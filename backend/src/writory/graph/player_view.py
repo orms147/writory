@@ -11,8 +11,13 @@ người giữ đồ vật, hay thuộc tính nào khác của lớp sự thật
 
 Nút có tên (Character/Location/Item/Faction) KHÔNG hiện `name` hay `aliases` của lớp sự thật:
 chữ hiện là `known_as` trên cạnh hé lộ mới nhất tới chương N, biệt danh là các `known_as` còn lại (D-17).
+
+Định nghĩa nằm trong MỘT hàm thuần, `build_player_view`, nhận bản ghi thô. `player_view` gom bản
+ghi từ Neo4j; `writory.guard.state.player_view_of` gom từ GraphState (nền đã commit + gói chưa
+ghi). Test so hai đường: tests/graph/test_guard_state_parity.py.
 """
 
+from collections.abc import Iterable
 from dataclasses import dataclass
 
 from neo4j import Driver, RoutingControl
@@ -34,6 +39,9 @@ class PlayerEntry:
     since_chapter: int
     quote: str | None
     about: tuple[str, ...]  # id các mục khác trong cùng player_view mà mục này nói về
+    # Mọi câu trích đã hé lộ mục này, theo thứ tự chương. Đều là chữ đã có trên trang; bộ dò lộ
+    # (G2, D-26) dùng để biết người chơi đã thấy gì. Giao diện chỉ cần `quote` (câu đầu tiên).
+    quotes: tuple[str, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -52,6 +60,88 @@ class PlayerView:
     lies: tuple[PlayerLie, ...]
 
 
+@dataclass(frozen=True)
+class KnownRecord:
+    """Một cạnh làm người chơi biết một nút: REVEALED_TO_PLAYER, hoặc KNOWS của nhân vật chính."""
+
+    node_id: str
+    labels: tuple[str, ...]
+    props: dict  # thuộc tính của nút (chỉ đọc trường chữ theo _TEXT_FIELD)
+    edge_id: str
+    since: int
+    quote: str | None
+    known_as: str | None
+
+
+@dataclass(frozen=True)
+class LieRecord:
+    id: str
+    content: str
+    chapter: int
+    told_to: tuple[str, ...]
+
+
+def build_player_view(
+    story_id: str,
+    chapter: int,
+    known: Iterable[KnownRecord],
+    about_edges: Iterable[tuple[str, str]],
+    lies: Iterable[LieRecord],
+) -> PlayerView:
+    """Định nghĩa duy nhất của player_view (G1, D-16, D-17). Đầu vào đã lọc tới chương N:
+    `known` và `about_edges` là cạnh có valid_from_chapter <= N; `lies` là lời nói dối của nhân
+    vật chính."""
+    # Một nút có thể được biết qua nhiều đường và nhiều lần (ví dụ biệt danh trước, tên thật sau).
+    seen: dict[str, list[KnownRecord]] = {}
+    kinds: dict[str, str] = {}
+    for rec in known:
+        kind = next((lb for lb in rec.labels if lb in _SHOWN), None)
+        if kind is None:
+            continue
+        kinds[rec.node_id] = kind
+        seen.setdefault(rec.node_id, []).append(rec)
+
+    shown: dict[str, tuple] = {}
+    for nid, recs in seen.items():
+        recs.sort(key=lambda r: (r.since, r.edge_id))
+        kind = kinds[nid]
+        if kind in NAMED_LABELS:
+            names = list(dict.fromkeys(r.known_as for r in recs if r.known_as))
+            if not names:
+                continue  # không biết người chơi gọi nó là gì: không hiện, thay vì lộ tên thật
+            text, aliases = names[-1], tuple(names[:-1])
+        else:
+            text, aliases = recs[0].props.get(_TEXT_FIELD[kind], ""), ()
+        quotes = tuple(dict.fromkeys(r.quote for r in recs if r.quote))
+        shown[nid] = (kind, text, aliases, recs[0].since, recs[0].quote, quotes)
+
+    about: dict[str, set[str]] = {}
+    for x, y in about_edges:
+        if x in shown and y in shown:
+            about.setdefault(x, set()).add(y)
+
+    entries = tuple(
+        PlayerEntry(
+            id=nid,
+            kind=kind,
+            text=text,
+            aliases=aliases,
+            since_chapter=since,
+            quote=quote,
+            about=tuple(sorted(about.get(nid, ()))),
+            quotes=quotes,
+        )
+        for nid, (kind, text, aliases, since, quote, quotes) in sorted(
+            shown.items(), key=lambda kv: (kv[1][3], kv[0])
+        )
+    )
+    lie_rows = tuple(
+        PlayerLie(r.id, r.content, r.chapter, tuple(sorted(r.told_to)))
+        for r in sorted(lies, key=lambda r: (r.chapter, r.id))
+    )
+    return PlayerView(story_id, chapter, entries, lie_rows)
+
+
 _KNOWN_QUERY = f"""
 MATCH (x:{ENTITY} {{story_id: $story_id}})-[r:REVEALED_TO_PLAYER]->(:{ENTITY}:Chapter {{story_id: $story_id}})
 WHERE r.valid_from_chapter <= $chapter
@@ -68,7 +158,7 @@ RETURN x AS x, r.id AS edge_id, r.valid_from_chapter AS since, r.quote AS quote,
 _ABOUT_QUERY = f"""
 MATCH (x:{ENTITY} {{story_id: $story_id}})-[r:ABOUT]->(y:{ENTITY} {{story_id: $story_id}})
 WHERE x.id IN $ids AND y.id IN $ids AND r.valid_from_chapter <= $chapter
-RETURN x.id AS id, collect(y.id) AS about
+RETURN x.id AS source, y.id AS target
 """
 
 _LIES_QUERY = f"""
@@ -76,11 +166,11 @@ MATCH (:{ENTITY}:Character {{story_id: $story_id, is_protagonist: true}})-[r:TOL
       (l:{ENTITY}:Lie {{story_id: $story_id}})-[:TOLD_TO]->(h:{ENTITY}:Character {{story_id: $story_id}})
 WHERE r.valid_from_chapter <= $chapter
 RETURN l.id AS id, l.content AS content, l.chapter AS chapter, collect(h.name) AS told_to
-ORDER BY chapter, id
 """
 
 
 def player_view(driver: Driver, story_id: str, chapter: int) -> PlayerView:
+    """player_view đọc từ Neo4j: gom bản ghi rồi gọi build_player_view."""
     require_story_id(story_id)
     require_chapter(chapter)
     params = {"story_id": story_id, "chapter": chapter}
@@ -90,51 +180,20 @@ def player_view(driver: Driver, story_id: str, chapter: int) -> PlayerView:
             query, parameters_={**params, **extra}, routing_=RoutingControl.READ
         ).records
 
-    # Một nút có thể được biết qua nhiều đường và nhiều lần (ví dụ biệt danh trước, tên thật sau).
-    seen: dict[str, list] = {}
-    kinds: dict[str, str] = {}
-    for rec in read(_KNOWN_QUERY):
-        node = rec["x"]
-        kind = next((lb for lb in node.labels if lb in _SHOWN), None)
-        if kind is None:
-            continue
-        kinds[node["id"]] = kind
-        seen.setdefault(node["id"], []).append(rec)
-
-    shown: dict[str, tuple[str, str, tuple[str, ...], int, str | None]] = {}
-    for nid, recs in seen.items():
-        recs.sort(key=lambda r: (r["since"], r["edge_id"]))
-        kind = kinds[nid]
-        if kind in NAMED_LABELS:
-            names = list(dict.fromkeys(r["known_as"] for r in recs if r["known_as"]))
-            if not names:
-                continue  # không biết người chơi gọi nó là gì: không hiện, thay vì lộ tên thật
-            text, aliases = names[-1], tuple(names[:-1])
-        else:
-            text, aliases = recs[0]["x"].get(_TEXT_FIELD[kind], ""), ()
-        shown[nid] = (kind, text, aliases, recs[0]["since"], recs[0]["quote"])
-
-    about = {r["id"]: tuple(sorted(r["about"])) for r in read(_ABOUT_QUERY, ids=list(shown))}
-
-    entries = tuple(
-        PlayerEntry(
-            id=nid,
-            kind=kind,
-            text=text,
-            aliases=aliases,
-            since_chapter=since,
-            quote=quote,
-            about=about.get(nid, ()),
+    known = [
+        KnownRecord(
+            node_id=r["x"]["id"], labels=tuple(r["x"].labels), props=dict(r["x"]),
+            edge_id=r["edge_id"], since=r["since"], quote=r["quote"], known_as=r["known_as"],
         )
-        for nid, (kind, text, aliases, since, quote) in sorted(
-            shown.items(), key=lambda kv: (kv[1][3], kv[0])
-        )
-    )
-    lies = tuple(
-        PlayerLie(r["id"], r["content"], r["chapter"], tuple(sorted(r["told_to"])))
+        for r in read(_KNOWN_QUERY)
+    ]
+    ids = sorted({k.node_id for k in known})
+    about_edges = [(r["source"], r["target"]) for r in read(_ABOUT_QUERY, ids=ids)]
+    lies = [
+        LieRecord(r["id"], r["content"], r["chapter"], tuple(r["told_to"]))
         for r in read(_LIES_QUERY)
-    )
-    return PlayerView(story_id, chapter, entries, lies)
+    ]
+    return build_player_view(story_id, chapter, known, about_edges, lies)
 
 
 def player_knowledge_about(

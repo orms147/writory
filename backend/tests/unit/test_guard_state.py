@@ -63,3 +63,15 @@ def test_named_nodes_carry_truth_names():
     assert names["ly_that"] == ("Lý Thất", "gã lái đò mặt sẹo")
     assert names["sword"] == ("Thanh Sương", "thanh kiếm")
     assert "f_lan_spy" not in names
+
+
+def test_player_view_of_overlay_follows_known_as():
+    from writory.guard.state import player_view_of
+
+    [ch4] = [e for e in player_view_of(through(4), 4).entries if e.id == "ly_that"]
+    assert (ch4.text, ch4.aliases) == ("gã lái đò mặt sẹo", ())
+    [ch5] = [e for e in player_view_of(through(5), 5).entries if e.id == "ly_that"]
+    assert (ch5.text, ch5.aliases) == ("Lý Thất", ("gã lái đò mặt sẹo",))
+    assert ch5.quote == "một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà"
+    assert ch5.quotes == ("một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà",
+                          "Cuối thư ký tên Lý Thất.")

@@ -1,9 +1,12 @@
 """Dò lộ bí mật trên mọi chữ sắp hiện cho người chơi (G2, D-26). Bằng code, không gọi model.
 
-Chuỗi cấm ở chương N, tạo từ trạng thái đồ thị và story_plan:
+"Người chơi đã thấy gì" lấy DUY NHẤT từ `PlayerView` (G1, D-16): chữ hiện, biệt danh, mọi câu
+trích, nội dung lời nói dối của nhân vật chính. Bộ dò không đọc cạnh đồ thị.
+
+Chuỗi cấm ở chương N, tạo từ player_view, tên lớp truth và story_plan:
 1. Tên (lớp truth) của nút có tên, khi tên đó có ít nhất một từ viết hoa (tên riêng) mà người
-   chơi chưa thấy trong bất kỳ `known_as` hay câu trích hé lộ nào tới chương N. Biệt danh toàn
-   chữ thường ("thanh kiếm") là danh từ chung, không bao giờ cấm.
+   chơi chưa thấy trong player_view. Biệt danh toàn chữ thường ("thanh kiếm") là danh từ chung,
+   không bao giờ cấm.
 2. Mỗi bí mật của story_plan chưa tới khoảng lộ và chưa được hé lộ: các nhóm `leak_terms`.
    Một nhóm trúng khi mọi cụm trong nhóm cùng nằm trong một câu.
 
@@ -15,11 +18,12 @@ Vị trí trả về tính trên chuỗi NFC (bỏ dấu giữ nguyên độ dà
 import logging
 import re
 import unicodedata
+from collections.abc import Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 
 from writory.errors import ErrorCode, WritoryError
-from writory.guard.state import GraphState
+from writory.graph import PlayerView
 from writory.pipeline.story_plan import StoryPlan
 
 log = logging.getLogger(__name__)
@@ -66,29 +70,15 @@ def _proper_tokens(text: str) -> set[str]:
     return {strip_diacritics(w) for w in _WORD.findall(text) if w[0].isupper()}
 
 
-def _player_seen(state: GraphState, chapter: int) -> tuple[set[str], set[str]]:
-    """(id các nút đã hé lộ, chữ người chơi đã thấy: known_as và câu trích) tới chương N."""
-    try:
-        protagonist: str | None = state.protagonist_id()
-    except LookupError:
-        protagonist = None
-    reveals = [(e.source, e) for e in state.edges_at("REVEALED_TO_PLAYER", chapter)]
-    if protagonist:
-        reveals += [(e.target, e) for e in state.edges_at("KNOWS", chapter, source_id=protagonist)]
-    seen_text = {
-        str(e.props[key]) for _, e in reveals for key in ("known_as", "quote") if key in e.props
-    }
-    return {node for node, _ in reveals}, seen_text
+def _seen_text(view: PlayerView) -> list[str]:
+    """Mọi chữ người chơi đã thấy, theo player_view."""
+    seen = [t for e in view.entries for t in (e.text, *e.aliases, *e.quotes)]
+    return seen + [lie.content for lie in view.lies]
 
 
-def _forbidden_names(state: GraphState, seen_text: set[str]) -> list[str]:
-    known = set().union(*(_proper_tokens(t) for t in seen_text))
-    terms = {
-        name
-        for names in state.named_nodes().values()
-        for name in names
-        if _proper_tokens(name) - known
-    }
+def _forbidden_names(truth_names: Mapping[str, tuple[str, ...]], seen: list[str]) -> list[str]:
+    known = set().union(*(_proper_tokens(t) for t in seen))
+    terms = {name for names in truth_names.values() for name in names if _proper_tokens(name) - known}
     return sorted(terms)
 
 
@@ -98,14 +88,20 @@ def _excerpt(text: str, start: int, end: int) -> str:
 
 
 def check_leaks(
-    text: str, *, state: GraphState, chapter: int, plan: StoryPlan
+    text: str,
+    *,
+    view: PlayerView,
+    truth_names: Mapping[str, tuple[str, ...]],
+    plan: StoryPlan,
 ) -> list[LeakHit]:
+    """`view`: player_view ở chương của chữ này. `truth_names`: GraphState.named_nodes()."""
     text = unicodedata.normalize("NFC", text)
     flat = strip_diacritics(text)
-    revealed, seen_text = _player_seen(state, chapter)
+    chapter = view.chapter
+    revealed = {e.id for e in view.entries}
     hits: list[LeakHit] = []
 
-    for term in _forbidden_names(state, seen_text):
+    for term in _forbidden_names(truth_names, _seen_text(view)):
         for m in _pattern(term).finditer(flat):
             hits.append(LeakHit(LeakKind.NAME, term, m.start(), m.end(),
                                 _excerpt(text, m.start(), m.end())))
@@ -129,12 +125,19 @@ def check_leaks(
     return sorted(hits, key=lambda h: (h.start, h.end))
 
 
-def ensure_no_leak(text: str, *, state: GraphState, chapter: int, plan: StoryPlan) -> None:
+def ensure_no_leak(
+    text: str,
+    *,
+    view: PlayerView,
+    truth_names: Mapping[str, tuple[str, ...]],
+    plan: StoryPlan,
+) -> None:
     """Chặn chữ có lộ bí mật (mức BLOCK, design §6.2). Lỗi không chứa chữ bị lộ, kể cả trong
     `detail` dành cho log (G12: log không chứa bí mật truyện)."""
-    hits = check_leaks(text, state=state, chapter=chapter, plan=plan)
+    hits = check_leaks(text, view=view, truth_names=truth_names, plan=plan)
     if hits:
         where = ", ".join(f"{h.kind.value}@{h.start}-{h.end}" for h in hits)
         raise WritoryError(
-            ErrorCode.SCENE_LEAK_BLOCKED, detail=f"chương {chapter}: {len(hits)} chỗ trúng ({where})"
+            ErrorCode.SCENE_LEAK_BLOCKED,
+            detail=f"chương {view.chapter}: {len(hits)} chỗ trúng ({where})",
         )

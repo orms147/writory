@@ -7,8 +7,8 @@ import unicodedata
 import pytest
 
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import read_sample
-from writory.guard.state import EmptyState, OverlayState
+from writory.graph import PlayerEntry, PlayerView, read_sample
+from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.leak import LeakKind, check_leaks, ensure_no_leak, strip_diacritics
 
@@ -30,8 +30,11 @@ def through(chapter: int) -> OverlayState:
     return OverlayState(EmptyState(), [c.package for c in SAMPLE.chapters if c.number <= chapter])
 
 
-def leaks(text: str, chapter: int, plan: StoryPlan = PLAN):
-    return check_leaks(text, state=through(chapter), chapter=chapter, plan=plan)
+def leaks(text: str, chapter: int, plan: StoryPlan = PLAN, state: OverlayState | None = None):
+    state = state or through(chapter)
+    return check_leaks(
+        text, view=player_view_of(state, chapter), truth_names=state.named_nodes(), plan=plan
+    )
 
 
 # --- tên chưa hé lộ ------------------------------------------------------------------------
@@ -104,8 +107,7 @@ def test_secret_revealed_early_by_choice_is_no_longer_secret():
         "edges": [{"type": "REVEALED_TO_PLAYER", "from": "f_lan_spy", "to": "ch4",
                    "valid_from_chapter": 4, "quote": "Lan là gián điệp.", "by_choice": "c3"}],
     })
-    state = OverlayState(through(3), [early])
-    assert check_leaks("Lan là gián điệp.", state=state, chapter=4, plan=PLAN) == []
+    assert leaks("Lan là gián điệp.", 4, state=OverlayState(through(3), [early])) == []
 
 
 def test_secret_without_leak_terms_warns(caplog):
@@ -148,9 +150,21 @@ def test_hand_written_sample_chapter_has_no_leak(chapter):
 # --- chặn và báo lỗi (G12) -----------------------------------------------------------------
 
 
+def test_leak_reads_only_player_view():
+    """Một định nghĩa "người chơi biết gì" (G1, D-16): bộ dò không đọc cạnh, chỉ đọc PlayerView.
+    Một PlayerView có "Lý Thất" ở chương 4 thì tên đó không còn bị cấm."""
+    view = player_view_of(through(4), 4)
+    entry = PlayerEntry("ly_that", "Character", "Lý Thất", (), 4, "Lý Thất", (), ("Lý Thất",))
+    patched = PlayerView(view.story_id, 4, (*view.entries, entry), view.lies)
+    text = "Lý Thất cười."
+    assert check_leaks(text, view=view, truth_names=through(4).named_nodes(), plan=PLAN)
+    assert check_leaks(text, view=patched, truth_names=through(4).named_nodes(), plan=PLAN) == []
+
+
 def test_ensure_no_leak_blocks_without_revealing_the_secret():
     with pytest.raises(WritoryError) as exc:
-        ensure_no_leak("Minh không ngờ Lan là gián điệp.", state=through(4), chapter=4, plan=PLAN)
+        ensure_no_leak("Minh không ngờ Lan là gián điệp.", view=player_view_of(through(4), 4),
+                       truth_names=through(4).named_nodes(), plan=PLAN)
     err = exc.value
     assert err.code is ErrorCode.SCENE_LEAK_BLOCKED
     shown = json.dumps(err.player_payload(), ensure_ascii=False) + str(err)
@@ -159,4 +173,5 @@ def test_ensure_no_leak_blocks_without_revealing_the_secret():
 
 
 def test_ensure_no_leak_passes_clean_text():
-    ensure_no_leak("Minh rót trà.", state=through(4), chapter=4, plan=PLAN)
+    ensure_no_leak("Minh rót trà.", view=player_view_of(through(4), 4),
+                   truth_names=through(4).named_nodes(), plan=PLAN)

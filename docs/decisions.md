@@ -201,7 +201,8 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 ## D-26 · Bộ dò lộ (G2): chuỗi cấm tạo bằng code ở từng chương
 - **Bối cảnh:** G2 cần chặn chữ để lộ bí mật trước khi hiện. Đo trên truyện mẫu: nếu cấm mọi tên và biệt danh lớp truth chưa có trong `known_as`, văn sạch của cả 5 chương đều bị báo. Có hai loại báo nhầm: tên thật được nói ngay trong câu trích hé lộ ("Tên thật của lão là Hồ Sĩ Bằng"), và biệt danh là danh từ chung ("thanh kiếm", "quán trà đầu bến").
 - **Quyết định:**
-  - Tên chỉ bị cấm khi có từ viết hoa (tên riêng) mà người chơi chưa thấy trong `known_as` hay câu trích của mọi cạnh hé lộ tới chương N.
+  - "Người chơi đã thấy gì" lấy duy nhất từ `PlayerView` (D-16): chữ hiện, biệt danh, mọi câu trích (`quotes`), lời nói dối của nhân vật chính. Định nghĩa nằm trong hàm thuần `graph.build_player_view`, dùng chung cho Neo4j và GraphState.
+  - Tên chỉ bị cấm khi có từ viết hoa (tên riêng) mà người chơi chưa thấy trong `PlayerView`.
   - Bí mật của `story_plan` chưa tới khoảng lộ và chưa được hé lộ (kể cả lộ sớm do lựa chọn): nhóm `leak_terms` trúng khi mọi cụm cùng nằm trong một câu. Bí mật không có `leak_terms` thì ghi cảnh báo.
   - So sau NFC và bỏ dấu, trọn từ. Cụm một từ phân biệt hoa thường; cụm nhiều từ thì không.
   - Trúng thì báo `SCENE_LEAK_BLOCKED`, câu báo trung tính (design §6.6). Log chỉ ghi loại và vị trí, không ghi chữ bị lộ.
