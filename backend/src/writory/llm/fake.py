@@ -7,8 +7,9 @@ Hai chế độ:
 
 import json
 from collections import deque
-from collections.abc import AsyncIterator, Iterable
+from collections.abc import AsyncIterator, Iterable, Mapping
 from pathlib import Path
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -41,6 +42,7 @@ class FakeLLM(LLMClient):
         self._cost_usd = cost_usd
         self.calls: list[list[Message]] = []
         self.schemas: list[type[BaseModel]] = []
+        self.extras: list[Mapping[str, Any] | None] = []
 
     @classmethod
     def scripted(
@@ -82,10 +84,14 @@ class FakeLLM(LLMClient):
         messages: list[Message],
         *,
         response_schema: type[BaseModel] | None = None,
+        extra: Mapping[str, Any] | None = None,
     ) -> ChatResult:
         if response_schema is not None:
             self.schemas.append(response_schema)
-        return ChatResult(text=self._next(messages), usage=self._usage())
+        self.extras.append(extra)
+        return ChatResult(
+            text=self._next(messages), usage=self._usage(), model=model, finish_reason="stop"
+        )
 
     async def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
         text = self._next(messages)

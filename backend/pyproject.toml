@@ -22,6 +22,14 @@ dev = [
     "pytest-asyncio>=1.4.0",
     "ruff>=0.17.1",
 ]
+eval = [
+    "anthropic>=1.15.0",
+]
+
+[tool.uv]
+# Bộ đo (nhóm eval) cài cùng dev để test của khung chạy bài đo chạy được trong CI.
+# Gói chính không phụ thuộc anthropic (D-24).
+default-groups = ["dev", "eval"]
 
 [build-system]
 requires = ["hatchling"]

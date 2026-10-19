@@ -4,7 +4,8 @@ Trần kiểm trước mỗi lời gọi, nên lời gọi cuối có thể vư�
 (D-10). Trần chưa đặt (null) là lỗi, không phải vô hạn.
 """
 
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Mapping
+from typing import Any
 
 from pydantic import BaseModel
 
@@ -66,9 +67,12 @@ class MeteredClient(LLMClient):
         messages: list[Message],
         *,
         response_schema: type[BaseModel] | None = None,
+        extra: Mapping[str, Any] | None = None,
     ) -> ChatResult:
         self.tracker.ensure_budget()
-        result = await self._inner.chat(model, messages, response_schema=response_schema)
+        result = await self._inner.chat(
+            model, messages, response_schema=response_schema, extra=extra
+        )
         self.tracker.record(result.usage.cost_usd)
         return result
 

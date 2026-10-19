@@ -1,0 +1,35 @@
+# Fixture test cho bài đo D (writory.quality.bench_d). Cùng schema với evals/scenarios/quality/.
+version: 1
+length_chars: {min: 20, max: 4000}
+
+cases:
+  - id: ca-mot
+    genre: tu tiên
+    tags: [thu]
+    focus: chỉ để test
+    pov: ngôi thứ ba, bám sát Lạc Vân
+    voice: gọn
+    context: Lạc Vân vào động đá sau núi để đột phá.
+    characters:
+      - {name: Lạc Vân, desc: "17 tuổi, ít nói"}
+      - {name: Tần Mặc, desc: "sư huynh"}
+    address:
+      - "Lạc Vân với Tần Mặc: xưng đệ, gọi sư huynh"
+    beats:
+      - Lạc Vân uống đan
+      - Đột phá thất bại
+    must_not_reveal:
+      - Tần Mặc đã trộn thuốc vào đan
+
+  - id: ca-hai
+    genre: đô thị
+    tags: [thu]
+    pov: ngôi thứ ba, bám sát Huy
+    voice: tiết chế
+    context: Huy hẹn Linh ở quán cà phê cũ.
+    characters:
+      - {name: Huy, desc: "29 tuổi"}
+      - {name: Linh, desc: "27 tuổi"}
+    beats:
+      - Linh nói muốn dừng lại
+    length_chars: {min: 10, max: 3000}

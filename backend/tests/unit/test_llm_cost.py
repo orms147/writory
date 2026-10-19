@@ -93,6 +93,12 @@ async def test_metered_client_stops_calling_model_at_cap():
     assert len(inner.calls) == 4
 
 
+async def test_metered_chat_passes_extra_through():
+    inner = FakeLLM.echo()
+    await MeteredClient(inner, CostTracker(limits())).chat("m", MSGS, extra={"max_tokens": 5})
+    assert inner.extras == [{"max_tokens": 5}]
+
+
 async def test_metered_chat_json_is_metered():
     inner = FakeLLM.scripted(['{"a": 1}'], cost_usd=0.3)
     tracker = CostTracker(limits())

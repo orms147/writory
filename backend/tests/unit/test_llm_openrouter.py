@@ -61,6 +61,31 @@ async def test_chat_sends_request_and_reads_usage_cost():
     assert "response_format" not in body
 
 
+async def test_chat_reads_served_model_and_finish_reason():
+    client, _ = client_with(lambda r: httpx.Response(200, json=completion()))
+    result = await client.chat("x/y", MSGS)
+    assert result.model == "x/y"
+    assert result.finish_reason == "stop"
+
+
+async def test_chat_extra_params_go_into_body():
+    client, seen = client_with(lambda r: httpx.Response(200, json=completion()))
+    extra = {"max_tokens": 900, "reasoning": {"effort": "none"}}
+    await client.chat("x/y", MSGS, extra=extra)
+    body = json.loads(seen[0].content)
+    assert body["max_tokens"] == 900
+    assert body["reasoning"] == {"effort": "none"}
+    assert body["model"] == "x/y"
+
+
+@pytest.mark.parametrize("key", ["model", "messages", "stream", "response_format"])
+async def test_chat_extra_cannot_override_core_fields(key):
+    client, seen = client_with(lambda r: httpx.Response(200, json=completion()))
+    with pytest.raises(ValueError, match=key):
+        await client.chat("x/y", MSGS, extra={key: "khác"})
+    assert seen == []
+
+
 async def test_missing_cost_is_reported_as_unknown():
     client, _ = client_with(lambda r: httpx.Response(200, json=completion(cost=None)))
     assert (await client.chat("x/y", MSGS)).usage.cost_usd is None
