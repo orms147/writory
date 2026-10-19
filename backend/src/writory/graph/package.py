@@ -76,10 +76,15 @@ class EdgeSpec(BaseModel):
         _check_props(self.props)
         if self.valid_to_chapter is not None and self.valid_to_chapter <= self.valid_from_chapter:
             raise ValueError("valid_to_chapter phải lớn hơn valid_from_chapter")
-        if self.type == "REVEALED_TO_PLAYER":
-            quote = self.props.get("quote")
-            if not isinstance(quote, str) or not quote.strip():
-                raise ValueError("REVEALED_TO_PLAYER phải kèm câu trích `quote` (G3)")
+        quote = self.props.get("quote")
+        if self.type == "REVEALED_TO_PLAYER" and (not isinstance(quote, str) or not quote.strip()):
+            raise ValueError("REVEALED_TO_PLAYER phải kèm câu trích `quote` (G3)")
+        if "known_as" in self.props:
+            known_as = self.props["known_as"]
+            if not isinstance(known_as, str) or not isinstance(quote, str) or not quote_in_text(
+                known_as, quote
+            ):
+                raise ValueError("`known_as` phải nằm trong `quote` (D-17)")
         if not self.id:
             key = f"{self.type}:{self.source}>{self.target}@{self.valid_from_chapter}"
             object.__setattr__(self, "id", key)

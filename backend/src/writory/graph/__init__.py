@@ -4,6 +4,7 @@ Schema: docs/graph-schema.md."""
 from writory.graph.commit import (
     CommitConflictError,
     GraphWriteError,
+    InvalidPackageError,
     MissingEntityError,
     StorySnapshot,
     apply_package,
@@ -46,6 +47,7 @@ __all__ = [
     "EntityRef",
     "GraphIntegrityError",
     "GraphWriteError",
+    "InvalidPackageError",
     "Knowledge",
     "LieInfo",
     "MissingEntityError",

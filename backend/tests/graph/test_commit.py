@@ -6,6 +6,7 @@ from writory.graph import (
     ChangePackage,
     CommitConflictError,
     GraphIntegrityError,
+    InvalidPackageError,
     MissingEntityError,
     apply_package,
     delete_commit,
@@ -144,3 +145,19 @@ def test_two_open_holders_is_reported_not_hidden(driver, new_story_id):
     ))
     with pytest.raises(GraphIntegrityError):
         item_holder(driver, sid, "sword", 6)
+
+
+@pytest.mark.parametrize("edge", [
+    {"type": "REVEALED_TO_PLAYER", "from": "khai", "to": "ch5", "valid_from_chapter": 5,
+     "id": "reveal_khai_again", "quote": "Lan là người của Hội Hắc Kỳ."},
+    {"type": "KNOWS", "from": "minh", "to": "sword", "valid_from_chapter": 5,
+     "how": "chứng kiến", "quote": "Thanh Sương nằm dưới mấy lớp áo"},
+])
+def test_named_reveal_without_known_as_is_rejected(driver, new_story_id, edge):
+    # D-17: thiếu known_as thì player_view không biết hiện tên gì; không được ghi.
+    sid = new_story_id()
+    load_sample_story(driver, sid)
+    before = story_snapshot(driver, sid)
+    with pytest.raises(InvalidPackageError, match="known_as"):
+        apply_package(driver, sid, _pkg("c-no-known-as", edges=[edge]))
+    assert story_snapshot(driver, sid) == before

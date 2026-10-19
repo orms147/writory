@@ -8,6 +8,7 @@ Mô hình ý tưởng: design §7.2. Code: `backend/src/writory/graph/` (danh s�
 - **Không xoá sự thật cũ; đóng nó lại.** Đổi trạng thái = đóng cạnh cũ (đặt `valid_to_chapter`) + tạo cạnh mới.
 - **Nút không bị sửa sau khi tạo** (D-15). Mọi trạng thái đổi theo thời gian là cạnh: chết là `DIED_IN`, lời nói dối bị phát hiện là `KNOWS` tới nút `Lie`, mạch được gỡ là `RESOLVED_IN`.
 - **Bất biến "tối đa một":** ở mỗi chương, một đồ vật có tối đa một cạnh `HOLDS` hiệu lực; mỗi cặp A→B có tối đa một `RELATES_TO` hiệu lực. Truy vấn gặp hơn một thì báo `GraphIntegrityError`, không chọn đại.
+- **Một mệnh đề một nút.** Chữ của một `Fact` hay `Event` chỉ chứa đúng một mệnh đề. Chi tiết bí mật về nó (ai làm, vì sao) phải là `Fact` riêng, vì khi nút được hé lộ thì người chơi thấy toàn bộ chữ của nó. Ví dụ trong truyện mẫu: `e_gu_death` ("Lão Gù chết sau miếu Bà") tách khỏi `f_lan_killed_gu`.
 - **Hai lớp** trên cùng một đồ thị: `truth` là toàn bộ đồ thị; `player_view` định nghĩa ở mục riêng bên dưới, trong **một hàm duy nhất** (G1).
 - **Nguồn gốc:** thuộc tính do người chơi viết mang `user_authored: true` (G4).
 - **Định danh:** mỗi nút có `id` ổn định trong truyện; nhân vật có `name` và `aliases[]`. Gói thay đổi chỉ tham chiếu `id` đã có hoặc khai trong cùng gói (G11).
@@ -39,13 +40,15 @@ Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu 
 | `MEMBER_OF` | Character → Faction | | |
 | `PARTICIPATED_IN` | Character → Event | `role` | |
 | `DIED_IN` | Character → Event | | chết trong sự kiện |
-| `KNOWS` | Character → Fact/Lie/Event | `how`, `quote` | biết từ `valid_from_chapter`. Tới `Lie` = biết đó là lời dối |
+| `KNOWS` | Character → Fact/Lie/Event | `how`, `quote`, `known_as` | biết từ `valid_from_chapter`. Tới `Lie` = biết đó là lời dối |
 | `FEELS` | nhân vật chính → bất kỳ | | từ lựa chọn nội tâm (chưa dùng ở tuần 1) |
 | `TOLD` | Character → Lie | | người nói |
 | `TOLD_TO` | Lie → Character | | người nghe |
 | `ABOUT` | Fact/Event → bất kỳ | | mệnh đề/sự kiện nói về ai, cái gì |
 | `RESOLVED_IN` | Thread → Chapter | | mạch được gỡ |
-| `REVEALED_TO_PLAYER` | bất kỳ → Chapter | `quote` (bắt buộc, G3) | hé lộ trên trang ở chương đó |
+| `REVEALED_TO_PLAYER` | bất kỳ → Chapter | `quote` (bắt buộc, G3), `known_as` | hé lộ trên trang ở chương đó |
+
+**`known_as` (D-17).** Cạnh `REVEALED_TO_PLAYER` từ một nút có tên (Character/Location/Item/Faction), và cạnh `KNOWS` từ nhân vật chính tới một nút có tên, **bắt buộc** có `known_as`: tên người chơi biết lúc đó, phải nằm trong `quote` (cùng cách chuẩn hoá với `quote_in_text`). Một nút có thể được hé lộ nhiều lần với tên khác nhau, ví dụ biệt danh trước, tên thật sau. Thiếu `known_as` thì `apply_package` báo `InvalidPackageError`.
 
 Lời nói dối "đã bị phát hiện ở chương N" khi có nhân vật khác người nói `KNOWS` nút `Lie` từ chương ≤ N.
 
@@ -55,14 +58,16 @@ Hàm `writory.graph.player_view(driver, story_id, chapter)` (D-16). Ở chương
 2. nút mà nhân vật chính `KNOWS` từ chương ≤ N;
 3. lời nói dối do nhân vật chính nói (người chơi đã chọn nói), không kèm trạng thái bị phát hiện.
 
-Chỉ trả trường trong danh sách trắng: id, loại, chữ hiện (`name`/`text`/`description`/`content`), biệt danh của nhân vật, chương biết, câu trích, và `about` (chỉ gồm id cũng nằm trong `player_view`). Không trả cạnh, quan hệ, vai trong sự kiện hay người giữ đồ vật. Nút `Thread` và `Chapter` không bao giờ vào `player_view`.
+Chỉ trả trường trong danh sách trắng: id, loại, chữ hiện, biệt danh, chương biết lần đầu, câu trích lần đầu, và `about` (chỉ gồm id cũng nằm trong `player_view`).
+- Nút có tên: chữ hiện là `known_as` của cạnh hé lộ mới nhất tới chương N; biệt danh là các `known_as` khác đã hé lộ tới chương N. **Không bao giờ** hiện `name` hay `aliases` của lớp sự thật (D-17). Nút có tên mà không có `known_as` nào thì không hiện.
+- `Fact`/`Event`/`Lie`: chữ hiện là `text`/`description`/`content` của nút.
+ Không trả cạnh, quan hệ, vai trong sự kiện hay người giữ đồ vật. Nút `Thread` và `Chapter` không bao giờ vào `player_view`.
 
 Câu trích của `REVEALED_TO_PLAYER` và của `KNOWS` từ nhân vật chính phải có nguyên văn trong chương (`quote_in_text`, chuẩn hoá NFC và khoảng trắng). Truyện mẫu được kiểm điều này trong `validate_sample`.
 
 ## Ghi theo `commit_id` (D-6, phần Neo4j)
 - `apply_package(driver, story_id, ChangePackage)`: một transaction. Nút `MERGE` theo `(story_id, id)`; cạnh `MERGE` theo `(story_id, id)`; đóng cạnh ghi `closed_by_commit`. Áp lại cùng gói không đổi gì. Tham chiếu id không có → `MissingEntityError`; đụng nút/cạnh của commit khác → `CommitConflictError`; cả hai đều rollback toàn bộ.
 - `delete_commit(driver, story_id, commit_id)`: xoá nút/cạnh commit đó tạo, mở lại cạnh nó đóng. Có commit sau dựa vào thì từ chối.
-- Phần Postgres (trạng thái `pending`/`committed`/`failed`, chỉ đọc chương `committed`) chưa làm.
 
 ## Ràng buộc và index
 Tạo bằng `ensure_schema(driver)` (chạy lại an toàn). Câu lệnh đầy đủ: `schema_statements()` trong `schema.py`.
@@ -94,3 +99,9 @@ RETURN c.id, c.name
 ```
 
 Đáp án viết tay cho từng câu trên truyện mẫu: `data/sample-story/answers.yaml`. Test: `cd backend && uv run pytest -m graph`.
+
+## Chưa làm
+- Phần Postgres của D-6: trạng thái `pending`/`committed`/`failed`, và chỉ đọc chương `committed`.
+- **Lời người chơi đã nghe.** Người chơi đã nghe lời nói dối của nhân vật khác (ví dụ `l_lan_cover`, `TOLD_TO` nhân vật chính), nhưng `player_view` chưa có gì về chuyện đó. Vì vậy sổ tay thiếu "Lan kể rằng cô trốn hôn nhân". Cần hiện dưới dạng **lời kể** ("Lan kể: …") và **không** được gắn nhãn `Lie`, vì gắn nhãn là lộ. Làm cùng sổ tay ở tuần 5, kèm test G1.
+- `player_view` chưa có quan hệ và người giữ đồ vật cho sổ tay (D-16).
+- G3 đối chiếu câu trích với văn bản mới được kiểm trong `validate_sample`. `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`; pipeline phải gọi `quote_in_text` với văn bản cảnh trước khi ghi.

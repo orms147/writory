@@ -75,3 +75,18 @@ def test_quote_in_text_normalizes_unicode_and_whitespace():
     assert quote_in_text(decomposed, text)
     assert not quote_in_text("Em tên Lan, Phạm Thị Hoa.", text)
     assert not quote_in_text("", text)
+
+
+def test_known_as_must_be_inside_quote():
+    # D-17: tên người chơi biết phải có trong câu trích.
+    with pytest.raises(ValidationError):
+        EdgeSpec.model_validate({
+            "type": "REVEALED_TO_PLAYER", "from": "x", "to": "ch1", "valid_from_chapter": 1,
+            "quote": "một gã lái đò mặt sẹo", "known_as": "Lý Thất",
+        })
+    ok = EdgeSpec.model_validate({
+        "type": "REVEALED_TO_PLAYER", "from": "x", "to": "ch1", "valid_from_chapter": 1,
+        "quote": "một gã lái đò  mặt sẹo",
+        "known_as": unicodedata.normalize("NFD", "gã lái đò mặt sẹo"),
+    })
+    assert ok.props["known_as"]

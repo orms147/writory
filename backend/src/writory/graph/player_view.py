@@ -8,25 +8,21 @@
 
 Chỉ trả các trường trong danh sách trắng dưới đây. Không trả cạnh, quan hệ, vai trong sự kiện,
 người giữ đồ vật, hay thuộc tính nào khác của lớp sự thật.
+
+Nút có tên (Character/Location/Item/Faction) KHÔNG hiện `name` hay `aliases` của lớp sự thật:
+chữ hiện là `known_as` trên cạnh hé lộ mới nhất tới chương N, biệt danh là các `known_as` còn lại (D-17).
 """
 
 from dataclasses import dataclass
 
 from neo4j import Driver, RoutingControl
 
-from writory.graph.schema import ENTITY
+from writory.graph.schema import ENTITY, NAMED_LABELS
 from writory.graph.story import require_chapter, require_story_id
 
-# Nhãn được phép hiện và trường chứa chữ hiện cho người chơi.
-_TEXT_FIELD = {
-    "Character": "name",
-    "Location": "name",
-    "Item": "name",
-    "Faction": "name",
-    "Fact": "text",
-    "Event": "description",
-    "Lie": "content",
-}
+# Nhãn được phép hiện. Nút có tên lấy chữ từ `known_as`; các nhãn dưới đây lấy từ thuộc tính nút.
+_TEXT_FIELD = {"Fact": "text", "Event": "description", "Lie": "content"}
+_SHOWN = NAMED_LABELS | _TEXT_FIELD.keys()
 
 
 @dataclass(frozen=True)
@@ -59,12 +55,14 @@ class PlayerView:
 _KNOWN_QUERY = f"""
 MATCH (x:{ENTITY} {{story_id: $story_id}})-[r:REVEALED_TO_PLAYER]->(:{ENTITY}:Chapter {{story_id: $story_id}})
 WHERE r.valid_from_chapter <= $chapter
-RETURN x AS x, r.valid_from_chapter AS since, r.quote AS quote
+RETURN x AS x, r.id AS edge_id, r.valid_from_chapter AS since, r.quote AS quote,
+       r.known_as AS known_as
 UNION ALL
 MATCH (:{ENTITY}:Character {{story_id: $story_id, is_protagonist: true}})-[r:KNOWS]->
       (x:{ENTITY} {{story_id: $story_id}})
 WHERE r.valid_from_chapter <= $chapter
-RETURN x AS x, r.valid_from_chapter AS since, r.quote AS quote
+RETURN x AS x, r.id AS edge_id, r.valid_from_chapter AS since, r.quote AS quote,
+       r.known_as AS known_as
 """
 
 _ABOUT_QUERY = f"""
@@ -92,30 +90,45 @@ def player_view(driver: Driver, story_id: str, chapter: int) -> PlayerView:
             query, parameters_={**params, **extra}, routing_=RoutingControl.READ
         ).records
 
-    # Một nút có thể được biết qua nhiều đường: giữ lần sớm nhất.
-    first: dict[str, tuple[str, dict, int, str | None]] = {}
+    # Một nút có thể được biết qua nhiều đường và nhiều lần (ví dụ biệt danh trước, tên thật sau).
+    seen: dict[str, list] = {}
+    kinds: dict[str, str] = {}
     for rec in read(_KNOWN_QUERY):
         node = rec["x"]
-        kind = next((lb for lb in node.labels if lb in _TEXT_FIELD), None)
+        kind = next((lb for lb in node.labels if lb in _SHOWN), None)
         if kind is None:
             continue
-        nid = node["id"]
-        if nid not in first or rec["since"] < first[nid][2]:
-            first[nid] = (kind, dict(node), rec["since"], rec["quote"])
+        kinds[node["id"]] = kind
+        seen.setdefault(node["id"], []).append(rec)
 
-    about = {r["id"]: tuple(sorted(r["about"])) for r in read(_ABOUT_QUERY, ids=list(first))}
+    shown: dict[str, tuple[str, str, tuple[str, ...], int, str | None]] = {}
+    for nid, recs in seen.items():
+        recs.sort(key=lambda r: (r["since"], r["edge_id"]))
+        kind = kinds[nid]
+        if kind in NAMED_LABELS:
+            names = list(dict.fromkeys(r["known_as"] for r in recs if r["known_as"]))
+            if not names:
+                continue  # không biết người chơi gọi nó là gì: không hiện, thay vì lộ tên thật
+            text, aliases = names[-1], tuple(names[:-1])
+        else:
+            text, aliases = recs[0]["x"].get(_TEXT_FIELD[kind], ""), ()
+        shown[nid] = (kind, text, aliases, recs[0]["since"], recs[0]["quote"])
+
+    about = {r["id"]: tuple(sorted(r["about"])) for r in read(_ABOUT_QUERY, ids=list(shown))}
 
     entries = tuple(
         PlayerEntry(
             id=nid,
             kind=kind,
-            text=props.get(_TEXT_FIELD[kind], ""),
-            aliases=tuple(props.get("aliases") or ()) if kind == "Character" else (),
+            text=text,
+            aliases=aliases,
             since_chapter=since,
             quote=quote,
             about=about.get(nid, ()),
         )
-        for nid, (kind, props, since, quote) in sorted(first.items(), key=lambda kv: (kv[1][2], kv[0]))
+        for nid, (kind, text, aliases, since, quote) in sorted(
+            shown.items(), key=lambda kv: (kv[1][3], kv[0])
+        )
     )
     lies = tuple(
         PlayerLie(r["id"], r["content"], r["chapter"], tuple(sorted(r["told_to"])))

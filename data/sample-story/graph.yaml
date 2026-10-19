@@ -8,6 +8,8 @@
 #   valid_from_chapter: 0 = đã đúng từ trước khi truyện bắt đầu.
 # - `close`: đóng một cạnh đã có (đặt valid_to_chapter), không xoá.
 # - REVEALED_TO_PLAYER và KNOWS của nhân vật chính phải có `quote` nằm nguyên văn trong chương (G3).
+#   Khi hé lộ nút có tên (Character/Item/Location/Faction) thì thêm `known_as`: tên người chơi
+#   biết lúc đó, nằm trong `quote` (D-17). Người chơi không bao giờ thấy `name` của lớp sự thật.
 
 story:
   title: "Thanh Sương"
@@ -46,17 +48,17 @@ chapters:
       - {id: at_gu_lo_ren, type: LOCATED_AT, from: gu, to: lo_ren, valid_from_chapter: 1}
       - {type: LOCATED_AT, from: lan, to: quan_tra, valid_from_chapter: 1}
       - {type: REVEALED_TO_PLAYER, from: minh, to: ch1, valid_from_chapter: 1,
-         quote: "Trần Minh ôm chồng sách chép thuê đi dọc phố Bến Sương"}
-      - {type: REVEALED_TO_PLAYER, from: lan, to: ch1, valid_from_chapter: 1, quote: "Em tên Lan, Phạm Thị Lan."}
+         quote: "Trần Minh ôm chồng sách chép thuê đi dọc phố Bến Sương", known_as: "Trần Minh"}
+      - {type: REVEALED_TO_PLAYER, from: lan, to: ch1, valid_from_chapter: 1, quote: "Em tên Lan, Phạm Thị Lan.", known_as: "Phạm Thị Lan"}
       - {type: REVEALED_TO_PLAYER, from: gu, to: ch1, valid_from_chapter: 1,
-         quote: "Tên thật của lão là Hồ Sĩ Bằng, nhưng cả phố chỉ gọi lão là Lão Gù"}
+         quote: "Tên thật của lão là Hồ Sĩ Bằng, nhưng cả phố chỉ gọi lão là Lão Gù", known_as: "Lão Gù"}
       - {type: REVEALED_TO_PLAYER, from: khai, to: ch1, valid_from_chapter: 1,
-         quote: "Khải cùng họ Trần với Minh nhưng chẳng họ hàng gì"}
+         quote: "Minh gặp cai Trần Văn Khải đang đi tuần", known_as: "Trần Văn Khải"}
       - {type: REVEALED_TO_PLAYER, from: sword, to: ch1, valid_from_chapter: 1,
-         quote: "Thanh Sương, — lão nói, không ngẩng lên."}
-      - {type: REVEALED_TO_PLAYER, from: ben_suong, to: ch1, valid_from_chapter: 1, quote: "đi dọc phố Bến Sương"}
-      - {type: REVEALED_TO_PLAYER, from: lo_ren, to: ch1, valid_from_chapter: 1, quote: "Cuối phố là lò rèn của Lão Gù."}
-      - {type: REVEALED_TO_PLAYER, from: quan_tra, to: ch1, valid_from_chapter: 1, quote: "Đầu bến có một quán trà mới mở."}
+         quote: "Thanh Sương, — lão nói, không ngẩng lên.", known_as: "Thanh Sương"}
+      - {type: REVEALED_TO_PLAYER, from: ben_suong, to: ch1, valid_from_chapter: 1, quote: "đi dọc phố Bến Sương", known_as: "phố Bến Sương"}
+      - {type: REVEALED_TO_PLAYER, from: lo_ren, to: ch1, valid_from_chapter: 1, quote: "Cuối phố là lò rèn của Lão Gù.", known_as: "lò rèn của Lão Gù"}
+      - {type: REVEALED_TO_PLAYER, from: quan_tra, to: ch1, valid_from_chapter: 1, quote: "Đầu bến có một quán trà mới mở.", known_as: "quán trà"}
     close: []
 
   - number: 2
@@ -87,9 +89,9 @@ chapters:
       - {id: rel_minh_lan_2, type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 2, kind: "bạn", score: 50}
       - {type: REVEALED_TO_PLAYER, from: e_gu_gives_sword, to: ch2, valid_from_chapter: 2, quote: "Ta giao nó cho mày."}
       - {type: REVEALED_TO_PLAYER, from: sealed_letter, to: ch2, valid_from_chapter: 2,
-         quote: "niêm sáp đỏ, ngoài phong bì không đề tên ai"}
+         quote: "một lá thư gấp bốn, niêm sáp đỏ", known_as: "lá thư gấp bốn"}
       - {type: REVEALED_TO_PLAYER, from: hac_ky, to: ch2, valid_from_chapter: 2,
-         quote: "Bọn buôn lậu trên sông, cờ đen không thêu chữ."}
+         quote: "đã nghe tới Hội Hắc Kỳ bao giờ chưa", known_as: "Hội Hắc Kỳ"}
       - {type: REVEALED_TO_PLAYER, from: f_gu_old_hac_ky, to: ch2, valid_from_chapter: 2,
          quote: "Ba mươi năm trước ta từng đi thuyền với chúng."}
     close:
@@ -118,7 +120,7 @@ chapters:
       - {type: TOLD, from: minh, to: l_home_night, valid_from_chapter: 3}
       - {type: TOLD_TO, from: l_home_night, to: khai, valid_from_chapter: 3}
       - {id: rel_minh_lan_3, type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 3, kind: "yêu", score: 80}
-      - {type: REVEALED_TO_PLAYER, from: mieu_ba, to: ch3, valid_from_chapter: 3, quote: "Miếu cũ, mái sụp một góc"}
+      - {type: REVEALED_TO_PLAYER, from: mieu_ba, to: ch3, valid_from_chapter: 3, quote: "Canh hai, Minh ra miếu Bà. Miếu cũ, mái sụp một góc", known_as: "miếu Bà"}
       - {type: REVEALED_TO_PLAYER, from: e_minh_at_mieu, to: ch3, valid_from_chapter: 3, quote: "Canh hai, Minh ra miếu Bà."}
       - {type: REVEALED_TO_PLAYER, from: e_gu_death, to: ch3, valid_from_chapter: 3,
          quote: "Người ta tìm thấy Lão Gù nằm sấp sau miếu Bà"}
@@ -132,6 +134,8 @@ chapters:
     nodes:
       - {id: ch4, label: Chapter, number: 4, title: "Mất kiếm"}
       - {id: e_sword_missing, label: Event, chapter: 4, description: "Minh thức dậy thấy Thanh Sương biến mất khỏi gầm giường"}
+      # Người của Hội. Ra mắt bằng biệt danh; tên thật chỉ lộ ở chương 5 (D-17).
+      - {id: ly_that, label: Character, name: "Lý Thất", aliases: ["gã lái đò mặt sẹo"]}
       - {id: e_sword_stolen, label: Event, chapter: 4, description: "Lan bỏ thuốc ngủ vào gói trà cho Minh, rồi đêm đó lẻn vào gác lấy Thanh Sương"}
       - {id: t_sword_missing, label: Thread, description: "Ai đã lấy Thanh Sương",
          planted_chapter: 4, due_from_chapter: 5, due_to_chapter: 6}
@@ -143,6 +147,9 @@ chapters:
       - {type: PARTICIPATED_IN, from: minh, to: e_sword_missing, valid_from_chapter: 4}
       - {type: ABOUT, from: e_sword_stolen, to: lan, valid_from_chapter: 4}
       - {type: ABOUT, from: e_sword_stolen, to: sword, valid_from_chapter: 4}
+      - {type: MEMBER_OF, from: ly_that, to: hac_ky, valid_from_chapter: 0}
+      - {type: REVEALED_TO_PLAYER, from: ly_that, to: ch4, valid_from_chapter: 4,
+         quote: "một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà", known_as: "gã lái đò mặt sẹo"}
       - {type: REVEALED_TO_PLAYER, from: e_sword_missing, to: ch4, valid_from_chapter: 4, quote: "Sáng ra, gầm giường trống trơn."}
     close:
       - {type: HOLDS, id: holds_sword_minh_2, valid_to_chapter: 4}
@@ -170,7 +177,9 @@ chapters:
       - {type: REVEALED_TO_PLAYER, from: e_sword_stolen, to: ch5, valid_from_chapter: 5,
          quote: "gói trà khiến anh ngủ mê mệt, vệt bùn trên bậu cửa"}
       - {type: REVEALED_TO_PLAYER, from: hac_ky_letter, to: ch5, valid_from_chapter: 5,
-         quote: "Lá trên cùng đóng dấu một lá cờ đen không thêu chữ"}
+         quote: "Bên cạnh là một xấp thư buộc dây gai.", known_as: "xấp thư buộc dây gai"}
+      - {type: REVEALED_TO_PLAYER, from: ly_that, to: ch5, valid_from_chapter: 5,
+         quote: "Cuối thư ký tên Lý Thất.", known_as: "Lý Thất"}
       - {type: REVEALED_TO_PLAYER, from: e_minh_finds_sword, to: ch5, valid_from_chapter: 5,
          quote: "Minh bọc Thanh Sương vào áo khoác, nhét lá thư vào ngực áo"}
     close:

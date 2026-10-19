@@ -28,6 +28,9 @@ EdgeType = Literal[
 ]
 
 NODE_LABELS: tuple[str, ...] = get_args(NodeLabel)
+
+# Nút có tên. Người chơi chỉ thấy tên qua `known_as` trên cạnh hé lộ, không bao giờ thấy `name` (D-17).
+NAMED_LABELS = frozenset({"Character", "Location", "Item", "Faction"})
 EDGE_TYPES: tuple[str, ...] = get_args(EdgeType)
 
 # Nhãn chung của mọi nút: khoá (story_id, id) là duy nhất trên toàn truyện, không theo nhãn.

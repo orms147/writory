@@ -4,7 +4,7 @@ import dataclasses
 
 import pytest
 
-from writory.graph import player_view
+from writory.graph import ChangePackage, apply_package, player_view
 
 pytestmark = pytest.mark.graph
 
@@ -61,3 +61,45 @@ def test_protagonist_lies_are_listed_without_discovery_state(driver, sample_stor
     view = player_view(driver, sample_story_id, 4)
     assert {lie.id for lie in view.lies} == {"l_sword_father", "l_home_night"}
     assert all(not hasattr(lie, "discovered") for lie in view.lies)
+
+
+def test_nickname_shown_before_real_name_is_revealed(driver, sample_story_id):
+    # D-17: gã lái đò ra mắt ở chương 4 bằng biệt danh; tên thật "Lý Thất" chỉ lộ ở chương 5.
+    ch4 = player_view(driver, sample_story_id, 4)
+    entry = next(e for e in ch4.entries if e.id == "ly_that")
+    assert entry.text == "gã lái đò mặt sẹo"
+    assert "Lý Thất" not in _all_text(ch4)
+
+    ch5 = player_view(driver, sample_story_id, 5)
+    entry = next(e for e in ch5.entries if e.id == "ly_that")
+    assert entry.text == "Lý Thất"
+    assert "gã lái đò mặt sẹo" in entry.aliases
+    assert entry.since_chapter == 4
+
+
+def test_truth_name_and_aliases_never_shown(driver, new_story_id):
+    sid = new_story_id()
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c1",
+        "nodes": [
+            {"id": "ch1", "label": "Chapter", "props": {"number": 1}},
+            {"id": "hero", "label": "Character",
+             "props": {"name": "Người Chính", "is_protagonist": True}},
+            {"id": "x", "label": "Character",
+             "props": {"name": "Hoàng Tử Mất Tích", "aliases": ["Điện Hạ"]}},
+            {"id": "blade", "label": "Item", "props": {"name": "Long Tuyền"}},
+        ],
+        "edges": [
+            {"type": "REVEALED_TO_PLAYER", "from": "x", "to": "ch1", "valid_from_chapter": 1,
+             "quote": "Một người đàn ông áo đen đứng ở cổng.", "known_as": "người đàn ông áo đen"},
+            {"type": "KNOWS", "from": "hero", "to": "blade", "valid_from_chapter": 1,
+             "how": "chứng kiến", "quote": "Hắn đeo một thanh kiếm cũ.", "known_as": "thanh kiếm cũ"},
+        ],
+    }))
+    view = player_view(driver, sid, 1)
+    text = _all_text(view)
+    for secret in ("Hoàng Tử Mất Tích", "Điện Hạ", "Long Tuyền"):
+        assert secret not in text
+    by_id = {e.id: e for e in view.entries}
+    assert by_id["x"].text == "người đàn ông áo đen"
+    assert by_id["blade"].text == "thanh kiếm cũ"

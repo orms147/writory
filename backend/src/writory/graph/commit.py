@@ -13,7 +13,7 @@ from neo4j import Driver, ManagedTransaction
 from neo4j.exceptions import ConstraintError
 
 from writory.graph.package import ChangePackage, CloseSpec
-from writory.graph.schema import EDGE_TYPES, ENTITY, NODE_LABELS
+from writory.graph.schema import EDGE_TYPES, ENTITY, NAMED_LABELS, NODE_LABELS
 from writory.graph.story import require_story_id
 
 
@@ -27,6 +27,10 @@ class MissingEntityError(GraphWriteError):
 
 class CommitConflictError(GraphWriteError):
     """Gói đụng dữ liệu của commit khác."""
+
+
+class InvalidPackageError(GraphWriteError):
+    """Gói đúng schema nhưng sai quy tắc cần biết nhãn nút (ví dụ thiếu `known_as`, D-17)."""
 
 
 @dataclass(frozen=True)
@@ -67,17 +71,23 @@ def _apply_tx(tx: ManagedTransaction, story_id: str, pkg: ChangePackage) -> None
 
     endpoints = sorted({e.source for e in pkg.edges} | {e.target for e in pkg.edges})
     if endpoints:
-        missing = tx.run(
-            f"""
-            UNWIND $ids AS id
-            OPTIONAL MATCH (n:{ENTITY} {{story_id: $story_id, id: id}})
-            WITH id, n WHERE n IS NULL
-            RETURN collect(id) AS missing
-            """,
-            ids=endpoints, story_id=story_id,
-        ).single(strict=True)["missing"]
+        found = {
+            r["id"]: r
+            for r in tx.run(
+                f"""
+                UNWIND $ids AS id
+                MATCH (n:{ENTITY} {{story_id: $story_id, id: id}})
+                RETURN id, labels(n) AS labels, coalesce(n.is_protagonist, false) AS protagonist
+                """,
+                ids=endpoints, story_id=story_id,
+            ).data()
+        }
+        missing = [i for i in endpoints if i not in found]
         if missing:
             raise MissingEntityError(f"id không có trong truyện: {missing}")
+        for e in pkg.edges:
+            if needs_known_as(e.type, found[e.source], found[e.target]) and "known_as" not in e.props:
+                raise InvalidPackageError(f"cạnh {e.id} hé lộ nút có tên nhưng thiếu `known_as`")
 
     for etype, group in groupby(sorted(pkg.edges, key=lambda e: e.type), key=lambda e: e.type):
         assert etype in EDGE_TYPES
@@ -105,6 +115,16 @@ def _apply_tx(tx: ManagedTransaction, story_id: str, pkg: ChangePackage) -> None
 
     for close in pkg.close:
         _close_edge(tx, story_id, cid, close)
+
+
+def needs_known_as(edge_type: str, source: dict, target: dict) -> bool:
+    """Cạnh làm người chơi biết một nút có tên thì phải nói người chơi biết nó dưới tên nào (D-17).
+    `source`/`target`: dict có `labels` và `protagonist`."""
+    if edge_type == "REVEALED_TO_PLAYER":
+        return bool(NAMED_LABELS & set(source["labels"]))
+    if edge_type == "KNOWS":
+        return source["protagonist"] and bool(NAMED_LABELS & set(target["labels"]))
+    return False
 
 
 def _close_edge(tx: ManagedTransaction, story_id: str, cid: str, close: CloseSpec) -> None:

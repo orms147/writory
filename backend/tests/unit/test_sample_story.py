@@ -37,3 +37,16 @@ def test_validate_sample_catches_reference_to_later_node():
     )
     ch.package = ch.package.model_copy(update={"edges": [*ch.package.edges, bad]})
     assert any("hac_ky_letter" in p for p in validate_sample(broken))
+
+
+def test_validate_sample_requires_known_as_for_named_nodes():
+    # D-17: hé lộ một Character/Item/Location/Faction phải nói người chơi biết nó dưới tên nào.
+    sample = read_sample()
+    broken = copy.deepcopy(sample)
+    ch = broken.chapters[0]
+    bad = EdgeSpec.model_validate({
+        "type": "REVEALED_TO_PLAYER", "from": "hac_ky", "to": "ch1",
+        "valid_from_chapter": 1, "id": "reveal_hac_ky_no_name", "quote": "Đầu bến có một quán trà mới mở.",
+    })
+    ch.package = ch.package.model_copy(update={"edges": [*ch.package.edges, bad]})
+    assert any("reveal_hac_ky_no_name" in p and "known_as" in p for p in validate_sample(broken))
