@@ -1,0 +1,178 @@
+# Đồ thị dựng tay cho truyện mẫu 5 chương (ch01.md … ch05.md).
+# Đây là ĐÁP ÁN GỐC cho bài đo A (docs/eval.md): chủ dự án phải duyệt trước khi dùng để đo.
+# Schema: docs/graph-schema.md. Mỗi chương là một gói thay đổi (commit_id, D-6).
+#
+# Quy ước:
+# - Khoá ngoài `id`, `label` của nút: thuộc tính của nút.
+# - Cạnh: type, from, to, valid_from_chapter, [valid_to_chapter], [id], còn lại là thuộc tính.
+#   valid_from_chapter: 0 = đã đúng từ trước khi truyện bắt đầu.
+# - `close`: đóng một cạnh đã có (đặt valid_to_chapter), không xoá.
+# - REVEALED_TO_PLAYER và KNOWS của nhân vật chính phải có `quote` nằm nguyên văn trong chương (G3).
+
+story:
+  title: "Thanh Sương"
+  protagonist: minh
+
+chapters:
+  - number: 1
+    file: ch01.md
+    commit_id: sample-ch1
+    nodes:
+      - {id: ch1, label: Chapter, number: 1, title: "Quán trà mới ở bến Sương"}
+      - {id: minh, label: Character, name: "Trần Minh", aliases: ["Minh"], is_protagonist: true}
+      - {id: lan, label: Character, name: "Phạm Thị Lan", aliases: ["Lan", "cô Lan"]}
+      - {id: gu, label: Character, name: "Hồ Sĩ Bằng", aliases: ["Lão Gù"]}
+      - {id: khai, label: Character, name: "Trần Văn Khải", aliases: ["Khải", "cai Khải"]}
+      - {id: sword, label: Item, name: "Thanh Sương", aliases: ["thanh kiếm"]}
+      - {id: hac_ky, label: Faction, name: "Hội Hắc Kỳ"}
+      - {id: ben_suong, label: Location, name: "phố Bến Sương"}
+      - {id: lo_ren, label: Location, name: "lò rèn của Lão Gù"}
+      - {id: quan_tra, label: Location, name: "quán trà đầu bến"}
+      - {id: f_lan_spy, label: Fact, text: "Lan là gián điệp của Hội Hắc Kỳ, tới phố Bến Sương để tìm thanh kiếm Thanh Sương"}
+      - {id: t_gu_warning, label: Thread, description: "Lão Gù dặn Minh đừng tin người lạ mới tới phố: lão sợ ai?",
+         planted_chapter: 1, due_from_chapter: 2, due_to_chapter: 3}
+    edges:
+      - {id: holds_sword_gu, type: HOLDS, from: gu, to: sword, valid_from_chapter: 1}
+      - {type: MEMBER_OF, from: lan, to: hac_ky, valid_from_chapter: 0}
+      - {type: KNOWS, from: lan, to: f_lan_spy, valid_from_chapter: 0, how: "tự biết"}
+      # Lão Gù thấy Lan gặp người của Hội ở bến đêm trước chương 1. Không có trên trang (góc nhìn Minh).
+      - {type: KNOWS, from: gu, to: f_lan_spy, valid_from_chapter: 1, how: "chứng kiến"}
+      - {type: ABOUT, from: f_lan_spy, to: lan, valid_from_chapter: 1}
+      - {type: ABOUT, from: f_lan_spy, to: hac_ky, valid_from_chapter: 1}
+      - {id: rel_minh_lan_1, type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 1, kind: "người quen", score: 30}
+      - {type: RELATES_TO, from: lan, to: minh, valid_from_chapter: 1, kind: "con mồi", score: -20}
+      - {type: RELATES_TO, from: minh, to: gu, valid_from_chapter: 1, kind: "thầy trò", score: 70}
+      - {type: RELATES_TO, from: khai, to: minh, valid_from_chapter: 1, kind: "quen biết", score: 10}
+      - {id: at_gu_lo_ren, type: LOCATED_AT, from: gu, to: lo_ren, valid_from_chapter: 1}
+      - {type: LOCATED_AT, from: lan, to: quan_tra, valid_from_chapter: 1}
+      - {type: REVEALED_TO_PLAYER, from: minh, to: ch1, valid_from_chapter: 1,
+         quote: "Trần Minh ôm chồng sách chép thuê đi dọc phố Bến Sương"}
+      - {type: REVEALED_TO_PLAYER, from: lan, to: ch1, valid_from_chapter: 1, quote: "Em tên Lan, Phạm Thị Lan."}
+      - {type: REVEALED_TO_PLAYER, from: gu, to: ch1, valid_from_chapter: 1,
+         quote: "Tên thật của lão là Hồ Sĩ Bằng, nhưng cả phố chỉ gọi lão là Lão Gù"}
+      - {type: REVEALED_TO_PLAYER, from: khai, to: ch1, valid_from_chapter: 1,
+         quote: "Khải cùng họ Trần với Minh nhưng chẳng họ hàng gì"}
+      - {type: REVEALED_TO_PLAYER, from: sword, to: ch1, valid_from_chapter: 1,
+         quote: "Thanh Sương, — lão nói, không ngẩng lên."}
+      - {type: REVEALED_TO_PLAYER, from: ben_suong, to: ch1, valid_from_chapter: 1, quote: "đi dọc phố Bến Sương"}
+      - {type: REVEALED_TO_PLAYER, from: lo_ren, to: ch1, valid_from_chapter: 1, quote: "Cuối phố là lò rèn của Lão Gù."}
+      - {type: REVEALED_TO_PLAYER, from: quan_tra, to: ch1, valid_from_chapter: 1, quote: "Đầu bến có một quán trà mới mở."}
+    close: []
+
+  - number: 2
+    file: ch02.md
+    commit_id: sample-ch2
+    nodes:
+      - {id: ch2, label: Chapter, number: 2, title: "Thanh kiếm và lá thư niêm phong"}
+      - {id: e_gu_gives_sword, label: Event, chapter: 2, description: "Lão Gù giao Thanh Sương và một lá thư niêm sáp đỏ cho Minh"}
+      - {id: sealed_letter, label: Item, name: "lá thư niêm sáp đỏ", aliases: ["lá thư của Lão Gù"]}
+      - {id: f_gu_old_hac_ky, label: Fact, text: "Ba mươi năm trước Lão Gù từng đi thuyền với Hội Hắc Kỳ"}
+      - {id: t_sealed_letter, label: Thread, description: "Lá thư niêm phong Lão Gù dặn đợi ngày rằm mới mở",
+         planted_chapter: 2, due_from_chapter: 3, due_to_chapter: 4}
+      - {id: l_sword_father, label: Lie, chapter: 2, content: "Thanh kiếm là của cha Minh để lại"}
+      - {id: l_lan_cover, label: Lie, chapter: 2, content: "Lan lên phố Bến Sương vì trốn một cuộc hôn nhân ở Hạ Châu"}
+    edges:
+      - {id: holds_sword_minh_2, type: HOLDS, from: minh, to: sword, valid_from_chapter: 2}
+      - {type: HOLDS, from: minh, to: sealed_letter, valid_from_chapter: 2}
+      - {type: PARTICIPATED_IN, from: gu, to: e_gu_gives_sword, valid_from_chapter: 2}
+      - {type: PARTICIPATED_IN, from: minh, to: e_gu_gives_sword, valid_from_chapter: 2}
+      - {type: ABOUT, from: f_gu_old_hac_ky, to: gu, valid_from_chapter: 2}
+      - {type: ABOUT, from: f_gu_old_hac_ky, to: hac_ky, valid_from_chapter: 2}
+      - {type: KNOWS, from: minh, to: f_gu_old_hac_ky, valid_from_chapter: 2, how: "được kể",
+         quote: "Ba mươi năm trước ta từng đi thuyền với chúng."}
+      - {type: TOLD, from: minh, to: l_sword_father, valid_from_chapter: 2}
+      - {type: TOLD_TO, from: l_sword_father, to: lan, valid_from_chapter: 2}
+      - {type: TOLD, from: lan, to: l_lan_cover, valid_from_chapter: 2}
+      - {type: TOLD_TO, from: l_lan_cover, to: minh, valid_from_chapter: 2}
+      - {id: rel_minh_lan_2, type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 2, kind: "bạn", score: 50}
+      - {type: REVEALED_TO_PLAYER, from: e_gu_gives_sword, to: ch2, valid_from_chapter: 2, quote: "Ta giao nó cho mày."}
+      - {type: REVEALED_TO_PLAYER, from: sealed_letter, to: ch2, valid_from_chapter: 2,
+         quote: "niêm sáp đỏ, ngoài phong bì không đề tên ai"}
+      - {type: REVEALED_TO_PLAYER, from: hac_ky, to: ch2, valid_from_chapter: 2,
+         quote: "Bọn buôn lậu trên sông, cờ đen không thêu chữ."}
+      - {type: REVEALED_TO_PLAYER, from: f_gu_old_hac_ky, to: ch2, valid_from_chapter: 2,
+         quote: "Ba mươi năm trước ta từng đi thuyền với chúng."}
+    close:
+      - {type: HOLDS, id: holds_sword_gu, valid_to_chapter: 2}
+      - {type: RELATES_TO, id: rel_minh_lan_1, valid_to_chapter: 2}
+
+  - number: 3
+    file: ch03.md
+    commit_id: sample-ch3
+    nodes:
+      - {id: ch3, label: Chapter, number: 3, title: "Đêm ở miếu Bà"}
+      - {id: mieu_ba, label: Location, name: "miếu Bà"}
+      - {id: e_minh_at_mieu, label: Event, chapter: 3, description: "Canh hai, Minh ra miếu Bà theo lời hẹn của Lão Gù nhưng không gặp ai"}
+      - {id: e_gu_death, label: Event, chapter: 3, description: "Lão Gù chết sau miếu Bà, bị đánh vào gáy"}
+      - {id: f_lan_killed_gu, label: Fact, text: "Lan giết Lão Gù sau miếu Bà để lão không kịp nói Lan là người của Hội Hắc Kỳ"}
+      - {id: l_home_night, label: Lie, chapter: 3, content: "Đêm Lão Gù chết, Minh ở nhà, không ra khỏi cửa"}
+      - {id: t_who_killed, label: Thread, description: "Ai đã giết Lão Gù, và vì sao",
+         planted_chapter: 3, due_from_chapter: 5, due_to_chapter: 8}
+    edges:
+      - {type: DIED_IN, from: gu, to: e_gu_death, valid_from_chapter: 3}
+      - {type: PARTICIPATED_IN, from: lan, to: e_gu_death, valid_from_chapter: 3, role: "kẻ giết"}
+      - {type: PARTICIPATED_IN, from: minh, to: e_minh_at_mieu, valid_from_chapter: 3}
+      - {type: KNOWS, from: lan, to: f_lan_killed_gu, valid_from_chapter: 3, how: "tự làm"}
+      - {type: ABOUT, from: f_lan_killed_gu, to: lan, valid_from_chapter: 3}
+      - {type: ABOUT, from: f_lan_killed_gu, to: gu, valid_from_chapter: 3}
+      - {type: TOLD, from: minh, to: l_home_night, valid_from_chapter: 3}
+      - {type: TOLD_TO, from: l_home_night, to: khai, valid_from_chapter: 3}
+      - {id: rel_minh_lan_3, type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 3, kind: "yêu", score: 80}
+      - {type: REVEALED_TO_PLAYER, from: mieu_ba, to: ch3, valid_from_chapter: 3, quote: "Miếu cũ, mái sụp một góc"}
+      - {type: REVEALED_TO_PLAYER, from: e_minh_at_mieu, to: ch3, valid_from_chapter: 3, quote: "Canh hai, Minh ra miếu Bà."}
+      - {type: REVEALED_TO_PLAYER, from: e_gu_death, to: ch3, valid_from_chapter: 3,
+         quote: "Người ta tìm thấy Lão Gù nằm sấp sau miếu Bà"}
+    close:
+      - {type: RELATES_TO, id: rel_minh_lan_2, valid_to_chapter: 3}
+      - {type: LOCATED_AT, id: at_gu_lo_ren, valid_to_chapter: 3}
+
+  - number: 4
+    file: ch04.md
+    commit_id: sample-ch4
+    nodes:
+      - {id: ch4, label: Chapter, number: 4, title: "Mất kiếm"}
+      - {id: e_sword_missing, label: Event, chapter: 4, description: "Minh thức dậy thấy Thanh Sương biến mất khỏi gầm giường"}
+      - {id: e_sword_stolen, label: Event, chapter: 4, description: "Lan bỏ thuốc ngủ vào gói trà cho Minh, rồi đêm đó lẻn vào gác lấy Thanh Sương"}
+      - {id: t_sword_missing, label: Thread, description: "Ai đã lấy Thanh Sương",
+         planted_chapter: 4, due_from_chapter: 5, due_to_chapter: 6}
+    edges:
+      # Lan nói ra trên trang: lời nói dối của Minh bị phát hiện.
+      - {type: KNOWS, from: lan, to: l_sword_father, valid_from_chapter: 4, how: "được Lão Gù kể"}
+      - {id: holds_sword_lan, type: HOLDS, from: lan, to: sword, valid_from_chapter: 4}
+      - {type: PARTICIPATED_IN, from: lan, to: e_sword_stolen, valid_from_chapter: 4}
+      - {type: PARTICIPATED_IN, from: minh, to: e_sword_missing, valid_from_chapter: 4}
+      - {type: ABOUT, from: e_sword_stolen, to: lan, valid_from_chapter: 4}
+      - {type: ABOUT, from: e_sword_stolen, to: sword, valid_from_chapter: 4}
+      - {type: REVEALED_TO_PLAYER, from: e_sword_missing, to: ch4, valid_from_chapter: 4, quote: "Sáng ra, gầm giường trống trơn."}
+    close:
+      - {type: HOLDS, id: holds_sword_minh_2, valid_to_chapter: 4}
+
+  - number: 5
+    file: ch05.md
+    commit_id: sample-ch5
+    nodes:
+      - {id: ch5, label: Chapter, number: 5, title: "Lá thư mang cờ đen"}
+      - {id: hac_ky_letter, label: Item, name: "thư của Hội Hắc Kỳ gửi Lan"}
+      - {id: e_minh_finds_sword, label: Event, chapter: 5, description: "Minh lẻn vào quán trà, tìm thấy Thanh Sương và thư của Hội Hắc Kỳ trong rương của Lan, mang cả hai về"}
+    edges:
+      - {type: HOLDS, from: minh, to: sword, valid_from_chapter: 5}
+      - {type: HOLDS, from: minh, to: hac_ky_letter, valid_from_chapter: 5}
+      - {type: PARTICIPATED_IN, from: minh, to: e_minh_finds_sword, valid_from_chapter: 5}
+      - {type: KNOWS, from: minh, to: f_lan_spy, valid_from_chapter: 5, how: "suy ra",
+         quote: "Lan là người của Hội Hắc Kỳ."}
+      # Minh nhận ra chuyện trốn hôn nhân là bịa: lời nói dối của Lan bị phát hiện.
+      - {type: KNOWS, from: minh, to: l_lan_cover, valid_from_chapter: 5, how: "suy ra",
+         quote: "không phải để trốn một cuộc hôn nhân"}
+      - {type: RESOLVED_IN, from: t_sword_missing, to: ch5, valid_from_chapter: 5}
+      - {type: RESOLVED_IN, from: t_gu_warning, to: ch5, valid_from_chapter: 5}
+      - {type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 5, kind: "thù", score: -60}
+      - {type: REVEALED_TO_PLAYER, from: f_lan_spy, to: ch5, valid_from_chapter: 5, quote: "Lan là người của Hội Hắc Kỳ."}
+      - {type: REVEALED_TO_PLAYER, from: e_sword_stolen, to: ch5, valid_from_chapter: 5,
+         quote: "gói trà khiến anh ngủ mê mệt, vệt bùn trên bậu cửa"}
+      - {type: REVEALED_TO_PLAYER, from: hac_ky_letter, to: ch5, valid_from_chapter: 5,
+         quote: "Lá trên cùng đóng dấu một lá cờ đen không thêu chữ"}
+      - {type: REVEALED_TO_PLAYER, from: e_minh_finds_sword, to: ch5, valid_from_chapter: 5,
+         quote: "Minh bọc Thanh Sương vào áo khoác, nhét lá thư vào ngực áo"}
+    close:
+      - {type: HOLDS, id: holds_sword_lan, valid_to_chapter: 5}
+      - {type: RELATES_TO, id: rel_minh_lan_3, valid_to_chapter: 5}

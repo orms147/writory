@@ -1,0 +1,63 @@
+# Đáp án gốc cho các câu hỏi design §7.3 trên truyện mẫu, viết tay từ ch01–ch05.md.
+# Chủ dự án phải duyệt. Test trong backend/tests/graph/ đối chiếu truy vấn với file này.
+# `chapter` = trạng thái ở cuối chương đó.
+
+# 1. Ai đang giữ thanh kiếm ở chương N?
+holder:
+  - {item: sword, chapter: 1, holder: gu}
+  - {item: sword, chapter: 2, holder: minh}
+  - {item: sword, chapter: 3, holder: minh}
+  - {item: sword, chapter: 4, holder: lan}     # lớp sự thật; người chơi chỉ biết kiếm mất
+  - {item: sword, chapter: 5, holder: minh}
+
+# 2. X có biết sự thật F không, từ chương nào, bằng cách nào? (null = chưa biết)
+knows:
+  - {character: minh, fact: f_lan_spy, chapter: 4, answer: null}
+  - {character: minh, fact: f_lan_spy, chapter: 5, answer: {since_chapter: 5, how: "suy ra"}}
+  - {character: gu, fact: f_lan_spy, chapter: 2, answer: {since_chapter: 1, how: "chứng kiến"}}
+  - {character: khai, fact: f_lan_spy, chapter: 5, answer: null}
+
+# 3. Người chơi đã được biết điều gì về X? (id các mục trong player_view, đúng bằng tập này)
+player_about:
+  - {entity: lan, chapter: 3, answer: [lan]}
+  - {entity: lan, chapter: 4, answer: [lan]}
+  - {entity: lan, chapter: 5, answer: [lan, f_lan_spy, e_sword_stolen]}
+  - {entity: gu, chapter: 5, answer: [gu, f_gu_old_hac_ky]}
+
+# 4. Những lời nói dối nào của X chưa bị phát hiện ở chương N, đã nói với ai?
+undiscovered_lies:
+  - {speaker: minh, chapter: 2, answer: [{lie: l_sword_father, told_to: [lan], chapter: 2}]}
+  - {speaker: minh, chapter: 3, answer: [{lie: l_sword_father, told_to: [lan], chapter: 2},
+                                         {lie: l_home_night, told_to: [khai], chapter: 3}]}
+  - {speaker: minh, chapter: 4, answer: [{lie: l_home_night, told_to: [khai], chapter: 3}]}
+  - {speaker: minh, chapter: 5, answer: [{lie: l_home_night, told_to: [khai], chapter: 3}]}
+  - {speaker: lan, chapter: 4, answer: [{lie: l_lan_cover, told_to: [minh], chapter: 2}]}
+  - {speaker: lan, chapter: 5, answer: []}
+
+# 5. Mạch nào đang mở và đã quá khoảng chương dự kiến gỡ ở chương N?
+overdue_threads:
+  - {chapter: 3, answer: []}
+  - {chapter: 4, answer: [t_gu_warning]}
+  - {chapter: 5, answer: [t_sealed_letter]}
+
+# Câu phụ cho các yêu cầu khác của truyện mẫu.
+# Quan hệ đổi theo thời gian: B là gì của A ở chương N.
+relationship:
+  - {from: minh, to: lan, chapter: 1, kind: "người quen", score: 30}
+  - {from: minh, to: lan, chapter: 2, kind: "bạn", score: 50}
+  - {from: minh, to: lan, chapter: 4, kind: "yêu", score: 80}
+  - {from: minh, to: lan, chapter: 5, kind: "thù", score: -60}
+
+# Còn sống ở chương N.
+alive:
+  - {character: gu, chapter: 2, alive: true}
+  - {character: gu, chapter: 3, alive: false}
+  - {character: lan, chapter: 5, alive: true}
+
+# Tìm nhân vật theo tên hoặc biệt danh (hai người cùng họ Trần không lẫn nhau).
+find_character:
+  - {name: "Lão Gù", answer: [gu]}
+  - {name: "Hồ Sĩ Bằng", answer: [gu]}
+  - {name: "Minh", answer: [minh]}
+  - {name: "trần văn khải", answer: [khai]}
+  - {name: "Trần", answer: []}

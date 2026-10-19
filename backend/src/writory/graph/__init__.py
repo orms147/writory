@@ -1,0 +1,78 @@
+"""Lớp truy cập Neo4j duy nhất (G10). Mọi hàm nhận driver qua tham số và bắt buộc có story_id.
+Schema: docs/graph-schema.md."""
+
+from writory.graph.commit import (
+    CommitConflictError,
+    GraphWriteError,
+    MissingEntityError,
+    StorySnapshot,
+    apply_package,
+    delete_commit,
+    delete_story,
+    story_snapshot,
+)
+from writory.graph.package import ChangePackage, CloseSpec, EdgeSpec, NodeSpec, quote_in_text
+from writory.graph.player_view import (
+    PlayerEntry,
+    PlayerLie,
+    PlayerView,
+    player_knowledge_about,
+    player_view,
+)
+from writory.graph.queries import (
+    EntityRef,
+    GraphIntegrityError,
+    Knowledge,
+    LieInfo,
+    Relation,
+    ThreadInfo,
+    find_characters,
+    is_alive,
+    item_holder,
+    knows,
+    overdue_threads,
+    protagonist_id,
+    relationship,
+    undiscovered_lies,
+)
+from writory.graph.sample import load_sample_story, read_sample, validate_sample
+from writory.graph.schema import ensure_schema
+
+__all__ = [
+    "ChangePackage",
+    "CloseSpec",
+    "CommitConflictError",
+    "EdgeSpec",
+    "EntityRef",
+    "GraphIntegrityError",
+    "GraphWriteError",
+    "Knowledge",
+    "LieInfo",
+    "MissingEntityError",
+    "NodeSpec",
+    "PlayerEntry",
+    "PlayerLie",
+    "PlayerView",
+    "Relation",
+    "StorySnapshot",
+    "ThreadInfo",
+    "apply_package",
+    "delete_commit",
+    "delete_story",
+    "ensure_schema",
+    "find_characters",
+    "is_alive",
+    "item_holder",
+    "knows",
+    "load_sample_story",
+    "overdue_threads",
+    "player_knowledge_about",
+    "player_view",
+    "protagonist_id",
+    "quote_in_text",
+    "read_sample",
+    "relationship",
+    "story_snapshot",
+    "undiscovered_lies",
+    "validate_sample",
+]
