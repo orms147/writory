@@ -20,7 +20,7 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 
 | Mã | Chống | Thi hành | Test |
 |---|---|---|---|
-| G1 | T1 | Sổ tay, hỏi người kể, tạo lựa chọn **chỉ nhận dữ liệu từ `player_view`**, lọc bằng code. Model phục vụ các đường này không bao giờ thấy lớp `truth`. Phản hồi API dùng schema riêng cho người chơi, không có trường id/nội dung ẩn. | Mỗi đường ra một test: dựng đồ thị có bí mật, gọi đường ra, khẳng định không chứa bí mật. Model giả **trả lại nguyên context nó nhận**, nên lọc sai là test đỏ. |
+| G1 | T1 | Sổ tay, hỏi người kể, tạo lựa chọn **chỉ nhận dữ liệu từ `player_view`**, lọc bằng code. Model phục vụ các đường này không bao giờ thấy lớp `truth`. Phản hồi API dùng schema riêng cho người chơi, không có trường id/nội dung ẩn. | Mỗi đường ra một test: dựng đồ thị có bí mật, gọi đường ra, khẳng định không bí mật nào nằm trong **context model nhận** (`FakeLLM.calls`), dùng được cho mọi vai, kể cả vai trả JSON. Với đường trả chữ, thêm chế độ `echo` (trả lại nguyên context) để khẳng định chữ trả người chơi không chứa bí mật. |
 | G2 | T1 | Bộ dò lộ chạy trên mọi chữ trả về người chơi: so tên, biệt danh, cụm từ khoá của các `Fact` chưa hé lộ (đã chuẩn hoá NFC, bỏ dấu khi so). Trúng thì không hiện, viết lại hoặc báo lỗi. | Fixture cảnh có chứa bí mật dưới nhiều dạng (có dấu, không dấu, biệt danh). |
 | G3 | T1 | Đánh dấu `REVEALED_TO_PLAYER` cho một bí mật phải kèm câu trích nguyên văn; code kiểm câu trích có trong cảnh đã hiện. | Trích bịa câu → không đánh dấu. |
 | G4 | T2 | Chữ có nguồn gốc người chơi **không bao giờ vào vai system**. Luôn bọc trong khối dữ liệu có nhãn (spotlighting), kể cả khi đọc lại từ đồ thị (mọi trường do người chơi viết mang cờ `user_authored`). | Bộ câu tấn công trong `evals/redteam/` (tiếng Việt có dấu, không dấu, teencode, tiếng Anh); test khẳng định prompt dựng ra đặt chúng trong khối dữ liệu. |
@@ -33,6 +33,18 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 | G11 | T7 | Kết quả trích qua schema pydantic. Sai → thử lại 1 lần → vẫn sai thì không ghi, báo lỗi. Chỉ tham chiếu id thực thể có sẵn; thực thể mới phải khai riêng. Ghi theo D-6 (tất cả hoặc không gì), và không đổi trạng thái phiên trước khi ghi thành công. | JSON hỏng, id bịa, lỗi giữa chừng khi ghi Neo4j → đồ thị và trạng thái phiên giữ nguyên như trước. |
 | G12 | mọi loại | Lỗi trả người chơi có mã riêng và câu tiếng Việt nói chuyện gì xảy ra và nên làm gì tiếp. Không trả mã chung chung kiểu `TOOL_ERROR`. Chi tiết kỹ thuật chỉ vào log, và log không chứa bí mật truyện hay key. | Mỗi mã lỗi có câu thông báo; test không mã nào trả câu rỗng. |
 
+## Đã cài trong code
+Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
+
+| Mã | Code | Test |
+|---|---|---|
+| G4 | `backend/src/writory/safety/wrap.py` (D-12) | `tests/unit/test_safety_wrap.py`, chạy trên bộ câu `evals/redteam/g4_prompt_injection.yaml` |
+| G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`) | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it` |
+| G8 | `llm/cost.py` (`CostTracker`, `MeteredClient`) (D-10), `llm/retry.py` (D-14) | `tests/unit/test_llm_cost.py`, `test_llm_retry.py` |
+| G12 | `backend/src/writory/errors.py` | `tests/unit/test_errors.py` |
+
+Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
+
 ## Đo guardrail
 - Test nhanh (mỗi commit): G1–G12 với model giả, không mạng.
 - Red-team với model thật: chạy tay hoặc định kỳ, có trần chi phí; báo tỉ lệ tấn công thành công. Lệnh và kết quả: `docs/eval.md`, `evals/results/`.
@@ -42,3 +54,6 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 - Nghị định 147/2024/NĐ-CP có áp dụng cho app này không (design §14). Phải kiểm trước khi mở cho người lạ.
 - Model kiểm duyệt cho tiếng Việt (G9).
 - Model vẫn có thể *tự suy ra* bí mật từ manh mối hợp lệ. Đó là việc của bản kế hoạch truyện và người canh, không phải lỗi rò rỉ.
+- Stream đứt giữa chừng thì không ghi được chi phí, nên trần G8 bị hụt. Hướng xử lý: sau lời gọi, tra chi phí theo id generation (chưa kiểm endpoint này). Làm ở tuần 2.
+- `response_format` strict với schema do pydantic sinh chưa thử với model thật. Kiểm ở tuần 2.
+- Lúc khởi động app, `install_log_redaction` phải gắn cả vào logger của uvicorn, vì các logger đó có handler riêng và không truyền record lên root (G7).

@@ -4,6 +4,7 @@ version = "0.0.0"
 description = "WriTory — truyện tương tác tiếng Việt với trí nhớ đồ thị"
 requires-python = ">=3.12"
 dependencies = [
+    "cryptography>=50.0.2",
     "fastapi>=0.148.0",
     "httpx>=0.28.1",
     "langgraph>=1.2.16",
@@ -31,6 +32,7 @@ packages = ["src/writory"]
 
 [tool.pytest.ini_options]
 testpaths = ["tests"]
+asyncio_mode = "auto"
 markers = ["graph: cần Neo4j trong Docker (docker compose up -d)"]
 
 [tool.ruff]

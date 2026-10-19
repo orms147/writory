@@ -1,0 +1,48 @@
+"""Xoá chuỗi trông giống key/bí mật xác thực khỏi văn bản sắp ghi log (G7).
+
+Regex ở đây chỉ kiểm định dạng chuỗi, không đọc ý định người dùng (G5).
+"""
+
+import logging
+import re
+
+REDACTED = "[REDACTED]"
+
+_PATTERNS = [
+    (re.compile(r"sk-or-[A-Za-z0-9_-]{8,}"), REDACTED),  # key OpenRouter: sk-or-v1-<hex>
+    (re.compile(r"sk-[A-Za-z0-9_-]{20,}"), REDACTED),  # key kiểu OpenAI/Anthropic
+    (re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]{8,}"), r"\g<1>" + REDACTED),
+    (re.compile(r"gAAAAA[A-Za-z0-9_=-]{20,}"), REDACTED),  # token Fernet (key đã mã hoá)
+]
+
+
+def redact(text: str) -> str:
+    for pattern, replacement in _PATTERNS:
+        text = pattern.sub(replacement, text)
+    return text
+
+
+class RedactSecretsFilter(logging.Filter):
+    """Gắn vào handler: định dạng sẵn message và traceback rồi xoá chuỗi giống key."""
+
+    def filter(self, record: logging.LogRecord) -> bool:
+        record.msg = redact(record.getMessage())
+        record.args = None
+        if record.exc_info:
+            record.exc_text = redact(logging.Formatter().formatException(record.exc_info))
+            record.exc_info = None
+        if record.stack_info:
+            record.stack_info = redact(record.stack_info)
+        return True
+
+
+def install_log_redaction(logger: logging.Logger | None = None) -> None:
+    """Gắn bộ lọc vào mọi handler của logger (mặc định: root).
+
+    Gắn vào handler chứ không vào logger, vì filter của logger không chạy với record
+    truyền lên từ logger con.
+    """
+    target = logger or logging.getLogger()
+    for handler in target.handlers:
+        if not any(isinstance(f, RedactSecretsFilter) for f in handler.filters):
+            handler.addFilter(RedactSecretsFilter())
