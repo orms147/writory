@@ -37,7 +37,7 @@ Truyện tương tác tiếng Việt có trí nhớ thế giới dạng đồ th
 ## 3. Cấu trúc thư mục
 ```
 CLAUDE.md  README.md  docker-compose.yml  .env.example
-config/            số và lựa chọn runtime: models.yaml, limits.yaml, story_lengths.yaml
+config/            số và lựa chọn runtime: models.yaml, limits.yaml, story_lengths.yaml, quality.yaml
 docs/              tài liệu ở §2
 backend/
   src/writory/
@@ -127,9 +127,9 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 *Chỉ ghi trạng thái hiện tại, kèm link tới quyết định. Cập nhật khi có thay đổi.*
 
 - Bản đang làm: **Bản 1, tuần 1**.
-- Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`, `safety/`), lõi đồ thị (`graph/`, schema chốt ở `docs/graph-schema.md`, truyện mẫu `data/sample-story/`). Đang làm trong PR: kiểm văn (`quality/`), ghi chương phía Postgres (`db/`).
+- Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`, `safety/`), lõi đồ thị (`graph/`, schema chốt ở `docs/graph-schema.md`, truyện mẫu `data/sample-story/`), kiểm văn (`quality/`). Đang làm trong PR: ghi chương phía Postgres (`db/`), người canh bằng code (`guard/`), dò lộ bí mật và phân loại hành động (`safety/`), khung chạy bài đo D.
 - CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
-- Quyết định đang hiệu lực: D-1 đến D-17 (`docs/decisions.md`).
+- Quyết định đang hiệu lực: D-1 đến D-19 (`docs/decisions.md`).
 - Chưa có: model viết và danh sách mức model (tuần 2, bài D), trần chi phí (tuần 2), frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).
