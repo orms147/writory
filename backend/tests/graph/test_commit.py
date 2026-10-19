@@ -81,11 +81,11 @@ def test_node_id_owned_by_other_commit_is_rejected(driver, new_story_id):
 def test_delete_commit_restores_previous_state(driver, new_story_id):
     sid = new_story_id()
     sample = read_sample()
-    for ch in sample.chapters[:4]:
+    for ch in sample.chapters[:5]:  # chương 0–4
         apply_package(driver, sid, ch.package)
     after_ch4 = story_snapshot(driver, sid)
 
-    apply_package(driver, sid, sample.chapters[4].package)
+    apply_package(driver, sid, sample.chapters[5].package)
     assert item_holder(driver, sid, "sword", 5).id == "minh"
 
     delete_commit(driver, sid, "sample-ch5")

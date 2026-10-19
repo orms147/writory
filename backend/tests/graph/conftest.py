@@ -1,13 +1,15 @@
-"""Test đồ thị: cần Neo4j (docker compose up -d). Kết nối lấy từ NEO4J_URI/USER/PASSWORD,
-mặc định theo .env.example. Database dùng chung, nên mỗi test dùng story_id riêng và chỉ dọn
-story_id của mình."""
+"""Test cần dịch vụ Docker (marker `graph`): Neo4j, và Postgres cho luồng ghi chương.
+Kết nối lấy từ NEO4J_URI/USER/PASSWORD và POSTGRES_DSN, mặc định theo .env.example.
+Database dùng chung, nên mỗi test dùng story_id riêng và chỉ dọn story_id của mình."""
 
 import os
 import uuid
 
+import psycopg
 import pytest
 from neo4j import GraphDatabase
 
+from writory.db import delete_story_record, migrate
 from writory.graph import delete_story, ensure_schema, load_sample_story
 
 
@@ -26,8 +28,20 @@ def driver():
     drv.close()
 
 
-@pytest.fixture
-def new_story_id(driver):
+@pytest.fixture(scope="session")
+def pg():
+    conn = psycopg.connect(
+        os.environ.get(
+            "POSTGRES_DSN", "postgresql://writory:change-me-local@localhost:5432/writory"
+        ),
+        autocommit=True,
+    )
+    migrate(conn)
+    yield conn
+    conn.close()
+
+
+def _story_ids():
     created: list[str] = []
 
     def make() -> str:
@@ -35,8 +49,24 @@ def new_story_id(driver):
         created.append(sid)
         return sid
 
+    return created, make
+
+
+@pytest.fixture
+def new_story_id(driver):
+    created, make = _story_ids()
     yield make
     for sid in created:
+        delete_story(driver, sid)
+
+
+@pytest.fixture
+def new_db_story_id(driver, pg):
+    """story_id mới; dọn cả Postgres lẫn Neo4j sau test."""
+    created, make = _story_ids()
+    yield make
+    for sid in created:
+        delete_story_record(pg, sid)
         delete_story(driver, sid)
 
 

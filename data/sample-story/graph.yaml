@@ -1,11 +1,12 @@
-# Đồ thị dựng tay cho truyện mẫu 5 chương (ch01.md … ch05.md).
+# Đồ thị dựng tay cho truyện mẫu 5 chương (ch01.md … ch05.md), cộng chương 0 là thế giới lúc khởi tạo.
 # Đây là ĐÁP ÁN GỐC cho bài đo A (docs/eval.md): chủ dự án phải duyệt trước khi dùng để đo.
 # Schema: docs/graph-schema.md. Mỗi chương là một gói thay đổi (commit_id, D-6).
 #
 # Quy ước:
 # - Khoá ngoài `id`, `label` của nút: thuộc tính của nút.
 # - Cạnh: type, from, to, valid_from_chapter, [valid_to_chapter], [id], còn lại là thuộc tính.
-#   valid_from_chapter: 0 = đã đúng từ trước khi truyện bắt đầu.
+#   Gói chương N chỉ mở cạnh với valid_from_chapter = N và chỉ đóng cạnh ở chương N (D-21).
+#   Chương 0 là thế giới lúc khởi tạo: valid_from_chapter 0 = đã đúng từ trước trang đầu.
 # - `close`: đóng một cạnh đã có (đặt valid_to_chapter), không xoá.
 # - REVEALED_TO_PLAYER và KNOWS của nhân vật chính phải có `quote` nằm nguyên văn trong chương (G3).
 #   Khi hé lộ nút có tên (Character/Item/Location/Faction) thì thêm `known_as`: tên người chơi
@@ -16,31 +17,42 @@ story:
   protagonist: minh
 
 chapters:
+  # Chương 0: thế giới lúc khởi tạo, trước trang đầu tiên (design §4.1). Không có văn bản.
+  # Sự thật "đã đúng từ trước" nằm ở đây, vì gói của chương N chỉ được mở cạnh từ chương N (D-21).
+  - number: 0
+    file: null
+    commit_id: sample-ch0
+    nodes:
+      - {id: lan, label: Character, name: "Phạm Thị Lan", aliases: ["Lan", "cô Lan"]}
+      - {id: hac_ky, label: Faction, name: "Hội Hắc Kỳ"}
+      - {id: f_lan_spy, label: Fact, text: "Lan là gián điệp của Hội Hắc Kỳ, tới phố Bến Sương để tìm thanh kiếm Thanh Sương"}
+      - {id: ly_that, label: Character, name: "Lý Thất", aliases: ["gã lái đò mặt sẹo"]}
+    edges:
+      - {type: MEMBER_OF, from: lan, to: hac_ky, valid_from_chapter: 0}
+      - {type: KNOWS, from: lan, to: f_lan_spy, valid_from_chapter: 0, how: "tự biết"}
+      - {type: ABOUT, from: f_lan_spy, to: lan, valid_from_chapter: 0}
+      - {type: ABOUT, from: f_lan_spy, to: hac_ky, valid_from_chapter: 0}
+      # Lý Thất: người của Hội. Ra mắt bằng biệt danh ở chương 4; tên thật chỉ lộ ở chương 5 (D-17).
+      - {type: MEMBER_OF, from: ly_that, to: hac_ky, valid_from_chapter: 0}
+    close: []
   - number: 1
     file: ch01.md
     commit_id: sample-ch1
     nodes:
       - {id: ch1, label: Chapter, number: 1, title: "Quán trà mới ở bến Sương"}
       - {id: minh, label: Character, name: "Trần Minh", aliases: ["Minh"], is_protagonist: true}
-      - {id: lan, label: Character, name: "Phạm Thị Lan", aliases: ["Lan", "cô Lan"]}
       - {id: gu, label: Character, name: "Hồ Sĩ Bằng", aliases: ["Lão Gù"]}
       - {id: khai, label: Character, name: "Trần Văn Khải", aliases: ["Khải", "cai Khải"]}
       - {id: sword, label: Item, name: "Thanh Sương", aliases: ["thanh kiếm"]}
-      - {id: hac_ky, label: Faction, name: "Hội Hắc Kỳ"}
       - {id: ben_suong, label: Location, name: "phố Bến Sương"}
       - {id: lo_ren, label: Location, name: "lò rèn của Lão Gù"}
       - {id: quan_tra, label: Location, name: "quán trà đầu bến"}
-      - {id: f_lan_spy, label: Fact, text: "Lan là gián điệp của Hội Hắc Kỳ, tới phố Bến Sương để tìm thanh kiếm Thanh Sương"}
       - {id: t_gu_warning, label: Thread, description: "Lão Gù dặn Minh đừng tin người lạ mới tới phố: lão sợ ai?",
          planted_chapter: 1, due_from_chapter: 2, due_to_chapter: 3}
     edges:
       - {id: holds_sword_gu, type: HOLDS, from: gu, to: sword, valid_from_chapter: 1}
-      - {type: MEMBER_OF, from: lan, to: hac_ky, valid_from_chapter: 0}
-      - {type: KNOWS, from: lan, to: f_lan_spy, valid_from_chapter: 0, how: "tự biết"}
       # Lão Gù thấy Lan gặp người của Hội ở bến đêm trước chương 1. Không có trên trang (góc nhìn Minh).
       - {type: KNOWS, from: gu, to: f_lan_spy, valid_from_chapter: 1, how: "chứng kiến"}
-      - {type: ABOUT, from: f_lan_spy, to: lan, valid_from_chapter: 1}
-      - {type: ABOUT, from: f_lan_spy, to: hac_ky, valid_from_chapter: 1}
       - {id: rel_minh_lan_1, type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 1, kind: "người quen", score: 30}
       - {type: RELATES_TO, from: lan, to: minh, valid_from_chapter: 1, kind: "con mồi", score: -20}
       - {type: RELATES_TO, from: minh, to: gu, valid_from_chapter: 1, kind: "thầy trò", score: 70}
@@ -134,8 +146,6 @@ chapters:
     nodes:
       - {id: ch4, label: Chapter, number: 4, title: "Mất kiếm"}
       - {id: e_sword_missing, label: Event, chapter: 4, description: "Minh thức dậy thấy Thanh Sương biến mất khỏi gầm giường"}
-      # Người của Hội. Ra mắt bằng biệt danh; tên thật chỉ lộ ở chương 5 (D-17).
-      - {id: ly_that, label: Character, name: "Lý Thất", aliases: ["gã lái đò mặt sẹo"]}
       - {id: e_sword_stolen, label: Event, chapter: 4, description: "Lan bỏ thuốc ngủ vào gói trà cho Minh, rồi đêm đó lẻn vào gác lấy Thanh Sương"}
       - {id: t_sword_missing, label: Thread, description: "Ai đã lấy Thanh Sương",
          planted_chapter: 4, due_from_chapter: 5, due_to_chapter: 6}
@@ -147,7 +157,6 @@ chapters:
       - {type: PARTICIPATED_IN, from: minh, to: e_sword_missing, valid_from_chapter: 4}
       - {type: ABOUT, from: e_sword_stolen, to: lan, valid_from_chapter: 4}
       - {type: ABOUT, from: e_sword_stolen, to: sword, valid_from_chapter: 4}
-      - {type: MEMBER_OF, from: ly_that, to: hac_ky, valid_from_chapter: 0}
       - {type: REVEALED_TO_PLAYER, from: ly_that, to: ch4, valid_from_chapter: 4,
          quote: "một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà", known_as: "gã lái đò mặt sẹo"}
       - {type: REVEALED_TO_PLAYER, from: e_sword_missing, to: ch4, valid_from_chapter: 4, quote: "Sáng ra, gầm giường trống trơn."}

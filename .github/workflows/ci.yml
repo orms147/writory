@@ -32,13 +32,15 @@ jobs:
       - run: uv run pytest -m "not graph"
 
   graph:
-    name: test đồ thị (Neo4j)
+    name: test tích hợp (Neo4j + Postgres)
     runs-on: ubuntu-latest
     env:
       NEO4J_URI: bolt://localhost:7687
       NEO4J_USER: neo4j
       # Mật khẩu dùng một lần cho container CI, không phải bí mật. Phải khớp NEO4J_AUTH bên dưới.
       NEO4J_PASSWORD: ci-throwaway-password
+      # Như trên: mật khẩu dùng một lần, phải khớp POSTGRES_PASSWORD bên dưới.
+      POSTGRES_DSN: postgresql://writory:ci-throwaway-password@localhost:5432/writory
     services:
       neo4j:
         image: neo4j:5.26-community
@@ -47,6 +49,20 @@ jobs:
         ports:
           - 7474:7474
           - 7687:7687
+      postgres:
+        image: postgres:16
+        env:
+          POSTGRES_USER: writory
+          POSTGRES_PASSWORD: ci-throwaway-password
+          POSTGRES_DB: writory
+        ports:
+          - 5432:5432
+        # Runner chỉ chạy bước đầu khi health check đạt.
+        options: >-
+          --health-cmd "pg_isready -U writory -d writory"
+          --health-interval 2s
+          --health-timeout 5s
+          --health-retries 30
     steps:
       - uses: actions/checkout@v6
       - uses: astral-sh/setup-uv@v7

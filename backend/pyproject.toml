@@ -33,7 +33,7 @@ packages = ["src/writory"]
 [tool.pytest.ini_options]
 testpaths = ["tests"]
 asyncio_mode = "auto"
-markers = ["graph: cần Neo4j trong Docker (docker compose up -d)"]
+markers = ["graph: cần dịch vụ Docker: Neo4j, và Postgres cho luồng ghi chương (docker compose up -d)"]
 
 [tool.ruff]
 line-length = 100
