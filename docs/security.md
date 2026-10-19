@@ -33,6 +33,18 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 | G11 | T7 | Kết quả trích qua schema pydantic. Sai → thử lại 1 lần → vẫn sai thì không ghi, báo lỗi. Chỉ tham chiếu id thực thể có sẵn; thực thể mới phải khai riêng. Ghi theo D-6 (tất cả hoặc không gì), và không đổi trạng thái phiên trước khi ghi thành công. | JSON hỏng, id bịa, lỗi giữa chừng khi ghi Neo4j → đồ thị và trạng thái phiên giữ nguyên như trước. |
 | G12 | mọi loại | Lỗi trả người chơi có mã riêng và câu tiếng Việt nói chuyện gì xảy ra và nên làm gì tiếp. Không trả mã chung chung kiểu `TOOL_ERROR`. Chi tiết kỹ thuật chỉ vào log, và log không chứa bí mật truyện hay key. | Mỗi mã lỗi có câu thông báo; test không mã nào trả câu rỗng. |
 
+## Đã cài trong code
+Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
+
+| Mã | Code | Test |
+|---|---|---|
+| G4 | `backend/src/writory/safety/wrap.py` (D-12) | `tests/unit/test_safety_wrap.py`, chạy trên bộ câu `evals/redteam/g4_prompt_injection.yaml` |
+| G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`) | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it` |
+| G8 | `llm/cost.py` (`CostTracker`, `MeteredClient`), `llm/retry.py` (D-10) | `tests/unit/test_llm_cost.py`, `test_llm_retry.py` |
+| G12 | `backend/src/writory/errors.py` | `tests/unit/test_errors.py` |
+
+Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
+
 ## Đo guardrail
 - Test nhanh (mỗi commit): G1–G12 với model giả, không mạng.
 - Red-team với model thật: chạy tay hoặc định kỳ, có trần chi phí; báo tỉ lệ tấn công thành công. Lệnh và kết quả: `docs/eval.md`, `evals/results/`.

@@ -68,3 +68,32 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** tên sản phẩm là **WriTory**, trùng tên repo và tên package `writory`. Bỏ mục "tên chính thức" khỏi danh sách còn mở (design §14).
 - **Hệ quả:** giao diện, tài liệu và nhận diện đều dùng "WriTory". Không dùng tên cũ ở bất kỳ đâu.
 - **Người quyết:** Chủ dự án · 19/10/2026
+
+## D-10 · Trần chi phí: kiểm trước mỗi lời gọi, không rõ chi phí thì dừng
+- **Bối cảnh:** G8 cần trần theo cảnh, chương, truyện. OpenRouter trả `usage.cost` tính bằng credit, có thể thiếu.
+- **Quyết định:**
+  - `CostTracker` kiểm cả ba trần **trước** mỗi lời gọi. Trần `null` gây lỗi `CONFIG_LIMIT_NOT_SET`, không coi là vô hạn.
+  - Phản hồi thiếu `usage.cost` gây lỗi `LLM_COST_UNKNOWN` và dừng. Coi 1 credit = 1 USD.
+  - `with_retries` chỉ thử lại `LLM_UNAVAILABLE` và `LLM_BAD_RESPONSE`, không chờ giữa các lần. Số lần do nơi gọi lấy từ `config/limits.yaml`.
+- **Hệ quả:** lời gọi cuối có thể vượt trần đúng bằng chi phí của chính nó. Stream đứt giữa chừng thì chưa ghi được chi phí.
+- **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-11 · Mã hoá key người chơi bằng Fernet
+- **Bối cảnh:** G7 yêu cầu mã hoá key khi lưu, khoá lấy từ biến môi trường.
+- **Quyết định:** dùng Fernet của thư viện `cryptography`. Khoá đặt trong `PLAYER_KEY_ENCRYPTION_KEY`. Khoá sai định dạng thì báo lỗi lúc khởi động. Giải mã hỏng gây lỗi `PLAYER_KEY_UNREADABLE`.
+- **Hệ quả:** bản 1 chưa xoay khoá (cần thì dùng `MultiFernet`). Mất khoá thì người chơi phải nhập lại key.
+- **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-12 · Bọc chữ người chơi bằng khối `<player_data>` có escape
+- **Bối cảnh:** G4 yêu cầu chữ người chơi luôn là dữ liệu, kể cả câu cố tình đóng khối hoặc giả thẻ system.
+- **Quyết định:**
+  - Chữ người chơi đi vào prompt qua `UserAuthored`; `str()` luôn trả khối đã bọc.
+  - Escape `&`, `<`, `>` bên trong khối.
+  - `system_message` từ chối `UserAuthored` và mọi chuỗi chứa khối.
+- **Hệ quả:** model thấy `&lt;` thay cho `<`. Chữ hiện cho người chơi lấy từ dữ liệu gốc, không lấy từ prompt.
+- **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-13 · `config.py` và `errors.py` đặt ở gốc gói `writory`
+- **Bối cảnh:** CLAUDE.md §3 yêu cầu ghi lý do khi thêm module mới.
+- **Quyết định:** cấu hình và mã lỗi dùng chung cho mọi module, nên đặt ở gốc gói. Đặt trong một module con sẽ tạo phụ thuộc ngược. `safety/redact.py` không import gì của `writory`, để `errors.py` dùng được mà không bị vòng import.
+- **Người quyết:** Claude (Session 2) · 19/10/2026
