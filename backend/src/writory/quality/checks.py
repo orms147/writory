@@ -24,6 +24,7 @@ class IssueKind(StrEnum):
     FOREIGN_SCRIPT = "foreign_script"
     DIALOGUE_FORMAT = "dialogue_format"
     UNCLOSED_QUOTE = "unclosed_quote"
+    META_LEAK = "meta_leak"
 
 
 @dataclass(frozen=True)
@@ -273,6 +274,43 @@ def check_dialogue(text: str, quality: QualityConfig) -> list[QualityIssue]:
             issues.append(_issue(text, IssueKind.UNCLOSED_QUOTE, m.start() + pos, m.end(),
                                  "ngoặc kép mở nhưng không đóng trong cùng đoạn"))
     return issues
+
+
+# --- lọt suy luận / chữ của prompt ----------------------------------------------------------
+
+# Thẻ suy luận, kể cả thẻ có hậu tố ("</think_36a8…>") hay bị cắt mất ">".
+_REASONING_TAG = re.compile(r"</?(?:thinking|reasoning|think)\w*(?:[^<>\n]{0,200}>)?",
+                            re.IGNORECASE)
+# Cụm chỉ có trong đề bài và hướng dẫn văn phong, gần như không gặp trong văn truyện (D-30).
+# Cố ý hẹp: "dàn ý" hay "lộ bí mật" đứng riêng vẫn có thể là văn truyện.
+_META_PHRASES = (
+    "theo dàn ý",
+    "không lộ bí mật",
+    "ngôi thứ ba",
+    "ngôi thứ nhất",
+    "bảng xưng hô",
+    "người viết được biết",
+)
+
+
+def check_meta_leak(text: str) -> list[QualityIssue]:
+    """Thẻ suy luận hoặc chữ của prompt (đề bài, hướng dẫn văn phong) lọt vào văn bản cảnh.
+    Ghi chú kế hoạch của model có thể nhắc tới bí mật, nên lỗi này liên quan G2. Không cần config."""
+    text = _nfc(text)
+    issues = [
+        _issue(text, IssueKind.META_LEAK, m.start(), m.end(), "thẻ suy luận lọt vào văn bản")
+        for m in _REASONING_TAG.finditer(text)
+    ]
+    for phrase in _META_PHRASES:
+        pattern = re.compile(
+            r"(?<!\w)" + r"\s+".join(map(re.escape, phrase.split())) + r"(?!\w)", re.IGNORECASE
+        )
+        issues += [
+            _issue(text, IssueKind.META_LEAK, m.start(), m.end(),
+                   f'cụm của prompt lọt vào văn bản: "{phrase}"')
+            for m in pattern.finditer(text)
+        ]
+    return sorted(issues, key=lambda i: (i.start, i.end))
 
 
 # --- gộp ----------------------------------------------------------------------------------

@@ -5,6 +5,7 @@ from writory.quality.checks import (
     check_dialogue,
     check_foreign_script,
     check_length,
+    check_meta_leak,
     check_repetition,
     check_scene,
 )
@@ -16,6 +17,7 @@ __all__ = [
     "check_dialogue",
     "check_foreign_script",
     "check_length",
+    "check_meta_leak",
     "check_repetition",
     "check_scene",
 ]

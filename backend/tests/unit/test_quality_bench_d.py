@@ -749,3 +749,24 @@ def test_git_state_ignores_changes_inside_results(tmp_path):
     assert bd.git_state(tmp_path)["dirty"] is False
     (tmp_path / "code.py").write_text("x = 2\n", encoding="utf-8")
     assert bd.git_state(tmp_path)["dirty"] is True
+
+
+async def test_summary_counts_meta_leaks_from_saved_text(tmp_path):
+    data = load()
+
+    def alpha_leaks_on_case_one(body):
+        user = body["messages"][1]["content"]
+        if body["model"] == "vendor-x/alpha-model" and "Lạc Vân" in user:
+            return or_completion(body["model"], "<think>viết theo dàn ý</think>\n" + SCENE)
+        return or_completion(body["model"])
+
+    writer, _ = writer_client(alpha_leaks_on_case_one)
+    judge, _ = judge_client()
+    await run_all(make_runner(tmp_path, data, writer, judge), data)
+    summary = bd.build_summary(data, bd.Store(tmp_path / "out"))
+    head = next(line for line in summary.splitlines() if line.startswith("| Model"))
+    col = head.split(" | ").index("Lọt suy luận")
+    rows_by_label = {line.split(" | ")[0].removeprefix("| "): line.split(" | ")
+                     for line in summary.splitlines() if line.startswith("| ") and "---" not in line}
+    assert rows_by_label["Alpha Nhãn"][col] == "1/2"
+    assert rows_by_label["Beta Nhãn"][col] == "0/2"

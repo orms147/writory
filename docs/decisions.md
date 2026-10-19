@@ -208,3 +208,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `GET /health`: `ok`/`down` cho Neo4j và Postgres, 503 nếu có phần down; lỗi chỉ vào log.
 - **Hệ quả:** nhánh nào thêm mã lỗi phải thêm status vào bảng. Lỗi 404/422 của FastAPI vẫn theo mặc định, chưa theo G12. Chưa gọi `reconcile_pending` lúc khởi động (TODO).
 - **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-30 · Kiểm văn bắt suy luận và chữ của prompt lọt vào cảnh
+- **Bối cảnh:** ở pilot bài D, một model viết đã đặt `reasoning: none` mà vẫn để ghi chú kế hoạch cùng thẻ `</think…>` lọt vào đầu cảnh. Ghi chú đó nhắc tới cách giữ bí mật. Giám khảo thấy nhưng vẫn cho 4; kiểm văn chỉ bắt được tình cờ qua luật chữ Latin.
+- **Quyết định:**
+  - Thêm hàm thuần `check_meta_leak` trong `writory/quality/checks.py`, loại lỗi `meta_leak`, không cần config.
+  - Hàm bắt thẻ suy luận (`<think`, `</think…>`, `thinking`, `reasoning`) và một danh sách hẹp các cụm chỉ có trong đề bài hoặc hướng dẫn văn phong (`_META_PHRASES`).
+  - Có test cho ca lọt thật lấy từ pilot, cho các ca gần giống mà sạch, và cho toàn bộ văn sạch có sẵn.
+  - Bài D tính cột "Lọt suy luận" từ văn bản đã lưu khi dựng `summary.md`, không gọi lại model.
+- **Hệ quả:** chưa đưa vào `check_scene`, nên chưa làm pipeline viết lại cảnh. Đưa vào lúc nào sẽ quyết khi làm pipeline (tuần 2); khi đó cảnh có lỗi này phải bị chặn trước khi hiện (G2). Danh sách cụm hẹp, nên có thể bỏ sót ghi chú viết bằng chữ khác.
+- **Người quyết:** điều phối (yêu cầu hàm và cột); danh sách mẫu: Claude (Session 3) · 19/10/2026

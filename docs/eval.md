@@ -37,7 +37,7 @@ Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writo
 - **Kiểm văn bằng code:** bốn bộ kiểm của `writory.quality` (lặp, sáo ngữ, chữ khác hệ, lời thoại), cộng độ dài theo case. Ngưỡng tạm là cờ của bài đo (`--ngram`, `--max-repeats`, `--latin-min`), có ghi vào kết quả. `config/quality.yaml` không đổi.
 - **Chỉ số** (`summary.md`, mỗi model một hàng):
   - trung bình ± khoảng tin cậy 95% của từng tiêu chí, tính theo t trên số case, sau khi gộp các mẫu và các lần chấm trong cùng case;
-  - tỉ lệ lộ bí mật; số lỗi kiểm văn; độ dài trung vị;
+  - tỉ lệ lộ bí mật; số cảnh lọt suy luận hoặc chữ của prompt (`check_meta_leak`, D-30, tính từ văn bản đã lưu); số lỗi kiểm văn; độ dài trung vị;
   - chi phí mỗi cảnh (`usage.cost`); độ trễ; số bài lỗi, bị cắt, hoặc thuộc loại khác.
 
   Chi phí giám khảo, độ lệch giữa các lần chấm và tỉ lệ câu trích không tìm thấy được ghi riêng.

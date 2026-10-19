@@ -58,7 +58,13 @@ from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient, Message
 from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import OpenRouterClient
-from writory.quality import check_cliches, check_dialogue, check_foreign_script, check_repetition
+from writory.quality import (
+    check_cliches,
+    check_dialogue,
+    check_foreign_script,
+    check_meta_leak,
+    check_repetition,
+)
 
 DATA_DIR = REPO_ROOT / "evals" / "scenarios" / "quality"
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
@@ -1307,12 +1313,15 @@ def build_summary(data: BenchData, store: Store) -> str:
         (f"- Lộ bí mật: số cảnh có điểm cuối `{SECRET_CRITERION}` ≤ 0,5 trên số cảnh đã chấm, chỉ "
         "tính case có bí mật. Lỗi · cắt · khác: lỗi ở bước viết (errors.jsonl), bài chạm "
         "max_tokens, bài rỗng hoặc bị lọc nội dung. Các bài này không vào trung bình."),
+        ("- Lọt suy luận: số cảnh có thẻ suy luận hoặc chữ của prompt trong văn bản "
+         "(`check_meta_leak`, D-30) trên số cảnh có văn bản. Tính lại từ samples.jsonl mỗi lần "
+         "dựng bảng, không gọi model."),
         "",
     ]
 
     head = ["Model", "n case", *(c.label for c in scale), *(c.label for c in other_binary),
-            "Lộ bí mật", "Lỗi kiểm văn", "Độ dài (TV)", "USD/cảnh", "Trễ s (TV)",
-            "Lỗi · cắt · khác"]
+            "Lộ bí mật", "Lọt suy luận", "Lỗi kiểm văn", "Độ dài (TV)", "USD/cảnh",
+            "Trễ s (TV)", "Lỗi · cắt · khác"]
     out += ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
     present = {r["model"] for r in samples} | {e["model"] for e in errors if e["stage"] == "write"}
     for w in [w for w in data.models.writers if w.id in present]:
@@ -1335,11 +1344,14 @@ def build_summary(data: BenchData, store: Store) -> str:
         n_err = sum(1 for e in errors if e["stage"] == "write" and e["model"] == w.id)
         n_trunc = sum(1 for r in mine if r["status"] == "truncated")
         n_other = sum(1 for r in mine if r["status"] in ("empty", "content_filter"))
+        written = [r for r in mine if r["text"].strip()]
+        meta_leaks = sum(1 for r in written if check_meta_leak(r["text"]))
         cells = [
             w.label, str(len(by_case)),
             *(_fmt_ci(per_case(c.id)) for c in scale),
             *(_fmt_ci(per_case(c.id)) for c in other_binary),
             f"{leaks}/{len(secret_finals)}" if secret_finals else "—",
+            f"{meta_leaks}/{len(written)}" if written else "—",
             f"{statistics.fmean(issues):.1f}" if issues else "—",
             f"{statistics.median(lengths):.0f}" if lengths else "—",
             f"{statistics.fmean(r['cost_usd'] for r in mine):.5f}" if mine else "—",
