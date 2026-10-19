@@ -133,7 +133,8 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - đoạn mở đầu bằng ngoặc kép;
   - dòng chỉ có dấu gạch;
   - ngoặc kép không đóng (mọi chế độ).
-- **Hệ quả:** ngoặc kép giữa đoạn (chữ khắc, tên sách, câu trích) là hợp lệ. Kiểm văn chỉ báo lỗi, không tự sửa.
+- **Ngoại lệ:** đoạn được ngoặc kép bao trọn, ngay sau đoạn kết thúc bằng ":", là trích nguyên văn (thư, chữ khắc), không báo.
+- **Hệ quả:** ngoặc kép giữa đoạn (chữ khắc, tên sách, câu trích) là hợp lệ. Lời thoại sai kiểu đứng trọn một đoạn ngay sau ":" bị lọt (chấp nhận: báo nhầm tốn một lượt viết lại, để lọt chỉ là lỗi thẩm mỹ). Kiểm văn chỉ báo lỗi, không tự sửa.
 - **Người quyết:** Claude (điều phối) · 19/10/2026
 
 ## D-19 · Ngưỡng kiểm văn nằm trong `config/quality.yaml`
@@ -143,5 +144,5 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Danh sách sáo ngữ là bản nháp chờ chủ dự án duyệt (`draft: true`).
   - "Tỉ lệ lặp" kiểm theo từng cụm: một cụm `ngram_words` từ xuất hiện quá `max_repeats` lần thì báo tại chỗ lặp. Không dùng một tỉ lệ cho cả cảnh, vì lỗi phải có vị trí.
   - Chữ Latin chỉ bị đếm khi không phải âm tiết tiếng Việt viết không dấu và không nằm trong danh sách từ mượn.
-- **Hệ quả:** văn tiếng Việt viết thiếu dấu không bị bắt (cần bộ kiểm khác nếu muốn).
+- **Hệ quả:** văn tiếng Việt bỏ dấu cả câu không bị bắt; chữ Cyrillic, Thái chưa kiểm. Hai việc này để tuần 2.
 - **Người quyết:** Claude (Session 2) · 19/10/2026

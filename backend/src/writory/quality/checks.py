@@ -225,17 +225,38 @@ def _unclosed_quotes(line: str) -> list[int]:
     return sorted(unclosed)
 
 
+def _quote_wraps_whole(body: str) -> bool:
+    """Dấu ngoặc mở ở đầu đoạn được đóng đúng ở ký tự cuối đoạn (một câu trích trọn đoạn)."""
+    if body[0] == '"':
+        return body.find('"', 1) == len(body) - 1
+    depth = 0
+    for i, ch in enumerate(body):
+        if ch == "“":
+            depth += 1
+        elif ch == "”":
+            depth -= 1
+            if depth == 0:
+                return i == len(body) - 1
+    return False
+
+
 def check_dialogue(text: str, quality: QualityConfig) -> list[QualityIssue]:
-    """Kiểu dash (D-18): dòng thoại mở đầu bằng "— ". Ngoặc kép giữa đoạn là hợp lệ."""
+    """Kiểu dash (D-18): dòng thoại mở đầu bằng "— ". Ngoặc kép giữa đoạn là hợp lệ.
+
+    Ngoại lệ (D-18): đoạn được ngoặc kép bao trọn, ngay sau đoạn kết thúc bằng ":", là trích
+    nguyên văn (thư, chữ khắc). Hệ quả đã biết: lời thoại sai kiểu đứng trọn đoạn sau ":" bị lọt.
+    """
     if quality.dialogue_style != "dash":
         raise ValueError(f"dialogue_style={quality.dialogue_style} chưa hỗ trợ (D-18)")
     text = _nfc(text)
     issues = []
+    previous = ""
     for m in re.finditer(r"[^\n]+", text):
         line = m.group()
         body = line.strip()
         if not body:
             continue
+        after_colon, previous = previous.endswith(":"), body
         start = m.start() + (len(line) - len(line.lstrip()))
         end = start + len(body)
         if _ONLY_DASHES.fullmatch(body):
@@ -245,7 +266,7 @@ def check_dialogue(text: str, quality: QualityConfig) -> list[QualityIssue]:
             issues.append(_issue(text, IssueKind.DIALOGUE_FORMAT, start, end,
                                  f'mở đầu lời thoại bằng "{_EM_DASH} " (U+2014), '
                                  f'không dùng "{body[0]}"'))
-        elif body[0] in "“\"":
+        elif body[0] in "“\"" and not (after_colon and _quote_wraps_whole(body)):
             issues.append(_issue(text, IssueKind.DIALOGUE_FORMAT, start, end,
                                  f'lời thoại mở đầu bằng "{_EM_DASH} ", không dùng ngoặc kép'))
         for pos in _unclosed_quotes(line):

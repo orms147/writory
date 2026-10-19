@@ -63,6 +63,27 @@ cases:
   - id: ngoac-giua-doan-hop-le
     text: "Cả phố gọi Khải là \"cai mặt sắt\", còn Lan thì gọi hắn là “ông cai” cho lịch sự."
     expect: []
+  # Ngoại lệ D-18: ngoặc kép bao trọn cả đoạn, đoạn trước kết thúc bằng ":" → trích nguyên văn.
+  - id: thu-trich-sau-hai-cham
+    text: "Minh mở ra đọc:\n\n\"Gửi Lan. Đã tìm được Thanh Sương chưa? Hội cần hàng chữ trên sống kiếm trước ngày rằm.\"\n\nMinh đọc lại hai lần."
+    expect: []
+  - id: chu-khac-sau-hai-cham-ngoac-cong
+    text: "Trên sống kiếm khắc tám chữ:\n\n“Sương tan thì kiếm về, người đi thì kiếm ở.”"
+    expect: []
+  - id: gioi-han-thoai-ngoac-tron-doan-sau-hai-cham
+    # GIỚI HẠN ĐÃ BIẾT (D-18): lời thoại sai kiểu đứng trọn một đoạn sau ":" bị lọt.
+    text: "Lan quay sang Minh:\n\n“Anh đi đâu thế?”"
+    expect: []
+  - id: sau-hai-cham-nhung-khong-tron-doan
+    text: "Lan quay sang Minh:\n\n“Anh đi đâu thế?” cô hỏi, tay vẫn lau chén."
+    expect: [dialogue_format]
+  - id: tron-doan-nhung-khong-sau-hai-cham
+    text: "Lan quay sang Minh.\n\n“Anh đi đâu thế?”"
+    expect: [dialogue_format]
+  - id: tron-doan-hai-cau-trich-rieng
+    # Mở và đóng ở hai đầu nhưng là hai câu trích khác nhau, không bao trọn đoạn.
+    text: "Minh đọc to:\n\n“Gửi Lan.” Rồi anh dừng lại, đọc tiếp: “Đừng tin ai.”"
+    expect: [dialogue_format]
   - id: gach-dai-hop-le
     text: "— Anh chép sách phải không? — cô hỏi. — Em tên Lan."
     expect: []
