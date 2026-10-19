@@ -68,6 +68,7 @@ evals/
 3. Viết code tối thiểu cho test xanh. Giao diện chỉ cần test nhẹ.
 4. Chạy test nhanh (§6), cập nhật tài liệu liên quan, rồi commit.
 5. Mỗi tính năng một nhánh `feature/<tên>`; `main` luôn chạy được; gộp qua PR.
+6. **Việc nhỏ commit thẳng lên `main`**, không cần nhánh: đổi tên, sửa chữ hoặc liên kết trong tài liệu, cập nhật §9. Vẫn phải chạy test nhanh trước khi push. Có đổi hành vi code thì không còn là việc nhỏ.
 
 **Thứ tự bản 1** theo design §12. Tuần 1 dựng đồ thị **bằng tay** trên truyện mẫu, trước mọi lời gọi LLM.
 
@@ -125,7 +126,8 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 ## 9. Sự thật hiện hành
 *Chỉ ghi trạng thái hiện tại, kèm link tới quyết định. Cập nhật khi có thay đổi.*
 
-- Bản đang làm: **Bản 1, trước tuần 1**. Mới có khung repo, chưa có code tính năng.
+- Bản đang làm: **Bản 1, tuần 1**. Lõi đồ thị và lớp nền đang chờ review trong PR.
+- CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
 - Quyết định đang hiệu lực: D-1 đến D-9 (`docs/decisions.md`).
 - Chưa có: schema đồ thị chốt (tuần 1), model viết và danh sách mức model (tuần 2, bài D), trần chi phí (tuần 2), frontend (tuần 4).
