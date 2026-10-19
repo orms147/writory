@@ -67,6 +67,7 @@ class CostLimits(_Section):
 class RetryLimits(_Strict):
     rewrite_per_scene: NonNegativeInt
     extract_schema_retry: NonNegativeInt
+    llm_transient: NonNegativeInt
 
 
 class RateLimits(_Section):
