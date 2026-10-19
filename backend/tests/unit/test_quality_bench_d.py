@@ -729,3 +729,23 @@ def test_workspace_id_is_read_from_env(tmp_path, monkeypatch):
     assert "wrkspc_abc" not in repr(keys)
     monkeypatch.delenv("ANTHROPIC_WORKSPACE_ID")
     assert bd.load_keys(tmp_path / "khong-co.env", ("anthropic",)).anthropic_workspace_id is None
+
+
+def test_git_state_ignores_changes_inside_results(tmp_path):
+    import subprocess
+
+    def git(*args):
+        subprocess.run(["git", "-C", str(tmp_path), *args], check=True, capture_output=True)
+
+    git("init", "-q")
+    git("config", "user.email", "t@example.com")
+    git("config", "user.name", "t")
+    (tmp_path / "evals" / "results" / "r").mkdir(parents=True)
+    (tmp_path / "evals" / "results" / "r" / "meta.json").write_text("{}", encoding="utf-8")
+    (tmp_path / "code.py").write_text("x = 1\n", encoding="utf-8")
+    git("add", "-A")
+    git("commit", "-q", "-m", "init")
+    (tmp_path / "evals" / "results" / "r" / "meta.json").write_text('{"runs": []}', "utf-8")
+    assert bd.git_state(tmp_path)["dirty"] is False
+    (tmp_path / "code.py").write_text("x = 2\n", encoding="utf-8")
+    assert bd.git_state(tmp_path)["dirty"] is True

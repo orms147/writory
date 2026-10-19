@@ -678,19 +678,21 @@ class Store:
         (self.root / "meta.json").write_text(text + "\n", encoding="utf-8")
 
 
-def git_state() -> dict[str, Any]:
+def git_state(root: Path = REPO_ROOT) -> dict[str, Any]:
+    """Commit đang chạy, và có sửa chưa commit không. Không tính evals/results/: chạy tiếp vào
+    một thư mục kết quả đã commit thì meta.json luôn đổi."""
+
     def git(*args: str) -> str:
         done = subprocess.run(
-            ["git", "-C", str(REPO_ROOT), *args],
+            ["git", "-C", str(root), *args],
             capture_output=True, text=True, timeout=10, check=False,
         )
         return done.stdout.strip()
 
     try:
-        return {
-            "commit": git("rev-parse", "HEAD") or "unknown",
-            "dirty": bool(git("status", "--porcelain", "--untracked-files=no")),
-        }
+        status = git("status", "--porcelain", "--untracked-files=no", "--", ".",
+                     ":(exclude)evals/results")
+        return {"commit": git("rev-parse", "HEAD") or "unknown", "dirty": bool(status)}
     except (OSError, subprocess.SubprocessError):
         return {"commit": "unknown", "dirty": None}
 
