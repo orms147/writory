@@ -1,0 +1,89 @@
+# Đoạn văn ngắn cho từng bộ kiểm. expect = các loại lỗi phải báo (rỗng = không được báo gì).
+# Độ dài không kiểm ở đây (đoạn ngắn); test độ dài riêng.
+cases:
+  # --- lẫn chữ khác hệ ---
+  - id: chu-han
+    text: "Minh bước vào quán, gọi một ấm trà nóng. 他看着窗外的雨。 Lan mang trà ra, không nói gì."
+    expect: [foreign_script]
+  - id: hangul
+    text: "Cô gái quay lại, khẽ nói 고마워요 rồi chạy mất."
+    expect: [foreign_script]
+  - id: cau-tieng-anh
+    text: "Lão Gù đặt thanh kiếm xuống bàn. The ancient sword glowed with a strange light. Minh lùi lại một bước."
+    expect: [foreign_script]
+  - id: ten-rieng-ngan
+    text: "John Smith gửi email cho Hà, bảo mọi thứ vẫn OK, hẹn gặp ở Singapore tuần sau."
+    expect: []
+  - id: tu-khong-dau-lien-nhau
+    # Tom, cho, Lan, xem, con, tem: đều là chữ ASCII nhưng là âm tiết tiếng Việt hợp lệ.
+    text: "Tom cho Lan xem con tem in hình nữ hoàng Anh."
+    expect: []
+  - id: tu-muon
+    text: "Wifi ở quán chập chờn, video gọi về nhà cứ đứng hình mãi."
+    expect: []
+
+  # --- sáo ngữ ---
+  - id: sao-ngu
+    text: "Khi cánh cửa mở ra, thời gian như ngừng trôi. Minh đứng sững, nhìn người đàn bà áo đen."
+    expect: [cliche]
+  - id: sao-ngu-hoa
+    text: "Hít Một Hơi Thật Sâu, Lan đẩy cửa bước vào."
+    expect: [cliche]
+  - id: ten-minh-khong-phai-sao-ngu
+    text: "Minh chứng cho Lan thấy cuốn sổ là của mình."
+    expect: []
+
+  # --- lặp cụm từ (với ngưỡng thử: cụm 4 từ, tối đa 2 lần) ---
+  - id: lap-cum
+    text: "Minh đi ra bến sông. Sáng hôm sau Minh đi ra bến sông lần nữa để tìm Lan. Chiều đó Minh đi ra bến sông thêm một lần, vẫn không thấy ai."
+    expect: [repetition]
+
+  # --- định dạng lời thoại (dash, D-18) ---
+  - id: gach-ngan
+    text: "Lan rót trà.\n\n– Anh uống đi, kẻo nguội.\n\nMinh cầm chén lên."
+    expect: [dialogue_format]
+  - id: gach-noi
+    text: "Có tiếng gõ cửa.\n\n- Ai đó?\n\nKhông ai trả lời."
+    expect: [dialogue_format]
+  - id: mo-dau-ngoac-kep
+    text: "“Anh đi đâu thế?” Lan hỏi, tay vẫn lau chén."
+    expect: [dialogue_format]
+  - id: mo-dau-ngoac-thang
+    text: "\"Đứng lại!\" Khải quát, rút đao ra."
+    expect: [dialogue_format]
+  - id: gach-khong-chu
+    text: "Minh im lặng.\n\n—\n\nLan quay đi."
+    expect: [dialogue_format]
+  - id: ngoac-khong-dong
+    text: "Trên chuôi kiếm khắc chữ “Thanh Sương, nét đã mờ gần hết."
+    expect: [unclosed_quote]
+  - id: ngoac-thang-khong-dong
+    text: "Hắn gọi Minh là \"chú em họ cho lính cười."
+    expect: [unclosed_quote]
+  - id: ngoac-giua-doan-hop-le
+    text: "Cả phố gọi Khải là \"cai mặt sắt\", còn Lan thì gọi hắn là “ông cai” cho lịch sự."
+    expect: []
+  # Ngoại lệ D-18: ngoặc kép bao trọn cả đoạn, đoạn trước kết thúc bằng ":" → trích nguyên văn.
+  - id: thu-trich-sau-hai-cham
+    text: "Minh mở ra đọc:\n\n\"Gửi Lan. Đã tìm được Thanh Sương chưa? Hội cần hàng chữ trên sống kiếm trước ngày rằm.\"\n\nMinh đọc lại hai lần."
+    expect: []
+  - id: chu-khac-sau-hai-cham-ngoac-cong
+    text: "Trên sống kiếm khắc tám chữ:\n\n“Sương tan thì kiếm về, người đi thì kiếm ở.”"
+    expect: []
+  - id: gioi-han-thoai-ngoac-tron-doan-sau-hai-cham
+    # GIỚI HẠN ĐÃ BIẾT (D-18): lời thoại sai kiểu đứng trọn một đoạn sau ":" bị lọt.
+    text: "Lan quay sang Minh:\n\n“Anh đi đâu thế?”"
+    expect: []
+  - id: sau-hai-cham-nhung-khong-tron-doan
+    text: "Lan quay sang Minh:\n\n“Anh đi đâu thế?” cô hỏi, tay vẫn lau chén."
+    expect: [dialogue_format]
+  - id: tron-doan-nhung-khong-sau-hai-cham
+    text: "Lan quay sang Minh.\n\n“Anh đi đâu thế?”"
+    expect: [dialogue_format]
+  - id: tron-doan-hai-cau-trich-rieng
+    # Mở và đóng ở hai đầu nhưng là hai câu trích khác nhau, không bao trọn đoạn.
+    text: "Minh đọc to:\n\n“Gửi Lan.” Rồi anh dừng lại, đọc tiếp: “Đừng tin ai.”"
+    expect: [dialogue_format]
+  - id: gach-dai-hop-le
+    text: "— Anh chép sách phải không? — cô hỏi. — Em tên Lan."
+    expect: []

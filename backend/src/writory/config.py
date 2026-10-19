@@ -1,11 +1,11 @@
-"""Cấu hình: biến môi trường (Settings) và ba file config/*.yaml.
+"""Cấu hình: biến môi trường (Settings) và các file config/*.yaml.
 
 Trong YAML, `null` nghĩa là "chưa đặt". Code cần một trần chưa đặt thì gọi `require()`;
 hàm đó báo lỗi rõ ràng chứ không coi là vô hạn.
 """
 
 from pathlib import Path
-from typing import Self
+from typing import Literal, Self
 
 import yaml
 from pydantic import (
@@ -145,6 +145,35 @@ class StoryLengthsConfig(_Strict):
     levels: dict[str, LengthLevel] = Field(min_length=1)
 
 
+# --- quality.yaml ----------------------------------------------------------------------
+
+
+class RepetitionConfig(_Section):
+    _path = "repetition"
+    _file = "quality.yaml"
+    ngram_words: PositiveInt | None
+    max_repeats: PositiveInt | None
+
+
+class ForeignScriptConfig(_Section):
+    _path = "foreign_script"
+    _file = "quality.yaml"
+    latin_run_min_words: PositiveInt | None
+    allowed_latin_words: list[str]
+
+
+class ClicheConfig(_Strict):
+    draft: bool
+    phrases: list[str]
+
+
+class QualityConfig(_Strict):
+    dialogue_style: Literal["dash", "quotes"]
+    repetition: RepetitionConfig
+    foreign_script: ForeignScriptConfig
+    cliches: ClicheConfig
+
+
 # --- nạp -------------------------------------------------------------------------------
 
 
@@ -152,12 +181,14 @@ class AppConfig(_Strict):
     limits: LimitsConfig
     models: ModelsConfig
     story_lengths: StoryLengthsConfig
+    quality: QualityConfig
 
 
 _FILES: dict[str, tuple[str, type[BaseModel]]] = {
     "limits": ("limits.yaml", LimitsConfig),
     "models": ("models.yaml", ModelsConfig),
     "story_lengths": ("story_lengths.yaml", StoryLengthsConfig),
+    "quality": ("quality.yaml", QualityConfig),
 }
 
 

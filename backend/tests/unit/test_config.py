@@ -70,6 +70,8 @@ def test_require_returns_value_when_set(config_dir: Path):
         ("models.yaml", "writer_tiers: []", "writer_tiers:\n  - id: x\n    label: X", "model"),
         ("story_lengths.yaml", "chapter_chars: {min: 3000, max: 10000}",
          "chapter_chars: {min: 10000, max: 3000}", "chapter_chars"),
+        ("quality.yaml", "dialogue_style: dash", "dialogue_style: html", "dialogue_style"),
+        ("quality.yaml", "  max_repeats: null", "  max_repeats: 0", "max_repeats"),
     ],
 )
 def test_bad_schema_reports_file_and_field(config_dir, file, old, new, expect_in_msg):

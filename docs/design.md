@@ -170,8 +170,8 @@ Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ �
 1. **Danh sách model đã thử.** Người chơi chọn một trong vài mức (ví dụ Tiết kiệm / Cân bằng / Cao cấp). Mỗi mức hiện giá ước tính mỗi chương và điểm chất lượng đã đo ở bài D (§9). Chỉ model đã qua bài D mới vào danh sách (danh sách nằm trong `config/`).
 2. **Tách vai.** Mức người chơi chọn chỉ đổi model **viết**. Các vai giữ trí nhớ (trích thay đổi, người canh, tạo lựa chọn, hỏi người kể) luôn dùng model đã chọn sẵn, vẫn trả bằng key người chơi. Nhờ vậy truyện ở mức rẻ có thể văn kém hơn, nhưng không quên nhiều hơn.
 3. **Dàn ý trước, văn sau.** Trước mỗi cảnh, model đáng tin viết dàn ý ngắn (các nhịp: chuyện gì xảy ra, ai nói gì, kết cảnh ở đâu). Model viết chỉ mở rộng dàn ý thành văn. Model yếu viết tốt hơn hẳn khi có nhịp rõ.
-4. **Hướng dẫn văn phong tiếng Việt** dùng chung cho mọi model: xưng hô đúng quan hệ, tránh văn dịch, tránh sáo ngữ hay gặp ở văn AI, nhịp câu theo giọng văn đã chọn, kèm vài đoạn mẫu.
-5. **Kiểm chất lượng bằng code** trên mỗi cảnh, không tốn lời gọi model:
+4. **Hướng dẫn văn phong tiếng Việt** dùng chung cho mọi model: xưng hô đúng quan hệ, tránh văn dịch, tránh sáo ngữ hay gặp ở văn AI, nhịp câu theo giọng văn đã chọn, kèm vài đoạn mẫu. Lời thoại theo kiểu gạch đầu dòng (D-18).
+5. **Kiểm chất lượng bằng code** trên mỗi cảnh, không tốn lời gọi model (ngưỡng và danh sách sáo ngữ: `config/quality.yaml`, D-19):
    - độ dài nằm trong khoảng;
    - tỉ lệ lặp cụm từ;
    - danh sách sáo ngữ cấm;
