@@ -1,0 +1,24 @@
+# Chỉ dùng cho máy local. Cách chạy: docs/runbook.md
+services:
+  neo4j:
+    image: neo4j:5.26-community
+    ports:
+      - "7474:7474"   # trình duyệt Neo4j
+      - "7687:7687"   # bolt
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:-change-me-local}
+      NEO4J_server_memory_heap_max__size: 1G
+      NEO4J_server_memory_pagecache_size: 512M
+    volumes:
+      - ./.data/neo4j:/data
+
+  postgres:
+    image: postgres:16
+    ports:
+      - "5432:5432"
+    environment:
+      POSTGRES_USER: writory
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:-change-me-local}
+      POSTGRES_DB: writory
+    volumes:
+      - ./.data/postgres:/var/lib/postgresql/data

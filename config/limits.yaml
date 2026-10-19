@@ -1,0 +1,15 @@
+# Trần và giới hạn (guardrail G8, docs/security.md). null = chưa đặt; đặt ở tuần 2 sau khi đo thử.
+cost_usd:
+  per_scene: null
+  per_chapter: null
+  per_story: null
+retries:
+  rewrite_per_scene: 1        # design §6.2
+  extract_schema_retry: 1     # G11
+rate_limit:
+  llm_calls_per_minute_per_user: null
+  narrator_questions_per_chapter: null
+input:
+  custom_action_max_chars: null
+  character_name_max_chars: null
+  backstory_max_chars: null

@@ -1,0 +1,18 @@
+# Model theo vai. Lý do tách vai: docs/design.md §6.5, docs/decisions.md D-3.
+# null = chưa chọn; chọn ở tuần 2 sau bài đo D (docs/eval.md).
+
+# Vai giữ trí nhớ: cố định, người chơi không đổi được.
+roles:
+  outline: null      # dàn ý cảnh
+  extract: null      # trích thay đổi -> JSON
+  guard: null        # người canh (phần LLM)
+  choices: null      # tạo 3 lựa chọn
+  narrator: null     # hỏi người kể
+  classify: null     # phân loại ô tự viết (G5)
+
+# Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
+writer_tiers: []
+#  - id: balanced
+#    label: "Cân bằng"
+#    model: "<openrouter-model-id>"
+#    eval_result: "evals/results/<ngày>-quality/"

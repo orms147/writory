@@ -1,0 +1,30 @@
+# Bí mật
+.env
+.env.*
+!.env.example
+
+# Python
+__pycache__/
+*.py[cod]
+.venv/
+.pytest_cache/
+.mypy_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Node
+node_modules/
+dist/
+
+# Dữ liệu Docker cục bộ
+.data/
+
+# Claude Code: cấu hình cá nhân, không chia sẻ
+.claude/settings.local.json
+
+# Hệ điều hành / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/

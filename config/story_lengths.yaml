@@ -1,0 +1,9 @@
+# Mức độ dài truyện. Ý đồ sản phẩm: docs/design.md §3. Runtime đọc số từ file này.
+chars_per_word_page: 3000          # 1 trang Word A4, giãn dòng đơn (ước lượng)
+chapter_chars: {min: 3000, max: 10000}
+scenes_per_chapter: {min: 2, max: 3}
+levels:
+  short:  {label: "Truyện ngắn",      target_chars: 30000,  chapters: {min: 4,  max: 8}}
+  medium: {label: "Truyện vừa",       target_chars: 90000,  chapters: {min: 10, max: 20}}
+  long:   {label: "Truyện dài",       target_chars: 180000, chapters: {min: 20, max: 35}}
+  novel:  {label: "Tiểu thuyết mỏng", target_chars: 300000, chapters: {min: 30, max: 60}}
