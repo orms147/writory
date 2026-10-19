@@ -91,7 +91,7 @@ Bản đầy đủ, kèm test cho từng mục: `docs/security.md`. **An toàn n
 Mỗi lỗi tìm được thêm thành **test hồi quy** trước khi sửa. Bài học được giữ bằng test, không bằng chữ trong file này.
 
 ## 6. Test
-- **Test nhanh** (mỗi commit): `cd backend && uv run pytest -m "not graph"`. Không mạng, không model thật; LLM thay bằng model giả trả câu ghi sẵn trong `tests/fixtures/`. Model giả cho test G1 **trả lại nguyên context nó nhận**, để lọc sai là test đỏ ngay. Mục tiêu dưới 2 phút.
+- **Test nhanh** (mỗi commit): `cd backend && uv run pytest -m "not graph"`. Không mạng, không model thật; LLM thay bằng model giả (`llm/fake.py`) trả câu ghi sẵn trong `tests/fixtures/`. Test G1 kiểm **context mà model nhận được** (`FakeLLM.calls`), để lọc sai là test đỏ ngay; chế độ echo dùng cho đường trả chữ. Mục tiêu dưới 2 phút.
 - **Test đồ thị:** `docker compose up -d` rồi `uv run pytest -m graph`, trên dữ liệu truyện mẫu.
 - **Bộ đo** (`docs/eval.md`): lệnh riêng, có gọi model, có trần chi phí, không chạy trong CI mặc định.
 - **Không viết test phụ thuộc thời gian chạy hoặc tốc độ máy** (sleep, timeout sát). Dùng đồng hồ giả.
