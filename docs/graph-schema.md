@@ -68,7 +68,7 @@ Câu trích của `REVEALED_TO_PLAYER` và của `KNOWS` từ nhân vật chính
 ## Ghi theo `commit_id` (D-6)
 **Một chương = một gói.** Gói của chương N chỉ mở cạnh với `valid_from_chapter = N`, không đặt sẵn `valid_to_chapter`, và chỉ đóng cạnh ở chương N (`chapter_rule_problems`, D-21). Chương 0 là thế giới lúc khởi tạo (design §4.1): sự thật "đã đúng từ trước trang đầu" mở ở chương 0. Nhờ quy tắc này, đọc ở chương N−1 không thấy gì của chương N, kể cả khi chương N đã áp vào Neo4j mà còn `pending` trong Postgres.
 
-**Luồng ghi** (`writory.db.commit_chapter`): kiểm quy tắc → Postgres ghi chương `pending` kèm gói (bảng `change_packages`, outbox) → `apply_package` → Postgres đặt `committed` và tăng `stories.committed_chapter`. Neo4j từ chối gói thì `delete_commit` rồi đặt `failed`. Neo4j không trả lời hoặc tiến trình chết thì chương ở lại `pending`, và `reconcile_pending` áp lại sau. Truyện còn chương `pending` không ghi được chương mới.
+**Luồng ghi** (`writory.db.commit_chapter`): kiểm quy tắc → Postgres ghi chương `pending` kèm gói (bảng `change_packages`, outbox) → `apply_package` → Postgres đặt `committed` và tăng `stories.committed_chapter`. Neo4j từ chối gói thì `delete_commit` rồi đặt `failed`; lý do lưu ở `chapters.error` sau khi qua `redact()`. Neo4j không trả lời hoặc tiến trình chết thì chương ở lại `pending`, và `reconcile_pending` áp lại sau. Truyện còn chương `pending` không ghi được chương mới.
 
 **Đọc chỉ thấy chương đã commit.** Mọi truy vấn cho người chơi và cho pipeline lấy số chương từ `writory.db.current_chapter` (hàm duy nhất), không tự đoán chương mới nhất trong Neo4j. Đường người chơi: `writory.db.committed_player_view`.
 
@@ -111,3 +111,4 @@ Truyện mẫu có chương 0 (gói khởi tạo, không có văn bản) và ch�
 - **Lời người chơi đã nghe.** Người chơi đã nghe lời nói dối của nhân vật khác (ví dụ `l_lan_cover`, `TOLD_TO` nhân vật chính), nhưng `player_view` chưa có gì về chuyện đó. Vì vậy sổ tay thiếu "Lan kể rằng cô trốn hôn nhân". Cần hiện dưới dạng **lời kể** ("Lan kể: …") và **không** được gắn nhãn `Lie`, vì gắn nhãn là lộ. Làm cùng sổ tay ở tuần 5, kèm test G1.
 - `player_view` chưa có quan hệ và người giữ đồ vật cho sổ tay (D-16).
 - G3 đối chiếu câu trích với văn bản mới được kiểm trong `validate_sample`. `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`; pipeline phải gọi `quote_in_text` với văn bản cảnh trước khi ghi.
+- **Tự reconcile lúc khởi động app.** Hiện `reconcile_pending` chỉ chạy tay (lệnh trong `docs/runbook.md`). Khi có app FastAPI, gọi nó lúc khởi động, để truyện không kẹt `pending` sau khi máy chủ chết giữa chừng.

@@ -19,6 +19,7 @@ from neo4j import Driver
 from neo4j.exceptions import DriverError, Neo4jError
 from psycopg.types.json import Jsonb
 
+from writory.errors import ErrorCode, WritoryError
 from writory.graph import (
     ChangePackage,
     GraphWriteError,
@@ -29,30 +30,44 @@ from writory.graph import (
     player_view,
 )
 from writory.graph.story import require_story_id
+from writory.safety.redact import redact
 
 
-class ChapterError(Exception):
-    """Lỗi khi ghi chương."""
+class ChapterError(WritoryError):
+    """Lỗi khi ghi chương. Mỗi lớp con mang một mã G12; chi tiết chỉ vào log (đã redact)."""
+
+    code = ErrorCode.CHAPTER_SAVE_FAILED
+
+    def __init__(self, detail: str = "") -> None:
+        super().__init__(type(self).code, detail)
 
 
 class StoryNotFoundError(ChapterError):
-    pass
+    code = ErrorCode.STORY_NOT_FOUND
 
 
 class ChapterPackageError(ChapterError):
     """Gói sai quy tắc theo chương hoặc trùng commit_id. Chưa ghi gì."""
 
+    code = ErrorCode.CHAPTER_PACKAGE_INVALID
+
 
 class ChapterOrderError(ChapterError):
     """Số chương không phải chương kế tiếp chương đã commit. Chưa ghi gì."""
+
+    code = ErrorCode.CHAPTER_OUT_OF_ORDER
 
 
 class PendingChapterError(ChapterError):
     """Truyện còn một chương pending; phải reconcile trước khi ghi chương mới. Chưa ghi gì."""
 
+    code = ErrorCode.CHAPTER_PENDING
+
 
 class ChapterCommitError(ChapterError):
     """Neo4j từ chối gói. Đã gỡ theo commit_id và đặt chương là failed; truyện giữ nguyên."""
+
+    code = ErrorCode.CHAPTER_SAVE_FAILED
 
 
 @dataclass(frozen=True)
@@ -169,7 +184,7 @@ def reconcile_pending(
         except ChapterCommitError as exc:
             results.append(ReconcileResult(sid, number, commit_id, "failed", str(exc)))
         except (Neo4jError, DriverError) as exc:
-            results.append(ReconcileResult(sid, number, commit_id, "pending", str(exc)))
+            results.append(ReconcileResult(sid, number, commit_id, "pending", redact(str(exc))))
     return results
 
 
@@ -215,7 +230,7 @@ def _apply(conn: psycopg.Connection, driver: Driver, story_id: str, package: Cha
     except GraphWriteError as exc:
         # Transaction Neo4j đã rollback; gỡ thêm theo commit_id cho chắc (D-6 bước 4).
         delete_commit(driver, story_id, package.commit_id)
-        _mark_failed(conn, story_id, package.commit_id, str(exc))
+        _mark_failed(conn, story_id, package.commit_id, redact(str(exc)))
         raise ChapterCommitError(f"commit {package.commit_id}: {exc}") from exc
 
 

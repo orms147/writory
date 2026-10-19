@@ -26,6 +26,11 @@ class ErrorCode(StrEnum):
     LLM_BAD_RESPONSE = "LLM_BAD_RESPONSE"
     PLAYER_KEY_MISSING = "PLAYER_KEY_MISSING"
     PLAYER_KEY_UNREADABLE = "PLAYER_KEY_UNREADABLE"
+    STORY_NOT_FOUND = "STORY_NOT_FOUND"
+    CHAPTER_SAVE_FAILED = "CHAPTER_SAVE_FAILED"
+    CHAPTER_PENDING = "CHAPTER_PENDING"
+    CHAPTER_OUT_OF_ORDER = "CHAPTER_OUT_OF_ORDER"
+    CHAPTER_PACKAGE_INVALID = "CHAPTER_PACKAGE_INVALID"
 
 
 @dataclass(frozen=True)
@@ -100,6 +105,28 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.PLAYER_KEY_UNREADABLE: PlayerMessage(
         "Không đọc được key OpenRouter đã lưu của bạn.",
         "Nhập lại key trong phần cài đặt.",
+    ),
+    ErrorCode.STORY_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy truyện này.",
+        "Quay về danh sách truyện của bạn và mở lại.",
+    ),
+    ErrorCode.CHAPTER_SAVE_FAILED: PlayerMessage(
+        "Không lưu được chương vừa viết vì dữ liệu của chương không khớp với truyện. "
+        "Truyện vẫn ở chương trước, không mất gì.",
+        "Bấm thử lại để viết lại chương này. " + _REPORT,
+    ),
+    ErrorCode.CHAPTER_PENDING: PlayerMessage(
+        "Chương trước vẫn đang được lưu dở nên chưa viết tiếp được.",
+        "Đợi một lát rồi bấm thử lại; hệ thống sẽ hoàn tất việc lưu chương trước.",
+    ),
+    ErrorCode.CHAPTER_OUT_OF_ORDER: PlayerMessage(
+        "Truyện đã sang chương khác so với trang bạn đang xem (có thể truyện đang mở ở hai nơi).",
+        "Tải lại trang để thấy chương mới nhất.",
+    ),
+    ErrorCode.CHAPTER_PACKAGE_INVALID: PlayerMessage(
+        "Hệ thống tạo ra thay đổi không hợp lệ cho chương này nên chưa lưu gì. "
+        "Lỗi ở phía hệ thống, không phải do bạn.",
+        "Bấm thử lại. " + _REPORT,
     ),
 }
 

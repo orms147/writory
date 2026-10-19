@@ -19,7 +19,13 @@ from writory.db import (
     migrate,
     reconcile_pending,
 )
-from writory.graph import ChangePackage, item_holder, read_sample, story_snapshot
+from writory.graph import (
+    ChangePackage,
+    MissingEntityError,
+    item_holder,
+    read_sample,
+    story_snapshot,
+)
 
 pytestmark = pytest.mark.graph
 
@@ -174,3 +180,21 @@ def test_neo4j_down_leaves_pending_then_reconcile(pg, driver, new_db_story_id, m
 
     assert [r.status for r in reconcile_pending(pg, driver, story_id=sid)] == ["committed"]
     assert current_chapter(pg, sid) == 2
+
+
+def test_stored_error_is_redacted(pg, driver, new_db_story_id, monkeypatch):
+    # chapters.error chỉ để log, nhưng vẫn không được chứa chuỗi giống key (G7).
+    sid = new_db_story_id()
+    _story_with(pg, driver, sid, 1)
+    fake_key = "sk-or-v1-" + "c3" * 32
+
+    def reject(*_args, **_kwargs):
+        raise MissingEntityError(f"id không có trong truyện: ['x'] {fake_key}")
+
+    monkeypatch.setattr(chapters_mod, "apply_package", reject)
+    with pytest.raises(ChapterCommitError) as info:
+        _commit(pg, driver, sid, 2)
+    stored = chapter_records(pg, sid)[-1]
+    assert stored.status == "failed"
+    assert fake_key not in stored.error and "[REDACTED]" in stored.error
+    assert fake_key not in str(info.value)
