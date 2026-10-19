@@ -1,4 +1,4 @@
-# CLAUDE.md — Mạch Truyện (writory)
+# CLAUDE.md — WriTory
 
 Truyện tương tác tiếng Việt có trí nhớ thế giới dạng đồ thị. Thiết kế: `docs/design.md`. File này chỉ chứa **quy tắc làm việc** và **sự thật hiện hành**, không chứa lịch sử. Tài liệu viết tiếng Việt; tên trong code viết tiếng Anh theo bảng thuật ngữ (§8).
 
@@ -127,6 +127,6 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 
 - Bản đang làm: **Bản 1, trước tuần 1**. Mới có khung repo, chưa có code tính năng.
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
-- Quyết định đang hiệu lực: D-1 đến D-8 (`docs/decisions.md`).
+- Quyết định đang hiệu lực: D-1 đến D-9 (`docs/decisions.md`).
 - Chưa có: schema đồ thị chốt (tuần 1), model viết và danh sách mức model (tuần 2, bài D), trần chi phí (tuần 2), frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).

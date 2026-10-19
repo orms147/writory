@@ -1,4 +1,4 @@
-# Mạch Truyện — Tài liệu thiết kế
+# WriTory — Tài liệu thiết kế
 
 *Truyện tương tác tiếng Việt, nhớ mọi thứ bạn đã chọn.*
 
@@ -310,7 +310,6 @@ Tuần 1 làm tay có chủ ý: thiết kế đồ thị sai thì mọi thứ sa
 | Prompt injection lưu trữ: chữ người chơi nằm trong đồ thị rồi quay lại prompt các chương sau | Mọi chữ có nguồn gốc người chơi mang nhãn và luôn được bọc như dữ liệu, kể cả khi đọc ra từ đồ thị |
 
 ## 14. Còn mở
-- Tên chính thức của dự án ("Mạch Truyện" là tên tạm; repo tên `writory`).
 - Ai là người dùng thật đầu tiên ngoài chủ dự án, và đưa cho họ bằng cách nào.
 - Model viết tiếng Việt cụ thể (chọn ở tuần 2 bằng thử).
 - Model kiểm duyệt nội dung cho tiếng Việt (chọn sau khi đo).
