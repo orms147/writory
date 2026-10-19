@@ -1,0 +1,68 @@
+# Đoạn văn ngắn cho từng bộ kiểm. expect = các loại lỗi phải báo (rỗng = không được báo gì).
+# Độ dài không kiểm ở đây (đoạn ngắn); test độ dài riêng.
+cases:
+  # --- lẫn chữ khác hệ ---
+  - id: chu-han
+    text: "Minh bước vào quán, gọi một ấm trà nóng. 他看着窗外的雨。 Lan mang trà ra, không nói gì."
+    expect: [foreign_script]
+  - id: hangul
+    text: "Cô gái quay lại, khẽ nói 고마워요 rồi chạy mất."
+    expect: [foreign_script]
+  - id: cau-tieng-anh
+    text: "Lão Gù đặt thanh kiếm xuống bàn. The ancient sword glowed with a strange light. Minh lùi lại một bước."
+    expect: [foreign_script]
+  - id: ten-rieng-ngan
+    text: "John Smith gửi email cho Hà, bảo mọi thứ vẫn OK, hẹn gặp ở Singapore tuần sau."
+    expect: []
+  - id: tu-khong-dau-lien-nhau
+    # Tom, cho, Lan, xem, con, tem: đều là chữ ASCII nhưng là âm tiết tiếng Việt hợp lệ.
+    text: "Tom cho Lan xem con tem in hình nữ hoàng Anh."
+    expect: []
+  - id: tu-muon
+    text: "Wifi ở quán chập chờn, video gọi về nhà cứ đứng hình mãi."
+    expect: []
+
+  # --- sáo ngữ ---
+  - id: sao-ngu
+    text: "Khi cánh cửa mở ra, thời gian như ngừng trôi. Minh đứng sững, nhìn người đàn bà áo đen."
+    expect: [cliche]
+  - id: sao-ngu-hoa
+    text: "Hít Một Hơi Thật Sâu, Lan đẩy cửa bước vào."
+    expect: [cliche]
+  - id: ten-minh-khong-phai-sao-ngu
+    text: "Minh chứng cho Lan thấy cuốn sổ là của mình."
+    expect: []
+
+  # --- lặp cụm từ (với ngưỡng thử: cụm 4 từ, tối đa 2 lần) ---
+  - id: lap-cum
+    text: "Minh đi ra bến sông. Sáng hôm sau Minh đi ra bến sông lần nữa để tìm Lan. Chiều đó Minh đi ra bến sông thêm một lần, vẫn không thấy ai."
+    expect: [repetition]
+
+  # --- định dạng lời thoại (dash, D-18) ---
+  - id: gach-ngan
+    text: "Lan rót trà.\n\n– Anh uống đi, kẻo nguội.\n\nMinh cầm chén lên."
+    expect: [dialogue_format]
+  - id: gach-noi
+    text: "Có tiếng gõ cửa.\n\n- Ai đó?\n\nKhông ai trả lời."
+    expect: [dialogue_format]
+  - id: mo-dau-ngoac-kep
+    text: "“Anh đi đâu thế?” Lan hỏi, tay vẫn lau chén."
+    expect: [dialogue_format]
+  - id: mo-dau-ngoac-thang
+    text: "\"Đứng lại!\" Khải quát, rút đao ra."
+    expect: [dialogue_format]
+  - id: gach-khong-chu
+    text: "Minh im lặng.\n\n—\n\nLan quay đi."
+    expect: [dialogue_format]
+  - id: ngoac-khong-dong
+    text: "Trên chuôi kiếm khắc chữ “Thanh Sương, nét đã mờ gần hết."
+    expect: [unclosed_quote]
+  - id: ngoac-thang-khong-dong
+    text: "Hắn gọi Minh là \"chú em họ cho lính cười."
+    expect: [unclosed_quote]
+  - id: ngoac-giua-doan-hop-le
+    text: "Cả phố gọi Khải là \"cai mặt sắt\", còn Lan thì gọi hắn là “ông cai” cho lịch sự."
+    expect: []
+  - id: gach-dai-hop-le
+    text: "— Anh chép sách phải không? — cô hỏi. — Em tên Lan."
+    expect: []

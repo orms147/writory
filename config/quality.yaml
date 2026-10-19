@@ -1,0 +1,50 @@
+# Kiểm văn bằng code (design §6.5 mục 5; docs/decisions.md D-18, D-19).
+# null = chưa đặt. Code dùng ngưỡng chưa đặt thì báo lỗi CONFIG_LIMIT_NOT_SET.
+# Ngưỡng đặt ở tuần 2, sau khi đo trên văn thật (truyện mẫu + cảnh model viết).
+# Độ dài cảnh lấy từ story_lengths.yaml (chapter_chars chia cho số cảnh của chương).
+
+dialogue_style: dash            # D-18. "quotes" để dành, chưa hỗ trợ.
+
+repetition:
+  ngram_words: null             # độ dài cụm từ, tính bằng số từ
+  max_repeats: null             # một cụm xuất hiện quá số lần này trong một cảnh thì báo
+
+foreign_script:
+  # Số từ Latin không phải âm tiết tiếng Việt, đứng liền nhau (không bị từ có dấu chen ngang),
+  # thì báo là lẫn chữ khác hệ. Chữ Hán/Kana/Hangul luôn bị báo, không cần ngưỡng.
+  latin_run_min_words: null
+  # Từ mượn hay gặp, không tính vào chuỗi trên. So không phân biệt hoa thường.
+  allowed_latin_words: [ok, email, wifi, internet, video, online, offline, laptop, website, app]
+
+cliches:
+  # BẢN NHÁP do Claude (Session 2) soạn, CHỜ CHỦ DỰ ÁN DUYỆT. Cụm hay gặp ở văn AI tiếng Việt.
+  # So sau chuẩn hoá NFC, không phân biệt hoa thường, khớp trọn từ.
+  draft: true
+  phrases:
+    - thời gian như ngừng trôi
+    - thời gian như ngưng đọng
+    - không khí như đặc quánh lại
+    - một luồng điện chạy dọc sống lưng
+    - trái tim như thắt lại
+    - tim như ngừng đập
+    - một cảm giác khó tả
+    - không thể diễn tả bằng lời
+    - một nỗi sợ hãi vô hình
+    - bầu không khí căng thẳng bao trùm
+    - sự im lặng bao trùm
+    - sự im lặng đáng sợ
+    - như thể cả thế giới
+    - nở một nụ cười bí ẩn
+    - nụ cười nhếch mép
+    - ánh mắt sắc lạnh
+    - đôi mắt sâu thẳm
+    - hít một hơi thật sâu
+    - tâm trí rối bời
+    - là minh chứng cho
+    - dệt nên một bức tranh
+    - bản giao hưởng của
+    - một hành trình đầy
+    - mọi thứ dường như
+    - khoảnh khắc ấy như kéo dài vô tận
+    - một làn sóng cảm xúc
+    - không hề hay biết rằng

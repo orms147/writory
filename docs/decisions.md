@@ -125,3 +125,23 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** cạnh `REVEALED_TO_PLAYER` và `KNOWS` (của nhân vật chính) tới Character/Item/Location/Faction bắt buộc có `known_as`, và code kiểm `known_as` nằm trong `quote`. `player_view` chỉ hiện `known_as` đã hé lộ tới chương N, không bao giờ hiện `name` hay `aliases`. Chữ của `Fact`/`Event` chỉ chứa một mệnh đề; chi tiết bí mật là `Fact` riêng. Bổ sung D-16 về trường hiện cho nút có tên.
 - **Hệ quả:** bước trích thay đổi (tuần 2) phải xuất `known_as` cho mỗi lần hé lộ. Truyện mẫu có thêm Lý Thất, ra mắt bằng biệt danh ở chương 4, lộ tên thật ở chương 5.
 - **Người quyết:** Claude (điều phối) · 19/10/2026
+
+## D-18 · Lời thoại theo kiểu gạch đầu dòng
+- **Bối cảnh:** design §6.5 cần kiểm "định dạng lời thoại" nhưng chưa nói kiểu nào. Truyện mẫu `data/sample-story/` dùng kiểu gạch đầu dòng.
+- **Quyết định:** dòng thoại mở đầu bằng "— " (U+2014 + khoảng trắng); config `dialogue_style: dash`. Giá trị `quotes` để dành, gặp thì báo "chưa hỗ trợ". Kiểm văn báo lỗi khi:
+  - dòng mở đầu bằng "–" hoặc "-";
+  - đoạn mở đầu bằng ngoặc kép;
+  - dòng chỉ có dấu gạch;
+  - ngoặc kép không đóng (mọi chế độ).
+- **Hệ quả:** ngoặc kép giữa đoạn (chữ khắc, tên sách, câu trích) là hợp lệ. Kiểm văn chỉ báo lỗi, không tự sửa.
+- **Người quyết:** Claude (điều phối) · 19/10/2026
+
+## D-19 · Ngưỡng kiểm văn nằm trong `config/quality.yaml`
+- **Bối cảnh:** kiểm văn (design §6.5 mục 5) cần ngưỡng và danh sách sáo ngữ. Ba file config sẵn có không hợp chỗ.
+- **Quyết định:**
+  - Thêm `config/quality.yaml`. Ngưỡng chưa đo để `null`; code dùng tới thì báo `CONFIG_LIMIT_NOT_SET`.
+  - Danh sách sáo ngữ là bản nháp chờ chủ dự án duyệt (`draft: true`).
+  - "Tỉ lệ lặp" kiểm theo từng cụm: một cụm `ngram_words` từ xuất hiện quá `max_repeats` lần thì báo tại chỗ lặp. Không dùng một tỉ lệ cho cả cảnh, vì lỗi phải có vị trí.
+  - Chữ Latin chỉ bị đếm khi không phải âm tiết tiếng Việt viết không dấu và không nằm trong danh sách từ mượn.
+- **Hệ quả:** văn tiếng Việt viết thiếu dấu không bị bắt (cần bộ kiểm khác nếu muốn).
+- **Người quyết:** Claude (Session 2) · 19/10/2026
