@@ -7,7 +7,7 @@ import yaml
 from neo4j import Driver
 
 from writory.graph.commit import apply_package, needs_known_as
-from writory.graph.package import ChangePackage, quote_in_text
+from writory.graph.package import ChangePackage, chapter_rule_problems, quote_in_text
 
 DEFAULT_SAMPLE_DIR = Path(__file__).resolve().parents[4] / "data" / "sample-story"
 
@@ -32,7 +32,7 @@ def read_sample(path: Path | None = None) -> SampleStory:
     chapters = [
         SampleChapter(
             number=ch["number"],
-            text=(root / ch["file"]).read_text(encoding="utf-8"),
+            text=(root / ch["file"]).read_text(encoding="utf-8") if ch.get("file") else "",
             package=ChangePackage.model_validate(
                 {k: ch.get(k) or [] for k in ("nodes", "edges", "close")}
                 | {"commit_id": ch["commit_id"]}
@@ -50,12 +50,14 @@ def validate_sample(sample: SampleStory) -> list[str]:
     - Cạnh chỉ trỏ tới nút đã khai ở chương này hoặc trước.
     - `close` chỉ trỏ tới cạnh đã có, cùng kiểu.
     - Cạnh hé lộ nút có tên phải có `known_as` (D-17).
+    - Gói chương N chỉ mở và đóng cạnh ở chương N (D-21).
     """
     problems: list[str] = []
     nodes: dict[str, dict] = {}
     edges: dict[str, str] = {}
     for ch in sample.chapters:
         pkg = ch.package
+        problems += [f"chương {ch.number}: {p}" for p in chapter_rule_problems(pkg, ch.number)]
         nodes |= {
             n.id: {"labels": [n.label], "protagonist": n.id == sample.protagonist}
             for n in pkg.nodes
@@ -79,8 +81,6 @@ def validate_sample(sample: SampleStory) -> list[str]:
                 and "known_as" not in e.props
             ):
                 problems.append(f"chương {ch.number}: cạnh {e.id} hé lộ nút có tên nhưng thiếu known_as")
-            if e.valid_from_chapter > ch.number:
-                problems.append(f"chương {ch.number}: cạnh {e.id} bắt đầu ở chương sau")
         edges |= {e.id: e.type for e in pkg.edges}
         for c in pkg.close:
             if edges.get(c.id) != c.type:

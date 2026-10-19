@@ -122,6 +122,27 @@ class ChangePackage(BaseModel):
         return self
 
 
+def chapter_rule_problems(package: ChangePackage, chapter: int) -> list[str]:
+    """Gói của chương N chỉ mở cạnh từ chương N và chỉ đóng cạnh ở chương N (D-21).
+    Nhờ vậy, khi chương N còn pending, đọc ở chương N-1 không thấy gì của nó."""
+    problems = [
+        f"cạnh {e.id} mở từ chương {e.valid_from_chapter}, gói thuộc chương {chapter}"
+        for e in package.edges
+        if e.valid_from_chapter != chapter
+    ]
+    problems += [
+        f"cạnh {e.id} đặt sẵn ngày đóng (chương {e.valid_to_chapter})"
+        for e in package.edges
+        if e.valid_to_chapter is not None
+    ]
+    problems += [
+        f"close {c.id} ở chương {c.valid_to_chapter}, gói thuộc chương {chapter}"
+        for c in package.close
+        if c.valid_to_chapter != chapter
+    ]
+    return problems
+
+
 def _normalize(s: str) -> str:
     return re.sub(r"\s+", " ", unicodedata.normalize("NFC", s)).strip()
 

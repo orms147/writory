@@ -12,7 +12,14 @@ from writory.graph.commit import (
     delete_story,
     story_snapshot,
 )
-from writory.graph.package import ChangePackage, CloseSpec, EdgeSpec, NodeSpec, quote_in_text
+from writory.graph.package import (
+    ChangePackage,
+    CloseSpec,
+    EdgeSpec,
+    NodeSpec,
+    chapter_rule_problems,
+    quote_in_text,
+)
 from writory.graph.player_view import (
     PlayerEntry,
     PlayerLie,
@@ -59,6 +66,7 @@ __all__ = [
     "StorySnapshot",
     "ThreadInfo",
     "apply_package",
+    "chapter_rule_problems",
     "delete_commit",
     "delete_story",
     "ensure_schema",

@@ -3,7 +3,15 @@ import unicodedata
 import pytest
 from pydantic import ValidationError
 
-from writory.graph import ChangePackage, CloseSpec, EdgeSpec, NodeSpec, quote_in_text
+from writory.graph import (
+    ChangePackage,
+    CloseSpec,
+    EdgeSpec,
+    NodeSpec,
+    chapter_rule_problems,
+    quote_in_text,
+    read_sample,
+)
 
 
 def test_edge_id_is_deterministic_when_not_given():
@@ -90,3 +98,31 @@ def test_known_as_must_be_inside_quote():
         "known_as": unicodedata.normalize("NFD", "gã lái đò mặt sẹo"),
     })
     assert ok.props["known_as"]
+
+
+def test_chapter_rule():
+    # D-21: gói chương N chỉ mở cạnh từ N, chỉ đóng cạnh ở N, không đặt trước ngày đóng.
+    ok = ChangePackage.model_validate({
+        "commit_id": "c3",
+        "edges": [{"type": "HOLDS", "from": "a", "to": "b", "valid_from_chapter": 3}],
+        "close": [{"type": "HOLDS", "id": "old", "valid_to_chapter": 3}],
+    })
+    assert chapter_rule_problems(ok, 3) == []
+    bad = ChangePackage.model_validate({
+        "commit_id": "c3",
+        "edges": [
+            {"type": "HOLDS", "from": "a", "to": "b", "valid_from_chapter": 2, "id": "early"},
+            {"type": "HOLDS", "from": "a", "to": "c", "valid_from_chapter": 3,
+             "valid_to_chapter": 5, "id": "preclosed"},
+        ],
+        "close": [{"type": "HOLDS", "id": "late", "valid_to_chapter": 4}],
+    })
+    problems = " ".join(chapter_rule_problems(bad, 3))
+    assert "early" in problems and "preclosed" in problems and "late" in problems
+
+
+def test_package_json_roundtrip():
+    # Gói được lưu dạng JSON trong Postgres (outbox, D-6) rồi đọc lại để áp.
+    for ch in read_sample().chapters:
+        raw = ch.package.model_dump(mode="json", by_alias=True)
+        assert ChangePackage.model_validate(raw) == ch.package

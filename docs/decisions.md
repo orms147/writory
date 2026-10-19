@@ -146,3 +146,15 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Chữ Latin chỉ bị đếm khi không phải âm tiết tiếng Việt viết không dấu và không nằm trong danh sách từ mượn.
 - **Hệ quả:** văn tiếng Việt bỏ dấu cả câu không bị bắt; chữ Cyrillic, Thái chưa kiểm. Hai việc này để tuần 2.
 - **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-20 · Migration Postgres bằng SQL thuần và một runner nhỏ
+- **Bối cảnh:** cần bảng `stories`, `chapters`, `change_packages` cho D-6. Alembic kéo theo SQLAlchemy, trong khi code chỉ dùng psycopg.
+- **Quyết định:** file `.sql` trong `backend/src/writory/db/migrations/`, chạy theo thứ tự tên bằng `writory.db.migrate`. Tên đã chạy ghi vào `schema_migrations`. Tất cả chạy trong một transaction, có khoá advisory. Không có migration ngược; đổi schema thì thêm file mới.
+- **Hệ quả:** không thêm phụ thuộc. Không tự sinh migration từ model; viết SQL tay.
+- **Người quyết:** Claude (Session 1) · 19/10/2026
+
+## D-21 · Gói của chương N chỉ mở và đóng cạnh ở chương N; chương 0 là thế giới lúc khởi tạo
+- **Bối cảnh:** D-6 cần "chỉ đọc chương đã commit". Đọc ở chương đã commit chỉ loại được dữ liệu của chương `pending` khi mọi cạnh của chương đó có `valid_from_chapter` bằng số chương. Truyện mẫu cũ có cạnh `valid_from_chapter: 0` nằm trong gói chương 1 và chương 4.
+- **Quyết định:** `commit_chapter` từ chối gói có cạnh mở ở chương khác, cạnh đặt sẵn ngày đóng, hoặc `close` ở chương khác (`chapter_rule_problems`). Sự thật có từ trước trang đầu nằm trong gói chương 0 (đồ thị ban đầu, design §4.1). Truyện mẫu đã chuyển các sự thật đó sang chương 0; đáp án §7.3 không đổi. Số chương hiện hành chỉ lấy từ `writory.db.current_chapter`.
+- **Hệ quả:** một sự thật chỉ phát hiện ra ở chương N (ví dụ "hoá ra Lan là người của Hội từ trước") được ghi là đúng từ chương N, không ghi lùi về trước. Muốn hỏi "thật ra từ khi nào" thì phải thêm thuộc tính riêng.
+- **Người quyết:** Claude (Session 1) · 19/10/2026
