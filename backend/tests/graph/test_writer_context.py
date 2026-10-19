@@ -38,9 +38,9 @@ def test_chapter_4_minh_and_lan(driver, sample_story_id):
     assert (ctx.as_of_chapter, ctx.writing_chapter) == (4, 5)
 
     lan = next(c for c in ctx.present if c.id == "lan")
-    assert lan.holds == ("Thanh Sương",)          # Lan đang giữ kiếm
+    assert [h.value for h in lan.holds] == ["Thanh Sương"]  # Lan đang giữ kiếm
     minh = next(c for c in ctx.present if c.id == "minh")
-    assert minh.holds == ("lá thư niêm sáp đỏ",)
+    assert [h.value for h in minh.holds] == ["lá thư niêm sáp đỏ"]
 
     spy = next(f for f in ctx.known_facts if f.id == "f_lan_spy")
     assert {k.id for k in spy.known_by} == {"lan", "gu"}
@@ -122,3 +122,60 @@ def test_render_size_is_reported(driver, sample_story_id, capsys):
             f"{len(text.encode('utf-8'))} UTF-8 bytes, {len(ctx.neighbors)} neighbors"
         )
     assert "Sự thật cần tôn trọng" in text
+
+
+def test_player_text_from_neo4j_is_wrapped(driver, new_story_id):
+    # Hồi quy (security review): cờ user_authored phải đi theo mọi chữ lấy từ Neo4j,
+    # kể cả khi nhân vật người chơi viết là người biết, người nghe, hay người nói vắng mặt.
+    from writory.graph import ChangePackage, apply_package
+    from writory.safety.wrap import UserAuthored
+
+    sid = new_story_id()
+    ua = {"user_authored": True}
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character",
+             "props": {"name": "[P-hero]", "aliases": ["[P-alias]"], "is_protagonist": True, **ua}},
+            {"id": "npc", "label": "Character", "props": {"name": "Người hầu"}},
+            {"id": "place", "label": "Location", "props": {"name": "[P-place]", **ua}},
+            {"id": "item", "label": "Item", "props": {"name": "[P-item]", **ua}},
+            {"id": "f1", "label": "Fact", "props": {"text": "Một sự thật"}},
+            {"id": "f9", "label": "Fact", "props": {"text": "[P-secret]", **ua}},
+            {"id": "l1", "label": "Lie", "props": {"chapter": 0, "content": "[P-lie]", **ua}},
+            # Lời dối hệ thống viết, người chơi là người nghe.
+            {"id": "l2", "label": "Lie", "props": {"chapter": 0, "content": "Lời dối của người hầu"}},
+            {"id": "t1", "label": "Thread", "props": {
+                "description": "[P-thread]", "planted_chapter": 0, "due_from_chapter": 1,
+                "due_to_chapter": 2, **ua}},
+        ],
+        "edges": [
+            {"type": "LOCATED_AT", "from": "npc", "to": "place", "valid_from_chapter": 0},
+            {"type": "HOLDS", "from": "npc", "to": "item", "valid_from_chapter": 0},
+            {"type": "KNOWS", "from": "npc", "to": "f1", "valid_from_chapter": 0},
+            {"type": "KNOWS", "from": "hero", "to": "f1", "valid_from_chapter": 0},
+            {"type": "TOLD", "from": "hero", "to": "l1", "valid_from_chapter": 0},
+            {"type": "TOLD_TO", "from": "l1", "to": "npc", "valid_from_chapter": 0},
+            {"type": "TOLD", "from": "npc", "to": "l2", "valid_from_chapter": 0},
+            {"type": "TOLD_TO", "from": "l2", "to": "hero", "valid_from_chapter": 0},
+        ],
+    }))
+
+    @dataclass(frozen=True)
+    class _P:
+        secrets: tuple
+
+    # Chỉ người hầu có mặt: người chơi là người biết, người nói vắng mặt và người nghe.
+    ctx = writer_context(driver, sid, 0, ["npc"], _P((_Secret("f9", 3, 4),)))
+    assert {lie.id for lie in ctx.open_lies} == {"l1", "l2"}
+    parts = render_writer_context(ctx)
+    # Từng vị trí riêng: người nghe của l2 là người chơi.
+    l2 = next(lie for lie in ctx.open_lies if lie.id == "l2")
+    assert [t.user_authored for t in l2.told_to] == [True]
+    assert next(lie for lie in ctx.open_lies if lie.id == "l1").speaker.user_authored
+    assert next(f for f in ctx.known_facts if f.id == "f1").known_by[0].name.user_authored
+    raw = [p for p in parts if isinstance(p, str)]
+    for marker in ["[P-hero]", "[P-alias]", "[P-place]", "[P-item]", "[P-secret]",
+                   "[P-lie]", "[P-thread]"]:
+        assert not any(marker in p for p in raw), f"{marker} đi ra trần"
+        assert any(isinstance(p, UserAuthored) and marker in p.text for p in parts), marker

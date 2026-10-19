@@ -86,7 +86,7 @@ Phần Neo4j:
 - nút cách người có mặt 1–2 bước, theo cạnh còn hiệu lực. Không đi qua `REVEALED_TO_PLAYER` hay nút `Chapter`, không lặp lại nút đã nằm ở các mục trên, và giới hạn số nút bằng `limits.context.writer_max_neighbors`;
 - mạch đang mở, kèm cờ quá hạn.
 
-`render_writer_context` trả các phần để đưa vào `user_message`, chia hai mục: "Sự thật cần tôn trọng" (gồm cả người liên quan đã chết) và "Gợi ý có thể nhắc tới". Chữ của nút mang `user_authored: true` luôn được bọc bằng `UserAuthored` (G4). Ngữ cảnh này chứa bí mật, nên không bao giờ được đi ra đường của người chơi.
+`render_writer_context` trả các phần để đưa vào `user_message`, chia hai mục: "Sự thật cần tôn trọng" (gồm cả người liên quan đã chết) và "Gợi ý có thể nhắc tới". Mọi chữ lấy từ một nút mang `user_authored: true` đều được bọc bằng `UserAuthored` (G4), ở bất kỳ vị trí nào: tên, biệt danh, nơi ở, đồ vật, người biết, người nói, người nghe, bí mật, mạch. Mỗi vị trí có test hồi quy. Ngữ cảnh này chứa bí mật, nên không bao giờ được đi ra đường của người chơi.
 
 ## Ràng buộc và index
 Tạo bằng `ensure_schema(driver)` (chạy lại an toàn). Câu lệnh đầy đủ: `schema_statements()` trong `schema.py`.
