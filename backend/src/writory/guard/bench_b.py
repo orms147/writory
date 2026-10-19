@@ -136,8 +136,7 @@ def _write_results(out: Path, result: BenchResult, table: str) -> None:
     out.mkdir(parents=True, exist_ok=True)
     (out / "result.json").write_text(
         json.dumps({"meta": meta, **asdict(result)}, ensure_ascii=False, indent=2) + "\n",
-        encoding="utf-8", newline="
-",
+        encoding="utf-8", newline="\n",
     )
     (out / "README.md").write_text(
         "# Bài B: người canh, phần kiểm bằng code\n\n"
@@ -147,8 +146,7 @@ def _write_results(out: Path, result: BenchResult, table: str) -> None:
         f"- Model: {meta['model']}\n"
         "- Lệnh: `cd backend && uv run python -m writory.guard.bench_b --out <thư mục này>`\n\n"
         + table + "\n",
-        encoding="utf-8", newline="
-",
+        encoding="utf-8", newline="\n",
     )
 
 
