@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
-from writory.llm.base import LLMClient
+from writory.llm.base import LLMClient, require_model
 from writory.llm.retry import RETRY_SCHEMA, with_retries
 from writory.safety.redact import redact
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
@@ -70,7 +70,7 @@ def _require(section, name: str):
 
 async def classify_action(text: str, *, llm: LLMClient, config: AppConfig) -> Classification:
     max_chars = _require(config.limits.input, "custom_action_max_chars")
-    model = _require(config.models.roles, "classify")
+    model = require_model(config.models.roles, "classify")
     if not text.strip():
         raise WritoryError(ErrorCode.ACTION_EMPTY)
     if len(text) > max_chars:

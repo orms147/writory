@@ -141,7 +141,8 @@ async def test_unset_classify_model_is_config_error():
     llm = FakeLLM.scripted([answer("in_story_action")])
     with pytest.raises(WritoryError) as exc:
         await classify_action("Tôi mở cửa.", llm=llm, config=cfg)
-    assert exc.value.code is ErrorCode.CONFIG_LIMIT_NOT_SET
+    assert exc.value.code is ErrorCode.CONFIG_MODEL_NOT_SET
+    assert "classify" in str(exc.value)
     assert llm.calls == []
 
 

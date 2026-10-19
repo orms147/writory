@@ -7,7 +7,17 @@ from typing import Literal
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
+from writory.config import LimitNotSetError, RoleModels
 from writory.errors import ErrorCode, WritoryError
+
+
+def require_model(roles: RoleModels, role: str) -> str:
+    """Model của một vai trong config/models.yaml. Vai chưa chọn model (null) thì báo
+    CONFIG_MODEL_NOT_SET, không đoán model nào."""
+    try:
+        return roles.require(role)
+    except LimitNotSetError as e:
+        raise WritoryError(ErrorCode.CONFIG_MODEL_NOT_SET, detail=str(e)) from None
 
 
 class Message(BaseModel):

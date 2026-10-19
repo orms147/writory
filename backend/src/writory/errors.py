@@ -12,6 +12,7 @@ from writory.safety.redact import redact
 
 class ErrorCode(StrEnum):
     CONFIG_LIMIT_NOT_SET = "CONFIG_LIMIT_NOT_SET"
+    CONFIG_MODEL_NOT_SET = "CONFIG_MODEL_NOT_SET"
     COST_LIMIT_SCENE = "COST_LIMIT_SCENE"
     COST_LIMIT_CHAPTER = "COST_LIMIT_CHAPTER"
     COST_LIMIT_STORY = "COST_LIMIT_STORY"
@@ -52,6 +53,10 @@ _REPORT = "Nếu lỗi lặp lại, hãy báo cho người quản trị."
 MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.CONFIG_LIMIT_NOT_SET: PlayerMessage(
         "Máy chủ chưa đặt giới hạn cần cho thao tác này nên đã dừng lại.",
+        "Đây là lỗi cấu hình phía máy chủ, không phải do bạn; hãy báo cho người quản trị.",
+    ),
+    ErrorCode.CONFIG_MODEL_NOT_SET: PlayerMessage(
+        "Máy chủ chưa chọn model cho bước này nên đã dừng lại.",
         "Đây là lỗi cấu hình phía máy chủ, không phải do bạn; hãy báo cho người quản trị.",
     ),
     ErrorCode.COST_LIMIT_SCENE: PlayerMessage(
