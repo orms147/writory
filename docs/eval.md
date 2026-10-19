@@ -30,3 +30,4 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 - Dữ liệu: `evals/redteam/`. Mỗi câu có kết quả mong đợi: bị chặn / không lộ / đúng schema.
 - Với model giả thì chạy trong test nhanh. Với model thật thì chạy riêng, có trần chi phí.
 - G4, prompt injection: `evals/redteam/g4_prompt_injection.yaml`. Phần `expected_wrap` chạy trong test nhanh (`tests/unit/test_safety_wrap.py`). Phần `expected_story` dành cho model thật; lệnh: *(chưa có)*.
+- G5, phân loại ô tự viết: `evals/redteam/g5_classify.yaml`, mỗi câu có nhãn mong đợi. Test nhanh chỉ kiểm cấu trúc bộ câu và luồng xử lý (model giả). Đo với model thật: `cd backend && uv run python -m writory.safety.bench_g5 --out ../evals/results/<ngày>-g5` (cần `models.roles.classify`, `limits.input.custom_action_max_chars`, trần `limits.cost_usd.per_story`; chưa chạy).

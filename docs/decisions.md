@@ -158,3 +158,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** `commit_chapter` từ chối gói có cạnh mở ở chương khác, cạnh đặt sẵn ngày đóng, hoặc `close` ở chương khác (`chapter_rule_problems`). Sự thật có từ trước trang đầu nằm trong gói chương 0 (đồ thị ban đầu, design §4.1). Truyện mẫu đã chuyển các sự thật đó sang chương 0; đáp án §7.3 không đổi. Số chương hiện hành chỉ lấy từ `writory.db.current_chapter`.
 - **Hệ quả:** một sự thật chỉ phát hiện ra ở chương N (ví dụ "hoá ra Lan là người của Hội từ trước") được ghi là đúng từ chương N, không ghi lùi về trước. Chi tiết quá khứ mới do model nghĩ ra ở chương N cũng mang `valid_from_chapter = N`, nghĩa là "đồ thị biết từ chương N". Muốn hỏi "thật ra từ khi nào" thì phải thêm thuộc tính riêng.
 - **Người quyết:** Claude (Session 1), điều phối đã duyệt · 19/10/2026
+
+## D-27 · Phân loại ô tự viết: một lời gọi enum, fail closed
+- **Bối cảnh:** G5 yêu cầu đọc ý định của ô tự viết bằng LLM có đầu ra enum, không dùng regex. Câu phủ định, câu dài và tấn công đội lốt hành động phải ra đúng.
+- **Quyết định:**
+  - `safety.classify_action`: một lời gọi `chat_json` với schema `Classification` (`label` thuộc 4 nhãn, `reason` ngắn chỉ để log), model `models.roles.classify`. Chữ người chơi bọc `UserAuthored` trong vai user (G4).
+  - Trước khi gọi model, code kiểm chữ rỗng và độ dài theo `input.custom_action_max_chars` (`require()`). Config chưa đặt thì báo `CONFIG_LIMIT_NOT_SET`.
+  - JSON sai schema thử lại theo `extract_schema_retry` (`RETRY_SCHEMA`); vẫn sai hoặc model lỗi thì ném lỗi, không mặc định là hợp lệ.
+  - Hành động bất khả hay bạo lực trong truyện vẫn là `in_story_action`; hậu quả do pipeline xử lý (G6). `ensure_in_story` map 3 nhãn bị chặn sang `ACTION_OUT_OF_STORY`, `ACTION_FORBIDDEN`, `ACTION_UNCLEAR`, câu trung tính, không kèm lý do.
+- **Hệ quả:** mỗi lần gửi ô tự viết tốn thêm một lời gọi model. `forbidden_content` chỉ gồm chặn cứng G9; trần mức u tối cần thiết lập của truyện, chưa làm. Độ chính xác với model thật chưa đo.
+- **Người quyết:** Claude (Session 2) · 19/10/2026

@@ -31,6 +31,11 @@ class ErrorCode(StrEnum):
     CHAPTER_PENDING = "CHAPTER_PENDING"
     CHAPTER_OUT_OF_ORDER = "CHAPTER_OUT_OF_ORDER"
     CHAPTER_PACKAGE_INVALID = "CHAPTER_PACKAGE_INVALID"
+    ACTION_EMPTY = "ACTION_EMPTY"
+    ACTION_TOO_LONG = "ACTION_TOO_LONG"
+    ACTION_OUT_OF_STORY = "ACTION_OUT_OF_STORY"
+    ACTION_FORBIDDEN = "ACTION_FORBIDDEN"
+    ACTION_UNCLEAR = "ACTION_UNCLEAR"
 
 
 @dataclass(frozen=True)
@@ -127,6 +132,28 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Hệ thống tạo ra thay đổi không hợp lệ cho chương này nên chưa lưu gì. "
         "Lỗi ở phía hệ thống, không phải do bạn.",
         "Bấm thử lại. " + _REPORT,
+    ),
+    # Ô tự viết hành động (G5, D-27). Câu trung tính: không nhắc lại chữ người chơi, không kể lý do
+    # của bộ phân loại.
+    ErrorCode.ACTION_EMPTY: PlayerMessage(
+        "Bạn chưa viết hành động nào.",
+        "Viết điều nhân vật của bạn làm, nói hoặc nghĩ rồi gửi.",
+    ),
+    ErrorCode.ACTION_TOO_LONG: PlayerMessage(
+        "Hành động bạn viết dài hơn mức cho phép.",
+        "Rút gọn lại rồi gửi.",
+    ),
+    ErrorCode.ACTION_OUT_OF_STORY: PlayerMessage(
+        "Ô này chỉ nhận hành động của nhân vật trong truyện.",
+        "Viết lại điều nhân vật của bạn làm, nói hoặc nghĩ.",
+    ),
+    ErrorCode.ACTION_FORBIDDEN: PlayerMessage(
+        "Hành động này thuộc loại nội dung truyện không viết.",
+        "Chọn hoặc viết một hành động khác.",
+    ),
+    ErrorCode.ACTION_UNCLEAR: PlayerMessage(
+        "Hệ thống không hiểu hành động bạn viết.",
+        "Viết lại rõ hơn, ví dụ: \"Tôi mở cửa bước ra ngoài.\"",
     ),
 }
 
