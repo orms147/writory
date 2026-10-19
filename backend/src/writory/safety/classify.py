@@ -18,6 +18,7 @@ from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient
 from writory.llm.retry import RETRY_SCHEMA, with_retries
+from writory.safety.redact import redact
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
 log = logging.getLogger(__name__)
@@ -83,7 +84,8 @@ async def classify_action(text: str, *, llm: LLMClient, config: AppConfig) -> Cl
         max_retries=config.limits.retries.extract_schema_retry,
         retry_on=RETRY_SCHEMA,
     )
-    log.info("phân loại ô tự viết: %s (%s)", result.label.value, result.reason)
+    # reason do model viết từ chữ người chơi: có thể nhắc lại key người chơi dán vào (G7).
+    log.info("phân loại ô tự viết: %s (%s)", result.label.value, redact(result.reason))
     return result
 
 

@@ -202,3 +202,15 @@ async def test_bench_scores_labelled_set():
     result = await score(CASES, llm=wrong_first, config=CFG)
     assert result.correct == len(CASES) - 1
     assert result.confusion[CASES[0]["expected"]]["gibberish"] == 1
+
+
+async def test_logged_reason_never_contains_key_like_string(caplog):
+    """G7: người chơi dán key vào ô tự viết và model nhắc lại trong reason: log không có key."""
+    import logging
+
+    fake_key = "sk-or-v1-" + "ab12" * 16
+    llm = FakeLLM.scripted([answer("out_of_story_request", f"người chơi dán key {fake_key}")])
+    with caplog.at_level(logging.INFO, logger="writory.safety.classify"):
+        await classify_action(f"key của tôi là {fake_key}", llm=llm, config=CFG)
+    assert "out_of_story_request" in caplog.text
+    assert fake_key not in caplog.text
