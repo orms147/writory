@@ -62,5 +62,4 @@ jobs:
           done
           echo "Neo4j không lên sau 120 giây" >&2
           exit 1
-      # pytest trả mã 5 khi chưa có test nào mang marker graph; coi là đạt.
-      - run: uv run pytest -m graph || [ $? -eq 5 ]
+      - run: uv run pytest -m graph
