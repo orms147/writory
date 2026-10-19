@@ -6,6 +6,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 
 ## Bài A — Bộ nhớ
 - Dữ liệu: *(chưa có)* bộ chương cố định + câu hỏi + đáp án, kèm nhóm câu hỏi và khoảng cách giữa lúc gieo và lúc hỏi.
+- Nguồn đáp án đầu tiên: truyện mẫu 5 chương và đồ thị dựng tay trong `data/sample-story/` (`graph.yaml`, `answers.yaml`). Chờ chủ dự án duyệt; chưa phải bộ câu hỏi bài A.
 - Đối thủ bản 1: tóm tắt cuộn, nhét cả truyện, đồ thị.
 - Chỉ số: độ đúng theo nhóm và theo khoảng cách, kèm `n` và khoảng tin cậy; token vào; chi phí.
 - Lệnh: *(chưa có)*
