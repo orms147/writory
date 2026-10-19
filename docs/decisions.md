@@ -206,6 +206,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bí mật của `story_plan` chưa tới khoảng lộ và chưa được hé lộ (kể cả lộ sớm do lựa chọn): nhóm `leak_terms` trúng khi mọi cụm cùng nằm trong một câu. Bí mật không có `leak_terms` thì ghi cảnh báo.
   - So sau NFC và bỏ dấu, trọn từ. Cụm một từ phân biệt hoa thường; cụm nhiều từ thì không.
   - Trúng thì báo `SCENE_LEAK_BLOCKED`, câu báo trung tính (design §6.6). Log chỉ ghi loại và vị trí, không ghi chữ bị lộ.
+  - Sửa `told_to` của lời nói dối trong `player_view` theo đúng D-17: tên người chơi biết, hoặc "(người chưa rõ tên)", không bao giờ là `name`.
 - **Hệ quả:** biệt danh toàn chữ thường không được bảo vệ ("người đàn ông áo đen" lộ thì không bắt được). Tên nhiều từ viết thường, bỏ dấu ("ly that") vẫn bắt được. Tên một từ viết thường thì lọt, vì cụm một từ so có phân biệt hoa thường.
 - **Người quyết:** Claude (Session 2) · 19/10/2026
 

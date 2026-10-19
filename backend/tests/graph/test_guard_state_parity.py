@@ -48,3 +48,20 @@ def test_edges_ever_opened_includes_closed_edges(driver, sample_story_id):
         ids = [e.id for e in state.edges_at("HOLDS", 5, target_id="sword", ever=True)]
         assert ids == ["HOLDS:minh>sword@5", "holds_sword_gu", "holds_sword_lan",
                        "holds_sword_minh_2"]
+
+
+def test_lie_hearer_name_parity_after_d17_fix(driver, new_story_id):
+    """Sửa told_to (D-17) ở cả hai đường: Neo4j và Overlay vẫn ra player_view giống hệt."""
+    from tests.unit.test_guard_state import LIE_TO_LY_THAT
+    from writory.graph import apply_package, load_sample_story, player_view
+    from writory.guard.state import player_view_of
+
+    sid = new_story_id()
+    sample = load_sample_story(driver, sid)
+    apply_package(driver, sid, LIE_TO_LY_THAT)
+    memory = OverlayState(EmptyState(), [*(c.package for c in sample.chapters), LIE_TO_LY_THAT])
+    for chapter in range(7):
+        neo4j_view = player_view(driver, sid, chapter)
+        assert player_view_of(memory, chapter, story_id=sid) == neo4j_view, chapter
+        if chapter == 4:
+            assert "Lý Thất" not in repr(neo4j_view)

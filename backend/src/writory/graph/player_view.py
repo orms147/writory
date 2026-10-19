@@ -49,7 +49,7 @@ class PlayerLie:
     id: str
     content: str
     chapter: int
-    told_to: tuple[str, ...]  # tên người nghe
+    told_to: tuple[str, ...]  # tên người chơi biết của người nghe (known_as), hoặc UNKNOWN_HEARER
 
 
 @dataclass(frozen=True)
@@ -73,12 +73,16 @@ class KnownRecord:
     known_as: str | None
 
 
+# Tên hiện cho người nghe mà người chơi chưa biết tên: chuỗi cố định, không chứa dữ liệu truth (D-17).
+UNKNOWN_HEARER = "(người chưa rõ tên)"
+
+
 @dataclass(frozen=True)
 class LieRecord:
     id: str
     content: str
     chapter: int
-    told_to: tuple[str, ...]
+    told_to: tuple[str, ...]  # id người nghe; build_player_view đổi ra tên người chơi biết
 
 
 def build_player_view(
@@ -135,8 +139,13 @@ def build_player_view(
             shown.items(), key=lambda kv: (kv[1][3], kv[0])
         )
     )
+    # Người nghe hiện bằng tên người chơi biết trong chính view này, không bao giờ bằng `name`
+    # (D-17). Chưa biết thì hiện UNKNOWN_HEARER; vẫn giữ lời nói dối vì người chơi đã chọn nói nó.
+    def hearer(cid: str) -> str:
+        return shown[cid][1] if cid in shown and shown[cid][0] == "Character" else UNKNOWN_HEARER
+
     lie_rows = tuple(
-        PlayerLie(r.id, r.content, r.chapter, tuple(sorted(r.told_to)))
+        PlayerLie(r.id, r.content, r.chapter, tuple(sorted(hearer(h) for h in r.told_to)))
         for r in sorted(lies, key=lambda r: (r.chapter, r.id))
     )
     return PlayerView(story_id, chapter, entries, lie_rows)
@@ -165,7 +174,7 @@ _LIES_QUERY = f"""
 MATCH (:{ENTITY}:Character {{story_id: $story_id, is_protagonist: true}})-[r:TOLD]->
       (l:{ENTITY}:Lie {{story_id: $story_id}})-[:TOLD_TO]->(h:{ENTITY}:Character {{story_id: $story_id}})
 WHERE r.valid_from_chapter <= $chapter
-RETURN l.id AS id, l.content AS content, l.chapter AS chapter, collect(h.name) AS told_to
+RETURN l.id AS id, l.content AS content, l.chapter AS chapter, collect(h.id) AS told_to
 """
 
 

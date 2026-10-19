@@ -75,3 +75,47 @@ def test_player_view_of_overlay_follows_known_as():
     assert ch5.quote == "một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà"
     assert ch5.quotes == ("một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà",
                           "Cuối thư ký tên Lý Thất.")
+
+
+# Lời nói dối với người mới chỉ biết qua biệt danh (D-17, G1). Fixture riêng của test: truyện
+# mẫu không có cảnh này nên không thêm vào data/sample-story/.
+LIE_TO_LY_THAT = ChangePackage.model_validate({
+    "commit_id": "test-lie-ly-that",
+    "nodes": [
+        {"id": "l_to_ly_that", "label": "Lie", "chapter": 4,
+         "content": "Minh nói với gã lái đò rằng anh không biết gì về thanh kiếm"},
+        {"id": "x_stranger", "label": "Character", "name": "Đỗ Bá Kiên"},
+        {"id": "l_to_stranger", "label": "Lie", "chapter": 4, "content": "Minh nói mình là học trò"},
+    ],
+    "edges": [
+        {"type": "TOLD", "from": "minh", "to": "l_to_ly_that", "valid_from_chapter": 4},
+        {"type": "TOLD_TO", "from": "l_to_ly_that", "to": "ly_that", "valid_from_chapter": 4},
+        {"type": "TOLD", "from": "minh", "to": "l_to_stranger", "valid_from_chapter": 4},
+        {"type": "TOLD_TO", "from": "l_to_stranger", "to": "x_stranger", "valid_from_chapter": 4},
+    ],
+})
+
+
+def lie_story(chapter: int) -> OverlayState:
+    packages = [c.package for c in SAMPLE.chapters if c.number <= chapter]
+    return OverlayState(EmptyState(), [*packages, LIE_TO_LY_THAT] if chapter >= 4 else packages)
+
+
+def test_lie_hearer_shown_by_name_player_knows_never_truth_name():
+    from writory.guard.state import player_view_of
+
+    ch4 = player_view_of(lie_story(4), 4)
+    told = {lie.id: lie.told_to for lie in ch4.lies}
+    assert told["l_to_ly_that"] == ("gã lái đò mặt sẹo",)
+    assert "Lý Thất" not in repr(ch4)
+    ch5 = player_view_of(lie_story(5), 5)
+    assert {lie.id: lie.told_to for lie in ch5.lies}["l_to_ly_that"] == ("Lý Thất",)
+
+
+def test_lie_to_unrevealed_hearer_is_kept_with_neutral_name():
+    from writory.graph.player_view import UNKNOWN_HEARER
+    from writory.guard.state import player_view_of
+
+    view = player_view_of(lie_story(4), 4)
+    assert {lie.id: lie.told_to for lie in view.lies}["l_to_stranger"] == (UNKNOWN_HEARER,)
+    assert "Đỗ Bá Kiên" not in repr(view)

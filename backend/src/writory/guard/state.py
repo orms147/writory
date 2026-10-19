@@ -202,14 +202,12 @@ def player_view_of(state: GraphState, chapter: int, *, story_id: str = "") -> Pl
         for node, e in reveals if node in rows
     ]
     about = [(e.source, e.target) for e in state.edges_at("ABOUT", chapter, ever=True)]
-    truth_names = state.named_nodes()
     lies = []
     for told in lies_told:
         lie = rows.get(told.target)
         hearers = state.edges_at("TOLD_TO", chapter, source_id=told.target, ever=True)
         if lie is None or lie.label != "Lie" or not hearers:
             continue
-        # Giữ đúng như graph.player_view: tên người nghe lấy từ `name` (xem _LIES_QUERY).
         lies.append(LieRecord(told.target, lie.props.get("content", ""), lie.props.get("chapter"),
-                              tuple(truth_names[h.target][0] for h in hearers)))
+                              tuple(h.target for h in hearers)))
     return build_player_view(story_id, chapter, known, about, lies)
