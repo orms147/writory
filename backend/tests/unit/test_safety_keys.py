@@ -146,3 +146,24 @@ def test_filter_keeps_args_for_formatters_that_read_them():
     out = stream.getvalue()
     assert "127.0.0.1:5" in out and "404" in out and "GET /x?key=" in out
     assert FAKE_KEY not in out
+
+
+def test_key_split_between_message_and_arg_is_redacted():
+    """Hồi quy (review bảo mật): redact từng mảnh thì bỏ sót key bị cắt giữa msg và arg."""
+    logger, stream = _capture_logger("writory.test.split")
+    logger.info("key=sk-or-v1-%s", FAKE_KEY.removeprefix("sk-or-v1-"))
+    assert FAKE_KEY not in stream.getvalue()
+    assert REDACTED in stream.getvalue()
+
+
+def test_key_only_in_repr_is_redacted():
+    class Holder:
+        def __str__(self) -> str:
+            return "Holder"
+
+        def __repr__(self) -> str:
+            return f"Holder(key={FAKE_KEY!r})"
+
+    logger, stream = _capture_logger("writory.test.repr")
+    logger.info("obj=%r", Holder())
+    assert FAKE_KEY not in stream.getvalue()

@@ -27,13 +27,20 @@ def _redact_arg(arg):
     chữ của arg có chuỗi giống key."""
     if isinstance(arg, str):
         return redact(arg)
-    text = str(arg)
-    cleaned = redact(text)
-    return arg if cleaned == text else cleaned
+    for text in (str(arg), repr(arg)):  # repr cho trường hợp %r
+        cleaned = redact(text)
+        if cleaned != text:
+            return cleaned
+    return arg
 
 
 class RedactSecretsFilter(logging.Filter):
-    """Gắn vào handler: xoá chuỗi giống key trong message, từng arg, traceback và stack."""
+    """Gắn vào handler: xoá chuỗi giống key trong message, từng arg, traceback và stack.
+
+    Redact từng mảnh trước để giữ `record.args` cho formatter đọc args (AccessFormatter của
+    uvicorn). Sau đó kiểm câu đã ghép: còn sót (key bị cắt giữa msg và arg) thì gộp thành câu
+    đã redact, bỏ args. Trường hợp hiếm đó, formatter đọc args mất định dạng nhưng không lộ key.
+    """
 
     def filter(self, record: logging.LogRecord) -> bool:
         if isinstance(record.msg, str):
@@ -44,6 +51,13 @@ class RedactSecretsFilter(logging.Filter):
             record.args = {k: _redact_arg(v) for k, v in record.args.items()}
         elif record.args:
             record.args = tuple(_redact_arg(a) for a in record.args)
+        if record.args:
+            try:
+                full = record.getMessage()
+            except (TypeError, ValueError):  # msg và args không khớp: để logging tự báo lỗi
+                full = None
+            if full is not None and redact(full) != full:
+                record.msg, record.args = redact(full), None
         if record.exc_info:
             record.exc_text = redact(logging.Formatter().formatException(record.exc_info))
             record.exc_info = None
