@@ -160,6 +160,27 @@ cases:
       edges: [{type: LOCATED_AT, from: khai, to: mieu_ba, valid_from_chapter: 4}]
     expect: [dead_actor]
 
+  - id: err-dead-teller
+    # Thêm 19/10/2026 (sau lần chạy 2026-10-19-guard-b): Lão Gù chết ở chương 3 mà chương 4 còn kể.
+    targets: [dead_actor]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges:
+        - {type: KNOWS, from: khai, to: f_lan_spy, valid_from_chapter: 4, how: "được kể", told_by: gu}
+    expect: [dead_actor]
+  - id: clean-teller-dies-after-telling
+    # Thêm 19/10/2026: Lan kể cho Khải rồi chết ngay trong cảnh này: hợp lệ.
+    targets: [dead_actor, teller_does_not_know]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: e_lan_drowns, label: Event, chapter: 4, description: "Lan rơi xuống sông ở bến Sương"}]
+      edges:
+        - {type: KNOWS, from: khai, to: f_lan_spy, valid_from_chapter: 4, how: "được kể", told_by: lan}
+        - {type: DIED_IN, from: lan, to: e_lan_drowns, valid_from_chapter: 4}
+    expect: []
+
   # --- tối đa một
   - id: err-two-holders
     targets: [at_most_one]

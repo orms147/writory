@@ -81,9 +81,14 @@ def _chapter_rule(current: ChangePackage, chapter: int) -> list[GuardIssue]:
 
 def _dead_actors(current: ChangePackage, chapter: int, before: GraphState) -> list[GuardIssue]:
     """Chết ở chương trước hoặc ở cảnh trước của chương này (trạng thái `before`).
-    Chết trong chính cảnh này thì hành động trong cảnh vẫn hợp lệ."""
+    Chết trong chính cảnh này thì hành động trong cảnh vẫn hợp lệ. Người kể (`told_by` của
+    KNOWS "được kể") cũng phải còn sống."""
     actors = [(e, e.source) for e in current.edges if e.type in _ACTS_AS_SOURCE]
     actors += [(e, e.target) for e in current.edges if e.type in _ACTS_AS_TARGET]
+    actors += [
+        (e, e.props["told_by"]) for e in current.edges
+        if e.type == "KNOWS" and e.props.get("how") == TOLD and isinstance(e.props.get("told_by"), str)
+    ]
     issues = []
     for edge, who in actors:  # DIED_IN chỉ đi ra từ Character, nên không cần lọc nhãn
         deaths = before.edges_at("DIED_IN", chapter, source_id=who)

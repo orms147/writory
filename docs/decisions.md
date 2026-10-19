@@ -173,7 +173,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Bối cảnh:** design §8 yêu cầu phần nào kiểm được bằng code thì kiểm bằng code. Gói của các cảnh trước trong chương chưa nằm trong Neo4j.
 - **Quyết định:**
   - `writory.guard.check_scene_package` đọc trạng thái phủ: nền đã commit + gói các cảnh trước + gói cảnh này (`OverlayState`).
-  - Các phép kiểm: quy tắc D-21; người chết hành động (chết ở chương trước hoặc ở cảnh trước, chết trong chính cảnh này thì không tính); "tối đa một" cho HOLDS theo đồ vật, LOCATED_AT của Item, RELATES_TO theo cặp; người kể không biết; lộ sớm so với `story_plan` (mức `block`, trừ khi có `by_choice`); quan hệ đổi quá ngưỡng mà chương không có Event liên quan.
+  - Các phép kiểm: quy tắc D-21; người chết hành động, kể cả làm người kể (`told_by`) (chết ở chương trước hoặc ở cảnh trước, chết trong chính cảnh này thì không tính); "tối đa một" cho HOLDS theo đồ vật, LOCATED_AT của Item, RELATES_TO theo cặp; người kể không biết; lộ sớm so với `story_plan` (mức `block`, trừ khi có `by_choice`); quan hệ đổi quá ngưỡng mà chương không có Event liên quan.
   - Ngưỡng nằm trong file mới `config/guard.yaml`, để `null` tới khi đo.
 - **Hệ quả:** phép kiểm tất định, đo bằng bài B. Lỗi của gói (D-21) cũng xếp mức `rewrite`, dù sửa gói có thể chỉ cần trích lại.
 - **Người quyết:** Claude (Session 2), điều phối đã duyệt · 19/10/2026
