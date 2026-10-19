@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 from neo4j import Driver, RoutingControl
 
-from writory.graph.schema import ENTITY
+from writory.graph.schema import EDGE_TYPES, ENTITY, RESERVED_PROPS
 from writory.graph.story import require_chapter, require_story_id
 
 # Điều kiện "cạnh r còn hiệu lực ở chương $chapter", dùng chung cho mọi truy vấn.
@@ -60,6 +60,17 @@ class Relation:
     kind: str
     score: int
     since_chapter: int
+
+
+@dataclass(frozen=True)
+class EdgeRow:
+    id: str
+    type: str
+    source: str
+    target: str
+    valid_from_chapter: int
+    valid_to_chapter: int | None
+    props: dict
 
 
 def _read(driver: Driver, query: str, story_id: str, chapter: int | None = None, **params):
@@ -217,3 +228,52 @@ def protagonist_id(driver: Driver, story_id: str) -> str:
     if len(rows) != 1:
         raise LookupError(f"truyện {story_id} có {len(rows)} nhân vật chính, cần đúng 1")
     return rows[0]["id"]
+
+
+def edges_at(
+    driver: Driver,
+    story_id: str,
+    edge_type: str,
+    chapter: int,
+    *,
+    source_id: str | None = None,
+    target_id: str | None = None,
+) -> list[EdgeRow]:
+    """Cạnh một kiểu còn hiệu lực ở chương N, kèm id. Cho người canh kiểm trước khi ghi.
+    `props` chỉ gồm thuộc tính của truyện, không gồm thuộc tính do lớp graph/ đặt."""
+    if edge_type not in EDGE_TYPES:
+        raise ValueError(f"kiểu cạnh không hợp lệ: {edge_type!r}")
+    rows = _read(
+        driver,
+        f"""
+        MATCH (a:{ENTITY} {{story_id: $story_id}})-[r:{edge_type}]->(b:{ENTITY} {{story_id: $story_id}})
+        WHERE r.story_id = $story_id AND {VALID_AT}
+          AND ($source_id IS NULL OR a.id = $source_id)
+          AND ($target_id IS NULL OR b.id = $target_id)
+        RETURN r.id AS id, a.id AS source, b.id AS target, r.valid_from_chapter AS vf,
+               r.valid_to_chapter AS vt, properties(r) AS props
+        ORDER BY id
+        """,
+        story_id, chapter, source_id=source_id, target_id=target_id,
+    )
+    return [
+        EdgeRow(
+            r["id"], edge_type, r["source"], r["target"], r["vf"], r["vt"],
+            {k: v for k, v in r["props"].items() if k not in RESERVED_PROPS},
+        )
+        for r in rows
+    ]
+
+
+def node_labels(driver: Driver, story_id: str, ids: list[str]) -> dict[str, str]:
+    """Nhãn loại (không tính nhãn chung Entity) của các nút có trong truyện; id không có thì bỏ."""
+    rows = _read(
+        driver,
+        f"""
+        UNWIND $ids AS id
+        MATCH (n:{ENTITY} {{story_id: $story_id, id: id}})
+        RETURN id, [l IN labels(n) WHERE l <> '{ENTITY}'][0] AS label
+        """,
+        story_id, ids=list(ids),
+    )
+    return {r["id"]: r["label"] for r in rows}

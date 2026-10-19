@@ -72,6 +72,8 @@ def test_require_returns_value_when_set(config_dir: Path):
          "chapter_chars: {min: 10000, max: 3000}", "chapter_chars"),
         ("quality.yaml", "dialogue_style: dash", "dialogue_style: html", "dialogue_style"),
         ("quality.yaml", "  max_repeats: null", "  max_repeats: 0", "max_repeats"),
+        ("guard.yaml", "max_score_jump_without_event: null",
+         "max_score_jump_without_event: -5", "max_score_jump_without_event"),
     ],
 )
 def test_bad_schema_reports_file_and_field(config_dir, file, old, new, expect_in_msg):

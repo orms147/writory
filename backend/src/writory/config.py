@@ -181,6 +181,19 @@ class QualityConfig(_Strict):
     cliches: ClicheConfig
 
 
+# --- guard.yaml ------------------------------------------------------------------------
+
+
+class RelationshipGuard(_Section):
+    _path = "relationship"
+    _file = "guard.yaml"
+    max_score_jump_without_event: int | None = Field(ge=1, le=200)
+
+
+class GuardConfig(_Strict):
+    relationship: RelationshipGuard
+
+
 # --- nạp -------------------------------------------------------------------------------
 
 
@@ -189,6 +202,7 @@ class AppConfig(_Strict):
     models: ModelsConfig
     story_lengths: StoryLengthsConfig
     quality: QualityConfig
+    guard: GuardConfig
 
 
 _FILES: dict[str, tuple[str, type[BaseModel]]] = {
@@ -196,6 +210,7 @@ _FILES: dict[str, tuple[str, type[BaseModel]]] = {
     "models": ("models.yaml", ModelsConfig),
     "story_lengths": ("story_lengths.yaml", StoryLengthsConfig),
     "quality": ("quality.yaml", QualityConfig),
+    "guard": ("guard.yaml", GuardConfig),
 }
 
 
