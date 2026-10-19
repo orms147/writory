@@ -1,0 +1,66 @@
+# CI: lint + test nhanh + test đồ thị. Cách chạy và cách chạy lại: docs/runbook.md
+name: ci
+
+on:
+  pull_request:
+  push:
+    branches: [main]
+
+permissions:
+  contents: read
+
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+defaults:
+  run:
+    working-directory: backend
+
+jobs:
+  fast:
+    name: lint + test nhanh
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --locked
+      - run: uv run ruff check .
+      - run: uv run pytest -m "not graph"
+
+  graph:
+    name: test đồ thị (Neo4j)
+    runs-on: ubuntu-latest
+    env:
+      NEO4J_URI: bolt://localhost:7687
+      NEO4J_USER: neo4j
+      # Mật khẩu dùng một lần cho container CI, không phải bí mật. Phải khớp NEO4J_AUTH bên dưới.
+      NEO4J_PASSWORD: ci-throwaway-password
+    services:
+      neo4j:
+        image: neo4j:5.26-community
+        env:
+          NEO4J_AUTH: neo4j/ci-throwaway-password
+        ports:
+          - 7474:7474
+          - 7687:7687
+    steps:
+      - uses: actions/checkout@v6
+      - uses: astral-sh/setup-uv@v7
+        with:
+          enable-cache: true
+          cache-dependency-glob: backend/uv.lock
+      - run: uv sync --locked
+      - name: chờ Neo4j sẵn sàng
+        run: |
+          for i in $(seq 1 60); do
+            curl -sf http://localhost:7474 > /dev/null && exit 0
+            sleep 2
+          done
+          echo "Neo4j không lên sau 120 giây" >&2
+          exit 1
+      # pytest trả mã 5 khi chưa có test nào mang marker graph; coi là đạt.
+      - run: uv run pytest -m graph || [ $? -eq 5 ]
