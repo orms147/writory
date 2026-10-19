@@ -62,3 +62,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Bối cảnh:** pipeline gần như thẳng, viết bằng Python thường cũng được.
 - **Quyết định:** dùng LangGraph, vì học nó là một mục tiêu và vì nó lưu được trạng thái để chạy tiếp sau khi hỏng giữa chừng. Toàn bộ đồ thị LangGraph nằm trong một module.
 - **Người quyết:** Claude · 19/10/2026
+
+## D-9 · Tên sản phẩm là WriTory
+- **Bối cảnh:** bản thiết kế đầu dùng tên tạm "Mạch Truyện".
+- **Quyết định:** tên sản phẩm là **WriTory**, trùng tên repo và tên package `writory`. Bỏ mục "tên chính thức" khỏi danh sách còn mở (design §14).
+- **Hệ quả:** giao diện, tài liệu và nhận diện đều dùng "WriTory". Không dùng tên cũ ở bất kỳ đâu.
+- **Người quyết:** Chủ dự án · 19/10/2026
