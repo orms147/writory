@@ -120,6 +120,11 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 - Định mệnh/tự do; kiểu kết mong muốn.
 - Bí mật của nhân vật chính; kẻ thù định mệnh và người đồng hành.
 - Nhập nhân vật bằng đoạn văn (trích đồ thị từ văn bản).
+- **Nhập tài liệu nguồn** (bài báo, file `.md`/`.txt`, ghi chép thế giới tự viết) để dựng cốt truyện theo đó [Chủ dự án đề xuất, xếp vào bản 3]. Đây là phần GraphRAG "cổ điển": trích thực thể/quan hệ từ văn bản có sẵn thành đồ thị nền, rồi mới tạo 3 bối cảnh từ đó.
+  - Hai chế độ: **lấy cảm hứng** (chỉ mượn chủ đề, bối cảnh, xung đột) và **bám sát** (sự thật trong tài liệu thành ràng buộc, người canh kiểm như `Rule`).
+  - Nội dung tài liệu là chuyện người chơi đã đọc, nhưng nhân vật chính chưa chắc đã biết. Bí mật và twist phải là phần **mới** do bản kế hoạch tạo ra, không lấy từ tài liệu, nếu không thì chẳng còn gì bất ngờ.
+  - Tài liệu là chữ người chơi đưa vào: bọc như dữ liệu (G4), có trần độ dài, và báo trước chi phí trích (tính trên key người chơi).
+  - **Người thật** trong bài báo: mặc định đổi sang nhân vật hư cấu, và cảnh báo người chơi (xem §13).
 - Sửa sự thật ("Không, Lan chưa biết chuyện đó").
 - "Nếu như…": tóm tắt nhánh không chọn, chỉ trong phạm vi nhân vật chính có thể biết.
 - Biên tập trước khi xuất, xuất ePub.
@@ -304,6 +309,7 @@ Tuần 1 làm tay có chủ ý: thiết kế đồ thị sai thì mọi thứ sa
 | Chi phí vượt | Trần trong cấu hình; model rẻ cho mọi bước trừ bước viết |
 | Lộ twist qua giao diện | Lọc bằng code theo lớp người chơi biết (§8.3), có test |
 | Phạm vi phình | Bản 1 chỉ gồm danh sách §5; mọi thứ khác vào bản sau |
+| Tài liệu nguồn nói về người thật (bài báo) — rủi ro bôi nhọ, pháp lý | Mặc định đổi người thật thành nhân vật hư cấu khi trích; cảnh báo người chơi; không cho chia sẻ truyện dựng từ bài báo có người thật (bản 3) |
 | Nội dung nhạy cảm do người dùng tự viết | Tuân chính sách của nhà cung cấp model; mức u tối có giới hạn trên; không nội dung tình dục liên quan trẻ vị thành niên |
 | Chưa có model kiểm duyệt nào được xác nhận tốt cho tiếng Việt | Tự dựng bộ câu kiểm tiếng Việt (có dấu, không dấu, teencode) và đo trước khi chọn (`docs/security.md`) |
 | Lộ key OpenRouter của người chơi | Mã hoá khi lưu, không log, không gửi về trình duyệt; có test |
