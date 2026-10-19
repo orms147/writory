@@ -823,11 +823,16 @@ def judge_disagrees(rows: Iterable[dict[str, Any]], rubric: Rubric, gap: int) ->
     return False
 
 
-async def _anthropic_create(client: Any, request: dict[str, Any]) -> Any:
+async def _anthropic_create(
+    client: Any, request: dict[str, Any], workspace_id: str | None
+) -> Any:
+    """`workspace_id` là tham số của SDK (header anthropic-workspace-id), cần khi key không gắn
+    với workspace. Không nằm trong `request`, nên không vào traces."""
     import anthropic
 
+    options = {"workspace_id": workspace_id} if workspace_id else {}
     try:
-        return await client.messages.create(**request)
+        return await client.messages.create(**request, **options)
     except anthropic.APIStatusError as e:
         status = e.status_code
         code = {401: ErrorCode.LLM_AUTH_FAILED, 403: ErrorCode.LLM_AUTH_FAILED,
@@ -853,9 +858,11 @@ class Runner:
         rng: random.Random | None = None,
         clock: Callable[[], float] = time.perf_counter,
         log: Callable[[str], None] = print,
+        judge_workspace_id: SecretStr | None = None,
     ) -> None:
         self.data, self.store, self.settings = data, store, settings
         self.writer_client, self.judge_client = writer_client, judge_client
+        self._workspace_id = judge_workspace_id
         self.budgets, self.quality = budgets, quality
         self._sleep, self._rng, self._clock, self._log = sleep, rng or random.Random(), clock, log
         self.samples: dict[tuple, dict[str, Any]] = {}
@@ -953,12 +960,14 @@ class Runner:
                 ctx.unknown_cost_usd += estimate
                 raise
             latency = self._clock() - started
-            if cost is None:  # D-10: không rõ chi phí thì dừng
+            if cost is None:
+                # Không rõ chi phí: tính bằng ước tính tối đa để trần vẫn đúng. Nơi gọi bỏ model
+                # đó và chạy tiếp, để biết hết model nào thiếu usage.cost (app thì dừng, D-10).
                 budget.settle(held, estimate)
                 ctx.unknown_cost_usd += estimate
                 raise CallFailed(
                     ErrorCode.LLM_COST_UNKNOWN.value, "phản hồi không có usage.cost",
-                    attempts=attempt, fatal=True, cost_estimated_usd=ctx.take_unknown(),
+                    attempts=attempt, cost_estimated_usd=ctx.take_unknown(),
                 )
             budget.settle(held, cost)
             return result, cost, attempt, latency
@@ -985,8 +994,8 @@ class Runner:
                         cost_estimated_usd=f.cost_estimated_usd)
             if f.fatal:
                 raise RunAborted(f"{writer.id}: {f}") from None
-            if f.code == ErrorCode.LLM_REQUEST_INVALID:
-                self._disable(writer, f.detail)
+            if f.code in (ErrorCode.LLM_REQUEST_INVALID, ErrorCode.LLM_COST_UNKNOWN):
+                self._disable(writer, f.detail)  # lỗi sẽ lặp lại ở mọi case của model này
             return None
 
         usage = res.usage.model_dump()
@@ -1093,7 +1102,8 @@ class Runner:
         judge = self.data.models.judge
 
         async def op() -> tuple[Any, float | None]:
-            msg = await _anthropic_create(self.judge_client, request)
+            workspace = self._workspace_id.get_secret_value() if self._workspace_id else None
+            msg = await _anthropic_create(self.judge_client, request, workspace)
             return msg, judge_cost(judge.model, usage_dict(msg.usage))
 
         try:
@@ -1556,13 +1566,17 @@ def fake_judge_reply(body: dict[str, Any]) -> dict[str, Any]:
     }
 
 
-def mock_judge_client(handler: Callable[[dict[str, Any]], Any]) -> Any:
+def mock_judge_client(
+    handler: Callable[[dict[str, Any]], Any], requests: list[Any] | None = None
+) -> Any:
     """AsyncAnthropic thật, nhưng HTTP đi vào `handler` thay vì mạng. `handler(body)` trả JSON
-    phản hồi, hoặc (status, JSON) để giả lỗi HTTP."""
+    phản hồi, hoặc (status, JSON) để giả lỗi HTTP. `requests` (nếu có) nhận yêu cầu HTTP thô."""
     import anthropic
     import httpx2
 
     def transport(request: Any) -> Any:
+        if requests is not None:
+            requests.append(request)
         out = handler(json.loads(request.content))
         status, payload = out if isinstance(out, tuple) else (200, out)
         return httpx2.Response(status, json=payload)
@@ -1580,14 +1594,16 @@ class BenchKeys(BaseSettings):
     model_config = SettingsConfigDict(extra="ignore")
     openrouter_api_key: SecretStr | None = None
     anthropic_api_key: SecretStr | None = None
+    # Tuỳ chọn: cần khi key Anthropic không gắn với workspace nào.
+    anthropic_workspace_id: SecretStr | None = None
 
 
 KEY_NAMES = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
 
 
-def load_keys(env_file: Path, needed: Sequence[str]) -> dict[str, SecretStr]:
-    """Chỉ đọc OPENROUTER_API_KEY và ANTHROPIC_API_KEY, và chỉ bắt buộc key lệnh cần.
-    Không in, không ghi key."""
+def load_keys(env_file: Path, needed: Sequence[str]) -> BenchKeys:
+    """Chỉ đọc OPENROUTER_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_WORKSPACE_ID; chỉ bắt buộc key
+    lệnh cần. Không in, không ghi key."""
     keys = BenchKeys(_env_file=env_file if env_file.exists() else None)  # type: ignore[call-arg]
     found = {"openrouter": keys.openrouter_api_key, "anthropic": keys.anthropic_api_key}
     missing = [KEY_NAMES[k] for k in needed
@@ -1597,7 +1613,7 @@ def load_keys(env_file: Path, needed: Sequence[str]) -> dict[str, SecretStr]:
             f"thiếu {', '.join(missing)} (biến môi trường hoặc {env_file}). Bộ đo chỉ đọc đúng "
             "các tên này."
         )
-    return {k: found[k] for k in needed}  # type: ignore[misc]
+    return keys
 
 
 def _split(value: str | None) -> list[str]:
@@ -1716,29 +1732,39 @@ def _budgets(store: Store, args: argparse.Namespace, *, dry_run: bool,
     return {k: Budget(k, math.inf if v is None else v, spent_usd=spent[k]) for k, v in caps.items()}
 
 
+@dataclass
+class Clients:
+    writer: LLMClient
+    judge: Any
+    close: Callable[[], Awaitable[None]]
+    judge_workspace_id: SecretStr | None = None
+
+
 def _clients(args: argparse.Namespace, *, dry_run: bool,
-             needed: Sequence[str] = ("openrouter", "anthropic")) -> tuple[LLMClient, Any, Callable]:
+             needed: Sequence[str] = ("openrouter", "anthropic")) -> Clients:
     """Client thật cho các nhà cung cấp trong `needed`; phần không cần là model giả, không gọi."""
     if dry_run:
-        return FakeLLM.echo(cost_usd=DRY_RUN_WRITER_COST_USD), mock_judge_client(
-            fake_judge_reply), lambda: asyncio.sleep(0)
+        return Clients(FakeLLM.echo(cost_usd=DRY_RUN_WRITER_COST_USD),
+                       mock_judge_client(fake_judge_reply), lambda: asyncio.sleep(0))
     keys = load_keys(Path(args.env_file), needed)
     try:
         import anthropic
     except ImportError:
         raise ConfigError("thiếu gói anthropic: chạy `uv sync --group eval`") from None
     http = httpx.AsyncClient(timeout=httpx.Timeout(HTTP_TIMEOUT_S, connect=10.0))
-    writer: LLMClient = (OpenRouterClient(keys["openrouter"], http=http)
-                         if "openrouter" in keys else FakeLLM.scripted([]))
-    judge = (anthropic.AsyncAnthropic(api_key=keys["anthropic"].get_secret_value(),
-                                      max_retries=0, timeout=HTTP_TIMEOUT_S)
-             if "anthropic" in keys else mock_judge_client(fake_judge_reply))
+    writer: LLMClient = FakeLLM.scripted([])
+    if "openrouter" in needed and keys.openrouter_api_key:
+        writer = OpenRouterClient(keys.openrouter_api_key, http=http)
+    judge = mock_judge_client(fake_judge_reply)
+    if "anthropic" in needed and keys.anthropic_api_key:
+        judge = anthropic.AsyncAnthropic(api_key=keys.anthropic_api_key.get_secret_value(),
+                                         max_retries=0, timeout=HTTP_TIMEOUT_S)
 
     async def close() -> None:
         await http.aclose()
         await judge.close()
 
-    return writer, judge, close
+    return Clients(writer, judge, close, keys.anthropic_workspace_id)
 
 
 def _finish(store: Store, data: BenchData, runner: Runner, started: float) -> int:
@@ -1767,21 +1793,21 @@ def cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
         print("Cảnh báo: chấm dưới 2 lần mỗi bài, trái D-25.", file=sys.stderr)
     store = Store(resolve_out(args, dry_run=args.dry_run))
     budgets = _budgets(store, args, dry_run=args.dry_run)
-    writer_client, judge_client, close = _clients(args, dry_run=args.dry_run)
+    clients = _clients(args, dry_run=args.dry_run)
     print(plan_text(data, cases, writers, settings))
     open_results(store, data, dry_run=args.dry_run,
                  run_info=_run_info("run", argv, settings, budgets, writers, cases))
     runner = Runner(
-        data, store, settings, writer_client=writer_client, judge_client=judge_client,
+        data, store, settings, writer_client=clients.writer, judge_client=clients.judge,
         budgets=budgets, quality=bench_quality_config(load_config().quality, settings.quality),
-        rng=random.Random(args.seed),
+        rng=random.Random(args.seed), judge_workspace_id=clients.judge_workspace_id,
     )
 
     async def go() -> None:
         try:
             await runner.run(cases, writers)
         finally:
-            await close()
+            await clients.close()
 
     started = time.monotonic()
     try:
@@ -1797,21 +1823,22 @@ def cmd_judge_check(args: argparse.Namespace, argv: Sequence[str]) -> int:
     off_topic = Path(args.off_topic_file).read_text(encoding="utf-8")
     store = Store(resolve_out(args, dry_run=args.dry_run))
     budgets = _budgets(store, args, dry_run=args.dry_run, needed=("anthropic",))
-    _, judge_client, close = _clients(args, dry_run=args.dry_run, needed=("anthropic",))
+    clients = _clients(args, dry_run=args.dry_run, needed=("anthropic",))
     open_results(store, data, dry_run=args.dry_run,
                  run_info=_run_info("judge-check", argv, None, budgets, [], [case]))
     inputs = store.root / "judge_check" / "inputs"
     inputs.mkdir(parents=True, exist_ok=True)
     (inputs / "off_topic.txt").write_text(off_topic, encoding="utf-8")
-    runner = Runner(data, store, RunSettings(), writer_client=FakeLLM.echo(),
-                    judge_client=judge_client, budgets=budgets,
-                    quality=load_config().quality)
+    runner = Runner(data, store, RunSettings(), writer_client=clients.writer,
+                    judge_client=clients.judge, budgets=budgets,
+                    quality=load_config().quality,
+                    judge_workspace_id=clients.judge_workspace_id)
 
     async def go() -> list[dict[str, Any]]:
         try:
             return await runner.judge_check(case, off_topic)
         finally:
-            await close()
+            await clients.close()
 
     started = time.monotonic()
     try:

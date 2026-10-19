@@ -1,0 +1,57 @@
+{
+  "bench": "D",
+  "created": "2026-10-19T23:00:02+07:00",
+  "data_dir": "C:\\Work\\AI\\WriTory-s3\\evals\\scenarios\\quality",
+  "fingerprint": {
+    "dry_run": false,
+    "data_sha256": {
+      "cases.yaml": "a12dc3cf7f7f86492eed4749f0e92ba04515b1f4f01c14c69508c91242fde96c",
+      "rubric.yaml": "cc633237b3cab4d5d1b0db446bce94c4a50bf0aa001ea1bc32b455dcfcf9f3a0",
+      "models.yaml": "0c8a942a0ea5432292783b899f93816ca809bd0b27446ef38f0ad5726beb2ba1",
+      "style_guide_vi.md": "f7f2b272078c4b7de8d899377c6f7addb2120cce41a084882fb293f3cc080429"
+    },
+    "brief_version": "d-brief-1",
+    "judge_version": "d-judge-1",
+    "judge_frame_sha256": "63d69d214f3c11a80782dd81a720ce251640eede9a40c4e2966f1230b8567ad3",
+    "judge": {
+      "model": "claude-sonnet-5-5",
+      "effort": "high",
+      "thinking": "adaptive",
+      "max_tokens": 16000
+    }
+  },
+  "runs": [
+    {
+      "command": "judge-check",
+      "started": "2026-10-19T23:00:02+07:00",
+      "commit": "40f871439ac85c3ad3839dfac9ad249326dfcad6",
+      "dirty": false,
+      "argv": [
+        "judge-check",
+        "--label",
+        "pilot",
+        "--off-topic-file",
+        "C:/Users/Admin/AppData/Local/Temp/claude/c--Work-AI-WriTory/3a814a0a-6652-4972-848c-24037633b3b8/scratchpad/lac-de-trinh-tham.txt",
+        "--budget-anthropic",
+        "2",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "settings": null,
+      "budgets": {
+        "openrouter": 0.0,
+        "anthropic": 2.0
+      },
+      "writers": [],
+      "cases": [
+        "tu-tien-dot-pha"
+      ],
+      "python": "3.13.14",
+      "anthropic_sdk": "1.15.0",
+      "finished": "2026-10-19T23:00:02+07:00",
+      "wall_s": 0.6,
+      "stopped": "abort: giám khảo: LLM_REQUEST_INVALID: HTTP 400: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'This API key is not scoped to a workspace, so this request must include the anthropic-workspace-id header with the ID of the workspace to use. Add the header, or use an API key that is scoped to a workspace.'}, 'request_id': 'req_011CgBsetsAWBoBmaaDSHeAV'}",
+      "disabled_writers": []
+    }
+  ]
+}

@@ -104,14 +104,16 @@ def with_writers(data: bd.BenchData, **update) -> bd.BenchData:
     return dataclasses.replace(data, models=data.models.model_copy(update={"writers": writers}))
 
 
-def make_runner(tmp_path, data, writer, judge, *, budgets=None, settings=None, sleep=None):
+def make_runner(tmp_path, data, writer, judge, *, budgets=None, settings=None, sleep=None,
+                **extra):
     budgets = budgets or {}
     budgets = {k: budgets.get(k) or bd.Budget(k, math.inf) for k in ("openrouter", "anthropic")}
+    extra.setdefault("log", lambda _: None)
     return bd.Runner(
         data, bd.Store(tmp_path / "out"), settings or bd.RunSettings(),
         writer_client=writer, judge_client=judge, budgets=budgets,
         quality=bd.bench_quality_config(load_config().quality, bd.QualityParams()),
-        sleep=sleep or FakeSleep(), rng=random.Random(0), log=lambda _: None,
+        sleep=sleep or FakeSleep(), rng=random.Random(0), **extra,
     )
 
 
@@ -449,17 +451,26 @@ async def test_truncated_scene_is_not_judged_or_averaged(tmp_path):
     assert "| 0 · 2 · 0 |" in summary
 
 
-async def test_missing_cost_aborts_run(tmp_path):
+async def test_missing_cost_charges_estimate_and_drops_that_writer(tmp_path):
     data = load()
-    writer, bodies = writer_client(lambda body: or_completion(body["model"], cost=None))
+
+    def alpha_without_cost(body):
+        cost = None if body["model"] == "vendor-x/alpha-model" else 0.001
+        return or_completion(body["model"], cost=cost)
+
+    writer, bodies = writer_client(alpha_without_cost)
     judge, _ = judge_client()
-    runner = make_runner(tmp_path, data, writer, judge)
+    budget = bd.Budget("openrouter", math.inf)
+    runner = make_runner(tmp_path, data, writer, judge, budgets={"openrouter": budget})
     await run_all(runner, data)
-    assert runner.stop is not None and runner.stop[0] == "abort"
-    assert len(bodies) == 1
+    assert runner.stop is None
+    assert runner.disabled == {"vendor-x/alpha-model"}
+    assert sum(b["model"] == "vendor-x/alpha-model" for b in bodies) == 1
     [err] = rows(tmp_path, bd.ERRORS)
     assert err["error_type"] == "LLM_COST_UNKNOWN"
     assert err["cost_estimated_usd"] > 0
+    assert budget.spent_usd == pytest.approx(err["cost_estimated_usd"] + 2 * 0.001)
+    assert {r["model"] for r in rows(tmp_path, bd.SAMPLES)} == {"vendor-y/beta-model"}
 
 
 async def test_served_model_mismatch_is_an_error_and_disables_writer(tmp_path):
@@ -679,9 +690,42 @@ def test_real_run_requires_budgets(tmp_path, capsys):
 
 
 def test_keys_required_per_command(tmp_path, monkeypatch):
+    monkeypatch.delenv("ANTHROPIC_WORKSPACE_ID", raising=False)
     monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
     monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
     env = tmp_path / "khong-co.env"
-    assert set(bd.load_keys(env, ("anthropic",))) == {"anthropic"}
+    assert bd.load_keys(env, ("anthropic",)).anthropic_api_key is not None
     with pytest.raises(ConfigError, match="OPENROUTER_API_KEY"):
         bd.load_keys(env, ("openrouter", "anthropic"))
+
+
+@pytest.mark.parametrize("workspace", ["wrkspc_test_0123456789", None])
+async def test_workspace_id_goes_on_every_judge_call_only_when_set(tmp_path, workspace):
+    data = load()
+    writer, _ = writer_client()
+    requests: list = []
+    judge = bd.mock_judge_client(bd.fake_judge_reply, requests)
+    logged: list[str] = []
+    runner = make_runner(
+        tmp_path, data, writer, judge, log=logged.append,
+        judge_workspace_id=SecretStr(workspace) if workspace else None,
+    )
+    await run_all(runner, data)
+    assert len(requests) == 8
+    sent = {r.headers.get("anthropic-workspace-id") for r in requests}
+    assert sent == {workspace}
+    if workspace:
+        traces = "".join(p.read_text(encoding="utf-8")
+                         for p in (tmp_path / "out" / "traces").rglob("*.json"))
+        assert workspace not in traces
+        assert all(workspace not in line for line in logged)
+
+
+def test_workspace_id_is_read_from_env(tmp_path, monkeypatch):
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+    monkeypatch.setenv("ANTHROPIC_WORKSPACE_ID", "wrkspc_abc")
+    keys = bd.load_keys(tmp_path / "khong-co.env", ("anthropic",))
+    assert keys.anthropic_workspace_id.get_secret_value() == "wrkspc_abc"
+    assert "wrkspc_abc" not in repr(keys)
+    monkeypatch.delenv("ANTHROPIC_WORKSPACE_ID")
+    assert bd.load_keys(tmp_path / "khong-co.env", ("anthropic",)).anthropic_workspace_id is None

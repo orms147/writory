@@ -54,7 +54,8 @@ uv run python -c "from neo4j import GraphDatabase; from writory.config import Se
 ## Biến môi trường
 Danh sách đầy đủ: `.env.example`. Không commit `.env`.
 
-- `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`: key của chủ dự án, chỉ cho bộ đo. Runner bài đo chỉ đọc đúng hai tên này; thiếu thì báo lỗi và không gọi model. Lệnh: `docs/eval.md`.
+- `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`: key của chủ dự án, chỉ cho bộ đo. Runner bài đo chỉ đọc đúng hai tên này; thiếu thì báo lỗi và không gọi model.
+- `ANTHROPIC_WORKSPACE_ID` (tuỳ chọn): cần khi key Anthropic không gắn với workspace. Lệnh: `docs/eval.md`.
 
 - `PLAYER_KEY_ENCRYPTION_KEY`: khoá Fernet mã hoá key OpenRouter của người chơi (G7, D-11). Tạo bằng lệnh sau, chạy trong `backend/`:
   ```bash

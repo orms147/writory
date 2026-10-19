@@ -32,7 +32,8 @@ Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writo
 - **Chấm:** giám khảo Claude qua Anthropic SDK, structured output, không biết model nào viết. Bài viết được bọc trong khối `<scene>` và escape. Code kiểm câu trích của giám khảo có thật trong bài. Số lần chấm và điều kiện chấm thêm: D-25, cờ `--judge-runs`, `--max-judge-runs`, `--rejudge-gap`.
 - **Không thành điểm 0:**
   - bài chạm max_tokens (`truncated`), bài rỗng, bài bị lọc nội dung, và bài giám khảo từ chối (`judge_refusal`) được ghi riêng;
-  - lỗi API, hết giờ, model trả lời khác model đã yêu cầu thì vào `errors.jsonl` và được chạy lại khi chạy tiếp.
+  - lỗi API, hết giờ, model trả lời khác model đã yêu cầu thì vào `errors.jsonl` và được chạy lại khi chạy tiếp;
+  - model không trả `usage.cost`: ghi `LLM_COST_UNKNOWN`, tính chi phí bằng ước tính tối đa, và bỏ model đó cho phần còn lại của lượt chạy.
 - **Kiểm văn bằng code:** bốn bộ kiểm của `writory.quality` (lặp, sáo ngữ, chữ khác hệ, lời thoại), cộng độ dài theo case. Ngưỡng tạm là cờ của bài đo (`--ngram`, `--max-repeats`, `--latin-min`), có ghi vào kết quả. `config/quality.yaml` không đổi.
 - **Chỉ số** (`summary.md`, mỗi model một hàng):
   - trung bình ± khoảng tin cậy 95% của từng tiêu chí, tính theo t trên số case, sau khi gộp các mẫu và các lần chấm trong cùng case;
@@ -46,9 +47,9 @@ Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writo
   - người chấm điền `human/scores.csv`;
   - `import-human` tính Spearman và tỉ lệ lệch ≤ 1 điểm cho từng tiêu chí, rồi ghi vào `summary.md`.
 - **Kết quả:** `evals/results/<ngày>-quality-<nhãn>/` gồm `samples.jsonl`, `results.jsonl`, `errors.jsonl`, `traces/`, `meta.json` (commit, sha256 dữ liệu, tham số, trần) và `summary.md`. Kết quả dry-run (`*-dryrun/`) không commit.
-- **Key:** chỉ đọc `OPENROUTER_API_KEY` và `ANTHROPIC_API_KEY` (biến môi trường hoặc `--env-file`).
+- **Key:** chỉ đọc `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY` và, nếu có, `ANTHROPIC_WORKSPACE_ID` (biến môi trường hoặc `--env-file`). Mỗi lệnh chỉ đòi key nó dùng.
 - **Trần:** lượt chạy thật bắt buộc có `--budget-openrouter` và `--budget-anthropic` (USD). Trần tính cả chi phí các lần chạy trước trong cùng thư mục. Trước mỗi lời gọi, code giữ chỗ theo chi phí tối đa có thể của lời gọi đó, nên không vượt trần.
-- **Mã thoát:** 0 xong; 1 lỗi cấu hình hoặc dữ liệu; 2 dừng vì chạm trần; 3 dừng vì lỗi không chạy tiếp được (key sai, thiếu `usage.cost`, giám khảo trả lời bằng model khác); 4 kiểm giám khảo không đạt.
+- **Mã thoát:** 0 xong; 1 lỗi cấu hình hoặc dữ liệu; 2 dừng vì chạm trần; 3 dừng vì lỗi không chạy tiếp được (key sai, hết credit, yêu cầu tới giám khảo bị từ chối, giám khảo trả lời bằng model khác); 4 kiểm giám khảo không đạt.
 - Kết quả dùng để cập nhật danh sách model trong `config/models.yaml`.
 
 Lệnh (chạy trong `backend/`):
