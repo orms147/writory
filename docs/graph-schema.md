@@ -76,6 +76,18 @@ Phần Neo4j:
 - `apply_package(driver, story_id, ChangePackage)`: một transaction. Nút `MERGE` theo `(story_id, id)`; cạnh `MERGE` theo `(story_id, id)`; đóng cạnh ghi `closed_by_commit`. Áp lại cùng gói không đổi gì. Tham chiếu id không có → `MissingEntityError`; đụng nút/cạnh của commit khác → `CommitConflictError`; cả hai đều rollback toàn bộ.
 - `delete_commit(driver, story_id, commit_id)`: xoá nút/cạnh commit đó tạo, mở lại cạnh nó đóng. Có commit sau dựa vào thì từ chối.
 
+## Ngữ cảnh cho model viết (D-28)
+`writory.graph.context.writer_context(driver, story_id, as_of_chapter, present_ids, plan, max_neighbors=...)` đọc lớp `truth` ở cuối chương `as_of_chapter` (chương đã commit, lấy từ `writory.db.current_chapter`) để viết chương kế tiếp. Ngữ cảnh gồm:
+- nhân vật có mặt: còn sống, nơi đang ở, đồ vật đang giữ;
+- quan hệ hiện tại giữa người có mặt (cả hai chiều);
+- `Fact` mà người có mặt biết, kèm danh sách mọi người biết;
+- lời nói dối chưa bị phát hiện, mà người nói hoặc người nghe đang có mặt;
+- bí mật trong `story_plan`, kèm trạng thái `not_yet` / `in_window` / `overdue` / `revealed` so với chương đang viết;
+- nút cách người có mặt 1–2 bước, theo cạnh còn hiệu lực. Không đi qua `REVEALED_TO_PLAYER` hay nút `Chapter`, không lặp lại nút đã nằm ở các mục trên, và giới hạn số nút bằng `limits.context.writer_max_neighbors`;
+- mạch đang mở, kèm cờ quá hạn.
+
+`render_writer_context` trả các phần để đưa vào `user_message`, chia hai mục: "Sự thật cần tôn trọng" (gồm cả người liên quan đã chết) và "Gợi ý có thể nhắc tới". Chữ của nút mang `user_authored: true` luôn được bọc bằng `UserAuthored` (G4). Ngữ cảnh này chứa bí mật, nên không bao giờ được đi ra đường của người chơi.
+
 ## Ràng buộc và index
 Tạo bằng `ensure_schema(driver)` (chạy lại an toàn). Câu lệnh đầy đủ: `schema_statements()` trong `schema.py`.
 - `entity_key`: `(n:Entity)` `REQUIRE (n.story_id, n.id) IS UNIQUE`.
@@ -112,3 +124,4 @@ Truyện mẫu có chương 0 (gói khởi tạo, không có văn bản) và ch�
 - `player_view` chưa có quan hệ và người giữ đồ vật cho sổ tay (D-16).
 - G3 đối chiếu câu trích với văn bản mới được kiểm trong `validate_sample`. `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`; pipeline phải gọi `quote_in_text` với văn bản cảnh trước khi ghi.
 - **Tự reconcile lúc khởi động app.** Hiện `reconcile_pending` chỉ chạy tay (lệnh trong `docs/runbook.md`). Khi có app FastAPI, gọi nó lúc khởi động, để truyện không kẹt `pending` sau khi máy chủ chết giữa chừng.
+- **`writer_context` chạy trên `GraphState`.** Hiện chỉ đọc từ Neo4j. `GraphState` của người canh (nhánh guard-rules) mới trả cạnh, chưa trả thuộc tính nút (tên, chữ của Fact), nên cần mở rộng giao thức đó trước. Khi đã mở rộng, ngữ cảnh mới tính được cả các gói chưa ghi của chương đang viết (cảnh 2–3 đọc thay đổi của cảnh 1).

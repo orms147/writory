@@ -85,11 +85,18 @@ class InputLimits(_Section):
     backstory_max_chars: PositiveInt | None
 
 
+class ContextLimits(_Section):
+    _path = "context"
+    _file = "limits.yaml"
+    writer_max_neighbors: PositiveInt | None
+
+
 class LimitsConfig(_Strict):
     cost_usd: CostLimits
     retries: RetryLimits
     rate_limit: RateLimits
     input: InputLimits
+    context: ContextLimits
 
 
 # --- models.yaml -----------------------------------------------------------------------
