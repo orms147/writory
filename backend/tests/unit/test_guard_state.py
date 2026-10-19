@@ -56,3 +56,10 @@ def test_empty_state_has_no_protagonist():
 def test_unknown_edge_type_rejected():
     with pytest.raises(ValueError):
         through(1).edges_at("NOT_A_TYPE", 1)
+
+
+def test_named_nodes_carry_truth_names():
+    names = through(5).named_nodes()
+    assert names["ly_that"] == ("Lý Thất", "gã lái đò mặt sẹo")
+    assert names["sword"] == ("Thanh Sương", "thanh kiếm")
+    assert "f_lan_spy" not in names

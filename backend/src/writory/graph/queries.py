@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 from neo4j import Driver, RoutingControl
 
-from writory.graph.schema import EDGE_TYPES, ENTITY, RESERVED_PROPS
+from writory.graph.schema import EDGE_TYPES, ENTITY, NAMED_LABELS, RESERVED_PROPS
 from writory.graph.story import require_chapter, require_story_id
 
 # Điều kiện "cạnh r còn hiệu lực ở chương $chapter", dùng chung cho mọi truy vấn.
@@ -277,3 +277,19 @@ def node_labels(driver: Driver, story_id: str, ids: list[str]) -> dict[str, str]
         story_id, ids=list(ids),
     )
     return {r["id"]: r["label"] for r in rows}
+
+
+def named_nodes(driver: Driver, story_id: str) -> dict[str, tuple[str, ...]]:
+    """Tên thật và biệt danh (lớp truth) của mọi nút có tên: id → (name, *aliases).
+    Chỉ cho người canh và bộ dò lộ (G2); không bao giờ trả cho người chơi (D-17)."""
+    rows = _read(
+        driver,
+        f"""
+        MATCH (n:{ENTITY} {{story_id: $story_id}})
+        WHERE any(l IN labels(n) WHERE l IN $labels)
+        RETURN n.id AS id, n.name AS name, coalesce(n.aliases, []) AS aliases
+        ORDER BY id
+        """,
+        story_id, labels=sorted(NAMED_LABELS),
+    )
+    return {r["id"]: (r["name"], *r["aliases"]) for r in rows}

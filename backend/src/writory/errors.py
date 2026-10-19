@@ -38,6 +38,7 @@ class ErrorCode(StrEnum):
     ACTION_FORBIDDEN = "ACTION_FORBIDDEN"
     ACTION_UNCLEAR = "ACTION_UNCLEAR"
     INTERNAL_ERROR = "INTERNAL_ERROR"
+    SCENE_LEAK_BLOCKED = "SCENE_LEAK_BLOCKED"
 
 
 @dataclass(frozen=True)
@@ -165,6 +166,12 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.INTERNAL_ERROR: PlayerMessage(
         "Hệ thống gặp lỗi không lường trước nên chưa làm xong việc bạn yêu cầu.",
         "Bấm thử lại. " + _REPORT,
+    ),
+    # Trung tính có chủ ý: không nói cảnh "lộ điều bạn chưa biết", vì câu đó đã cho biết có bí
+    # mật (design §6.6: không úp mở về sự tồn tại của bí mật). D-26.
+    ErrorCode.SCENE_LEAK_BLOCKED: PlayerMessage(
+        "Cảnh vừa viết không qua được bước kiểm tra cuối nên hệ thống không hiện nó.",
+        "Bấm thử lại để viết lại cảnh này.",
     ),
 }
 

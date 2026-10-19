@@ -198,6 +198,16 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** chi phí giám khảo lớn hơn chi phí viết. Bài bị cắt, bị từ chối hoặc gặp lỗi được ghi riêng, không thành điểm 0. Thay phần chấm của bài D trong design §9 cũ.
 - **Người quyết:** Chủ dự án (yêu cầu Sonnet chấm theo rubric); cách làm do điều phối chốt · 19/10/2026
 
+## D-26 · Bộ dò lộ (G2): chuỗi cấm tạo bằng code ở từng chương
+- **Bối cảnh:** G2 cần chặn chữ để lộ bí mật trước khi hiện. Đo trên truyện mẫu: nếu cấm mọi tên và biệt danh lớp truth chưa có trong `known_as`, văn sạch của cả 5 chương đều bị báo. Có hai loại báo nhầm: tên thật được nói ngay trong câu trích hé lộ ("Tên thật của lão là Hồ Sĩ Bằng"), và biệt danh là danh từ chung ("thanh kiếm", "quán trà đầu bến").
+- **Quyết định:**
+  - Tên chỉ bị cấm khi có từ viết hoa (tên riêng) mà người chơi chưa thấy trong `known_as` hay câu trích của mọi cạnh hé lộ tới chương N.
+  - Bí mật của `story_plan` chưa tới khoảng lộ và chưa được hé lộ (kể cả lộ sớm do lựa chọn): nhóm `leak_terms` trúng khi mọi cụm cùng nằm trong một câu. Bí mật không có `leak_terms` thì ghi cảnh báo.
+  - So sau NFC và bỏ dấu, trọn từ. Cụm một từ phân biệt hoa thường; cụm nhiều từ thì không.
+  - Trúng thì báo `SCENE_LEAK_BLOCKED`, câu báo trung tính (design §6.6). Log chỉ ghi loại và vị trí, không ghi chữ bị lộ.
+- **Hệ quả:** biệt danh toàn chữ thường không được bảo vệ ("người đàn ông áo đen" lộ thì không bắt được). Tên nhiều từ viết thường, bỏ dấu ("ly that") vẫn bắt được. Tên một từ viết thường thì lọt, vì cụm một từ so có phân biệt hoa thường.
+- **Người quyết:** Claude (Session 2) · 19/10/2026
+
 ## D-27 · Phân loại ô tự viết: một lời gọi enum, fail closed
 - **Bối cảnh:** G5 yêu cầu đọc ý định của ô tự viết bằng LLM có đầu ra enum, không dùng regex. Câu phủ định, câu dài và tấn công đội lốt hành động phải ra đúng.
 - **Quyết định:**

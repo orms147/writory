@@ -12,8 +12,15 @@ from typing import Protocol
 
 from neo4j import Driver
 
-from writory.graph import ChangePackage, EdgeRow, edges_at, node_labels, protagonist_id
-from writory.graph.schema import EDGE_TYPES
+from writory.graph import (
+    ChangePackage,
+    EdgeRow,
+    edges_at,
+    named_nodes,
+    node_labels,
+    protagonist_id,
+)
+from writory.graph.schema import EDGE_TYPES, NAMED_LABELS
 
 
 class GraphState(Protocol):
@@ -27,6 +34,10 @@ class GraphState(Protocol):
     ) -> list[EdgeRow]: ...
 
     def node_labels(self, ids: Sequence[str]) -> dict[str, str]: ...
+
+    def named_nodes(self) -> dict[str, tuple[str, ...]]:
+        """id → (name, *aliases) của lớp truth, cho bộ dò lộ (G2)."""
+        ...
 
     def protagonist_id(self) -> str: ...
 
@@ -50,6 +61,9 @@ class Neo4jState:
     def node_labels(self, ids: Sequence[str]) -> dict[str, str]:
         return node_labels(self._driver, self._story_id, list(ids))
 
+    def named_nodes(self) -> dict[str, tuple[str, ...]]:
+        return named_nodes(self._driver, self._story_id)
+
     def protagonist_id(self) -> str:
         return protagonist_id(self._driver, self._story_id)
 
@@ -60,6 +74,9 @@ class EmptyState:
         return []
 
     def node_labels(self, ids: Sequence[str]) -> dict[str, str]:
+        return {}
+
+    def named_nodes(self) -> dict[str, tuple[str, ...]]:
         return {}
 
     def protagonist_id(self) -> str:
@@ -75,6 +92,7 @@ class OverlayState:
         self._base = base
         self._labels: dict[str, str] = {}
         self._protagonist: str | None = None
+        self._names: dict[str, tuple[str, ...]] = {}
         self._closes: dict[str, int] = {}
         specs = []
         for pkg in packages:
@@ -82,6 +100,8 @@ class OverlayState:
                 self._labels[node.id] = node.label
                 if node.props.get("is_protagonist") is True:
                     self._protagonist = node.id
+                if node.label in NAMED_LABELS:
+                    self._names[node.id] = (node.props["name"], *(node.props.get("aliases") or []))
             specs.extend(pkg.edges)
             self._closes.update({c.id: c.valid_to_chapter for c in pkg.close})
         self._edges = [
@@ -123,6 +143,9 @@ class OverlayState:
         found = {i: self._labels[i] for i in ids if i in self._labels}
         rest = [i for i in ids if i not in found]
         return found | (self._base.node_labels(rest) if rest else {})
+
+    def named_nodes(self) -> dict[str, tuple[str, ...]]:
+        return dict(sorted((self._base.named_nodes() | self._names).items()))
 
     def protagonist_id(self) -> str:
         return self._protagonist or self._base.protagonist_id()

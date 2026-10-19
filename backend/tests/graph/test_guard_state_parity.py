@@ -22,3 +22,8 @@ def test_overlay_matches_neo4j_for_every_edge_type_and_chapter(driver, sample_st
     every_id = [n.id for c in sample.chapters for n in c.package.nodes]
     assert memory.node_labels(every_id) == neo4j.node_labels(every_id)
     assert memory.protagonist_id() == neo4j.protagonist_id()
+
+
+def test_named_nodes_match_neo4j(driver, sample_story_id):
+    memory = OverlayState(EmptyState(), [c.package for c in read_sample().chapters])
+    assert memory.named_nodes() == Neo4jState(driver, sample_story_id).named_nodes()

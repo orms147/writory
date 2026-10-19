@@ -42,3 +42,18 @@ def test_valid_plan_and_secret_lookup():
 def test_invalid_plan_rejected(bad):
     with pytest.raises(ValidationError):
         StoryPlan.model_validate(plan(**bad))
+
+
+def test_leak_terms_optional_and_validated():
+    ok = StoryPlan.model_validate(plan(secrets=[{
+        "fact_id": "f", "reveal_from_chapter": 1, "reveal_to_chapter": 2,
+        "leak_terms": [["Lan", "gián điệp"]],
+    }]))
+    assert ok.secret("f").leak_terms == [["Lan", "gián điệp"]]
+    assert StoryPlan.model_validate(plan()).secret("f_lan_spy").leak_terms == []
+    for bad in ([[]], [["Lan", "  "]], [["Lan", "Lan"]]):
+        with pytest.raises(ValidationError):
+            StoryPlan.model_validate(plan(secrets=[{
+                "fact_id": "f", "reveal_from_chapter": 1, "reveal_to_chapter": 2,
+                "leak_terms": bad,
+            }]))
