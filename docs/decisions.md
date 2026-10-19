@@ -178,3 +178,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `plan` nhận qua một Protocol (chỉ cần `secrets`), để khỏi phụ thuộc nhánh chứa `StoryPlan`.
 - **Hệ quả:** trên truyện mẫu, chương 4 với Minh và Lan có mặt, bản render khoảng 2.500 ký tự (in ra trong test, không khẳng định con số). Chưa chạy trên `GraphState` (graph-schema.md, mục Chưa làm).
 - **Người quyết:** Claude (Session 1) · 19/10/2026
+
+## D-29 · Khung API: factory, một bảng mã lỗi → HTTP, lỗi lạ không lộ gì
+- **Bối cảnh:** cần app FastAPI trước các endpoint truyện. G12 cấm trả lỗi chung chung kèm chi tiết kỹ thuật; G7 cần redaction cả ở logger của uvicorn.
+- **Quyết định:**
+  - `writory.api.create_app(settings, health_checks=None)` là factory; không tạo app lúc import. Chạy: `uvicorn writory.api:create_app --factory`.
+  - Lúc khởi động gắn `install_log_redaction` cho root và `uvicorn`, `uvicorn.error`, `uvicorn.access`. Bộ lọc giữ nguyên `record.args`, chỉ redact từng arg, vì `AccessFormatter` của uvicorn đọc args.
+  - `WritoryError` → `player_payload()` với status trong bảng duy nhất `api/errors.HTTP_STATUS`; test bắt mọi mã phải có status. Exception khác → `INTERNAL_ERROR` (500), câu cố định; traceback chỉ vào log, đã redact.
+  - `GET /health`: `ok`/`down` cho Neo4j và Postgres, 503 nếu có phần down; lỗi chỉ vào log.
+- **Hệ quả:** nhánh nào thêm mã lỗi phải thêm status vào bảng. Lỗi 404/422 của FastAPI vẫn theo mặc định, chưa theo G12. Chưa gọi `reconcile_pending` lúc khởi động (TODO, chờ chapter-commit).
+- **Người quyết:** Claude (Session 2) · 19/10/2026

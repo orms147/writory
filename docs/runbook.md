@@ -15,6 +15,14 @@ uv run pytest -m "not graph"  # test nhanh: không mạng, không gọi model th
 uv run pytest -m graph        # test cần Neo4j + Postgres ở trên; mỗi test dùng story_id riêng và chỉ dọn story_id đó
 ```
 
+Chạy API ở máy (đọc biến môi trường từ `.env` ở gốc repo):
+```bash
+cd backend
+uv run uvicorn writory.api:create_app --factory --reload
+curl http://127.0.0.1:8000/health   # {"neo4j": "ok"|"down", "postgres": "ok"|"down"}; 503 nếu có phần down
+```
+App tạo bằng factory (`--factory`), nên import `writory.api` không cần biến môi trường.
+
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.
 

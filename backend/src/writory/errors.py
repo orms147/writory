@@ -37,6 +37,7 @@ class ErrorCode(StrEnum):
     ACTION_OUT_OF_STORY = "ACTION_OUT_OF_STORY"
     ACTION_FORBIDDEN = "ACTION_FORBIDDEN"
     ACTION_UNCLEAR = "ACTION_UNCLEAR"
+    INTERNAL_ERROR = "INTERNAL_ERROR"
 
 
 @dataclass(frozen=True)
@@ -159,6 +160,11 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.ACTION_UNCLEAR: PlayerMessage(
         "Hệ thống không hiểu hành động bạn viết.",
         "Viết lại rõ hơn, ví dụ: \"Tôi mở cửa bước ra ngoài.\"",
+    ),
+    # Lỗi không lường trước (exception không phải WritoryError). Chi tiết chỉ vào log (D-29).
+    ErrorCode.INTERNAL_ERROR: PlayerMessage(
+        "Hệ thống gặp lỗi không lường trước nên chưa làm xong việc bạn yêu cầu.",
+        "Bấm thử lại. " + _REPORT,
     ),
 }
 

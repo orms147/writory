@@ -39,10 +39,10 @@ Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
 | Mã | Code | Test |
 |---|---|---|
 | G4 | `backend/src/writory/safety/wrap.py` (D-12) | `tests/unit/test_safety_wrap.py`, chạy trên bộ câu `evals/redteam/g4_prompt_injection.yaml` |
-| G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`) | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it` |
+| G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`; app gắn cho root và logger `uvicorn*` lúc khởi động, D-29) | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it` |
 | G8 | `llm/cost.py` (`CostTracker`, `MeteredClient`) (D-10), `llm/retry.py` (D-14) | `tests/unit/test_llm_cost.py`, `test_llm_retry.py` |
 | G5 | `safety/classify.py` (`classify_action`, `ensure_in_story`, D-27) | `tests/unit/test_classify.py` |
-| G12 | `backend/src/writory/errors.py` | `tests/unit/test_errors.py` |
+| G12 | `backend/src/writory/errors.py`; `api/errors.py` (bảng `HTTP_STATUS`, lỗi lạ → `INTERNAL_ERROR`, D-29) | `tests/unit/test_errors.py`, `test_api.py` |
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
 
@@ -57,4 +57,3 @@ Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, 
 - Model vẫn có thể *tự suy ra* bí mật từ manh mối hợp lệ. Đó là việc của bản kế hoạch truyện và người canh, không phải lỗi rò rỉ.
 - Stream đứt giữa chừng thì không ghi được chi phí, nên trần G8 bị hụt. Hướng xử lý: sau lời gọi, tra chi phí theo id generation (chưa kiểm endpoint này). Làm ở tuần 2.
 - `response_format` strict với schema do pydantic sinh chưa thử với model thật. Kiểm ở tuần 2.
-- Lúc khởi động app, `install_log_redaction` phải gắn cả vào logger của uvicorn, vì các logger đó có handler riêng và không truyền record lên root (G7).
