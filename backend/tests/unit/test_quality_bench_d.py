@@ -676,3 +676,12 @@ def test_real_run_requires_budgets(tmp_path, capsys):
     code = bd.main(["run", "--data", str(FIX), "--out", str(tmp_path / "o")])
     assert code == bd.EXIT_CONFIG
     assert "--budget-openrouter" in capsys.readouterr().err
+
+
+def test_keys_required_per_command(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    monkeypatch.setenv("ANTHROPIC_API_KEY", "sk-ant-test")
+    env = tmp_path / "khong-co.env"
+    assert set(bd.load_keys(env, ("anthropic",))) == {"anthropic"}
+    with pytest.raises(ConfigError, match="OPENROUTER_API_KEY"):
+        bd.load_keys(env, ("openrouter", "anthropic"))

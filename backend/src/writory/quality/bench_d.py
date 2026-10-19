@@ -1582,18 +1582,22 @@ class BenchKeys(BaseSettings):
     anthropic_api_key: SecretStr | None = None
 
 
-def load_keys(env_file: Path) -> tuple[SecretStr, SecretStr]:
-    """Chỉ đọc OPENROUTER_API_KEY và ANTHROPIC_API_KEY. Không in, không ghi key."""
+KEY_NAMES = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
+
+
+def load_keys(env_file: Path, needed: Sequence[str]) -> dict[str, SecretStr]:
+    """Chỉ đọc OPENROUTER_API_KEY và ANTHROPIC_API_KEY, và chỉ bắt buộc key lệnh cần.
+    Không in, không ghi key."""
     keys = BenchKeys(_env_file=env_file if env_file.exists() else None)  # type: ignore[call-arg]
-    found = {"OPENROUTER_API_KEY": keys.openrouter_api_key,
-             "ANTHROPIC_API_KEY": keys.anthropic_api_key}
-    missing = [n for n, v in found.items() if v is None or not v.get_secret_value().strip()]
+    found = {"openrouter": keys.openrouter_api_key, "anthropic": keys.anthropic_api_key}
+    missing = [KEY_NAMES[k] for k in needed
+               if found[k] is None or not found[k].get_secret_value().strip()]
     if missing:
         raise ConfigError(
             f"thiếu {', '.join(missing)} (biến môi trường hoặc {env_file}). Bộ đo chỉ đọc đúng "
             "các tên này."
         )
-    return found["OPENROUTER_API_KEY"], found["ANTHROPIC_API_KEY"]  # type: ignore[return-value]
+    return {k: found[k] for k in needed}  # type: ignore[misc]
 
 
 def _split(value: str | None) -> list[str]:
@@ -1712,25 +1716,29 @@ def _budgets(store: Store, args: argparse.Namespace, *, dry_run: bool,
     return {k: Budget(k, math.inf if v is None else v, spent_usd=spent[k]) for k, v in caps.items()}
 
 
-def _clients(args: argparse.Namespace, *, dry_run: bool) -> tuple[LLMClient, Any, Callable]:
+def _clients(args: argparse.Namespace, *, dry_run: bool,
+             needed: Sequence[str] = ("openrouter", "anthropic")) -> tuple[LLMClient, Any, Callable]:
+    """Client thật cho các nhà cung cấp trong `needed`; phần không cần là model giả, không gọi."""
     if dry_run:
         return FakeLLM.echo(cost_usd=DRY_RUN_WRITER_COST_USD), mock_judge_client(
             fake_judge_reply), lambda: asyncio.sleep(0)
-    openrouter_key, anthropic_key = load_keys(Path(args.env_file))
+    keys = load_keys(Path(args.env_file), needed)
     try:
         import anthropic
     except ImportError:
         raise ConfigError("thiếu gói anthropic: chạy `uv sync --group eval`") from None
     http = httpx.AsyncClient(timeout=httpx.Timeout(HTTP_TIMEOUT_S, connect=10.0))
-    judge = anthropic.AsyncAnthropic(
-        api_key=anthropic_key.get_secret_value(), max_retries=0, timeout=HTTP_TIMEOUT_S
-    )
+    writer: LLMClient = (OpenRouterClient(keys["openrouter"], http=http)
+                         if "openrouter" in keys else FakeLLM.scripted([]))
+    judge = (anthropic.AsyncAnthropic(api_key=keys["anthropic"].get_secret_value(),
+                                      max_retries=0, timeout=HTTP_TIMEOUT_S)
+             if "anthropic" in keys else mock_judge_client(fake_judge_reply))
 
     async def close() -> None:
         await http.aclose()
         await judge.close()
 
-    return OpenRouterClient(openrouter_key, http=http), judge, close
+    return writer, judge, close
 
 
 def _finish(store: Store, data: BenchData, runner: Runner, started: float) -> int:
@@ -1789,7 +1797,7 @@ def cmd_judge_check(args: argparse.Namespace, argv: Sequence[str]) -> int:
     off_topic = Path(args.off_topic_file).read_text(encoding="utf-8")
     store = Store(resolve_out(args, dry_run=args.dry_run))
     budgets = _budgets(store, args, dry_run=args.dry_run, needed=("anthropic",))
-    _, judge_client, close = _clients(args, dry_run=args.dry_run)
+    _, judge_client, close = _clients(args, dry_run=args.dry_run, needed=("anthropic",))
     open_results(store, data, dry_run=args.dry_run,
                  run_info=_run_info("judge-check", argv, None, budgets, [], [case]))
     inputs = store.root / "judge_check" / "inputs"
