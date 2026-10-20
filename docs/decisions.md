@@ -426,7 +426,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `check_repetition(names=...)`: mỗi chỗ tên hay biệt danh thực thể (danh mục và player_view của chương đã commit, `chapter.entity_names`) tính là một từ.
   - Dàn ý có trường lẫn chữ khác hệ (`scene.outline_foreign_script`) là sai schema, thử lại theo D-14; đề dàn ý dặn viết tiếng Việt (`outline-2`).
 - **Hệ quả:** đổi ngôi một đoạn ngắn giữa cảnh có thể lọt, vì đo trên cả cảnh. "ta" trong lời kể không tính là ngôi thứ nhất. Cụm lặp không phải tên ("trận quanh linh mạch") vẫn bị bắt. Config thử của test đặt `third` vì văn thử lấy từ truyện mẫu. Bài D không chạy ngôi kể (ngôi theo từng case).
-- **Người quyết:** Claude (nhánh run1-fixes), chờ điều phối duyệt. Chốt ngôi thứ nhất cho cả bản 1: cần chủ dự án xác nhận · 20/10/2026
+- **Người quyết:** Claude (nhánh run1-fixes), điều phối duyệt (PR #23). Ngôi thứ nhất theo ghi chú chấm tay của chủ dự án (style guide v2); chốt cho cả bản 1: chờ chủ dự án xác nhận · 20/10/2026
 
 ## D-52 · Bộ dò lộ: thiết lập truyện người chơi đã đọc là chữ đã thấy (bổ sung D-26, thay một phần D-48)
 - **Bối cảnh:** `notes.md` mục 4: chương 1 bị viết lại vì "Huyền Sát Tông", "Tín Vật Huyền Nguyệt", "động linh mạch". Bối cảnh, hướng truyện, nhân vật chính đã chọn là chữ người chơi đọc lúc khởi tạo (G1, D-37, D-45), nhưng bộ dò chỉ tính `player_view`.
@@ -437,4 +437,4 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Đo lại: thiết lập thật của lần chạy không có ba tên trên (chỉ có "tín vật", "linh mạch" viết thường; tên tính theo từ viết hoa), nên sửa này không bỏ được ba lượt viết lại đó. Nguyên nhân thật: bộ trích không hé lộ thực thể ở lần đầu cảnh nêu tên (`test_leak.py::test_run1_names_absent_from_its_setup_text_still_leak`).
   - Từ trong tên nhân vật chính và chữ người chơi tự gõ (quá khứ, tính cách) giờ là chữ đã thấy: tên hay biệt danh chỉ gồm các từ đó không còn bị cấm theo tên.
   - Tên ghép từ từ thường ("Động Linh Mạch" trùng "chấn động linh mạch") chưa sửa: mọi cách gọn tìm được đều bỏ bắt một kiểu viết tên thật (chữ thường có dấu). Hướng đề xuất ở `docs/security.md`, mục Chưa giải quyết.
-- **Người quyết:** Claude (nhánh run1-fixes), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh run1-fixes), điều phối duyệt (PR #23) · 20/10/2026
