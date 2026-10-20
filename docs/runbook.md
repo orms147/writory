@@ -39,6 +39,13 @@ curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type:
 # tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:
 curl -X POST http://127.0.0.1:8000/setup/<session_id>/finalize   # trả story_id
 ```
+Viết chương (SSE, D-46) rồi chọn hành động cho chương sau:
+```bash
+curl -N -X POST http://127.0.0.1:8000/stories/<story_id>/chapters/next   # event: stage | scene_ready | … | choices_ready
+curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: application/json' -d '{"choice_id": "choice-…"}'
+curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
+curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện
+```
 Danh sách route và schema: `http://127.0.0.1:8000/docs` (OpenAPI của FastAPI).
 
 Lời gọi model trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`, và có trần trong `config/limits.yaml`. Truyện phải có `story_plan` trong Postgres: truyện tạo qua `/setup` có; truyện mẫu nạp tay thì không, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).

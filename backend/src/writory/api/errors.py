@@ -65,6 +65,11 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.PLAYER_KEY_INVALID: 422,
     ErrorCode.REQUEST_INVALID: 422,  # D-45: lỗi kiểm thân yêu cầu, không chép lại đầu vào
     ErrorCode.CHARACTER_EDIT_INVALID: 422,
+    # Chơi (D-46)
+    ErrorCode.CHOICE_NOT_FOUND: 404,
+    ErrorCode.CHOICE_REQUIRED: 409,
+    ErrorCode.CHAPTER_NOT_FOUND: 404,
+    ErrorCode.STORY_COMPLETE: 409,
 }
 
 

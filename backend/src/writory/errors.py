@@ -50,6 +50,10 @@ class ErrorCode(StrEnum):
     PLAYER_KEY_INVALID = "PLAYER_KEY_INVALID"
     REQUEST_INVALID = "REQUEST_INVALID"
     CHARACTER_EDIT_INVALID = "CHARACTER_EDIT_INVALID"
+    CHOICE_NOT_FOUND = "CHOICE_NOT_FOUND"
+    CHOICE_REQUIRED = "CHOICE_REQUIRED"
+    CHAPTER_NOT_FOUND = "CHAPTER_NOT_FOUND"
+    STORY_COMPLETE = "STORY_COMPLETE"
 
 
 @dataclass(frozen=True)
@@ -241,6 +245,23 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.CHARACTER_EDIT_INVALID: PlayerMessage(
         "Tên, tính cách hoặc quá khứ bạn sửa đang để trống hoặc dài hơn mức cho phép.",
         "Sửa lại cho ngắn gọn rồi gửi.",
+    ),
+    # Chơi: lựa chọn, hành động, chương (D-46).
+    ErrorCode.CHOICE_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy lựa chọn này trong chương hiện tại (có thể truyện đã sang chương khác).",
+        "Tải lại trang để thấy các lựa chọn mới nhất.",
+    ),
+    ErrorCode.CHOICE_REQUIRED: PlayerMessage(
+        "Bạn chưa chọn hành động cho chương tiếp theo.",
+        "Chọn một lựa chọn hoặc tự viết hành động, rồi bấm viết tiếp.",
+    ),
+    ErrorCode.CHAPTER_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy chương này.",
+        "Quay về truyện để đọc chương mới nhất.",
+    ),
+    ErrorCode.STORY_COMPLETE: PlayerMessage(
+        "Truyện đã tới chương cuối.",
+        "Bạn vẫn đọc lại được các chương đã có; muốn chơi tiếp thì bắt đầu truyện mới.",
     ),
 }
 

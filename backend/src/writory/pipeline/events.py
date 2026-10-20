@@ -1,4 +1,4 @@
-"""Sự kiện tiến trình của một chương, gửi cho giao diện (SSE sau này; D-36).
+"""Sự kiện tiến trình của một chương, gửi cho giao diện qua SSE (`api/play.py`; D-36, D-46).
 
 Đây là schema cho người chơi (G1): chỉ chữ đã qua kiểm (cảnh đã soát, lựa chọn đã dò lộ) và câu lỗi
 cố định của G12. Không có id nút, lớp truth, chi tiết kỹ thuật hay lỗi người canh. Dữ liệu cho

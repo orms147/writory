@@ -8,6 +8,7 @@ from pydantic import BaseModel, ConfigDict, Field, SecretStr, StringConstraints
 
 from writory.db import SetupRecord
 from writory.graph import PlayerView, public_entries, public_lies
+from writory.pipeline.events import PlayerChoice
 from writory.pipeline.setup import OPTION_COUNT, StoryChoices
 
 
@@ -215,3 +216,47 @@ class SetupOut(_Out):
             protagonist=None if rec.protagonist is None else character(rec.protagonist),
             story_id=rec.story_id,
         )
+
+
+# --- chơi: chương, lựa chọn, hành động (design §4.2, D-46) -----------------------------------
+
+CHOICE_ID_PATTERN = r"^choice-[0-9a-f]{12}$"  # id mờ do pipeline/choices.py đặt
+ACTION_HARD_MAX_CHARS = 5000  # trần cứng; giới hạn thật: limits.input.custom_action_max_chars
+
+
+class ChoiceIn(_Out):
+    choice_id: str = Field(pattern=CHOICE_ID_PATTERN)
+
+
+class CustomActionIn(_Out):
+    # Rỗng và độ dài theo config kiểm trong safety.classify (G5), với mã lỗi riêng.
+    text: str = Field(max_length=ACTION_HARD_MAX_CHARS)
+
+
+class ActionOut(_Out):
+    """Hành động dẫn tới chương `for_chapter`. Với lựa chọn: đúng chữ người chơi đã thấy."""
+
+    for_chapter: int
+    source: Literal["choice", "custom"]
+    text: str
+
+
+class ChoicesOut(_Out):
+    chapter: int
+    choices: list[PlayerChoice]  # id mờ, loại, sắc thái, chữ (pipeline/events.py)
+
+
+class ChapterOut(_Out):
+    number: int
+    scenes: list[str]  # đúng chữ đã hiện, đã qua mọi phép kiểm (D-1)
+
+
+class StoryOut(_Out):
+    story_id: str
+    length_level: str
+    chapter: int  # chương đã ghi cuối; 0 = vừa khởi tạo, chưa có trang nào
+    pending: bool  # còn chương đang lưu dở (D-6): chưa viết tiếp được
+    choices: list[PlayerChoice]  # bộ lựa chọn cuối chương hiện tại; rỗng ở chương 0
+    action: ActionOut | None  # hành động đã chọn cho chương sau
+    next_ready: bool  # viết được chương sau ngay
+    finished: bool  # đã tới chương cuối theo kế hoạch
