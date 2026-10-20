@@ -92,7 +92,7 @@ Mỗi lỗi tìm được thêm thành **test hồi quy** trước khi sửa. B�
 
 ## 6. Test
 - **Test nhanh** (mỗi commit): `cd backend && uv run pytest -m "not graph"`. Không mạng, không model thật; LLM thay bằng model giả (`llm/fake.py`) trả câu ghi sẵn trong `tests/fixtures/`. Test G1 kiểm **context mà model nhận được** (`FakeLLM.calls`), để lọc sai là test đỏ ngay; chế độ echo dùng cho đường trả chữ. Mục tiêu dưới 2 phút.
-- **Test đồ thị:** `docker compose up -d` rồi `uv run pytest -m graph`, trên dữ liệu truyện mẫu.
+- **Test tích hợp (Neo4j + Postgres):** `docker compose up -d` rồi `uv run pytest -m graph`, trên dữ liệu truyện mẫu. Marker `graph` dùng cho mọi test cần Docker.
 - **Bộ đo** (`docs/eval.md`): lệnh riêng, có gọi model, có trần chi phí, không chạy trong CI mặc định.
 - **Không viết test phụ thuộc thời gian chạy hoặc tốc độ máy** (sleep, timeout sát). Dùng đồng hồ giả.
 - Lint: `uv run ruff check .`
@@ -126,10 +126,11 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 ## 9. Sự thật hiện hành
 *Chỉ ghi trạng thái hiện tại, kèm link tới quyết định. Cập nhật khi có thay đổi.*
 
-- Bản đang làm: **Bản 1, tuần 1**.
-- Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`, `safety/`), lõi đồ thị (`graph/`, schema chốt ở `docs/graph-schema.md`, truyện mẫu `data/sample-story/`), kiểm văn (`quality/`). Đang làm trong PR: ghi chương phía Postgres (`db/`), người canh bằng code (`guard/`), dò lộ bí mật và phân loại hành động (`safety/`), khung chạy bài đo D.
+- Bản đang làm: **Bản 1, cuối tuần 1 sang tuần 2**.
+- Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`, `safety/` gồm bọc chữ, mã hoá key, lọc log, phân loại hành động G5), lõi đồ thị (`graph/` gồm `player_view`, ngữ cảnh model viết `context.py`; truyện mẫu `data/sample-story/`), kiểm văn (`quality/`), ghi chương phía Postgres (`db/`), khung FastAPI (`api/`).
+- Đang chờ merge: người canh bằng code (`guard/`, chờ chủ dự án duyệt sửa truyện mẫu), dò lộ bí mật G2 (`safety/leak.py`), kết quả bài đo D (chờ chủ dự án chấm tay 15 cảnh).
 - CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
-- Quyết định đang hiệu lực: D-1 đến D-19 (`docs/decisions.md`).
+- Quyết định đang hiệu lực trên `main`: D-1 đến D-21, D-27 đến D-29 (`docs/decisions.md`). D-22..D-26, D-30 nằm ở các nhánh chờ merge.
 - Chưa có: model viết và danh sách mức model (tuần 2, bài D), trần chi phí (tuần 2), frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).
