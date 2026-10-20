@@ -45,6 +45,10 @@ class ErrorCode(StrEnum):
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
     STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
     CHOICES_LEAK_BLOCKED = "CHOICES_LEAK_BLOCKED"
+    SETUP_NOT_FOUND = "SETUP_NOT_FOUND"
+    SETUP_STEP_NOT_READY = "SETUP_STEP_NOT_READY"
+    PLAYER_KEY_INVALID = "PLAYER_KEY_INVALID"
+    REQUEST_INVALID = "REQUEST_INVALID"
 
 
 @dataclass(frozen=True)
@@ -210,6 +214,27 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Các lựa chọn vừa tạo không qua được bước kiểm tra cuối nên hệ thống không hiện chúng. "
         "Chương bạn vừa đọc đã được lưu.",
         "Bấm thử lại để tạo lựa chọn mới.",
+    ),
+    # Phiên khởi tạo truyện (design §4.1, D-44).
+    ErrorCode.SETUP_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy phiên tạo truyện này.",
+        "Bắt đầu tạo truyện mới.",
+    ),
+    ErrorCode.SETUP_STEP_NOT_READY: PlayerMessage(
+        "Bước tạo truyện này chưa làm được: bước trước chưa xong, hoặc truyện đã được tạo từ "
+        "phiên này.",
+        "Tải lại trang để thấy bước hiện tại.",
+    ),
+    # Key người chơi dán vào (G7, D-45). Không nhắc lại chữ đã dán.
+    ErrorCode.PLAYER_KEY_INVALID: PlayerMessage(
+        "Chuỗi bạn dán không phải key OpenRouter (key OpenRouter bắt đầu bằng \"sk-or-\").",
+        "Sao chép lại key từ trang openrouter.ai/keys rồi dán vào.",
+    ),
+    # Thân yêu cầu sai dạng (D-45). Không chép lại đầu vào, vì đầu vào có thể là key (G7).
+    ErrorCode.REQUEST_INVALID: PlayerMessage(
+        "Yêu cầu gửi lên không đúng dạng: thiếu trường, sai kiểu, hoặc giá trị nằm ngoài khoảng "
+        "cho phép.",
+        "Tải lại trang rồi thử lại. " + _REPORT,
     ),
 }
 

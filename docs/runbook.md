@@ -25,12 +25,13 @@ curl http://127.0.0.1:8000/health   # {"neo4j": "ok"|"down", "postgres": "ok"|"d
 ```
 App tạo bằng factory (`--factory`), nên import `writory.api` không cần biến môi trường.
 
-Sổ tay và hỏi người kể (`/stories/...`) chưa có đăng nhập, nên chưa kiểm được truyện thuộc ai (G10). Router này chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ bật trên máy dev, không bật trên máy chủ thật:
+API truyện (`/stories/...`) và key người chơi (`/player/key`) chưa có đăng nhập, nên mọi người đều là người chơi dev `dev` và chưa kiểm được truyện thuộc ai (G10). Các router này chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ bật trên máy dev, không bật trên máy chủ thật. Chạy migration trước (mục Migration Postgres).
 ```bash
 ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
+curl -X PUT http://127.0.0.1:8000/player/key -H 'content-type: application/json' -d '{"api_key": "sk-or-v1-..."}'
 curl http://127.0.0.1:8000/stories/<story_id>/notebook
 ```
-`POST /stories/<story_id>/narrator` chưa trả lời được ở máy: chưa có nơi lưu key người chơi và `story_plan`, nên nó báo lỗi thay vì gọi model (D-41).
+Lời gọi model (ví dụ `POST /stories/<story_id>/narrator`) trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`. Truyện phải có `story_plan` trong Postgres; truyện mẫu nạp tay không có, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).
 
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.
@@ -70,8 +71,8 @@ Danh sách đầy đủ: `.env.example`. Không commit `.env`.
   ```bash
   uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
   ```
-  Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại.
-- `ENABLE_DEV_ROUTES` (mặc định `false`): gắn router chưa có đăng nhập (sổ tay, hỏi người kể; D-41). Chỉ bật trên máy dev.
+  Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại. Khi `ENABLE_DEV_ROUTES=true`, khoá sai định dạng thì app không khởi động (D-11, D-45).
+- `ENABLE_DEV_ROUTES` (mặc định `false`): gắn router chưa có đăng nhập (truyện, key người chơi; D-41). Chỉ bật trên máy dev.
 - Cấu hình runtime nằm trong `config/*.yaml`, được nạp và kiểm schema bằng `writory.config.load_config()`. Giá trị `null` nghĩa là chưa đặt; code nào cần giá trị đó sẽ báo lỗi.
 
 ## Deploy

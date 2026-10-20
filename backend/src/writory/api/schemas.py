@@ -4,7 +4,7 @@ một từ `PlayerView`, không chép cả object. Không có id lớp truth: m�
 
 from typing import Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, SecretStr
 
 from writory.graph import PlayerView, public_entries, public_lies
 
@@ -67,3 +67,18 @@ class NarratorQuestionIn(_Out):
 
 class NarratorAnswerOut(_Out):
     answer: str
+
+
+# --- key người chơi (G7, D-45) ---------------------------------------------------------------
+
+
+class PlayerKeyIn(_Out):
+    # SecretStr: repr/log của model không lộ key. Dạng key kiểm bằng `safety.crypto`.
+    api_key: SecretStr
+
+
+class PlayerKeyOut(_Out):
+    """Không bao giờ có key: chỉ có hay không, và 4 ký tự cuối ("•••• 7f3a" ở giao diện)."""
+
+    has_key: bool
+    last4: str | None

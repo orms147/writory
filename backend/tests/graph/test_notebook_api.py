@@ -6,8 +6,10 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
+from tests.api_fixtures import MASTER_KEY
 from tests.unit.test_narrator import CFG, PLAN, metered, reply
 from writory.api import create_app, deps
+from writory.api.deps import DEV_OWNER_ID
 from writory.config import Settings
 from writory.db import (
     commit_chapter,
@@ -25,7 +27,7 @@ SAMPLE = read_sample()
 
 
 def _story(pg, driver, sid, up_to):
-    create_story(pg, sid, length_level="short")
+    create_story(pg, sid, length_level="short", owner_id=DEV_OWNER_ID)
     for n in range(up_to + 1):
         ch = SAMPLE.chapters[n]
         commit_chapter(pg, driver, sid, n, [ch.text] if ch.text else [], ch.package)
@@ -38,7 +40,7 @@ async def _ok() -> bool:
 def _app(pg, driver, *, fake: FakeLLM | None = None):
     settings = Settings(
         _env_file=None, neo4j_uri="bolt://unused", neo4j_user="u", neo4j_password="p",
-        postgres_dsn="postgresql://unused", player_key_encryption_key="k",
+        postgres_dsn="postgresql://unused", player_key_encryption_key=MASTER_KEY,
         enable_dev_routes=True,
     )
     app = create_app(settings, health_checks={"neo4j": _ok}, config=CFG)

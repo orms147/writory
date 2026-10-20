@@ -338,7 +338,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:**
   - `Settings.enable_dev_routes` (`ENABLE_DEV_ROUTES`), mặc định `False`. `create_app` chỉ gắn router khi cờ bật; mỗi route còn kiểm `app.state.dev_routes_enabled`, nên gắn router vào app khác vẫn 404.
   - `GET /stories/{story_id}/notebook` → `NotebookOut` (danh sách trắng, mã công khai, D-40), đọc qua `committed_player_view`. `POST /stories/{story_id}/narrator` nhận `{question}`, trả `{answer}`.
-  - Dependency nằm trong `api/deps.py`; test thay bằng `dependency_overrides`. Chưa có nơi lưu key người chơi → LLM mặc định báo `PLAYER_KEY_MISSING`, không bao giờ dùng key chủ dự án. Chưa có nơi lưu `story_plan` → lỗi, không trả lời.
+  - Dependency nằm trong `api/deps.py`; test thay bằng `dependency_overrides`. Chưa có nơi lưu key người chơi → LLM mặc định báo `PLAYER_KEY_MISSING`, không bao giờ dùng key chủ dự án. Chưa có nơi lưu `story_plan` → lỗi, không trả lời. Nơi lưu key và kế hoạch: xem D-44.
   - `create_app` đọc `Settings()` và `load_config()` lúc gọi factory (trước đây `Settings()` đọc trong lifespan).
   - Thêm mã `WRITORY_RATE_LIMITED` (429) cho trần mỗi phút của WriTory (G8); chưa có bộ đếm vì chưa có tài khoản.
 - **Hệ quả:** máy chủ thật không có router này tới khi có đăng nhập và kiểm quyền (TODO G10 trong `api/stories.py`). Chi phí hỏi người kể chưa cộng vào trần truyện, vì chưa có nhật ký chi phí.
@@ -365,6 +365,26 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Vai của lời gọi nhận ra qua schema JSON; cảnh nhận qua `CostTracker.start_scene()`.
 - **Hệ quả:** lần chạy khác app ở `max_tokens`: app chưa đặt. Giá trong đề phải sửa khi giá OpenRouter đổi. Chưa đo được độ trễ tới chữ đầu, vì pipeline chưa stream.
 - **Người quyết:** `reasoning: none` cho mức `standard`: Chủ dự án duyệt 20/10/2026. Phần còn lại, gồm `max_tokens_per_call: 16000` chỉ cho lần chạy: Claude (nhánh story-run), điều phối duyệt · 20/10/2026
+
+## D-44 · Lưu trữ cho API truyện (migration 0003); người chơi dev; nhật ký chi phí theo vai
+- **Bối cảnh:** D-41 để `get_story_plan`, `get_narrator_llm` fail closed: chưa có nơi lưu bản kế hoạch và key người chơi, chưa có nhật ký chi phí nên trần mỗi truyện không tính các lần gọi trước. Khởi tạo (design §4.1) cần máy chủ giữ 3 lựa chọn mỗi bước.
+- **Quyết định:**
+  - `0003_story_api.sql`: `story_plans` (ẩn, không ra API), `stories.brief` (thiết lập người chơi chọn, đề cho mọi chương), `player_keys` (chỉ bản mã hoá Fernet), `setup_sessions`, `llm_costs`, `chapter_choices`, `player_actions`. Hàm ở `db/plans.py`, `keys.py`, `setup.py`, `costs.py`, `choices.py`.
+  - Chưa có tài khoản: mọi dòng mang `owner_id = "dev"` (`api/deps.get_owner_id`). Truyện, phiên khởi tạo và key đều đọc theo chủ; của người khác là 404. Tuần 5: tạo bảng tài khoản, đổi các dòng `dev`, thêm FOREIGN KEY từ `owner_id`, và `get_owner_id` đọc phiên đăng nhập.
+  - Mỗi lời gọi model ghi một dòng `llm_costs` qua `llm.ledger.RecordingClient`, đặt dưới `MeteredClient`, kể cả khi thiếu `usage.cost`. Vai đoán theo schema JSON (`api/deps.ROLE_OF_SCHEMA`; không schema là `writer`). `CostTracker(story_spent_usd=...)` cộng từ nhật ký. Chi phí khởi tạo tính theo phiên, gắn vào truyện khi tạo xong.
+  - `deps.PlayerLLM`: key chỉ được đọc và giải mã khi sắp gọi model, rồi đi thẳng vào client OpenRouter (một `httpx.AsyncClient` chung của app). Không có key thì `PLAYER_KEY_MISSING`, không bao giờ dùng key chủ dự án. Truyện không có kế hoạch: fail closed (500).
+- **Hệ quả:** lời gọi lỗi và stream đứt không có dòng chi phí. Thêm schema mới mà quên bảng vai thì nhật ký ghi tên lớp. Cột `model` là model được yêu cầu, không phải model OpenRouter thật sự dùng. Truy vấn Postgres chạy đồng bộ.
+- **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
+
+## D-45 · Key người chơi qua API; lỗi 422 không chép lại đầu vào
+- **Bối cảnh:** design §10, G7. Lỗi 422 mặc định của FastAPI trả `input` của từng lỗi, tức chép lại chữ người chơi gửi lên, kể cả key.
+- **Quyết định:**
+  - `GET/PUT/DELETE /player/key` (router dev, D-41). Phản hồi chỉ có `has_key` và `last4`; 4 ký tự tính sau khi giải mã, không lưu riêng.
+  - Key phải bắt đầu bằng `sk-or-` và được bộ lọc log nhận ra trọn vẹn (`safety.crypto.validate_player_key`), để nếu lọt vào log thì vẫn bị xoá. Sai dạng: mã mới `PLAYER_KEY_INVALID` (422). Chưa gọi OpenRouter để thử key.
+  - Lỗi kiểm thân yêu cầu thành mã mới `REQUEST_INVALID` (422) cho mọi route; log chỉ ghi vị trí và loại lỗi.
+  - Bật router dev thì `create_app` dựng `KeyCipher` ngay: khoá sai thì app không khởi động (D-11).
+- **Hệ quả:** key dạng khác (nếu OpenRouter đổi tiền tố) bị từ chối tới khi sửa bộ lọc log và hàm kiểm. Giao diện không nhận được chi tiết trường nào sai.
+- **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
 
 ## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
 - **Bối cảnh:** pipeline (D-36..D-40) dừng ở lỗi cấu hình vì `roles.*`, trần chi phí và ngưỡng còn `null`. Chưa có bài đo riêng cho dàn ý, lựa chọn, người kể, phân loại, người canh, khởi tạo. Bài D đo riêng bước viết của Luna khoảng 0,001 USD một cảnh (`evals/results/2026-10-20-quality-r2/`); cả đường đi chưa đo.

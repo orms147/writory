@@ -9,6 +9,7 @@ import logging
 import traceback
 
 from fastapi import FastAPI, Request
+from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
 
 from writory.errors import ErrorCode, WritoryError
@@ -58,6 +59,11 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     # Khởi tạo truyện (D-39): kết quả của model không dùng được, giống LLM_BAD_RESPONSE.
     ErrorCode.STORY_SETUP_INVALID: 502,
     ErrorCode.CHOICES_LEAK_BLOCKED: 502,  # D-37: như SCENE_LEAK_BLOCKED
+    # Phiên khởi tạo (D-44)
+    ErrorCode.SETUP_NOT_FOUND: 404,
+    ErrorCode.SETUP_STEP_NOT_READY: 409,
+    ErrorCode.PLAYER_KEY_INVALID: 422,
+    ErrorCode.REQUEST_INVALID: 422,  # D-45: lỗi kiểm thân yêu cầu, không chép lại đầu vào
 }
 
 
@@ -74,6 +80,19 @@ async def _unexpected_error(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(err.player_payload(), status_code=HTTP_STATUS[err.code])
 
 
+async def _request_invalid(request: Request, exc: Exception) -> JSONResponse:
+    """Lỗi kiểm thân yêu cầu (422). Bản mặc định của FastAPI trả `input` của từng lỗi, tức chép lại
+    chữ người chơi gửi lên, kể cả key (G7). Ở đây log và phản hồi chỉ có vị trí và loại lỗi."""
+    assert isinstance(exc, RequestValidationError)
+    where = "; ".join(f"{'.'.join(str(p) for p in e.get('loc', ()))}: {e.get('type')}"
+                      for e in exc.errors())
+    log.warning("%s %s -> %s (%s)", request.method, request.url.path,
+                ErrorCode.REQUEST_INVALID.value, where)
+    err = WritoryError(ErrorCode.REQUEST_INVALID)
+    return JSONResponse(err.player_payload(), status_code=HTTP_STATUS[err.code])
+
+
 def install_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(WritoryError, _writory_error)
+    app.add_exception_handler(RequestValidationError, _request_invalid)
     app.add_exception_handler(Exception, _unexpected_error)

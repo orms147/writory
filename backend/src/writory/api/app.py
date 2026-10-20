@@ -1,7 +1,8 @@
 """App FastAPI (D-29). Chạy dev: docs/runbook.md.
 
 Tạo app bằng factory `create_app`, không tạo lúc import, để import không cần biến môi trường.
-Router `stories` (sổ tay, hỏi người kể) chỉ mount khi `enable_dev_routes` bật (D-41).
+Router chưa có đăng nhập (`DEV_ROUTERS`: truyện, khởi tạo, key người chơi) chỉ mount khi
+`enable_dev_routes` bật (D-41).
 """
 
 import asyncio
@@ -9,17 +10,24 @@ import logging
 from collections.abc import AsyncIterator, Awaitable, Callable
 from contextlib import asynccontextmanager
 
+import httpx
 import psycopg
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from neo4j import GraphDatabase
 
 from writory.api.errors import install_error_handlers
+from writory.api.keys import router as keys_router
 from writory.api.stories import router as stories_router
 from writory.config import AppConfig, Settings, load_config
+from writory.llm.openrouter import DEFAULT_TIMEOUT
+from writory.safety.crypto import KeyCipher
 from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
+
+# Router chưa có đăng nhập (D-41): chỉ mount khi bật ENABLE_DEV_ROUTES.
+DEV_ROUTERS = (stories_router, keys_router)
 
 # Logger của uvicorn có handler riêng và không truyền record lên root, nên phải gắn riêng (G7).
 UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")
@@ -75,12 +83,18 @@ def create_app(
             if health_checks is not None
             else _default_health_checks(app, settings)
         )
+        if app.state.dev_routes_enabled:
+            # Một httpx client cho mọi client OpenRouter (mỗi client mang key một người chơi).
+            app.state.openrouter_http = httpx.AsyncClient(timeout=DEFAULT_TIMEOUT)
         try:
             yield
         finally:
             driver = getattr(app.state, "neo4j_driver", None)
             if driver is not None:
                 driver.close()
+            http = getattr(app.state, "openrouter_http", None)
+            if http is not None:
+                await http.aclose()
 
     app = FastAPI(title="WriTory", lifespan=lifespan)
     install_error_handlers(app)
@@ -89,7 +103,10 @@ def create_app(
     # D-41: router chưa có đăng nhập chỉ mount khi bật cờ dev; mặc định tắt (fail closed).
     app.state.dev_routes_enabled = settings.enable_dev_routes is True
     if app.state.dev_routes_enabled:
-        app.include_router(stories_router)
+        # D-11: khoá mã hoá key sai thì app không khởi động (lỗi không chép lại khoá).
+        app.state.key_cipher = KeyCipher(settings.player_key_encryption_key)
+        for router in DEV_ROUTERS:
+            app.include_router(router)
 
     @app.get("/health")
     async def health() -> JSONResponse:

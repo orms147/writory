@@ -1,34 +1,77 @@
-"""Dependency của API (D-41). Test thay từng hàm qua `app.dependency_overrides`.
+"""Dependency của API (D-41, D-44). Test thay từng hàm qua `app.dependency_overrides`.
 
 Hàm đọc dữ liệu là `def` thường: FastAPI chạy chúng trong threadpool, nên driver Neo4j và
 psycopg (đồng bộ) không chặn event loop. Mặc định nào chưa làm được thì fail closed.
+
+Chưa có đăng nhập (tuần 5): mọi yêu cầu là người chơi dev `DEV_OWNER_ID`, và mọi router dùng các
+hàm này chỉ mount khi bật `ENABLE_DEV_ROUTES` (D-41). Đường ống kiểm chủ (truyện, phiên khởi tạo,
+key, nhật ký chi phí đều theo `owner_id`) đã có; tuần 5 chỉ cần đổi `get_owner_id`.
 """
 
 import asyncio
-from collections.abc import Iterator, Mapping
-from typing import Annotated
+from collections.abc import Callable, Iterator, Mapping
+from typing import Annotated, Protocol
 
 import psycopg
-from fastapi import Depends, Request
+from fastapi import Depends, HTTPException, Request
 from neo4j import Driver
+from pydantic import BaseModel, SecretStr
 
-from writory.config import AppConfig
-from writory.db import committed_player_view, connect, take_narrator_question
+from writory.config import AppConfig, CostLimits
+from writory.db import (
+    CostEntry,
+    StoryRecord,
+    committed_player_view,
+    connect,
+    delete_player_key,
+    load_player_key,
+    load_story_plan,
+    record_cost,
+    save_player_key,
+    setup_spent_usd,
+    story_spent_usd,
+    take_narrator_question,
+)
+from writory.db import get_owned_story as db_get_owned_story
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerView
 from writory.guard.state import Neo4jState
-from writory.llm.cost import MeteredClient
-from writory.pipeline.narrator import NarratorQuota
+from writory.llm.base import LLMClient, Usage
+from writory.llm.cost import CostTracker, MeteredClient
+from writory.llm.ledger import RecordingClient
+from writory.llm.openrouter import OpenRouterClient
+from writory.pipeline.choices import ChoicesOutput
+from writory.pipeline.extract import ExtractOutput
+from writory.pipeline.narrator import NarratorOutput, NarratorQuota
+from writory.pipeline.scene import SceneOutline
+from writory.pipeline.setup import BuildOutput, CharactersOutput, PlotsOutput, SettingsOutput
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.classify import Classification
+from writory.safety.crypto import KeyCipher
 from writory.safety.leak import leak_names
+
+# TODO(G10, tuần 5): bỏ khi có đăng nhập; mọi dòng `dev` đổi sang tài khoản thật (migration 0003).
+DEV_OWNER_ID = "dev"
+
+
+def dev_routes_only(request: Request) -> None:
+    """Fail closed: chỉ chạy khi create_app đã bật cờ dev cho chính app này (D-41)."""
+    if getattr(request.app.state, "dev_routes_enabled", False) is not True:
+        raise HTTPException(status_code=404)
 
 
 def get_app_config(request: Request) -> AppConfig:
     return request.app.state.config
 
 
+def get_owner_id() -> str:
+    """Người đang dùng. TODO(G10, tuần 5): lấy từ phiên đăng nhập; chưa có thì mọi người là dev."""
+    return DEV_OWNER_ID
+
+
 def get_pg_conn(request: Request) -> Iterator[psycopg.Connection]:
-    """Một kết nối Postgres (autocommit) cho mỗi request; đóng sau khi trả lời."""
+    """Một kết nối Postgres (autocommit) cho mỗi request; đóng sau khi trả lời (với SSE: sau khi
+    stream xong hoặc bị huỷ)."""
     conn = connect(request.app.state.settings)
     try:
         yield conn
@@ -43,35 +86,198 @@ def get_neo4j_driver(request: Request) -> Driver:
     return driver
 
 
+Config = Annotated[AppConfig, Depends(get_app_config)]
+Owner = Annotated[str, Depends(get_owner_id)]
 PgConn = Annotated[psycopg.Connection, Depends(get_pg_conn)]
 Neo4jDriver = Annotated[Driver, Depends(get_neo4j_driver)]
 
 
-def get_player_view(story_id: str, conn: PgConn, driver: Neo4jDriver) -> PlayerView:
-    """player_view ở chương đã commit (D-6). Truyện không có → STORY_NOT_FOUND (404).
-    TODO(G10, tuần 5): kiểm truyện thuộc người đang đăng nhập; chưa có đăng nhập nên router
-    chỉ mount khi bật `enable_dev_routes` (D-41)."""
-    return committed_player_view(conn, driver, story_id)
+def get_owned_story(story_id: str, conn: PgConn, owner: Owner) -> StoryRecord:
+    """Truyện không có, hoặc của người khác → STORY_NOT_FOUND (404, G10)."""
+    return db_get_owned_story(conn, story_id, owner)
 
 
-def get_truth_names(story_id: str, driver: Neo4jDriver) -> Mapping[str, tuple[str, ...]]:
+OwnedStory = Annotated[StoryRecord, Depends(get_owned_story)]
+
+
+def get_player_view(story: OwnedStory, conn: PgConn, driver: Neo4jDriver) -> PlayerView:
+    """player_view ở chương đã commit (D-6)."""
+    return committed_player_view(conn, driver, story.id)
+
+
+def get_truth_names(story: OwnedStory, driver: Neo4jDriver) -> Mapping[str, tuple[str, ...]]:
     """Tên lớp truth, CHỈ cho bộ dò lộ (G2), theo đúng quy tắc của `leak_names` (D-48). Không bao
     giờ đưa vào phản hồi hay context model."""
-    return leak_names(Neo4jState(driver, story_id))
+    return leak_names(Neo4jState(driver, story.id))
 
 
-def get_story_plan(story_id: str) -> StoryPlan:
-    """TODO(pipeline): chưa có nơi lưu `story_plan`. Fail closed: không có kế hoạch thì không
-    chạy đủ bộ dò lộ (G2), nên không trả lời."""
-    raise NotImplementedError("chưa có nơi lưu story_plan")
+def get_story_plan(story: OwnedStory, conn: PgConn) -> StoryPlan:
+    """Bản kế hoạch ẩn (D-44). Truyện không có kế hoạch thì fail closed: không có nó thì không chạy
+    đủ bộ dò lộ (G2) và người canh, nên không trả lời, không viết."""
+    plan = load_story_plan(conn, story.id)
+    if plan is None:
+        raise RuntimeError(f"truyện {story.id} không có story_plan")  # → INTERNAL_ERROR
+    return plan
 
 
-def get_narrator_llm(story_id: str) -> MeteredClient:
-    """TODO(tuần 5): giải mã key OpenRouter của người chơi (`safety.crypto`), dựng
-    `MeteredClient(OpenRouterClient(key), CostTracker(config.limits.cost_usd,
-    story_spent_usd=<nhật ký chi phí>))`. Chưa có nơi lưu key nên báo thiếu key, không bao giờ
-    dùng key của chủ dự án."""
-    raise WritoryError(ErrorCode.PLAYER_KEY_MISSING, detail="chưa có nơi lưu key người chơi")
+# --- key người chơi (G7) -----------------------------------------------------------------------
+
+
+class KeyStore(Protocol):
+    """Key đã mã hoá của người đang dùng. Không bao giờ thấy key gốc."""
+
+    def load(self) -> bytes | None: ...
+    def save(self, token: bytes) -> None: ...
+    def delete(self) -> bool: ...
+
+
+class PostgresKeyStore:
+    def __init__(self, conn: psycopg.Connection, owner_id: str) -> None:
+        self._conn = conn
+        self._owner = owner_id
+
+    def load(self) -> bytes | None:
+        return load_player_key(self._conn, self._owner)
+
+    def save(self, token: bytes) -> None:
+        save_player_key(self._conn, self._owner, token)
+
+    def delete(self) -> bool:
+        return delete_player_key(self._conn, self._owner)
+
+
+def get_key_store(conn: PgConn, owner: Owner) -> KeyStore:
+    return PostgresKeyStore(conn, owner)
+
+
+def get_key_cipher(request: Request) -> KeyCipher:
+    """Dựng trong create_app khi bật router dev; khoá sai thì app không khởi động (D-11)."""
+    return request.app.state.key_cipher
+
+
+Keys = Annotated[KeyStore, Depends(get_key_store)]
+Cipher = Annotated[KeyCipher, Depends(get_key_cipher)]
+
+
+# --- nhật ký chi phí (G8) ----------------------------------------------------------------------
+
+
+class CostLedger(Protocol):
+    def record(self, entry: CostEntry, *, story_id: str | None = None,
+               setup_id: str | None = None, chapter: int | None = None) -> None: ...
+    def story_spent(self, story_id: str) -> float: ...
+    def setup_spent(self, setup_id: str) -> float: ...
+
+
+class PostgresCostLedger:
+    def __init__(self, conn: psycopg.Connection, owner_id: str) -> None:
+        self._conn = conn
+        self._owner = owner_id
+
+    def record(self, entry: CostEntry, *, story_id: str | None = None,
+               setup_id: str | None = None, chapter: int | None = None) -> None:
+        record_cost(self._conn, owner_id=self._owner, entry=entry, story_id=story_id,
+                    setup_id=setup_id, chapter=chapter)
+
+    def story_spent(self, story_id: str) -> float:
+        return story_spent_usd(self._conn, story_id)
+
+    def setup_spent(self, setup_id: str) -> float:
+        return setup_spent_usd(self._conn, setup_id)
+
+
+def get_cost_ledger(conn: PgConn, owner: Owner) -> CostLedger:
+    return PostgresCostLedger(conn, owner)
+
+
+# Vai của một lời gọi, đoán theo schema JSON; không schema là model viết. Dùng để ghi nhật ký.
+ROLE_OF_SCHEMA: dict[type[BaseModel], str] = {
+    SceneOutline: "outline",
+    ExtractOutput: "extract",
+    ChoicesOutput: "choices",
+    NarratorOutput: "narrator",
+    Classification: "classify",
+    SettingsOutput: "setup",
+    PlotsOutput: "setup",
+    CharactersOutput: "setup",
+    BuildOutput: "setup",
+}
+
+
+def role_of_schema(schema: type[BaseModel] | None) -> str:
+    if schema is None:
+        return "writer"
+    return ROLE_OF_SCHEMA.get(schema, schema.__name__)
+
+
+# --- client model trả bằng key người chơi (D-2) ------------------------------------------------
+
+LLMFactory = Callable[[SecretStr], LLMClient]
+
+
+def get_llm_factory(request: Request) -> LLMFactory:
+    """Client OpenRouter dùng chung một httpx.AsyncClient của app (đóng lúc tắt app)."""
+    http = getattr(request.app.state, "openrouter_http", None)
+    if http is None:
+        raise RuntimeError("app chưa có httpx client cho OpenRouter")
+    return lambda api_key: OpenRouterClient(api_key, http=http)
+
+
+class PlayerLLM:
+    """Dựng client model cho một nhóm lời gọi, trả bằng key của người chơi; không bao giờ dùng key
+    của chủ dự án. Key chỉ được đọc và giải mã khi thật sự cần gọi model, rồi chỉ đi vào client
+    model (G7). Mọi lời gọi được ghi vào nhật ký chi phí, và trần mỗi truyện tính cả số đã tiêu."""
+
+    def __init__(self, *, keys: KeyStore, cipher: KeyCipher, factory: LLMFactory,
+                 ledger: CostLedger, limits: CostLimits) -> None:
+        self._keys = keys
+        self._cipher = cipher
+        self._factory = factory
+        self._ledger = ledger
+        self._limits = limits
+
+    def open(self, *, story_id: str | None = None, setup_id: str | None = None,
+             chapter: int | None = None) -> tuple[LLMClient, CostTracker]:
+        """Client đã gắn nhật ký (chưa gắn trần) và bộ đếm trần, cho nơi tự dựng MeteredClient
+        (ChapterRun). Lời gọi khởi tạo tính theo phiên; lời gọi của truyện tính theo truyện."""
+        if (story_id is None) == (setup_id is None):
+            raise ValueError("cần đúng một trong story_id, setup_id")
+        token = self._keys.load()
+        if token is None:
+            raise WritoryError(ErrorCode.PLAYER_KEY_MISSING, detail="người chơi chưa lưu key")
+        inner = self._factory(self._cipher.decrypt(token))
+
+        def sink(role: str, model: str, usage: Usage) -> None:
+            self._ledger.record(
+                CostEntry(role, model, usage.prompt_tokens, usage.completion_tokens,
+                          usage.cost_usd),
+                story_id=story_id, setup_id=setup_id, chapter=chapter,
+            )
+
+        spent = (self._ledger.story_spent(story_id) if story_id is not None
+                 else self._ledger.setup_spent(setup_id))
+        tracker = CostTracker(self._limits, story_spent_usd=spent)
+        return RecordingClient(inner, sink, role_of=role_of_schema), tracker
+
+    def metered(self, **kw) -> MeteredClient:
+        llm, tracker = self.open(**kw)
+        return MeteredClient(llm, tracker)
+
+
+def get_player_llm(
+    keys: Keys, cipher: Cipher, factory: Annotated[LLMFactory, Depends(get_llm_factory)],
+    ledger: Annotated[CostLedger, Depends(get_cost_ledger)], config: Config,
+) -> PlayerLLM:
+    return PlayerLLM(keys=keys, cipher=cipher, factory=factory, ledger=ledger,
+                     limits=config.limits.cost_usd)
+
+
+PlayerLLMs = Annotated[PlayerLLM, Depends(get_player_llm)]
+
+
+def get_narrator_llm(story: OwnedStory, llm: PlayerLLMs) -> MeteredClient:
+    """Hỏi người kể: key người chơi; chi phí tính vào truyện, ở chương đang đọc."""
+    return llm.metered(story_id=story.id, chapter=story.committed_chapter or 0)
 
 
 class PostgresNarratorQuota:
