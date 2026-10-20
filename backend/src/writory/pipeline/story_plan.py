@@ -180,7 +180,8 @@ class StoryPlan(_Strict):
     def deadlines(self) -> dict[int, int]:
         """Số việc đến hạn ở mỗi chương: bí mật (`reveal_to_chapter`), mạch phải gỡ có khoảng
         (`resolve_to_chapter`), mốc (`to_chapter`). Luật "không dồn vào một chương" (D-49) so số
-        này với `story_lengths.levels.*.max_due_per_chapter`."""
+        này với `story_lengths.levels.*.max_due_per_chapter`, trừ chương cuối (D-54,
+        `pipeline.setup`)."""
         due: Counter[int] = Counter(s.reveal_to_chapter for s in self.secrets)
         due.update(t.resolve_to_chapter for t in self.must_resolve_threads
                    if t.resolve_to_chapter is not None)

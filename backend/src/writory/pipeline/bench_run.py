@@ -95,9 +95,12 @@ from writory.pipeline.setup import (
     PlotsOutput,
     PovMode,
     SettingsOutput,
+    SetupInvalidError,
+    SetupProblem,
     StoryChoices,
     StoryTags,
     build_story,
+    problem_kinds,
     propose_characters,
     propose_plots,
     propose_settings,
@@ -479,6 +482,9 @@ class StoryRun:
         self.truth_chapters: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.errors: list[dict[str, Any]] = []  # chi tiết lỗi, chỉ vào truth_dump
         self.retries_used = {"setup": 0, "chapter": 0, "choices": 0}
+        # Lượt sửa của build_story (D-54): lượt "bấm thử lại", loại lỗi, danh sách lỗi (có id, chỉ
+        # vào truth_dump).
+        self.setup_repairs: list[dict[str, Any]] = []
         self.stop: dict[str, Any] | None = None
         self.target: int | None = None
         self.clamped = False
@@ -540,10 +546,13 @@ class StoryRun:
         self.files.append("calls.jsonl", row)
 
     def _fail(self, where: str, attempt: int, e: WritoryError) -> None:
-        """Ghi một lỗi có mã: câu G12 vào sự kiện chung, chi tiết vào truth_dump."""
+        """Ghi một lỗi có mã: câu G12 vào sự kiện chung, chi tiết vào truth_dump. Khởi tạo sai
+        quy tắc: danh sách lỗi (có id lớp truth) cũng chỉ vào truth_dump."""
         self._event({"where": where, "attempt": attempt, **error_event(e).model_dump(mode="json")})
-        self.errors.append({"where": where, "attempt": attempt, "code": e.code.value,
-                            "detail": e.detail})
+        row = {"where": where, "attempt": attempt, "code": e.code.value, "detail": e.detail}
+        if isinstance(e, SetupInvalidError):
+            row["problems"] = [redact(p.text) for p in e.problems]
+        self.errors.append(row)
 
     # -- khởi tạo --
 
@@ -569,7 +578,7 @@ class StoryRun:
         protagonist = self._pick_option("characters", people)
         built = await self._setup_step("build", lambda: build_story(
             choices, setting, plot, protagonist, llm=llm, config=cfg,
-            commit_id=f"{self.store.story_id}-ch0"))
+            commit_id=f"{self.store.story_id}-ch0", on_repair=self._setup_repair))
         if built is None:
             return False
         self.plan = built.plan
@@ -606,6 +615,13 @@ class StoryRun:
                 self._stop("error", f"setup:{step}", e.code, e.detail)
                 return None
         return None
+
+    def _setup_repair(self, problems: Sequence[SetupProblem]) -> None:
+        """`build_story` sắp gọi model sửa (D-54): đếm cho report, danh sách lỗi cho truth_dump."""
+        assert self.budgeted is not None
+        self.setup_repairs.append({"attempt": self.budgeted.attempt,
+                                   "kinds": problem_kinds(problems),
+                                   "problems": [redact(p.text) for p in problems]})
 
     def _pick_option(self, step: str, options: Sequence[BaseModel]) -> Any:
         index = self.rng.randrange(len(options))
@@ -841,6 +857,7 @@ class StoryRun:
             "packages": {str(n): p.model_dump(mode="json", by_alias=True)
                          for n, p in sorted(self.packages.items())},
             "final": final, "chapters": self.truth_chapters, "errors": self.errors,
+            "setup_repairs": self.setup_repairs,
         }
         self._write_json("truth_dump.json", truth)
         self._write_json("setup.json", self.setup_record)
@@ -976,6 +993,9 @@ def build_report(run: StoryRun) -> dict[str, Any]:
             left.update(s["left_when_shown"])
     committed = [n for n in run.packages if n > 0]
     status = "done" if run.stop is None else run.stop["kind"]
+    repair_kinds: Counter[str] = Counter()
+    for r in run.setup_repairs:
+        repair_kinds.update(r["kinds"])
     return {
         "status": status, "stop": run.stop,
         "chapters_planned": run.plan.total_chapters if run.plan else None,
@@ -1013,6 +1033,10 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         },
         "rejected_edges": {"total": sum(rejected.values()), "by_reason": dict(sorted(rejected.items()))},
         "player_retries_used": dict(run.retries_used),
+        # Lượt model sửa kế hoạch sai quy tắc trong build_story, mọi lượt "bấm thử lại" (D-54); số
+        # lỗi theo loại, không id.
+        "setup_repairs": {"used": len(run.setup_repairs),
+                          "kinds": dict(sorted(repair_kinds.items()))},
         "chapters": run.attempts,
     }
 
@@ -1046,6 +1070,9 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         (f"- Chương đã ghi: {report['chapters_committed']}/{report['chapters_target']} "
          f"(kế hoạch {report['chapters_planned']}){clamped}."),
         f"- Dừng: {stopped}.",
+        (f"- Khởi tạo: lượt sửa {report['setup_repairs']['used']} "
+         f"({_fmt_counts(report['setup_repairs']['kinds'])}); tự bấm thử lại "
+         f"{report['player_retries_used']['setup']}."),
         (f"- Chi phí: {cost['total_usd']:.4f} USD (trần --budget: {meta['budget_usd']}); ước tính "
          f"cho lời gọi không rõ chi phí: {cost['estimated_unbilled_usd']:.4f} USD."),
         (f"- Trần config (USD): cảnh {limits['per_scene']}, chương {limits['per_chapter']}, "

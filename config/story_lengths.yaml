@@ -3,7 +3,8 @@ chars_per_word_page: 3000          # 1 trang Word A4, giãn dòng đơn (ước 
 chapter_chars: {min: 3000, max: 10000}
 scenes_per_chapter: {min: 2, max: 3}
 # milestones: số mốc cốt truyện của bản kế hoạch; max_due_per_chapter: số việc đến hạn tối đa
-# ở một chương (bí mật, mạch phải gỡ, mốc). Nhịp theo độ dài, design §6.1; số tạm (D-49).
+# ở một chương (bí mật, mạch phải gỡ, mốc), trừ chương cuối (D-54). Nhịp theo độ dài, design §6.1;
+# số tạm (D-49).
 levels:
   short:  {label: "Truyện ngắn",      target_chars: 30000,  chapters: {min: 4,  max: 8},
            milestones: {min: 3, max: 5},  max_due_per_chapter: 3}

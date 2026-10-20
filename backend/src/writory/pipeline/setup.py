@@ -1,4 +1,4 @@
-"""Khởi tạo truyện (design §4.1, §6.1; D-38, D-39).
+"""Khởi tạo truyện (design §4.1, §6.1; D-38, D-39, D-54).
 
 Bốn bước, mỗi bước một lời gọi `chat_json` với schema strict (mọi trường bắt buộc; trống là null
 hoặc danh sách rỗng), kiểm bằng pydantic rồi kiểm quy tắc bằng code:
@@ -11,17 +11,27 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
 
 - G4: chữ đi qua tay người chơi (tag, bối cảnh và hướng đã chọn, nhân vật chính đã sửa) chỉ vào vai
   user, bọc `UserAuthored`. Nút nhân vật chính do code dựng từ chữ người chơi, mang
-  `user_authored: true`; model chỉ nhắc tới nó qua `PROTAGONIST_ID`.
+  `user_authored: true`; model chỉ nhắc tới nó qua `PROTAGONIST_ID`. Lượt sửa của `build_story`:
+  câu trả lời trước (model viết, có thể nhắc lại chữ người chơi) vào khối dữ liệu
+  `previous_answer`; danh sách lỗi (id lớp truth, chữ model viết) đứng ngoài khối, qua
+  `escape_text`. Cả hai ở vai user; vai `setup` vốn được thấy lớp truth.
 - G1: lựa chọn ở bước 1–3 hiện cho người chơi, nên prompt cấm viết bí mật vào đó. Gói chương 0
   không có REVEALED_TO_PLAYER và nhân vật chính không KNOWS gì; code kiểm player_view ở chương 0
   rỗng bằng định nghĩa duy nhất (`guard.state.player_view_of`).
 - G11, D-39, D-14: JSON sai schema thử lại theo `retries.extract_schema_retry`, lỗi mạng tạm thời
-  theo `retries.llm_transient` (`with_json_retries`); sai quy tắc thì báo
-  STORY_SETUP_INVALID ngay, không tự gọi lại model, không trả kế hoạch hay gói nửa vời.
+  theo `retries.llm_transient` (`with_json_retries`). Bước 1–3 sai quy tắc thì báo
+  STORY_SETUP_INVALID ngay, không tự gọi lại model.
+- D-54 (`build_story`): id sai dạng thì code chuẩn hoá (`normalize_ids`), không gọi lại model. Sai
+  quy tắc thì gọi model sửa tối đa `retries.setup_repair` lượt, kèm danh sách lỗi; lượt sửa vẫn
+  thử lại JSON sai schema riêng như trên. Vẫn sai thì `SetupInvalidError` (STORY_SETUP_INVALID):
+  log chỉ có loại lỗi, không trả kế hoạch hay gói nửa vời.
 """
 
+import logging
+import re
 import unicodedata
-from collections import Counter
+from collections import Counter, defaultdict
+from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Literal, get_args
 
@@ -29,15 +39,25 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from writory.config import AppConfig, LengthLevel
 from writory.errors import ErrorCode, WritoryError
-from writory.graph.package import ChangePackage, chapter_rule_problems
+from writory.graph.package import ID_MAX_LEN, ID_PATTERN, ChangePackage, chapter_rule_problems
 from writory.graph.schema import NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
 from writory.llm.retry import with_json_retries
 from writory.pipeline.story_plan import MilestoneKind, StoryPlan
-from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
+from writory.safety.wrap import (
+    DATA_NOTICE,
+    UserAuthored,
+    escape_text,
+    system_message,
+    user_message,
+)
 
-PROMPT_VERSION = "setup-3"  # đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49)
+log = logging.getLogger(__name__)
+
+# Đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49). setup-4: luật id có dạng và
+# ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54).
+PROMPT_VERSION = "setup-4"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -259,6 +279,121 @@ class StorySetup:
     package: ChangePackage
 
 
+# --- lỗi của build_story (D-54) ------------------------------------------------------------------
+
+ProblemKind = Literal[
+    "id",  # chuẩn hoá id: hai id ra cùng một id, hoặc không đổi được
+    "package", "plan",  # pydantic của gói chương 0, của bản kế hoạch
+    "chapter_0", "nodes", "protagonist", "edges", "player_view",  # luật của gói chương 0
+    "acts", "length", "milestones", "pacing", "secrets", "threads",  # luật của bản kế hoạch
+]
+
+
+@dataclass(frozen=True)
+class SetupProblem:
+    """Một lỗi của đầu ra `build_story`. `kind` được vào log và file chung của bộ đo. `text` nêu id
+    lớp truth và số chương: chỉ cho model `setup` ở lượt sửa và cho truth_dump của bộ đo."""
+
+    kind: ProblemKind
+    text: str
+
+
+def problem_kinds(problems: Iterable[SetupProblem]) -> dict[str, int]:
+    """Số lỗi theo loại, xếp theo tên loại."""
+    return dict(sorted(Counter(p.kind for p in problems).items()))
+
+
+def _kinds_text(problems: Iterable[SetupProblem]) -> str:
+    return ", ".join(f"{kind} ×{n}" for kind, n in problem_kinds(problems).items())
+
+
+class SetupInvalidError(WritoryError):
+    """STORY_SETUP_INVALID của `build_story`, `to_story_setup`. `detail` (vào log, G12) chỉ có loại
+    lỗi và số lượt sửa đã dùng; danh sách lỗi đầy đủ ở `problems` (D-54)."""
+
+    def __init__(self, problems: Sequence[SetupProblem], *, repairs: int = 0) -> None:
+        self.problems = tuple(problems)
+        self.repairs = repairs
+        super().__init__(ErrorCode.STORY_SETUP_INVALID,
+                         detail=f"sai quy tắc sau {repairs} lượt sửa: {_kinds_text(self.problems)}")
+
+
+# --- chuẩn hoá id bằng code (D-54) --------------------------------------------------------------
+# Lần chạy tu-tien-2 hỏng lượt khởi tạo đầu vì model đặt id có dấu, có khoảng trắng. Code sửa trên
+# đầu ra của model, trước mọi phép kiểm, cùng một ánh xạ cho mọi chỗ khai và mọi chỗ nhắc tới.
+
+SAFE_ID_PATTERN = r"^[a-z0-9_]+$"  # dạng id đề yêu cầu; hẹp hơn ID_PATTERN
+_ID_RE = re.compile(ID_PATTERN)
+_UNSAFE_RUN = re.compile(r"[^a-z0-9_]+")
+# Tên có dấu làm ví dụ cho luật id trong đề; id ví dụ sinh bằng `normalize_id`.
+ID_EXAMPLES = ("Lão Đạo Sĩ", "Hội Kiếm", "Đoàn Khương")
+# Phần của đầu ra model khai id. Hồi và mốc không có id.
+_ID_SECTIONS = ("characters", "locations", "factions", "items", "facts", "threads")
+
+
+def normalize_id(raw: str) -> str:
+    """Id đã khớp `ID_PATTERN` giữ nguyên. Id khác: chữ thường, bỏ dấu tiếng Việt (đ → d), mỗi đoạn
+    khoảng trắng hay ký tự ngoài [a-z0-9_] thành một `_`, bỏ `_` ở hai đầu, cắt còn `ID_MAX_LEN`
+    ký tự. Không ra được id nào (chuỗi rỗng, toàn ký tự lạ) thì trả nguyên chuỗi, để phép kiểm
+    báo lỗi."""
+    if _ID_RE.fullmatch(raw):
+        return raw
+    text = unicodedata.normalize("NFD", raw.lower().replace("đ", "d"))
+    text = "".join(ch for ch in text if not unicodedata.combining(ch))
+    text = _UNSAFE_RUN.sub("_", text).strip("_")[:ID_MAX_LEN].rstrip("_")
+    return text or raw
+
+
+def _map_ids(data: dict[str, Any], fn: Callable[[str], str]) -> None:
+    """Áp `fn` tại chỗ lên mọi id của đầu ra model (dạng dict): chỗ khai (`_ID_SECTIONS`) và chỗ
+    nhắc tới (`about`, `known_by`, from/to của cạnh, `fact_id` của bí mật). Id mạch của kế hoạch
+    lấy từ chỗ khai của mạch."""
+    for section in _ID_SECTIONS:
+        for x in data[section]:
+            x["id"] = fn(x["id"])
+    for f in data["facts"]:
+        f["about"] = [fn(i) for i in f["about"]]
+        f["known_by"] = [fn(i) for i in f["known_by"]]
+    for e in data["edges"]:
+        e["source"], e["target"] = fn(e["source"]), fn(e["target"])
+    for s in data["secrets"]:
+        s["fact_id"] = fn(s["fact_id"])
+
+
+def normalize_ids(output: BuildOutput) -> tuple[BuildOutput, list[SetupProblem]]:
+    """Chuẩn hoá mọi id của đầu ra model bằng `normalize_id`. Hai id khác nhau ra cùng một id (kể
+    cả trùng `PROTAGONIST_ID`) thì không gộp: giữ nguyên cả hai và báo lỗi. `PROTAGONIST_ID`
+    không bao giờ bị đổi."""
+    data = output.model_dump()
+    raws: set[str] = set()
+
+    def collect(i: str) -> str:
+        raws.add(i)
+        return i
+
+    _map_ids(data, collect)
+    groups: dict[str, set[str]] = defaultdict(set)
+    groups[PROTAGONIST_ID].add(PROTAGONIST_ID)
+    for raw in raws:
+        groups[normalize_id(raw)].add(raw)
+    mapping: dict[str, str] = {}
+    problems: list[SetupProblem] = []
+    for fixed, group in sorted(groups.items()):
+        if len(group) > 1:
+            problems.append(SetupProblem("id", (
+                f"các id {', '.join(repr(r) for r in sorted(group))} khác nhau nhưng đổi sang "
+                f"dạng {SAFE_ID_PATTERN} đều ra {fixed!r}: đặt cho mỗi thứ một id riêng")))
+            continue
+        [raw] = group
+        if raw != fixed:
+            mapping[raw] = fixed
+        elif not _ID_RE.fullmatch(raw):
+            problems.append(SetupProblem("id", f"id {raw!r} không đổi được sang dạng "
+                                               f"{SAFE_ID_PATTERN}"))
+    _map_ids(data, lambda i: mapping.get(i, i))
+    return BuildOutput.model_validate(data), problems
+
+
 # --- prompt ----------------------------------------------------------------------------------
 
 _COMMON = """Bạn là người thiết kế truyện cho WriTory, trò chơi truyện tương tác tiếng Việt: người \
@@ -290,6 +425,8 @@ Mỗi nhân vật có `name` (họ tên theo quy ước tên ở trên), `person
 Người chơi đọc và sửa được cả ba trường, nên không viết ra bí mật của truyện, kể cả bí mật về \
 chính nhân vật đó."""
 
+_ID_EXAMPLES_TEXT = "; ".join(f"{name} → `{normalize_id(name)}`" for name in ID_EXAMPLES)
+
 BUILD_TASK = f"""Việc: dựng bản kế hoạch truyện (ẩn với người chơi) và thế giới lúc truyện bắt \
 đầu (chương 0, trước trang đầu tiên), từ bối cảnh, hướng cốt truyện và nhân vật chính người chơi \
 đã chọn.
@@ -297,9 +434,10 @@ BUILD_TASK = f"""Việc: dựng bản kế hoạch truyện (ẩn với người
 Nhân vật chính đã có sẵn với id `{PROTAGONIST_ID}`: dùng id này khi nói tới nhân vật chính. Không \
 khai lại nhân vật chính trong `characters`, không đổi tên, tính cách hay quá khứ của họ.
 
-Định danh `id`: chữ thường không dấu, số và dấu gạch dưới, duy nhất trong cả truyện, ví dụ `lan`, \
-`hoi_kiem`, `f_lan_gian_diep`. Mọi id nhắc tới trong `about`, `known_by`, `edges`, `secrets` phải \
-là id đã khai trong cùng câu trả lời.
+Định danh `id`: chỉ gồm chữ cái ASCII thường không dấu, chữ số và dấu gạch dưới, đúng dạng \
+`{SAFE_ID_PATTERN}`: không dấu tiếng Việt, không khoảng trắng, không ký tự nào khác. Ví dụ: \
+{_ID_EXAMPLES_TEXT}. Id duy nhất trong cả truyện. Mọi id nhắc tới trong `about`, `known_by`, `edges`, `secrets` phải là id đã khai trong \
+cùng câu trả lời, viết y hệt.
 
 Các phần:
 - `acts`: các hồi theo thứ tự (mở đầu, phát triển, cao trào, kết), phủ liền các chương từ chương 1 \
@@ -335,12 +473,13 @@ của một nhóm cùng nằm trong một câu thì coi như bí mật đã lộ
 
 def _pacing_rule(level: LengthLevel) -> str:
     """Nhịp theo độ dài truyện (D-49): số trong config/story_lengths.yaml, kiểm lại ở
-    `initial_problems`."""
+    `initial_problems`. Chương cuối không tính giới hạn số việc đến hạn (D-54)."""
     m = level.milestones
-    return (f"Nhịp cho độ dài này: {m.min}–{m.max} mốc. Mỗi chương có tối đa "
+    return (f"Nhịp cho độ dài này: {m.min}–{m.max} mốc. Mỗi chương, trừ chương cuối, có tối đa "
             f"{level.max_due_per_chapter} việc đến hạn; một việc đến hạn ở chương N là một bí mật "
             "có `reveal_to_chapter` = N, một mạch phải gỡ có `due_to_chapter` = N, hoặc một mốc "
-            "có `to_chapter` = N. Rải các hạn ra nhiều chương, không dồn vào chương cuối.")
+            "có `to_chapter` = N. Chương cuối là chương kết, được gỡ nhiều mạch cùng lúc nên không "
+            "tính giới hạn này. Ở các chương còn lại, rải các hạn ra, không dồn vào một chương.")
 
 _POV_TEXT = {
     "protagonist": "Góc nhìn: chỉ nhân vật chính. Người chơi chỉ biết những gì nhân vật chính "
@@ -482,12 +621,17 @@ def story_brief(
 async def build_story(
     choices: StoryChoices, setting: SettingOption, plot: PlotOption, protagonist: CharacterOption,
     *, llm: LLMClient, config: AppConfig, commit_id: str,
+    on_repair: Callable[[Sequence[SetupProblem]], None] | None = None,
 ) -> StorySetup:
-    """Bản kế hoạch + gói chương 0. `protagonist` là nhân vật người chơi đã chọn (và có thể đã sửa)."""
+    """Bản kế hoạch + gói chương 0. `protagonist` là nhân vật người chơi đã chọn (và có thể đã sửa).
+
+    Sai quy tắc thì gọi model sửa tối đa `retries.setup_repair` lượt (D-54), mỗi lượt qua `llm`
+    như lời gọi đầu (nên qua MeteredClient của nơi gọi, tính vào trần). `on_repair` nhận danh sách
+    lỗi ngay trước mỗi lượt sửa (bộ đo đếm lượt sửa)."""
     pc = _clean_protagonist(protagonist)
     level = choices.level(config)
-    messages = _messages(
-        build_task(level), choices, level,
+    task = build_task(level)
+    parts: tuple[str | UserAuthored, ...] = (
         "Bối cảnh đã chọn:", _setting_data(setting),
         "Hướng cốt truyện đã chọn:", _plot_data(plot),
         f"Nhân vật chính (id `{PROTAGONIST_ID}`), người chơi đã chọn và có thể đã sửa:",
@@ -495,14 +639,48 @@ async def build_story(
         "Tính cách:", UserAuthored(pc.personality, "protagonist_personality"),
         "Quá khứ:", UserAuthored(pc.backstory, "protagonist_backstory"),
     )
-    output = await _ask(llm, config, messages, BuildOutput)
-    return to_story_setup(output, protagonist=pc, commit_id=commit_id, level=level)
+    output = await _ask(llm, config, _messages(task, choices, level, *parts), BuildOutput)
+    limit = config.limits.retries.setup_repair
+    repairs = 0
+    while True:
+        output, setup, problems = _check_build(output, protagonist=pc, commit_id=commit_id,
+                                               level=level)
+        if setup is not None:
+            return setup
+        if repairs >= limit:
+            log.warning("khởi tạo: kế hoạch vẫn sai quy tắc sau %d lượt sửa (%s)", repairs,
+                        _kinds_text(problems))
+            raise SetupInvalidError(problems, repairs=repairs)
+        repairs += 1
+        log.info("khởi tạo: kế hoạch sai quy tắc (%s); gọi model sửa, lượt %d/%d",
+                 _kinds_text(problems), repairs, limit)
+        if on_repair is not None:
+            on_repair(problems)
+        messages = _messages(task, choices, level, *parts, *_repair_parts(output, problems))
+        output = await _ask(llm, config, messages, BuildOutput)
 
 
 def build_task(level: LengthLevel) -> str:
     """Đề của bước 4: phần việc, luật nhịp theo độ dài (D-49), rồi khối bảng cạnh sinh từ luật
     (`edge_rules`) đứng riêng."""
     return f"{BUILD_TASK}\n\n{_pacing_rule(level)}\n\n{edge_rules()}"
+
+
+REPAIR_INTRO = ("Câu trả lời trước của bạn bị trả lại vì sai quy tắc. Đây là câu trả lời đó, các "
+                "id sai dạng đã được hệ thống đổi sang dạng đúng (trừ những id trùng nhau sau khi "
+                "đổi):")
+REPAIR_TASK = ("Trả lại toàn bộ câu trả lời theo đúng schema và mọi luật ở trên, sửa hết các lỗi "
+               "này; phần không có lỗi thì giữ nguyên.")
+
+
+def _repair_parts(
+    previous: BuildOutput, problems: Sequence[SetupProblem]
+) -> tuple[str | UserAuthored, ...]:
+    """Phần thêm vào vai user cho lượt sửa (D-54). Câu trả lời trước có thể chép lại chữ người chơi
+    nên vào khối dữ liệu; danh sách lỗi (id, chữ model viết) đứng ngoài khối, qua `escape_text`."""
+    listed = "\n".join(f"- {escape_text(p.text)}" for p in problems)
+    return (REPAIR_INTRO, UserAuthored(previous.model_dump_json(), "previous_answer"),
+            f"Lỗi cần sửa:\n{listed}", REPAIR_TASK)
 
 
 # --- đổi đầu ra thành kế hoạch + gói, rồi kiểm -------------------------------------------------
@@ -520,13 +698,15 @@ def _edge(etype: str, source: str, target: str, **props: Any) -> dict[str, Any]:
 
 
 def _validated[M: BaseModel](
-    model: type[M], data: dict[str, Any], what: str, problems: list[str]
+    model: type[M], data: dict[str, Any], what: str, kind: ProblemKind,
+    problems: list[SetupProblem],
 ) -> M | None:
     try:
         return model.model_validate(data)
     except ValidationError as e:
         problems += [
-            f"{what}: {'.'.join(str(p) for p in err['loc']) or '(gốc)'}: {err['msg']}"
+            SetupProblem(kind, f"{what}: {'.'.join(str(p) for p in err['loc']) or '(gốc)'}: "
+                               f"{err['msg']}")
             for err in e.errors(include_input=False, include_url=False)
         ]
         return None
@@ -535,8 +715,21 @@ def _validated[M: BaseModel](
 def to_story_setup(
     output: BuildOutput, *, protagonist: CharacterOption, commit_id: str, level: LengthLevel
 ) -> StorySetup:
-    """Đổi đầu ra của model thành `StoryPlan` + gói chương 0 rồi kiểm (`initial_problems`).
-    Có lỗi thì ném STORY_SETUP_INVALID kèm toàn bộ danh sách lỗi, không trả phần nào."""
+    """Chuẩn hoá id rồi đổi đầu ra của model thành `StoryPlan` + gói chương 0 và kiểm
+    (`initial_problems`). Có lỗi thì ném `SetupInvalidError` kèm toàn bộ danh sách lỗi, không trả
+    phần nào."""
+    _, setup, problems = _check_build(output, protagonist=protagonist, commit_id=commit_id,
+                                      level=level)
+    if setup is None:
+        raise SetupInvalidError(problems)
+    return setup
+
+
+def _check_build(
+    output: BuildOutput, *, protagonist: CharacterOption, commit_id: str, level: LengthLevel
+) -> tuple[BuildOutput, StorySetup | None, list[SetupProblem]]:
+    """(đầu ra đã chuẩn hoá id, kết quả nếu không có lỗi nào, danh sách lỗi)."""
+    output, problems = normalize_ids(output)
     pc = _clean_protagonist(protagonist)
     nodes: list[dict[str, Any]] = [{
         "id": PROTAGONIST_ID, "label": "Character",
@@ -564,9 +757,8 @@ def to_story_setup(
         edges += [_edge("ABOUT", f.id, target) for target in f.about]
         edges += [_edge("KNOWS", who, f.id, how=INITIAL_KNOWS_HOW) for who in f.known_by]
 
-    problems: list[str] = []
     package = _validated(ChangePackage, {"commit_id": commit_id, "nodes": nodes, "edges": edges},
-                         "gói chương 0", problems)
+                         "gói chương 0", "package", problems)
     plan = _validated(StoryPlan, {
         "acts": [a.model_dump() for a in output.acts],
         "secrets": [s.model_dump() for s in output.secrets],
@@ -577,12 +769,12 @@ def to_story_setup(
             for t in output.threads if t.must_resolve
         ],
         "milestones": [m.model_dump() for m in output.milestones],
-    }, "bản kế hoạch", problems)
+    }, "bản kế hoạch", "plan", problems)
     if package is not None and plan is not None:
-        problems += initial_problems(plan, package, level=level)
+        problems += _initial_problems(plan, package, level=level)
     if problems or package is None or plan is None:
-        raise _invalid(problems)
-    return StorySetup(plan=plan, package=package)
+        return output, None, problems
+    return output, StorySetup(plan=plan, package=package), []
 
 
 # Nhãn và cạnh dùng ở chương 0, kèm nhãn hai đầu hợp lệ (docs/graph-schema.md, mục Chương 0).
@@ -647,22 +839,32 @@ def initial_problems(plan: StoryPlan, package: ChangePackage, *, level: LengthLe
     Rỗng là hợp lệ. Luật luôn đúng của kế hoạch (khoảng trong số chương, mốc kết, hồi có mốc)
     nằm trong validator của `StoryPlan`.
 
-    Lỗi chỉ nêu id, nhãn và số chương, không chép chữ của truyện: chi tiết vào log (G12)."""
+    Lỗi chỉ nêu id, nhãn và số chương, không chép chữ của truyện. Danh sách này chỉ vào lượt sửa
+    và truth_dump; log chỉ có loại lỗi (D-54, `SetupProblem`)."""
+    return [p.text for p in _initial_problems(plan, package, level=level)]
+
+
+def _initial_problems(
+    plan: StoryPlan, package: ChangePackage, *, level: LengthLevel
+) -> list[SetupProblem]:
     labels = {n.id: n.label for n in package.nodes}
     protagonists = {n.id for n in package.nodes if n.props.get("is_protagonist") is True}
-    problems = [f"chương 0: {p}" for p in chapter_rule_problems(package, INITIAL_CHAPTER)]
-    problems += _node_problems(package)
+    problems = [SetupProblem("chapter_0", f"chương 0: {p}")
+                for p in chapter_rule_problems(package, INITIAL_CHAPTER)]
+    problems += [SetupProblem("nodes", p) for p in _node_problems(package)]
     if len(protagonists) != 1 or labels[next(iter(protagonists))] != "Character":
-        problems.append(f"cần đúng một nhân vật chính (Character có is_protagonist), "
-                        f"có {len(protagonists)}: {sorted(protagonists)}")
-    problems += _edge_problems(package, labels, protagonists)
+        problems.append(SetupProblem("protagonist", (
+            f"cần đúng một nhân vật chính (Character có is_protagonist), "
+            f"có {len(protagonists)}: {sorted(protagonists)}")))
+    problems += [SetupProblem("edges", p) for p in _edge_problems(package, labels, protagonists)]
     problems += _plan_problems(plan, package, labels, level)
     if not problems:
         # Lưới cuối, theo định nghĩa duy nhất của player_view (G1): người chơi chưa biết gì.
         view = player_view_of(OverlayState(EmptyState(), [package]), INITIAL_CHAPTER)
         if view.entries or view.lies:
-            problems.append("player_view ở chương 0 phải rỗng, có: "
-                            f"{sorted({e.id for e in view.entries} | {x.id for x in view.lies})}")
+            problems.append(SetupProblem("player_view", (
+                "player_view ở chương 0 phải rỗng, có: "
+                f"{sorted({e.id for e in view.entries} | {x.id for x in view.lies})}")))
     return problems
 
 
@@ -729,41 +931,47 @@ def _edge_problems(
 
 def _plan_problems(
     plan: StoryPlan, package: ChangePackage, labels: dict[str, str], level: LengthLevel
-) -> list[str]:
-    problems = []
+) -> list[SetupProblem]:
+    problems: list[SetupProblem] = []
+
+    def add(kind: ProblemKind, text: str) -> None:
+        problems.append(SetupProblem(kind, text))
+
     expected = 1
     for i, act in enumerate(plan.acts, 1):
         if act.from_chapter != expected:
-            problems.append(f"hồi thứ {i} bắt đầu ở chương {act.from_chapter}, cần chương "
-                            f"{expected}: các hồi phải liền nhau từ chương 1")
+            add("acts", f"hồi thứ {i} bắt đầu ở chương {act.from_chapter}, cần chương "
+                        f"{expected}: các hồi phải liền nhau từ chương 1")
         expected = act.to_chapter + 1
     total, chapters, milestones = plan.total_chapters, level.chapters, level.milestones
     if not chapters.min <= total <= chapters.max:
-        problems.append(f"kế hoạch có {total} chương, mức độ dài cần "
-                        f"{chapters.min}–{chapters.max}")
+        add("length", f"kế hoạch có {total} chương, mức độ dài cần {chapters.min}–{chapters.max}")
     if not milestones.min <= len(plan.milestones) <= milestones.max:
-        problems.append(f"cần {milestones.min}–{milestones.max} mốc, có {len(plan.milestones)}")
-    crowded = {c: n for c, n in plan.deadlines().items() if n > level.max_due_per_chapter}
-    problems += [f"chương {c} có {n} việc đến hạn, tối đa {level.max_due_per_chapter}"
-                 for c, n in crowded.items()]
+        add("milestones", f"cần {milestones.min}–{milestones.max} mốc, có {len(plan.milestones)}")
+    # Chương cuối không tính (D-54): chương kết vốn gỡ nhiều mạch cùng lúc.
+    cap = level.max_due_per_chapter
+    for c, n in plan.deadlines().items():
+        if c != total and n > cap:
+            add("pacing", f"chương {c} có {n} việc đến hạn, tối đa {cap} (trừ chương cuối)")
     if not SECRETS_MIN <= len(plan.secrets) <= SECRETS_MAX:
-        problems.append(f"cần {SECRETS_MIN}–{SECRETS_MAX} bí mật, có {len(plan.secrets)}")
+        add("secrets", f"cần {SECRETS_MIN}–{SECRETS_MAX} bí mật, có {len(plan.secrets)}")
     for s in plan.secrets:
         if labels.get(s.fact_id) != "Fact":
-            problems.append(f"bí mật {s.fact_id} không trỏ tới Fact có trong gói")
+            add("secrets", f"bí mật {s.fact_id} không trỏ tới Fact có trong gói")
         if not s.leak_terms:
-            problems.append(f"bí mật {s.fact_id} thiếu leak_terms (D-26)")
+            add("secrets", f"bí mật {s.fact_id} thiếu leak_terms (D-26)")
         elif any(len(group) < LEAK_GROUP_MIN_PHRASES for group in s.leak_terms):
-            problems.append(f"bí mật {s.fact_id}: mỗi nhóm leak_terms cần ít nhất "
-                            f"{LEAK_GROUP_MIN_PHRASES} cụm")
+            add("secrets", f"bí mật {s.fact_id}: mỗi nhóm leak_terms cần ít nhất "
+                           f"{LEAK_GROUP_MIN_PHRASES} cụm")
     threads = {n.id: n.props for n in package.nodes if n.label == "Thread"}
-    problems += [f"mạch {t} không có nút Thread trong gói"
-                 for t in plan.thread_ids if t not in threads]
+    for t in plan.thread_ids:
+        if t not in threads:
+            add("threads", f"mạch {t} không có nút Thread trong gói")
     for tid, props in threads.items():
         planted = props.get("planted_chapter")
         low, high = props.get("due_from_chapter"), props.get("due_to_chapter")
         if not _is_int(planted) or planted != INITIAL_CHAPTER:
-            problems.append(f"mạch {tid}: planted_chapter phải là {INITIAL_CHAPTER}")
+            add("threads", f"mạch {tid}: planted_chapter phải là {INITIAL_CHAPTER}")
         if not (_is_int(low) and _is_int(high) and 1 <= low <= high <= total):
-            problems.append(f"mạch {tid}: khoảng gỡ {low}–{high} phải nằm trong chương 1–{total}")
+            add("threads", f"mạch {tid}: khoảng gỡ {low}–{high} phải nằm trong chương 1–{total}")
     return problems

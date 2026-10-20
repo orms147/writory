@@ -68,6 +68,9 @@ class RetryLimits(_Strict):
     rewrite_per_scene: NonNegativeInt
     extract_schema_retry: NonNegativeInt
     llm_transient: NonNegativeInt
+    # `build_story` sai quy tắc: số lượt gọi lại model kèm danh sách lỗi, riêng với thử lại JSON
+    # sai schema (D-14, D-54).
+    setup_repair: NonNegativeInt
 
 
 class RateLimits(_Section):
@@ -168,7 +171,8 @@ class LengthLevel(_Strict):
     target_chars: PositiveInt
     chapters: IntRange
     # Nhịp của bản kế hoạch (design §6.1, D-49): số mốc cốt truyện, và số việc đến hạn tối đa ở
-    # một chương (bí mật, mạch phải gỡ, mốc có chương cuối của khoảng là chương đó).
+    # một chương (bí mật, mạch phải gỡ, mốc có chương cuối của khoảng là chương đó). Chương cuối
+    # không tính (D-54).
     milestones: IntRange
     max_due_per_chapter: PositiveInt
 

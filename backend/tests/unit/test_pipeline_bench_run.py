@@ -97,6 +97,7 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     # bao giờ hé lộ bí mật hay gỡ mạch đến hạn ở chương cuối (trễ hạn, D-49).
     assert calls == {"setup": 4, "outline": scenes, "writer": scenes + 1, "extract": scenes + 1,
                      "summary": total - 1, "choices": total - 1}
+    assert report["setup_repairs"] == {"used": 0, "kinds": {}}
     assert len(rows(out / "calls.jsonl")) == len(llm.calls)
 
     events = rows(out / "events.jsonl")
@@ -310,6 +311,37 @@ async def test_blocked_choices_are_regenerated_like_a_player_retry(tmp_path):
     dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
     assert [c["kind"] for c in dump["chapters"]["1"][0]["choices"]] == [
         "action", "dialogue", "inner"]
+
+
+def _without_secrets(answer: str) -> str:  # sai quy tắc khởi tạo: cần 1–3 bí mật
+    data = json.loads(answer)
+    data["secrets"] = []
+    return json.dumps(data, ensure_ascii=False)
+
+
+async def test_setup_repair_is_counted_in_the_report(tmp_path):
+    """D-54: kế hoạch sai quy tắc được một lượt sửa trong `build_story`. Lượt đầu của "bấm thử lại"
+    sửa rồi vẫn sai; lượt sau sai, sửa đúng. Report đếm lượt sửa và loại lỗi; danh sách lỗi (có id)
+    chỉ ở truth_dump."""
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    llm = _Scripted(total, {("setup", k): _without_secrets for k in (4, 5, 6)})
+    run, _, store, out = make_run(tmp_path, llm=llm, config=config, chapters=1)
+    assert await run.run() == bench_run.EXIT_OK
+    assert store.committed == 1
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["setup_repairs"] == {"used": 2, "kinds": {"secrets": 2}}
+    assert report["player_retries_used"]["setup"] == 1
+    assert report["calls"]["by_role"]["setup"] == 3 + 4  # 3 bước đề xuất + 2 lượt × (gọi + sửa)
+    assert "Khởi tạo: lượt sửa 2 (secrets ×2)" in (out / "summary.md").read_text(encoding="utf-8")
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    assert [r["attempt"] for r in dump["setup_repairs"]] == [1, 2]
+    problems = [p for r in dump["setup_repairs"] for p in r["problems"]]
+    assert problems and all("bí mật" in p for p in problems)
+    [error] = [e for e in dump["errors"] if e["where"] == "setup:build"]
+    assert error["code"] == "STORY_SETUP_INVALID" and error["problems"]
+    general = all_text(out, skip=("truth_dump.json",))
+    assert all(p not in general for p in problems + error["problems"])
 
 
 async def test_scene_blocked_after_every_retry_stops_the_run_and_keeps_files(tmp_path):

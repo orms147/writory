@@ -142,7 +142,7 @@ Tạo lúc khởi tạo, cập nhật khi lựa chọn làm lệch hướng:
 - Các **mốc** chính của cốt truyện (bước ngoặt, cao trào, kết), mỗi mốc có khoảng chương và một câu mục tiêu. Mỗi hồi có ít nhất một mốc; mốc kết nằm ở chương cuối. Số mốc theo mức độ dài (`config/story_lengths.yaml`).
 - Vài bí mật lớn (số lượng cho phép: `SECRETS_MIN`, `SECRETS_MAX` trong `backend/src/writory/pipeline/setup.py`), mỗi cái là một sự thật có trong đồ thị ban đầu, kèm **khoảng chương dự kiến lộ** (ví dụ "Lan là gián điệp: lộ trong chương 12–16") và các cụm từ để bộ dò lộ nhận ra khi bí mật bị nói ra sớm (D-26).
 - Các mạch chính và phụ; mạch phải gỡ trước khi kết mang **khoảng chương phải gỡ**.
-- **Nhịp** định trước từ đầu, dày hay thưa theo độ dài truyện: mỗi chương có tối đa một số việc đến hạn (bí mật, mạch phải gỡ, mốc), số trong `config/story_lengths.yaml`, để hạn không dồn vào một chương. Mọi khoảng nằm trong số chương của truyện. Kiểm bằng code lúc khởi tạo (D-49).
+- **Nhịp** định trước từ đầu, dày hay thưa theo độ dài truyện: mỗi chương có tối đa một số việc đến hạn (bí mật, mạch phải gỡ, mốc), số trong `config/story_lengths.yaml`, để hạn không dồn vào một chương. Chương cuối không tính, vì chương kết gỡ nhiều mạch cùng lúc (D-54). Mọi khoảng nằm trong số chương của truyện. Kiểm bằng code lúc khởi tạo (D-49).
 
 Bản kế hoạch là nguồn để người canh biết thế nào là "lộ sớm" và "trễ hạn", và là nguồn của mục tiêu mỗi chương (§6.2 bước 1). Lựa chọn của người chơi được phép kéo sớm hoặc lùi một lần lộ (ví dụ người chơi chủ động điều tra Lan), nhưng việc đó phải xảy ra qua một cảnh hợp lý, không tự nhiên lộ ra.
 
