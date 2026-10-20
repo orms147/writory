@@ -1,6 +1,10 @@
-"""Khoá chống chạy đôi: một truyện chỉ một lần viết chương, một phiên chỉ một lần chốt khởi tạo
-(G8, D-46). Lần gọi thứ hai không chờ: báo STORY_BUSY ngay, để key người chơi không bị trừ tiền hai
-lần.
+"""Khoá chống chạy đôi: một truyện chỉ một lần viết chương (cùng khoá với tạo lại lựa chọn và
+phân loại ô tự viết), một truyện chỉ một câu hỏi người kể, một phiên khởi tạo chỉ một lần gọi
+model (G8, D-46, D-56). Lần gọi thứ hai không chờ: báo STORY_BUSY ngay, để key người chơi không bị
+trừ tiền hai lần.
+
+Người kể có khoá riêng (`narrator`) vì hỏi người kể không mất lượt truyện (design §6.6): được hỏi
+khi chương đang được viết, chỉ không được hỏi hai câu cùng lúc.
 
 Cách làm: advisory lock mức phiên của Postgres (`pg_try_advisory_lock`) trên chính kết nối của yêu
 cầu, giữ suốt việc. Nhả khi việc xong hoặc lỗi (`finally`), và Postgres tự nhả khi kết nối đóng,
@@ -20,7 +24,7 @@ from writory.safety.redact import redact
 
 log = logging.getLogger(__name__)
 
-LockScope = Literal["story", "setup"]
+LockScope = Literal["story", "narrator", "setup"]
 
 
 class StoryBusyError(WritoryError):

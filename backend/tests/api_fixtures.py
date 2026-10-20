@@ -77,6 +77,31 @@ class KeyedFactory:
         return self.llm
 
 
+class AllowAllQuota:
+    """Bộ đếm tần suất luôn cho qua, cho test không có Postgres (cùng giao thức `CallQuota`)."""
+
+    async def take(self) -> bool:
+        return True
+
+
+def offline(app) -> None:
+    """Test không Docker: kết nối Postgres giả (None) nên khoá chống chạy đôi và bộ đếm tần suất
+    (cả hai cần Postgres thật) được thay bằng bản không làm gì. Hành vi thật của chúng nằm ở test
+    graph (tests/graph/test_play_api.py, test_rate_limit.py)."""
+    from contextlib import nullcontext
+
+    from writory.api import deps
+    from writory.api.setup import lock_setup
+
+    def no_lock():
+        with nullcontext():
+            yield
+
+    for dep in (deps.lock_story, deps.lock_narrator, lock_setup):
+        app.dependency_overrides[dep] = no_lock
+    app.dependency_overrides[deps.get_call_quota] = AllowAllQuota
+
+
 def own_connections() -> Iterator[psycopg.Connection]:
     """Thay `deps.get_pg_conn` trong test graph: mỗi yêu cầu một kết nối Postgres riêng, như app
     thật. Cần cho test khoá chống chạy đôi, vì advisory lock lồng được trên cùng một kết nối."""

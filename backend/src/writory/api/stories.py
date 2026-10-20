@@ -29,7 +29,8 @@ def notebook(view: Annotated[PlayerView, Depends(deps.get_player_view)]) -> Note
     return NotebookOut.from_view(view)
 
 
-@router.post("/{story_id}/narrator", response_model=NarratorAnswerOut)
+@router.post("/{story_id}/narrator", response_model=NarratorAnswerOut,
+             dependencies=[Depends(deps.lock_narrator)])
 async def narrator(
     body: NarratorQuestionIn,
     view: Annotated[PlayerView, Depends(deps.get_player_view)],

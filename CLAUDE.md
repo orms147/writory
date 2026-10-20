@@ -133,5 +133,5 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 - Quyết định đang hiệu lực: D-1 đến D-54 (`docs/decisions.md`).
 - Model viết: GPT-6 Luna, một mức, suy luận none (D-33, D-43). Vai trích: GPT-6 Luna, suy luận thấp (D-35). Các vai khác: GPT-6 Luna tạm, suy luận thấp (D-47, `config/models.yaml`).
 - Trần chi phí, ngưỡng kiểm văn và người canh, giới hạn người chơi: số tạm (D-47), chỉnh lại sau lần chạy thật đầu.
-- Chưa có: đăng nhập (G10; mọi người là người chơi dev `dev`, D-44); ghi `Lie`/`FEELS` vào đồ thị khi chọn (D-46); frontend (tuần 4).
+- Chưa có: đăng nhập (G10; mọi người là người chơi dev `dev`, D-44); frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).

@@ -9,6 +9,7 @@ key, nhật ký chi phí đều theo `owner_id`) đã có; tuần 5 chỉ cần 
 """
 
 import asyncio
+import time
 from collections.abc import Callable, Iterator, Mapping
 from typing import Annotated, Protocol
 
@@ -17,13 +18,14 @@ from fastapi import Depends, HTTPException, Request
 from neo4j import Driver
 from pydantic import BaseModel, SecretStr
 
-from writory.config import AppConfig, CostLimits
+from writory.config import AppConfig, CostLimits, LimitNotSetError, RateLimits
 from writory.db import (
     CostEntry,
     StoryRecord,
     committed_player_view,
     connect,
     delete_player_key,
+    job_lock,
     load_player_key,
     load_story_brief,
     load_story_plan,
@@ -31,6 +33,7 @@ from writory.db import (
     save_player_key,
     setup_spent_usd,
     story_spent_usd,
+    take_llm_call,
     take_narrator_question,
 )
 from writory.db import get_owned_story as db_get_owned_story
@@ -41,6 +44,7 @@ from writory.llm.base import LLMClient, Usage
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.ledger import RecordingClient
 from writory.llm.openrouter import OpenRouterClient
+from writory.llm.ratelimit import CallQuota, RateLimitedClient
 from writory.pipeline.choices import ChoicesOutput
 from writory.pipeline.extract import ExtractOutput
 from writory.pipeline.narrator import NarratorOutput, NarratorQuota
@@ -100,6 +104,21 @@ def get_owned_story(story_id: str, conn: PgConn, owner: Owner) -> StoryRecord:
 
 
 OwnedStory = Annotated[StoryRecord, Depends(get_owned_story)]
+
+
+def lock_story(story: OwnedStory, conn: PgConn) -> Iterator[None]:
+    """Giữ khoá của truyện tới khi yêu cầu kết thúc: dùng cho đường gọi model đổi trạng thái truyện
+    (tạo lại lựa chọn, ô tự viết). Đang có việc khác trên truyện, kể cả viết chương: STORY_BUSY
+    ngay, không gọi model (G8, D-56). Cùng khoá với viết chương (`api/play.get_chapter_job`)."""
+    with job_lock(conn, "story", story.id):
+        yield
+
+
+def lock_narrator(story: OwnedStory, conn: PgConn) -> Iterator[None]:
+    """Một câu hỏi người kể mỗi truyện tại một thời điểm (G8, D-56). Khoá riêng, không chặn và
+    không bị chặn bởi việc viết chương, vì hỏi người kể không mất lượt truyện."""
+    with job_lock(conn, "narrator", story.id):
+        yield
 
 
 def get_player_view(story: OwnedStory, conn: PgConn, driver: Neo4jDriver) -> PlayerView:
@@ -236,18 +255,55 @@ def get_llm_factory(request: Request) -> LLMFactory:
     return lambda api_key: OpenRouterClient(api_key, http=http)
 
 
+# --- giới hạn tần suất (G8, D-56) ---------------------------------------------------------------
+
+Clock = Callable[[], float]
+
+
+def get_clock() -> Clock:
+    """Giờ cho bộ đếm tần suất (giây kể từ epoch). Test thay bằng đồng hồ giả."""
+    return time.time
+
+
+class PostgresCallQuota:
+    """Lượt gọi model mỗi phút của một người chơi, đếm trong Postgres (`db.take_llm_call`).
+    Giới hạn đọc từ config mỗi lần xin: chưa đặt (null) thì CONFIG_LIMIT_NOT_SET, không phải vô hạn."""
+
+    def __init__(self, conn: psycopg.Connection, owner_id: str, limits: RateLimits,
+                 clock: Clock) -> None:
+        self._conn = conn
+        self._owner = owner_id
+        self._limits = limits
+        self._clock = clock
+
+    async def take(self) -> bool:
+        try:
+            limit = self._limits.require("llm_calls_per_minute_per_user")
+        except LimitNotSetError as e:
+            raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail=str(e)) from None
+        return await asyncio.to_thread(take_llm_call, self._conn, self._owner, limit,
+                                       now=self._clock())
+
+
+def get_call_quota(conn: PgConn, owner: Owner, config: Config,
+                   clock: Annotated[Clock, Depends(get_clock)]) -> CallQuota:
+    return PostgresCallQuota(conn, owner, config.limits.rate_limit, clock)
+
+
 class PlayerLLM:
     """Dựng client model cho một nhóm lời gọi, trả bằng key của người chơi; không bao giờ dùng key
     của chủ dự án. Key chỉ được đọc và giải mã khi thật sự cần gọi model, rồi chỉ đi vào client
-    model (G7). Mọi lời gọi được ghi vào nhật ký chi phí, và trần mỗi truyện tính cả số đã tiêu."""
+    model (G7). Mọi lời gọi được ghi vào nhật ký chi phí, và trần mỗi truyện tính cả số đã tiêu.
+    Mọi lời gọi cũng xin một lượt tần suất của người chơi trước khi tới model (G8, D-56)."""
 
     def __init__(self, *, keys: KeyStore, cipher: KeyCipher, factory: LLMFactory,
-                 ledger: CostLedger, limits: CostLimits) -> None:
+                 ledger: CostLedger, limits: CostLimits, quota: CallQuota) -> None:
         self._keys = keys
         self._cipher = cipher
         self._factory = factory
         self._ledger = ledger
         self._limits = limits
+        self._quota = quota
 
     def open(self, *, story_id: str | None = None, setup_id: str | None = None,
              chapter: int | None = None) -> tuple[LLMClient, CostTracker]:
@@ -258,7 +314,7 @@ class PlayerLLM:
         token = self._keys.load()
         if token is None:
             raise WritoryError(ErrorCode.PLAYER_KEY_MISSING, detail="người chơi chưa lưu key")
-        inner = self._factory(self._cipher.decrypt(token))
+        inner = RateLimitedClient(self._factory(self._cipher.decrypt(token)), self._quota)
 
         def sink(role: str, model: str, usage: Usage) -> None:
             self._ledger.record(
@@ -280,9 +336,10 @@ class PlayerLLM:
 def get_player_llm(
     keys: Keys, cipher: Cipher, factory: Annotated[LLMFactory, Depends(get_llm_factory)],
     ledger: Annotated[CostLedger, Depends(get_cost_ledger)], config: Config,
+    quota: Annotated[CallQuota, Depends(get_call_quota)],
 ) -> PlayerLLM:
     return PlayerLLM(keys=keys, cipher=cipher, factory=factory, ledger=ledger,
-                     limits=config.limits.cost_usd)
+                     limits=config.limits.cost_usd, quota=quota)
 
 
 PlayerLLMs = Annotated[PlayerLLM, Depends(get_player_llm)]

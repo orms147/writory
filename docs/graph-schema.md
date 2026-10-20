@@ -41,10 +41,10 @@ Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu 
 | `PARTICIPATED_IN` | Character → Event | `role` | |
 | `DIED_IN` | Character → Event | | chết trong sự kiện |
 | `KNOWS` | Character → Fact/Lie/Event | `how`, `told_by`, `quote`, `known_as`, `by_choice` | biết từ `valid_from_chapter`. Tới `Lie` = biết đó là lời dối. `how` thuộc `KNOWS_HOW`; `được kể` bắt buộc có `told_by` (D-22) |
-| `FEELS` | nhân vật chính → bất kỳ | | từ lựa chọn nội tâm (chưa dùng ở tuần 1) |
+| `FEELS` | nhân vật chính → bất kỳ | `feeling` | cảm xúc thầm từ lựa chọn nội tâm (D-55). Cảm xúc mới về cùng đích đóng cạnh cũ |
 | `TOLD` | Character → Lie | | người nói |
 | `TOLD_TO` | Lie → Character | | người nghe |
-| `ABOUT` | Fact/Event → bất kỳ | | mệnh đề/sự kiện nói về ai, cái gì |
+| `ABOUT` | Fact/Event/Lie → bất kỳ | | mệnh đề, sự kiện hay lời nói dối nói về ai, cái gì |
 | `RESOLVED_IN` | Thread → Chapter | | mạch được gỡ |
 | `REVEALED_TO_PLAYER` | bất kỳ → Chapter | `quote` (bắt buộc, G3), `known_as`, `by_choice` | hé lộ trên trang ở chương đó. `by_choice`: id lựa chọn dẫn tới lần lộ (D-22) |
 
@@ -94,6 +94,13 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:
 - **Nút:** chỉ nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Chưa có nút mới nào khác, vì bộ trích chỉ tham chiếu id có sẵn (D-34).
 - **Cạnh:** của bộ trích, từng cảnh một, đã qua người canh. Cạnh người canh báo sai không vào gói. Gộp các cảnh theo trạng thái cuối chương: cùng id thì lấy cảnh sau; cạnh cảnh trước mở mà cảnh sau đóng thì không vào gói.
+
+## Tác động của lựa chọn (D-55)
+Người chơi chọn ở cuối chương N; tác động nằm trong gói của chương N+1 (mọi cạnh mở ở N+1, D-21), do `writory.pipeline.choices.choice_effects` dựng:
+- **Nói dối:** nút `Lie` (id `lie:<choice_id>`, `chapter` = N+1, `content`), `TOLD` từ nhân vật chính, `TOLD_TO` tới từng người nghe còn sống (không gồm chính nhân vật chính), `ABOUT` tới các mục nó nói tới. Không ai nghe được thì không ghi. Hiện trong `player_view.lies` từ chương N+1.
+- **Nội tâm:** `FEELS` từ nhân vật chính tới từng mục, mang `feeling`; `FEELS` cũ cùng đích bị đóng ở chương N+1. Chưa vào `player_view` (D-16).
+- **Nói thật, im lặng, hành động:** không ghi gì; chỉ chữ của lựa chọn vào đề chương sau.
+Người canh, bộ trích và lớp phủ `OverlayState` thấy các cạnh này từ cảnh 1 của chương N+1.
 
 ## Ngữ cảnh cho model viết (D-28)
 `writory.graph.context.writer_context(driver, story_id, as_of_chapter, present_ids, plan, max_neighbors=...)` đọc lớp `truth` ở cuối chương `as_of_chapter` (chương đã commit, lấy từ `writory.db.current_chapter`) để viết chương kế tiếp. Ngữ cảnh gồm:

@@ -298,7 +298,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Đầu ra `ChoicesOutput` có đúng 3 lựa chọn, tối thiểu 2 loại (`action`/`dialogue`/`inner`). Lời thoại có `tone` (`truth`/`lie`/`silence`) và người nghe. Lựa chọn nói dối có `lie_content`; lựa chọn nội tâm có `feeling` và `about`. Sai một trong các điều này, mã lạ, hay người nghe không phải nhân vật đều tính là sai schema và được thử lại theo D-14.
   - Phía máy chủ, `Choice` đổi mã về id nút (`LieEffect`: nói dối X với Y). Người chơi nhận `PlayerChoice`: id mờ `choice-…`, loại, sắc thái, chữ.
   - `check_leaks` chạy trên chữ lựa chọn, `lie_content` và `feeling`. Trúng một chỗ thì không hiện bộ nào và báo mã mới `CHOICES_LEAK_BLOCKED` (502, câu trung tính), không tự gọi lại model. Chương đã ghi xong; gọi lại `make_choices` để tạo bộ mới.
-- **Hệ quả:** chưa ghi dữ liệu của lựa chọn vào đồ thị khi người chơi chọn (Lie, FEELS ở chương sau). Văn cảnh cuối là chữ trên trang và đã qua bộ dò lộ, nhưng không nằm trong `player_view`.
+- **Hệ quả:** dữ liệu của lựa chọn được ghi vào đồ thị khi người chơi chọn rồi chương sau được viết (Lie, FEELS; D-55). Văn cảnh cuối là chữ trên trang và đã qua bộ dò lộ, nhưng không nằm trong `player_view`.
 - **Người quyết:** Claude (nhánh pipeline-chapter), điều phối duyệt (PR #18). Văn cảnh cuối vào context của model lựa chọn (G1): Chủ dự án đồng ý · 20/10/2026
 
 ## D-38 · Khởi tạo truyện: bốn bước, nhân vật chính do code dựng, chương 0 người chơi chưa biết gì
@@ -340,7 +340,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `GET /stories/{story_id}/notebook` → `NotebookOut` (danh sách trắng, mã công khai, D-40), đọc qua `committed_player_view`. `POST /stories/{story_id}/narrator` nhận `{question}`, trả `{answer}`.
   - Dependency nằm trong `api/deps.py`; test thay bằng `dependency_overrides`. Chưa có nơi lưu key người chơi → LLM mặc định báo `PLAYER_KEY_MISSING`, không bao giờ dùng key chủ dự án. Chưa có nơi lưu `story_plan` → lỗi, không trả lời. Nơi lưu key và kế hoạch: xem D-44.
   - `create_app` đọc `Settings()` và `load_config()` lúc gọi factory (trước đây `Settings()` đọc trong lifespan).
-  - Thêm mã `WRITORY_RATE_LIMITED` (429) cho trần mỗi phút của WriTory (G8); chưa có bộ đếm vì chưa có tài khoản.
+  - Thêm mã `WRITORY_RATE_LIMITED` (429) cho trần mỗi phút của WriTory (G8); bộ đếm: D-56.
 - **Hệ quả:** máy chủ thật không có router này tới khi có đăng nhập và kiểm quyền (TODO G10 trong `api/stories.py`). Chi phí hỏi người kể chưa cộng vào trần truyện, vì chưa có nhật ký chi phí.
 - **Người quyết:** điều phối (yêu cầu cờ dev, fail closed); cách làm: Claude (Session narrator) · 20/10/2026
 
@@ -396,7 +396,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `choices_ready` chỉ phát sau khi bộ lựa chọn đã lưu ở `chapter_choices`. Ngắt kết nối: FastAPI huỷ task chạy chương; pipeline không ghi gì trước `commit_chapter`, và bước đó chạy đồng bộ nên không bị cắt giữa chừng. Chương đã ghi mà chưa có lựa chọn: `POST /stories/{id}/choices` tạo lại (đã có thì trả lại).
   - `POST /stories/{id}/choice {choice_id}` lưu hành động cho chương sau (`player_actions`), kèm lời nói dối, cảm xúc dạng chữ (`api.play.action_text`). `POST /stories/{id}/action {text}` qua `classify_action` + `ensure_in_story` rồi mới lưu. Chọn lại được tới khi viết chương sau.
   - `GET /stories/{id}` (trạng thái để mở lại truyện), `GET /stories/{id}/chapters/{n}` (văn đã hiện). Mã mới `CHOICE_NOT_FOUND`, `CHAPTER_NOT_FOUND` (404).
-- **Hệ quả:** chưa ghi `Lie`, `FEELS` vào đồ thị khi người chơi chọn; dữ liệu nằm ở `chapter_choices` và chỉ vào đề chương sau dạng chữ. Khoá chỉ có tác dụng khi mỗi yêu cầu có kết nối Postgres riêng (khoá lồng được trên cùng kết nối); hỏi người kể, tạo lại lựa chọn và phân loại ô tự viết chưa có khoá. Lời gọi bị huỷ giữa chừng không có dòng chi phí.
+- **Hệ quả:** `Lie`, `FEELS` của lựa chọn vào đồ thị ở gói chương sau (D-55); dữ liệu cũng vào đề chương sau dạng chữ. Khoá chỉ có tác dụng khi mỗi yêu cầu có kết nối Postgres riêng (khoá lồng được trên cùng kết nối); các đường gọi model còn lại cũng có khoá (D-56). Lời gọi bị huỷ giữa chừng không có dòng chi phí.
 - **Người quyết:** Claude (nhánh story-api), điều phối duyệt; POST cho SSE, 2 cảnh mỗi chương, khoá chống chạy đôi: điều phối yêu cầu và duyệt · 20/10/2026
 
 ## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
@@ -480,3 +480,22 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `bench_run`: report và summary có `setup_repairs` (số lượt sửa, số lỗi theo loại); danh sách lỗi có id chỉ ở truth_dump.
 - **Hệ quả:** mỗi lượt sửa là một lời gọi `build_story` nữa trên key người chơi, đầu vào dài hơn (kèm câu trả lời trước), qua cùng `MeteredClient` nên tính vào trần như mọi lời gọi. Log API không còn id của lỗi khởi tạo. Chương cuối được dồn nhiều hạn. Chưa đo lượt sửa với model thật.
 - **Người quyết:** Chủ dự án (lượt sửa, luật chương cuối); Claude (chuẩn hoá id) · 20/10/2026
+
+## D-55 · Lựa chọn của người chơi có tác động vào đồ thị (bổ sung D-37 và D-46)
+- **Bối cảnh:** D-37, D-46 ghi lựa chọn nói dối và nội tâm chưa vào đồ thị: chương sau chỉ nhận chữ của lựa chọn.
+- **Quyết định:**
+  - Người chơi chọn ở cuối chương N; tác động thuộc gói của chương N+1 (D-21) và được ghi cùng chương đó khi nó commit. Bấm chọn không ghi gì lên đồ thị, nên chọn lại trước khi viết là thay.
+  - `pipeline.choices.choice_effects` (hàm thuần): nói dối → nút `Lie` (id `lie:<choice_id>`, `chapter` = N+1), cạnh `TOLD` (nhân vật chính → Lie), `TOLD_TO` (Lie → từng người nghe còn sống), `ABOUT` (Lie → mục nói tới); nội tâm → `FEELS` mang `feeling`, đóng `FEELS` cũ cùng đích. Nói thật, im lặng, hành động: graph-schema không có chỗ cho chúng nên không ghi, chỉ chữ vào đề chương.
+  - Tác động là phần mở đầu của gói chương (`ChapterRequest.choice`): người canh, bộ trích và `OverlayState` thấy từ cảnh 1; danh mục thực thể có nút `Lie`, nên một cảnh ghi được "Lan biết đó là dối". `merge_scene_packages(prelude=…)` gộp nó với các cảnh.
+  - Id lựa chọn nhắc tới mà đồ thị không có: dừng trước khi gọi model (`INTERNAL_ERROR`). Người nghe đã chết bị bỏ; không ai nghe được thì lời dối không ghi (ghi log id, không chữ).
+- **Hệ quả:** lời dối vào sổ tay (`player_view.lies`) từ chương N+1, kể cả khi văn chương đó không tả lúc nói (người chơi đã chọn nói); chữ của nó đã qua `check_leaks` lúc tạo lựa chọn (D-37). `FEELS` chưa vào `player_view` (D-16). Ô tự viết không có dữ liệu có cấu trúc nên không tác động. `bench_run` truyền lựa chọn, nên chạy liền nhiều chương cũng ghi tác động.
+- **Người quyết:** Claude (nhánh choice-effects), chờ điều phối duyệt · 20/10/2026
+
+## D-56 · Khoá chống chạy đôi cho mọi đường gọi model; bộ đếm lời gọi mỗi phút (bổ sung D-46)
+- **Bối cảnh:** D-46 chỉ khoá viết chương và chốt khởi tạo; hỏi người kể, tạo lại lựa chọn, ô tự viết và tạo lựa chọn khởi tạo gọi song song thì key người chơi bị trừ tiền hai lần. `WRITORY_RATE_LIMITED` (D-41) chưa có bộ đếm.
+- **Quyết định:**
+  - Khoá `story` (cùng khoá viết chương) cho `POST /stories/{id}/choices` và `/action`. Khoá `narrator` riêng cho hỏi người kể, vì hỏi người kể không mất lượt truyện (design §6.6): được hỏi khi chương đang viết, chỉ không được hỏi hai câu cùng lúc. Khoá `setup` cho ba bước tạo lựa chọn khởi tạo, chung với chốt. Lần hai: `STORY_BUSY`, không gọi model.
+  - Bộ đếm: bảng `llm_call_windows` (migration 0005), `db.take_llm_call`, cửa sổ cố định một phút theo `owner_id`, một câu lệnh kiểm và tăng cùng lúc. Giới hạn `rate_limit.llm_calls_per_minute_per_user`; null → `CONFIG_LIMIT_NOT_SET`.
+  - `llm.ratelimit.RateLimitedClient` bọc client thật trong `PlayerLLM.open`, nên mọi lời gọi của API, kể cả lần thử lại, xin một lượt trước khi tới model. Hết lượt: `WRITORY_RATE_LIMITED` (429), không thử lại, không tốn tiền, không có dòng nhật ký chi phí. Giờ qua `deps.get_clock` để test dùng đồng hồ giả.
+- **Hệ quả:** cửa sổ cố định cho phép tới 2 × giới hạn quanh ranh giới phút. Một chương cần từ 8 lời gọi (thêm 3 mỗi lần viết lại cảnh); hết lượt giữa chương thì chương dừng như mọi lỗi trước bước ghi (G11) và phải viết lại từ đầu, các lời gọi đã chạy vẫn tốn tiền. Lượt đã giữ không trả lại khi lời gọi lỗi. Câu hỏi người kể bị từ chối vì bận không tốn lượt hỏi của chương.
+- **Người quyết:** Claude (nhánh choice-effects), chờ điều phối duyệt · 20/10/2026

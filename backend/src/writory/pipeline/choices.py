@@ -15,7 +15,7 @@ G4: toàn bộ view và văn bản cảnh nằm trong khối dữ liệu, vì vi
 
 import logging
 import uuid
-from collections.abc import Mapping
+from collections.abc import Collection, Mapping
 from dataclasses import dataclass
 from typing import Any, Self
 
@@ -23,7 +23,8 @@ from pydantic import BaseModel, ConfigDict, model_validator
 
 from writory.config import RetryLimits
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerView, public_entries
+from writory.graph import ChangePackage, EdgeSpec, NodeSpec, PlayerView, public_entries
+from writory.graph.package import CloseSpec
 from writory.llm.base import LLMClient, Message
 from writory.llm.retry import with_json_retries
 from writory.pipeline.events import KIND_LABELS, TONE_LABELS, ChoiceKind, PlayerChoice, Tone
@@ -113,6 +114,48 @@ class Choice:
             id=self.id, kind=self.kind, kind_label=KIND_LABELS[self.kind], tone=self.tone,
             tone_label=TONE_LABELS[self.tone] if self.tone else None, text=self.text,
         )
+
+
+def choice_effects(
+    choice: Choice, *, chapter: int, protagonist: str, dead: Collection[str] = (),
+    open_feels: Mapping[str, str] | None = None,
+) -> ChangePackage:
+    """Tác động của lựa chọn lên đồ thị, dựng thành phần mở đầu của gói chương `chapter` (D-55):
+    người chơi chọn ở cuối chương N, nên tác động thuộc gói chương N+1 và mọi cạnh mở ở N+1 (D-21).
+
+    - Nói dối: nút `Lie`, cạnh `TOLD` (nhân vật chính → Lie), `TOLD_TO` (Lie → từng người nghe còn
+      sống, không kể chính nhân vật chính), `ABOUT` (Lie → các mục nó nói tới). Không còn ai nghe
+      được thì không ghi gì (một lời dối không ai nghe không phải lời dối).
+    - Nội tâm: `FEELS` từ nhân vật chính tới từng mục, mang `feeling`. `open_feels` (đích → id cạnh
+      FEELS đang hiệu lực từ nhân vật chính) cho biết cạnh cũ nào bị cảm xúc mới thay: đóng nó.
+    - Nói thật, im lặng, hành động: graph-schema không có chỗ cho chúng, chỉ chữ đi vào đề chương.
+
+    Id của nút và cạnh suy ra từ id lựa chọn và số chương, nên viết lại chương (lần ghi trước lỗi)
+    cho đúng cùng gói. Hàm thuần: không đọc đồ thị; người gọi lọc người chết và cạnh FEELS cũ.
+    """
+    nodes: list[NodeSpec] = []
+    edges: list[EdgeSpec] = []
+    close: list[CloseSpec] = []
+
+    def edge(kind: str, source: str, target: str, **props: Any) -> EdgeSpec:
+        return EdgeSpec(type=kind, source=source, target=target, valid_from_chapter=chapter,
+                        props=props)
+
+    if choice.lie is not None:
+        hearers = [h for h in choice.lie.told_to if h != protagonist and h not in dead]
+        if hearers:
+            lie_id = f"lie:{choice.id}"
+            nodes.append(NodeSpec(id=lie_id, label="Lie",
+                                  props={"chapter": chapter, "content": choice.lie.content}))
+            edges.append(edge("TOLD", protagonist, lie_id))
+            edges += [edge("TOLD_TO", lie_id, h) for h in hearers]
+            edges += [edge("ABOUT", lie_id, a) for a in choice.about]
+    if choice.kind == "inner" and choice.feeling:
+        for target in choice.about:
+            edges.append(edge("FEELS", protagonist, target, feeling=choice.feeling))
+            if open_feels and target in open_feels:
+                close.append(CloseSpec(type="FEELS", id=open_feels[target], valid_to_chapter=chapter))
+    return ChangePackage(commit_id="header", nodes=nodes, edges=edges, close=close)
 
 
 # Lần chạy evals/results/2026-10-20-run-tu-tien-1/: cả 6 chương, mọi lời thoại đều "truth". Đề khuyến

@@ -642,20 +642,22 @@ class StoryRun:
             self._print(f"--chapters {wanted} vượt kế hoạch ({total} chương): dừng ở chương {total}")
         present: tuple[str, ...] = ()
         action: str | None = None
+        choice: Choice | None = None
         for number in range(1, self.target + 1):
-            step = await self._chapter(number, present, action)
+            step = await self._chapter(number, present, action, choice)
             if step is None:
                 return
-            action, present = step
+            action, present, choice = step
 
-    async def _chapter(self, number: int, present: tuple[str, ...], action: str | None):
+    async def _chapter(self, number: int, present: tuple[str, ...], action: str | None,
+                       choice: Choice | None):
         assert self.budgeted is not None and self.plan is not None
         retries = self.scenario.player_retries
         for attempt in range(1, retries + 2):
             self.budgeted.chapter, self.budgeted.attempt = number, attempt
             request = ChapterRequest(
                 present_ids=present, scene_count=self.scenario.scene_count, story_brief=self.brief,
-                player_action=action, writer_tier=self.scenario.writer_tier,
+                player_action=action, writer_tier=self.scenario.writer_tier, choice=choice,
             )
             run = ChapterRun(request, llm=self.budgeted, store=self.store, config=self.config,
                              plan=self.plan, tracker=self.tracker, style_guide=self.style_guide)
@@ -688,7 +690,7 @@ class StoryRun:
                 if picked is None:
                     return None
                 return (player_action_text(choices[picked].for_player()),
-                        self._carry_present(out))
+                        self._carry_present(out), choices[picked])
             if out.error is not None:
                 self.errors.append({"where": f"chapter {number}", "attempt": attempt,
                                     "code": out.error.value, "detail": out.error_detail})

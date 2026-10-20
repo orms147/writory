@@ -16,6 +16,7 @@ from pydantic import SecretStr
 
 from tests.api_fixtures import (
     FAKE_KEY,
+    AllowAllQuota,
     KeyedFactory,
     asgi_request,
     dev_settings,
@@ -28,6 +29,7 @@ from tests.pipeline_fixtures import (
     SCENE_1_LEAK,
     TRUTH_AT_4,
     ScriptedLLM,
+    _refs,
     calls_of,
     choices_reply,
     final_chapter_script,
@@ -39,19 +41,23 @@ from tests.pipeline_fixtures import (
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.api.errors import HTTP_STATUS
+from writory.api.play import action_text, choice_record
 from writory.db import (
     chapter_records,
     commit_chapter,
     create_story_with_plan,
     current_chapter,
     delete_player_key,
+    job_lock,
     load_action,
     load_choices,
     save_action,
+    save_choices,
     save_player_key,
 )
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import story_snapshot
+from writory.pipeline.choices import Choice, LieEffect
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import CLOSE_TAG
 
@@ -121,6 +127,9 @@ def make_app(pg, driver, llm, tmp_path, *, key: bool = True, own_conns: bool = F
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     factory = KeyedFactory(llm)
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
+    # Các test không kiểm giới hạn tần suất dùng chung người chơi dev và giờ máy thật, nên không để
+    # bộ đếm thật chặn nhau; `limited_app` bật lại bộ đếm thật.
+    app.dependency_overrides[deps.get_call_quota] = AllowAllQuota
     if key:
         save_player_key(pg, DEV_OWNER_ID, app.state.key_cipher.encrypt(SecretStr(FAKE_KEY)))
     else:
@@ -449,3 +458,281 @@ def test_chapter_text_routes(pg, driver, story, tmp_path):
                      "choices": [], "action": {"for_chapter": 4, "source": "custom",
                                                "text": "Ở nhà chờ tin."},
                      "next_ready": True, "finished": False}
+
+
+# --- tác động của lựa chọn lên đồ thị (D-55) ----------------------------------------------------
+
+LIE_TEXT = "Thanh Sương đang ở chỗ cai Khải"
+
+
+LIE_CHOICE = Choice(id="choice-lie000000001", kind="dialogue", tone="lie",
+                    text="Nói với Lan là kiếm đã gửi.", listeners=("lan",), about=("sword",),
+                    lie=LieEffect(LIE_TEXT, ("lan",)), feeling=None)
+INNER_CHOICE = Choice(id="choice-inner0000001", kind="inner", tone=None,
+                      text="Thầm nghĩ Lan biết nhiều hơn.", listeners=(), about=("lan",), lie=None,
+                      feeling="nghi ngờ")
+
+
+def pick(pg, sid, choice: Choice) -> Choice:
+    """Bộ lựa chọn của chương 3 (một bộ mỗi chương) rồi chọn `choice` làm hành động cho chương 4."""
+    save_choices(pg, sid, 3, [choice_record(LIE_CHOICE), choice_record(INNER_CHOICE)])
+    save_action(pg, sid, 4, source="choice", text=action_text(choice), choice_id=choice.id)
+    return choice
+
+
+def graph_edges(driver, sid, edge_type):
+    return [e for e in story_snapshot(driver, sid).edges if e[0] == edge_type]
+
+
+def test_picked_lie_reaches_the_graph_and_the_notebook(pg, driver, story, tmp_path):
+    sid = story(action=None)
+    choice = pick(pg, sid, LIE_CHOICE)
+    llm = ScriptedLLM(full_script())
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        before = client.get(f"/stories/{sid}/notebook").json()
+        resp = write_next(client, sid)
+        notebook = client.get(f"/stories/{sid}/notebook").json()
+    assert "chapter_committed" in kinds(sse(resp.text)) and current_chapter(pg, sid) == 4
+    lie_id = f"lie:{choice.id}"
+    nodes = {n[0]: dict(n[2]) for n in story_snapshot(driver, sid).nodes}
+    assert nodes[lie_id]["content"] == LIE_TEXT and nodes[lie_id]["chapter"] == 4
+    for edge_type, source, target in (("TOLD", "minh", lie_id), ("TOLD_TO", lie_id, "lan"),
+                                      ("ABOUT", lie_id, "sword")):
+        [edge] = [e for e in graph_edges(driver, sid, edge_type)
+                  if (e[1], e[2]) == (source, target)]
+        assert dict(edge[3])["valid_from_chapter"] == 4
+    # Lời dối chỉ vào sổ tay sau khi chương 4 được ghi, kèm chương và người nghe.
+    assert LIE_TEXT not in [x["content"] for x in before["lies"]]
+    [lie] = [x for x in notebook["lies"] if x["content"] == LIE_TEXT]
+    assert lie["chapter"] == 4 and lie["told_to"]
+    assert lie_id not in json.dumps(notebook, ensure_ascii=False)  # G1: không lộ id nút
+
+
+def test_picked_inner_feeling_reaches_the_graph_but_not_the_notebook(pg, driver, story, tmp_path):
+    sid = story(action=None)
+    pick(pg, sid, INNER_CHOICE)
+    llm = ScriptedLLM(full_script())
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        write_next(client, sid)
+        notebook = client.get(f"/stories/{sid}/notebook").json()
+    [feels] = graph_edges(driver, sid, "FEELS")
+    assert (feels[1], feels[2]) == ("minh", "lan")
+    assert dict(feels[3])["feeling"] == "nghi ngờ"
+    assert "nghi ngờ" not in json.dumps(notebook, ensure_ascii=False)  # D-16: chưa có trong sổ tay
+
+
+def test_choosing_again_before_writing_replaces_the_effects(pg, driver, story, tmp_path):
+    """Chọn lời dối rồi đổi sang nội tâm: chương 4 chỉ mang tác động của lựa chọn cuối."""
+    sid = story(action=None)
+    pick(pg, sid, LIE_CHOICE)
+    pick(pg, sid, INNER_CHOICE)  # save_action thay hành động cũ
+    llm = ScriptedLLM(full_script())
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        write_next(client, sid)
+    assert not [e for e in graph_edges(driver, sid, "TOLD") if e[2].startswith("lie:")]
+    assert graph_edges(driver, sid, "FEELS")
+
+
+def test_custom_action_has_no_graph_effects(pg, driver, story, tmp_path):
+    sid = story()  # hành động tự viết mặc định
+    llm = ScriptedLLM(full_script())
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        write_next(client, sid)
+    assert not graph_edges(driver, sid, "FEELS")
+    assert not [n for n in story_snapshot(driver, sid).nodes if n[1] == ("Entity", "Lie")
+                and n[0].startswith("lie:")]
+
+
+# --- khoá chống chạy đôi cho các đường gọi model còn lại (G8, D-56) ------------------------------
+
+NARRATOR_REPLY = json.dumps({"known": False, "answer": None, "entry_ids": []})
+BUSY = WritoryError(ErrorCode.STORY_BUSY).player_payload()
+
+
+async def second_call_is_refused(app, llm: GatedLLM, path: str, body: dict | None = None):
+    """Yêu cầu 1 vào lời gọi model đầu rồi dừng; yêu cầu 2 cùng đường nhận 409 STORY_BUSY và không
+    gọi model: key người chơi không bị trừ tiền hai lần. Trả (status, thân) của yêu cầu 1."""
+    first = asyncio.create_task(asgi_request(app, "POST", path, body))
+    await asyncio.wait_for(llm.entered.wait(), timeout=30)
+    status, resp = await asyncio.wait_for(asgi_request(app, "POST", path, body), timeout=30)
+    assert status == 409 == HTTP_STATUS[ErrorCode.STORY_BUSY]
+    assert json.loads(resp) == BUSY
+    assert llm.calls == []  # yêu cầu 1 còn chờ ở cổng, yêu cầu 2 chưa gọi gì
+    llm.gate.set()
+    return await asyncio.wait_for(first, timeout=30)
+
+
+async def test_second_concurrent_narrator_question_is_refused(pg, driver, story, tmp_path):
+    sid = story()
+    llm = GatedLLM([NARRATOR_REPLY])
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    status, _ = await second_call_is_refused(app, llm, f"/stories/{sid}/narrator",
+                                             {"question": "Ai đang giữ thanh kiếm?"})
+    assert status == 200 and len(llm.calls) == 1
+    # Câu bị từ chối vì bận không tốn lượt hỏi của chương (chỉ câu 1 được tính).
+    used = pg.execute("SELECT asked FROM narrator_questions WHERE story_id = %s", (sid,)
+                      ).fetchone()
+    assert used == (1,)
+
+
+def test_narrator_question_is_allowed_while_a_chapter_is_being_written(
+        pg, driver, story, tmp_path):
+    """Hỏi người kể không mất lượt truyện (design §6.6): khoá của nó tách khỏi khoá viết chương.
+    Giữ khoá viết chương của truyện trên một kết nối khác, rồi hỏi."""
+    sid = story()
+    llm = ScriptedLLM([NARRATOR_REPLY])
+    holder = own_connections()
+    conn = next(holder)
+    try:
+        with job_lock(conn, "story", sid), TestClient(
+                make_app(pg, driver, llm, tmp_path, own_conns=True)) as client:
+            resp = client.post(f"/stories/{sid}/narrator", json={"question": "Ai giữ kiếm?"})
+    finally:
+        holder.close()
+    assert resp.status_code == 200 and len(llm.calls) == 1
+
+
+def choices_after_chapter_3(messages) -> str:
+    """Bộ lựa chọn cho sổ tay tới hết chương 3 (`choices_reply` cần mục chỉ có từ chương 4)."""
+    lan = _refs(messages)["Phạm Thị Lan"]
+    blank = {"tone": None, "lie_content": None, "listeners": [], "about": [], "feeling": None}
+    return json.dumps({"choices": [
+        {"kind": "action", "text": "Xuống bến.", **blank},
+        {"kind": "dialogue", "text": "Hỏi thẳng Lan.", **blank | {"tone": "truth",
+                                                                 "listeners": [lan]}},
+        {"kind": "inner", "text": "Thầm nghi ngờ Lan.", **blank | {"about": [lan],
+                                                                  "feeling": "nghi ngờ"}},
+    ]}, ensure_ascii=False)
+
+
+async def test_second_concurrent_choices_regeneration_is_refused(pg, driver, story, tmp_path):
+    sid = story(action=None)
+    llm = GatedLLM([choices_after_chapter_3])
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    status, body = await second_call_is_refused(app, llm, f"/stories/{sid}/choices")
+    assert status == 200 and len(llm.calls) == 1
+    assert len(json.loads(body)["choices"]) == 3
+    assert len(load_choices(pg, sid, 3)) == 3  # đúng một bộ được lưu
+
+
+async def test_second_concurrent_custom_action_is_refused(pg, driver, story, tmp_path):
+    sid = story(action=None)
+    llm = GatedLLM([classify_reply()])
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    status, _ = await second_call_is_refused(app, llm, f"/stories/{sid}/action",
+                                             {"text": "Tôi ở nhà chờ tin."})
+    assert status == 200 and len(llm.calls) == 1
+    assert load_action(pg, sid, 4).text == "Tôi ở nhà chờ tin."
+
+
+async def test_choices_and_action_wait_out_a_chapter_being_written(pg, driver, story, tmp_path):
+    """Đang viết chương thì tạo lại lựa chọn hay gửi hành động tự viết bị từ chối ngay."""
+    sid = story()
+    llm = GatedLLM(full_script())
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    writing = asyncio.create_task(asgi_request(app, "POST", f"/stories/{sid}/chapters/next"))
+    await asyncio.wait_for(llm.entered.wait(), timeout=30)
+    for path, body in ((f"/stories/{sid}/choices", None),
+                       (f"/stories/{sid}/action", {"text": "Tôi ở nhà."})):
+        status, resp = await asyncio.wait_for(asgi_request(app, "POST", path, body), timeout=30)
+        assert (status, json.loads(resp)) == (409, BUSY), path
+    llm.gate.set()
+    status, _ = await asyncio.wait_for(writing, timeout=60)
+    assert status == 200
+
+
+# --- giới hạn lời gọi model mỗi phút (G8, D-56) --------------------------------------------------
+
+
+class FakeClock:
+    def __init__(self, now: float = 1_800_000_000.0) -> None:
+        self.now = now
+
+    def __call__(self) -> float:
+        return self.now
+
+
+@pytest.fixture
+def clean_windows(pg):
+    """Đồng hồ giả cố định nên các lần chạy test dùng lại cùng cửa sổ: dọn cả trước lẫn sau."""
+
+    def clean() -> None:
+        pg.execute("DELETE FROM llm_call_windows WHERE owner_id LIKE 'rl-%%' OR owner_id = %s",
+                   (DEV_OWNER_ID,))
+
+    clean()
+    yield
+    clean()
+
+
+def limited_app(pg, driver, llm, tmp_path, clock, *, per_minute: int | None, owner=None):
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    del app.dependency_overrides[deps.get_call_quota]  # bộ đếm thật trong Postgres
+    app.state.config = make_config(tmp_path / "limited", limits={
+        "rate_limit": {"llm_calls_per_minute_per_user": per_minute}})
+    app.dependency_overrides[deps.get_clock] = lambda: clock
+    if owner:
+        app.dependency_overrides[deps.get_owner_id] = lambda: owner
+    return app
+
+
+def act(client, sid):
+    return client.post(f"/stories/{sid}/action", json={"text": "Tôi ở nhà chờ tin."})
+
+
+def test_calls_over_the_per_minute_limit_get_429_without_reaching_the_model(
+        pg, driver, story, tmp_path, clean_windows):
+    sid = story(action=None)
+    clock = FakeClock()
+    llm = ScriptedLLM([classify_reply()] * 3)
+    with TestClient(limited_app(pg, driver, llm, tmp_path, clock, per_minute=2)) as client:
+        first, second, third = act(client, sid), act(client, sid), act(client, sid)
+        clock.now += 59
+        still = act(client, sid)
+        clock.now += 1  # sang phút kế: cửa sổ mới, không sleep
+        later = act(client, sid)
+    assert [r.status_code for r in (first, second)] == [200, 200]
+    assert third.status_code == 429 == still.status_code == HTTP_STATUS[ErrorCode.WRITORY_RATE_LIMITED]
+    assert third.json() == WritoryError(ErrorCode.WRITORY_RATE_LIMITED).player_payload()
+    assert later.status_code == 200
+    assert len(llm.calls) == 3  # hai lời gọi trước + một sau khi sang phút mới
+    # Lượt bị từ chối không tốn tiền và không có dòng nhật ký chi phí.
+    (rows,) = pg.execute("SELECT count(*) FROM llm_costs WHERE story_id = %s", (sid,)).fetchone()
+    assert rows == 3
+
+
+def test_limit_not_set_fails_closed_before_any_model_call(pg, driver, story, tmp_path,
+                                                         clean_windows):
+    sid = story(action=None)
+    llm = ScriptedLLM([classify_reply()])
+    with TestClient(limited_app(pg, driver, llm, tmp_path, FakeClock(), per_minute=None),
+                    raise_server_exceptions=False) as client:
+        resp = act(client, sid)
+    assert resp.status_code == HTTP_STATUS[ErrorCode.CONFIG_LIMIT_NOT_SET]
+    assert resp.json() == WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET).player_payload()
+    assert llm.calls == []
+
+
+def test_chapter_stops_with_an_error_event_when_the_limit_is_hit_midway(
+        pg, driver, story, tmp_path, clean_windows):
+    """Một chương cần nhiều lời gọi. Hết lượt giữa chừng thì chương dừng như mọi lỗi trước bước ghi
+    (G11): có sự kiện lỗi G12, không ghi gì, và sang phút mới viết lại được."""
+    sid = story()
+    before = story_snapshot(driver, sid)
+    clock = FakeClock()
+    llm = ScriptedLLM(full_script())
+    with TestClient(limited_app(pg, driver, llm, tmp_path, clock, per_minute=4)) as client:
+        events = sse(write_next(client, sid).text)
+        assert kinds(events)[-1] == "error"
+        err = dict(events)["error"]
+        assert err["code"] == "WRITORY_RATE_LIMITED"
+        assert current_chapter(pg, sid) == 3 and story_snapshot(driver, sid) == before
+        used = len(llm.calls)
+        assert used == 4  # đúng 4 lời gọi tới model, lời thứ 5 bị chặn trước khi gọi
+        clock.now += 60
+        llm._script.clear()
+        llm._script.extend(full_script())
+        # Chương cần 8 lời gọi, trần 4 mỗi phút: vẫn dừng, nhưng không hỏng gì ở lần chạy lại.
+        again = sse(write_next(client, sid).text)
+        assert dict(again)["error"]["code"] == "WRITORY_RATE_LIMITED"
+    assert current_chapter(pg, sid) == 3

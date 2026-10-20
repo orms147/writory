@@ -5,7 +5,7 @@ import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from tests.api_fixtures import FAKE_KEY, KeyedFactory, dev_settings
+from tests.api_fixtures import FAKE_KEY, AllowAllQuota, KeyedFactory, dev_settings
 from tests.unit.test_narrator import CFG, PLAN, reply
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
@@ -49,6 +49,7 @@ def _app(pg, driver, fake: FakeLLM):
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     factory = KeyedFactory(fake)
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
+    app.dependency_overrides[deps.get_call_quota] = AllowAllQuota  # xem make_app của test_play_api
     return app, factory
 
 
