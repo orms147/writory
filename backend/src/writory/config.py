@@ -112,6 +112,7 @@ class RoleModels(_Section):
     choices: str | None
     narrator: str | None
     classify: str | None
+    setup: str | None
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
@@ -126,6 +127,7 @@ class RoleReasoning(_Strict):
     choices: ReasoningEffort | None = None
     narrator: ReasoningEffort | None = None
     classify: ReasoningEffort | None = None
+    setup: ReasoningEffort | None = None
 
 
 class WriterTier(_Strict):

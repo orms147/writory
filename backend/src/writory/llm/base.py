@@ -7,7 +7,7 @@ from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
-from writory.config import LimitNotSetError, RoleModels
+from writory.config import LimitNotSetError, ModelsConfig, RoleModels
 from writory.errors import ErrorCode, WritoryError
 
 
@@ -18,6 +18,13 @@ def require_model(roles: RoleModels, role: str) -> str:
         return roles.require(role)
     except LimitNotSetError as e:
         raise WritoryError(ErrorCode.CONFIG_MODEL_NOT_SET, detail=str(e)) from None
+
+
+def role_extra(models: ModelsConfig, role: str) -> dict[str, Any] | None:
+    """Tham số riêng của một vai cho `chat`/`chat_json` (`extra`): mức suy luận trong
+    `role_reasoning` (tham số `reasoning` của OpenRouter, như bài C). null thì không gửi gì."""
+    effort = getattr(models.role_reasoning, role)
+    return {"reasoning": {"effort": effort}} if effort is not None else None
 
 
 class Message(BaseModel):

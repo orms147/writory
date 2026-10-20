@@ -19,8 +19,8 @@ Mọi nút có hai nhãn: `Entity` (nhãn chung, mang khoá) và một nhãn lo�
 
 | Nhãn | Thuộc tính bắt buộc | Thuộc tính khác |
 |---|---|---|
-| `Character` | `name` | `aliases[]`, `is_protagonist` (đúng một nhân vật mỗi truyện) |
-| `Location`, `Item`, `Faction` | `name` | `aliases[]` |
+| `Character` | `name` | `aliases[]`, `is_protagonist` (đúng một nhân vật mỗi truyện), `personality`, `backstory` |
+| `Location`, `Item`, `Faction` | `name` | `aliases[]`, `description` |
 | `Event` | `chapter`, `description` | |
 | `Fact` | `text` | |
 | `Lie` | `chapter`, `content` | |
@@ -77,6 +77,16 @@ Câu trích của `REVEALED_TO_PLAYER` và của `KNOWS` từ nhân vật chính
 Phần Neo4j:
 - `apply_package(driver, story_id, ChangePackage)`: một transaction. Nút `MERGE` theo `(story_id, id)`; cạnh `MERGE` theo `(story_id, id)`; đóng cạnh ghi `closed_by_commit`. Áp lại cùng gói không đổi gì. Tham chiếu id không có → `MissingEntityError`; đụng nút/cạnh của commit khác → `CommitConflictError`; cả hai đều rollback toàn bộ.
 - `delete_commit(driver, story_id, commit_id)`: xoá nút/cạnh commit đó tạo, mở lại cạnh nó đóng. Có commit sau dựa vào thì từ chối.
+
+## Chương 0 (khởi tạo, D-38)
+Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.setup.build_story` dựng cùng `story_plan`, rồi ghi như mọi chương (`commit_chapter(..., 0, ...)`). Code kiểm bằng `initial_problems`; sai một điều thì không trả gì (`STORY_SETUP_INVALID`, D-39).
+- **Nút:** chỉ `Character`, `Location`, `Item`, `Faction`, `Fact`, `Thread`. Không có `Chapter`, `Event`, `Lie`. Nút có tên phải có `name`, không trùng tên trong cùng nhãn.
+- **Nhân vật chính:** đúng một, id `protagonist` (`PROTAGONIST_ID`), do code dựng từ chữ người chơi (tên, tính cách, quá khứ), mang `user_authored: true` (G4). Model chỉ nhắc tới nó qua id.
+- **Cạnh:** `RELATES_TO` (bắt buộc `kind`, `score` −100…100), `LOCATED_AT` (mỗi thứ một nơi), `HOLDS` (mỗi đồ vật một người giữ), `MEMBER_OF`, `ABOUT`, `KNOWS`. Hai đầu đúng nhãn như bảng Cạnh, và đều là nút trong gói.
+- **`KNOWS` ở chương 0** luôn có `how: "tự biết"`. **Nhân vật chính không `KNOWS` gì**, và **không có `REVEALED_TO_PLAYER`**: người chơi chưa đọc trang nào, nên `player_view` ở chương 0 rỗng (code kiểm lại bằng `player_view_of`). Điều nhân vật chính biết từ quá khứ được ghi khi trang kể tới, kèm câu trích (G3).
+- **Bí mật** trong `story_plan` trỏ tới `Fact` có trong gói; khoảng lộ nằm trong số chương của kế hoạch; mỗi bí mật có `leak_terms`, mỗi nhóm có ít nhất `LEAK_GROUP_MIN_PHRASES` cụm (D-26).
+- **Mạch** của kế hoạch là nút `Thread` có `planted_chapter: 0`, khoảng gỡ nằm trong số chương; `must_resolve_threads` trỏ tới các nút đó.
+- **Hồi** phủ liền từ chương 1; chương cuối nằm trong khoảng `chapters` của mức độ dài (`config/story_lengths.yaml`).
 
 ## Ngữ cảnh cho model viết (D-28)
 `writory.graph.context.writer_context(driver, story_id, as_of_chapter, present_ids, plan, max_neighbors=...)` đọc lớp `truth` ở cuối chương `as_of_chapter` (chương đã commit, lấy từ `writory.db.current_chapter`) để viết chương kế tiếp. Ngữ cảnh gồm:

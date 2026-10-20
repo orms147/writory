@@ -74,10 +74,12 @@ Lưu ý: 300.000 ký tự tiếng Việt ước khoảng 100.000 token (chưa đ
    - **Nhiều nhân vật** (bản 3) — có thêm chương qua mắt nhân vật khác, vẫn không lộ twist sớm.
 4. Hệ thống tạo **3 bối cảnh mở** (mỗi cái một đoạn giới thiệu) → chọn một.
 5. **3 hướng cốt truyện** → chọn một.
-6. **3 nhân vật chính** → chọn một; sửa được tên, tính cách, quá khứ.
+6. **3 nhân vật chính** → chọn một; sửa được tên, tính cách, quá khứ. Những gì người chơi sửa là chữ người chơi: vào prompt như dữ liệu, không như lệnh (G4).
 7. (Bản 3) Luật thế giới, kiểu kết thúc, định mệnh/tự do, bí mật của nhân vật chính, kẻ thù định mệnh, nhập nhân vật bằng đoạn văn (§5).
 
-Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1) và đồ thị ban đầu. Người chơi không thấy bản kế hoạch.
+Người chơi đọc các lựa chọn ở bước 4–6, nên chúng không được chứa bí mật hay cú lật nào.
+
+Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1) và đồ thị ban đầu (thế giới trước trang đầu, gọi là chương 0). Người chơi không thấy bản kế hoạch, và ở chương 0 người chơi chưa biết gì: sổ tay rỗng cho tới khi đọc chương 1. Luật của đồ thị ban đầu: `docs/graph-schema.md`, mục Chương 0 (D-38).
 
 ### 4.2 Chơi
 - Mỗi chương gồm 2–3 **cảnh**. Một cảnh chỉ hiện ra sau khi người canh đã kiểm xong; chữ chạy dần trên màn hình. Trong lúc người chơi đọc cảnh trước, cảnh sau được viết và kiểm. Người chơi không bao giờ đọc một bản chưa kiểm. [Chốt]
@@ -136,8 +138,8 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 
 ### 6.1 Bản kế hoạch truyện (ẩn) [Quyết định thiết kế]
 Tạo lúc khởi tạo, cập nhật khi lựa chọn làm lệch hướng:
-- Các hồi (mở đầu, phát triển, cao trào, kết) quy ra số chương theo mức độ dài.
-- Các bí mật lớn và **khoảng chương dự kiến lộ** (ví dụ "Lan là gián điệp: lộ trong chương 12–16").
+- Các hồi (mở đầu, phát triển, cao trào, kết) quy ra số chương theo mức độ dài: các hồi phủ liền từ chương 1, tổng số chương nằm trong khoảng của mức đã chọn (§3).
+- Vài bí mật lớn (số lượng cho phép: `SECRETS_MIN`, `SECRETS_MAX` trong `backend/src/writory/pipeline/setup.py`), mỗi cái là một sự thật có trong đồ thị ban đầu, kèm **khoảng chương dự kiến lộ** (ví dụ "Lan là gián điệp: lộ trong chương 12–16") và các cụm từ để bộ dò lộ nhận ra khi bí mật bị nói ra sớm (D-26).
 - Các mạch chính và phụ, mạch nào phải gỡ trước khi kết.
 
 Bản kế hoạch là nguồn để người canh biết "lộ sớm" là gì. Lựa chọn của người chơi được phép kéo sớm hoặc lùi một lần lộ (ví dụ người chơi chủ động điều tra Lan), nhưng việc đó phải xảy ra qua một cảnh hợp lý, không tự nhiên lộ ra.

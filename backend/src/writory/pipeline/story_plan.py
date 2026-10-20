@@ -1,7 +1,8 @@
 """Bản kế hoạch truyện (`story_plan`, design §6.1): hồi, bí mật kèm khoảng chương lộ, mạch phải
 gỡ trước khi kết. Ẩn với người chơi. Người canh dùng nó để biết "lộ sớm" là gì (design §8 mục 2).
 
-Bản tối thiểu cho người canh tuần 3; phần tạo và cập nhật kế hoạch bằng model làm sau.
+Tạo lúc khởi tạo truyện: `pipeline.setup.build_story` (D-38). Cập nhật khi lựa chọn làm lệch hướng
+thì chưa làm.
 """
 
 from typing import Self
@@ -77,6 +78,11 @@ class StoryPlan(_Strict):
             if dup:
                 raise ValueError(f"{what} trùng id: {dup}")
         return self
+
+    @property
+    def total_chapters(self) -> int:
+        """Số chương của truyện theo kế hoạch: chương cuối của hồi cuối (các hồi xếp theo thứ tự)."""
+        return self.acts[-1].to_chapter
 
     def secret(self, fact_id: str) -> Secret | None:
         return next((s for s in self.secrets if s.fact_id == fact_id), None)

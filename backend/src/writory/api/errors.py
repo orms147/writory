@@ -55,6 +55,8 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.NARRATOR_QUESTION_TOO_LONG: 422,
     ErrorCode.NARRATOR_LIMIT_REACHED: 429,
     ErrorCode.WRITORY_RATE_LIMITED: 429,  # G8: giới hạn mỗi phút của WriTory, chưa có bộ đếm
+    # Khởi tạo truyện (D-39): kết quả của model không dùng được, giống LLM_BAD_RESPONSE.
+    ErrorCode.STORY_SETUP_INVALID: 502,
 }
 
 
