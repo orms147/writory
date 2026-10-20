@@ -113,6 +113,20 @@ class RoleModels(_Section):
     classify: str | None
 
 
+ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
+
+
+class RoleReasoning(_Strict):
+    """Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model."""
+
+    outline: ReasoningEffort | None = None
+    extract: ReasoningEffort | None = None
+    guard: ReasoningEffort | None = None
+    choices: ReasoningEffort | None = None
+    narrator: ReasoningEffort | None = None
+    classify: ReasoningEffort | None = None
+
+
 class WriterTier(_Strict):
     id: str
     label: str
@@ -122,6 +136,7 @@ class WriterTier(_Strict):
 
 class ModelsConfig(_Strict):
     roles: RoleModels
+    role_reasoning: RoleReasoning = RoleReasoning()
     writer_tiers: list[WriterTier]
 
 
@@ -242,7 +257,9 @@ def load_config(config_dir: Path = REPO_CONFIG_DIR) -> AppConfig:
 class Settings(BaseSettings):
     """Biến môi trường. Danh sách đầy đủ: .env.example."""
 
-    model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
+    # hide_input_in_errors: lỗi thiếu/sai biến không in kèm giá trị đầu vào, vì đầu vào có key (G7).
+    model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore",
+                                      hide_input_in_errors=True)
 
     # Key của chủ dự án, chỉ cho bộ đo. Người chơi dùng key riêng (D-2), lưu mã hoá trong DB.
     openrouter_api_key: SecretStr | None = None

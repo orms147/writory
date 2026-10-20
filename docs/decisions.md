@@ -267,3 +267,16 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** `writer_tiers` chỉ có mức "Tiêu chuẩn" = `openai/gpt-6-luna` (`config/models.yaml`). Không có mức GPT-6.1 Sol vì giá.
 - **Hệ quả:** design §6.5 mục 1 (nhiều mức) tạm chỉ còn một mức; thêm mức mới phải qua bài D. Điểm yếu cần cải thiện bằng prompt: trình bày lời thoại (rubric v2). Các vai giữ trí nhớ (`roles.*`) chưa chọn model; chọn khi có bài đo cho từng vai.
 - **Người quyết:** Chủ dự án · 20/10/2026
+
+## D-34 · Bài C v1: chọn model cho vai trích bằng cách chấm bằng code trên truyện mẫu
+- **Bối cảnh:** vai `extract` ghi thẳng vào đồ thị; cần chọn model. Đáp án có sẵn: đồ thị dựng tay của truyện mẫu.
+- **Quyết định:** bộ trích `pipeline/extract.py` (prompt `extract-1`, đầu ra JSON mọi trường bắt buộc, cạnh sai quy tắc bị bỏ từng cái). Bài C v1 cho sẵn danh mục thực thể, chấm bằng code; chỉ số chính là F1 lớp người chơi biết và số lần hé lộ sai. Runner `writory.pipeline.bench_c` (D-24). Bộ trích nhận cả `RESOLVED_IN` (oracle phát hiện thiếu).
+- **Hệ quả:** chưa đo phát hiện thực thể mới; pipeline phải tạo nút mới ở bước khác (dàn ý/lựa chọn) trước khi trích. `chat_json` nhận `extra` (tham số riêng theo model).
+- **Người quyết:** Claude (điều phối); chủ dự án đồng ý làm bài đo này · 20/10/2026
+
+## D-35 · Vai trích dùng GPT-6 Luna, suy luận mức thấp
+- **Bối cảnh:** bài C (`evals/results/2026-10-20-extract-v1/`, `-v2/`, `-v2-qwen/`, `-v2-luna-reasoning/`). Prompt `extract-2` kèm sửa G3 đưa số lần hé lộ sai của Luna từ 4 về 0. Bật suy luận thấp tăng F1 lớp người chơi biết từ 0,63 lên 0,78, vẫn 0 hé lộ sai, chưa tới 0,001 USD/chương. DeepSeek V4.1 Flash thấp hơn hẳn (0,35). Qwen 3.8 Flash bị giới hạn tần suất 60% lời gọi.
+- **Quyết định:** `roles.extract = openai/gpt-6-luna`, `role_reasoning.extract = low` (`config/models.yaml`). Thêm mục `role_reasoning` vào config.
+- **Hệ quả:** F1 0,78 trên 5 chương mẫu, dữ liệu nhỏ và prompt đã chỉnh theo chính bộ này, nên con số có thể lạc quan. Cần đo lại khi có bài C đầy đủ và truyện thứ hai. Các vai khác chưa chọn.
+- **Người quyết:** Claude (điều phối), theo kết quả đo; chủ dự án đồng ý cách chọn · 20/10/2026
+

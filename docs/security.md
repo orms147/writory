@@ -39,7 +39,7 @@ Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
 | Mã | Code | Test |
 |---|---|---|
 | G4 | `backend/src/writory/safety/wrap.py` (D-12) | `tests/unit/test_safety_wrap.py`, chạy trên bộ câu `evals/redteam/g4_prompt_injection.yaml` |
-| G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`; app gắn cho root và logger `uvicorn*` lúc khởi động, D-29) | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it` |
+| G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`; app gắn cho root và logger `uvicorn*` lúc khởi động, D-29); `Settings`/`BenchKeys` đặt `hide_input_in_errors` để lỗi cấu hình không in giá trị đầu vào | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it`, `test_config.py::test_settings_validation_error_never_echoes_secret_values` |
 | G2 | `safety/leak.py` (`check_leaks`, `ensure_no_leak`, D-26); tên lớp truth qua `graph.named_nodes` | `tests/unit/test_leak.py` |
 | G8 | `llm/cost.py` (`CostTracker`, `MeteredClient`) (D-10), `llm/retry.py` (D-14) | `tests/unit/test_llm_cost.py`, `test_llm_retry.py` |
 | G5 | `safety/classify.py` (`classify_action`, `ensure_in_story`, D-27) | `tests/unit/test_classify.py` |

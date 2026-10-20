@@ -19,9 +19,18 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   - Kết quả mới nhất: [`evals/results/2026-10-19-guard-b-r2/`](../evals/results/2026-10-19-guard-b-r2/README.md). Lần trước: [`2026-10-19-guard-b/`](../evals/results/2026-10-19-guard-b/README.md).
 - **Phần LLM** (đọc văn tìm điểm nghi): dữ liệu và lệnh *(chưa có, tuần 3)*.
 
-## Bài C — Trích thực thể (bản 2)
-- Dữ liệu: câu tiếng Việt khó (trùng họ, biệt danh, đổi tên, xưng hô đổi theo quan hệ).
-- Chỉ số: độ chính xác và độ phủ khi gộp/tách thực thể.
+## Bài C — Trích thay đổi chương
+**v1 (D-34): trích cạnh, danh mục thực thể cho sẵn.** Chọn model cho vai `extract`.
+- Dữ liệu: 5 chương truyện mẫu và `graph.yaml` làm đáp án (`data/sample-story/`, chủ dự án đã duyệt). Cấu hình khai trước: `evals/scenarios/extract/config.yaml`.
+- Đầu vào mỗi (model, chương N): văn bản chương, danh mục mọi nút có tới hết chương N, các cạnh đang hiệu lực trước chương N. Bộ trích là `writory.pipeline.extract`, cùng code với pipeline.
+- Chấm bằng code (`writory.pipeline.bench_c.score_chapter`), khoá cạnh = (kiểu, từ, tới):
+  - **PV**: precision/recall/F1 trên lớp người chơi biết (REVEALED_TO_PLAYER và KNOWS của nhân vật chính); luôn có bằng chứng trên trang. Chỉ số chính.
+  - **Hé lộ sai**: số lần hé lộ một `Fact` mà đáp án chưa hé lộ tới hết chương (rủi ro lộ bí mật).
+  - Toàn bộ cạnh và `close`: precision/recall, chỉ để tham khảo (đáp án có sự thật tác giả biết mà trang không viết ra).
+  - KNOWS: `how` và `told_by` đúng; số cạnh bị bỏ vì sai quy tắc (G3, G11, D-17, D-22).
+- Kiểm khung: `--dry-run` dùng model giả trả đúng đáp án, phải ra PV F1 = 1 (oracle); gói rỗng phải ra recall 0 (test).
+- Lệnh: `cd backend && uv run python -m writory.pipeline.bench_c --label <nhãn> --budget 0.5`
+- Giới hạn v1: chưa đo việc phát hiện thực thể mới, gộp/tách biệt danh, trùng họ. Phần đó là bài C đầy đủ (bản 2): câu tiếng Việt khó (trùng họ, biệt danh, đổi tên, xưng hô đổi theo quan hệ), đo độ chính xác và độ phủ khi gộp/tách thực thể.
 
 ## Bài D — Chất lượng văn theo model
 Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writory.quality.bench_d`.
