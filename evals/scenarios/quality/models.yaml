@@ -11,13 +11,13 @@
 # MiniMax M3.1 Flash :free: giá 0, nhưng endpoint miễn phí có giới hạn tần suất và có thể dùng dữ liệu
 # để huấn luyện; chỉ hợp cho bài đo, chưa chắc hợp cho người chơi thật.
 
-version: 3
+version: 4  # v4: MiniMax M3.1 Flash free bắt buộc suy luận (lượt 2 trả HTTP 400 với reasoning none). Đề và rubric không đổi.
 
 writers:
   - {id: openai/gpt-6-luna,                 label: GPT-6 Luna,          in: 0.10,  out: 0.50, reasoning: none}
   - {id: deepseek/deepseek-v4.1-flash-1017, label: DeepSeek V4.1 Flash, in: 0.30,  out: 1.20, reasoning: none}
   - {id: qwen/qwen3.8-flash,                label: Qwen 3.8 Flash,      in: 0.15,  out: 0.47, reasoning: none}
-  - {id: minimax/minimax-m3.1-flash:free,   label: MiniMax M3.1 F free, in: 0.00,  out: 0.00, reasoning: none}
+  - {id: minimax/minimax-m3.1-flash:free,   label: MiniMax M3.1 F free, in: 0.00,  out: 0.00, reasoning: mandatory-minimal}
   # Mốc tham chiếu (không rẻ): khác họ với giám khảo, để biết "tốt" trông thế nào.
   - {id: openai/gpt-6.1-sol,                label: GPT-6.1 Sol (mốc),   in: 2.00,  out: 10.00, reasoning: mandatory-minimal}
 

@@ -1,0 +1,84 @@
+{
+  "bench": "D",
+  "created": "2026-10-20T13:28:57+07:00",
+  "data_dir": "C:\\Work\\AI\\WriTory\\evals\\scenarios\\quality",
+  "fingerprint": {
+    "dry_run": false,
+    "data_sha256": {
+      "cases.yaml": "97aa056aeb4e046efdbc50bf386899888c3719d25332d350db1108bdf90dee3a",
+      "rubric.yaml": "cc601304bc471d089722a181812f585a73606aea58bd102059b2ebd76c0695d4",
+      "models.yaml": "b276e8a57e8b596dbfbbe816ed47593aae0821458acf63a07f5e52f097a773f1",
+      "style_guide_vi.md": "1986226a9c6d45fe86628155816847d3af6de3c6e39b0c2479b83fd2abea4361"
+    },
+    "brief_version": "d-brief-2",
+    "judge_version": "d-judge-1",
+    "judge_frame_sha256": "63d69d214f3c11a80782dd81a720ce251640eede9a40c4e2966f1230b8567ad3",
+    "judge": {
+      "model": "claude-sonnet-5-5",
+      "effort": "high",
+      "thinking": "adaptive",
+      "max_tokens": 16000
+    }
+  },
+  "runs": [
+    {
+      "command": "run",
+      "started": "2026-10-20T13:28:57+07:00",
+      "commit": "d4d66da34049792cdf21ab029d802bdfaf18f42c",
+      "dirty": true,
+      "argv": [
+        "run",
+        "--label",
+        "r2-minimax",
+        "--models",
+        "minimax/minimax-m3.1-flash:free",
+        "--samples",
+        "1",
+        "--concurrency",
+        "2",
+        "--budget-anthropic",
+        "1",
+        "--budget-openrouter",
+        "0.1"
+      ],
+      "settings": {
+        "samples": 1,
+        "judge_runs": 2,
+        "max_judge_runs": 3,
+        "rejudge_gap": 2,
+        "case_timeout_s": 900.0,
+        "concurrency": 2,
+        "quality": {
+          "ngram_words": 4,
+          "max_repeats": 2,
+          "latin_run_min_words": 4
+        }
+      },
+      "budgets": {
+        "openrouter": 0.1,
+        "anthropic": 1.0
+      },
+      "writers": [
+        "minimax/minimax-m3.1-flash:free"
+      ],
+      "cases": [
+        "tu-tien-dot-pha",
+        "trinh-tham-tham-van",
+        "do-thi-chia-tay",
+        "hau-tan-the-tram-xang",
+        "kiem-hiep-quan-tro",
+        "kinh-di-dem-gio",
+        "ngon-tinh-cong-so",
+        "bao-cap-tem-phieu",
+        "khoa-huyen-tram-vu-tru",
+        "hoc-duong-thu-nac-danh"
+      ],
+      "python": "3.13.14",
+      "anthropic_sdk": "1.15.0",
+      "finished": "2026-10-20T13:34:33+07:00",
+      "wall_s": 335.5,
+      "stopped": null,
+      "disabled_writers": []
+    }
+  ]
+}
