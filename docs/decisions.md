@@ -499,3 +499,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `llm.ratelimit.RateLimitedClient` bọc client thật trong `PlayerLLM.open`, nên mọi lời gọi của API, kể cả lần thử lại, xin một lượt trước khi tới model. Hết lượt: `WRITORY_RATE_LIMITED` (429), không thử lại, không tốn tiền, không có dòng nhật ký chi phí. Giờ qua `deps.get_clock` để test dùng đồng hồ giả.
 - **Hệ quả:** cửa sổ cố định cho phép tới 2 × giới hạn quanh ranh giới phút. Một chương cần từ 8 lời gọi (thêm 3 mỗi lần viết lại cảnh); hết lượt giữa chương thì chương dừng như mọi lỗi trước bước ghi (G11) và phải viết lại từ đầu, các lời gọi đã chạy vẫn tốn tiền. Lượt đã giữ không trả lại khi lời gọi lỗi. Câu hỏi người kể bị từ chối vì bận không tốn lượt hỏi của chương.
 - **Người quyết:** Claude (nhánh choice-effects), chờ điều phối duyệt · 20/10/2026
+
+## D-59 · Hỏi người kể: sổ tay lớn thì chỉ gửi phần liên quan tới câu hỏi
+- **Bối cảnh:** `ask_narrator` đưa cả sổ tay vào context. Truyện tới 60 chương (`config/story_lengths.yaml`) có sổ tay hàng trăm mục: tốn token và loãng. Bài E lần 1 (`evals/results/2026-10-20-narrator-luna-1/`) chỉ có sổ tay vài chục mục.
+- **Quyết định:**
+  - `pipeline/notebook.py` (`select_notebook`): vượt `limits.narrator_notebook` (số mục hoặc số ký tự) thì chọn mục có chữ hiện hoặc biệt danh trùng câu hỏi (bỏ dấu, trọn từ), vài mục khớp từ khoá hiếm (điểm IDF), hàng xóm 1-2 bước theo `about` hai chiều, và luôn kèm các mục và lời nói dối gần đây nhất. Không vector DB.
+  - G1 giữ nguyên: hàm chỉ nhận `PlayerView`, nên lọc theo `player_view` trước, truy hồi sau, không thể chạm lớp truth. Mã công khai lấy từ sổ tay đầy đủ nên ổn định; mã model dẫn mà không nằm trong phần đã gửi bị coi là mã sai (`unknown_ref`).
+  - Số tạm trong `config/limits.yaml`: 80 mục, 16000 ký tự, 10 mục gần đây, 8 mục theo từ khoá. Dưới ngưỡng thì context y hệt trước đây.
+- **Hệ quả:** mục tin cậy phụ thuộc truy hồi: câu hỏi dùng chữ khác sổ tay (ví dụ "thanh kiếm" so với "Thanh Sương") có thể không kéo được mục, khi đó người kể trả "Bạn chưa biết điều này." oan (an toàn, không lộ). Bài E bản 2 có nhóm câu trên sổ tay lớn để đo điều này (D-60). Embedding đáng làm khi đo cho thấy trượt vì từ vựng; chưa làm.
+- **Người quyết:** Claude (nhánh narrator-retrieval), chờ điều phối duyệt · 20/10/2026
+

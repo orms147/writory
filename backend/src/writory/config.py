@@ -90,6 +90,26 @@ class InputLimits(_Section):
     narrator_question_max_chars: PositiveInt | None  # câu hỏi người kể (D-40)
 
 
+class NarratorNotebookLimits(_Section):
+    """Truy hồi sổ tay cho người kể (D-59): ngưỡng cắt và số mục luôn kèm."""
+
+    _path = "narrator_notebook"
+    _file = "limits.yaml"
+    max_entries: PositiveInt | None
+    max_chars: PositiveInt | None
+    recent_entries: PositiveInt | None
+    keyword_entries: PositiveInt | None
+
+    @model_validator(mode="after")
+    def _recent_fits(self) -> Self:
+        if (self.max_entries is not None and self.recent_entries is not None
+                and self.recent_entries >= self.max_entries):
+            raise ValueError(
+                f"recent_entries ({self.recent_entries}) phải nhỏ hơn max_entries "
+                f"({self.max_entries})")
+        return self
+
+
 class ContextLimits(_Section):
     _path = "context"
     _file = "limits.yaml"
@@ -102,6 +122,7 @@ class LimitsConfig(_Strict):
     retries: RetryLimits
     rate_limit: RateLimits
     input: InputLimits
+    narrator_notebook: NarratorNotebookLimits
     context: ContextLimits
 
 
