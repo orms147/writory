@@ -103,3 +103,15 @@ async def test_retry_on_is_required():
 async def test_negative_retries_rejected():
     with pytest.raises(ValueError):
         await with_retries(lambda: None, max_retries=-1, retry_on=RETRY_TRANSIENT)
+
+
+def test_require_model_returns_role_model_or_model_not_set():
+    from writory.llm.base import require_model
+
+    cfg = load_config()
+    roles = cfg.models.roles.model_copy(update={"extract": "x/extract", "guard": None})
+    assert require_model(roles, "extract") == "x/extract"
+    with pytest.raises(WritoryError) as exc:
+        require_model(roles, "guard")
+    assert exc.value.code is ErrorCode.CONFIG_MODEL_NOT_SET
+    assert "roles.guard" in str(exc.value)
