@@ -71,10 +71,11 @@ class LLMClient(ABC):
         """Trả các TextDelta, rồi đúng một StreamDone ở cuối."""
 
     async def chat_json[T: BaseModel](
-        self, model: str, messages: list[Message], schema: type[T]
+        self, model: str, messages: list[Message], schema: type[T],
+        *, extra: Mapping[str, Any] | None = None,
     ) -> tuple[T, ChatResult]:
         """Gọi chat với schema JSON rồi kiểm bằng pydantic (G11). Không tự thử lại."""
-        result = await self.chat(model, messages, response_schema=schema)
+        result = await self.chat(model, messages, response_schema=schema, extra=extra)
         try:
             return schema.model_validate_json(result.text), result
         except ValidationError as e:

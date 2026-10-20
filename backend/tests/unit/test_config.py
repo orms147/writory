@@ -120,3 +120,21 @@ def test_settings_missing_required_env_is_clear(monkeypatch: pytest.MonkeyPatch)
         monkeypatch.delenv(name, raising=False)
     with pytest.raises(Exception, match="(?i)neo4j_password"):
         Settings(_env_file=None)
+
+
+def test_settings_validation_error_never_echoes_secret_values(monkeypatch, tmp_path):
+    """G7: thiếu biến môi trường thì lỗi pydantic không được in kèm giá trị đầu vào (key người khác).
+    Hồi quy 20/10/2026: lỗi Settings() in đuôi OPENROUTER_API_KEY ra màn hình."""
+    from pydantic import ValidationError
+
+    from writory.config import Settings
+
+    secret = "sk-or-v1-" + "7" * 64
+    for name in ("NEO4J_URI", "NEO4J_USER", "NEO4J_PASSWORD", "POSTGRES_DSN",
+                 "PLAYER_KEY_ENCRYPTION_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    monkeypatch.setenv("OPENROUTER_API_KEY", secret)
+    with pytest.raises(ValidationError) as exc:
+        Settings(_env_file=tmp_path / "missing.env")
+    text = str(exc.value) + repr(exc.value)
+    assert "7777777777" not in text

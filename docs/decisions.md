@@ -267,3 +267,10 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** `writer_tiers` chỉ có mức "Tiêu chuẩn" = `openai/gpt-6-luna` (`config/models.yaml`). Không có mức GPT-6.1 Sol vì giá.
 - **Hệ quả:** design §6.5 mục 1 (nhiều mức) tạm chỉ còn một mức; thêm mức mới phải qua bài D. Điểm yếu cần cải thiện bằng prompt: trình bày lời thoại (rubric v2). Các vai giữ trí nhớ (`roles.*`) chưa chọn model; chọn khi có bài đo cho từng vai.
 - **Người quyết:** Chủ dự án · 20/10/2026
+
+## D-34 · Bài C v1: chọn model cho vai trích bằng cách chấm bằng code trên truyện mẫu
+- **Bối cảnh:** vai `extract` ghi thẳng vào đồ thị; cần chọn model. Đáp án có sẵn: đồ thị dựng tay của truyện mẫu.
+- **Quyết định:** bộ trích `pipeline/extract.py` (prompt `extract-1`, đầu ra JSON mọi trường bắt buộc, cạnh sai quy tắc bị bỏ từng cái). Bài C v1 cho sẵn danh mục thực thể, chấm bằng code; chỉ số chính là F1 lớp người chơi biết và số lần hé lộ sai. Runner `writory.pipeline.bench_c` (D-24). Bộ trích nhận cả `RESOLVED_IN` (oracle phát hiện thiếu).
+- **Hệ quả:** chưa đo phát hiện thực thể mới; pipeline phải tạo nút mới ở bước khác (dàn ý/lựa chọn) trước khi trích. `chat_json` nhận `extra` (tham số riêng theo model).
+- **Người quyết:** Claude (điều phối); chủ dự án đồng ý làm bài đo này · 20/10/2026
+

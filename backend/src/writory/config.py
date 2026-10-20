@@ -242,7 +242,9 @@ def load_config(config_dir: Path = REPO_CONFIG_DIR) -> AppConfig:
 class Settings(BaseSettings):
     """Biến môi trường. Danh sách đầy đủ: .env.example."""
 
-    model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore")
+    # hide_input_in_errors: lỗi thiếu/sai biến không in kèm giá trị đầu vào, vì đầu vào có key (G7).
+    model_config = SettingsConfigDict(env_file=REPO_ROOT / ".env", extra="ignore",
+                                      hide_input_in_errors=True)
 
     # Key của chủ dự án, chỉ cho bộ đo. Người chơi dùng key riêng (D-2), lưu mã hoá trong DB.
     openrouter_api_key: SecretStr | None = None

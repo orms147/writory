@@ -1,0 +1,20 @@
+# Bài đo C v1 — trích thay đổi chương (docs/eval.md, D-34). Khai TRƯỚC khi chạy.
+# Dữ liệu vàng: data/sample-story/ (5 chương + graph.yaml, chủ dự án đã duyệt).
+# Chấm bằng code (writory.pipeline.bench_c.score_chapter), không giám khảo LLM.
+# Giới hạn v1: danh mục thực thể đưa sẵn mọi nút có tới hết chương đang trích, nên bài này đo
+# việc nối cạnh và hé lộ, chưa đo việc phát hiện thực thể mới (bài C đầy đủ, bản 2).
+# Chỉ số chính: F1 trên lớp người chơi biết (PV) và số lần hé lộ sai một Fact (rủi ro G1/G2).
+# Soạn: Claude (điều phối), chủ dự án đồng ý làm bài đo này cho vai "trích" (20/10/2026).
+
+version: 1
+chapters: [1, 2, 3, 4, 5]
+samples: 2
+schema_retries: 1      # G11: JSON sai schema thử lại 1 lần
+transient_retries: 2   # D-14: lỗi mạng tạm thời
+max_tokens: 6000
+
+# Giá OpenRouter 20/10/2026 (USD/1M vào/ra): Luna 0.10/0.50, DeepSeek 0.30/1.20, Qwen 0.15/0.47.
+models:
+  - {id: openai/gpt-6-luna,                 label: GPT-6 Luna,          reasoning: none}
+  - {id: deepseek/deepseek-v4.1-flash-1017, label: DeepSeek V4.1 Flash, reasoning: none}
+  - {id: qwen/qwen3.8-flash,                label: Qwen 3.8 Flash,      reasoning: none}

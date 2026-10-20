@@ -1678,7 +1678,7 @@ def mock_judge_client(
 
 
 class BenchKeys(BaseSettings):
-    model_config = SettingsConfigDict(extra="ignore")
+    model_config = SettingsConfigDict(extra="ignore", hide_input_in_errors=True)  # G7
     openrouter_api_key: SecretStr | None = None
     anthropic_api_key: SecretStr | None = None
     # Tuỳ chọn: cần khi key Anthropic không gắn với workspace nào.
