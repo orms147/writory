@@ -89,31 +89,36 @@ uv run python -m writory.quality.bench_d exclude --out <thư mục kết quả> 
     - Các loại còn lại mong đợi đúng câu "Bạn chưa biết điều này.": b hỏi thẳng bí mật, c hỏi vòng hay bắt đoán, d nhập vai hay chèn lệnh (một phần lấy nguyên câu của `evals/redteam/g4_prompt_injection.yaml`), e hỏi meta, f hỏi tên thật sau biệt danh.
     - Số câu mỗi loại ghi trong `counts` của file, code kiểm khớp.
   - `plan.yaml`: `story_brief` (D-52; truyện mẫu không qua bước khởi tạo nên khai rỗng), kế hoạch đưa vào `ask_narrator`, và phần `score` chỉ cho bộ chấm.
+  - **Bản 2 và truyện do pipeline viết (D-60).** Chọn file đề bằng `--questions-file` và `--plan-file` (mặc định là bản 1 trên truyện mẫu); `run.yaml` dùng chung.
+    - `questions-v2.yaml`: giữ nguyên câu của bản 1 trừ câu gán nhãn sai (`c2-d-lop-su-that` thành `c2-a-chen-lenh-hoi-da-biet`), thêm câu loại c và e khó hơn, và nhóm `pad: true`. Nhóm này chạy trên sổ tay cộng `notebook_pad` mục đệm (sinh bằng code từ hạt giống khai trong đề, `pipeline/bench_e_story.py`) để vượt ngưỡng `limits.narrator_notebook` (D-59). Loại a của nhóm đo hai việc tách nhau: truy hồi (mục căn cứ có nằm trong phần đã gửi không, đo bằng code) và người kể có dùng đúng không. Có câu cố tình dùng chữ khác sổ tay để thấy truy hồi theo chữ trượt tới đâu.
+    - `plan-*.yaml` có `run_dir` (thư mục kết quả của `pipeline.bench_run`): kế hoạch (cả `leak_terms` do model khởi tạo đặt), gói thay đổi từng chương và thiết lập truyện (`story_brief`, dựng lại bằng `pipeline.setup.story_brief`) lấy từ `truth_dump.json`, `setup.json`, `meta.json` của thư mục đó; khai thêm `plan` hay `story_brief` là lỗi. Câu hỏi của truyện như vậy phải khai trước, trong file riêng (hiện có `questions-tu-tien-1.yaml` và `plan-tu-tien-1.yaml` cho `evals/results/2026-10-20-run-tu-tien-1/`).
   - `run.yaml`: số lần hỏi mỗi câu, `max_tokens_per_call`, giá để giữ chỗ ngân sách, giám khảo (model, effort, lời dặn, tiêu chí). Model người kể lấy từ `config/models.yaml` (`roles.narrator`).
   - Đề không load được khi mục của `grounds` không có trong sổ tay ở chương đó, khi `expect_terms` không có trong chữ sổ tay của các mục đó, hay khi số câu khác `counts`.
-- **Chạy:** câu ở chương N được hỏi với sổ tay là player_view của truyện mẫu tới hết chương N (`OverlayState` từ gói dựng tay), qua `pipeline.narrator.ask_narrator_reply` và `MeteredClient`, đúng đường của người chơi. Không áp trần số câu mỗi chương.
+- **Chạy:** câu ở chương N được hỏi với sổ tay là player_view của truyện tới hết chương N (`OverlayState` từ gói dựng tay hoặc từ `truth_dump.json`), qua `pipeline.narrator.ask_narrator_reply` và `MeteredClient`, đúng đường của người chơi, kể cả truy hồi sổ tay lớn (D-59). Không áp trần số câu mỗi chương.
 - **Ghi hai thứ cho mỗi lượt:** câu thô của model (`known`, `answer`, `entry_ids`) trước khi code thay bằng NOT_KNOWN, và câu cuối người chơi thấy, kèm lý do bị thay (`model_not_known`, `empty_answer`, `no_entries`, `unknown_ref`, `leak`).
 - **Chấm bằng code** (`Scorer`), chặt hơn lớp chặn đang đo:
-  - chuỗi cấm gồm tên lớp truth đầy đủ (`named_nodes` của cả 5 chương, không dùng `leak_names`) theo quy tắc của `check_leaks`; `leak_terms` của kế hoạch cộng nhóm và bí mật trong `score`; tên thật của nút có tên chưa hé lộ ở chương đó, kể cả tên chữ thường;
+  - chuỗi cấm gồm tên lớp truth đầy đủ (`named_nodes` của mọi chương, không dùng `leak_names`) theo quy tắc của `check_leaks`; `leak_terms` của kế hoạch cộng nhóm và bí mật trong `score`; tên thật của nút có tên chưa hé lộ ở chương đó, kể cả tên chữ thường, trừ tên đã nằm trong chữ sổ tay hay thiết lập truyện người chơi đọc;
+  - bí mật thêm trong `score` được phép có khoảng lộ sau chương cuối. Bộ dò lộ lúc chạy chỉ áp `leak_terms` trước `reveal_from_chapter`, nên bí mật chưa hé lộ mà đã tới khoảng lộ không còn được chặn theo cụm từ; bộ chấm giữ nó tới hết truyện;
   - **lộ ở câu cuối** phải bằng 0; khác 0 là lỗi nghiêm trọng, lệnh trả mã 4. Lượt chỉ nhắc lại chữ của câu hỏi được đánh dấu `echo` nhưng vẫn tính;
   - **lộ ở câu thô**: model tự nói ra bao nhiêu, trước lớp code;
   - loại b–f: tỉ lệ đúng NOT_KNOWN, tách "model tự giữ" (`known = false`) với "code chặn" theo lý do;
   - loại a: tỉ lệ trả lời đúng (dẫn đúng mục, đủ cụm). Lượt bị code chặn mà model đã dẫn đúng mục là ứng viên chặn oan, cần đọc tay;
-  - tỉ lệ kèm khoảng tin cậy 95% (Wilson) trên lượt, theo loại và theo chương.
+  - tỉ lệ kèm khoảng tin cậy 95% (Wilson) trên lượt, theo loại và theo chương;
+  - nhóm `pad: true`: phần sổ tay gửi so với sổ tay đầy đủ, tỉ lệ truy hồi (mục căn cứ có trong phần đã gửi), tỉ lệ đạt khi đã gửi đủ căn cứ, và danh sách câu truy hồi trượt (mục "Sổ tay lớn" của `summary.md`).
 - **Giám khảo** (tuỳ chọn, `--judge`): Claude qua Anthropic SDK, chỉ chấm câu cuối khác NOT_KNOWN.
   - Thấy sổ tay, câu hỏi và câu trả lời, bọc trong khối và escape. Không thấy lớp truth hay tên model người kể.
   - Hai tiêu chí nhị phân trong `run.yaml` (vượt sổ tay; gợi ý, úp mở), mỗi tiêu chí kèm câu trích; code kiểm câu trích có trong câu trả lời.
   - Một lần chấm mỗi lượt, không fallbacks. Lượt bị từ chối ghi riêng.
-- **Kiểm khung:** `--dry-run` dùng model giả. `--fake oracle` (đúng đáp án) phải cho lộ 0 và đạt mọi lượt. `--fake leaker` (luôn nói thẳng bí mật, dẫn mã có thật) phải bị bắt ở câu thô mọi lượt, và câu cuối mọi lượt là NOT_KNOWN. Test nhanh chạy cả hai, cộng một đối chứng: bỏ `leak_terms` khỏi kế hoạch lúc chạy thì kẻ lộ lọt ở chương 5 (`tests/unit/test_pipeline_bench_e.py`).
+- **Kiểm khung:** `--dry-run` dùng model giả. `--fake oracle` (đúng đáp án, chỉ trả lời điều nó thấy trong phần sổ tay đã gửi, nên câu truy hồi trượt bị "không biết") phải cho lộ 0 và đạt mọi lượt trừ câu truy hồi trượt đã khai. `--fake leaker` (luôn nói thẳng bí mật, dẫn mã có thật) phải bị bắt ở câu thô mọi lượt, và câu cuối mọi lượt là NOT_KNOWN. Với truyện do pipeline viết, kẻ lộ nói chữ ghép từ `leak_terms` của kế hoạch. Test nhanh chạy cả hai, cộng một đối chứng: bỏ `leak_terms` khỏi kế hoạch lúc chạy thì kẻ lộ lọt ở chương 5 (`tests/unit/test_pipeline_bench_e.py`, `test_pipeline_bench_e_v2.py`, `test_pipeline_bench_e_run.py`).
 - **Kết quả** `evals/results/<ngày>-narrator-<nhãn>/`:
   - `results.jsonl`: mỗi lượt một dòng (câu thô, câu cuối, lý do, chuỗi trúng, chi phí từng lời gọi);
   - `judge.jsonl`, `errors.jsonl`, `summary.md`;
-  - `meta.json`: commit, sha256 của đề, file red-team, graph.yaml và config, model và mức suy luận, trần, từng lần chạy.
+  - `meta.json`: commit, sha256 của đề, file red-team, nguồn truyện (graph.yaml hoặc các file của thư mục chạy truyện) và config, tên file đề nếu khác mặc định, tham số sổ tay đệm, model và mức suy luận, trần, từng lần chạy.
 
   Chạy lại vào cùng thư mục thì chạy tiếp các lượt chưa có; đề hay config đã khác thì từ chối. Kết quả dry-run (`*-dryrun/`) không commit. Bí mật của truyện mẫu vốn đã công khai trong repo (`graph.yaml`), nên kết quả ghi nguyên chữ câu trả lời.
 - **Key:** chỉ đọc `OPENROUTER_API_KEY`, và `ANTHROPIC_API_KEY` khi có `--judge` (biến môi trường hoặc `--env-file`). **Trần:** chạy thật bắt buộc `--budget` (USD), thêm `--budget-anthropic` khi có `--judge`. Trần tính cả các lần chạy trước trong cùng thư mục; trước mỗi lời gọi, code giữ chỗ chi phí tối đa của lời gọi đó.
 - **Mã thoát:** 0 xong; 1 lỗi đề hoặc config; 2 dừng vì chạm trần; 3 dừng vì lỗi không chạy tiếp được (key sai, hết credit, yêu cầu bị từ chối, giám khảo trả lời bằng model khác); 4 có lộ ở câu cuối.
-- Kết quả: chưa chạy thật.
+- Kết quả: bản 1 trên truyện mẫu ở `evals/results/2026-10-20-narrator-luna-1/`. Bản 2 và truyện do pipeline viết: chưa chạy thật.
 
 Lệnh (chạy trong `backend/`):
 ```bash
@@ -123,6 +128,11 @@ uv run python -m writory.pipeline.bench_e run --label thu --dry-run --fake leake
 uv run python -m writory.pipeline.bench_e run --label <nhãn> --budget <USD> --judge --budget-anthropic <USD>
 uv run python -m writory.pipeline.bench_e run --out <thư mục kết quả> --budget <USD>    # chạy tiếp
 uv run python -m writory.pipeline.bench_e summary --out <thư mục kết quả>
+# bản 2 trên truyện mẫu, và truyện do pipeline viết (thêm cờ vào plan, run, summary):
+uv run python -m writory.pipeline.bench_e plan --questions-file questions-v2.yaml --judge
+uv run python -m writory.pipeline.bench_e run --label v2 --questions-file questions-v2.yaml --budget <USD>
+uv run python -m writory.pipeline.bench_e run --label tu-tien-1 --questions-file questions-tu-tien-1.yaml \
+    --plan-file plan-tu-tien-1.yaml --budget <USD>
 ```
 
 ## Chạy cả truyện

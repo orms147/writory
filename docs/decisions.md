@@ -509,3 +509,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** mục tin cậy phụ thuộc truy hồi: câu hỏi dùng chữ khác sổ tay (ví dụ "thanh kiếm" so với "Thanh Sương") có thể không kéo được mục, khi đó người kể trả "Bạn chưa biết điều này." oan (an toàn, không lộ). Bài E bản 2 có nhóm câu trên sổ tay lớn để đo điều này (D-60). Embedding đáng làm khi đo cho thấy trượt vì từ vựng; chưa làm.
 - **Người quyết:** Claude (nhánh narrator-retrieval), chờ điều phối duyệt · 20/10/2026
 
+## D-60 · Bài E bản 2: đề mới không sửa đè, nhóm sổ tay lớn, truyện do pipeline viết
+- **Bối cảnh:** bài E lần 1 (`evals/results/2026-10-20-narrator-luna-1/`) lộ 0/216, nhưng có một câu gán nhãn sai, chưa đủ câu khó loại c và e, sổ tay chỉ vài chục mục nên chưa đo truy hồi (D-59), và kế hoạch truyện mẫu viết tay nên chưa đo bộ dò lộ với `leak_terms` do model khởi tạo đặt.
+- **Quyết định:**
+  - Đề v2 là file mới `questions-v2.yaml` (chọn bằng `--questions-file`); v1 giữ nguyên, test kiểm hash khớp lần chạy đầu. Sửa nhãn `c2-d-lop-su-that` thành loại a. Thêm câu loại c, e khó hơn và nhóm `pad: true` chạy trên sổ tay cộng mục đệm sinh bằng code (tất định).
+  - `bench_e` nhận truyện do `bench_run` viết: `plan-*.yaml` có `run_dir`, kế hoạch, gói và `story_brief` lấy từ thư mục đó (`pipeline/bench_e_story.py`). Đề cho `run-tu-tien-1` đã soạn trước khi chạy.
+  - Bộ chấm: tên đã nằm trong chữ sổ tay không bị coi là lộ (như bộ dò lộ lúc chạy), vì truyện do model viết hay nhắc tên một nút chưa hé lộ ngay trong chữ của mục khác. Bí mật thêm của bộ chấm được có khoảng lộ sau chương cuối.
+  - Model giả: `oracle` chỉ trả lời điều nó thấy; `leaker` lấy chữ từ `leak_terms` của kế hoạch khi truyện do pipeline viết.
+- **Hệ quả:** bộ dò lộ lúc chạy (`safety/leak.py`) chỉ áp `leak_terms` khi chương < `reveal_from_chapter`. Ở tu-tien-1 hai bí mật có khoảng lộ 3-6 và 4-6 mà chưa hề hé lộ, nên từ chương 3-4 người kể có thể nói ra chúng mà không bị chặn theo cụm từ (chỉ còn quy tắc tên riêng). Đường người kể và lựa chọn chỉ dùng chữ của `player_view` nên có thể chặn mọi bí mật chưa hé lộ; cần chủ dự án quyết có đổi không. Chưa chạy thật.
+- **Người quyết:** Claude (nhánh narrator-retrieval), chờ điều phối duyệt · 20/10/2026

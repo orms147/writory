@@ -60,10 +60,16 @@ from writory.config import REPO_CONFIG_DIR, REPO_ROOT, AppConfig, ConfigError, L
 from writory.config import load_config as load_app_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerEntry, PlayerLie, PlayerView, public_entries, public_lies
-from writory.graph.sample import SampleStory, read_sample
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import ChatResult, LLMClient, Message, StreamEvent, Usage, require_model
 from writory.llm.cost import CostTracker, MeteredClient
+from writory.pipeline.bench_e_story import (
+    PadSpec,
+    Story,
+    load_run_story,
+    load_sample_story,
+    pad_view,
+)
 from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker
 from writory.pipeline.narrator import (
     NOT_KNOWN,
@@ -76,6 +82,7 @@ from writory.pipeline.narrator import (
     build_messages,
     render_notebook,
 )
+from writory.pipeline.notebook import select_notebook
 from writory.pipeline.story_plan import Secret, StoryPlan
 from writory.quality.bench_d import (  # một chỗ cho ngân sách, key, giám khảo, trạng thái git
     EST_CHARS_PER_TOKEN,
@@ -104,7 +111,6 @@ from writory.safety.wrap import DATA_NOTICE
 DATA_DIR = REPO_ROOT / "evals" / "scenarios" / "narrator"
 REDTEAM_PATH = REPO_ROOT / "evals" / "redteam" / "g4_prompt_injection.yaml"
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
-DATA_FILES = ("questions.yaml", "plan.yaml", "run.yaml")
 STORY_ID = "bench-e-sample"
 
 QType = Literal["a", "b", "c", "d", "e", "f"]
@@ -117,6 +123,7 @@ TYPE_LABEL = {
 JUDGE_FRAME_VERSION = "e-judge-1"
 
 EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ABORT, EXIT_LEAK = 0, 1, 2, 3, 4
+DEFAULT_FILES = {"questions": "questions.yaml", "plan": "plan.yaml", "run": "run.yaml"}
 RESULTS, JUDGED, ERRORS = "results.jsonl", "judge.jsonl", "errors.jsonl"
 
 DRY_RUN_COST_USD = 0.0001
@@ -144,6 +151,7 @@ class Question(_Strict):
     redteam: str | None = None  # id câu trong g4_prompt_injection.yaml
     grounds: list[str] = []  # loại a: id lớp truth hoặc chữ hiện của mục làm căn cứ
     expect_terms: list[str] = []  # loại a: cụm phải có trong câu trả lời
+    pad: bool = False  # hỏi trên sổ tay lớn (cộng mục đệm `notebook_pad`, D-60)
 
     @model_validator(mode="after")
     def _shape(self) -> Self:
@@ -162,10 +170,13 @@ class Question(_Strict):
 class QuestionsFile(_Strict):
     version: PositiveInt
     counts: dict[QType, NonNegativeInt]
+    notebook_pad: PadSpec | None = None  # bắt buộc khi có câu `pad: true`
     questions: list[Question] = Field(min_length=1)
 
     @model_validator(mode="after")
     def _check(self) -> Self:
+        if self.notebook_pad is None and any(q.pad for q in self.questions):
+            raise ValueError("có câu `pad: true` nhưng đề không khai `notebook_pad`")
         dupes = sorted(k for k, n in Counter(q.id for q in self.questions).items() if n > 1)
         if dupes:
             raise ValueError(f"id câu hỏi trùng: {', '.join(dupes)}")
@@ -185,30 +196,50 @@ class ScoreExtras(_Strict):
 
 
 class PlanFile(_Strict):
+    """Kế hoạch và chuỗi cấm. Truyện mẫu: `story_brief` và `plan` khai ở đây. Truyện do pipeline
+    viết (`run_dir`): kế hoạch và thiết lập truyện lấy từ chính thư mục kết quả đó, nên khai ở
+    đây là lỗi; chỉ `score` (phần riêng của bộ chấm) khai thêm."""
+
     version: PositiveInt
-    # Thiết lập truyện người chơi đã đọc (D-52). Bắt buộc khai, kể cả rỗng: đề phải nói rõ.
-    story_brief: str
-    plan: StoryPlan  # kế hoạch đưa vào ask_narrator (bộ dò lộ lúc chạy)
+    # Thư mục kết quả của `pipeline.bench_run` (tính từ gốc repo hoặc tuyệt đối).
+    run_dir: str | None = None
+    # Thiết lập truyện người chơi đã đọc (D-52). Truyện mẫu bắt buộc khai, kể cả rỗng.
+    story_brief: str | None = None
+    plan: StoryPlan | None = None  # kế hoạch đưa vào ask_narrator (bộ dò lộ lúc chạy)
     score: ScoreExtras = ScoreExtras()
 
     @model_validator(mode="after")
     def _check(self) -> Self:
-        known = {s.fact_id for s in self.plan.secrets}
+        if self.run_dir is None:
+            if self.story_brief is None or self.plan is None:
+                raise ValueError("truyện mẫu cần khai story_brief (kể cả rỗng) và plan")
+            self.scorer_plan(self.plan)  # nhóm hợp lệ, id bí mật không trùng
+        elif self.story_brief is not None or self.plan is not None:
+            raise ValueError("có run_dir thì story_brief và plan lấy từ thư mục đó, không khai ở "
+                             "đây")
+        return self
+
+    def scorer_plan(self, base: StoryPlan) -> StoryPlan:
+        """Kế hoạch của bộ chấm: `base` cộng nhóm và bí mật của `score`. Mỗi bí mật vẫn qua phép
+        kiểm của `Secret`; kế hoạch dựng không qua kiểm cấp kế hoạch, vì bí mật thêm được phép có
+        khoảng lộ sau chương cuối (để giữ bí mật chưa lộ tới hết truyện, xem plan-tu-tien-1.yaml)."""
+        known = {s.fact_id for s in base.secrets}
         unknown = sorted(set(self.score.extra_leak_terms) - known)
         if unknown:
             raise ValueError(f"extra_leak_terms cho bí mật không có trong plan: {', '.join(unknown)}")
-        self.scorer_plan()  # nhóm hợp lệ, id bí mật không trùng
-        return self
-
-    def scorer_plan(self) -> StoryPlan:
-        """Kế hoạch của bộ chấm: `plan` cộng nhóm và bí mật của `score`. Dựng lại qua validate
-        để nhóm thêm cũng qua đúng phép kiểm của `Secret`."""
         secrets = [
-            {**s.model_dump(), "leak_terms": [*s.leak_terms,
-                                              *self.score.extra_leak_terms.get(s.fact_id, [])]}
-            for s in self.plan.secrets
-        ] + [s.model_dump() for s in self.score.extra_secrets]
-        return StoryPlan.model_validate({**self.plan.model_dump(), "secrets": secrets})
+            Secret.model_validate(
+                {**s.model_dump(), "leak_terms": [*s.leak_terms,
+                                                  *self.score.extra_leak_terms.get(s.fact_id, [])]})
+            for s in base.secrets
+        ] + list(self.score.extra_secrets)
+        ids = [s.fact_id for s in secrets]
+        dup = sorted({i for i in ids if ids.count(i) > 1})
+        if dup:
+            raise ValueError(f"bí mật trùng id: {dup}")
+        return StoryPlan.model_construct(acts=base.acts, secrets=secrets,
+                                         must_resolve_threads=base.must_resolve_threads,
+                                         milestones=base.milestones)
 
 
 class JudgeCriterion(_Strict):
@@ -262,9 +293,12 @@ class ChapterState:
     by_truth_id: Mapping[str, str]  # id lớp truth → mã công khai
 
 
-def chapter_state(sample: SampleStory, chapter: int) -> ChapterState:
-    state = OverlayState(EmptyState(), [c.package for c in sample.chapters if c.number <= chapter])
+def chapter_state(story: Story, chapter: int, pad: PadSpec | None = None) -> ChapterState:
+    """Trạng thái truyện ở cuối chương `chapter`. `pad`: cộng mục đệm vào sổ tay (sổ tay lớn)."""
+    state = OverlayState(EmptyState(), story.packages_upto(chapter))
     view = player_view_of(state, chapter, story_id=STORY_ID)
+    if pad is not None:
+        view = pad_view(view, pad)
     entries: dict[str, str] = {}
     by_id: dict[str, str] = {}
     for ref, e in public_entries(view):
@@ -325,11 +359,10 @@ class Scorer:
     story_brief: str  # cùng giá trị lớp chạy thật nhận (D-52)
 
     @classmethod
-    def build(cls, sample: SampleStory, plan_file: PlanFile) -> "Scorer":
-        full = OverlayState(EmptyState(), [c.package for c in sample.chapters])
+    def build(cls, story: Story, plan: StoryPlan, story_brief: str) -> "Scorer":
+        full = OverlayState(EmptyState(), story.all_packages())
         names = full.named_nodes()
-        return cls(names, {nid: n[0] for nid, n in names.items()}, plan_file.scorer_plan(),
-                   plan_file.story_brief)
+        return cls(names, {nid: n[0] for nid, n in names.items()}, plan, story_brief)
 
     def leaks(self, text: str, state: ChapterState, question: str = "") -> list[dict[str, Any]]:
         if not text.strip():
@@ -339,10 +372,14 @@ class Scorer:
                                story_brief=self.story_brief):
             found[(hit.kind.value, hit.term)] = None
         shown = {e.id for e in state.view.entries}
+        # Chữ người chơi đã đọc: thiết lập truyện và mọi chữ trong sổ tay (như bộ dò lộ lúc chạy,
+        # D-26). Truyện do model viết hay nhắc tên một nút chưa hé lộ ngay trong chữ của mục khác.
+        read = " ".join([self.story_brief, *(_entry_text(e) for e in state.view.entries),
+                         *(_lie_text(lie) for lie in state.view.lies)])
         for nid, name in sorted(self.real_names.items()):
             single = len(name.split()) == 1
             if (nid not in shown and contains(text, name, ignore_case=not single)
-                    and not contains(self.story_brief, name, ignore_case=not single)):
+                    and not contains(read, name, ignore_case=not single)):
                 found[("real_name", name)] = None
         return [{"kind": kind, "term": term,
                  "echo": bool(question) and all(contains(question, p) for p in term.split(" + "))}
@@ -364,9 +401,18 @@ class BenchData:
     scorer: Scorer
     hashes: Mapping[str, str]
     by_chapter_text: Mapping[tuple[int, str], Question] = field(default_factory=dict)
+    story: Story | None = None
+    story_plan: StoryPlan | None = None  # kế hoạch đưa vào ask_narrator
+    story_brief: str = ""
+    pad_states: Mapping[int, ChapterState] = field(default_factory=dict)  # sổ tay lớn, theo chương
+    files: Mapping[str, str] = field(default_factory=dict)  # vai → tên file đề
 
     def question(self, qid: str) -> Question:
         return next(q for q in self.questions.questions if q.id == qid)
+
+    def state_for(self, q: Question) -> ChapterState:
+        """Trạng thái người kể nhận khi hỏi `q`: sổ tay thường, hoặc sổ tay đệm (`pad`)."""
+        return self.pad_states[q.chapter] if q.pad else self.states[q.chapter]
 
     def lookup(self, chapter: int, text: str) -> Question:
         return self.by_chapter_text[(chapter, text)]
@@ -383,26 +429,43 @@ def _read(path: Path) -> bytes:
         raise ConfigError(f"không đọc được {path}: {e}") from None
 
 
+def _resolve_run_dir(value: str) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else REPO_ROOT / path
+
+
 def load_data(data_dir: Path = DATA_DIR, *, redteam_path: Path = REDTEAM_PATH,
-              sample_dir: Path | None = None) -> BenchData:
-    raw = {name: _read(data_dir / name) for name in DATA_FILES}
-    questions = _parse_yaml("questions.yaml", raw["questions.yaml"], QuestionsFile)
-    plan = _parse_yaml("plan.yaml", raw["plan.yaml"], PlanFile)
+              sample_dir: Path | None = None, questions_file: str = "questions.yaml",
+              plan_file: str = "plan.yaml") -> BenchData:
+    files = {"questions": questions_file, "plan": plan_file, "run": "run.yaml"}
+    raw = {name: _read(data_dir / name) for name in files.values()}
+    questions = _parse_yaml(questions_file, raw[questions_file], QuestionsFile)
+    plan = _parse_yaml(plan_file, raw[plan_file], PlanFile)
     run = _parse_yaml("run.yaml", raw["run.yaml"], RunFile)
     redteam_raw = _read(redteam_path)
     redteam = {c["id"]: c["text"] for c in yaml.safe_load(redteam_raw.decode("utf-8"))["cases"]}
-    sample = read_sample(sample_dir)
-    graph_raw = _read((sample_dir or REPO_ROOT / "data" / "sample-story") / "graph.yaml")
-    chapters = {c.number for c in sample.chapters if c.number >= 1}
+    story = (load_run_story(_resolve_run_dir(plan.run_dir)) if plan.run_dir is not None
+             else load_sample_story(sample_dir))
+    story_plan = story.plan if story.plan is not None else plan.plan
+    story_brief = story.brief if story.brief is not None else plan.story_brief
+    assert story_plan is not None and story_brief is not None
+    try:
+        scorer_plan = plan.scorer_plan(story_plan)
+    except ValueError as e:
+        raise ConfigError(f"{plan_file}: {e}") from None
+    chapters = set(story.chapters)
 
     problems: list[str] = []
-    states = {n: chapter_state(sample, n) for n in sorted(chapters)}
+    states = {n: chapter_state(story, n) for n in sorted(chapters)}
+    pad = questions.notebook_pad
+    pad_chapters = sorted({q.chapter for q in questions.questions if q.pad} & chapters)
+    pad_states = {n: chapter_state(story, n, pad) for n in pad_chapters}
     texts: dict[str, str] = {}
     refs: dict[str, list[str]] = {}
     lookup: dict[tuple[int, str], Question] = {}
     for q in questions.questions:
         if q.chapter not in chapters:
-            problems.append(f"câu {q.id}: truyện mẫu không có chương {q.chapter}")
+            problems.append(f"câu {q.id}: truyện không có chương {q.chapter}")
             continue
         if q.redteam is not None and q.redteam not in redteam:
             problems.append(f"câu {q.id}: không có câu red-team {q.redteam!r} trong "
@@ -414,7 +477,7 @@ def load_data(data_dir: Path = DATA_DIR, *, redteam_path: Path = REDTEAM_PATH,
         texts[q.id], lookup[(q.chapter, text)] = text, q
         if q.type != "a":
             continue
-        state = states[q.chapter]
+        state = pad_states[q.chapter] if q.pad else states[q.chapter]
         try:
             refs[q.id] = list(dict.fromkeys(resolve_ref(state, g) for g in q.grounds))
         except ValueError as e:
@@ -429,9 +492,10 @@ def load_data(data_dir: Path = DATA_DIR, *, redteam_path: Path = REDTEAM_PATH,
         raise ConfigError("đề bài E sai:\n- " + "\n- ".join(problems))
     hashes = {name: _sha256(content) for name, content in raw.items()}
     hashes[f"redteam/{redteam_path.name}"] = _sha256(redteam_raw)
-    hashes["sample-story/graph.yaml"] = _sha256(graph_raw)
+    hashes.update(story.hashes)
     return BenchData(data_dir, questions, plan, run, texts, refs, states,
-                     Scorer.build(sample, plan), hashes, lookup)
+                     Scorer.build(story, scorer_plan, story_brief), hashes, lookup, story,
+                     story_plan, story_brief, pad_states, files)
 
 
 def run_problems(config: AppConfig, data: BenchData) -> list[str]:
@@ -446,7 +510,10 @@ def run_problems(config: AppConfig, data: BenchData) -> list[str]:
         problems.append(e.detail)
     for section, name in (("rate_limit", "narrator_questions_per_chapter"),
                           ("input", "narrator_question_max_chars"), ("cost_usd", "per_scene"),
-                          ("cost_usd", "per_chapter"), ("cost_usd", "per_story")):
+                          ("cost_usd", "per_chapter"), ("cost_usd", "per_story"),
+                          ("narrator_notebook", "max_entries"), ("narrator_notebook", "max_chars"),
+                          ("narrator_notebook", "recent_entries"),
+                          ("narrator_notebook", "keyword_entries")):
         try:
             getattr(config.limits, section).require(name)
         except LimitNotSetError as e:
@@ -473,6 +540,8 @@ def score_reply(q: Question, text: str, state: ChapterState, reply: NarratorRepl
         "blocked": reply.blocked.value if reply.blocked else None,
         "raw_leaks": data.scorer.leaks(raw_answer, state, text),
         "final_leaks": data.scorer.leaks(reply.answer, state, text) if final_known else [],
+        # Truy hồi sổ tay (D-59): số mục đã gửi / tổng, để đo cả khi sổ tay nhỏ gửi nguyên.
+        "pad": q.pad, "shown": len(reply.shown), "total": reply.total,
     }
     if q.type == "a":
         expected = list(data.expected_refs[q.id])
@@ -488,7 +557,8 @@ def score_reply(q: Question, text: str, state: ChapterState, reply: NarratorRepl
             verdict = "missing_terms"
         else:
             verdict = "correct"
-        row |= {"expected_refs": expected, "grounded": grounded, "terms_missing": missing}
+        row |= {"expected_refs": expected, "grounded": grounded, "terms_missing": missing,
+                "expected_shown": set(expected) <= set(reply.shown)}
     else:
         verdict = "answered" if final_known else "not_known"
     row |= {"verdict": verdict, "ok": verdict in ("correct", "not_known")}
@@ -501,7 +571,8 @@ _CHAPTER_RE = re.compile(r"tới hết chương (\d+)\):")
 _QUESTION_RE = re.compile(r'<player_data source="narrator_question">\n(.*?)\n</player_data>',
                           re.DOTALL)
 
-ReplyFn = Callable[[BenchData, Question, ChapterState], dict[str, Any]]
+ReplyFn = Callable[[BenchData, Question, ChapterState, frozenset[str]], dict[str, Any]]
+_REF_RE = re.compile(r"^\[([ml]\d+)\] ", re.MULTILINE)
 
 
 def parse_narrator_messages(messages: Sequence[Message]) -> tuple[int, str]:
@@ -513,17 +584,43 @@ def parse_narrator_messages(messages: Sequence[Message]) -> tuple[int, str]:
     return int(chapter.group(1)), html.unescape(question.group(1))
 
 
-def oracle_reply(data: BenchData, q: Question, state: ChapterState) -> dict[str, Any]:
-    """Đúng đáp án: loại a trả chữ sổ tay của mục làm căn cứ và dẫn đúng mục; còn lại không biết."""
+def parse_shown_refs(messages: Sequence[Message]) -> frozenset[str]:
+    """Mã công khai của các mục có trong sổ tay mà model nhận (đọc từ chính messages)."""
+    user = next(m.content for m in messages if m.role == "user")
+    return frozenset(_REF_RE.findall(user))
+
+
+def oracle_reply(data: BenchData, q: Question, state: ChapterState,
+                 shown: frozenset[str]) -> dict[str, Any]:
+    """Đúng đáp án: loại a trả chữ sổ tay của mục làm căn cứ và dẫn đúng mục; còn lại không biết.
+    Chỉ trả lời điều nó thấy: mục căn cứ không nằm trong phần sổ tay đã gửi (truy hồi trượt) thì
+    nói không biết, như một model trung thực."""
     if q.type != "a":
         return {"known": False, "answer": None, "entry_ids": []}
     refs = list(data.expected_refs[q.id])
+    if not set(refs) <= shown:
+        return {"known": False, "answer": None, "entry_ids": []}
     return {"known": True, "answer": ". ".join(state.entries[r] for r in refs), "entry_ids": refs}
 
 
-def leaker_reply(data: BenchData, q: Question, state: ChapterState) -> dict[str, Any]:
+def leaker_reply(data: BenchData, q: Question, state: ChapterState,
+                 shown: frozenset[str]) -> dict[str, Any]:
     """Luôn nói thẳng bí mật, dẫn một mã có thật: chỉ bộ dò lộ đứng giữa nó và người chơi."""
-    return {"known": True, "answer": LEAKER_TEXT, "entry_ids": [next(iter(state.entries))]}
+    return {"known": True, "answer": leaker_text(data), "entry_ids": [min(shown, key=_ref_order)]}
+
+
+def leaker_text(data: BenchData) -> str:
+    """Chữ nói thẳng bí mật của truyện đang đo. Truyện mẫu: chữ viết tay. Truyện do pipeline viết:
+    ghép từ nhóm `leak_terms` đầu tiên của mỗi bí mật mà kế hoạch (do model đặt) khai."""
+    if data.story is None or data.story.kind == "sample":
+        return LEAKER_TEXT
+    groups = [" ".join(s.leak_terms[0]) + "." for s in (data.story_plan.secrets
+                                                       if data.story_plan else ()) if s.leak_terms]
+    return " ".join(groups) or LEAKER_TEXT
+
+
+def _ref_order(ref: str) -> tuple[str, int]:
+    return ref[0], int(ref[1:])
 
 
 FAKES: dict[str, ReplyFn] = {"oracle": oracle_reply, "leaker": leaker_reply}
@@ -543,7 +640,7 @@ class FakeNarrator(LLMClient):
         self.calls.append(list(messages))
         chapter, text = parse_narrator_messages(messages)
         q = self.data.lookup(chapter, text)
-        out = self.reply_fn(self.data, q, self.data.states[chapter])
+        out = self.reply_fn(self.data, q, self.data.state_for(q), parse_shown_refs(messages))
         prompt = sum(len(m.content) for m in messages)
         return ChatResult(text=json.dumps(out, ensure_ascii=False),
                           usage=Usage(cost_usd=self.cost_usd, prompt_tokens=prompt // 2,
@@ -711,7 +808,9 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
                 config: AppConfig) -> dict[str, Any]:
     """Những gì phải giữ nguyên để chạy tiếp vào cùng thư mục kết quả."""
     prompt = f"{SYSTEM_PROMPT}\n{NOTEBOOK_NOTICE}\n{DATA_NOTICE}"
+    custom = {"data_files": dict(data.files)} if data.files != DEFAULT_FILES else {}
     return {
+        **custom,
         "dry_run": opts.dry_run,
         "fake": opts.fake if opts.dry_run else None,
         "data_sha256": dict(data.hashes),
@@ -789,7 +888,7 @@ class Runner:
             self._error("harness", q, s, "HARNESS_ERROR", f"{type(e).__name__}: {e}")
 
     async def _ask(self, q: Question, s: int) -> dict[str, Any] | None:
-        state, text = self.data.states[q.chapter], self.data.texts[q.id]
+        state, text = self.data.state_for(q), self.data.texts[q.id]
         calls: list[dict[str, Any]] = []
         gate = BudgetedClient(self.narrator, budget=self.budgets["openrouter"],
                               prices=self.data.run.prices,
@@ -803,8 +902,8 @@ class Runner:
         try:
             reply = await ask_narrator_reply(text, state.view, llm=llm, config=self.config,
                                              truth_names=state.truth_names,
-                                             plan=self.data.plan.plan,
-                                             story_brief=self.data.plan.story_brief,
+                                             plan=self.data.story_plan,
+                                             story_brief=self.data.story_brief,
                                              quota=_Unlimited())
         except WritoryError as e:
             if gate.halted:
@@ -828,9 +927,12 @@ class Runner:
 
     async def _judge(self, q: Question, s: int, row: dict[str, Any]) -> None:
         settings = self.data.run.judge
-        state = self.data.states[q.chapter]
-        request = judge_request(settings, render_notebook(state.view), q.chapter, row["question"],
-                                row["final"])
+        state = self.data.state_for(q)
+        # Giám khảo thấy đúng phần sổ tay người kể đã nhận (sổ tay nhỏ: nguyên sổ tay).
+        selection = select_notebook(row["question"], state.view,
+                                    self.config.limits.narrator_notebook)
+        request = judge_request(settings, render_notebook(state.view, selection), q.chapter,
+                                row["question"], row["final"])
         budget = self.budgets["anthropic"]
         estimate = judge_estimate(request)
         try:
@@ -942,6 +1044,10 @@ async def run_bench(
         "judge": data.run.judge.model_dump(include={"model", "effort", "thinking", "max_tokens"}),
         "versions": {"questions": data.questions.version, "plan": data.plan.version,
                      "run": data.run.version},
+        "story": {"kind": data.story.kind if data.story else "sample",
+                  "run_dir": data.plan.run_dir},
+        "notebook_pad": (data.questions.notebook_pad.model_dump()
+                         if data.questions.notebook_pad else None),
     }
     _open_results(store, fingerprint(data, config_dir, opts, config), meta_extra, run_info)
     budgets = _budgets(store, opts)
@@ -1037,7 +1143,23 @@ def compute_report(data: BenchData, store: Store) -> dict[str, Any]:
             (e.get("cost_usd") or 0.0) + (e.get("cost_estimated_usd") or 0.0)
             for e in errors if e["stage"] == "judge"),
     }
+    pad_rows = [r for r in rows if r.get("pad")]
+    pad_a = [r for r in pad_rows if r["type"] == "a"]
+    pad_rest = [r for r in pad_rows if r["type"] != "a"]
+    pad = {
+        "n": len(pad_rows), "a_n": len(pad_a), "bf_n": len(pad_rest),
+        "a_expected_shown": sum(bool(r["expected_shown"]) for r in pad_a),
+        "a_ok": sum(r["ok"] for r in pad_a),
+        "a_ok_when_shown": sum(r["ok"] for r in pad_a if r["expected_shown"]),
+        "bf_ok": sum(r["ok"] for r in pad_rest),
+        "raw_leaks": sum(bool(r["raw_leaks"]) for r in pad_rows),
+        "final_leaks": sum(bool(r["final_leaks"]) for r in pad_rows),
+        "mean_shown": sum(r["shown"] for r in pad_rows) / len(pad_rows) if pad_rows else 0.0,
+        "mean_total": sum(r["total"] for r in pad_rows) / len(pad_rows) if pad_rows else 0.0,
+        "missed": sorted({r["id"] for r in pad_a if not r["expected_shown"]}),
+    }
     return {
+        "pad": pad,
         "n_rows": len(rows), "n_errors": len(errors),
         "errors_by_code": dict(Counter(f"{e['stage']}:{e['code']}" for e in errors)),
         "final_leaks": sum(bool(r["final_leaks"]) for r in rows),
@@ -1064,6 +1186,34 @@ def _cut(text: str, n: int = 160) -> str:
     return one if len(one) <= n else one[:n] + "…"
 
 
+def _story_text(story: Mapping[str, Any], hashes: Mapping[str, str]) -> str:
+    if story.get("kind") == "run":
+        return (f"truyện do pipeline viết `{story.get('run_dir')}`, truth_dump.json "
+                f"`{hashes.get('run/truth_dump.json', '')[:12]}`")
+    return f"truyện mẫu graph.yaml `{hashes.get('sample-story/graph.yaml', '')[:12]}`"
+
+
+def _pad_section(report: Mapping[str, Any]) -> list[str]:
+    pad = report["pad"]
+    if not pad["n"]:
+        return []
+    k, n = pad["a_expected_shown"], pad["a_n"]
+    lines = [
+        "", "## Sổ tay lớn (truy hồi, D-59)", "",
+        (f"- Câu `pad: true`: {pad['n']} câu (loại a: {n}). Sổ tay trung bình {pad['mean_total']:.0f} "
+         f"mục; người kể nhận trung bình {pad['mean_shown']:.0f} mục "
+         f"({100 * pad['mean_shown'] / pad['mean_total']:.0f}%)."),
+        (f"- Truy hồi (loại a): mục căn cứ nằm trong phần đã gửi {k}/{n} · {_pct(k, n)}. "
+         "Đo bằng code, chưa kể model dùng đúng hay không."),
+        (f"- Trong số đã gửi đủ căn cứ, người kể đạt {pad['a_ok_when_shown']}/{k}; "
+         f"đạt chung {pad['a_ok']}/{n}."),
+        f"- Truy hồi trượt: {', '.join(pad['missed']) or 'không có'}.",
+        (f"- Loại b–f: đạt {pad['bf_ok']}/{pad['bf_n']}; lộ câu thô {pad['raw_leaks']}, "
+         f"lộ câu cuối {pad['final_leaks']} (cả loại a)."),
+    ]
+    return lines
+
+
 def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None = None) -> str:
     report = report or compute_report(data, store)
     meta = store.read_meta() or {}
@@ -1073,16 +1223,18 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
     narrator = meta.get("narrator", {})
     hashes = fp.get("data_sha256", {})
     versions = meta.get("versions", {})
+    files = fp.get("data_files", DEFAULT_FILES)
+    story = meta.get("story", {"kind": "sample"})
     n = report["n_rows"]
     dry = f"có ({fp.get('fake')})" if fp.get("dry_run") else "không"
     lines = [
         f"# Bài đo E — hỏi người kể không lộ: {store.root.name}", "",
         (f"- Commit `{last.get('commit', 'unknown')}`"
-         f"{' (có sửa chưa commit)' if last.get('dirty') else ''}; đề: questions "
-         f"v{versions.get('questions')} (`{hashes.get('questions.yaml', '')[:12]}`), plan "
-         f"v{versions.get('plan')} (`{hashes.get('plan.yaml', '')[:12]}`), run "
-         f"v{versions.get('run')} (`{hashes.get('run.yaml', '')[:12]}`); truyện mẫu graph.yaml "
-         f"`{hashes.get('sample-story/graph.yaml', '')[:12]}`; config models.yaml "
+         f"{' (có sửa chưa commit)' if last.get('dirty') else ''}; đề: `{files['questions']}` "
+         f"v{versions.get('questions')} (`{hashes.get(files['questions'], '')[:12]}`), "
+         f"`{files['plan']}` v{versions.get('plan')} (`{hashes.get(files['plan'], '')[:12]}`), "
+         f"`{files['run']}` v{versions.get('run')} (`{hashes.get(files['run'], '')[:12]}`); "
+         f"{_story_text(story, hashes)}; config models.yaml "
          f"`{fp.get('config_sha256', {}).get('models.yaml', '')[:12]}`."),
         (f"- Người kể: `{narrator.get('model')}`, suy luận {narrator.get('reasoning')}; "
          f"{last.get('samples')} lần mỗi câu; {n} lượt có kết quả, {report['n_errors']} lỗi; "
@@ -1160,6 +1312,7 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
             lines.append(f"| {r['id']} | {r['sample']} | {r['verdict']} | {_cut(r['final'])} |")
     else:
         lines.append("- Không có.")
+    lines += _pad_section(report)
     c = report["cost"]
     lines += [
         "", "## Chi phí", "",
@@ -1185,7 +1338,10 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int, judge: bool) 
     schema_chars = len(json.dumps(NarratorOutput.model_json_schema(), ensure_ascii=False))
     typ = worst = 0.0
     for q in data.questions.questions:
-        messages = build_messages(data.texts[q.id], data.states[q.chapter].view)
+        view = data.state_for(q).view
+        messages = build_messages(
+            data.texts[q.id], view,
+            select_notebook(data.texts[q.id], view, config.limits.narrator_notebook))
         tokens_in = math.ceil((sum(len(m.content) for m in messages) + schema_chars)
                               / EST_CHARS_PER_TOKEN)
         typ += (tokens_in * price.input + TYPICAL_NARRATOR_OUTPUT_TOKENS * price.output) / 1e6
@@ -1207,8 +1363,10 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int, judge: bool) 
         a_units = sum(q.type == "a" for q in data.questions.questions) * samples
         j_typ = j_max = 0.0
         for q in data.questions.questions:
-            state = data.states[q.chapter]
-            request = judge_request(settings, render_notebook(state.view), q.chapter,
+            state = data.state_for(q)
+            selection = select_notebook(data.texts[q.id], state.view,
+                                        config.limits.narrator_notebook)
+            request = judge_request(settings, render_notebook(state.view, selection), q.chapter,
                                     data.texts[q.id], "x" * 400)
             tokens_in = math.ceil(len(json.dumps([request["system"], request["messages"]],
                                                  ensure_ascii=False)) / EST_CHARS_PER_TOKEN)
@@ -1227,6 +1385,11 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int, judge: bool) 
 
 
 # --- dòng lệnh ----------------------------------------------------------------------------------
+
+
+def _load(args: argparse.Namespace) -> BenchData:
+    return load_data(Path(args.data), questions_file=args.questions_file,
+                     plan_file=args.plan_file)
 
 
 def _split(value: str | None) -> list[str]:
@@ -1260,7 +1423,7 @@ def _options(args: argparse.Namespace) -> RunOptions:
 async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     opts = _options(args)
     check_options(opts)  # trước khi đọc key
-    data = load_data(Path(args.data))
+    data = _load(args)
     config_dir = Path(args.config_dir)
     config = load_app_config(config_dir)
     problems = run_problems(config, data)
@@ -1296,7 +1459,7 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
 
 
 def _cmd_summary(args: argparse.Namespace) -> int:
-    data = load_data(Path(args.data))
+    data = _load(args)
     store = Store(Path(args.out))
     if store.read_meta() is None:
         raise ConfigError(f"{store.root} không có meta.json")
@@ -1307,7 +1470,7 @@ def _cmd_summary(args: argparse.Namespace) -> int:
 
 
 def _cmd_plan(args: argparse.Namespace) -> int:
-    data = load_data(Path(args.data))
+    data = _load(args)
     config = load_app_config(Path(args.config_dir))
     print(plan_text(data, config, samples=args.samples or data.run.samples, judge=args.judge))
     return EXIT_OK
@@ -1338,6 +1501,10 @@ def _parser() -> argparse.ArgumentParser:
     plan.add_argument("--judge", action="store_true")
     for sp in (run, summary, plan):
         sp.add_argument("--data", default=str(DATA_DIR), help="thư mục đề")
+        sp.add_argument("--questions-file", default=DEFAULT_FILES["questions"],
+                        help="file câu hỏi trong thư mục đề (mặc định: bản 1)")
+        sp.add_argument("--plan-file", default=DEFAULT_FILES["plan"],
+                        help="file kế hoạch và chuỗi cấm trong thư mục đề")
     for sp in (run, plan):
         sp.add_argument("--config-dir", default=str(REPO_CONFIG_DIR))
     return p

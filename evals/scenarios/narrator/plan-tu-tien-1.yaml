@@ -1,0 +1,58 @@
+# Bài đo E — chuỗi cấm cho truyện do pipeline viết: evals/results/2026-10-20-run-tu-tien-1/
+# (docs/eval.md, mục "Bài E"; D-53, D-60). Khai TRƯỚC khi chạy. Đã chạy thật rồi thì không sửa đè:
+# tăng `version`. Dùng với: --plan-file plan-tu-tien-1.yaml --questions-file questions-tu-tien-1.yaml
+#
+# Khác truyện mẫu: kế hoạch (`plan`, kể cả `leak_terms` của từng bí mật) và thiết lập truyện
+# (`story_brief`) lấy từ chính lượt chạy, vì đó là điều model khởi tạo đã đặt lúc viết truyện.
+# Đo bộ dò lộ với chuỗi cấm do model đặt, không phải chuỗi viết tay là mục đích của nhóm đề này.
+# Vì vậy file này KHÔNG khai `plan` hay `story_brief` (khai thì đề không load được).
+#
+# Phần `score` chỉ cho bộ chấm, không bao giờ vào ask_narrator (như plan.yaml của truyện mẫu):
+# nhóm chuỗi thêm và bí mật thêm, soạn từ truth_dump.json trước lần chạy thật.
+#
+# Về tên "Vạn Tinh Bách": ở chương 5 bộ trích gắn cạnh hé lộ có known_as "Vạn Tinh Bách" vào nút
+# kẻ phản bội (`doan_khac`, tên thật Đoàn Khắc), không phải nút người trao tín vật
+# (`van_tinh_bach`). Hệ quả: sổ tay chương 5-6 có mục tên "Vạn Tinh Bách", còn tên thật "Đoàn
+# Khắc" của nút đó vẫn là bí mật (bộ chấm cấm). Bộ chấm không báo nhầm tên "Vạn Tinh Bách" của nút
+# kia, vì tên đã nằm trong chữ sổ tay người chơi đọc. Câu `t5-a-ai-trao-tin-vat` đo đúng chỗ này.
+#
+# Soạn: Claude (nhánh narrator-retrieval), 20/10/2026. Chờ điều phối và chủ dự án duyệt trước lần chạy thật.
+
+version: 1
+
+run_dir: evals/results/2026-10-20-run-tu-tien-1
+
+score:
+  # Bộ dò lộ lúc chạy chỉ áp `leak_terms` khi chương < reveal_from_chapter (safety/leak.py). Hai bí
+  # mật dưới đây mà kế hoạch đặt khoảng lộ 3-6 và 4-6 chưa hề được hé lộ trong 6 chương, nên từ
+  # chương 3-4 lớp chạy thật không còn chặn theo cụm từ. Bộ chấm giữ chúng tới hết truyện bằng
+  # bí mật thêm có khoảng lộ sau chương cuối (code kéo dài hồi cuối của kế hoạch riêng của bộ chấm).
+  extra_secrets:
+    - fact_id: x_doan_khac_tao_phu_gia
+      reveal_from_chapter: 7
+      reveal_to_chapter: 9
+      leak_terms:
+        - ["Đoàn Khắc"]
+        - ["Vạn Tinh Bách", "làm giả"]
+        - ["Vạn Tinh Bách", "phù âm giả"]
+        - ["làm giả", "phù âm"]
+        - ["cố ý", "khe hở"]
+        - ["kẻ phản bội"]
+        - ["nội ứng"]
+    - fact_id: x_doan_khac_muon_mac_ca
+      reveal_from_chapter: 7
+      reveal_to_chapter: 9
+      leak_terms:
+        - ["Vạn Tinh Bách", "thương lượng"]
+        - ["Vạn Tinh Bách", "đường lui"]
+        - ["Bạch Lộc Cốc", "thương lượng"]
+        - ["đường lui", "đội tiếp ứng"]
+        - ["Bạch Lộc Cốc", "nội ứng"]
+    - fact_id: f_phu_am_bi_doi
+      reveal_from_chapter: 7
+      reveal_to_chapter: 9
+      leak_terms:
+        - ["phù âm giả"]
+        - ["phù âm", "giả mạo"]
+        - ["lệnh", "bị làm giả"]
+        - ["lệnh", "bị làm lệch"]
