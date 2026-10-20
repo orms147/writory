@@ -1441,12 +1441,27 @@ def _human_section(store: Store) -> list[str]:
         return []
     agreement = json.loads(path.read_text(encoding="utf-8"))
     out = ["## Đồng thuận người chấm – giám khảo",
-           "| Tiêu chí | n | Spearman | Lệch ≤ 1 điểm |", "|---|---|---|---|"]
+           "| Tiêu chí | n | Spearman | Lệch ≤ 1 điểm | Người − giám khảo (TB) |",
+           "|---|---|---|---|---|"]
     for cid, a in agreement["criteria"].items():
         rho = "—" if a["spearman"] is None else f"{a['spearman']:.2f}"
         within = "—" if a["within_1"] is None else f"{a['within_1']:.0%}"
-        out.append(f"| {cid} | {a['n']} | {rho} | {within} |")
-    return out + [""]
+        diff = a.get("mean_diff")
+        diff_s = "—" if diff is None else f"{diff:+.2f}"
+        out.append(f"| {cid} | {a['n']} | {rho} | {within} | {diff_s} |")
+    n_max = max((a["n"] for a in agreement["criteria"].values()), default=0)
+    if n_max < HUMAN_MIN_FOR_CONCLUSION:
+        out.append(f"\nMới có {n_max} cảnh chấm tay (< {HUMAN_MIN_FOR_CONCLUSION}): chỉ để tham khảo, "
+                   "chưa đủ để kết luận thứ hạng model.")
+    out.append("")
+    notes, general = agreement.get("notes") or [], agreement.get("general_notes") or []
+    if notes or general:
+        out += ["## Ghi chú của chủ dự án", "Chép nguyên văn từ `human/scores.csv`; id cảnh ẩn danh.",
+                ""]
+        out += [f"- {n['scene_id']}: {n['note']}" for n in notes]
+        out += [f"- (chung) {g}" for g in general]
+        out.append("")
+    return out
 
 
 # --- chấm tay để hiệu chỉnh giám khảo ------------------------------------------------------------
@@ -1525,6 +1540,20 @@ def export_human(data: BenchData, store: Store, *, n: int, criteria: Sequence[st
     return folder
 
 
+HUMAN_MIN_FOR_CONCLUSION = 15  # số cảnh chấm tay tối thiểu trước khi dùng đồng thuận để kết luận
+
+
+def _human_score(raw: str) -> float | None:
+    """Điểm chấm tay: 1–5, bước 0,5; nhận cả dấu phẩy thập phân. Sai thang thì None."""
+    try:
+        value = float(raw.replace(",", "."))
+    except ValueError:
+        return None
+    if not 1 <= value <= 5 or (value * 2) != int(value * 2):
+        return None
+    return value
+
+
 def import_human(data: BenchData, store: Store, csv_path: Path | None) -> dict[str, Any]:
     folder = store.root / "human"
     mapping = json.loads((folder / "_mapping.json").read_text(encoding="utf-8"))
@@ -1532,29 +1561,45 @@ def import_human(data: BenchData, store: Store, csv_path: Path | None) -> dict[s
     judged: dict[tuple, list[dict[str, Any]]] = defaultdict(list)
     for r in store.rows(RESULTS):
         judged[sample_key(r)].append(r)
-    pairs: dict[str, list[tuple[int, float]]] = {c: [] for c in criteria}
+    pairs: dict[str, list[tuple[float, float]]] = {c: [] for c in criteria}
+    notes: list[dict[str, str]] = []
+    general_notes: list[str] = []
     with (csv_path or folder / "scores.csv").open(encoding="utf-8-sig", newline="") as f:
         for line_no, row in enumerate(csv.DictReader(f), 2):
             scene = (row.get("scene_id") or "").strip()
+            if not scene:
+                # Dòng góp ý chung, không gắn cảnh nào: giữ chữ, không chấm.
+                text = " ".join(v.strip() for v in row.values() if isinstance(v, str) and v.strip())
+                if text:
+                    general_notes.append(text)
+                continue
             if scene not in mapping["scenes"]:
                 raise ConfigError(f"scores.csv dòng {line_no}: scene_id {scene!r} không có")
+            note = (row.get("ghi_chu") or "").strip()
+            if note:
+                notes.append({"scene_id": scene, "note": note})
             m = mapping["scenes"][scene]
             final = final_scores(judged[(m["model"], m["case"], m["sample"])], data.rubric)
             for c in criteria:
                 raw = (row.get(c) or "").strip()
                 if not raw:
                     continue
-                if raw not in {"1", "2", "3", "4", "5"}:
-                    raise ConfigError(f"scores.csv dòng {line_no}, {c}: {raw!r} không phải 1–5")
+                score = _human_score(raw)
+                if score is None:
+                    raise ConfigError(
+                        f"scores.csv dòng {line_no}, {c}: {raw!r} không phải 1–5 (bước 0,5)")
                 if final is not None:
-                    pairs[c].append((int(raw), final[c]))
-    result = {"created": _now(), "criteria": {}}
+                    pairs[c].append((score, final[c]))
+    result: dict[str, Any] = {"created": _now(), "criteria": {}, "notes": notes,
+                              "general_notes": general_notes}
     for c, ps in pairs.items():
         human, judge = [p[0] for p in ps], [p[1] for p in ps]
         result["criteria"][c] = {
             "n": len(ps),
             "spearman": spearman(human, judge),
             "within_1": (sum(1 for h, j in ps if abs(h - j) <= 1) / len(ps)) if ps else None,
+            # người trừ giám khảo: dương nghĩa là giám khảo chấm khắt hơn người
+            "mean_diff": (round(sum(h - j for h, j in ps) / len(ps), 3)) if ps else None,
         }
     (folder / "agreement.json").write_text(json.dumps(result, ensure_ascii=False, indent=2),
                                            encoding="utf-8")

@@ -663,10 +663,56 @@ def test_export_and_import_human_scores(tmp_path):
         w.writerows(table)
     assert bd.main(["import-human", "--data", str(FIX), "--out", str(out)]) == 0
     agreement = json.loads((human / "agreement.json").read_text(encoding="utf-8"))["criteria"]
-    assert agreement["tieng_viet_tu_nhien"] == {"n": 6, "spearman": None, "within_1": 1.0}
+    assert agreement["tieng_viet_tu_nhien"] == {"n": 6, "spearman": None, "within_1": 1.0,
+                                                 "mean_diff": 0.0}
     assert agreement["van_nguoi"]["within_1"] == 1.0
-    assert agreement["hap_dan"]["n"] == 0
+    assert agreement["hap_dan"] == {"n": 0, "spearman": None, "within_1": None,
+                                    "mean_diff": None}
     assert "Đồng thuận người chấm" in (out / "summary.md").read_text(encoding="utf-8")
+
+
+def test_import_human_accepts_half_points_notes_and_a_general_row(tmp_path):
+    """Chủ dự án chấm điểm lẻ 0,5, ghi chú từng cảnh, và thêm một dòng góp ý chung không có scene_id."""
+    out = tmp_path / "o"
+    bd.main(["run", "--data", str(FIX), "--out", str(out), "--dry-run", "--samples", "3"])
+    assert bd.main(["export-human", "--data", str(FIX), "--out", str(out), "--n", "4"]) == 0
+    human = out / "human"
+    with (human / "scores.csv").open(encoding="utf-8-sig", newline="") as f:
+        table = list(csv.DictReader(f))
+    table[0].update(tieng_viet_tu_nhien="3.5", van_nguoi="4,5", ghi_chu="thoại nên xuống dòng")
+    table[1].update(tieng_viet_tu_nhien="4")
+    general = {k: "" for k in table[0]}
+    general["tieng_viet_tu_nhien"] = "Feedback chung: thay ' — ' bằng ' - '"
+    with (human / "scores.csv").open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(table[0]))
+        w.writeheader()
+        w.writerows([*table, general])
+    assert bd.main(["import-human", "--data", str(FIX), "--out", str(out)]) == 0
+    result = json.loads((human / "agreement.json").read_text(encoding="utf-8"))
+    assert result["criteria"]["tieng_viet_tu_nhien"]["n"] == 2
+    assert result["criteria"]["van_nguoi"]["n"] == 1
+    assert result["notes"] == [{"scene_id": table[0]["scene_id"], "note": "thoại nên xuống dòng"}]
+    assert result["general_notes"] == ["Feedback chung: thay ' — ' bằng ' - '"]
+    summary = (out / "summary.md").read_text(encoding="utf-8")
+    assert "thoại nên xuống dòng" in summary and "Feedback chung" in summary
+    for name in WRITER_IDENTITY:  # ghi chú vẫn ẩn danh trong báo cáo
+        assert name not in summary.split("Ghi chú của chủ dự án")[1]
+
+
+@pytest.mark.parametrize("bad", ["0", "6", "3.25", "abc"])
+def test_import_human_rejects_scores_outside_half_point_scale(tmp_path, bad):
+    out = tmp_path / "o"
+    bd.main(["run", "--data", str(FIX), "--out", str(out), "--dry-run", "--samples", "3"])
+    assert bd.main(["export-human", "--data", str(FIX), "--out", str(out), "--n", "2"]) == 0
+    human = out / "human"
+    with (human / "scores.csv").open(encoding="utf-8-sig", newline="") as f:
+        table = list(csv.DictReader(f))
+    table[0]["hap_dan"] = bad
+    with (human / "scores.csv").open("w", encoding="utf-8-sig", newline="") as f:
+        w = csv.DictWriter(f, fieldnames=list(table[0]))
+        w.writeheader()
+        w.writerows(table)
+    assert bd.main(["import-human", "--data", str(FIX), "--out", str(out)]) == bd.EXIT_CONFIG
 
 
 def test_missing_keys_are_reported_without_printing_keys(tmp_path, monkeypatch, capsys):

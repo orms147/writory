@@ -35,3 +35,25 @@ Model bị loại khỏi bảng (dữ liệu thô vẫn nằm trong samples/resu
 - Câu trích của giám khảo không tìm thấy trong bài: 24/1420.
 - Độ lệch giữa các lần chấm (trung bình max−min mỗi cảnh): tieng_viet_tu_nhien 0.16, xung_ho 0.26, bam_dan_y 0.26, cho_thay 0.10, loi_thoai 0.09, van_nguoi 0.16, hap_dan 0.12, giu_bi_mat 0.02.
 
+## Đồng thuận người chấm – giám khảo
+| Tiêu chí | n | Spearman | Lệch ≤ 1 điểm | Người − giám khảo (TB) |
+|---|---|---|---|---|
+| tieng_viet_tu_nhien | 6 | 0.32 | 67% | +0.92 |
+| van_nguoi | 6 | 0.68 | 67% | +0.92 |
+| hap_dan | 6 | 0.31 | 100% | +0.67 |
+
+Mới có 6 cảnh chấm tay (< 15): chỉ để tham khảo, chưa đủ để kết luận thứ hạng model.
+
+## Ghi chú của chủ dự án
+Chép nguyên văn từ `human/scores.csv`; id cảnh ẩn danh.
+
+- S01: giữa cuộc hội thoại không miêu tả tâm lý nhân vật, nên có 1 dòng ngắn để người đọc tưởng tưởng được cảm xúc và hành động của nhân vật nam
+- S02: 1. Các câu nói không xuống dòng; 2. với thể loại giả tưởng này nếu user không yêu cầu gì thì nên ghi địa danh giả, tên nhân vật nên kiểu Trung quốc hán việt thay vì tên Việt Nam
+- S03: Bài này làm được cả 2 thứ tôi feedback cho 2 bài trên, nhưng vẫn đang dùng địa điểm thật, và các từ như "đường trống" hơi kém (nên là "đường vắng" ), hoặc "Cô nghe ngóng" nghe rất cụt ngủn
+- S04: 1. Xưng ngôi thứ nhất nên xưng là "Tôi" thay vì "Tao"; 2. Lặp từ "Tao" quá nhiều vì đang ở ngôi thứ nhất, nhưng do viết kém nên bị lặp
+- S05: Viết tốt, văn phong chưa hay lắm, nhưng có thể chấp nhận
+- S06: nội dung chứa ký tự lạ "bềnh trên mặt汤", " không chút起伏"
+- S10: Văn phong chưa hợp truyện, "giết người đoạt bảo" thay vì "chuyên lấy mạng người mang hành lý quý giá" và nhiều cầu từ kahsc chưa hợp ; hội thoại của truyện kiếm hiệp  nên xuống dòng, "" chỉ dành cho truyền đạt lời
+- S11: như trên , "Ta đứng ngay ngoài này, đệ cứ yên tâm." -> "ta hộ pháp cho đệ"
+- (chung) Feedback chung : 1. backend thay toàn bộ " — " bằng " - " nhé;
+

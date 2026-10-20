@@ -45,7 +45,7 @@ Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writo
 - **Hiệu chỉnh với người chấm:**
   - `export-human` chọn cảnh trải đều theo model và case, xáo thứ tự, ẩn tên model;
   - người chấm điền `human/scores.csv`;
-  - `import-human` tính Spearman và tỉ lệ lệch ≤ 1 điểm cho từng tiêu chí, rồi ghi vào `summary.md`.
+  - `import-human` tính Spearman, tỉ lệ lệch ≤ 1 điểm và độ lệch trung bình người − giám khảo cho từng tiêu chí, rồi ghi vào `summary.md`. Điểm chấm tay 1–5, bước 0,5. Cột `ghi_chu` và dòng không có `scene_id` (góp ý chung) được chép nguyên văn vào mục "Ghi chú của chủ dự án". Dưới 15 cảnh thì báo cáo ghi rõ là chưa đủ để kết luận thứ hạng.
 - **Kết quả:** `evals/results/<ngày>-quality-<nhãn>/` gồm `samples.jsonl`, `results.jsonl`, `errors.jsonl`, `traces/`, `meta.json` (commit, sha256 dữ liệu, tham số, trần) và `summary.md`. Kết quả dry-run (`*-dryrun/`) không commit.
 - **Key:** chỉ đọc `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY` và, nếu có, `ANTHROPIC_WORKSPACE_ID` (biến môi trường hoặc `--env-file`). Mỗi lệnh chỉ đòi key nó dùng.
 - **Trần:** lượt chạy thật bắt buộc có `--budget-openrouter` và `--budget-anthropic` (USD). Trần tính cả chi phí các lần chạy trước trong cùng thư mục. Trước mỗi lời gọi, code giữ chỗ theo chi phí tối đa có thể của lời gọi đó, nên không vượt trần.
