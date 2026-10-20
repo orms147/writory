@@ -1324,7 +1324,8 @@ def build_summary(data: BenchData, store: Store) -> str:
             "Trễ s (TV)", "Lỗi · cắt · khác"]
     out += ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
     present = {r["model"] for r in samples} | {e["model"] for e in errors if e["stage"] == "write"}
-    for w in [w for w in data.models.writers if w.id in present]:
+    excluded = meta.get("excluded_writers", {})
+    for w in [w for w in data.models.writers if w.id in present and w.id not in excluded]:
         mine = [r for r in samples if r["model"] == w.id]
         by_case: dict[str, list[dict[str, float]]] = defaultdict(list)
         for r in mine:
@@ -1360,6 +1361,11 @@ def build_summary(data: BenchData, store: Store) -> str:
         ]
         out.append("| " + " | ".join(cells) + " |")
 
+    if excluded:
+        labels = {w.id: w.label for w in data.models.writers}
+        out += ["", ("Model bị loại khỏi bảng (dữ liệu thô vẫn nằm trong samples/results/"
+                     "errors.jsonl; chi phí vẫn tính vào tổng):")]
+        out += [f"- {labels.get(wid, wid)} (`{wid}`): {x['reason']}" for wid, x in excluded.items()]
     out += ["", *_judge_section(data, judged, errors, samples)]
     out += _check_section(store)
     out += _human_section(store)
@@ -1482,7 +1488,9 @@ def export_human(data: BenchData, store: Store, *, n: int, criteria: Sequence[st
     judged: dict[tuple, list[dict[str, Any]]] = defaultdict(list)
     for r in store.rows(RESULTS):
         judged[sample_key(r)].append(r)
-    samples = {sample_key(r): r for r in store.rows(SAMPLES) if r["status"] == "ok"}
+    excluded = (store.read_meta() or {}).get("excluded_writers", {})
+    samples = {sample_key(r): r for r in store.rows(SAMPLES)
+               if r["status"] == "ok" and r["model"] not in excluded}
     keys = sorted(k for k in samples if final_scores(judged.get(k, []), data.rubric))
     if len(keys) < n:
         raise ConfigError(f"chỉ có {len(keys)} cảnh đã chấm, cần {n}")
@@ -1886,6 +1894,22 @@ def cmd_export_human(args: argparse.Namespace, argv: Sequence[str]) -> int:
     return EXIT_OK
 
 
+def cmd_exclude(args: argparse.Namespace, argv: Sequence[str]) -> int:
+    """Loại một model khỏi bảng theo quyết định của người chạy; dữ liệu thô giữ nguyên."""
+    data, store = load_data(Path(args.data)), Store(Path(args.out))
+    meta = store.read_meta()
+    if meta is None:
+        raise ConfigError(f"{store.root} chưa có meta.json")
+    known = {w.id for w in data.models.writers} | {r["model"] for r in store.rows(SAMPLES)}
+    if args.model not in known:
+        raise ConfigError(f"model {args.model} không có trong models.yaml hay kết quả")
+    meta.setdefault("excluded_writers", {})[args.model] = {"reason": args.reason, "time": _now()}
+    store.write_meta(meta)
+    (store.root / "summary.md").write_text(build_summary(data, store), encoding="utf-8")
+    print(f"Đã loại {args.model} khỏi bảng; dựng lại {store.root / 'summary.md'}")
+    return EXIT_OK
+
+
 def cmd_import_human(args: argparse.Namespace, argv: Sequence[str]) -> int:
     data, store = load_data(Path(args.data)), Store(Path(args.out))
     result = import_human(data, store, Path(args.csv) if args.csv else None)
@@ -1955,12 +1979,17 @@ def _parser() -> argparse.ArgumentParser:
     data_arg(imp)
     imp.add_argument("--out", required=True)
     imp.add_argument("--csv")
+    exc = sub.add_parser("exclude", help="loại một model khỏi bảng (ghi lý do vào meta.json)")
+    data_arg(exc)
+    exc.add_argument("--out", required=True)
+    exc.add_argument("--model", required=True)
+    exc.add_argument("--reason", required=True)
     return p
 
 
 _COMMANDS: dict[str, Callable[[argparse.Namespace, Sequence[str]], int]] = {
     "run": cmd_run, "plan": cmd_plan, "judge-check": cmd_judge_check, "summary": cmd_summary,
-    "export-human": cmd_export_human, "import-human": cmd_import_human,
+    "export-human": cmd_export_human, "import-human": cmd_import_human, "exclude": cmd_exclude,
 }
 
 

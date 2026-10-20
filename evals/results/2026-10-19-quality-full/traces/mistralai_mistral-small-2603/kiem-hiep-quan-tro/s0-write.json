@@ -1,0 +1,33 @@
+{
+ "request": {
+  "model": "mistralai/mistral-small-2603",
+  "messages": [
+   {
+    "role": "system",
+    "content": "Bạn là một nhà văn Việt Nam viết tiểu thuyết. Bạn viết một cảnh truyện theo dàn ý được giao. Văn phải đọc như người Việt viết, không như bản dịch, không như máy.\n\n## Bám dàn ý\n- Viết đủ các nhịp trong dàn ý, theo đúng thứ tự. Không thêm sự kiện lớn ngoài dàn ý, không kết thúc cảnh sớm hay muộn hơn nhịp cuối.\n- Giữ đúng ngôi kể và nhân vật được bám theo. Không nhảy vào đầu nhân vật khác.\n- Độ dài trong khoảng được giao.\n\n## Bí mật\n- Bạn được biết các bí mật của truyện để viết có chủ đích. **Không được nói ra bí mật trên trang**, dù qua lời người kể, lời thoại, hay ý nghĩ của nhân vật.\n- Được gieo manh mối nhỏ, mơ hồ, đọc lại mới thấy. Không được gieo đến mức người đọc chắc chắn.\n\n## Tiếng Việt tự nhiên\n- Viết câu theo cách người Việt nói và viết. Tránh văn dịch: tránh \"một cách + tính từ\" lặp lại, tránh bị động kiểu \"được/bị\" khi không cần, tránh chuỗi danh từ hoá (\"sự\", \"việc\") dày đặc.\n- Từ Hán Việt dùng đúng chỗ, đúng thể loại. Truyện hiện đại không dùng từ cổ; truyện cổ trang không dùng từ hiện đại.\n- Không chêm tiếng Anh khi tiếng Việt có từ tương đương.\n- **Xưng hô theo đúng bảng được giao** và đổi xưng hô chỉ khi dàn ý hoặc cảm xúc của cảnh đòi hỏi. Xưng hô là quan hệ: sai xưng hô là sai nhân vật.\n\n## Cho thấy, đừng kể\n- Cảm xúc hiện qua hành động, cử chỉ, chi tiết, lời nói. Không gọi tên cảm xúc thay cho người đọc (\"cô cảm thấy buồn\").\n- Chọn chi tiết cụ thể, đúng nơi, đúng thời, có mùi, có tiếng, có chạm. Một chi tiết đúng hơn ba tính từ.\n- Tin người đọc: không giải thích lại điều vừa cho thấy, không tóm tắt ý nghĩa của cảnh.\n\n## Lời thoại\n- Mỗi nhân vật có giọng riêng: từ ngữ, độ dài câu, cách né tránh.\n- Người ta ít khi nói thẳng điều mình nghĩ. Để ẩn ý nằm dưới lời nói.\n- Định dạng: mỗi lượt thoại một dòng, mở đầu bằng \"— \" (gạch dài và một khoảng trắng).\n\n## Nhịp và giọng\n- Đổi độ dài câu. Không để ba câu liền nhau dài bằng nhau, không mở nhiều câu liền nhau bằng cùng một chủ ngữ.\n- Không kết cảnh bằng một câu triết lý, câu đúc kết, hay bài học.\n- Không dùng cấu trúc dàn dựng \"không phải X, mà là Y\" để làm câu nghe sâu hơn.\n- Tránh sáo ngữ của văn máy, ví dụ: \"thời gian như ngừng trôi\", \"một luồng điện chạy dọc sống lưng\", \"trái tim như thắt lại\", \"không thể diễn tả bằng lời\", \"nở một nụ cười bí ẩn\", \"hít một hơi thật sâu\", \"bầu không khí căng thẳng bao trùm\".\n- Không gom ý thành bộ ba cho tròn câu khi nội dung không có ba ý.\n\n## Đầu ra\n- Chỉ viết văn bản của cảnh. Không tiêu đề, không lời dẫn, không giải thích, không ghi chú, không markdown."
+   },
+   {
+    "role": "user",
+    "content": "Thể loại: kiếm hiệp\nNgôi kể: ngôi thứ ba, bám sát Phong Dao\nGiọng văn: kiếm hiệp cổ điển, có nhịp, tiết chế từ Hán Việt\n\nChuyện trước đó:\nPhong Dao, nữ kiếm khách, hộ tống một hòm thư mật về kinh thành. Mưa lớn làm nàng phải nghỉ đêm ở quán trọ Hồng Mai giữa núi. Chủ quán là một lão già lưng còng, nói nhiều.\n\nNhân vật:\n- Phong Dao: khoảng 30, ít cười, kiếm pháp nhanh\n- lão Hồ: chủ quán, ngoài 60, lưng còng, hiếu khách quá mức\n\nXưng hô:\n- Phong Dao với lão Hồ: xưng tại hạ, gọi lão trượng hoặc chủ quán\n- lão Hồ với Phong Dao: xưng lão phu hoặc lão, gọi cô nương\n\nDàn ý (các nhịp, theo thứ tự):\n1. Phong Dao vào quán ướt sũng, chọn bàn quay lưng vào tường\n2. Lão Hồ mang rượu và thịt, hỏi han đường đi; Phong Dao trả lời nửa vời\n3. Lão Hồ kể chuyện một toán cướp hay chặn đường đèo, ngầm khuyên nàng sáng mai đi lối khác\n4. Phong Dao để ý bàn tay lão rót rượu không run, vết chai ở hổ khẩu\n5. Nàng đổi chén rượu với lão một cách khéo léo; cảnh kết khi lão cười, uống cạn\n\nBí mật (người viết được biết; không được để lộ trên trang):\n- Lão Hồ là sát thủ của Đông Xưởng được lệnh lấy hòm thư; lối đi khác là nơi phục kích\n\nĐộ dài: từ 2000 đến 3500 ký tự."
+   }
+  ],
+  "extra": {
+   "max_tokens": 8000,
+   "reasoning": {
+    "effort": "none"
+   }
+  }
+ },
+ "response": {
+  "text": "Nước mưa tuôn ròng ròng trên mái gianh, rơi lộp độp xuống sân đất. Phong Dao đẩy cửa bước vào, người ướt như chuột lột. Chiếc áo choàng đen dính sát vào da, những ngọn kiếm găm trên lưng nhấp nhô theo nhịp thở. Nàng nhìn quanh quán trọ vắng tanh, chỉ thấy vài bóng người ngồi sát tường, cúi đầu trước bát canh nguội.\n\nTại hạ chọn bàn cuối, quay lưng vào vách đất nện. Vị trí này không ai có thể đến từ phía sau lưng. Lão Hồ, người chủ quán lưng còng, lom khom bước lại, tay cầm bình rượu sún men.\n\n— Cô nương đi xa thế? Lão phu thấy trời mưa thế này, chắc phải nghỉ đêm rồi?\n\n— Tại hạ cũng vừa ý.\n\nLão Hồ đặt xuống bàn đĩa thịt khô dai, vài lát dưa hành. Rượu trong bình vẫn còn nóng, hơi bốc lên quẩn quanh mũi.\n\n— Đèo núi phía tây lắm cướp lắm. Mấy hôm trước, có toán năm đứa chặn đường, giết người cướp của không chừa ai. Lão phu nghe nói họ trú ở hang đá sau khe suối.\n\nPhong Dao gắp miếng thịt, nhai chậm. Đôi mắt sắc lạnh nhìn lão già, nhưng không nói gì.\n\n— Cô nương đi kinh thành à? Lão phu khuyên cô nên đi đường quanh phía nam, xa hơn chút nhưng an toàn. Đường đèo nguy hiểm lắm.\n\nNàng đặt đũa xuống, nhìn chén rượu trước mặt. Lão Hồ rót đầy, tay không hề run. Vết chai sần nơi hổ khẩu hiện rõ dưới ánh đèn dầu mờ.\n\n— Tại hạ quen đường rồi.\n\n— Thôi thì... lão phu cũng chỉ nói suông. Cô nương cứ tự liệu.\n\nLão già lùi vài bước, quay đi. Phong Dao liền nâng chén rượu, xoay nhẹ cho mặt thoáng thoáng rượu tràn ra ngoài. Lão Hồ quay lại, đôi mắt nhỏ xíu chợt nheo lại.\n\n— Cô nương khéo đấy.\n\n— Tại hạ học được từ người xưa.\n\nLão Hồ cầm chén rượu kia, uống cạn trong một hơi. Nụ cười nham hiểm hiện trên môi nhăn nheo:\n\n— Chúc cô nương sớm đến nơi.",
+  "usage": {
+   "prompt_tokens": 1230,
+   "completion_tokens": 596,
+   "cost_usd": 0.0005421
+  },
+  "model": "mistralai/mistral-small-2603",
+  "finish_reason": "stop"
+ },
+ "attempts": 5,
+ "latency_s": 9.172595500014722
+}

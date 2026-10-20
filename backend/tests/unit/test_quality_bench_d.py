@@ -770,3 +770,33 @@ async def test_summary_counts_meta_leaks_from_saved_text(tmp_path):
                      for line in summary.splitlines() if line.startswith("| ") and "---" not in line}
     assert rows_by_label["Alpha Nhãn"][col] == "1/2"
     assert rows_by_label["Beta Nhãn"][col] == "0/2"
+
+
+def test_excluded_writer_leaves_table_but_keeps_raw_data(tmp_path):
+    out = tmp_path / "o"
+    bd.main(["run", "--data", str(FIX), "--out", str(out), "--dry-run", "--samples", "3"])
+    raw = (out / bd.SAMPLES).read_bytes()
+    reason = "Loại khỏi bài đo theo quyết định chủ dự án (20/10): lỗi 429 liên tục, 4/10 case"
+    code = bd.main(["exclude", "--data", str(FIX), "--out", str(out),
+                    "--model", "vendor-x/alpha-model", "--reason", reason])
+    assert code == bd.EXIT_OK
+    assert (out / bd.SAMPLES).read_bytes() == raw
+    meta = bd.Store(out).read_meta()
+    assert meta["excluded_writers"]["vendor-x/alpha-model"]["reason"] == reason
+    summary = (out / "summary.md").read_text(encoding="utf-8")
+    assert not any(line.startswith("| Alpha Nhãn") for line in summary.splitlines())
+    assert any(line.startswith("| Beta Nhãn") for line in summary.splitlines())
+    assert f"Alpha Nhãn (`vendor-x/alpha-model`): {reason}" in summary
+
+    assert bd.main(["export-human", "--data", str(FIX), "--out", str(out), "--n", "4"]) == 0
+    mapping = json.loads((out / "human" / "_mapping.json").read_text(encoding="utf-8"))
+    assert {m["model"] for m in mapping["scenes"].values()} == {"vendor-y/beta-model"}
+
+
+def test_exclude_rejects_unknown_model(tmp_path, capsys):
+    out = tmp_path / "o"
+    bd.main(["run", "--data", str(FIX), "--out", str(out), "--dry-run"])
+    code = bd.main(["exclude", "--data", str(FIX), "--out", str(out), "--model", "x/khong-co",
+                    "--reason", "r"])
+    assert code == bd.EXIT_CONFIG
+    assert "x/khong-co" in capsys.readouterr().err

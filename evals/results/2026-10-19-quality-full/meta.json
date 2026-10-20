@@ -1,0 +1,161 @@
+{
+  "bench": "D",
+  "created": "2026-10-19T23:17:52+07:00",
+  "data_dir": "C:\\Work\\AI\\WriTory-s3\\evals\\scenarios\\quality",
+  "fingerprint": {
+    "dry_run": false,
+    "data_sha256": {
+      "cases.yaml": "a12dc3cf7f7f86492eed4749f0e92ba04515b1f4f01c14c69508c91242fde96c",
+      "rubric.yaml": "cc633237b3cab4d5d1b0db446bce94c4a50bf0aa001ea1bc32b455dcfcf9f3a0",
+      "models.yaml": "26cad385946668b3151bab1669434574de56a24ff93ff689ebaf5cdc7323d598",
+      "style_guide_vi.md": "f7f2b272078c4b7de8d899377c6f7addb2120cce41a084882fb293f3cc080429"
+    },
+    "brief_version": "d-brief-1",
+    "judge_version": "d-judge-1",
+    "judge_frame_sha256": "63d69d214f3c11a80782dd81a720ce251640eede9a40c4e2966f1230b8567ad3",
+    "judge": {
+      "model": "claude-sonnet-5-5",
+      "effort": "high",
+      "thinking": "adaptive",
+      "max_tokens": 16000
+    }
+  },
+  "runs": [
+    {
+      "command": "run",
+      "started": "2026-10-19T23:17:52+07:00",
+      "commit": "1c9aeae8ec0bfc916737208ffecbc058be5960ab",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "full",
+        "--samples",
+        "1",
+        "--concurrency",
+        "4",
+        "--budget-anthropic",
+        "12",
+        "--budget-openrouter",
+        "2",
+        "--models",
+        "xiaomi/mimo-v2.6-flash,xiaomi/mimo-v2.6-pro,deepseek/deepseek-v4.1-flash-1017,google/gemini-3.5-flash-lite,openai/gpt-6-luna,qwen/qwen3.7-plus,minimax/minimax-m3,qwen/qwen3.8-flash,openai/gpt-6.1-sol",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "settings": {
+        "samples": 1,
+        "judge_runs": 2,
+        "max_judge_runs": 3,
+        "rejudge_gap": 2,
+        "case_timeout_s": 900.0,
+        "concurrency": 4,
+        "quality": {
+          "ngram_words": 4,
+          "max_repeats": 2,
+          "latin_run_min_words": 4
+        }
+      },
+      "budgets": {
+        "openrouter": 2.0,
+        "anthropic": 12.0
+      },
+      "writers": [
+        "xiaomi/mimo-v2.6-flash",
+        "xiaomi/mimo-v2.6-pro",
+        "deepseek/deepseek-v4.1-flash-1017",
+        "google/gemini-3.5-flash-lite",
+        "openai/gpt-6-luna",
+        "qwen/qwen3.7-plus",
+        "minimax/minimax-m3",
+        "qwen/qwen3.8-flash",
+        "openai/gpt-6.1-sol"
+      ],
+      "cases": [
+        "tu-tien-dot-pha",
+        "trinh-tham-tham-van",
+        "do-thi-chia-tay",
+        "hau-tan-the-tram-xang",
+        "kiem-hiep-quan-tro",
+        "kinh-di-dem-gio",
+        "ngon-tinh-cong-so",
+        "bao-cap-tem-phieu",
+        "khoa-huyen-tram-vu-tru",
+        "hoc-duong-thu-nac-danh"
+      ],
+      "python": "3.13.14",
+      "anthropic_sdk": "1.15.0",
+      "finished": "2026-10-19T23:39:23+07:00",
+      "wall_s": 1290.7,
+      "stopped": null,
+      "disabled_writers": []
+    },
+    {
+      "command": "run",
+      "started": "2026-10-19T23:39:40+07:00",
+      "commit": "7b1a5e9fca32088173452dbc4aaaae9ab49802f0",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--out",
+        "../evals/results/2026-10-19-quality-full",
+        "--samples",
+        "1",
+        "--concurrency",
+        "1",
+        "--budget-anthropic",
+        "12",
+        "--budget-openrouter",
+        "2",
+        "--models",
+        "mistralai/mistral-small-2603",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "settings": {
+        "samples": 1,
+        "judge_runs": 2,
+        "max_judge_runs": 3,
+        "rejudge_gap": 2,
+        "case_timeout_s": 900.0,
+        "concurrency": 1,
+        "quality": {
+          "ngram_words": 4,
+          "max_repeats": 2,
+          "latin_run_min_words": 4
+        }
+      },
+      "budgets": {
+        "openrouter": 2.0,
+        "anthropic": 12.0
+      },
+      "writers": [
+        "mistralai/mistral-small-2603"
+      ],
+      "cases": [
+        "tu-tien-dot-pha",
+        "trinh-tham-tham-van",
+        "do-thi-chia-tay",
+        "hau-tan-the-tram-xang",
+        "kiem-hiep-quan-tro",
+        "kinh-di-dem-gio",
+        "ngon-tinh-cong-so",
+        "bao-cap-tem-phieu",
+        "khoa-huyen-tram-vu-tru",
+        "hoc-duong-thu-nac-danh"
+      ],
+      "python": "3.13.14",
+      "anthropic_sdk": "1.15.0",
+      "finished": "2026-10-19T23:44:54+07:00",
+      "wall_s": 313.5,
+      "stopped": null,
+      "disabled_writers": []
+    }
+  ],
+  "excluded_writers": {
+    "mistralai/mistral-small-2603": {
+      "reason": "Loại khỏi bài đo theo quyết định chủ dự án (20/10): lỗi 429 liên tục, 4/10 case",
+      "time": "2026-10-20T08:12:45+07:00"
+    }
+  }
+}

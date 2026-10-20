@@ -50,6 +50,7 @@ Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writo
 - **Key:** chỉ đọc `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY` và, nếu có, `ANTHROPIC_WORKSPACE_ID` (biến môi trường hoặc `--env-file`). Mỗi lệnh chỉ đòi key nó dùng.
 - **Trần:** lượt chạy thật bắt buộc có `--budget-openrouter` và `--budget-anthropic` (USD). Trần tính cả chi phí các lần chạy trước trong cùng thư mục. Trước mỗi lời gọi, code giữ chỗ theo chi phí tối đa có thể của lời gọi đó, nên không vượt trần.
 - **Mã thoát:** 0 xong; 1 lỗi cấu hình hoặc dữ liệu; 2 dừng vì chạm trần; 3 dừng vì lỗi không chạy tiếp được (key sai, hết credit, yêu cầu tới giám khảo bị từ chối, giám khảo trả lời bằng model khác); 4 kiểm giám khảo không đạt.
+- **Loại model khỏi bảng** (`exclude`): lý do và người quyết ghi vào `meta.json`; model đó không vào bảng và không vào `export-human`. Dữ liệu thô và chi phí giữ nguyên.
 - Kết quả dùng để cập nhật danh sách model trong `config/models.yaml`.
 
 Lệnh (chạy trong `backend/`):
@@ -64,6 +65,7 @@ uv run python -m writory.quality.bench_d run --out <thư mục kết quả> ... 
 uv run python -m writory.quality.bench_d summary --out <thư mục kết quả>
 uv run python -m writory.quality.bench_d export-human --out <thư mục kết quả>
 uv run python -m writory.quality.bench_d import-human --out <thư mục kết quả>
+uv run python -m writory.quality.bench_d exclude --out <thư mục kết quả> --model <id> --reason "<lý do, ai quyết>"
 ```
 
 ## Red-team guardrail
