@@ -105,6 +105,7 @@ from writory.pipeline.setup import (
 )
 from writory.pipeline.store import ChapterStore, GraphStore
 from writory.pipeline.story_plan import StoryPlan
+from writory.pipeline.summary import SummaryOutput
 from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách, key, trạng thái git
     EST_CHARS_PER_TOKEN,
     Budget,
@@ -246,7 +247,7 @@ ROLE_BY_SCHEMA_NAME: dict[str, str] = {
     SettingsOutput.__name__: "setup", PlotsOutput.__name__: "setup",
     CharactersOutput.__name__: "setup", BuildOutput.__name__: "setup",
     SceneOutline.__name__: "outline", ExtractOutput.__name__: "extract",
-    ChoicesOutput.__name__: "choices",
+    ChoicesOutput.__name__: "choices", SummaryOutput.__name__: "summary",
 }
 _SETUP_STEP_BY_SCHEMA = dict(zip(
     (SettingsOutput.__name__, PlotsOutput.__name__, CharactersOutput.__name__,
@@ -431,6 +432,15 @@ def reject_reason(reason: str) -> str:
 
 def _kinds(issues) -> list[str]:
     return [f"{i.source}:{i.kind}" for i in issues]
+
+
+def _summary_status(out: ChapterOutcome) -> str | None:
+    """`made`, `failed`, `skipped` (chương cuối: không cần tóm tắt), None (chương chưa ghi)."""
+    if not out.committed:
+        return None
+    if out.finished:
+        return "skipped"
+    return "made" if out.summary is not None else "failed"
 
 
 def _choice_truth(c: Choice) -> dict[str, Any]:
@@ -750,11 +760,16 @@ class StoryRun:
             "scenes": [{"scene": s.number, "attempts": s.attempts, "chars": len(s.text),
                         "left_when_shown": _kinds(s.unresolved)} for s in out.scenes],
             "reviews": reviews, "rewrites": sum(r["verdict"] == "rewrite" for r in reviews),
+            "fallbacks": sum(r["verdict"] == "fallback" for r in reviews),
             "choices": len(out.choices), "cost_usd": round(out.cost_usd, 6),
+            # Tóm tắt (D-49): chỉ trạng thái và số chương, chữ tóm tắt chỉ ở truth_dump.
+            "summary": _summary_status(out),
+            "summary_error": out.summary_error.value if out.summary_error else None,
+            "summaries_missing": list(out.summaries_missing),
         })
         self.truth_chapters[str(number)].append({
             "attempt": attempt, "commit_id": out.commit_id, "player_action": action,
-            "error_detail": out.error_detail,
+            "error_detail": out.error_detail, "summary": out.summary,
             "outlines": [{"scene": s.number, **s.outline.model_dump()} for s in out.scenes],
             "reviews": [{
                 "scene": r.scene, "attempt": r.attempt, "verdict": r.verdict,
@@ -986,7 +1001,16 @@ def build_report(run: StoryRun) -> dict[str, Any]:
                    "blocking_found": dict(sorted(blocking.items())),
                    "left_when_shown": dict(sorted(left.items()))},
         "rewrites": sum(a["rewrites"] for a in run.attempts),
+        # Bản viết lại có lỗi chặn nên hiện bản trước (D-50, bổ sung D-36).
+        "fallbacks": sum(a["fallbacks"] for a in run.attempts),
         "scenes_blocked": sum(1 for a in run.attempts if a["blocked_scene"]),
+        # Tóm tắt chương (D-49): tạo được, lỗi, và số chương đã ghi chạy thiếu tóm tắt chương trước.
+        "summaries": {
+            "made": sum(a["summary"] == "made" for a in run.attempts),
+            "failed": sum(a["summary"] == "failed" for a in run.attempts),
+            "chapters_missing_previous": sum(bool(a["summaries_missing"])
+                                             for a in run.attempts if a["committed"]),
+        },
         "rejected_edges": {"total": sum(rejected.values()), "by_reason": dict(sorted(rejected.items()))},
         "player_retries_used": dict(run.retries_used),
         "chapters": run.attempts,
@@ -1027,8 +1051,12 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         (f"- Trần config (USD): cảnh {limits['per_scene']}, chương {limits['per_chapter']}, "
          f"truyện {limits['per_story']}. Cảnh đắt nhất {cost['max_scene_usd']:.4f}, lượt chương "
          f"đắt nhất {cost['max_chapter_attempt_usd']:.4f}."),
-        (f"- Viết lại: {report['rewrites']}; cảnh bị chặn: {report['scenes_blocked']}; tự bấm thử "
+        (f"- Viết lại: {report['rewrites']}; hiện bản trước vì bản viết lại có lỗi chặn: "
+         f"{report['fallbacks']}; cảnh bị chặn: {report['scenes_blocked']}; tự bấm thử "
          f"lại: {_fmt_counts(report['player_retries_used'])}."),
+        (f"- Tóm tắt chương: tạo {report['summaries']['made']}, lỗi "
+         f"{report['summaries']['failed']}; chương chạy thiếu tóm tắt chương trước: "
+         f"{report['summaries']['chapters_missing_previous']}."),
         (f"- Lỗi tìm thấy: {_fmt_counts(report['issues']['found'])}. Còn lại khi hiện: "
          f"{_fmt_counts(report['issues']['left_when_shown'])}."),
         (f"- Cạnh bộ trích bỏ: {report['rejected_edges']['total']} "
@@ -1043,7 +1071,7 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         t = report["tokens"].get(role, {"prompt": 0, "completion": 0})
         lines.append(f"| {role} | {report['calls']['by_role'].get(role, 0)} | {usd:.5f} "
                      f"| {t['prompt']} | {t['completion']} |")
-    roles = ("setup", "outline", "writer", "extract", "choices")
+    roles = ("setup", "outline", "writer", "extract", "summary", "choices")
     lines += ["", "## Chi phí theo chương (USD, mọi lượt)", "",
               "| Chương | " + " | ".join(roles) + " | Tổng |",
               "|---|" + "---|" * (len(roles) + 1)]
@@ -1135,6 +1163,10 @@ môn vô danh thì chỉ có một lý do, và lý do ấy đang nằm yên sát
 
 Khi tiếng điểm danh vang lên lần thứ hai, tôi chạy vội về hàng. Phía trên bậc đá, vị chấp sự mặt \
 lạnh đã ghi tên tôi vào sổ phạt, nét bút dài và chậm như cố ý cho cả sân cùng thấy."""
+
+# Tóm tắt giả, ngôi thứ nhất như cảnh giả (D-51), cho đề các chương sau (D-49).
+DRY_RUN_SUMMARY = ("Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, "
+                   "nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.")
 
 _DRY_SETTINGS = [
     {"title": "Tông môn trên mây",
@@ -1251,7 +1283,8 @@ _EDGE_NULLS = {"kind": None, "score": None, "how": None, "told_by": None, "quote
 class DryRunLLM(FakeLLM):
     """--dry-run: model giả trả câu ghi sẵn theo vai (nhận ra qua schema JSON), đủ hợp lệ để đi hết
     đường: 3 lựa chọn mỗi bước khởi tạo, thế giới `dry_run_world`, dàn ý, một cảnh viết tay, bộ trích
-    hé lộ `DRY_RUN_NPC` ở lần đầu nhân vật này xuất hiện, 3 lựa chọn dùng mã trong sổ tay.
+    hé lộ `DRY_RUN_NPC` ở lần đầu nhân vật này xuất hiện, một tóm tắt chương, 3 lựa chọn dùng mã
+    trong sổ tay.
     Không mạng, không key."""
 
     def __init__(self, total_chapters: int, *, cost_usd: float | None = DRY_RUN_COST_USD) -> None:
@@ -1276,6 +1309,7 @@ class DryRunLLM(FakeLLM):
             },
             ExtractOutput.__name__: lambda: self._extract(text),
             ChoicesOutput.__name__: lambda: self._choices(text),
+            SummaryOutput.__name__: lambda: {"summary": DRY_RUN_SUMMARY},
         }
         return json.dumps(replies[schema_name](), ensure_ascii=False)
 

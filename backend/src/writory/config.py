@@ -91,6 +91,7 @@ class ContextLimits(_Section):
     _path = "context"
     _file = "limits.yaml"
     writer_max_neighbors: PositiveInt | None
+    summary_max_chars: PositiveInt | None = None  # độ dài tối đa của tóm tắt chương (D-49)
 
 
 class LimitsConfig(_Strict):
@@ -114,6 +115,7 @@ class RoleModels(_Section):
     narrator: str | None
     classify: str | None
     setup: str | None
+    summary: str | None = None  # tóm tắt chương vừa ghi (D-49)
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
@@ -129,6 +131,7 @@ class RoleReasoning(_Strict):
     narrator: ReasoningEffort | None = None
     classify: ReasoningEffort | None = None
     setup: ReasoningEffort | None = None
+    summary: ReasoningEffort | None = None
 
 
 class WriterTier(_Strict):

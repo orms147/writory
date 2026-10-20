@@ -33,6 +33,7 @@ from writory.llm.fake import FakeLLM
 from writory.pipeline import choices as choices_mod
 from writory.pipeline import extract as extract_mod
 from writory.pipeline import scene as scene_mod
+from writory.pipeline import summary as summary_mod
 from writory.pipeline.extract import Entity
 from writory.pipeline.store import entities_from_rows
 from writory.pipeline.story_plan import StoryPlan
@@ -156,6 +157,7 @@ def role_of(messages: list[Message]) -> str:
         ("outline", scene_mod.OUTLINE_SYSTEM_PROMPT),
         ("extract", extract_mod.SYSTEM_PROMPT),
         ("choices", choices_mod.SYSTEM_PROMPT),
+        ("summary", summary_mod.SYSTEM_PROMPT),
     ):
         if system.startswith(prompt[:60]):
             return role
@@ -229,11 +231,27 @@ def choices_reply(*, action_text: str = "Xuống bến hỏi chuyện gã lái �
     return reply
 
 
+SUMMARY_TEXT = "Lan mang cháo tới gác, hỏi về thanh kiếm; đêm đó Thanh Sương biến mất."
+
+
+def summary_reply(text: str = SUMMARY_TEXT) -> str:
+    return json.dumps({"summary": text}, ensure_ascii=False)
+
+
+# Tóm tắt chương vừa ghi (D-49): lời gọi ngay sau bước ghi, trước bước lựa chọn.
+SUMMARY = summary_reply()
+
+
 def full_script(*, scene_1=SCENE_1, scene_2=SCENE_2, choices=None) -> list[Any]:
-    """Thứ tự lời gọi của một chương 2 cảnh không viết lại."""
+    """Thứ tự lời gọi của một chương 2 cảnh không viết lại: hai cảnh, tóm tắt, lựa chọn."""
     return [outline_reply(), scene_1, EXTRACT_1,
             outline_reply(), scene_2, EXTRACT_2,
-            choices or choices_reply()]
+            SUMMARY, choices or choices_reply()]
+
+
+def final_chapter_script() -> list[Any]:
+    """Chương cuối của kế hoạch: hai cảnh, không tóm tắt, không lựa chọn (D-50)."""
+    return full_script()[:6]
 
 
 # --- kho truyện trong bộ nhớ --------------------------------------------------------------------
@@ -273,7 +291,7 @@ class MemoryStore:
     Ghi chương kiểm như `commit_chapter`: thứ tự chương, quy tắc D-21, id tham chiếu có thật."""
 
     def __init__(self, story_id: str = "mem-story", through: int = COMMITTED_THROUGH,
-                 *, pending: bool = False) -> None:
+                 *, pending: bool = False, summaries: dict[int, str] | None = None) -> None:
         self.story_id = story_id
         self.packages: list[ChangePackage] = [
             c.package for c in SAMPLE.chapters if c.number <= through
@@ -282,6 +300,14 @@ class MemoryStore:
         self.pending = pending
         self.commits: list[tuple[int, list[str], ChangePackage]] = []
         self.context_calls: list[tuple[int, tuple[str, ...]]] = []
+        self.saved_summaries: dict[int, str] = dict(summaries or {})
+
+    def summaries(self, chapters) -> dict[int, str]:
+        return {c: self.saved_summaries[c] for c in chapters if c in self.saved_summaries}
+
+    def save_summary(self, chapter: int, text: str) -> None:
+        assert chapter <= self.committed, (chapter, self.committed)  # chỉ sau khi ghi chương
+        self.saved_summaries.setdefault(chapter, text)
 
     def committed_chapter(self) -> int | None:
         return self.committed
@@ -362,6 +388,13 @@ class OverlayStore:
         self.created: str | None = None
         self.deleted = False
         self.commits: list[tuple[int, list[str]]] = []
+        self.saved_summaries: dict[int, str] = {}
+
+    def summaries(self, chapters) -> dict[int, str]:
+        return {c: self.saved_summaries[c] for c in chapters if c in self.saved_summaries}
+
+    def save_summary(self, chapter: int, text: str) -> None:
+        self.saved_summaries.setdefault(chapter, text)
 
     def create_story(self, length_level: str) -> None:
         self.created = length_level

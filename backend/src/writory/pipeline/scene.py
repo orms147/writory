@@ -35,8 +35,9 @@ from writory.safety.wrap import (
 )
 
 # outline-3, writer-3: thêm mục tiêu của chương theo bản kế hoạch (D-49).
-OUTLINE_PROMPT_VERSION = "outline-3"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-3"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-4, writer-4: thêm tóm tắt hai chương gần nhất (D-49).
+OUTLINE_PROMPT_VERSION = "outline-4"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-4"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -108,6 +109,9 @@ class SceneBrief:
     player_action: str | None  # lựa chọn hoặc hành động tự viết dẫn tới chương (đã qua G5)
     earlier: tuple[EarlierScene, ...]
     goals: ChapterGoals | None = None  # mục tiêu của chương theo bản kế hoạch (D-49)
+    # (chương, tóm tắt) của các chương gần nhất, cũ trước (D-49). Chữ do model tóm tắt viết từ văn
+    # có chữ người chơi: luôn bọc như dữ liệu (G4).
+    summaries: tuple[tuple[int, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -207,6 +211,11 @@ def _head(out: _Lines, brief: SceneBrief) -> None:
     out.line(f"Chương {brief.chapter}, cảnh {brief.scene}/{brief.scene_count}{act}. "
              f"Độ dài cảnh: từ {brief.min_chars} đến {brief.max_chars} ký tự.")
     out.line("Thiết lập truyện do người chơi chọn:", UserAuthored(brief.story_brief, "story_setup"))
+    if brief.summaries:
+        out.line("Tóm tắt các chương trước (ghi chú cho người viết, không phải văn của truyện; "
+                 "cảnh này nối tiếp từ đó, không lặp lại):")
+        for number, text in brief.summaries:
+            out.line(f"Chương {number}:", UserAuthored(text, "chapter_summary"))
     if brief.player_action:
         out.line("Lựa chọn của người chơi dẫn tới chương này:",
                  UserAuthored(brief.player_action, "player_action"))

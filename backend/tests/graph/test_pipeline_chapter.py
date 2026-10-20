@@ -62,6 +62,11 @@ async def test_chapter_4_is_committed_and_visible(pg, driver, new_db_story_id, t
     assert "Lý Thất" not in repr(view)
     assert "f_lan_spy" not in {e.id for e in view.entries}
     assert outcome.committed and len(outcome.choices) == 3
+    # Tóm tắt chương 4 lưu ở Postgres (D-49), cho đề của chương 5 và 6.
+    from tests.pipeline_fixtures import SUMMARY_TEXT
+    from writory.db import load_chapter_summaries
+
+    assert load_chapter_summaries(pg, sid, [4]) == {4: SUMMARY_TEXT}
     # Context của model viết đến từ writer_context thật trên Neo4j.
     writer = [c for c in llm.calls if c[0].content.startswith("Văn phong thử.")]
     assert len(writer) == 2 and "Sự thật cần tôn trọng" in writer[0][-1].content

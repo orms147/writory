@@ -30,6 +30,7 @@ from tests.pipeline_fixtures import (
     ScriptedLLM,
     calls_of,
     choices_reply,
+    final_chapter_script,
     full_script,
     make_config,
     outline_reply,
@@ -164,8 +165,8 @@ def test_chapter_stream_commits_and_saves_choices(pg, driver, story, tmp_path):
     # G8: mỗi lời gọi một dòng nhật ký, theo vai, ở chương đang viết.
     rows = pg.execute("SELECT role, chapter FROM llm_costs WHERE story_id = %s ORDER BY id",
                       (sid,)).fetchall()
-    assert [r for r, _ in rows] == ["outline", "writer", "extract", "outline", "writer",
-                                    "extract", "choices"]
+    assert [r for r, _ in rows] == ["outline", "writer", "extract", "outline", "writer", "extract",
+                                    "summary", "choices"]
     assert {c for _, c in rows} == {4}
 
 
@@ -263,7 +264,7 @@ def test_last_planned_chapter_finishes_the_story_without_choices(pg, driver, sto
     final = PLAN.model_copy(update={"acts": [PLAN.acts[0].model_copy(update={"to_chapter": 4})],
                                     "secrets": []})
     sid = story(plan=final)
-    llm = ScriptedLLM(full_script()[:-1])  # không có câu trả lời cho bước lựa chọn
+    llm = ScriptedLLM(final_chapter_script())  # không có tóm tắt hay lựa chọn
     with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
         resp = write_next(client, sid)
         state = client.get(f"/stories/{sid}").json()

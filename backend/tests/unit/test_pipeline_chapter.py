@@ -25,6 +25,8 @@ from tests.pipeline_fixtures import (
     SCENE_1_META,
     SCENE_2,
     SETUP_PC_NAME,
+    SUMMARY,
+    SUMMARY_TEXT,
     TRUTH_AT_4,
     MemoryStore,
     OverlayStore,
@@ -32,6 +34,7 @@ from tests.pipeline_fixtures import (
     calls_of,
     choices_reply,
     extract_reply,
+    final_chapter_script,
     full_script,
     make_config,
     outline_reply,
@@ -178,7 +181,7 @@ async def test_writer_tier_without_reasoning_sends_no_extra(tmp_path):
 
 async def test_quality_issue_rewrites_exactly_once(tmp_path):
     script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, SCENE_1, EXTRACT_1,
-              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     events, outcome, llm, _ = await run(script, tmp_path)
 
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
@@ -198,7 +201,7 @@ async def test_quality_issue_rewrites_exactly_once(tmp_path):
 async def test_issue_left_after_rewrite_shows_second_draft_and_logs(tmp_path, caplog):
     second = SCENE_1_CLICHE.replace("Lan dọn bát", "Lan dọn bát xong")
     script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, second, EXTRACT_1,
-              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     with caplog.at_level(logging.WARNING, logger="writory.pipeline.chapter"):
         events, outcome, llm, store = await run(script, tmp_path)
 
@@ -216,7 +219,8 @@ async def test_narration_in_wrong_person_is_rewritten_never_blocked(tmp_path):
     """D-51: lời kể lệch ngôi đã chốt là lỗi mức viết lại. Văn truyện mẫu kể ngôi thứ ba; ở đây
     truyện chốt ngôi thứ nhất, nên mỗi cảnh viết lại một lần kèm góp ý, rồi vẫn hiện bản thứ hai."""
     script = [outline_reply(), SCENE_1, EXTRACT_1, SCENE_1, EXTRACT_1,
-              outline_reply(), SCENE_2, EXTRACT_2, SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SCENE_2, EXTRACT_2, SUMMARY,
+              choices_reply()]
     config = make_config(tmp_path, quality={"narration": {"person": "first"}})
     events, outcome, llm, store = await run(script, tmp_path, config=config)
 
@@ -261,7 +265,7 @@ async def test_writer_is_told_the_story_person(tmp_path):
 async def test_guard_issue_left_after_rewrite_is_not_written_to_graph(tmp_path):
     """Lỗi người canh còn sau lượt viết lại: hiện cảnh, nhưng cạnh mâu thuẫn không vào gói."""
     script = [outline_reply(), SCENE_1, EXTRACT_DEAD_HOLDS, SCENE_1, EXTRACT_DEAD_HOLDS,
-              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     events, outcome, llm, store = await run(script, tmp_path)
 
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
@@ -279,7 +283,7 @@ async def test_outcome_keeps_every_review_for_measurement(tmp_path):
     """Mỗi lượt soát được giữ ở phía máy chủ (loại lỗi, mức chặn, cạnh bị bỏ), kể cả lỗi đã sửa
     ở lượt viết lại: dữ liệu để đo người canh và kiểm văn (D-43)."""
     script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, SCENE_1, EXTRACT_1,
-              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     _, outcome, _, _ = await run(script, tmp_path)
     assert [(r.scene, r.attempt, r.verdict) for r in outcome.reviews] == [
         (1, 1, "rewrite"), (1, 2, "accept"), (2, 1, "accept")]
@@ -312,7 +316,7 @@ async def test_leak_in_both_drafts_blocks_scene(tmp_path):
 
 async def test_leak_in_first_draft_only_is_rewritten_and_shown_clean(tmp_path):
     script = [outline_reply(), SCENE_1_LEAK, EXTRACT_1, SCENE_1, EXTRACT_1,
-              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     events, _, llm, _ = await run(script, tmp_path)
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     assert all("gián điệp" not in e.model_dump_json() for e in events)
@@ -361,7 +365,7 @@ async def test_protagonist_name_is_not_a_leak_even_if_never_revealed(tmp_path):
     Tên do người chơi chọn, nên cảnh không bị chặn; lựa chọn nêu tên đó cũng hiện."""
     outline = outline_reply(present=("protagonist", "ha_ba_tung"))
     script = [outline, SCENE_PC, EXTRACT_REVEAL_HA, outline, SCENE_PC, extract_reply(),
-              _choices_naming_protagonist]
+              SUMMARY, _choices_naming_protagonist]
     events, outcome, store = await run_new_story(script, tmp_path)
 
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
@@ -414,7 +418,7 @@ async def test_name_the_player_read_at_setup_is_not_a_leak(tmp_path, brief, show
         assert kinds(events) == ["scene_blocked"] and store.committed == 0
         return
     script = [outline, text, EXTRACT_REVEAL_HA, outline, text, extract_reply(),
-              _choices_naming_visitor]
+              SUMMARY, _choices_naming_visitor]
     events, outcome, store = await run_new_story(script, tmp_path, brief=brief)
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     assert all(i.source != "leak" for r in outcome.reviews for i in r.issues)
@@ -594,7 +598,7 @@ async def test_chapter_goals_reach_outline_and_writer_but_never_choices(tmp_path
     """Mục tiêu của chương (có chữ bí mật đến hạn) vào đề dàn ý và đề viết; không vào đề tạo
     lựa chọn hay sự kiện cho người chơi (G1)."""
     script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2,
-              SCENE_2, EXTRACT_2, choices_reply()]
+              SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     llm = ScriptedLLM(script)
     config = make_config(tmp_path)
     chapter_run = ChapterRun(request(), llm=llm, store=MemoryStore(), config=config,
@@ -615,7 +619,7 @@ async def test_overdue_secret_rewrites_last_scene_once_and_never_blocks(tmp_path
     """Trễ hạn (D-49): hết chương đến hạn mà bí mật chưa lộ → viết lại cảnh cuối một lần (D-36),
     kèm góp ý; vẫn chưa lộ thì hiện bản hai, ghi chương, có lựa chọn như thường."""
     script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2,
-              SCENE_2, EXTRACT_2, choices_reply()]
+              SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     llm = ScriptedLLM(script)
     config = make_config(tmp_path)
     store = MemoryStore()
@@ -635,7 +639,7 @@ async def test_overdue_secret_rewrites_last_scene_once_and_never_blocks(tmp_path
 async def test_last_chapter_of_the_plan_ends_the_story_without_choices(tmp_path):
     """Chương cuối (D-50): đề đòi kết truyện; không gọi model lựa chọn; phát `story_finished`
     chỉ mang số chương."""
-    script = full_script()[:-1]  # không có câu trả lời cho bước lựa chọn
+    script = final_chapter_script()  # không có tóm tắt hay lựa chọn
     llm = ScriptedLLM(script)
     config = make_config(tmp_path)
     store = MemoryStore()
@@ -714,7 +718,7 @@ async def test_extracted_free_text_cannot_fake_a_data_block(tmp_path):
         close=["rel_minh_lan_3"],
     )
     script = [outline_reply(), SCENE_1, poisoned,
-              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
     events, _, llm, _ = await run(script, tmp_path)
 
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
@@ -760,3 +764,139 @@ def test_scene_count_outside_config_range_is_refused(tmp_path):
     with pytest.raises(ValueError):
         ChapterRun(request(scene_count=5), llm=ScriptedLLM([]), store=MemoryStore(),
                    config=config, plan=PLAN, tracker=CostTracker(config.limits.cost_usd))
+
+
+# --- bản viết lại sinh lỗi chặn mà bản trước không có (D-50, bổ sung D-36) ------------------------
+
+
+async def test_rewrite_that_adds_a_blocking_issue_falls_back_to_the_earlier_draft(tmp_path, caplog):
+    """Bản đầu chỉ có lỗi mức viết lại (sáo ngữ); bản viết lại lộ bí mật (mức chặn). Hiện bản
+    đầu, không chặn người chơi; log chỉ ghi loại lỗi."""
+    script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, SCENE_1_LEAK, EXTRACT_1,
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    with caplog.at_level(logging.WARNING, logger="writory.pipeline.chapter"):
+        events, outcome, _, store = await run(script, tmp_path)
+
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert of_type(events, "scene_ready")[0].text == normalize_dashes(SCENE_1_CLICHE)
+    assert all(LEAK_SENTENCE not in e.model_dump_json() for e in events)
+    assert [(r.scene, r.attempt, r.verdict) for r in outcome.reviews] == [
+        (1, 1, "rewrite"), (1, 2, "fallback"), (2, 1, "accept")]
+    assert [i.kind for i in outcome.scenes[0].unresolved] == ["cliche"]
+    assert store.commits[0][1][0] == normalize_dashes(SCENE_1_CLICHE)
+    logged = " ".join(r.getMessage() for r in caplog.records)
+    assert "leak:" in logged and "gián điệp" not in logged
+
+
+async def test_blocking_issue_in_every_draft_still_blocks(tmp_path):
+    """Không có bản nào sạch lỗi chặn thì vẫn chặn như D-36 (đối chứng cho ca trên)."""
+    script = [outline_reply(), SCENE_1_LEAK, EXTRACT_1, SCENE_1_META, EXTRACT_1]
+    events, outcome, _, store = await run(script, tmp_path)
+    assert kinds(events) == ["scene_blocked"] and not store.commits
+    assert [r.verdict for r in outcome.reviews] == ["rewrite", "block"]
+
+
+# --- tóm tắt chương trước (D-49) ---------------------------------------------------------------
+
+SUMMARIES = {1: "TÓM TẮT MỘT: Minh nhận việc ở lò rèn.",
+             2: "TÓM TẮT HAI: Lão Gù giao thanh kiếm và lá thư.",
+             3: "TÓM TẮT BA: Lão Gù chết sau miếu Bà."}
+
+
+async def test_summary_of_the_committed_chapter_is_made_and_saved(tmp_path):
+    """Sau khi ghi chương: một lời gọi vai `summary`, đầu vào chỉ là chữ đã hiện, bọc dữ liệu
+    (G4); tóm tắt lưu vào kho, không tới người chơi."""
+    events, outcome, llm, store = await run(full_script(), tmp_path)
+    [call] = calls_of(llm, "summary")
+    system, user = call
+    shown = [e.text for e in of_type(events, "scene_ready")]
+    assert all(t not in system.content for t in shown)
+    assert all(_only_inside_blocks(user.content, t) for t in shown)
+    assert store.saved_summaries[CHAPTER] == SUMMARY_TEXT
+    assert outcome.summary == SUMMARY_TEXT and outcome.summary_error is None
+    assert all(SUMMARY_TEXT not in e.model_dump_json() for e in events)
+    # Thứ tự: ghi chương → tóm tắt → lựa chọn.
+    assert [role_of(c) for c in llm.calls][-2:] == ["summary", "choices"]
+
+
+async def test_previous_two_summaries_reach_outline_and_writer_as_data(tmp_path):
+    store = MemoryStore(summaries=SUMMARIES)
+    _, outcome, llm, _ = await run(full_script(), tmp_path, store=store)
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            content = call[-1].content
+            assert "Tóm tắt các chương trước" in content
+            for text in (SUMMARIES[2], SUMMARIES[3]):
+                assert _only_inside_blocks(content, text)
+            assert SUMMARIES[1] not in content  # chỉ hai chương gần nhất
+            assert content.index(SUMMARIES[2]) < content.index(SUMMARIES[3])
+            assert all(text not in call[0].content for text in SUMMARIES.values())
+    choices = "\n".join(m.content for m in calls_of(llm, "choices")[0])
+    assert all(text not in choices for text in SUMMARIES.values())
+    assert outcome.summaries_missing == []
+
+
+async def test_player_text_inside_a_summary_stays_data(tmp_path):
+    """G4: tóm tắt do model viết từ văn có chữ người chơi; vào đề chương sau chỉ trong khối dữ
+    liệu, kể cả khi nó chứa câu tấn công hay thẻ đóng khối."""
+    poisoned = f"{ATTACK} {FAKE_CLOSE}"
+    _, _, llm, _ = await run(full_script(), tmp_path,
+                             store=MemoryStore(summaries={3: poisoned}))
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            assert all(ATTACK not in m.content for m in call if m.role == "system")
+            assert _only_inside_blocks(call[-1].content, ATTACK)
+            assert FAKE_CLOSE not in call[-1].content
+            assert _blocks_balanced(call[-1].content)
+
+
+async def test_failed_summary_keeps_the_chapter_and_the_next_chapter_still_runs(tmp_path, caplog):
+    """Lỗi khi tóm tắt không làm hỏng chương đã ghi (D-6): chương 4 vẫn ghi, vẫn có lựa chọn;
+    chương 5 chạy thiếu tóm tắt chương 4, log ghi lại."""
+    store = MemoryStore(summaries={2: SUMMARIES[2], 3: SUMMARIES[3]})
+    attempts = 1 + load_config().limits.retries.llm_transient  # mạng lỗi mọi lần thử
+    failing = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2,
+               *[unavailable() for _ in range(attempts)], choices_reply()]
+    with caplog.at_level(logging.WARNING, logger="writory.pipeline.chapter"):
+        events, outcome, llm, _ = await run(failing, tmp_path, store=store)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert outcome.committed and outcome.error is None
+    assert outcome.summary is None and outcome.summary_error == ErrorCode.RETRY_LIMIT_REACHED
+    assert CHAPTER not in store.saved_summaries
+    assert "tóm tắt" in " ".join(r.getMessage() for r in caplog.records)
+
+    nxt = [outline_reply(), SCENE_1, extract_reply(), outline_reply(), SCENE_2, extract_reply(),
+           SUMMARY, choices_reply()]
+    req = request(commit_id="c-ch5")
+    with caplog.at_level(logging.WARNING, logger="writory.pipeline.chapter"):
+        events, outcome, llm, _ = await run(nxt, tmp_path, store=store, req=req,
+                                            config=make_config(tmp_path / "ch5"))
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert outcome.summaries_missing == [CHAPTER]
+    outline = calls_of(llm, "outline")[0][-1].content
+    assert SUMMARIES[3] in outline and "TÓM TẮT" in outline
+    assert store.saved_summaries[CHAPTER + 1] == SUMMARY_TEXT
+
+
+async def test_first_chapter_has_no_summary_block(tmp_path):
+    """Chương 1 không có chương trước: không có khối tóm tắt, không tính là thiếu."""
+    package, plan = setup_chapter_0()
+    store = OverlayStore("new-story")
+    store.commit(0, [], package)
+    config = make_config(tmp_path)
+    outline = outline_reply(present=("protagonist", "ha_ba_tung"))
+    llm = ScriptedLLM([outline, SCENE_PC, EXTRACT_REVEAL_HA, outline, SCENE_PC, extract_reply(),
+                       SUMMARY, _choices_naming_protagonist])
+    chapter_run = ChapterRun(
+        ChapterRequest(present_ids=(), scene_count=2, story_brief="Kiếm hiệp, Hán Việt.",
+                       commit_id="c-ch1"),
+        llm=llm, store=store, config=config, plan=plan,
+        tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE,
+    )
+    _ = [e async for e in chapter_run.events()]
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            assert "Tóm tắt các chương trước" not in call[-1].content
+            assert 'source="chapter_summary"' not in call[-1].content
+    assert chapter_run.outcome.committed and chapter_run.outcome.summaries_missing == []
+    assert store.saved_summaries[1] == SUMMARY_TEXT
