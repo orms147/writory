@@ -10,11 +10,12 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
+from tests.api_fixtures import MemoryCostLedger, MemoryKeyStore, dev_settings
 from writory.api import create_app, deps
 from writory.api.errors import HTTP_STATUS
 from writory.api.stories import router as stories_router
 from writory.config import Settings
-from writory.db import StoryNotFoundError
+from writory.db import StoryNotFoundError, StoryRecord
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerView, public_entries
 from writory.llm.fake import FakeLLM
@@ -28,15 +29,7 @@ LIE_KEYS = {"content", "chapter", "told_to"}
 
 
 def settings(*, dev: bool) -> Settings:
-    return Settings(
-        _env_file=None,
-        neo4j_uri="bolt://neo4j.invalid:7687",
-        neo4j_user="neo4j",
-        neo4j_password="pw",
-        postgres_dsn="postgresql://u:p@pg.invalid/db",
-        player_key_encryption_key="enc",
-        enable_dev_routes=dev,
-    )
+    return dev_settings(dev=dev)
 
 
 async def ok() -> bool:
@@ -52,6 +45,12 @@ def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota |
             raise StoryNotFoundError(f"không có truyện {story_id}")
         return view(chapter)
 
+    # Không Docker: kết nối giả, truyện của người chơi dev, kho key rỗng, nhật ký trong bộ nhớ.
+    app.dependency_overrides[deps.get_pg_conn] = lambda: None
+    app.dependency_overrides[deps.get_owned_story] = (
+        lambda story_id: StoryRecord(story_id, "dev", "short", chapter))
+    app.dependency_overrides[deps.get_key_store] = MemoryKeyStore
+    app.dependency_overrides[deps.get_cost_ledger] = MemoryCostLedger
     app.dependency_overrides[deps.get_player_view] = player_view
     app.dependency_overrides[deps.get_truth_names] = lambda: state(chapter).named_nodes()
     q = quota or MemoryQuota()
@@ -185,15 +184,16 @@ def test_narrator_request_body_rejects_extra_fields():
 
 
 def test_narrator_without_player_key_fails_closed():
-    """Chưa có nơi lưu key người chơi (tuần 5): mặc định báo thiếu key, không gọi model nào."""
+    """Người chơi chưa lưu key: báo thiếu key, không gọi model nào, không dùng key chủ dự án."""
     with TestClient(build(3, override_llm=False), raise_server_exceptions=False) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Lan là ai?"})
     assert resp.status_code == 400
     assert resp.json() == WritoryError(ErrorCode.PLAYER_KEY_MISSING).player_payload()
 
 
-def test_narrator_without_story_plan_fails_closed():
-    """Chưa có nơi lưu story_plan: không chạy được bộ dò lộ đầy đủ, nên không trả lời."""
+def test_narrator_without_story_plan_fails_closed(monkeypatch):
+    """Truyện không có story_plan: không chạy được bộ dò lộ đầy đủ, nên không trả lời."""
+    monkeypatch.setattr(deps, "load_story_plan", lambda conn, story_id: None)
     fake = FakeLLM.scripted([])
     app = build(3, fake=fake, override_plan=False)
     with TestClient(app, raise_server_exceptions=False) as client:

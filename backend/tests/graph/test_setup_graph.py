@@ -7,6 +7,7 @@ import pytest
 
 from writory.api.deps import get_truth_names
 from writory.config import load_config
+from writory.db import StoryRecord
 from writory.graph import (
     apply_package,
     item_holder,
@@ -79,7 +80,7 @@ async def test_leak_names_spare_the_player_written_name_on_neo4j_too(driver, new
     apply_package(driver, sid, result.package)
     on_neo4j = leak_names(Neo4jState(driver, sid))
     assert on_neo4j == leak_names(OverlayState(EmptyState(), [result.package]))
-    assert get_truth_names(sid, driver) == on_neo4j
+    assert get_truth_names(StoryRecord(sid, None, "short", None), driver) == on_neo4j
     assert PROTAGONIST_ID not in on_neo4j
     assert on_neo4j["to_nguyet_hoa"][0] == "Tô Nguyệt Hoa"
 

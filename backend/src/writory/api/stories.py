@@ -1,15 +1,16 @@
 """Router `stories`: sổ tay và hỏi người kể (design §4.2, §6.6; D-40, D-41).
 
-CHƯA kiểm truyện thuộc ai (G10): chưa có đăng nhập (tuần 5). Vì vậy `create_app` chỉ mount
-router này khi `Settings.enable_dev_routes` bật (mặc định tắt), và mọi route ở đây còn kiểm lại
-cờ đó lúc chạy, để gắn router vào app khác cũng không mở được.
-TODO(G10, tuần 5): dependency kiểm quyền sở hữu truyện; truyện của người khác → STORY_NOT_FOUND.
+Truyện được kiểm theo chủ (`deps.get_owned_story`: truyện của người khác → STORY_NOT_FOUND), nhưng
+CHƯA có đăng nhập (tuần 5): mọi người là người chơi dev, nên G10 chưa thật sự được thi hành. Vì vậy
+`create_app` chỉ mount router này khi `Settings.enable_dev_routes` bật (mặc định tắt), và mọi route
+ở đây còn kiểm lại cờ đó lúc chạy, để gắn router vào app khác cũng không mở được.
+TODO(G10, tuần 5): `deps.get_owner_id` lấy người đang đăng nhập.
 """
 
 from collections.abc import Mapping
 from typing import Annotated
 
-from fastapi import APIRouter, Depends, HTTPException, Request
+from fastapi import APIRouter, Depends
 
 from writory.api import deps
 from writory.api.schemas import NarratorAnswerOut, NarratorQuestionIn, NotebookOut
@@ -19,14 +20,7 @@ from writory.llm.cost import MeteredClient
 from writory.pipeline.narrator import NarratorQuota, ask_narrator
 from writory.pipeline.story_plan import StoryPlan
 
-
-def _dev_routes_only(request: Request) -> None:
-    """Fail closed: chỉ chạy khi create_app đã bật cờ dev cho chính app này."""
-    if getattr(request.app.state, "dev_routes_enabled", False) is not True:
-        raise HTTPException(status_code=404)
-
-
-router = APIRouter(prefix="/stories", dependencies=[Depends(_dev_routes_only)])
+router = APIRouter(prefix="/stories", dependencies=[Depends(deps.dev_routes_only)])
 
 
 @router.get("/{story_id}/notebook", response_model=NotebookOut)

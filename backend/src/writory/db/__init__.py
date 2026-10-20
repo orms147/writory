@@ -1,5 +1,6 @@
-"""Postgres: truyện, chương, gói thay đổi (outbox), luồng ghi chương theo D-6, và bộ đếm câu
-hỏi người kể (D-40).
+"""Postgres: truyện, chương, gói thay đổi (outbox), luồng ghi chương theo D-6, bộ đếm câu hỏi người
+kể (D-40), và lưu trữ của API truyện (D-44): bản kế hoạch ẩn, key người chơi đã mã hoá, phiên khởi
+tạo, nhật ký chi phí, lựa chọn và hành động.
 Migration: SQL thuần trong db/migrations/, chạy bằng `migrate` (D-20)."""
 
 from writory.db.chapters import (
@@ -13,37 +14,105 @@ from writory.db.chapters import (
     StoryNotFoundError,
     StoryRecord,
     chapter_records,
+    chapter_scenes,
     commit_chapter,
     committed_player_view,
     create_story,
     current_chapter,
     delete_story_record,
+    get_owned_story,
     get_story,
     reconcile_pending,
 )
+from writory.db.choices import (
+    ActionRecord,
+    load_action,
+    load_choice,
+    load_choices,
+    save_action,
+    save_choices,
+)
 from writory.db.connection import connect
+from writory.db.costs import CostEntry, record_cost, setup_spent_usd, story_spent_usd
+from writory.db.keys import delete_player_key, load_player_key, save_player_key
+from writory.db.locks import StoryBusyError, job_lock
 from writory.db.migrate import migrate
 from writory.db.narrator import take_narrator_question
+from writory.db.plans import (
+    create_story_with_plan,
+    discard_story,
+    load_story_brief,
+    load_story_plan,
+    save_story_plan,
+    set_story_brief,
+    start_story,
+)
+from writory.db.setup import (
+    STEPS,
+    SetupNotFoundError,
+    SetupRecord,
+    SetupStep,
+    SetupStepError,
+    choose_setup_option,
+    create_setup,
+    finish_setup,
+    get_setup,
+    save_setup_options,
+)
 
 __all__ = [
+    "STEPS",
+    "ActionRecord",
     "ChapterCommitError",
     "ChapterError",
     "ChapterOrderError",
     "ChapterPackageError",
     "ChapterRecord",
+    "CostEntry",
     "PendingChapterError",
     "ReconcileResult",
+    "SetupNotFoundError",
+    "SetupRecord",
+    "SetupStep",
+    "SetupStepError",
+    "StoryBusyError",
     "StoryNotFoundError",
     "StoryRecord",
     "chapter_records",
+    "chapter_scenes",
+    "choose_setup_option",
     "commit_chapter",
     "committed_player_view",
     "connect",
+    "create_setup",
     "create_story",
+    "create_story_with_plan",
     "current_chapter",
+    "delete_player_key",
     "delete_story_record",
+    "discard_story",
+    "finish_setup",
+    "get_owned_story",
+    "get_setup",
     "get_story",
+    "job_lock",
+    "load_action",
+    "load_choice",
+    "load_choices",
+    "load_player_key",
+    "load_story_brief",
+    "load_story_plan",
     "migrate",
     "reconcile_pending",
+    "record_cost",
+    "save_action",
+    "save_choices",
+    "save_player_key",
+    "save_setup_options",
+    "save_story_plan",
+    "set_story_brief",
+    "setup_spent_usd",
+    "start_story",
+    "story_spent_usd",
     "take_narrator_question",
 ]

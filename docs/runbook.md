@@ -25,12 +25,31 @@ curl http://127.0.0.1:8000/health   # {"neo4j": "ok"|"down", "postgres": "ok"|"d
 ```
 App tạo bằng factory (`--factory`), nên import `writory.api` không cần biến môi trường.
 
-Sổ tay và hỏi người kể (`/stories/...`) chưa có đăng nhập, nên chưa kiểm được truyện thuộc ai (G10). Router này chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ bật trên máy dev, không bật trên máy chủ thật:
+API truyện (`/stories/...`) và key người chơi (`/player/key`) chưa có đăng nhập, nên mọi người đều là người chơi dev `dev` và chưa kiểm được truyện thuộc ai (G10). Các router này chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ bật trên máy dev, không bật trên máy chủ thật. Chạy migration trước (mục Migration Postgres).
 ```bash
 ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
+curl -X PUT http://127.0.0.1:8000/player/key -H 'content-type: application/json' -d '{"api_key": "sk-or-v1-..."}'
 curl http://127.0.0.1:8000/stories/<story_id>/notebook
 ```
-`POST /stories/<story_id>/narrator` chưa trả lời được ở máy: chưa có nơi lưu key người chơi và `story_plan`, nên nó báo lỗi thay vì gọi model (D-41).
+Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2:
+```bash
+curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short"}'
+curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings
+curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
+# tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:
+curl -X POST http://127.0.0.1:8000/setup/<session_id>/finalize   # trả story_id
+```
+Viết chương (SSE, D-46) rồi chọn hành động cho chương sau:
+```bash
+curl -N -X POST http://127.0.0.1:8000/stories/<story_id>/chapters/next   # event: stage | scene_ready | … | choices_ready
+curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: application/json' -d '{"choice_id": "choice-…"}'
+curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
+curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện
+```
+Một truyện chỉ viết một chương một lúc, một phiên chỉ chốt một lần một lúc: lần gọi thứ hai trả 409 `STORY_BUSY` (D-46). Khoá giữ trên kết nối Postgres của yêu cầu, nên tự nhả khi yêu cầu kết thúc hay tiến trình chết.
+Danh sách route và schema: `http://127.0.0.1:8000/docs` (OpenAPI của FastAPI).
+
+Lời gọi model trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`, và có trần trong `config/limits.yaml`. Truyện phải có `story_plan` trong Postgres: truyện tạo qua `/setup` có; truyện mẫu nạp tay thì không, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).
 
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.
@@ -70,8 +89,8 @@ Danh sách đầy đủ: `.env.example`. Không commit `.env`.
   ```bash
   uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
   ```
-  Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại.
-- `ENABLE_DEV_ROUTES` (mặc định `false`): gắn router chưa có đăng nhập (sổ tay, hỏi người kể; D-41). Chỉ bật trên máy dev.
+  Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại. Khi `ENABLE_DEV_ROUTES=true`, khoá sai định dạng thì app không khởi động (D-11, D-45).
+- `ENABLE_DEV_ROUTES` (mặc định `false`): gắn router chưa có đăng nhập (truyện, key người chơi; D-41). Chỉ bật trên máy dev.
 - Cấu hình runtime nằm trong `config/*.yaml`, được nạp và kiểm schema bằng `writory.config.load_config()`. Giá trị `null` nghĩa là chưa đặt; code nào cần giá trị đó sẽ báo lỗi.
 
 ## Deploy

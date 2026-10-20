@@ -2,11 +2,14 @@
 một từ `PlayerView`, không chép cả object. Không có id lớp truth: mục mang mã công khai
 (`graph.public_entries`, D-40)."""
 
-from typing import Literal
+from typing import Annotated, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field, SecretStr, StringConstraints
 
+from writory.db import SetupRecord
 from writory.graph import PlayerView, public_entries, public_lies
+from writory.pipeline.events import PlayerChoice
+from writory.pipeline.setup import OPTION_COUNT, StoryChoices
 
 
 class _Out(BaseModel):
@@ -67,3 +70,193 @@ class NarratorQuestionIn(_Out):
 
 class NarratorAnswerOut(_Out):
     answer: str
+
+
+# --- key người chơi (G7, D-45) ---------------------------------------------------------------
+
+
+class PlayerKeyIn(_Out):
+    # SecretStr: repr/log của model không lộ key. Dạng key kiểm bằng `safety.crypto`.
+    api_key: SecretStr
+
+
+class PlayerKeyOut(_Out):
+    """Không bao giờ có key: chỉ có hay không, và 4 ký tự cuối ("•••• 7f3a" ở giao diện)."""
+
+    has_key: bool
+    last4: str | None
+
+
+# --- khởi tạo truyện (design §4.1, D-45) -------------------------------------------------------
+
+TAG_MAX_CHARS = 60  # tag là nhãn ngắn; trần cứng để thân yêu cầu không phình
+EDIT_HARD_MAX_CHARS = 5000  # trần cứng của trường sửa nhân vật; giới hạn thật: limits.input
+
+Tag = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1,
+                                       max_length=TAG_MAX_CHARS)]
+# Số thứ tự lựa chọn: chỉ số nguyên JSON, 0…OPTION_COUNT-1. Trình duyệt không gửi chữ lựa chọn.
+OptionIndex = Annotated[int, Field(ge=0, le=OPTION_COUNT - 1, strict=True)]
+Edit = Annotated[str | None, Field(max_length=EDIT_HARD_MAX_CHARS)]
+
+
+class StoryTagsIn(_Out):
+    genre: Tag
+    era: Tag | None = None
+    voice: Tag | None = None
+    darkness: Tag | None = None
+
+
+class NamingIn(_Out):
+    names: Literal["han_viet", "viet"]
+    places: Literal["hu_cau", "that"]
+
+
+class SetupStartIn(_Out):
+    tags: StoryTagsIn
+    length_level: str = Field(max_length=32)  # khoá trong config/story_lengths.yaml
+    naming: NamingIn | None = None  # None: mặc định theo thể loại (D-32)
+
+
+class OptionChoiceIn(_Out):
+    index: OptionIndex
+
+
+class CharacterChoiceIn(_Out):
+    """Chọn nhân vật thứ `index`, kèm phần người chơi sửa (null: giữ chữ của lựa chọn)."""
+
+    index: OptionIndex
+    name: Edit = None
+    personality: Edit = None
+    backstory: Edit = None
+
+
+class TagsOut(_Out):
+    genre: str
+    era: str | None
+    voice: str | None
+    darkness: str | None
+
+
+class NamingOut(_Out):
+    names: str
+    places: str
+
+
+class SettingOut(_Out):
+    title: str
+    intro: str
+
+
+class PlotOut(_Out):
+    title: str
+    summary: str
+
+
+class CharacterOut(_Out):
+    name: str
+    personality: str
+    backstory: str
+
+
+SetupStage = Literal["settings", "plots", "characters", "finalize", "done"]
+
+
+class SetupOut(_Out):
+    """Trạng thái phiên khởi tạo. Chỉ có điều người chơi chọn hoặc đọc; không có bản kế hoạch,
+    bí mật hay id lớp truth (G1). `step`: bước người chơi đang ở; danh sách null là chưa tạo."""
+
+    session_id: str
+    step: SetupStage
+    tags: TagsOut
+    length_level: str
+    naming: NamingOut
+    settings: list[SettingOut] | None
+    setting_index: int | None
+    plots: list[PlotOut] | None
+    plot_index: int | None
+    characters: list[CharacterOut] | None
+    character_index: int | None
+    protagonist: CharacterOut | None
+    story_id: str | None  # có khi đã tạo truyện; dùng cho /stories/{story_id}/…
+
+    @classmethod
+    def from_record(cls, rec: SetupRecord) -> "SetupOut":
+        choices = StoryChoices.model_validate(rec.choices)
+        tags = choices.tags
+
+        def character(o: dict) -> CharacterOut:
+            return CharacterOut(name=o["name"], personality=o["personality"],
+                                backstory=o["backstory"])
+
+        if rec.story_id is not None:
+            step: SetupStage = "done"
+        elif rec.protagonist is not None:
+            step = "finalize"
+        elif rec.plot_index is not None:
+            step = "characters"
+        elif rec.setting_index is not None:
+            step = "plots"
+        else:
+            step = "settings"
+        return cls(
+            session_id=rec.id,
+            step=step,
+            tags=TagsOut(genre=tags.genre, era=tags.era, voice=tags.voice, darkness=tags.darkness),
+            length_level=choices.length_level,
+            naming=NamingOut(names=choices.naming.names, places=choices.naming.places),
+            settings=None if rec.settings is None else [
+                SettingOut(title=o["title"], intro=o["intro"]) for o in rec.settings],
+            setting_index=rec.setting_index,
+            plots=None if rec.plots is None else [
+                PlotOut(title=o["title"], summary=o["summary"]) for o in rec.plots],
+            plot_index=rec.plot_index,
+            characters=None if rec.characters is None else [
+                character(o) for o in rec.characters],
+            character_index=rec.character_index,
+            protagonist=None if rec.protagonist is None else character(rec.protagonist),
+            story_id=rec.story_id,
+        )
+
+
+# --- chơi: chương, lựa chọn, hành động (design §4.2, D-46) -----------------------------------
+
+CHOICE_ID_PATTERN = r"^choice-[0-9a-f]{12}$"  # id mờ do pipeline/choices.py đặt
+ACTION_HARD_MAX_CHARS = 5000  # trần cứng; giới hạn thật: limits.input.custom_action_max_chars
+
+
+class ChoiceIn(_Out):
+    choice_id: str = Field(pattern=CHOICE_ID_PATTERN)
+
+
+class CustomActionIn(_Out):
+    # Rỗng và độ dài theo config kiểm trong safety.classify (G5), với mã lỗi riêng.
+    text: str = Field(max_length=ACTION_HARD_MAX_CHARS)
+
+
+class ActionOut(_Out):
+    """Hành động dẫn tới chương `for_chapter`. Với lựa chọn: đúng chữ người chơi đã thấy."""
+
+    for_chapter: int
+    source: Literal["choice", "custom"]
+    text: str
+
+
+class ChoicesOut(_Out):
+    chapter: int
+    choices: list[PlayerChoice]  # id mờ, loại, sắc thái, chữ (pipeline/events.py)
+
+
+class ChapterOut(_Out):
+    number: int
+    scenes: list[str]  # đúng chữ đã hiện, đã qua mọi phép kiểm (D-1)
+
+
+class StoryOut(_Out):
+    story_id: str
+    length_level: str
+    chapter: int  # chương đã ghi cuối; 0 = vừa khởi tạo, chưa có trang nào
+    pending: bool  # còn chương đang lưu dở (D-6): chưa viết tiếp được
+    choices: list[PlayerChoice]  # bộ lựa chọn cuối chương hiện tại; rỗng ở chương 0
+    action: ActionOut | None  # hành động đã chọn cho chương sau
+    next_ready: bool  # viết được chương sau ngay
+    finished: bool  # đã tới chương cuối theo kế hoạch

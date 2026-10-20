@@ -4,8 +4,10 @@ Mỗi mã có câu tiếng Việt: chuyện gì xảy ra và làm gì tiếp. Ch
 chỉ để ghi log, không bao giờ vào phản hồi cho người chơi.
 """
 
+from collections.abc import Sequence
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Any
 
 from writory.safety.redact import redact
 
@@ -45,6 +47,16 @@ class ErrorCode(StrEnum):
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
     STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
     CHOICES_LEAK_BLOCKED = "CHOICES_LEAK_BLOCKED"
+    SETUP_NOT_FOUND = "SETUP_NOT_FOUND"
+    SETUP_STEP_NOT_READY = "SETUP_STEP_NOT_READY"
+    PLAYER_KEY_INVALID = "PLAYER_KEY_INVALID"
+    REQUEST_INVALID = "REQUEST_INVALID"
+    CHARACTER_EDIT_INVALID = "CHARACTER_EDIT_INVALID"
+    CHOICE_NOT_FOUND = "CHOICE_NOT_FOUND"
+    CHOICE_REQUIRED = "CHOICE_REQUIRED"
+    CHAPTER_NOT_FOUND = "CHAPTER_NOT_FOUND"
+    STORY_COMPLETE = "STORY_COMPLETE"
+    STORY_BUSY = "STORY_BUSY"
 
 
 @dataclass(frozen=True)
@@ -211,17 +223,74 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Chương bạn vừa đọc đã được lưu.",
         "Bấm thử lại để tạo lựa chọn mới.",
     ),
+    # Phiên khởi tạo truyện (design §4.1, D-44).
+    ErrorCode.SETUP_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy phiên tạo truyện này.",
+        "Bắt đầu tạo truyện mới.",
+    ),
+    ErrorCode.SETUP_STEP_NOT_READY: PlayerMessage(
+        "Bước tạo truyện này chưa làm được: bước trước chưa xong, hoặc truyện đã được tạo từ "
+        "phiên này.",
+        "Tải lại trang để thấy bước hiện tại.",
+    ),
+    # Key người chơi dán vào (G7, D-45). Không nhắc lại chữ đã dán.
+    ErrorCode.PLAYER_KEY_INVALID: PlayerMessage(
+        "Chuỗi bạn dán không phải key OpenRouter (key OpenRouter bắt đầu bằng \"sk-or-\").",
+        "Sao chép lại key từ trang openrouter.ai/keys rồi dán vào.",
+    ),
+    # Thân yêu cầu sai dạng (D-45). Không chép lại đầu vào, vì đầu vào có thể là key (G7).
+    ErrorCode.REQUEST_INVALID: PlayerMessage(
+        "Yêu cầu gửi lên không đúng dạng: thiếu trường, sai kiểu, hoặc giá trị nằm ngoài khoảng "
+        "cho phép.",
+        "Tải lại trang rồi thử lại. " + _REPORT,
+    ),
+    # Sửa nhân vật chính lúc khởi tạo (D-45): giới hạn trong config/limits.yaml `input`.
+    ErrorCode.CHARACTER_EDIT_INVALID: PlayerMessage(
+        "Tên, tính cách hoặc quá khứ bạn sửa đang để trống hoặc dài hơn mức cho phép.",
+        "Sửa lại cho ngắn gọn rồi gửi.",
+    ),
+    # Chơi: lựa chọn, hành động, chương (D-46).
+    ErrorCode.CHOICE_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy lựa chọn này trong chương hiện tại (có thể truyện đã sang chương khác).",
+        "Tải lại trang để thấy các lựa chọn mới nhất.",
+    ),
+    ErrorCode.CHOICE_REQUIRED: PlayerMessage(
+        "Bạn chưa chọn hành động cho chương tiếp theo.",
+        "Chọn một lựa chọn hoặc tự viết hành động, rồi bấm viết tiếp.",
+    ),
+    ErrorCode.CHAPTER_NOT_FOUND: PlayerMessage(
+        "Không tìm thấy chương này.",
+        "Quay về truyện để đọc chương mới nhất.",
+    ),
+    ErrorCode.STORY_COMPLETE: PlayerMessage(
+        "Truyện đã tới chương cuối.",
+        "Bạn vẫn đọc lại được các chương đã có; muốn chơi tiếp thì bắt đầu truyện mới.",
+    ),
+    # Chống chạy đôi (G8, D-46): một truyện chỉ một lần viết, một phiên chỉ một lần chốt.
+    ErrorCode.STORY_BUSY: PlayerMessage(
+        "Truyện này đang được viết hoặc tạo ở một yêu cầu khác (có thể bạn mở nó ở hai nơi), "
+        "nên hệ thống không chạy thêm lần nữa để khỏi trừ tiền key của bạn hai lần.",
+        "Đợi việc đang chạy xong rồi tải lại trang.",
+    ),
 }
 
 
 class WritoryError(Exception):
     """Lỗi có mã. `str()` dành cho log (đã xoá chuỗi giống key); người chơi nhận
-    `player_payload()`."""
+    `player_payload()`.
 
-    def __init__(self, code: ErrorCode, detail: str = "") -> None:
+    `fields`: đường dẫn các trường người chơi cần sửa (ví dụ "index", "tags.genre"), để giao diện
+    chỉ đúng chỗ (G12). Chỉ là tên trường, không bao giờ là giá trị người chơi gửi lên (G7)."""
+
+    def __init__(self, code: ErrorCode, detail: str = "", *,
+                 fields: Sequence[str] = ()) -> None:
         self.code = code
         self.detail = redact(detail)
+        self.fields = tuple(fields)
         super().__init__(f"{code.value}: {self.detail}" if self.detail else code.value)
 
-    def player_payload(self) -> dict[str, str]:
-        return {"code": self.code.value, "message": MESSAGES[self.code].text()}
+    def player_payload(self) -> dict[str, Any]:
+        payload: dict[str, Any] = {"code": self.code.value, "message": MESSAGES[self.code].text()}
+        if self.fields:
+            payload["fields"] = list(self.fields)
+        return payload

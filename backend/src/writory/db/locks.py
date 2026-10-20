@@ -1,0 +1,51 @@
+"""Khoá chống chạy đôi: một truyện chỉ một lần viết chương, một phiên chỉ một lần chốt khởi tạo
+(G8, D-46). Lần gọi thứ hai không chờ: báo STORY_BUSY ngay, để key người chơi không bị trừ tiền hai
+lần.
+
+Cách làm: advisory lock mức phiên của Postgres (`pg_try_advisory_lock`) trên chính kết nối của yêu
+cầu, giữ suốt việc. Nhả khi việc xong hoặc lỗi (`finally`), và Postgres tự nhả khi kết nối đóng,
+kể cả khi tiến trình chết giữa chừng: không cần cột trạng thái hay hạn giờ. Khoá lồng được trên
+cùng một kết nối, nên mỗi yêu cầu phải có kết nối riêng (`api/deps.get_pg_conn`).
+"""
+
+import logging
+from collections.abc import Iterator
+from contextlib import contextmanager
+from typing import Literal
+
+import psycopg
+
+from writory.errors import ErrorCode, WritoryError
+from writory.safety.redact import redact
+
+log = logging.getLogger(__name__)
+
+LockScope = Literal["story", "setup"]
+
+
+class StoryBusyError(WritoryError):
+    def __init__(self, detail: str = "") -> None:
+        super().__init__(ErrorCode.STORY_BUSY, detail)
+
+
+def _lock_name(scope: LockScope, key: str) -> str:
+    return f"writory:{scope}:{key}"
+
+
+@contextmanager
+def job_lock(conn: psycopg.Connection, scope: LockScope, key: str) -> Iterator[None]:
+    """Giữ khoá `scope:key` trên `conn` trong khối `with`. Đã có người giữ: StoryBusyError.
+
+    Tên khoá băm ra số 64 bit (`hashtextextended`); hai tên trùng số thì lần sau báo bận nhầm,
+    xác suất không đáng kể."""
+    name = _lock_name(scope, key)
+    row = conn.execute("SELECT pg_try_advisory_lock(hashtextextended(%s, 0))", (name,)).fetchone()
+    if not row[0]:
+        raise StoryBusyError(f"{scope} {key} đang chạy ở yêu cầu khác")
+    try:
+        yield
+    finally:
+        try:
+            conn.execute("SELECT pg_advisory_unlock(hashtextextended(%s, 0))", (name,))
+        except Exception as exc:  # noqa: BLE001 — kết nối hỏng: đóng nó là Postgres tự nhả
+            log.warning("nhả khoá %s không được: %s", name, redact(f"{type(exc).__name__}: {exc}"))

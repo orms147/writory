@@ -35,3 +35,12 @@ def test_log_text_redacts_key_like_strings():
     err = WritoryError(ErrorCode.LLM_AUTH_FAILED, detail=f"rejected {fake_key}")
     assert fake_key not in str(err)
     assert fake_key not in repr(err)
+
+
+def test_payload_lists_fields_only_when_given():
+    """G12: lỗi đầu vào nói trường nào sai; lỗi khác giữ đúng hai khoá như trước."""
+    assert set(WritoryError(ErrorCode.REQUEST_INVALID).player_payload()) == {"code", "message"}
+    payload = WritoryError(ErrorCode.REQUEST_INVALID,
+                           fields=["index", "tags.genre"]).player_payload()
+    assert set(payload) == {"code", "message", "fields"}
+    assert payload["fields"] == ["index", "tags.genre"]

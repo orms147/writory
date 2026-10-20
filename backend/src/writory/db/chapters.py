@@ -116,6 +116,23 @@ def get_story(conn: psycopg.Connection, story_id: str) -> StoryRecord:
     return StoryRecord(*row)
 
 
+def get_owned_story(conn: psycopg.Connection, story_id: str, owner_id: str) -> StoryRecord:
+    """Truyện của người này. Truyện của người khác báo giống truyện không có (G10, 404)."""
+    story = get_story(conn, story_id)
+    if story.owner_id != owner_id:
+        raise StoryNotFoundError(f"truyện {story_id} không thuộc người này")
+    return story
+
+
+def chapter_scenes(conn: psycopg.Connection, story_id: str, number: int) -> list[str] | None:
+    """Văn các cảnh của một chương đã commit (đúng chữ đã hiện cho người chơi); None nếu chưa có."""
+    row = conn.execute(
+        "SELECT scenes FROM chapters WHERE story_id = %s AND number = %s AND status = 'committed'",
+        (story_id, number),
+    ).fetchone()
+    return None if row is None else list(row[0])
+
+
 def delete_story_record(conn: psycopg.Connection, story_id: str) -> None:
     """Xoá truyện khỏi Postgres (chương và gói xoá theo). Đồ thị xoá riêng: graph.delete_story."""
     require_story_id(story_id)

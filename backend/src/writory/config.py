@@ -83,6 +83,7 @@ class InputLimits(_Section):
     custom_action_max_chars: PositiveInt | None
     character_name_max_chars: PositiveInt | None
     backstory_max_chars: PositiveInt | None
+    personality_max_chars: PositiveInt | None  # nhân vật chính người chơi sửa (D-45)
     narrator_question_max_chars: PositiveInt | None  # câu hỏi người kể (D-40)
 
 
