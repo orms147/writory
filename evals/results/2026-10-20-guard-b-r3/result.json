@@ -1,0 +1,66 @@
+{
+  "meta": {
+    "date": "2026-10-20",
+    "commit": "2132238c225dddcd5d7514a932602572c9eebb92",
+    "worktree_dirty": false,
+    "inputs_sha256_16": "a68a67824273cc70",
+    "inputs": [
+      "evals/scenarios/guard-b/cases.yaml",
+      "config/guard.yaml",
+      "data/sample-story/graph.yaml"
+    ],
+    "model": "không dùng model (phần kiểm bằng code)"
+  },
+  "by_kind": {
+    "chapter_rule": {
+      "error_cases": 2,
+      "detected": 2,
+      "clean_cases": 2,
+      "false_positive_cases": 0
+    },
+    "dead_actor": {
+      "error_cases": 4,
+      "detected": 4,
+      "clean_cases": 4,
+      "false_positive_cases": 0
+    },
+    "at_most_one": {
+      "error_cases": 3,
+      "detected": 3,
+      "clean_cases": 4,
+      "false_positive_cases": 0
+    },
+    "teller_does_not_know": {
+      "error_cases": 2,
+      "detected": 2,
+      "clean_cases": 4,
+      "false_positive_cases": 0
+    },
+    "early_reveal": {
+      "error_cases": 2,
+      "detected": 2,
+      "clean_cases": 3,
+      "false_positive_cases": 0
+    },
+    "sudden_relationship": {
+      "error_cases": 2,
+      "detected": 2,
+      "clean_cases": 5,
+      "false_positive_cases": 0
+    },
+    "overdue_secret": {
+      "error_cases": 2,
+      "detected": 2,
+      "clean_cases": 4,
+      "false_positive_cases": 0
+    },
+    "overdue_thread": {
+      "error_cases": 2,
+      "detected": 2,
+      "clean_cases": 5,
+      "false_positive_cases": 0
+    }
+  },
+  "unexpected": 0,
+  "failures": []
+}
