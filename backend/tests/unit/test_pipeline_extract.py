@@ -156,3 +156,15 @@ def test_gold_state_lists_open_edges_before_the_chapter_only():
 def test_committed_extract_config_loads():
     cfg = bench_c.load_config()
     assert cfg.chapters == [1, 2, 3, 4, 5] and cfg.models
+
+
+def test_protagonist_knows_without_quote_is_rejected():
+    """G3: nhân vật chính biết một điều thì phải có câu trích trên trang. Hồi quy bài C v1: 5/6 lần
+    'hé lộ sai' là KNOWS của nhân vật chính không kèm câu trích."""
+    entities, open_edges, text = _ctx(1)
+    out = ExtractOutput(edges=[_edge(type="KNOWS", source=PROTAGONIST, target="f_lan_spy",
+                                     how="suy ra")], close=[])
+    pkg, rejected = to_package(out, chapter=1, commit_id="c", protagonist_id=PROTAGONIST,
+                               chapter_text=text, entities=entities, open_edges=open_edges)
+    assert pkg.edges == []
+    assert "câu trích" in rejected[0][1]

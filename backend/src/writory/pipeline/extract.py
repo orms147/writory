@@ -20,7 +20,7 @@ from writory.graph.package import KNOWS_HOW, ChangePackage, CloseSpec, EdgeSpec,
 from writory.llm.base import ChatResult, LLMClient
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
-PROMPT_VERSION = "extract-1"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "extract-2"  # đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -95,10 +95,16 @@ Kiểu cạnh:
 - RESOLVED_IN (mạch → nút chương này): một mạch, cài cắm hay câu hỏi bỏ ngỏ được gỡ (trả lời, kết thúc) trong chương này.
 - REVEALED_TO_PLAYER (thực thể → nút chương này): điều người chơi được thấy trên trang ở chương này, theo góc nhìn nhân vật chính.
 
+Hé lộ cho người chơi:
+- Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ ở chương trước thì không ghi lại.
+- Không đánh dấu hé lộ một bí mật mà trang chỉ gợi ý hay để người đọc đoán. Chỉ ghi khi trang nói rõ điều đó.
+
 Câu trích (`quote`):
-- Bắt buộc với REVEALED_TO_PLAYER và với KNOWS mà người biết là nhân vật chính. Chép NGUYÊN VĂN một đoạn ngắn trong chương làm bằng chứng; không sửa chữ.
-- Hé lộ một nhân vật, nơi chốn, đồ vật hay phe (REVEALED_TO_PLAYER, hoặc KNOWS của nhân vật chính) thì `known_as` là đúng cái tên người chơi đọc thấy trên trang, và tên đó phải nằm trong `quote`. Không dùng tên thật nếu trang chỉ gọi bằng biệt danh.
-- Không đánh dấu hé lộ một bí mật mà trang chỉ gợi ý mơ hồ. Chỉ ghi khi trang nói rõ.
+- Bắt buộc với REVEALED_TO_PLAYER và với KNOWS mà người biết là nhân vật chính. Không có câu trích thì KHÔNG ghi cạnh đó.
+- Chép NGUYÊN VĂN một đoạn ngắn liền mạch trong chương (một câu là đủ); không sửa chữ, không ghép hai đoạn, không thêm dấu ba chấm.
+- Hé lộ một nhân vật, nơi chốn, đồ vật hay phe thì `known_as` là cái tên người chơi đọc thấy trên trang, CHÉP Y NGUYÊN từ bên trong `quote` (cùng chữ hoa, cùng dấu). Không dùng tên thật nếu trang chỉ gọi bằng biệt danh.
+
+Không ghi trùng: mỗi bộ (kiểu, từ, tới) chỉ một cạnh.
 """
 
 
@@ -150,6 +156,10 @@ def to_package(
             continue
         if x.quote is not None and not quote_in_text(x.quote, chapter_text):
             rejected.append((desc, "câu trích không có nguyên văn trong chương (G3)"))
+            continue
+        if x.type == "KNOWS" and x.source == protagonist_id and not x.quote:
+            # G3: người chơi chỉ biết điều có trên trang; thiếu bằng chứng thì không ghi.
+            rejected.append((desc, "nhân vật chính biết mà không có câu trích (G3)"))
             continue
         props = {
             k: v for k, v in (("kind", x.kind), ("score", x.score), ("how", x.how),

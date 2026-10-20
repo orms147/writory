@@ -335,7 +335,10 @@ async def run(args: argparse.Namespace) -> int:
             "prompt_version": PROMPT_VERSION, "created": datetime.now().isoformat(timespec="seconds"),
             "dry_run": args.dry_run}
     spent = 0.0
+    wanted = {m for m in args.models.split(",") if m}
     for model in cfg.models:
+        if wanted and model.id not in wanted:
+            continue
         for chapter in cfg.chapters:
             for s in range(cfg.samples):
                 if spent >= args.budget:
@@ -349,6 +352,8 @@ async def run(args: argparse.Namespace) -> int:
                     print(f"[lỗi] {model.label} ch{chapter} s{s}: {e.code.value}")
                     continue
                 spent += row["cost_usd"] or 0
+                if args.pause:
+                    await asyncio.sleep(args.pause)
                 store.append("results.jsonl", row)
                 pv = prf(row["score"]["player_view"])
                 print(f"[ok] {model.label} ch{chapter} s{s}: PV F1 {_fmt(pv[2])}, "
@@ -368,6 +373,9 @@ def main(argv: Sequence[str] | None = None) -> int:
     parser.add_argument("--config", default=str(DATA_DIR / "config.yaml"))
     parser.add_argument("--budget", type=float, default=0.5, help="trần OpenRouter, USD")
     parser.add_argument("--dry-run", action="store_true")
+    parser.add_argument("--models", default="", help="lọc model theo id, cách nhau dấu phẩy")
+    parser.add_argument("--pause", type=float, default=0.0,
+                        help="nghỉ giữa các lời gọi, giây (nhà cung cấp giới hạn tần suất)")
     return asyncio.run(run(parser.parse_args(argv)))
 
 
