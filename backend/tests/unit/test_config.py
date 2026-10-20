@@ -67,7 +67,7 @@ def test_require_returns_value_when_set(config_dir: Path):
         ("limits.yaml", "per_scene: null", "per_scene: -1", "per_scene"),
         ("limits.yaml", "per_scene: null", "per_scene: null\n  per_sceen: 1", "per_sceen"),
         ("limits.yaml", "rewrite_per_scene: 1", "rewrite_per_scene: -1", "rewrite_per_scene"),
-        ("models.yaml", "writer_tiers: []", "writer_tiers:\n  - id: x\n    label: X", "model"),
+        ("models.yaml", '    model: "openai/gpt-6-luna"\n', "", "model"),  # mức thiếu model
         ("story_lengths.yaml", "chapter_chars: {min: 3000, max: 10000}",
          "chapter_chars: {min: 10000, max: 3000}", "chapter_chars"),
         ("quality.yaml", "dialogue_style: dash", "dialogue_style: html", "dialogue_style"),

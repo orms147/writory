@@ -230,3 +230,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** lúc khởi tạo có tag quy ước tên (Hán Việt / Việt) và địa danh (thật / hư cấu). Người chơi chọn; mặc định theo thể loại như design §4.1. Prompt mọi bước sinh nội dung nhận quy ước này.
 - **Hệ quả:** bộ đề bài D có trường `naming` (cases.yaml v2); rubric v2 thêm tiêu chí `quy_uoc_the_loai`. Đề cũ có địa danh thật trong truyện giả tưởng là lỗi của đề, không phải của model.
 - **Người quyết:** Chủ dự án · 20/10/2026
+
+## D-33 · Model viết: GPT-6 Luna, một mức duy nhất
+- **Bối cảnh:** bài D hai lượt (`evals/results/2026-10-19-quality-full/`, `evals/results/2026-10-20-quality-r2/`): GPT-6 Luna điểm sát mốc GPT-6.1 Sol, rẻ nhất trong nhóm (khoảng 1/23 chi phí Sol, rẻ hơn DeepSeek V4.1 Flash sau khi DeepSeek tăng giá), nhanh nhất, không lộ bí mật. Chấm tay lượt 1: Luna là cảnh duy nhất người và giám khảo cho điểm như nhau.
+- **Quyết định:** `writer_tiers` chỉ có mức "Tiêu chuẩn" = `openai/gpt-6-luna` (`config/models.yaml`). Không có mức GPT-6.1 Sol vì giá.
+- **Hệ quả:** design §6.5 mục 1 (nhiều mức) tạm chỉ còn một mức; thêm mức mới phải qua bài D. Điểm yếu cần cải thiện bằng prompt: trình bày lời thoại (rubric v2). Các vai giữ trí nhớ (`roles.*`) chưa chọn model; chọn khi có bài đo cho từng vai.
+- **Người quyết:** Chủ dự án · 20/10/2026

@@ -11,8 +11,9 @@ roles:
   classify: null     # phân loại ô tự viết (G5)
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
-writer_tiers: []
-#  - id: balanced
-#    label: "Cân bằng"
-#    model: "<openrouter-model-id>"
-#    eval_result: "evals/results/<ngày>-quality/"
+# D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).
+writer_tiers:
+  - id: standard
+    label: "Tiêu chuẩn"
+    model: "openai/gpt-6-luna"
+    eval_result: "evals/results/2026-10-20-quality-r2/"
