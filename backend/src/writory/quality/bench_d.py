@@ -64,6 +64,7 @@ from writory.quality import (
     check_foreign_script,
     check_meta_leak,
     check_repetition,
+    normalize_dashes,
 )
 
 DATA_DIR = REPO_ROOT / "evals" / "scenarios" / "quality"
@@ -71,7 +72,7 @@ RESULTS_DIR = REPO_ROOT / "evals" / "results"
 DATA_FILES = ("cases.yaml", "rubric.yaml", "models.yaml", "style_guide_vi.md")
 
 # Đổi chữ của đề bài hoặc khung giám khảo thì tăng version: kết quả cũ không còn so được.
-BRIEF_TEMPLATE_VERSION = "d-brief-1"
+BRIEF_TEMPLATE_VERSION = "d-brief-2"  # d-brief-2: thêm quy ước tên/địa danh (D-32)
 JUDGE_TEMPLATE_VERSION = "d-judge-1"
 SCENE_TAG = "scene"
 SECRET_CRITERION = "giu_bi_mat"
@@ -137,6 +138,18 @@ class Character(_Strict):
     desc: str
 
 
+class Naming(_Strict):
+    """Quy ước tên nhân vật và địa danh của một cảnh (D-32)."""
+
+    names: Literal["han_viet", "viet"]
+    places: Literal["hu_cau", "that"]
+
+
+NAMES_TEXT = {"han_viet": "tên nhân vật kiểu Hán Việt", "viet": "tên nhân vật kiểu Việt"}
+PLACES_TEXT = {"hu_cau": "địa danh hư cấu, không dùng địa danh có thật",
+               "that": "được dùng địa danh có thật"}
+
+
 class Case(_Strict):
     id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]*$")
     genre: str
@@ -150,6 +163,7 @@ class Case(_Strict):
     beats: list[str] = Field(min_length=1)
     must_not_reveal: list[str] = []
     length_chars: LengthRange | None = None
+    naming: Naming | None = None
 
     @model_validator(mode="after")
     def _unique_names(self) -> Self:
@@ -331,6 +345,9 @@ def case_brief(case: Case, length: LengthRange) -> str:
         f"Thể loại: {case.genre}",
         f"Ngôi kể: {case.pov}",
         f"Giọng văn: {case.voice}",
+        *([(f"Quy ước tên và địa danh: {NAMES_TEXT[case.naming.names]}; "
+            f"{PLACES_TEXT[case.naming.places]}. Áp dụng cả cho nhân vật và nơi chốn mới.")]
+          if case.naming else []),
         "",
         "Chuyện trước đó:",
         case.context.strip(),
@@ -412,7 +429,9 @@ def judge_schema(rubric: Rubric) -> dict[str, Any]:
 
 
 def wrap_scene(text: str) -> str:
-    """Bọc bài viết thành dữ liệu; escape như khối player_data (D-12) để không đóng khối sớm."""
+    """Bọc bài viết thành dữ liệu; escape như khối player_data (D-12) để không đóng khối sớm.
+    Chuẩn hoá dấu gạch trước (D-31): giám khảo chấm đúng chữ người chơi sẽ thấy."""
+    text = normalize_dashes(text)
     return f"<{SCENE_TAG}>\n{html.escape(text, quote=False)}\n</{SCENE_TAG}>"
 
 
@@ -534,7 +553,8 @@ def bench_quality_config(base: QualityConfig, params: QualityParams) -> QualityC
 def code_metrics(text: str, length: LengthRange, quality: QualityConfig) -> dict[str, Any]:
     """Độ dài theo khoảng của case (không theo story_lengths.yaml như check_scene), cộng bốn bộ
     kiểm còn lại của writory.quality. Đếm ký tự giống check_length: gộp khoảng trắng."""
-    chars = len(" ".join(unicodedata.normalize("NFC", text).split()))
+    text = normalize_dashes(unicodedata.normalize("NFC", text))  # D-31: đo trên chữ người chơi thấy
+    chars = len(" ".join(text.split()))
     issues = (
         check_repetition(text, quality)
         + check_cliches(text, quality)

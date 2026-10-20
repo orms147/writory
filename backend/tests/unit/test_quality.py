@@ -20,6 +20,7 @@ from writory.quality import (
     check_length,
     check_repetition,
     check_scene,
+    normalize_dashes,
 )
 
 FIXTURES = Path(__file__).parents[1] / "fixtures" / "quality"
@@ -110,9 +111,26 @@ def test_decomposed_unicode_is_normalised_before_matching():
     assert issue.excerpt == "thời gian như ngừng trôi"
 
 
-def test_wrong_dash_detail_suggests_em_dash():
-    [issue] = check_dialogue("– Anh uống đi.", TRIAL)
-    assert "—" in issue.detail
+@pytest.mark.parametrize(("raw", "want"), [
+    ("— Anh uống đi.", "- Anh uống đi."),
+    ("– Anh uống đi.", "- Anh uống đi."),
+    ("—Anh đi đâu?", "- Anh đi đâu?"),
+    ("-Ai đó?", "- Ai đó?"),
+    ("  — Thụt lề.", "  - Thụt lề."),
+    ("Thanh Sương, — lão nói, không ngẩng lên.", "Thanh Sương, - lão nói, không ngẩng lên."),
+    ("Anh chép sách phải không? — cô hỏi.", "Anh chép sách phải không? - cô hỏi."),
+    ("Chiến tranh 1945–1954, số nhà 12-14.", "Chiến tranh 1945-1954, số nhà 12-14."),
+    ("Minh im lặng.\n\n—\n\nLan quay đi.", "Minh im lặng.\n\n-\n\nLan quay đi."),
+])
+def test_normalize_dashes_turns_every_dash_into_hyphen(raw, want):
+    """D-31: backend thay mọi " — " bằng " - "; dòng thoại thành "- "."""
+    assert normalize_dashes(raw) == want
+    assert normalize_dashes(want) == want  # chạy lại không đổi gì
+
+
+def test_only_dash_line_is_still_an_error_after_normalising():
+    [issue] = check_dialogue("—", TRIAL)
+    assert issue.kind == "dialogue_format"
 
 
 # --- độ dài -------------------------------------------------------------------------------
@@ -162,7 +180,8 @@ def test_hand_written_sample_story_has_no_issues(path: Path):
 
 
 def test_issues_are_sorted_by_position():
-    text = "他 thời gian như ngừng trôi.\n\n– Đi thôi."
+    # D-31: dấu gạch được chuẩn hoá nên không còn là lỗi; dòng mở bằng ngoặc kép thì vẫn lỗi.
+    text = "他 thời gian như ngừng trôi.\n\n—Đi thôi.\n\n“Về thôi.”"
     issues = check_scene(text, scenes_in_chapter=2, quality=TRIAL, lengths=REPO.story_lengths)
     starts = [i.start for i in issues]
     assert starts == sorted(starts)

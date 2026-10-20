@@ -219,6 +219,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** chưa đưa vào `check_scene`, nên chưa làm pipeline viết lại cảnh. Đưa vào lúc nào sẽ quyết khi làm pipeline (tuần 2); khi đó cảnh có lỗi này phải bị chặn trước khi hiện (G2). Danh sách cụm hẹp, nên có thể bỏ sót ghi chú viết bằng chữ khác.
 - **Người quyết:** điều phối (yêu cầu hàm và cột); danh sách mẫu: Claude (Session 3) · 19/10/2026
 
+## D-31 · Dấu thoại là "- "; backend thay mọi "—" bằng "-" (thay thế phần ký tự gạch của D-18)
+- **Bối cảnh:** D-18 chọn em dash "— " cho dòng thoại. Chấm tay bài D, chủ dự án yêu cầu "backend thay toàn bộ ' — ' bằng ' - '". Model cũng trộn em dash, en dash và gạch nối.
+- **Quyết định:** `writory.quality.normalize_dashes` đổi mọi em/en dash thành "-" và dòng thoại thành "- ". `check_scene`/`check_dialogue` chuẩn hoá trước rồi mới kiểm; bài đo D chuẩn hoá trước khi đưa giám khảo. Kiểu gạch đầu dòng và ngoại lệ trích sau ":" của D-18 giữ nguyên.
+- **Hệ quả:** dòng mở bằng gạch bất kỳ đều hợp lệ; dòng chỉ có gạch và dòng mở bằng ngoặc kép vẫn là lỗi. Vị trí lỗi tính trên văn bản đã chuẩn hoá. Đường hiện chữ cho người chơi (pipeline) phải gọi cùng hàm này.
+- **Người quyết:** Chủ dự án · 20/10/2026
+
 ## D-32 · Quy ước tên và địa danh do người chơi chọn, mặc định theo thể loại
 - **Bối cảnh:** chấm tay bài D, chủ dự án ghi: truyện giả tưởng mà dùng tên Việt và địa danh thật thì lạc chất; truyện tu tiên, kiếm hiệp cần tên kiểu Hán Việt.
 - **Quyết định:** lúc khởi tạo có tag quy ước tên (Hán Việt / Việt) và địa danh (thật / hư cấu). Người chơi chọn; mặc định theo thể loại như design §4.1. Prompt mọi bước sinh nội dung nhận quy ước này.
