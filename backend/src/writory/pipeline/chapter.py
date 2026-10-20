@@ -23,14 +23,14 @@ from typing import Any, Literal, TypedDict
 from langgraph.graph import END, START, StateGraph
 from langgraph.runtime import Runtime
 
-from writory.config import AppConfig, LimitNotSetError
+from writory.config import AppConfig, LimitNotSetError, WriterTier
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage, NodeSpec
 from writory.graph.context import WriterContext
 from writory.graph.schema import EDGE_TYPES
 from writory.guard import Severity, check_scene_package
 from writory.guard.state import OverlayState, player_view_of
-from writory.llm.base import LLMClient, require_model, role_extra
+from writory.llm.base import LLMClient, reasoning_extra, require_model, role_extra
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.retry import RETRY_TRANSIENT, with_json_retries, with_retries
 from writory.pipeline.choices import Choice, make_choices
@@ -58,7 +58,7 @@ from writory.pipeline.scene import (
 from writory.pipeline.store import ChapterStore
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import IssueKind, check_meta_leak, check_scene, normalize_dashes
-from writory.safety.leak import check_leaks
+from writory.safety.leak import check_leaks, leak_names
 from writory.safety.redact import redact
 
 log = logging.getLogger(__name__)
@@ -104,6 +104,18 @@ class Review:
 
 
 @dataclass(frozen=True)
+class ReviewRecord:
+    """Một lượt soát, giữ ở phía máy chủ để đo người canh và kiểm văn (D-43). `issues` có
+    `feedback` (lớp truth): không vào log chung hay tới người chơi."""
+
+    scene: int
+    attempt: int
+    verdict: Literal["accept", "rewrite", "block"]
+    issues: tuple[ReviewIssue, ...]
+    rejected: tuple[tuple[str, str], ...]
+
+
+@dataclass(frozen=True)
 class AcceptedScene:
     number: int
     text: str
@@ -126,6 +138,8 @@ class ChapterOutcome:
     blocked_scene: int | None = None
     choices: list[Choice] = field(default_factory=list)
     error: ErrorCode | None = None
+    error_detail: str | None = None  # chi tiết cho log máy chủ (đã redact); không tới người chơi
+    reviews: list[ReviewRecord] = field(default_factory=list)  # mọi lượt soát, theo thứ tự
     cost_usd: float = 0.0
 
 
@@ -198,6 +212,7 @@ class _State(TypedDict, total=False):
     finish_reason: str | None
     review: Review | None
     verdict: Literal["accept", "rewrite", "block"]
+    reviews: list[ReviewRecord]
     accepted: list[AcceptedScene]
     blocked_scene: int
     package: ChangePackage
@@ -212,30 +227,56 @@ def _require(section, name: str):
         raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail=str(e)) from None
 
 
-def _writer_model(config: AppConfig, tier_id: str | None) -> str:
+def writer_tier(config: AppConfig, tier_id: str | None) -> WriterTier:
+    """Mức model viết theo id; None = mức đầu. Danh sách rỗng là lỗi cấu hình."""
     tiers = config.models.writer_tiers
     if not tiers:
         raise WritoryError(ErrorCode.CONFIG_MODEL_NOT_SET, detail="models.writer_tiers rỗng")
     if tier_id is None:
-        return tiers[0].model
+        return tiers[0]
     for tier in tiers:
         if tier.id == tier_id:
-            return tier.model
+            return tier
     raise ValueError(f"không có mức model viết {tier_id!r}")
+
+
+CHAPTER_ROLES = ("outline", "extract", "choices")
+
+
+def config_problems(config: AppConfig, tier_id: str | None = None) -> list[WritoryError]:
+    """Mọi model và ngưỡng một chương cần mà còn null, theo thứ tự kiểm. Rỗng là đủ (D-36).
+    Lệnh chạy cả truyện dùng hàm này để báo một lần mọi chỗ thiếu (D-42)."""
+    problems: list[WritoryError] = []
+
+    def check(fn, *args) -> None:
+        try:
+            fn(*args)
+        except WritoryError as e:
+            problems.append(e)
+
+    for role in CHAPTER_ROLES:
+        check(require_model, config.models.roles, role)
+    check(writer_tier, config, tier_id)
+    for section, name in (
+        (config.limits.cost_usd, "per_scene"),
+        (config.limits.cost_usd, "per_chapter"),
+        (config.limits.cost_usd, "per_story"),
+        (config.limits.context, "writer_max_neighbors"),
+        (config.quality.repetition, "ngram_words"),
+        (config.quality.repetition, "max_repeats"),
+        (config.quality.foreign_script, "latin_run_min_words"),
+        (config.guard.relationship, "max_score_jump_without_event"),
+    ):
+        check(_require, section, name)
+    return problems
 
 
 def _preflight(d: _Deps) -> None:
     """Mọi model và ngưỡng cần cho chương phải đã đặt, trước lời gọi model đầu tiên."""
-    cfg = d.config
-    for role in ("outline", "extract", "choices"):
-        require_model(cfg.models.roles, role)
-    _writer_model(cfg, d.request.writer_tier)
+    problems = config_problems(d.config, d.request.writer_tier)
+    if problems:
+        raise problems[0]
     d.llm.tracker.ensure_budget()
-    _require(cfg.limits.context, "writer_max_neighbors")
-    _require(cfg.quality.repetition, "ngram_words")
-    _require(cfg.quality.repetition, "max_repeats")
-    _require(cfg.quality.foreign_script, "latin_run_min_words")
-    _require(cfg.guard.relationship, "max_score_jump_without_event")
 
 
 def _accepted_packages(state: _State) -> list[ChangePackage]:
@@ -373,8 +414,9 @@ async def _write(state: _State, runtime: Runtime[_Deps]) -> dict:
                if review is not None else None)
     messages = writer_messages(d.style_guide, _brief(d, state), state["context"],
                                state["outline"], state["names"], _edge_ends(state), rewrite)
-    model = _writer_model(d.config, d.request.writer_tier)
-    result = await with_retries(lambda: d.llm.chat(model, messages),
+    tier = writer_tier(d.config, d.request.writer_tier)
+    extra = reasoning_extra(tier.reasoning)
+    result = await with_retries(lambda: d.llm.chat(tier.model, messages, extra=extra),
                                 max_retries=d.config.limits.retries.llm_transient,
                                 retry_on=RETRY_TRANSIENT)
     if not result.text.strip():
@@ -435,7 +477,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     # 4. Dò lộ trên chữ cảnh, với player_view gồm cả các hé lộ của chính cảnh này (G2, D-26).
     overlay = OverlayState(base, [*earlier, package])
     hits = check_leaks(text, view=player_view_of(overlay, chapter), plan=d.plan,
-                       truth_names=overlay.named_nodes())
+                       truth_names=leak_names(overlay))
     issues += [ReviewIssue("leak", h.kind.value, True,
                            f"lộ bí mật: đoạn «{h.excerpt}» nói ra điều người đọc chưa được biết; "
                            "viết lại để không nói ra điều đó")
@@ -456,7 +498,9 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     if issues:
         log.info("chương %s cảnh %s lượt %s: %s lỗi (%s) -> %s", chapter, scene, attempt,
                  len(issues), _kinds(issues), verdict)
+    record = ReviewRecord(scene, attempt, verdict, review.issues, review.rejected)
     return {"review": review, "verdict": verdict,
+            "reviews": [*state.get("reviews", []), record],
             "attempt": attempt + 1 if verdict == "rewrite" else attempt}
 
 
@@ -506,7 +550,7 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
         d.llm, require_model(d.config.models.roles, "choices"),
         view=d.store.player_view(chapter), protagonist_id=state["protagonist"],
         last_scene_text=state["accepted"][-1].text,
-        truth_names=d.store.state().named_nodes(), plan=d.plan,
+        truth_names=leak_names(d.store.state()), plan=d.plan,
         retries=d.config.limits.retries, extra=role_extra(d.config.models, "choices"),
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,
@@ -575,6 +619,7 @@ class ChapterRun:
         except WritoryError as e:
             log.warning("viết chương dừng: %s", e)  # str() đã redact chi tiết
             self.outcome.error = e.code
+            self.outcome.error_detail = e.detail
             yield error_event(e)
         except Exception:  # noqa: BLE001 — ranh giới tới người chơi: lỗi lạ thành INTERNAL_ERROR
             log.error("viết chương: lỗi không lường trước:\n%s", redact(traceback.format_exc()))
@@ -592,4 +637,5 @@ class ChapterRun:
         out.committed = bool(final.get("committed", False))
         out.blocked_scene = final.get("blocked_scene")
         out.choices = list(final.get("choices", []))
+        out.reviews = list(final.get("reviews", []))
         out.cost_usd = self._deps.llm.tracker.chapter_usd

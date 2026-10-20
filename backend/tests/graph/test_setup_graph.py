@@ -5,6 +5,7 @@ from pathlib import Path
 
 import pytest
 
+from writory.api.deps import get_truth_names
 from writory.config import load_config
 from writory.graph import (
     apply_package,
@@ -14,6 +15,7 @@ from writory.graph import (
     story_snapshot,
 )
 from writory.graph.context import render_writer_context, writer_context
+from writory.guard.state import EmptyState, Neo4jState, OverlayState
 from writory.llm.fake import FakeLLM
 from writory.pipeline.setup import (
     PROTAGONIST_ID,
@@ -25,6 +27,7 @@ from writory.pipeline.setup import (
     StoryTags,
     build_story,
 )
+from writory.safety.leak import leak_names
 from writory.safety.wrap import UserAuthored
 
 pytestmark = pytest.mark.graph
@@ -66,6 +69,19 @@ async def test_chapter_0_package_applies_and_player_knows_nothing(driver, new_st
 
     apply_package(driver, sid, result.package)  # áp lại cùng gói: không đổi gì (D-6)
     assert story_snapshot(driver, sid) == snap
+
+
+async def test_leak_names_spare_the_player_written_name_on_neo4j_too(driver, new_story_id):
+    """D-48 một quy tắc cho cả ba nơi: API (`get_truth_names`, Neo4jState) và pipeline
+    (OverlayState) ra cùng tên cấm; tên nhân vật chính do người chơi chọn không bị cấm."""
+    sid = new_story_id()
+    result = await _setup(sid)
+    apply_package(driver, sid, result.package)
+    on_neo4j = leak_names(Neo4jState(driver, sid))
+    assert on_neo4j == leak_names(OverlayState(EmptyState(), [result.package]))
+    assert get_truth_names(sid, driver) == on_neo4j
+    assert PROTAGONIST_ID not in on_neo4j
+    assert on_neo4j["to_nguyet_hoa"][0] == "Tô Nguyệt Hoa"
 
 
 async def test_writer_reads_chapter_0_world_and_player_text_stays_wrapped(driver, new_story_id):

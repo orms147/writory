@@ -135,6 +135,8 @@ class WriterTier(_Strict):
     label: str
     model: str
     eval_result: str
+    # Mức suy luận của model viết, như `role_reasoning`; null = mặc định của model (D-43).
+    reasoning: ReasoningEffort | None = None
 
 
 class ModelsConfig(_Strict):

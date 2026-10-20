@@ -1,0 +1,443 @@
+"""Lệnh chạy cả một truyện (pipeline/bench_run.py, D-42, D-43): model giả, kho truyện trong bộ nhớ,
+không mạng. Bản chạy trên Neo4j + Postgres thật: tests/graph/test_bench_run.py."""
+
+import json
+import logging
+import random
+from pathlib import Path
+
+import httpx
+import pytest
+
+from tests.pipeline_fixtures import OverlayStore, make_config
+from writory.config import ConfigError, load_config
+from writory.llm.openrouter import OpenRouterClient
+from writory.pipeline import bench_run
+from writory.pipeline.bench_run import (
+    DRY_RUN_SECRET_TEXT,
+    DryRunLLM,
+    RunOptions,
+    StoryRun,
+    load_scenario,
+    models_in_use,
+    openrouter_client,
+)
+
+SCENARIO_PATH = bench_run.DEFAULT_SCENARIO
+GENERAL_FILES = ("meta.json", "setup.json", "events.jsonl", "calls.jsonl", "report.json",
+                 "summary.md")
+STYLE = "Văn phong thử."
+
+
+# --- dựng một lần chạy --------------------------------------------------------------------------
+
+
+def scenario_for(config, **changes):
+    """Đề mẫu, với giá cho đúng các model config thử đang dùng (để test không phụ thuộc
+    model thật trong config/models.yaml)."""
+    base, _ = load_scenario(SCENARIO_PATH)
+    prices = {info["model"]: {"in": 0.1, "out": 0.5}
+              for info in models_in_use(config, base).values() if info["model"]}
+    data = base.model_dump(mode="json", by_alias=True) | {"prices": prices} | changes
+    return type(base).model_validate(data)
+
+
+def trial_config(tmp_path):
+    """Bản sao config/ với ngưỡng thử (tests/pipeline_fixtures.make_config), dựng một lần."""
+    target = tmp_path / "config"
+    return load_config(target) if target.exists() else make_config(tmp_path)
+
+
+def make_run(tmp_path, *, llm=None, config=None, scenario=None, store=None, out=None, **options):
+    config = config or trial_config(tmp_path)
+    scenario = scenario or scenario_for(config)
+    total = config.story_lengths.levels[scenario.length_level].chapters.min
+    llm = llm if llm is not None else DryRunLLM(total)
+    store = store or OverlayStore()
+    out = out or tmp_path / "out"
+    run = StoryRun(scenario, "sha-test", config, llm=llm, store=store,
+                   options=RunOptions(out=out, dry_run=True, **options), style_guide=STYLE,
+                   log=lambda _: None)
+    return run, llm, store, out
+
+
+def rows(path: Path) -> list[dict]:
+    return [json.loads(line) for line in path.read_text(encoding="utf-8").splitlines() if line]
+
+
+def all_text(out: Path, *, skip: tuple[str, ...] = ()) -> str:
+    return "\n".join(p.read_text(encoding="utf-8") for p in sorted(out.rglob("*"))
+                     if p.is_file() and p.name not in skip)
+
+
+# --- dry-run hết đường ------------------------------------------------------------------------
+
+
+async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
+    run, llm, store, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+
+    total = run.plan.total_chapters
+    assert store.created == "short" and store.committed == total  # mặc định: số chương kế hoạch
+    for name in (*GENERAL_FILES, "truth_dump.json"):
+        assert (out / name).is_file(), name
+    assert sorted(p.name for p in (out / "chapters").iterdir()) == [
+        f"ch{n:02d}.md" for n in range(1, total + 1)]
+
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["status"] == "done" and report["chapters_committed"] == total
+    by_role = report["cost"]["by_role"]
+    assert set(by_role) == {"setup", "outline", "writer", "extract", "choices"}
+    assert all(v > 0 for v in by_role.values())
+    assert sorted(report["cost"]["by_chapter"]) == [str(n) for n in range(total + 1)]
+    calls = report["calls"]["by_role"]
+    scenes = total * run.scenario.scene_count
+    assert calls == {"setup": 4, "outline": scenes, "writer": scenes, "extract": scenes,
+                     "choices": total}
+    assert len(rows(out / "calls.jsonl")) == len(llm.calls)
+
+    events = rows(out / "events.jsonl")
+    kinds = [e["type"] for e in events]
+    assert kinds.count("setup_options") == 3
+    assert kinds.count("scene_ready") == scenes
+    assert kinds.count("chapter_committed") == total + 1  # gồm chương 0
+    assert kinds.count("choice_picked") == total
+
+    # Lựa chọn tự chọn ở chương 1 là hành động dẫn tới chương 2, đúng như người chơi bấm.
+    picked = next(e for e in events if e["type"] == "choice_picked" and e["chapter"] == 1)
+    writer_ch2 = [c for c in llm.calls if c[0].content.startswith(STYLE)
+                  and "Chương 2, cảnh 1" in c[-1].content]
+    assert writer_ch2 and picked["choice"]["text"] in writer_ch2[0][-1].content
+
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["status"] == "done" and meta["exit_code"] == 0 and meta["dry_run"] is True
+    assert meta["seed"] == run.scenario.seed and meta["git"]["commit"]
+    assert set(meta["models"]) == {"setup", "outline", "writer", "extract", "choices"}
+    assert meta["models"]["writer"]["reasoning"] == "none"
+    assert meta["config"]["sha256"] and meta["scenario"]["content"]["tags"]["genre"] == "tu tiên"
+    chapter_1 = (out / "chapters" / "ch01.md").read_text(encoding="utf-8")
+    assert bench_run.DRY_RUN_NPC_NAME in chapter_1 and "Lựa chọn" in chapter_1
+
+
+def test_result_paths_are_relative_to_the_repo():
+    assert bench_run.repo_path(SCENARIO_PATH) == "evals/scenarios/story_run/tu-tien-ngan.yaml"
+    assert bench_run.repo_path(bench_run.REPO_CONFIG_DIR) == "config"
+
+
+async def test_chapters_option_stops_early_and_never_runs_past_the_plan(tmp_path):
+    run, _, store, out = make_run(tmp_path, chapters=2)
+    assert await run.run() == bench_run.EXIT_OK
+    assert store.committed == 2
+    run, _, store, out = make_run(tmp_path, out=tmp_path / "out2", chapters=99)
+    assert await run.run() == bench_run.EXIT_OK
+    assert store.committed == run.plan.total_chapters
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["chapters_target"] == run.plan.total_chapters and report["chapters_clamped"]
+
+
+async def test_existing_results_are_never_overwritten(tmp_path):
+    run, _, _, out = make_run(tmp_path, chapters=1)
+    assert await run.run() == bench_run.EXIT_OK
+    again, llm, _, _ = make_run(tmp_path, out=out, chapters=1)
+    with pytest.raises(ConfigError, match="đã có kết quả"):
+        await again.run()
+    assert llm.calls == []
+
+
+# --- tách chữ bí mật ------------------------------------------------------------------------
+
+
+async def test_secret_text_only_goes_to_truth_dump(tmp_path):
+    run, _, _, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    general = all_text(out, skip=("truth_dump.json",))
+    secret = run.plan.secrets[0]
+    forbidden = [DRY_RUN_SECRET_TEXT, secret.fact_id, *(p for g in secret.leak_terms for p in g),
+                 "reveal_from_chapter", "leak_terms"]
+    for text in forbidden:
+        assert text not in general, text
+    truth = (out / "truth_dump.json").read_text(encoding="utf-8")
+    for text in (DRY_RUN_SECRET_TEXT, secret.fact_id, "reveal_from_chapter"):
+        assert text in truth
+    dump = json.loads(truth)
+    assert dump["plan"]["secrets"][0]["fact_id"] == secret.fact_id
+    assert set(dump["packages"]) == {str(n) for n in range(run.plan.total_chapters + 1)}
+    assert dump["final"]["chapter"] == run.plan.total_chapters
+    assert any(e["type"] == "REVEALED_TO_PLAYER" for e in dump["final"]["edges"])
+    assert dump["chapters"]["1"][0]["outlines"][0]["beats"]
+
+
+# --- đếm lỗi, viết lại, cạnh bị bỏ ----------------------------------------------------------
+
+
+class _Scripted(DryRunLLM):
+    """DryRunLLM, thay câu trả lời của một vai ở lần gọi thứ k (đếm từ 1)."""
+
+    def __init__(self, total, overrides):
+        super().__init__(total)
+        self.overrides = overrides  # {(vai, k): chuỗi | hàm(chữ gốc) -> chuỗi}
+        self.seen: dict[str, int] = {}
+
+    def reply(self, schema_name, text):
+        role = bench_run.ROLE_BY_SCHEMA_NAME.get(schema_name, "writer")
+        self.seen[role] = self.seen.get(role, 0) + 1
+        answer = super().reply(schema_name, text)
+        override = self.overrides.get((role, self.seen[role]))
+        if override is None:
+            return answer
+        return override(answer) if callable(override) else override
+
+
+def _with_bad_edge(answer: str) -> str:
+    data = json.loads(answer)
+    data["edges"].append({"type": "HOLDS", "source": "khong_co", "target": "cung_khong_co",
+                          "kind": None, "score": None, "how": None, "told_by": None,
+                          "quote": None, "known_as": None, "role": None})
+    return json.dumps(data, ensure_ascii=False)
+
+
+async def test_rewrites_issue_kinds_and_rejected_edges_are_counted(tmp_path):
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    cliche = "Thời gian như ngừng trôi. "
+    llm = _Scripted(total, {("writer", 1): lambda a: cliche + a, ("extract", 1): _with_bad_edge})
+    run, _, _, out = make_run(tmp_path, llm=llm, config=config, chapters=1)
+    assert await run.run() == bench_run.EXIT_OK
+
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["issues"]["found"] == {"quality:cliche": 1}
+    assert report["issues"]["left_when_shown"] == {}
+    assert report["rewrites"] == 1
+    assert report["rejected_edges"]["total"] == 1
+    assert report["rejected_edges"]["by_reason"] == {"id không có trong danh mục": 1}
+    # Chữ góp ý cho model viết lại (có thể chứa lớp truth) và mô tả cạnh chỉ ở truth_dump.
+    general = all_text(out, skip=("truth_dump.json",))
+    assert "sáo ngữ:" not in general and "khong_co" not in general
+    truth = (out / "truth_dump.json").read_text(encoding="utf-8")
+    assert "sáo ngữ:" in truth and "khong_co" in truth
+
+
+async def test_blocked_choices_are_regenerated_like_a_player_retry(tmp_path):
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+
+    def leak(answer: str) -> str:  # tên thật chưa hé lộ trong chữ lựa chọn (G2)
+        data = json.loads(answer)
+        data["choices"][0]["text"] = f"Đi tìm {bench_run.DRY_RUN_HIDDEN_NAME} hỏi chuyện."
+        return json.dumps(data, ensure_ascii=False)
+
+    llm = _Scripted(total, {("choices", 1): leak})
+    run, _, store, out = make_run(tmp_path, llm=llm, config=config, chapters=2)
+    assert await run.run() == bench_run.EXIT_OK
+    assert store.committed == 2
+    events = [e for e in rows(out / "events.jsonl") if e.get("chapter") == 1]
+    kinds = [e["type"] for e in events]
+    assert kinds.index("error") < kinds.index("choices_ready") < kinds.index("choice_picked")
+    assert next(e for e in events if e["type"] == "error")["code"] == "CHOICES_LEAK_BLOCKED"
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["player_retries_used"] == {"setup": 0, "chapter": 0, "choices": 1}
+    # Bộ tạo lại (dữ liệu có cấu trúc, id nút) vào truth_dump để chấm tay.
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    assert [c["kind"] for c in dump["chapters"]["1"][0]["choices"]] == [
+        "action", "dialogue", "inner"]
+
+
+async def test_scene_blocked_after_every_retry_stops_the_run_and_keeps_files(tmp_path):
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    leak = f"{bench_run.DRY_RUN_HIDDEN_NAME} đứng sau cánh cửa. "
+    llm = _Scripted(total, {("writer", k): (lambda a: leak + a) for k in range(1, 10)})
+    run, _, store, out = make_run(tmp_path, llm=llm, config=config)
+    assert await run.run() == bench_run.EXIT_ABORT
+    assert store.committed == 0  # chỉ chương 0
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["status"] == "error" and report["stop"]["code"] == "SCENE_LEAK_BLOCKED"
+    assert report["player_retries_used"]["chapter"] == run.scenario.player_retries
+    assert [e["type"] for e in rows(out / "events.jsonl")].count("scene_blocked") == (
+        run.scenario.player_retries + 1)
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["status"] == "error" and meta["exit_code"] == bench_run.EXIT_ABORT
+    assert (out / "truth_dump.json").is_file() and (out / "summary.md").is_file()
+
+
+# --- trần ngân sách --------------------------------------------------------------------------
+
+
+async def test_budget_stops_before_a_call_that_could_exceed_and_keeps_what_was_done(tmp_path):
+    """Giá vào 0, giá ra 2 USD/1M, max_tokens 1000: mỗi lời gọi giữ chỗ đúng 0,002 USD; mỗi lời
+    gọi tốn 0,001. Trần 0,0105: lời gọi thứ 10 cần 0,009 + 0,002 > trần nên không được gọi."""
+    config = trial_config(tmp_path)
+    base = scenario_for(config)
+    scenario = scenario_for(config, max_tokens_per_call=1000,
+                            prices={m: {"in": 0.0, "out": 2.0} for m in base.prices})
+    total = config.story_lengths.levels["short"].chapters.min
+    llm = DryRunLLM(total, cost_usd=0.001)
+    run, _, store, out = make_run(tmp_path, llm=llm, config=config, scenario=scenario,
+                                  budget_usd=0.0105)
+    assert await run.run() == bench_run.EXIT_BUDGET
+
+    # setup 4 + chương 1: dàn ý, viết, trích (cảnh 1), dàn ý, viết (cảnh 2) = 9 lời gọi.
+    assert len(llm.calls) == 9
+    calls = rows(out / "calls.jsonl")
+    assert len(calls) == 9 and all(c["status"] == "ok" for c in calls)
+    assert sum(c["cost_usd"] for c in calls) <= 0.0105
+    assert {c["reserved_usd"] for c in calls} == {0.002}
+    assert all(c["extra"]["max_tokens"] == 1000 for c in calls)
+    assert store.committed == 0  # chương 1 chưa ghi: không có gì nửa vời
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["status"] == "budget" and report["stop"]["where"] == "chapter 1"
+    assert report["cost"]["total_usd"] == pytest.approx(0.009)
+    # Phần đã có vẫn được ghi: bối cảnh đã chọn, cảnh 1 đã hiện, kế hoạch và chương 0.
+    assert json.loads((out / "setup.json").read_text(encoding="utf-8"))["build"]["done"]
+    scene_1 = [e for e in rows(out / "events.jsonl") if e["type"] == "scene_ready"]
+    assert len(scene_1) == 1
+    partial = (out / "chapters" / "ch01.md").read_text(encoding="utf-8")
+    assert scene_1[0]["text"] in partial and "chưa ghi" in partial
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    assert dump["plan"] and set(dump["packages"]) == {"0"}
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["status"] == "budget" and meta["budget_usd"] == 0.0105
+
+
+async def test_budget_is_required_for_a_real_run(tmp_path):
+    config = trial_config(tmp_path)
+    run = StoryRun(scenario_for(config), "sha", config, llm=DryRunLLM(4), store=OverlayStore(),
+                   options=RunOptions(out=tmp_path / "o", dry_run=False), log=lambda _: None)
+    with pytest.raises(ConfigError, match="--budget"):
+        await run.run()
+
+
+# --- tự chọn theo seed ------------------------------------------------------------------------
+
+
+def _picks(out: Path) -> list[int]:
+    return [e.get("picked", e.get("index")) for e in rows(out / "events.jsonl")
+            if e["type"] in ("setup_options", "choice_picked")]
+
+
+async def test_auto_pick_is_deterministic_for_a_seed(tmp_path):
+    first, _, _, out_1 = make_run(tmp_path, out=tmp_path / "a", chapters=2, seed=7)
+    second, _, _, out_2 = make_run(tmp_path, out=tmp_path / "b", chapters=2, seed=7)
+    assert await first.run() == bench_run.EXIT_OK
+    assert await second.run() == bench_run.EXIT_OK
+    rng = random.Random(7)
+    expected = [rng.randrange(3) for _ in range(3 + 2)]  # 3 bước khởi tạo + 2 chương
+    assert _picks(out_1) == _picks(out_2) == expected
+    for name in ("ch01.md", "ch02.md"):
+        assert (out_1 / "chapters" / name).read_text(encoding="utf-8") == (
+            out_2 / "chapters" / name).read_text(encoding="utf-8")
+    assert json.loads((out_1 / "meta.json").read_text(encoding="utf-8"))["seed"] == 7
+
+
+async def test_scenario_seed_is_the_default(tmp_path):
+    run, _, _, out = make_run(tmp_path, chapters=1)
+    assert await run.run() == bench_run.EXIT_OK
+    rng = random.Random(run.scenario.seed)
+    assert _picks(out) == [rng.randrange(3) for _ in range(4)]
+
+
+# --- config còn null --------------------------------------------------------------------------
+
+
+async def test_unset_config_fails_before_the_first_call_and_lists_every_gap(tmp_path):
+    repo = trial_config(tmp_path)
+    roles = repo.models.roles.model_copy(update={"setup": None})
+    cost = repo.limits.cost_usd.model_copy(update={"per_story": None})
+    config = repo.model_copy(update={
+        "models": repo.models.model_copy(update={"roles": roles}),
+        "limits": repo.limits.model_copy(update={"cost_usd": cost}),
+    })
+    scenario = scenario_for(repo, prices={"khac/model": {"in": 0.1, "out": 0.5}})
+    llm, store = DryRunLLM(4), OverlayStore()
+    run, _, _, out = make_run(tmp_path, llm=llm, config=config, scenario=scenario, store=store)
+    with pytest.raises(ConfigError) as exc:
+        await run.run()
+    message = str(exc.value)
+    for gap in ("roles.setup", "cost_usd.per_story", "prices"):
+        assert gap in message
+    assert llm.calls == [] and store.created is None and not out.exists()
+
+
+def test_cli_reports_unset_config_without_touching_services(tmp_path, capsys, monkeypatch):
+    """`main` kiểm config và đề trước khi kết nối Neo4j/Postgres hay đọc key."""
+    config_dir = tmp_path / "config"
+    make_config(tmp_path)  # dựng tmp_path/config
+    models = config_dir / "models.yaml"
+    models.write_text(models.read_text(encoding="utf-8").replace(
+        "setup: openai/gpt-6-luna", "setup: null"), encoding="utf-8")
+    for name in ("NEO4J_URI", "POSTGRES_DSN", "OPENROUTER_API_KEY"):
+        monkeypatch.delenv(name, raising=False)
+    code = bench_run.main(["--dry-run", "--config-dir", str(config_dir), "--out",
+                           str(tmp_path / "out"), "--env-file", str(tmp_path / "none.env")])
+    assert code == bench_run.EXIT_CONFIG
+    err = capsys.readouterr().err
+    assert "roles.setup" in err and not (tmp_path / "out").exists()
+
+
+# --- key --------------------------------------------------------------------------------------
+
+KEY = "sk-or-v1-" + "f00dfeed" * 8
+
+
+def _transport(world: DryRunLLM, seen_auth: list[str], *, fails: int):
+    """OpenRouter giả: `fails` lần đầu trả 500 có chép lại key (lỗi giữa đường), sau đó trả lời
+    như model giả của --dry-run."""
+    count = {"n": 0}
+
+    def handler(request: httpx.Request) -> httpx.Response:
+        seen_auth.append(request.headers["Authorization"])
+        count["n"] += 1
+        if count["n"] <= fails:
+            return httpx.Response(500, json={"error": {"code": 500,
+                                                       "message": f"upstream lỗi, key={KEY}"}})
+        body = json.loads(request.content)
+        schema = (body.get("response_format") or {}).get("json_schema", {}).get("name")
+        text = world.reply(schema, body["messages"][-1]["content"])
+        return httpx.Response(200, json={
+            "model": body["model"],
+            "choices": [{"message": {"content": text}, "finish_reason": "stop"}],
+            "usage": {"prompt_tokens": 10, "completion_tokens": 10, "cost": 0.0001},
+        })
+
+    return httpx.MockTransport(handler)
+
+
+async def test_key_is_never_written_to_results_or_logs(tmp_path, monkeypatch, caplog, capsys):
+    caplog.set_level(logging.DEBUG)
+    monkeypatch.setenv("OPENROUTER_API_KEY", KEY)
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    seen: list[str] = []
+    # Lỗi 500 lặp lại quá `retries.llm_transient` lần ở bước khởi tạo đầu (D-14) thành
+    # RETRY_LIMIT_REACHED; lệnh "bấm thử lại" như người chơi.
+    fails = config.limits.retries.llm_transient + 1
+    http = httpx.AsyncClient(transport=_transport(DryRunLLM(total), seen, fails=fails))
+    client = openrouter_client(tmp_path / "none.env", http=http)
+    assert isinstance(client, OpenRouterClient)
+    run, _, _, out = make_run(tmp_path, llm=client, config=config, chapters=1, budget_usd=1.0)
+    run.options.dry_run = False
+    try:
+        assert await run.run() == bench_run.EXIT_OK
+    finally:
+        await http.aclose()
+
+    assert seen and all(h == f"Bearer {KEY}" for h in seen)  # key thật sự được dùng
+    printed = capsys.readouterr()
+    for where, text in (("kết quả", all_text(out)), ("log", caplog.text),
+                        ("stdout", printed.out), ("stderr", printed.err)):
+        assert KEY not in text, where
+        assert "f00dfeedf00dfeed" not in text, where
+    # Chi tiết lỗi (có chép key) chỉ vào truth_dump, đã redact.
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["player_retries_used"]["setup"] == 1
+    assert report["calls"]["by_status"]["LLM_UNAVAILABLE"] == fails
+    assert "[REDACTED]" in (out / "truth_dump.json").read_text(encoding="utf-8")
+
+
+def test_real_client_reads_only_the_openrouter_key(tmp_path, monkeypatch):
+    monkeypatch.delenv("OPENROUTER_API_KEY", raising=False)
+    env = tmp_path / ".env"
+    env.write_text("ANTHROPIC_API_KEY=sk-ant-khong-dung\n", encoding="utf-8")
+    with pytest.raises(ConfigError, match="OPENROUTER_API_KEY") as exc:
+        openrouter_client(env)
+    assert "sk-ant" not in str(exc.value)

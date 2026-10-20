@@ -36,6 +36,7 @@ from writory.pipeline.setup import (
     propose_characters,
     propose_plots,
     propose_settings,
+    story_brief,
     to_story_setup,
 )
 from writory.safety.wrap import CLOSE_TAG
@@ -201,6 +202,34 @@ async def test_bad_json_retries_by_schema_limit_then_fails():
 async def test_bad_then_good_json_succeeds_within_retry():
     llm = FakeLLM.scripted(['{"options": "x"}', _options("settings")])
     assert len(await propose_settings(CHOICES, llm=llm, config=CFG)) == 3
+
+
+TRANSIENT = CFG.limits.retries.llm_transient
+
+
+def _down() -> WritoryError:
+    return WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="giả lập")
+
+
+async def test_network_error_is_retried_by_transient_limit():
+    """D-14: lỗi mạng tạm thời thử lại theo `retries.llm_transient`, lồng ngoài lớp schema."""
+    llm = FakeLLM.scripted([_down()] * TRANSIENT + [_options("settings")])
+    assert len(await propose_settings(CHOICES, llm=llm, config=CFG)) == 3
+    assert len(llm.calls) == TRANSIENT + 1
+
+
+async def test_network_down_stops_after_transient_limit():
+    llm = FakeLLM.scripted([_down()] * (TRANSIENT + 5))
+    err = await _error(propose_settings(CHOICES, llm=llm, config=CFG))
+    assert err.code is ErrorCode.RETRY_LIMIT_REACHED
+    assert len(llm.calls) == TRANSIENT + 1
+
+
+async def test_rate_limit_is_never_retried():
+    """D-14: lỗi 429 không thử lại (không trừ thêm tiền key người chơi)."""
+    llm = FakeLLM.scripted([WritoryError(ErrorCode.LLM_RATE_LIMITED, "429"), _options("settings")])
+    err = await _error(propose_settings(CHOICES, llm=llm, config=CFG))
+    assert err.code is ErrorCode.LLM_RATE_LIMITED and len(llm.calls) == 1
 
 
 async def test_model_not_chosen_fails_before_any_call():
@@ -504,3 +533,15 @@ def test_initial_problems_flags_protagonist_knowledge():
                                        "to": "f_chuoi_kiem_ban_do", "valid_from_chapter": 0,
                                        "how": "tự biết"}])
     assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, chapters=SHORT))
+
+
+def test_story_brief_carries_every_player_choice_and_naming():
+    """Thiết lập truyện cho mỗi chương (`ChapterRequest.story_brief`): tag, quy ước tên và địa danh
+    (D-32), bối cảnh, hướng và nhân vật chính đã chọn. Nhân vật chính bỏ khoảng trắng hai đầu."""
+    padded = PC.model_copy(update={"name": "  " + PC.name + " "})
+    brief = story_brief(CHOICES, SETTING, PLOT, padded)
+    for part in ("kiếm hiệp", "cổ đại", "trầm, chậm", NAMES_TEXT["han_viet"], PLACES_TEXT["hu_cau"],
+                 SETTING.title, SETTING.intro, PLOT.title, PLOT.summary, PC.personality,
+                 PC.backstory):
+        assert part in brief
+    assert f"Nhân vật chính: {PC.name}\n" in brief

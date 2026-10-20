@@ -4,9 +4,9 @@
 trích, nội dung lời nói dối của nhân vật chính. Bộ dò không đọc cạnh đồ thị.
 
 Chuỗi cấm ở chương N, tạo từ player_view, tên lớp truth và story_plan:
-1. Tên (lớp truth) của nút có tên, khi tên đó có ít nhất một từ viết hoa (tên riêng) mà người
-   chơi chưa thấy trong player_view. Biệt danh toàn chữ thường ("thanh kiếm") là danh từ chung,
-   không bao giờ cấm.
+1. Tên (lớp truth, `leak_names`) của nút có tên, khi tên đó có ít nhất một từ viết hoa (tên riêng)
+   mà người chơi chưa thấy trong player_view. Biệt danh toàn chữ thường ("thanh kiếm") là danh từ
+   chung, không bao giờ cấm. `name` của nút `user_authored` không bao giờ cấm (D-48).
 2. Mỗi bí mật của story_plan chưa tới khoảng lộ và chưa được hé lộ: các nhóm `leak_terms`.
    Một nhóm trúng khi mọi cụm trong nhóm cùng nằm trong một câu.
 
@@ -18,15 +18,42 @@ Vị trí trả về tính trên chuỗi NFC (bỏ dấu giữ nguyên độ dà
 import logging
 import re
 import unicodedata
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
+from typing import Protocol
 
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerView
+from writory.graph import NodeRow, PlayerView
 from writory.pipeline.story_plan import StoryPlan
 
 log = logging.getLogger(__name__)
+
+
+class NamedState(Protocol):
+    """Phần của `guard.state.GraphState` mà `leak_names` cần (Neo4jState, OverlayState)."""
+
+    def named_nodes(self) -> dict[str, tuple[str, ...]]: ...
+
+    def nodes(self, ids: Sequence[str]) -> Mapping[str, NodeRow]: ...
+
+
+def leak_names(state: NamedState) -> dict[str, tuple[str, ...]]:
+    """Tên lớp truth cho bộ dò lộ: id → (name, *aliases) của mọi nút có tên, TRỪ `name` của nút
+    mang `user_authored: true` (D-48). Người chơi tự viết hay chọn tên đó (ví dụ tên nhân vật
+    chính), nên nó không phải bí mật đối với người chơi, kể cả khi trang chưa hé lộ nút. Biệt danh
+    của nút đó vẫn bị dò, vì model có thể gán bí danh bí mật. Mọi nơi gọi `check_leaks` lấy
+    `truth_names` từ đây: quy tắc chỉ nằm một chỗ."""
+    names = state.named_nodes()
+    rows = state.nodes(sorted(names))
+    out: dict[str, tuple[str, ...]] = {}
+    for node_id, (name, *aliases) in names.items():
+        row = rows.get(node_id)
+        authored = row is not None and row.props.get("user_authored") is True
+        kept = tuple(aliases) if authored else (name, *aliases)
+        if kept:
+            out[node_id] = kept
+    return out
 
 _EXCERPT_MAX_CHARS = 120
 _SENTENCE = re.compile(r"[^.!?…\n]+")
@@ -94,7 +121,7 @@ def check_leaks(
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
 ) -> list[LeakHit]:
-    """`view`: player_view ở chương của chữ này. `truth_names`: GraphState.named_nodes()."""
+    """`view`: player_view ở chương của chữ này. `truth_names`: `leak_names(state)` (D-48)."""
     text = unicodedata.normalize("NFC", text)
     flat = strip_diacritics(text)
     chapter = view.chapter

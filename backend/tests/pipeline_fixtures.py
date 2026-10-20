@@ -308,3 +308,102 @@ class MemoryStore:
 
     def player_view(self, chapter: int) -> PlayerView:
         return player_view_of(self.state(), chapter, story_id=self.story_id)
+
+
+# --- truyện mới từ bước khởi tạo (D-38) ---------------------------------------------------------
+
+SETUP_PC_NAME = "Lục Thanh Vân"  # tên người chơi chọn: chữ người chơi, không phải bí mật (D-48)
+
+
+def setup_chapter_0(*, protagonist_aliases: tuple[str, ...] = ()) -> tuple[ChangePackage, StoryPlan]:
+    """Gói chương 0 + kế hoạch do `setup.to_story_setup` dựng từ tests/fixtures/setup/: nhân vật
+    chính `protagonist` mang `user_authored: true`, người chơi chưa biết gì. `protagonist_aliases`:
+    biệt danh model gán cho nhân vật chính (có thể là bí mật)."""
+    from writory.pipeline.setup import (
+        PROTAGONIST_ID,
+        BuildOutput,
+        CharacterOption,
+        to_story_setup,
+    )
+
+    raw = (Path(__file__).parent / "fixtures" / "setup" / "build_story.json").read_text(
+        encoding="utf-8")
+    setup = to_story_setup(
+        BuildOutput.model_validate_json(raw),
+        protagonist=CharacterOption(name=SETUP_PC_NAME, personality="Ít nói, cố chấp.",
+                                    backstory="Con trai một thợ rèn; cha mất năm cậu mười hai."),
+        commit_id="setup-c0", chapters=load_config().story_lengths.levels["short"].chapters,
+    )
+    package = setup.package
+    if protagonist_aliases:
+        nodes = [n.model_copy(update={"props": {**n.props, "aliases": list(protagonist_aliases)}})
+                 if n.id == PROTAGONIST_ID else n for n in package.nodes]
+        package = package.model_copy(update={"nodes": nodes})
+    return package, setup.plan
+
+
+# --- kho truyện bất kỳ trong bộ nhớ --------------------------------------------------------------------
+
+
+class OverlayStore:
+    """Kho truyện trong bộ nhớ cho truyện bất kỳ (bắt đầu từ chương 0 do người gọi ghi), cùng
+    giao thức với kho Neo4j + Postgres của lệnh chạy cả truyện (`bench_run.RunStore`). Đọc qua
+    `OverlayState` thật. `writer_context` dựng tối giản: nhân vật có mặt + nhân vật khác làm lân
+    cận."""
+
+    def __init__(self, story_id: str = "mem-run") -> None:
+        self.story_id = story_id
+        self.packages: list[ChangePackage] = []
+        self.committed: int | None = None
+        self.created: str | None = None
+        self.deleted = False
+        self.commits: list[tuple[int, list[str]]] = []
+
+    def create_story(self, length_level: str) -> None:
+        self.created = length_level
+
+    def delete_story(self) -> None:
+        self.deleted = True
+
+    def committed_chapter(self) -> int | None:
+        return self.committed
+
+    def has_pending(self) -> bool:
+        return False
+
+    def state(self) -> OverlayState:
+        return OverlayState(EmptyState(), self.packages)
+
+    def catalogue(self) -> list[Entity]:
+        return entities_from_rows(self.state().nodes([n.id for p in self.packages for n in p.nodes]))
+
+    def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors) -> WriterContext:
+        rows = {i: r for i, r in self.state().nodes([e.id for e in self.catalogue()]).items()
+                if r.label == "Character"}
+
+        def ua(i):
+            return bool(rows[i].props.get("user_authored"))
+
+        present = tuple(
+            CharacterInfo(i, rows[i].props["name"], tuple(rows[i].props.get("aliases", ())), True,
+                          None, (), ua(i))
+            for i in present_ids if i in rows
+        )
+        neighbors = tuple(
+            NeighborInfo(i, "Character", r.props["name"], tuple(r.props.get("aliases", ())), 1,
+                         True, ua(i))
+            for i, r in rows.items() if i not in present_ids
+        )
+        return WriterContext(self.story_id, as_of_chapter, as_of_chapter + 1, present, (), (), (),
+                             (), neighbors, ())
+
+    def commit(self, number: int, scenes: list[str], package: ChangePackage) -> None:
+        expected = 0 if self.committed is None else self.committed + 1
+        assert number == expected, (number, expected)
+        assert chapter_rule_problems(package, number) == []
+        self.packages.append(package)
+        self.committed = number
+        self.commits.append((number, scenes))
+
+    def player_view(self, chapter: int) -> PlayerView:
+        return player_view_of(self.state(), chapter, story_id=self.story_id)
