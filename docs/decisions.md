@@ -168,3 +168,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Hành động bất khả hay bạo lực trong truyện vẫn là `in_story_action`; hậu quả do pipeline xử lý (G6). `ensure_in_story` map 3 nhãn bị chặn sang `ACTION_OUT_OF_STORY`, `ACTION_FORBIDDEN`, `ACTION_UNCLEAR`, câu trung tính, không kèm lý do.
 - **Hệ quả:** mỗi lần gửi ô tự viết tốn thêm một lời gọi model. `forbidden_content` chỉ gồm chặn cứng G9; trần mức u tối theo từng truyện để sau, khi pipeline có thiết lập truyện. Lỗi model tạm thời (`LLM_UNAVAILABLE`) do pipeline bọc `RETRY_TRANSIENT` ở ngoài. Độ chính xác với model thật chưa đo.
 - **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-28 · Ngữ cảnh đồ thị cho model viết
+- **Bối cảnh:** design §6.2 bước 1 cần lấy phần đồ thị liên quan cho model viết. Design §13 khuyên tách "sự thật cần tôn trọng" khỏi "gợi ý" để văn không khô.
+- **Quyết định:**
+  - `graph/context.py` đọc lớp `truth` ở chương đã commit (`as_of_chapter`) để viết chương kế tiếp. Ngữ cảnh gồm: người có mặt, quan hệ giữa họ, `Fact` họ biết, lời dối chưa bị phát hiện, bí mật trong `story_plan` kèm trạng thái lộ, nút cách 1–2 bước, và mạch đang mở.
+  - Nút lân cận không đi qua `REVEALED_TO_PLAYER` hay `Chapter`, không lặp lại nút đã ở phần sự thật. Số nút tối đa nằm ở `limits.context.writer_max_neighbors`, đang `null` cho tới khi đo; hàm nhận giới hạn qua tham số.
+  - Render chia hai phần; người liên quan đã chết thuộc phần sự thật. Chữ của nút `user_authored` đi qua `UserAuthored`.
+  - `plan` nhận qua một Protocol (chỉ cần `secrets`), để khỏi phụ thuộc nhánh chứa `StoryPlan`.
+- **Hệ quả:** trên truyện mẫu, chương 4 với Minh và Lan có mặt, bản render khoảng 2.500 ký tự (in ra trong test, không khẳng định con số). Chưa chạy trên `GraphState` (graph-schema.md, mục Chưa làm).
+- **Người quyết:** Claude (Session 1) · 19/10/2026
