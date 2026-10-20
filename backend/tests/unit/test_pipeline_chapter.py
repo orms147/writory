@@ -37,6 +37,7 @@ from writory.config import load_config
 from writory.errors import MESSAGES, ErrorCode
 from writory.graph import ChangePackage, EdgeSpec
 from writory.graph.package import CloseSpec
+from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker
 from writory.pipeline.chapter import ChapterRequest, ChapterRun, chapter_node, merge_scene_packages
 from writory.quality import normalize_dashes
@@ -137,8 +138,8 @@ async def test_writer_uses_first_writer_tier_and_style_guide(tmp_path):
     for model, extra, call in zip(llm.models, llm.extras, llm.calls, strict=True):
         by_role.setdefault(role_of(call), set()).add((model, repr(extra)))
     assert by_role["writer"] == {(config.models.writer_tiers[0].model, "None")}
-    assert by_role["outline"] == {("test/outline", "None")}
-    assert by_role["choices"] == {("test/choices", "None")}
+    for role in ("outline", "choices"):
+        assert by_role[role] == {(f"test/{role}", repr(role_extra(config.models, role)))}
     # role_reasoning.extract = low (D-35)
     assert by_role["extract"] == {(config.models.roles.extract, "{'reasoning': {'effort': 'low'}}")}
 
@@ -289,10 +290,10 @@ async def test_cost_limit_stops_before_next_call(tmp_path):
 
 
 async def test_unset_config_fails_before_any_model_call(tmp_path):
-    """Config thật còn null (roles.outline, trần chi phí): báo lỗi cấu hình, không gọi model."""
-    config = load_config()
-    if config.models.roles.outline is not None and config.limits.cost_usd.per_scene is not None:
-        pytest.skip("config thật đã đặt đủ")
+    """Config còn null (ở đây: roles.outline): báo lỗi cấu hình, không gọi model."""
+    repo = load_config()
+    roles = repo.models.roles.model_copy(update={"outline": None})
+    config = repo.model_copy(update={"models": repo.models.model_copy(update={"roles": roles})})
     events, _, llm, store = await run(full_script(), tmp_path, config=config)
     [err] = of_type(events, "error")
     assert err.code in (ErrorCode.CONFIG_MODEL_NOT_SET, ErrorCode.CONFIG_LIMIT_NOT_SET)

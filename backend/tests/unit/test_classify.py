@@ -124,20 +124,20 @@ async def test_model_error_propagates_not_allowed():
 
 
 async def test_unset_max_chars_is_config_error_before_any_call():
-    if REPO.limits.input.custom_action_max_chars is not None:
-        pytest.skip("custom_action_max_chars đã đặt trong config thật")
+    limits = REPO.limits
+    unset = limits.input.model_copy(update={"custom_action_max_chars": None})
+    cfg = REPO.model_copy(update={"limits": limits.model_copy(update={"input": unset})})
     llm = FakeLLM.scripted([answer("in_story_action")])
     with pytest.raises(WritoryError) as exc:
-        await classify_action("Tôi mở cửa.", llm=llm, config=REPO)
+        await classify_action("Tôi mở cửa.", llm=llm, config=cfg)
     assert exc.value.code is ErrorCode.CONFIG_LIMIT_NOT_SET
     assert "custom_action_max_chars" in str(exc.value)
     assert llm.calls == []
 
 
 async def test_unset_classify_model_is_config_error():
-    cfg = CFG.model_copy(update={"models": REPO.models})
-    if REPO.models.roles.classify is not None:
-        pytest.skip("model classify đã đặt trong config thật")
+    roles = REPO.models.roles.model_copy(update={"classify": None})
+    cfg = CFG.model_copy(update={"models": REPO.models.model_copy(update={"roles": roles})})
     llm = FakeLLM.scripted([answer("in_story_action")])
     with pytest.raises(WritoryError) as exc:
         await classify_action("Tôi mở cửa.", llm=llm, config=cfg)

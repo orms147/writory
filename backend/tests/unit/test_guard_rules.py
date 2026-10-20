@@ -58,9 +58,9 @@ def test_at_most_one_names_both_edges():
 
 
 def test_unset_relationship_threshold_is_config_error():
-    cfg = load_config().guard
-    if cfg.relationship.max_score_jump_without_event is not None:
-        pytest.skip("ngưỡng đã đặt trong config thật")
+    guard = load_config().guard
+    unset = guard.relationship.model_copy(update={"max_score_jump_without_event": None})
+    cfg = guard.model_copy(update={"relationship": unset})
     with pytest.raises(WritoryError) as exc:
         check_scene_package(
             chapter=2, current=SAMPLE.chapters[2].package, earlier=[],

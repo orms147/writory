@@ -26,6 +26,7 @@ from writory.graph import (
     read_sample,
 )
 from writory.guard.state import EmptyState, OverlayState, player_view_of
+from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM, render_context
 from writory.pipeline.narrator import NOT_KNOWN, NarratorOutput, ask_narrator
@@ -141,7 +142,7 @@ async def test_answer_from_notebook_is_returned():
     fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
     assert await ask("Lão Gù chết ở đâu?", 3, fake) == "Lão Gù chết sau miếu Bà."
     assert fake.schemas == [NarratorOutput]
-    assert fake.extras == [None]
+    assert fake.extras == [role_extra(CFG.models, "narrator")]
 
 
 async def test_answer_about_a_lie_the_protagonist_told():
@@ -400,15 +401,6 @@ async def test_unset_config_fails_closed_before_anything(change, code):
         await ask("Lan là ai?", 3, fake, quota=quota, config=with_limits(**change))
     assert exc.value.code is code
     assert fake.calls == [] and sum(quota.taken.values()) == 0
-
-
-async def test_repo_config_is_not_set_yet_so_narrator_is_off():
-    """Số liệu chưa đặt trong config/ thật: người kể dừng, không đoán giới hạn hay model."""
-    if REPO.models.roles.narrator is not None:
-        pytest.skip("config thật đã chọn model cho vai narrator")
-    with pytest.raises(WritoryError) as exc:
-        await ask("Lan là ai?", 3, FakeLLM.scripted([]), config=REPO)
-    assert exc.value.code in {ErrorCode.CONFIG_LIMIT_NOT_SET, ErrorCode.CONFIG_MODEL_NOT_SET}
 
 
 @pytest.mark.parametrize(("question", "code"), [

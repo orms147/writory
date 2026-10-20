@@ -1,8 +1,8 @@
 # Người canh, phần kiểm bằng code (design §8; docs/decisions.md D-23).
 # null = chưa đặt. Code dùng ngưỡng chưa đặt thì báo lỗi CONFIG_LIMIT_NOT_SET.
-# Đặt sau khi có văn và gói thay đổi do model viết (tuần 3).
+# D-47: số tạm, chỉnh lại sau lần chạy thật đầu.
 
 relationship:
   # |score mới − score cũ| của một RELATES_TO lớn hơn số này, mà các cảnh của chương không có
   # Event nào liên quan tới hai nhân vật, thì báo "quan hệ đổi đột ngột". Thang score: −100…100.
-  max_score_jump_without_event: null
+  max_score_jump_without_event: 40

@@ -289,7 +289,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Gói chương gồm nút `Chapter` (id `ch<N>`) và cạnh của các cảnh. Hai cảnh cùng id thì lấy cảnh sau; cạnh mở rồi đóng trong cùng chương thì bỏ. Ghi bằng `commit_chapter`.
   - Kiểm config trước lời gọi đầu: model các vai, trần chi phí, ngưỡng kiểm văn và người canh, `writer_max_neighbors`. Chương trước còn `pending` thì báo `CHAPTER_PENDING`. Mọi lời gọi đi qua `MeteredClient`; JSON qua `with_json_retries` (D-14). Chữ model đặt ngoài khối dữ liệu đều qua `escape_text` (G4).
 - **Hệ quả:** chưa có checkpointer, nên bấm thử lại sau `scene_blocked` sẽ viết lại cả chương. Chưa tạo thực thể mới (D-34). Chưa có tóm tắt chương trước, chưa có nhật ký người canh và nhật ký chi phí trong Postgres. Model viết chưa đặt `reasoning`/`max_tokens` như bài D.
-- **Người quyết:** Claude (nhánh pipeline-chapter), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh pipeline-chapter), điều phối duyệt (PR #18). Bỏ cạnh người canh báo sai khi giữ bản thứ hai: Chủ dự án đồng ý · 20/10/2026
 
 ## D-37 · Lựa chọn cuối chương: chỉ từ sổ tay, mã công khai; một chỗ lộ thì không hiện bộ nào
 - **Bối cảnh:** design §6.2 bước 6, §6.3; G1, G2. Lựa chọn hiện cho người chơi và mang dữ liệu để ghi về sau.
@@ -299,7 +299,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Phía máy chủ, `Choice` đổi mã về id nút (`LieEffect`: nói dối X với Y). Người chơi nhận `PlayerChoice`: id mờ `choice-…`, loại, sắc thái, chữ.
   - `check_leaks` chạy trên chữ lựa chọn, `lie_content` và `feeling`. Trúng một chỗ thì không hiện bộ nào và báo mã mới `CHOICES_LEAK_BLOCKED` (502, câu trung tính), không tự gọi lại model. Chương đã ghi xong; gọi lại `make_choices` để tạo bộ mới.
 - **Hệ quả:** chưa ghi dữ liệu của lựa chọn vào đồ thị khi người chơi chọn (Lie, FEELS ở chương sau). Văn cảnh cuối là chữ trên trang và đã qua bộ dò lộ, nhưng không nằm trong `player_view`.
-- **Người quyết:** Claude (nhánh pipeline-chapter), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh pipeline-chapter), điều phối duyệt (PR #18). Văn cảnh cuối vào context của model lựa chọn (G1): Chủ dự án đồng ý · 20/10/2026
 
 ## D-38 · Khởi tạo truyện: bốn bước, nhân vật chính do code dựng, chương 0 người chơi chưa biết gì
 - **Bối cảnh:** design §4.1 cần 3 bối cảnh / 3 hướng / 3 nhân vật rồi bản kế hoạch và đồ thị ban đầu. Chương 0 là thế giới lúc khởi tạo (D-21). `KNOWS` của nhân vật chính là điều người chơi biết (D-16), mà ở chương 0 chưa có trang nào để trích câu (G3).
@@ -309,7 +309,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Tag, bối cảnh và hướng đã chọn, nhân vật chính đã sửa đều bọc `UserAuthored`, vì trình duyệt gửi lại chúng (G4).
   - `Naming` chuyển từ bài đo D sang đây, dùng chung một chỗ. `default_naming` theo bảng design §4.1. Thể loại ngoài bảng dùng tên Việt, địa danh hư cấu.
 - **Hệ quả:** chưa kiểm bằng code tên có đúng kiểu Hán Việt hay Việt; điều này chỉ nằm trong prompt. Chưa kiểm độ dài chữ người chơi sửa (`limits.input.*` đang null, chưa có khoá cho tính cách). Chưa lưu `StoryPlan` vào Postgres. `writer_context` chưa đọc `personality`/`backstory`.
-- **Người quyết:** Claude (nhánh pipeline-setup), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh pipeline-setup), điều phối duyệt (PR #17) · 20/10/2026
 
 ## D-39 · Vai `setup`; JSON sai schema thì thử lại, sai quy tắc thì báo `STORY_SETUP_INVALID`
 - **Bối cảnh:** bốn bước khởi tạo cần một model (D-3: các vai cố định nằm trong config) và một cách xử lý khi model trả sai.
@@ -319,7 +319,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Sai quy tắc (số lựa chọn, kế hoạch, gói chương 0) báo ngay mã mới `STORY_SETUP_INVALID` (HTTP 502), không tự gọi lại model, để không trừ tiền key người chơi khi chưa hỏi. Câu báo không nói sai ở đâu, vì chi tiết có thể chạm bản kế hoạch ẩn; chi tiết vào log, chỉ ghi id và số chương.
   - Không trả nửa vời: có một lỗi là không trả kế hoạch hay gói. Module không ghi gì.
 - **Hệ quả:** người chơi phải bấm thử lại khi model sai quy tắc. Muốn tự thử lại thì đổi `retry_on`, cần chủ dự án đồng ý vì tốn tiền.
-- **Người quyết:** Claude (nhánh pipeline-setup), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh pipeline-setup), điều phối duyệt (PR #17) · 20/10/2026
 
 ## D-40 · Hỏi người kể: context chỉ từ `player_view`, mã công khai thay id, không biết thì một câu
 - **Bối cảnh:** design §6.6 và G1/G2/G4/G8. `PlayerEntry.id` là id lớp truth, có thể lộ bí mật: ở chương 4 truyện mẫu, mục "gã lái đò mặt sẹo" có id `ly_that`.
@@ -331,7 +331,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Trần `rate_limit.narrator_questions_per_chapter` và `input.narrator_question_max_chars` (mới), đều `null` tới khi chủ dự án đặt. Lượt giữ trong Postgres (`narrator_questions`) bằng một câu lệnh, trước khi gọi model, không trả lại khi lỗi. Câu hỏi rỗng, quá dài, hoặc sổ tay trống: không mất lượt, không gọi model.
   - Mã mới: `NARRATOR_QUESTION_EMPTY`, `NARRATOR_QUESTION_TOO_LONG` (422), `NARRATOR_LIMIT_REACHED` (429).
 - **Hệ quả:** câu trả "Bạn chưa biết điều này." vẫn tính một lượt. Sổ tay không qua bộ dò lộ: chữ của nó chính là định nghĩa "người chơi đã thấy". Chưa có trần độ dài câu trả lời hay token đầu ra.
-- **Người quyết:** điều phối (yêu cầu); mã công khai, cách đếm lượt: Claude (Session narrator) · 20/10/2026
+- **Người quyết:** điều phối (yêu cầu); mã công khai: Claude (Session narrator); câu "Bạn chưa biết điều này." vẫn tính một lượt: Chủ dự án đồng ý · 20/10/2026
 
 ## D-41 · Router `stories` chỉ mount khi bật cờ dev; dependency mặc định fail closed
 - **Bối cảnh:** sổ tay và hỏi người kể cần API trước khi có đăng nhập (tuần 5), nên chưa kiểm được truyện thuộc ai (G10).
@@ -344,3 +344,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** máy chủ thật không có router này tới khi có đăng nhập và kiểm quyền (TODO G10 trong `api/stories.py`). Chi phí hỏi người kể chưa cộng vào trần truyện, vì chưa có nhật ký chi phí.
 - **Người quyết:** điều phối (yêu cầu cờ dev, fail closed); cách làm: Claude (Session narrator) · 20/10/2026
 
+## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
+- **Bối cảnh:** pipeline (D-36..D-40) dừng ở lỗi cấu hình vì `roles.*`, trần chi phí và ngưỡng còn `null`. Chưa có bài đo riêng cho dàn ý, lựa chọn, người kể, phân loại, người canh, khởi tạo. Bài D đo riêng bước viết của Luna khoảng 0,001 USD một cảnh (`evals/results/2026-10-20-quality-r2/`); cả đường đi chưa đo.
+- **Quyết định:**
+  - Các vai `outline`, `guard`, `choices`, `narrator`, `classify`, `setup` dùng tạm `openai/gpt-6-luna`, `role_reasoning: low` như vai trích (D-35).
+  - Trần chi phí, giới hạn người chơi, `writer_max_neighbors`, ngưỡng người canh: số trong `config/limits.yaml`, `config/guard.yaml`. Trần đặt rộng gấp nhiều lần ước tính, để lần chạy đầu đo được chi phí thật.
+  - Ngưỡng kiểm văn (`config/quality.yaml`) lấy đúng số bài D đã dùng (`QualityParams`).
+  - Test không còn dựa vào việc config thật để `null`: test "chưa đặt thì báo lỗi" dùng bản config có chỗ `null`.
+- **Hệ quả:** mọi số trên là tạm. Sau lần chạy thật đầu (một truyện ngắn tu tiên, trần 0,30 USD), chỉnh theo chi phí và tỉ lệ lỗi đo được rồi ghi quyết định mới.
+- **Người quyết:** Claude đề xuất số; Chủ dự án duyệt · 20/10/2026

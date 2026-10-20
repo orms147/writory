@@ -59,10 +59,10 @@ def test_repo_quality_config_loads():
 
 
 def test_unset_threshold_is_config_error_not_skipped():
-    if REPO.quality.repetition.max_repeats is not None:
-        pytest.skip("ngưỡng đã được đặt trong config thật")
+    unset = REPO.quality.repetition.model_copy(update={"max_repeats": None})
+    quality = REPO.quality.model_copy(update={"repetition": unset})
     with pytest.raises(WritoryError) as exc:
-        check_scene("Một cảnh.", scenes_in_chapter=2, quality=REPO.quality,
+        check_scene("Một cảnh.", scenes_in_chapter=2, quality=quality,
                     lengths=REPO.story_lengths)
     assert exc.value.code is ErrorCode.CONFIG_LIMIT_NOT_SET
     assert "quality.yaml" in str(exc.value)
