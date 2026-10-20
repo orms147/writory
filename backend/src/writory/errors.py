@@ -44,6 +44,7 @@ class ErrorCode(StrEnum):
     NARRATOR_LIMIT_REACHED = "NARRATOR_LIMIT_REACHED"
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
     STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
+    CHOICES_LEAK_BLOCKED = "CHOICES_LEAK_BLOCKED"
 
 
 @dataclass(frozen=True)
@@ -203,6 +204,12 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Bước khởi tạo truyện vừa rồi cho ra kết quả không hợp lệ nên hệ thống chưa dùng và chưa "
         "lưu gì. Lỗi ở phía hệ thống, không phải do bạn.",
         "Bấm thử lại bước này. " + _REPORT,
+    ),
+    # Cùng lý do trung tính như SCENE_LEAK_BLOCKED (D-37). Chương đã ghi xong trước bước này.
+    ErrorCode.CHOICES_LEAK_BLOCKED: PlayerMessage(
+        "Các lựa chọn vừa tạo không qua được bước kiểm tra cuối nên hệ thống không hiện chúng. "
+        "Chương bạn vừa đọc đã được lưu.",
+        "Bấm thử lại để tạo lựa chọn mới.",
     ),
 }
 

@@ -95,6 +95,25 @@ async def test_non_retryable_errors_are_not_retried(code):
     assert len(llm.calls) == 1
 
 
+async def test_json_retries_layer_schema_inside_transient():
+    """D-14: JSON hỏng thử lại theo số lần schema; lỗi mạng theo số lần mạng, mỗi lần lỗi mạng
+    lại được đủ số lần schema."""
+    from writory.llm.retry import with_json_retries
+
+    llm = FakeLLM.scripted(["hỏng", unavailable(), "hỏng", '{"who": "Lan"}'])
+    value, _ = await with_json_retries(
+        lambda: llm.chat_json("m", MSGS, Change), schema_retries=1, transient_retries=1
+    )
+    assert value == Change(who="Lan") and len(llm.calls) == 4
+
+    llm = FakeLLM.scripted(["hỏng"] * 5)
+    with pytest.raises(WritoryError) as exc:
+        await with_json_retries(lambda: llm.chat_json("m", MSGS, Change),
+                                schema_retries=1, transient_retries=2)
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED
+    assert len(llm.calls) == 2  # hết lượt schema: không dùng lượt của lỗi mạng
+
+
 async def test_retry_on_is_required():
     with pytest.raises(TypeError):
         await with_retries(lambda: None, max_retries=1)

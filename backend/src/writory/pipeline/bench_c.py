@@ -62,13 +62,8 @@ class BenchConfig(_Strict):
 # --- trạng thái vàng của truyện mẫu --------------------------------------------------------------
 
 
-def _entity(node, user_authored: bool = False) -> Entity:
-    p = node.props
-    text = p.get("name") or p.get("text") or p.get("description") or p.get("content") or p.get(
-        "title") or node.id
-    aliases = tuple(p.get("aliases") or ()) if "name" in p else ()
-    return Entity(id=node.id, label=node.label, text=str(text), aliases=aliases,
-                  user_authored=bool(p.get("user_authored", user_authored)))
+def _entity(node) -> Entity:
+    return Entity.from_node(node.id, node.label, node.props)
 
 
 def gold_state(sample: SampleStory, chapter: int) -> tuple[list[Entity], list[OpenEdge]]:

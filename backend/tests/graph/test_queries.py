@@ -4,6 +4,8 @@ import pytest
 import yaml
 
 from writory.graph import (
+    ChangePackage,
+    apply_package,
     find_characters,
     is_alive,
     item_holder,
@@ -11,7 +13,9 @@ from writory.graph import (
     overdue_threads,
     player_knowledge_about,
     protagonist_id,
+    read_sample,
     relationship,
+    story_nodes,
     undiscovered_lies,
 )
 from writory.graph.sample import DEFAULT_SAMPLE_DIR
@@ -104,3 +108,21 @@ def test_protagonist(driver, sample_story_id):
 
 def test_chapter_before_story_has_no_holder(driver, sample_story_id):
     assert item_holder(driver, sample_story_id, "sword", 0) is None
+
+
+def test_story_nodes_lists_every_node_of_one_story_only(driver, sample_story_id, new_story_id):
+    """Danh mục thực thể cho bộ trích (D-36): mọi nút của truyện, kể cả nút chưa có cạnh nào
+    (mạch mới gieo), không gồm thuộc tính do graph/ đặt, không lẫn truyện khác (G10)."""
+    sample = read_sample()
+    rows = story_nodes(driver, sample_story_id)
+    assert set(rows) == {n.id for ch in sample.chapters for n in ch.package.nodes}
+    assert rows["t_sword_missing"].label == "Thread"
+    assert rows["lan"].props["aliases"] == ["Lan", "cô Lan"]
+    assert "commit_id" not in rows["lan"].props and "story_id" not in rows["lan"].props
+
+    other = new_story_id()
+    apply_package(driver, other, ChangePackage.model_validate(
+        {"commit_id": "o", "nodes": [{"id": "lan", "label": "Character", "name": "Lan khác"}]}))
+    assert set(story_nodes(driver, other)) == {"lan"}
+    with pytest.raises(ValueError):
+        story_nodes(driver, "")
