@@ -218,3 +218,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bài D tính cột "Lọt suy luận" từ văn bản đã lưu khi dựng `summary.md`, không gọi lại model.
 - **Hệ quả:** chưa đưa vào `check_scene`, nên chưa làm pipeline viết lại cảnh. Đưa vào lúc nào sẽ quyết khi làm pipeline (tuần 2); khi đó cảnh có lỗi này phải bị chặn trước khi hiện (G2). Danh sách cụm hẹp, nên có thể bỏ sót ghi chú viết bằng chữ khác.
 - **Người quyết:** điều phối (yêu cầu hàm và cột); danh sách mẫu: Claude (Session 3) · 19/10/2026
+
+## D-32 · Quy ước tên và địa danh do người chơi chọn, mặc định theo thể loại
+- **Bối cảnh:** chấm tay bài D, chủ dự án ghi: truyện giả tưởng mà dùng tên Việt và địa danh thật thì lạc chất; truyện tu tiên, kiếm hiệp cần tên kiểu Hán Việt.
+- **Quyết định:** lúc khởi tạo có tag quy ước tên (Hán Việt / Việt) và địa danh (thật / hư cấu). Người chơi chọn; mặc định theo thể loại như design §4.1. Prompt mọi bước sinh nội dung nhận quy ước này.
+- **Hệ quả:** bộ đề bài D có trường `naming` (cases.yaml v2); rubric v2 thêm tiêu chí `quy_uoc_the_loai`. Đề cũ có địa danh thật trong truyện giả tưởng là lỗi của đề, không phải của model.
+- **Người quyết:** Chủ dự án · 20/10/2026

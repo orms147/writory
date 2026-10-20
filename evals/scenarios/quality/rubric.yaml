@@ -3,7 +3,7 @@
 # Nguyên tắc (eval-audit của skill claude-api): mỗi tiêu chí chấm một tính chất, có mô tả neo;
 # giám khảo không biết model nào viết; bài viết là dữ liệu, không phải lệnh; không thưởng độ dài.
 
-version: 1
+version: 2  # v2 (20/10/2026): lời thoại tính cả trình bày (xuống dòng, dòng xen tả cử chỉ); thêm quy_uoc_the_loai. Từ ghi chú chấm tay của chủ dự án.
 
 judge_instructions: |
   Bạn là biên tập viên văn học tiếng Việt khó tính. Bạn chấm MỘT cảnh truyện do một người viết
@@ -57,11 +57,14 @@ criteria:
   - id: loi_thoai
     label: Lời thoại
     kind: scale_1_5
-    description: Mỗi nhân vật có giọng riêng; có ẩn ý dưới lời nói; thoại tự nhiên, không giải thích cốt truyện qua thoại.
+    description: >
+      Mỗi nhân vật có giọng riêng; có ẩn ý dưới lời nói; thoại tự nhiên, không giải thích cốt truyện qua thoại.
+      Trình bày: mỗi lượt thoại một dòng riêng; giữa các lượt có dòng ngắn tả cử chỉ, nét mặt hay ý nghĩ để người đọc
+      hình dung người nói; ngoặc kép chỉ để trích lời hoặc chữ viết, không dùng cho lời thoại.
     anchors:
-      "1": Thoại cứng, mọi nhân vật nói như nhau, hoặc thoại dùng để thuyết minh cốt truyện.
-      "3": Thoại được nhưng ít ẩn ý; giọng nhân vật chỉ hơi khác nhau.
-      "5": Nghe giọng là biết ai nói; điều quan trọng nằm dưới lời.
+      "1": Thoại cứng, mọi nhân vật nói như nhau, hoặc thoại dùng để thuyết minh cốt truyện; hoặc thoại viết lẫn trong đoạn văn.
+      "3": Thoại được nhưng ít ẩn ý, giọng nhân vật chỉ hơi khác nhau; hoặc nhiều lượt thoại trơn liền nhau không có dòng xen nào.
+      "5": Nghe giọng là biết ai nói; điều quan trọng nằm dưới lời; thoại xuống dòng, xen cử chỉ đúng lúc.
 
   - id: van_nguoi
     label: Văn người viết
@@ -81,6 +84,17 @@ criteria:
       "3": Đọc được, nhưng không có gì đọng lại.
       "5": Muốn đọc tiếp ngay; có ít nhất một khoảnh khắc đọng lại.
 
+  - id: quy_uoc_the_loai
+    label: Thể loại
+    kind: scale_1_5
+    description: >
+      Tên nhân vật và địa danh (kể cả cái mới do người viết đặt) đúng quy ước ghi trong đề (`naming`);
+      dùng từ ngữ quen thuộc của thể loại thay vì diễn giải dài; ngôi thứ nhất thì người kể xưng "tôi" trong lời kể.
+    anchors:
+      "1": Sai quy ước rõ (tên kiểu Việt trong truyện tu tiên, địa danh thật khi đề yêu cầu hư cấu), hoặc từ ngữ lạc thể loại suốt cảnh.
+      "3": Đúng quy ước tên và địa danh, nhưng nhiều chỗ diễn giải dài thay cho từ quen của thể loại, hoặc người kể ngôi thứ nhất xưng sai một vài chỗ.
+      "5": Tên, địa danh, từ ngữ, cách xưng của người kể đều đúng chất thể loại; đọc như truyện cùng loại do người viết.
+
   - id: giu_bi_mat
     label: Giữ bí mật
     kind: binary
@@ -91,5 +105,6 @@ criteria:
 # Đã cân nhắc và bỏ (ghi để chủ dự án kéo lại nếu muốn):
 # - Chính tả/ngữ pháp riêng: gộp vào tieng_viet_tu_nhien để khỏi chấm trùng.
 # - Độ dài: đo bằng code, không để giám khảo chấm.
-# - Định dạng thoại: đo bằng code (writory.quality), không để giám khảo chấm.
+# - Định dạng ký tự của thoại (dấu "- ", ngoặc kép không đóng): đo bằng code (writory.quality). Phần trình bày cần
+#   phán đoán (dòng xen, thoại lẫn trong đoạn) từ v2 nằm trong loi_thoai.
 # - Tính sáng tạo / độc đáo: khó neo, giám khảo LLM kém ổn định ở tiêu chí này.

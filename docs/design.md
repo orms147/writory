@@ -67,6 +67,7 @@ Lưu ý: 300.000 ký tự tiếng Việt ước khoảng 100.000 token (chưa đ
 
 ### 4.1 Khởi tạo (~2 phút)
 1. Chọn tag: thể loại (ví dụ tu tiên, trinh thám, đô thị, hậu tận thế), thời đại, giọng văn, mức độ u tối.
+   - Quy ước tên và địa danh (D-32): tên nhân vật **kiểu Hán Việt** hay **kiểu Việt**, địa danh **thật** hay **hư cấu**. Người chơi tự chọn; mặc định theo thể loại: cổ trang và kỳ ảo (tu tiên, kiếm hiệp, huyền huyễn) dùng tên Hán Việt và địa danh hư cấu; hiện đại và tương lai giả tưởng (hậu tận thế, khoa huyễn) dùng tên Việt và địa danh hư cấu; hiện thực (đô thị, trinh thám, lịch sử, học đường) dùng tên Việt và được dùng địa danh thật. Quy ước này đi vào prompt của mọi bước sinh nội dung, kể cả bước tạo bối cảnh.
 2. Chọn độ dài (§3).
 3. Chọn góc nhìn [Chốt]:
    - **Chỉ nhân vật chính** — người chơi chỉ biết những gì nhân vật chính thấy, nghe, suy ra.

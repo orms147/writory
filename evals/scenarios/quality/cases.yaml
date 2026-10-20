@@ -5,13 +5,15 @@
 # Mỗi case nhắm một điểm khó (`focus`), để biết model giỏi/yếu ở đâu chứ không chỉ một điểm tổng.
 # `address`: bảng xưng hô — "A với B: A xưng ..., gọi B là ...".
 # `must_not_reveal`: bí mật model ĐƯỢC BIẾT (để viết có chủ đích) nhưng KHÔNG được nói ra trên trang.
+# `naming` (D-32): quy ước tên nhân vật (han_viet | viet) và địa danh (hu_cau | that) cho chính cảnh này.
 
-version: 1
+version: 2  # v2 (20/10/2026): thêm `naming` theo D-32; đề hậu tận thế bỏ địa danh thật (ghi chú S02/S03 của chủ dự án). Dàn ý các đề khác không đổi.
 length_chars: {min: 2000, max: 3500}
 
 cases:
   - id: tu-tien-dot-pha
     genre: tu tiên
+    naming: {names: han_viet, places: hu_cau}
     tags: [tu-tien, hanh-dong, giu-bi-mat]
     focus: tả tu luyện và linh lực mà không sáo; giữ kín kẻ phá ngầm
     pov: ngôi thứ ba, bám sát Lạc Vân
@@ -37,6 +39,7 @@ cases:
 
   - id: trinh-tham-tham-van
     genre: trinh thám
+    naming: {names: viet, places: that}
     tags: [trinh-tham, thoai-an-y, giu-bi-mat]
     focus: lời thoại có ẩn ý, nhân chứng nói một đằng nghĩ một nẻo
     pov: ngôi thứ ba, bám sát thiếu uý Đặng Khoa
@@ -61,6 +64,7 @@ cases:
 
   - id: do-thi-chia-tay
     genre: đô thị
+    naming: {names: viet, places: that}
     tags: [do-thi, noi-tam, xung-ho-doi, giu-bi-mat]
     focus: xưng hô đổi theo cảm xúc giữa cảnh (anh/em → tôi/cô) phải tự nhiên
     pov: ngôi thứ ba, bám sát Huy
@@ -85,13 +89,14 @@ cases:
 
   - id: hau-tan-the-tram-xang
     genre: hậu tận thế
+    naming: {names: viet, places: hu_cau}
     tags: [hau-tan-the, giac-quan, cang-thang, giu-bi-mat]
     focus: căng thẳng và chi tiết giác quan; không tả quá đà
     pov: ngôi thứ ba, bám sát Tâm
     voice: gai góc, câu ngắn, ít tính từ
     context: >
       Năm thứ hai sau dịch bệnh biến người thành "hoá dại". Tâm dẫn em gái Bông (9 tuổi) và gã đàn ông
-      tên Lực đi dọc Quốc lộ 1 về phía nam. Chiều tối, cả ba dừng ở một trạm xăng bỏ hoang gần Phan Thiết.
+      tên Lực đi dọc con đường ven biển về phía nam. Chiều tối, cả ba dừng ở một trạm xăng bỏ hoang gần thị trấn Cát Muối.
     characters:
       - {name: Tâm, desc: "24 tuổi, cựu y tá, cảnh giác"}
       - {name: Bông, desc: "em gái Tâm, 9 tuổi, ít khóc"}
@@ -111,6 +116,7 @@ cases:
 
   - id: kiem-hiep-quan-tro
     genre: kiếm hiệp
+    naming: {names: han_viet, places: hu_cau}
     tags: [kiem-hiep, thoai-co-trang, giu-bi-mat]
     focus: lời thoại cổ trang không lố, đấu trí bằng lời
     pov: ngôi thứ ba, bám sát Phong Dao
@@ -135,6 +141,7 @@ cases:
 
   - id: kinh-di-dem-gio
     genre: kinh dị dân gian
+    naming: {names: viet, places: that}
     tags: [kinh-di, khong-khi, gieo-manh-moi, giu-bi-mat]
     focus: gieo manh mối nhẹ mà không nói thẳng; không khí miền Tây
     pov: ngôi thứ nhất, nhân vật Út (cháu)
@@ -161,6 +168,7 @@ cases:
 
   - id: ngon-tinh-cong-so
     genre: ngôn tình công sở
+    naming: {names: viet, places: that}
     tags: [ngon-tinh, hai-huoc, thoai-dua, giu-bi-mat]
     focus: hài hước nhẹ và lời thoại đối đáp có nhịp
     pov: ngôi thứ ba, bám sát An
@@ -187,6 +195,7 @@ cases:
 
   - id: bao-cap-tem-phieu
     genre: gia đình, thời bao cấp
+    naming: {names: viet, places: that}
     tags: [lich-su, gia-dinh, chi-tiet-thoi-dai, giu-bi-mat]
     focus: chi tiết thời đại chính xác, không giảng giải lịch sử
     pov: ngôi thứ ba, bám sát cậu bé Thắng
@@ -213,6 +222,7 @@ cases:
 
   - id: khoa-huyen-tram-vu-tru
     genre: khoa học viễn tưởng
+    naming: {names: viet, places: hu_cau}
     tags: [khoa-huyen, thuat-ngu, giu-bi-mat]
     focus: thuật ngữ khoa học viết bằng tiếng Việt tự nhiên, không chêm tiếng Anh dài
     pov: ngôi thứ ba, bám sát kỹ sư Mai Phương
@@ -237,6 +247,7 @@ cases:
 
   - id: hoc-duong-thu-nac-danh
     genre: học đường
+    naming: {names: viet, places: that}
     tags: [hoc-duong, ngoi-thu-nhat, giong-tre, giu-bi-mat]
     focus: giọng ngôi thứ nhất của học sinh cấp ba tự nhiên, không cố "trẻ trâu"
     pov: ngôi thứ nhất, nhân vật Nam
