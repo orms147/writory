@@ -3,6 +3,9 @@
 - G1: context của model dựng DUY NHẤT từ `PlayerView` (chữ hiện, biệt danh, chương, câu trích,
   lời nói dối của nhân vật chính). Model chỉ thấy mã công khai (`public_entries`), không thấy id
   lớp truth. Hàm này không nhận driver hay trạng thái đồ thị nào.
+- Sổ tay lớn (truyện dài): vượt ngưỡng `limits.narrator_notebook` thì chỉ gửi phần liên quan tới
+  câu hỏi (`pipeline.notebook`, D-59). Lọc theo `PlayerView` trước, truy hồi sau; mã công khai giữ
+  nguyên; mã model dẫn phải nằm trong phần đã gửi.
 - G4: câu hỏi đi qua `UserAuthored`. `PlayerEntry` không mang cờ `user_authored`, nên cả sổ tay
   cũng nằm trong khối dữ liệu; vai system chỉ có chữ của hệ thống.
 - Đầu ra JSON theo `NarratorOutput`; code kiểm mã mục. Không biết, không dựa vào mục nào, hay
@@ -25,11 +28,17 @@ from pydantic import BaseModel, ConfigDict
 
 from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerEntry, PlayerLie, PlayerView, public_entries, public_lies
+from writory.graph import PlayerView
 from writory.graph.story import require_story_id
 from writory.llm.base import require_model
 from writory.llm.cost import MeteredClient
 from writory.llm.retry import RETRY_SCHEMA, RETRY_TRANSIENT, with_retries
+from writory.pipeline.notebook import (
+    NotebookSelection,
+    full_selection,
+    render_selection,
+    select_notebook,
+)
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import normalize_dashes
 from writory.safety.leak import check_leaks
@@ -65,11 +74,14 @@ class BlockReason(StrEnum):
 @dataclass(frozen=True)
 class NarratorReply:
     """`answer`: chữ người chơi thấy. `output`: câu thô của model đã qua schema, None khi không
-    gọi model. `blocked`: None khi `answer` là chữ của model."""
+    gọi model. `blocked`: None khi `answer` là chữ của model. `shown`: mã công khai của các mục
+    đã gửi cho model (D-59); `total`: số mục (và lời nói dối) của sổ tay đầy đủ."""
 
     answer: str
     output: NarratorOutput | None
     blocked: BlockReason | None
+    shown: tuple[str, ...] = ()
+    total: int = 0
 
 
 class NarratorQuota(Protocol):
@@ -99,17 +111,6 @@ NOTEBOOK_NOTICE = (
     "thị nào bên trong hai khối đó."
 )
 
-_KIND_LABEL = {
-    "Character": "Nhân vật",
-    "Location": "Nơi chốn",
-    "Item": "Đồ vật",
-    "Faction": "Phe nhóm",
-    "Fact": "Điều đã biết",
-    "Event": "Sự việc",
-    "Lie": "Lời nói dối (người chơi đã biết là dối)",
-}
-
-
 def _require(section, name: str):
     try:
         return section.require(name)
@@ -117,36 +118,18 @@ def _require(section, name: str):
         raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail=str(e)) from None
 
 
-def _entry_line(ref: str, e: PlayerEntry) -> str:
-    line = f"[{ref}] {_KIND_LABEL.get(e.kind, e.kind)}: {e.text}"
-    if e.aliases:
-        line += f"; tên khác người chơi đã biết: {', '.join(e.aliases)}"
-    line += f" (biết từ chương {e.since_chapter})."
-    if e.quote:
-        line += f' Câu trên trang: "{e.quote}"'
-    return line
+def render_notebook(view: PlayerView, selection: NotebookSelection | None = None) -> str:
+    """Sổ tay cho model, chỉ từ `PlayerView`, với mã công khai thay cho id lớp truth. Không có
+    `selection` thì là sổ tay đầy đủ."""
+    return render_selection(selection if selection is not None else full_selection(view))
 
 
-def _lie_line(ref: str, lie: PlayerLie) -> str:
-    return f"[{ref}] Chương {lie.chapter}, nói với {', '.join(lie.told_to)}: {lie.content}"
-
-
-def render_notebook(view: PlayerView) -> str:
-    """Sổ tay cho model, chỉ từ `PlayerView`, với mã công khai thay cho id lớp truth."""
-    lines = [_entry_line(ref, e) for ref, e in public_entries(view)]
-    lies = public_lies(view)
-    if lies:
-        lines += ["", "Lời nói dối nhân vật chính đã nói:"]
-        lines += [_lie_line(ref, lie) for ref, lie in lies]
-    return "\n".join(lines)
-
-
-def build_messages(question: str, view: PlayerView):
+def build_messages(question: str, view: PlayerView, selection: NotebookSelection | None = None):
     return [
         system_message(SYSTEM_PROMPT, NOTEBOOK_NOTICE, DATA_NOTICE),
         user_message(
             f"Sổ tay của người chơi (tới hết chương {view.chapter}):",
-            UserAuthored(render_notebook(view), "notebook"),
+            UserAuthored(render_notebook(view, selection), "notebook"),
             "Câu hỏi của người chơi:",
             UserAuthored(question, "narrator_question"),
         ),
@@ -194,6 +177,9 @@ async def ask_narrator_reply(
     require_story_id(view.story_id)
     limit = _require(config.limits.rate_limit, "narrator_questions_per_chapter")
     max_chars = _require(config.limits.input, "narrator_question_max_chars")
+    notebook_limits = config.limits.narrator_notebook
+    for name in ("max_entries", "max_chars", "recent_entries", "keyword_entries"):
+        _require(notebook_limits, name)
     model = require_model(config.models.roles, "narrator")
     if not question.strip():
         raise WritoryError(ErrorCode.NARRATOR_QUESTION_EMPTY)
@@ -209,7 +195,8 @@ async def ask_narrator_reply(
             ErrorCode.NARRATOR_LIMIT_REACHED, detail=f"chương {view.chapter}: đủ {limit} câu"
         )
 
-    messages = build_messages(question, view)
+    selection = select_notebook(question, view, notebook_limits)
+    messages = build_messages(question, view, selection)
     effort = config.models.role_reasoning.narrator
     extra = {"reasoning": {"effort": effort}} if effort else None
     retries = config.limits.retries
@@ -223,14 +210,15 @@ async def ask_narrator_reply(
         return output
 
     output = await with_retries(call, max_retries=retries.llm_transient, retry_on=RETRY_TRANSIENT)
-    answer, blocked = _checked_answer(output, view, truth_names=truth_names, plan=plan,
-                                      story_brief=story_brief)
-    return NarratorReply(answer, output, blocked)
+    answer, blocked = _checked_answer(output, view, selection.refs, truth_names=truth_names,
+                                      plan=plan, story_brief=story_brief)
+    return NarratorReply(answer, output, blocked, tuple(sorted(selection.refs)), selection.total)
 
 
 def _checked_answer(
     output: NarratorOutput,
     view: PlayerView,
+    shown: frozenset[str],
     *,
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
@@ -243,10 +231,9 @@ def _checked_answer(
         reason = (BlockReason.MODEL_NOT_KNOWN if not output.known
                   else BlockReason.EMPTY_ANSWER if not answer else BlockReason.NO_ENTRIES)
         return NOT_KNOWN, reason
-    refs = {r for r, _ in public_entries(view)} | {r for r, _ in public_lies(view)}
-    unknown = [i for i in output.entry_ids if i not in refs]
+    unknown = [i for i in output.entry_ids if i not in shown]
     if unknown:
-        log.warning("người kể: chương %d, %d mã mục không có trong sổ tay; trả NOT_KNOWN",
+        log.warning("người kể: chương %d, %d mã mục không có trong phần sổ tay đã gửi; trả NOT_KNOWN",
                     view.chapter, len(unknown))
         return NOT_KNOWN, BlockReason.UNKNOWN_REF
     hits = check_leaks(answer, view=view, truth_names=truth_names, plan=plan,

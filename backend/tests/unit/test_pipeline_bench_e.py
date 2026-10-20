@@ -14,6 +14,7 @@ import yaml
 pytest.importorskip("anthropic")
 
 from writory.config import ConfigError, load_config
+from writory.graph.sample import read_sample
 from writory.pipeline import bench_e as be
 from writory.pipeline.narrator import NOT_KNOWN, build_messages
 from writory.quality.bench_d import mock_judge_client
@@ -165,7 +166,7 @@ def test_scorer_uses_full_truth_names_not_leak_names():
     """Bộ chấm dùng `named_nodes` đầy đủ của cả truyện mẫu (điều phối, 20/10/2026)."""
     from writory.guard.state import EmptyState, OverlayState
 
-    full = OverlayState(EmptyState(), [c.package for c in be.read_sample().chapters])
+    full = OverlayState(EmptyState(), [c.package for c in read_sample().chapters])
     assert dict(DATA.scorer.names) == full.named_nodes()
     assert DATA.plan.story_brief == ""  # truyện mẫu không có bước khởi tạo: đề khai rỗng
 
@@ -176,7 +177,7 @@ async def test_story_brief_from_the_data_reaches_runtime_and_scorer(tmp_path):
     _edit(data_dir / "plan.yaml", lambda d: d.update(story_brief="Ở bến có lái đò Lý Thất."))
     data = be.load_data(data_dir)
 
-    def names_him(data, q, state):
+    def names_him(data, q, state, shown):
         return {"known": True, "answer": "Gã lái đò mặt sẹo, chỗ Lý Thất hay ngồi.",
                 "entry_ids": [state.by_truth_id["ly_that"]]}
 
@@ -310,7 +311,7 @@ async def test_bench_sends_the_production_narrator_context(tmp_path):
 
 
 async def test_final_leak_is_a_serious_error_with_its_own_exit_code(tmp_path):
-    def slips(data, q, state):
+    def slips(data, q, state, shown):
         return {"known": True, "answer": "Có lẽ Lan đã ra tay với lão.",
                 "entry_ids": [state.by_truth_id["e_gu_death"]]}
 
