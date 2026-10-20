@@ -8,12 +8,19 @@ vào đề chỉ trong khối dữ liệu. G11: ngắt kết nối hay lỗi gi�
 
 import asyncio
 import json
+from collections import deque
 
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from tests.api_fixtures import FAKE_KEY, KeyedFactory, dev_settings
+from tests.api_fixtures import (
+    FAKE_KEY,
+    KeyedFactory,
+    asgi_request,
+    dev_settings,
+    own_connections,
+)
 from tests.pipeline_fixtures import (
     EXTRACT_1,
     PLAN,
@@ -26,9 +33,11 @@ from tests.pipeline_fixtures import (
     full_script,
     make_config,
     outline_reply,
+    unavailable,
 )
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
+from writory.api.errors import HTTP_STATUS
 from writory.db import (
     chapter_records,
     commit_chapter,
@@ -103,9 +112,11 @@ def story(pg, driver, new_db_story_id):
     delete_player_key(pg, DEV_OWNER_ID)
 
 
-def make_app(pg, driver, llm, tmp_path, *, key: bool = True):
+def make_app(pg, driver, llm, tmp_path, *, key: bool = True, own_conns: bool = False):
+    """`own_conns`: mỗi yêu cầu một kết nối Postgres riêng như app thật (cần cho test khoá chống
+    chạy đôi, vì khoá lồng được trên cùng một kết nối)."""
     app = create_app(dev_settings(), health_checks={"neo4j": _ok}, config=make_config(tmp_path))
-    app.dependency_overrides[deps.get_pg_conn] = lambda: pg
+    app.dependency_overrides[deps.get_pg_conn] = own_connections if own_conns else (lambda: pg)
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     factory = KeyedFactory(llm)
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
@@ -309,34 +320,19 @@ async def test_disconnect_mid_chapter_cancels_and_writes_nothing(pg, driver, sto
     sid = story()
     before = story_snapshot(driver, sid)
     llm = HangingLLM(full_script(), hang_at=4)  # 1–3: cảnh 1; 4: dàn ý cảnh 2 treo
-    app = make_app(pg, driver, llm, tmp_path)
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
     shown = asyncio.Event()
-    sent: list[bytes] = []
-    requested = False
 
-    async def receive():
-        nonlocal requested
-        if not requested:
-            requested = True
-            return {"type": "http.request", "body": b"", "more_body": False}
-        await shown.wait()
-        return {"type": "http.disconnect"}
-
-    async def send(message):
-        if message["type"] == "http.response.body":
-            sent.append(message.get("body", b""))
-            if b"scene_ready" in message.get("body", b""):
-                shown.set()
+    def on_send(message):
+        if message["type"] == "http.response.body" and b"scene_ready" in message.get("body", b""):
+            shown.set()
 
     path = f"/stories/{sid}/chapters/next"
-    scope = {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1",
-             "method": "POST", "scheme": "http", "path": path, "raw_path": path.encode(),
-             "query_string": b"", "root_path": "", "headers": [(b"host", b"testserver")],
-             "client": ("testclient", 50000), "server": ("testserver", 80), "state": {}}
     # Lời gọi thứ 4 không bao giờ trả về, nên app chỉ trả về được khi task chạy chương đã bị huỷ
     # (task group của FastAPI chờ nó). Huỷ ở đâu (trong lời gọi treo hay lúc chờ đẩy sự kiện) tuỳ
     # lịch chạy, không khẳng định.
-    await asyncio.wait_for(app(scope, receive, send), timeout=30)
+    await asyncio.wait_for(asgi_request(app, "POST", path, on_send=on_send, disconnect=shown),
+                           timeout=30)
 
     assert shown.is_set() and len(llm.calls) <= 4
     assert current_chapter(pg, sid) == 3
@@ -347,6 +343,63 @@ async def test_disconnect_mid_chapter_cancels_and_writes_nothing(pg, driver, sto
     roles = [r for (r,) in pg.execute("SELECT role FROM llm_costs WHERE story_id = %s "
                                       "ORDER BY id", (sid,)).fetchall()]
     assert roles == ["outline", "writer", "extract"]
+
+    # Khoá của truyện đã nhả khi ngắt kết nối: viết lại được ngay, và lần này chạy trọn.
+    llm.hang_at, llm._script = None, deque(full_script())
+    status, body = await asyncio.wait_for(asgi_request(app, "POST", path), timeout=30)
+    assert status == 200
+    assert "chapter_committed" in kinds(sse(body.decode()))
+    assert current_chapter(pg, sid) == 4
+
+
+class GatedLLM(ScriptedLLM):
+    """Lời gọi đầu tiên báo `entered` rồi chờ `gate` mở; các lời gọi sau chạy theo kịch bản."""
+
+    def __init__(self, script) -> None:
+        super().__init__(script)
+        self.entered = asyncio.Event()
+        self.gate = asyncio.Event()
+
+    async def chat(self, model, messages, *, response_schema=None, extra=None):
+        if not self.entered.is_set():
+            self.entered.set()
+            await self.gate.wait()
+        return await super().chat(model, messages, response_schema=response_schema, extra=extra)
+
+
+async def test_second_concurrent_chapter_run_is_refused(pg, driver, story, tmp_path):
+    """G8, D-46: hai lần viết cùng truyện cùng lúc thì một chạy, một nhận 409 STORY_BUSY và không
+    gọi model: key người chơi không bị trừ tiền hai lần."""
+    sid = story()
+    llm = GatedLLM(full_script())
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    path = f"/stories/{sid}/chapters/next"
+    first = asyncio.create_task(asgi_request(app, "POST", path))
+    await asyncio.wait_for(llm.entered.wait(), timeout=30)  # lần 1 đang trong lời gọi model đầu
+
+    status, body = await asyncio.wait_for(asgi_request(app, "POST", path), timeout=30)
+    assert status == 409 == HTTP_STATUS[ErrorCode.STORY_BUSY]
+    assert json.loads(body) == WritoryError(ErrorCode.STORY_BUSY).player_payload()
+    assert len(llm.calls) == 0  # lần 2 không gọi model (lần 1 vẫn đang chờ, chưa ghi lời gọi)
+
+    llm.gate.set()
+    status, body = await asyncio.wait_for(first, timeout=30)
+    assert status == 200
+    assert kinds(sse(body.decode())) == ["scene_ready", "scene_ready", "chapter_committed",
+                                         "choices_ready"]
+    assert len(calls_of(llm, "writer")) == 2  # đúng một chương được viết
+
+
+def test_lock_is_released_after_a_failed_run(pg, driver, story, tmp_path):
+    sid = story()
+    llm = ScriptedLLM([unavailable(), unavailable(), unavailable(), *full_script()])
+    with TestClient(make_app(pg, driver, llm, tmp_path, own_conns=True)) as client:
+        failed = sse(write_next(client, sid).text)
+        assert kinds(failed) == ["error"]
+        retried = write_next(client, sid)
+    assert retried.status_code == 200
+    assert "chapter_committed" in kinds(sse(retried.text))
+    assert current_chapter(pg, sid) == 4
 
 
 def test_chapter_text_routes(pg, driver, story, tmp_path):

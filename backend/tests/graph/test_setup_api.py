@@ -5,22 +5,32 @@ G1: không phản hồi nào có bản kế hoạch, bí mật hay id lớp trut
 trong khối dữ liệu. G11: chốt truyện tất cả hoặc không gì; lỗi giữa chừng không để lại truyện.
 """
 
+import asyncio
 import copy
 import json
 import re
+import uuid
 from pathlib import Path
 
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
-from tests.api_fixtures import FAKE_KEY, KeyedFactory, dev_settings
+from tests.api_fixtures import (
+    FAKE_KEY,
+    KeyedFactory,
+    asgi_request,
+    dev_settings,
+    own_connections,
+)
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.db import (
     ChapterCommitError,
     CostEntry,
     chapter_records,
+    choose_setup_option,
+    create_setup,
     current_chapter,
     delete_player_key,
     delete_story_record,
@@ -29,6 +39,7 @@ from writory.db import (
     load_story_plan,
     record_cost,
     save_player_key,
+    save_setup_options,
 )
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import delete_story, node_rows, player_view, story_snapshot
@@ -83,9 +94,11 @@ def created(pg, driver):
     delete_player_key(pg, DEV_OWNER_ID)
 
 
-def make_app(pg, driver, fake: FakeLLM, *, key: bool = True, owner: str | None = None):
+def make_app(pg, driver, fake: FakeLLM, *, key: bool = True, owner: str | None = None,
+             own_conns: bool = False):
+    """`own_conns`: mỗi yêu cầu một kết nối Postgres riêng như app thật (test khoá chống chạy đôi)."""
     app = create_app(dev_settings(), health_checks={"neo4j": _ok})
-    app.dependency_overrides[deps.get_pg_conn] = lambda: pg
+    app.dependency_overrides[deps.get_pg_conn] = own_connections if own_conns else (lambda: pg)
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     factory = KeyedFactory(fake)
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
@@ -244,7 +257,8 @@ def test_index_outside_0_to_2_is_refused(pg, driver, created, index):
         client.post(f"/setup/{sid}/settings")
         resp = client.put(f"/setup/{sid}/settings", json={"index": index})
         assert resp.status_code == 422
-        assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+        assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID,
+                                           fields=["index"]).player_payload()
         assert client.get(f"/setup/{sid}").json()["setting_index"] is None
 
 
@@ -281,6 +295,7 @@ def test_session_of_another_owner_is_not_found(pg, driver, created):
     {"name": "Tên " * 20},  # quá limits.input.character_name_max_chars
     {"personality": "x" * 301},
     {"backstory": "y" * 601},
+    {"name": "", "backstory": "y" * 601},
 ])
 def test_bad_character_edit_is_refused_and_changes_nothing(pg, driver, created, edit):
     fake = FakeLLM.scripted([options("settings"), options("plots"), options("characters")])
@@ -292,7 +307,9 @@ def test_bad_character_edit_is_refused_and_changes_nothing(pg, driver, created, 
         client.post(f"/setup/{sid}/characters")
         resp = client.put(f"/setup/{sid}/characters", json={"index": 1, **edit})
         assert resp.status_code == 422
-        assert resp.json() == WritoryError(ErrorCode.CHARACTER_EDIT_INVALID).player_payload()
+        # G12: nói trường nào phải sửa, đúng thứ tự tên, tính cách, quá khứ.
+        assert resp.json() == WritoryError(ErrorCode.CHARACTER_EDIT_INVALID,
+                                           fields=list(edit)).player_payload()
         body = client.get(f"/setup/{sid}").json()
     assert (body["character_index"], body["protagonist"], body["step"]) == (None, None,
                                                                             "characters")
@@ -317,6 +334,69 @@ def test_invalid_build_creates_no_story(pg, driver, created):
         assert_no_truth(resp.text)
         assert client.get(f"/setup/{sid}").json()["step"] == "finalize"
     assert _dev_story_count(pg) == before
+
+
+def test_finalize_can_be_retried_after_a_failed_attempt(pg, driver, created):
+    """Khoá chống chạy đôi nhả khi lần chốt lỗi: bấm lại được ngay (D-46)."""
+    fake = FakeLLM.scripted([*script()[:3], build_reply(secrets=[]), build_reply()])
+    with TestClient(make_app(pg, driver, fake, own_conns=True),
+                    raise_server_exceptions=False) as client:
+        sid = to_finalize(client, created)
+        assert client.post(f"/setup/{sid}/finalize").status_code == 502
+        resp = client.post(f"/setup/{sid}/finalize")
+    assert resp.status_code == 200, resp.text
+    created[1].append(resp.json()["story_id"])
+    assert resp.json()["step"] == "done"
+
+
+class GatedFakeLLM(FakeLLM):
+    """Lời gọi đầu tiên báo `entered` rồi chờ `gate` mở."""
+
+    def __init__(self, responses) -> None:
+        super().__init__(responses)
+        self.entered = asyncio.Event()
+        self.gate = asyncio.Event()
+
+    async def chat(self, model, messages, *, response_schema=None, extra=None):
+        if not self.entered.is_set():
+            self.entered.set()
+            await self.gate.wait()
+        return await super().chat(model, messages, response_schema=response_schema, extra=extra)
+
+
+async def test_second_concurrent_finalize_is_refused(pg, driver, created):
+    """G8, D-46: hai lần chốt cùng phiên cùng lúc thì một chạy, một nhận 409 STORY_BUSY và không
+    gọi model; chỉ một truyện được tạo."""
+    sid = f"setup-{uuid.uuid4().hex[:16]}"
+    created[0].append(sid)
+    create_setup(pg, sid, owner_id=DEV_OWNER_ID, choices={
+        "tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "protagonist",
+        "naming": {"names": "han_viet", "places": "hu_cau"}})
+    for step in ("settings", "plots"):
+        save_setup_options(pg, sid, step, json.loads(options(step))["options"])
+        choose_setup_option(pg, sid, step, 0)
+    characters = json.loads(options("characters"))["options"]
+    save_setup_options(pg, sid, "characters", characters)
+    choose_setup_option(pg, sid, "characters", 0, protagonist=characters[0])
+    before = _dev_story_count(pg)
+    fake = GatedFakeLLM([build_reply()])
+    app = make_app(pg, driver, fake, own_conns=True)
+    path = f"/setup/{sid}/finalize"
+    first = asyncio.create_task(asgi_request(app, "POST", path))
+    await asyncio.wait_for(fake.entered.wait(), timeout=30)
+
+    status, body = await asyncio.wait_for(asgi_request(app, "POST", path), timeout=30)
+    assert status == 409
+    assert json.loads(body) == WritoryError(ErrorCode.STORY_BUSY).player_payload()
+
+    fake.gate.set()
+    status, body = await asyncio.wait_for(first, timeout=30)
+    assert status == 200, body
+    done = json.loads(body)
+    created[1].append(done["story_id"])
+    assert done["step"] == "done"
+    assert _dev_story_count(pg) == before + 1
+    assert len(fake.calls) == 1  # một lời gọi build_story duy nhất
 
 
 def test_graph_failure_at_chapter_0_leaves_no_story(pg, driver, created, monkeypatch):

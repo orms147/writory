@@ -46,6 +46,7 @@ curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: a
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
 curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện
 ```
+Một truyện chỉ viết một chương một lúc, một phiên chỉ chốt một lần một lúc: lần gọi thứ hai trả 409 `STORY_BUSY` (D-46). Khoá giữ trên kết nối Postgres của yêu cầu, nên tự nhả khi yêu cầu kết thúc hay tiến trình chết.
 Danh sách route và schema: `http://127.0.0.1:8000/docs` (OpenAPI của FastAPI).
 
 Lời gọi model trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`, và có trần trong `config/limits.yaml`. Truyện phải có `story_plan` trong Postgres: truyện tạo qua `/setup` có; truyện mẫu nạp tay thì không, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).

@@ -308,6 +308,39 @@ def test_action_for_next_chapter_upserts(pg, new_db_story_id):
     assert (action.source, action.text, action.choice_id) == ("custom", "Tôi im lặng bỏ đi.", None)
 
 
+# --- khoá chống chạy đôi (G8, D-46) ------------------------------------------------------------
+
+
+def _other_conn():
+    import os
+
+    return psycopg.connect(os.environ.get(
+        "POSTGRES_DSN", "postgresql://writory:change-me-local@localhost:5432/writory"),
+        autocommit=True)
+
+
+def test_job_lock_lets_one_connection_run_at_a_time(pg):
+    from writory.db import StoryBusyError, job_lock
+
+    key = f"story-{uuid.uuid4().hex[:12]}"
+    other = _other_conn()
+    try:
+        with job_lock(pg, "story", key):
+            with pytest.raises(StoryBusyError) as exc, job_lock(other, "story", key):
+                pass
+            assert exc.value.code.value == "STORY_BUSY"
+            with job_lock(other, "story", f"{key}-khac"), job_lock(other, "setup", key):
+                pass  # khoá theo từng truyện, từng loại việc
+        with job_lock(other, "story", key):  # nhả khi xong
+            pass
+        with pytest.raises(RuntimeError), job_lock(pg, "story", key):
+            raise RuntimeError("việc lỗi giữa chừng")
+        with job_lock(other, "story", key):  # nhả cả khi lỗi
+            pass
+    finally:
+        other.close()
+
+
 def test_action_choice_must_exist(pg, new_db_story_id):
     sid = new_db_story_id()
     create_story(pg, sid, length_level="short", owner_id="dev")

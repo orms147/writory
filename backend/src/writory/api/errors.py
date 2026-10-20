@@ -3,10 +3,15 @@
 - `WritoryError` → `player_payload()` với HTTP status lấy từ bảng duy nhất `HTTP_STATUS`.
 - Exception khác → `INTERNAL_ERROR`, câu tiếng Việt cố định. Không traceback, không `str(e)` trong
   phản hồi; chi tiết chỉ vào log, đã qua redact (G7).
+- Lỗi kiểm thân yêu cầu → `REQUEST_INVALID` kèm `fields` (đường dẫn trường sai), không bao giờ kèm
+  giá trị đầu vào (D-45).
 """
 
 import logging
+import re
 import traceback
+from collections.abc import Sequence
+from typing import Any
 
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
@@ -70,6 +75,7 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.CHOICE_REQUIRED: 409,
     ErrorCode.CHAPTER_NOT_FOUND: 404,
     ErrorCode.STORY_COMPLETE: 409,
+    ErrorCode.STORY_BUSY: 409,  # D-46: đang có một lần viết/chốt khác của cùng truyện, phiên
 }
 
 
@@ -86,15 +92,39 @@ async def _unexpected_error(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(err.player_payload(), status_code=HTTP_STATUS[err.code])
 
 
+# Một đoạn của đường dẫn trường được trả về nguyên văn chỉ khi có dạng định danh (tên trường của
+# schema). Đoạn khác (tên trường lạ do người gửi đặt, có thể chính là key) thành "?". Regex ở đây
+# chỉ kiểm định dạng.
+_FIELD_PART = re.compile(r"[A-Za-z_][A-Za-z0-9_]{0,63}")
+_LOC_SOURCES = frozenset({"body", "query", "path", "header", "cookie"})
+
+
+def field_path(loc: Sequence[Any], error_type: str | None = None) -> str:
+    """`("body", "tags", "genre")` → `"tags.genre"`. Không bao giờ chứa giá trị đầu vào (G7)."""
+    if error_type == "json_invalid":  # loc là vị trí ký tự trong thân, không phải trường
+        return "body"
+    parts = list(loc[1:]) if len(loc) > 1 and loc[0] in _LOC_SOURCES else list(loc)
+    out = []
+    for part in parts:
+        if isinstance(part, int) and not isinstance(part, bool):
+            out.append(str(part))  # chỉ số trong danh sách
+        elif isinstance(part, str) and _FIELD_PART.fullmatch(part):
+            out.append(part)
+        else:
+            out.append("?")
+    return ".".join(out) or (str(loc[0]) if loc and loc[0] in _LOC_SOURCES else "?")
+
+
 async def _request_invalid(request: Request, exc: Exception) -> JSONResponse:
     """Lỗi kiểm thân yêu cầu (422). Bản mặc định của FastAPI trả `input` của từng lỗi, tức chép lại
-    chữ người chơi gửi lên, kể cả key (G7). Ở đây log và phản hồi chỉ có vị trí và loại lỗi."""
+    chữ người chơi gửi lên, kể cả key (G7). Ở đây log và phản hồi chỉ có đường dẫn trường (đã lọc
+    như `field_path`) và loại lỗi; không `input`, không `ctx`."""
     assert isinstance(exc, RequestValidationError)
-    where = "; ".join(f"{'.'.join(str(p) for p in e.get('loc', ()))}: {e.get('type')}"
-                      for e in exc.errors())
+    errors = [(field_path(e.get("loc", ()), e.get("type")), e.get("type")) for e in exc.errors()]
     log.warning("%s %s -> %s (%s)", request.method, request.url.path,
-                ErrorCode.REQUEST_INVALID.value, where)
-    err = WritoryError(ErrorCode.REQUEST_INVALID)
+                ErrorCode.REQUEST_INVALID.value, "; ".join(f"{f}: {t}" for f, t in errors))
+    fields = list(dict.fromkeys(f for f, _ in errors))
+    err = WritoryError(ErrorCode.REQUEST_INVALID, fields=fields)
     return JSONResponse(err.player_payload(), status_code=HTTP_STATUS[err.code])
 
 

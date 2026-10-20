@@ -137,28 +137,48 @@ def test_malformed_key_is_refused_and_never_echoed(bad):
     with captured_logs() as logs, TestClient(app, raise_server_exceptions=False) as client:
         resp = client.put("/player/key", json={"api_key": bad})
     assert resp.status_code == 422
-    assert resp.json() == WritoryError(ErrorCode.PLAYER_KEY_INVALID).player_payload()
+    # G12: nói trường nào sai để người chơi sửa; G7: không chép lại chữ đã dán.
+    assert resp.json() == WritoryError(ErrorCode.PLAYER_KEY_INVALID,
+                                       fields=["api_key"]).player_payload()
+    assert resp.json()["fields"] == ["api_key"]
     assert store.token is None
     if len(bad) >= 8:
         assert bad not in resp.text and bad not in logs.text
 
 
-@pytest.mark.parametrize("body", [
-    {"api_key": FAKE_KEY, "note": "thêm trường lạ"},
-    {"key": FAKE_KEY},
-    {"api_key": [FAKE_KEY]},
-    {"api_key": {"value": FAKE_KEY}},
+@pytest.mark.parametrize(("body", "fields"), [
+    ({"api_key": FAKE_KEY, "note": "thêm trường lạ"}, {"note"}),
+    ({"key": FAKE_KEY}, {"api_key", "key"}),
+    ({"api_key": [FAKE_KEY]}, {"api_key"}),
+    ({"api_key": {"value": FAKE_KEY}}, {"api_key"}),
+    # Tên trường do người gửi đặt (ở đây chính là key) không được chép lại: thành "?".
+    ({FAKE_KEY: "x"}, {"api_key", "?"}),
 ])
-def test_bad_request_body_is_g12_error_that_never_echoes_input(body):
-    """Lỗi 422 mặc định của FastAPI chép lại đầu vào (`input`), tức chép lại key."""
+def test_bad_request_body_is_g12_error_that_never_echoes_input(body, fields):
+    """Lỗi 422 mặc định của FastAPI chép lại đầu vào (`input`), tức chép lại key. Phản hồi chỉ có
+    mã, câu tiếng Việt, và đường dẫn các trường sai."""
     app, store, _, _ = build()
     with captured_logs() as logs, TestClient(app, raise_server_exceptions=False) as client:
         resp = client.put("/player/key", json=body)
     assert resp.status_code == 422 == HTTP_STATUS[ErrorCode.REQUEST_INVALID]
-    assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+    payload = resp.json()
+    assert set(payload) == {"code", "message", "fields"}
+    expected = WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+    assert (payload["code"], payload["message"]) == (expected["code"], expected["message"])
+    assert set(payload["fields"]) == fields
     assert_no_key(resp.text)
     assert_no_key(logs.text)
     assert store.token is None
+
+
+def test_malformed_json_body_reports_the_body():
+    app, _, _, _ = build()
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.put("/player/key", content=b'{"api_key": "' + FAKE_KEY.encode(),
+                          headers={"content-type": "application/json"})
+    assert resp.status_code == 422
+    assert resp.json()["code"] == "REQUEST_INVALID" and resp.json()["fields"] == ["body"]
+    assert_no_key(resp.text)
 
 
 def test_invalid_master_key_fails_at_startup_without_echoing_it():

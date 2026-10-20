@@ -35,41 +35,47 @@ def client():
         yield c
 
 
-def assert_request_invalid(resp) -> None:
+def assert_request_invalid(resp, fields: set[str]) -> None:
+    """422 REQUEST_INVALID: câu chung, kèm đúng các trường sai (G12), không có đầu vào."""
     assert resp.status_code == 422
-    assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+    payload = resp.json()
+    expected = WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+    assert (payload["code"], payload["message"]) == (expected["code"], expected["message"])
+    assert set(payload) == {"code", "message", "fields"}
+    assert set(payload["fields"]) == fields
 
 
 @pytest.mark.parametrize("step", ["settings", "plots"])
-@pytest.mark.parametrize("body", [
-    {"index": -1}, {"index": 3}, {"index": 99}, {"index": "hai"}, {"index": None}, {},
-    {"index": 1, "title": "tự viết bối cảnh"},  # trình duyệt chỉ gửi số thứ tự
+@pytest.mark.parametrize(("body", "fields"), [
+    ({"index": -1}, {"index"}), ({"index": 3}, {"index"}), ({"index": 99}, {"index"}),
+    ({"index": "hai"}, {"index"}), ({"index": None}, {"index"}), ({}, {"index"}),
+    ({"index": 1, "title": "tự viết bối cảnh"}, {"title"}),  # trình duyệt chỉ gửi số thứ tự
 ])
-def test_option_index_must_be_0_to_2(client, step, body):
-    assert_request_invalid(client.put(f"/setup/s1/{step}", json=body))
+def test_option_index_must_be_0_to_2(client, step, body, fields):
+    assert_request_invalid(client.put(f"/setup/s1/{step}", json=body), fields)
 
 
-@pytest.mark.parametrize("body", [
-    {"index": 3},
-    {"index": -1, "name": "Lục Vân"},
-    {"index": 0, "name": 5},
-    {"index": 0, "hidden_secret": "x"},
+@pytest.mark.parametrize(("body", "fields"), [
+    ({"index": 3}, {"index"}),
+    ({"index": -1, "name": "Lục Vân"}, {"index"}),
+    ({"index": 0, "name": 5}, {"name"}),
+    ({"index": 0, "hidden_secret": "x"}, {"hidden_secret"}),
 ])
-def test_character_choice_body_is_checked(client, body):
-    assert_request_invalid(client.put("/setup/s1/characters", json=body))
+def test_character_choice_body_is_checked(client, body, fields):
+    assert_request_invalid(client.put("/setup/s1/characters", json=body), fields)
 
 
-@pytest.mark.parametrize("body", [
-    {"tags": {"genre": ""}, "length_level": "short"},
-    {"tags": {"genre": "kiếm hiệp" * 20}, "length_level": "short"},
-    {"tags": {"genre": "kiếm hiệp"}, "length_level": "khong-co"},
-    {"tags": {"genre": "kiếm hiệp"}},
-    {"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "many"},
-    {"tags": {"genre": "kiếm hiệp"}, "length_level": "short",
-     "naming": {"names": "latin", "places": "hu_cau"}},
+@pytest.mark.parametrize(("body", "fields"), [
+    ({"tags": {"genre": ""}, "length_level": "short"}, {"tags.genre"}),
+    ({"tags": {"genre": "kiếm hiệp" * 20}, "length_level": "short"}, {"tags.genre"}),
+    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "khong-co"}, {"length_level"}),
+    ({"tags": {"genre": "kiếm hiệp"}}, {"length_level"}),
+    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "many"}, {"pov"}),
+    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short",
+      "naming": {"names": "latin", "places": "hu_cau"}}, {"naming.names"}),
 ])
-def test_start_body_is_checked(client, body):
-    assert_request_invalid(client.post("/setup", json=body))
+def test_start_body_is_checked(client, body, fields):
+    assert_request_invalid(client.post("/setup", json=body), fields)
 
 
 def test_setup_routes_not_mounted_when_dev_flag_off():

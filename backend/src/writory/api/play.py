@@ -12,6 +12,8 @@
   task đang chạy chương: trước bước ghi thì không có gì được ghi; bước ghi (`commit_chapter`)
   chạy đồng bộ nên không bị cắt giữa chừng. Chương đã ghi mà chưa kịp có lựa chọn: tạo lại bằng
   `POST /stories/{id}/choices`.
+- G8: một truyện chỉ một lần viết chương cùng lúc (`db.job_lock` trong `get_chapter_job`); lần
+  thứ hai báo STORY_BUSY, không gọi model.
 - G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động.
 - Chọn lựa chọn chỉ lưu hành động cho chương sau; chưa ghi `Lie`/`FEELS` vào đồ thị (D-46).
 Chỉ mount khi bật cờ dev (D-41).
@@ -19,7 +21,7 @@ Chỉ mount khi bật cờ dev (D-41).
 
 import logging
 import traceback
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Iterator
 from dataclasses import dataclass
 from typing import Annotated, Any
 
@@ -39,6 +41,7 @@ from writory.db import (
     ActionRecord,
     chapter_records,
     chapter_scenes,
+    job_lock,
     load_action,
     load_choice,
     load_choices,
@@ -149,29 +152,34 @@ class ChapterJob:
 
 
 def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4jDriver,
-                    config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ChapterJob:
-    """Mọi điều kiện kiểm được trước khi viết, để lỗi là JSON có status thay vì sự kiện SSE."""
+                    config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> Iterator[ChapterJob]:
+    """Mọi điều kiện kiểm được trước khi viết, để lỗi là JSON có status thay vì sự kiện SSE.
+
+    Giữ khoá của truyện (`db.job_lock`) từ trước các phép kiểm tới khi yêu cầu kết thúc: stream
+    xong, lỗi, hay người chơi ngắt kết nối (FastAPI thoát dependency có `yield` sau khi stream
+    dừng). Lần viết thứ hai cùng lúc báo STORY_BUSY, không gọi model (G8, D-46)."""
     committed = _committed(story)
-    if _has_pending(conn, story.id):
-        raise WritoryError(ErrorCode.CHAPTER_PENDING, detail=f"truyện {story.id}")
-    chapter = committed + 1
-    if chapter > plan.total_chapters:
-        raise WritoryError(ErrorCode.STORY_COMPLETE, detail=f"truyện {story.id}: {committed}")
-    action = load_action(conn, story.id, chapter)
-    if action is None and committed >= 1:
-        raise WritoryError(ErrorCode.CHOICE_REQUIRED, detail=f"truyện {story.id}, ch{chapter}")
-    brief = load_story_brief(conn, story.id)
-    if brief is None:
-        raise RuntimeError(f"truyện {story.id} không có thiết lập truyện")  # fail closed
-    client, tracker = llm.open(story_id=story.id, chapter=chapter)
-    tracker.ensure_budget()  # trần chưa đặt hoặc đã chạm: báo trước khi mở stream
-    request = ChapterRequest(
-        present_ids=(), scene_count=config.story_lengths.scenes_per_chapter.min,
-        story_brief=brief, player_action=None if action is None else action.text,
-    )
-    run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
-                     config=config, plan=plan, tracker=tracker)
-    return ChapterJob(story.id, chapter, run)
+    with job_lock(conn, "story", story.id):
+        if _has_pending(conn, story.id):
+            raise WritoryError(ErrorCode.CHAPTER_PENDING, detail=f"truyện {story.id}")
+        chapter = committed + 1
+        if chapter > plan.total_chapters:
+            raise WritoryError(ErrorCode.STORY_COMPLETE, detail=f"truyện {story.id}: {committed}")
+        action = load_action(conn, story.id, chapter)
+        if action is None and committed >= 1:
+            raise WritoryError(ErrorCode.CHOICE_REQUIRED, detail=f"truyện {story.id}, ch{chapter}")
+        brief = load_story_brief(conn, story.id)
+        if brief is None:
+            raise RuntimeError(f"truyện {story.id} không có thiết lập truyện")  # fail closed
+        client, tracker = llm.open(story_id=story.id, chapter=chapter)
+        tracker.ensure_budget()  # trần chưa đặt hoặc đã chạm: báo trước khi mở stream
+        request = ChapterRequest(
+            present_ids=(), scene_count=config.story_lengths.scenes_per_chapter.min,
+            story_brief=brief, player_action=None if action is None else action.text,
+        )
+        run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
+                         config=config, plan=plan, tracker=tracker)
+        yield ChapterJob(story.id, chapter, run)
 
 
 @router.post("/{story_id}/chapters/next", response_class=EventSourceResponse)

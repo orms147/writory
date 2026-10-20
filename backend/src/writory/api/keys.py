@@ -9,6 +9,7 @@ from fastapi import APIRouter, Depends
 
 from writory.api import deps
 from writory.api.schemas import PlayerKeyIn, PlayerKeyOut
+from writory.errors import WritoryError
 from writory.safety.crypto import key_last4, validate_player_key
 
 router = APIRouter(prefix="/player", dependencies=[Depends(deps.dev_routes_only)])
@@ -25,7 +26,10 @@ def key_status(keys: deps.Keys, cipher: deps.Cipher) -> PlayerKeyOut:
 @router.put("/key", response_model=PlayerKeyOut)
 def put_key(body: PlayerKeyIn, keys: deps.Keys, cipher: deps.Cipher) -> PlayerKeyOut:
     """Thêm hoặc thay key. Chưa gọi OpenRouter để thử key: key sai báo LLM_AUTH_FAILED ở lời gọi đầu."""
-    api_key = validate_player_key(body.api_key)
+    try:
+        api_key = validate_player_key(body.api_key)
+    except WritoryError as e:  # nói trường nào sai (G12); chi tiết vẫn không có key (G7)
+        raise WritoryError(e.code, e.detail, fields=["api_key"]) from None
     keys.save(cipher.encrypt(api_key))
     return PlayerKeyOut(has_key=True, last4=key_last4(api_key))
 

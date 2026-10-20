@@ -13,6 +13,7 @@ Chỉ mount khi bật cờ dev (D-41).
 """
 
 import uuid
+from collections.abc import Iterator
 
 from fastapi import APIRouter, Depends
 
@@ -28,6 +29,7 @@ from writory.db import (
     discard_story,
     finish_setup,
     get_setup,
+    job_lock,
     save_setup_options,
     start_story,
 )
@@ -73,7 +75,7 @@ def start_setup(body: SetupStartIn, conn: deps.PgConn, owner: deps.Owner,
                 config: deps.Config) -> SetupOut:
     """Tạo phiên từ tag, độ dài, quy ước tên (design §4.1 bước 1–3). Chưa gọi model."""
     if body.length_level not in config.story_lengths.levels:
-        raise WritoryError(ErrorCode.REQUEST_INVALID,
+        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["length_level"],
                            detail=f"mức độ dài {body.length_level!r} không có trong config")
     tags = StoryTags(**body.tags.model_dump())
     naming = (Naming(**body.naming.model_dump()) if body.naming is not None
@@ -173,7 +175,7 @@ def _protagonist(option: dict, body: CharacterChoiceIn, limits: InputLimits) -> 
             bad.append(field)
         pc[field] = value
     if bad:
-        raise WritoryError(ErrorCode.CHARACTER_EDIT_INVALID, detail=f"trường {bad}")
+        raise WritoryError(ErrorCode.CHARACTER_EDIT_INVALID, detail=f"trường {bad}", fields=bad)
     return pc
 
 
@@ -197,7 +199,15 @@ def _parts(rec: SetupRecord) -> tuple[StoryChoices, SettingOption, PlotOption, C
             CharacterOption.model_validate(rec.protagonist))
 
 
-@router.post("/{session_id}/finalize", response_model=SetupOut)
+def lock_setup(session_id: str, conn: deps.PgConn) -> Iterator[None]:
+    """Một phiên chỉ một lần chốt cùng lúc (G8, D-46): lần thứ hai báo STORY_BUSY, không gọi
+    model. Khoá nhả khi yêu cầu kết thúc, kể cả khi lỗi."""
+    with job_lock(conn, "setup", session_id):
+        yield
+
+
+@router.post("/{session_id}/finalize", response_model=SetupOut,
+             dependencies=[Depends(lock_setup)])
 async def finalize(session_id: str, conn: deps.PgConn, driver: deps.Neo4jDriver,
                    owner: deps.Owner, config: deps.Config, llm: deps.PlayerLLMs) -> SetupOut:
     """Bản kế hoạch ẩn + chương 0 (`build_story`), rồi tạo truyện, tất cả hoặc không gì. Đã chốt

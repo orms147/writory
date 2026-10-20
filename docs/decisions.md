@@ -374,29 +374,30 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Mỗi lời gọi model ghi một dòng `llm_costs` qua `llm.ledger.RecordingClient`, đặt dưới `MeteredClient`, kể cả khi thiếu `usage.cost`. Vai đoán theo schema JSON (`api/deps.ROLE_OF_SCHEMA`; không schema là `writer`). `CostTracker(story_spent_usd=...)` cộng từ nhật ký. Chi phí khởi tạo tính theo phiên, gắn vào truyện khi tạo xong.
   - `deps.PlayerLLM`: key chỉ được đọc và giải mã khi sắp gọi model, rồi đi thẳng vào client OpenRouter (một `httpx.AsyncClient` chung của app). Không có key thì `PLAYER_KEY_MISSING`, không bao giờ dùng key chủ dự án. Truyện không có kế hoạch: fail closed (500).
 - **Hệ quả:** lời gọi lỗi và stream đứt không có dòng chi phí. Thêm schema mới mà quên bảng vai thì nhật ký ghi tên lớp. Cột `model` là model được yêu cầu, không phải model OpenRouter thật sự dùng. Truy vấn Postgres chạy đồng bộ.
-- **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh story-api), điều phối duyệt · 20/10/2026
 
 ## D-45 · API key người chơi và API khởi tạo; lỗi 422 không chép lại đầu vào
 - **Bối cảnh:** design §4.1, §10; G7. Lỗi 422 mặc định của FastAPI trả `input` của từng lỗi, tức chép lại chữ người chơi gửi lên, kể cả key.
 - **Quyết định:**
   - `GET/PUT/DELETE /player/key`: phản hồi chỉ có `has_key`, `last4` (tính sau khi giải mã, không lưu riêng). Key phải bắt đầu bằng `sk-or-` và được bộ lọc log nhận ra trọn vẹn (`safety.crypto.validate_player_key`); sai dạng: mã mới `PLAYER_KEY_INVALID` (422). Chưa gọi OpenRouter để thử key. Bật router dev thì `KeyCipher` dựng lúc tạo app: khoá sai thì app không khởi động (D-11).
-  - Lỗi kiểm thân yêu cầu thành mã mới `REQUEST_INVALID` (422) cho mọi route; log chỉ ghi vị trí và loại lỗi.
+  - Lỗi kiểm thân yêu cầu thành mã mới `REQUEST_INVALID` (422) cho mọi route, kèm `fields`: đường dẫn trường sai lấy từ `loc` (`["body","tags","genre"]` → `"tags.genre"`). Không bao giờ có `input`, `ctx` hay giá trị nào; đoạn đường dẫn không có dạng định danh (tên trường lạ, có thể chính là key) thành `"?"` (`api/errors.field_path`). `PLAYER_KEY_INVALID`, `CHARACTER_EDIT_INVALID` cũng kèm `fields`.
   - `/setup`: tạo phiên → POST một bước (trả bộ đã có; chưa có mới gọi model) → PUT `{index}` là số nguyên JSON 0–2 → `finalize`. Đổi lựa chọn bước trước thì xoá các bước sau. Sai thứ tự: mã mới `SETUP_STEP_NOT_READY` (409), không gọi model; phiên của người khác: `SETUP_NOT_FOUND` (404).
   - Sửa nhân vật chính: trường người chơi gửi lên kiểm theo `input.character_name_max_chars`, `personality_max_chars` (khoá mới, 300, số tạm như D-47), `backstory_max_chars`; rỗng hoặc quá dài: mã mới `CHARACTER_EDIT_INVALID` (422).
-  - `finalize`: `build_story` → `db.start_story` (truyện + kế hoạch + chương 0; lỗi thì gỡ hết theo `story_id`) → gắn truyện vào phiên. Thiết lập truyện (`pipeline.setup.story_brief`) lưu ở `stories.brief`.
-- **Hệ quả:** chưa chống hai yêu cầu chốt cùng lúc: yêu cầu sau gỡ truyện của nó nhưng đã tốn một lời gọi `build_story`. Bối cảnh, hướng giờ do máy chủ giữ, không còn do trình duyệt gửi lại; vẫn bọc như dữ liệu như D-38. Key dạng khác bị từ chối tới khi sửa bộ lọc log.
-- **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
+  - `finalize`: `build_story` → `db.start_story` (truyện + kế hoạch + chương 0; lỗi thì gỡ hết theo `story_id`) → gắn truyện vào phiên. Thiết lập truyện (`pipeline.setup.story_brief`, gồm tên, tính cách, quá khứ nhân vật chính, luôn bọc như dữ liệu) lưu ở `stories.brief`. Hai yêu cầu chốt cùng phiên cùng lúc: lần sau báo `STORY_BUSY` (khoá như D-46).
+- **Hệ quả:** bối cảnh, hướng giờ do máy chủ giữ, không còn do trình duyệt gửi lại; vẫn bọc như dữ liệu như D-38. Key dạng khác bị từ chối tới khi sửa bộ lọc log.
+- **Người quyết:** Claude (nhánh story-api), điều phối duyệt; tiền tố `sk-or-`, tính cách và quá khứ nhân vật chính trong thiết lập truyện: điều phối duyệt · 20/10/2026
 
 ## D-46 · Viết chương qua SSE; lựa chọn và hành động tự viết lưu phía máy chủ
 - **Bối cảnh:** design §4.2, §6.2–6.4; D-1, D-6, D-36, D-37. Giao diện cần nhận từng cảnh đã kiểm, và gửi lại lựa chọn bằng id mờ.
 - **Quyết định:**
   - `POST /stories/{id}/chapters/next` trả `text/event-stream` qua `fastapi.sse.EventSourceResponse` (FastAPI 0.148, đọc mã nguồn): mỗi sự kiện của `pipeline.events` là một SSE, `event:` là loại, `data:` là JSON; khi rảnh FastAPI gửi dòng chú thích `: ping`. Dùng POST, không GET: `EventSource` của trình duyệt tự nối lại, tức viết lại chương và tốn tiền hai lần; giao diện đọc stream bằng `fetch`.
-  - Điều kiện kiểm được trước khi viết nằm trong dependency, trả JSON có status: truyện, chương `pending`, đã quá chương cuối của kế hoạch (mã mới `STORY_COMPLETE`, 409), chương ≥ 2 mà chưa có hành động dẫn tới (mã mới `CHOICE_REQUIRED`, 409), key, trần. Số cảnh lấy `scenes_per_chapter.min`; người có mặt đầu chương để dàn ý chọn.
+  - Điều kiện kiểm được trước khi viết nằm trong dependency, trả JSON có status: truyện, chương `pending`, đã quá chương cuối của kế hoạch (mã mới `STORY_COMPLETE`, 409), chương ≥ 2 mà chưa có hành động dẫn tới (mã mới `CHOICE_REQUIRED`, 409), key, trần. Số cảnh lấy `scenes_per_chapter.min` (2); người có mặt đầu chương để dàn ý chọn.
+  - Chống chạy đôi (G8): advisory lock mức phiên của Postgres (`db.job_lock`, `pg_try_advisory_lock`) theo `story_id` trên kết nối của yêu cầu, lấy trong dependency có `yield`, giữ tới khi yêu cầu kết thúc (stream xong, lỗi, hay ngắt kết nối). Lần thứ hai báo ngay mã mới `STORY_BUSY` (409), không chờ, không gọi model. Chọn khoá thay cho cột trạng thái vì kết nối đóng hay tiến trình chết thì Postgres tự nhả: không cần hạn giờ để gỡ kẹt.
   - `choices_ready` chỉ phát sau khi bộ lựa chọn đã lưu ở `chapter_choices`. Ngắt kết nối: FastAPI huỷ task chạy chương; pipeline không ghi gì trước `commit_chapter`, và bước đó chạy đồng bộ nên không bị cắt giữa chừng. Chương đã ghi mà chưa có lựa chọn: `POST /stories/{id}/choices` tạo lại (đã có thì trả lại).
   - `POST /stories/{id}/choice {choice_id}` lưu hành động cho chương sau (`player_actions`), kèm lời nói dối, cảm xúc dạng chữ (`api.play.action_text`). `POST /stories/{id}/action {text}` qua `classify_action` + `ensure_in_story` rồi mới lưu. Chọn lại được tới khi viết chương sau.
   - `GET /stories/{id}` (trạng thái để mở lại truyện), `GET /stories/{id}/chapters/{n}` (văn đã hiện). Mã mới `CHOICE_NOT_FOUND`, `CHAPTER_NOT_FOUND` (404).
-- **Hệ quả:** chưa ghi `Lie`, `FEELS` vào đồ thị khi người chơi chọn; dữ liệu nằm ở `chapter_choices` và chỉ vào đề chương sau dạng chữ. Chưa chặn hai lần viết cùng truyện cùng lúc: D-6 giữ dữ liệu đúng nhưng tốn tiền hai lần. Lời gọi bị huỷ giữa chừng không có dòng chi phí.
-- **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
+- **Hệ quả:** chưa ghi `Lie`, `FEELS` vào đồ thị khi người chơi chọn; dữ liệu nằm ở `chapter_choices` và chỉ vào đề chương sau dạng chữ. Khoá chỉ có tác dụng khi mỗi yêu cầu có kết nối Postgres riêng (khoá lồng được trên cùng kết nối); hỏi người kể, tạo lại lựa chọn và phân loại ô tự viết chưa có khoá. Lời gọi bị huỷ giữa chừng không có dòng chi phí.
+- **Người quyết:** Claude (nhánh story-api), điều phối duyệt; POST cho SSE, 2 cảnh mỗi chương, khoá chống chạy đôi: điều phối yêu cầu và duyệt · 20/10/2026
 
 ## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
 - **Bối cảnh:** pipeline (D-36..D-40) dừng ở lỗi cấu hình vì `roles.*`, trần chi phí và ngưỡng còn `null`. Chưa có bài đo riêng cho dàn ý, lựa chọn, người kể, phân loại, người canh, khởi tạo. Bài D đo riêng bước viết của Luna khoảng 0,001 USD một cảnh (`evals/results/2026-10-20-quality-r2/`); cả đường đi chưa đo.

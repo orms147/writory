@@ -35,6 +35,7 @@ from writory.db.choices import (
 from writory.db.connection import connect
 from writory.db.costs import CostEntry, record_cost, setup_spent_usd, story_spent_usd
 from writory.db.keys import delete_player_key, load_player_key, save_player_key
+from writory.db.locks import StoryBusyError, job_lock
 from writory.db.migrate import migrate
 from writory.db.narrator import take_narrator_question
 from writory.db.plans import (
@@ -74,6 +75,7 @@ __all__ = [
     "SetupRecord",
     "SetupStep",
     "SetupStepError",
+    "StoryBusyError",
     "StoryNotFoundError",
     "StoryRecord",
     "chapter_records",
@@ -93,6 +95,7 @@ __all__ = [
     "get_owned_story",
     "get_setup",
     "get_story",
+    "job_lock",
     "load_action",
     "load_choice",
     "load_choices",

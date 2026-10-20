@@ -176,3 +176,21 @@ def test_chapter_errors_from_db_layer_get_their_status():
     assert (a.status_code, a.json()["code"]) == (404, "STORY_NOT_FOUND")
     assert (b.status_code, b.json()["code"]) == (409, "CHAPTER_PENDING")
     assert "test-123" not in a.text and "pending" not in b.json()["message"]
+
+
+@pytest.mark.parametrize(("loc", "kind", "path"), [
+    (("body", "tags", "genre"), "string_too_short", "tags.genre"),
+    (("body", "index"), "int_type", "index"),
+    (("body", "items", 0, "name"), "missing", "items.0.name"),
+    (("path", "number"), "int_parsing", "number"),
+    (("body",), "missing", "body"),
+    (("body", 17), "json_invalid", "body"),
+    # Tên trường lạ do người gửi đặt (ở đây là key) không bao giờ được chép lại (G7).
+    (("body", FAKE_KEY), "extra_forbidden", "?"),
+    (("body", "ghi chú"), "extra_forbidden", "?"),
+    (("body", "a" * 65), "extra_forbidden", "?"),
+])
+def test_field_path_keeps_only_schema_names(loc, kind, path):
+    from writory.api.errors import field_path
+
+    assert field_path(loc, kind) == path

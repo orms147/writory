@@ -71,24 +71,29 @@ def test_sse_event_is_named_by_type_and_has_no_ids():
     assert "xyz" not in sse_event(events[3]).data.model_dump_json()
 
 
-@pytest.mark.parametrize("body", [
-    {"choice_id": "lan"},
-    {"choice_id": "choice-XYZ"},
-    {"choice_id": "choice-0123456789ab", "kind": "action"},
-    {"choice_id": 7},
-    {},
+def assert_request_invalid(resp, fields: list[str]) -> None:
+    assert resp.status_code == 422
+    expected = WritoryError(ErrorCode.REQUEST_INVALID, fields=fields).player_payload()
+    assert resp.json() == expected
+
+
+@pytest.mark.parametrize(("body", "fields"), [
+    ({"choice_id": "lan"}, ["choice_id"]),
+    ({"choice_id": "choice-XYZ"}, ["choice_id"]),
+    ({"choice_id": "choice-0123456789ab", "kind": "action"}, ["kind"]),
+    ({"choice_id": 7}, ["choice_id"]),
+    ({}, ["choice_id"]),
 ])
-def test_choice_body_is_checked(client, body):
-    resp = client.post("/stories/s1/choice", json=body)
-    assert resp.status_code == 422
-    assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+def test_choice_body_is_checked(client, body, fields):
+    assert_request_invalid(client.post("/stories/s1/choice", json=body), fields)
 
 
-@pytest.mark.parametrize("body", [{"text": 5}, {"text": ["a"]}, {}, {"text": "a", "label": "x"}])
-def test_custom_action_body_is_checked(client, body):
-    resp = client.post("/stories/s1/action", json=body)
-    assert resp.status_code == 422
-    assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID).player_payload()
+@pytest.mark.parametrize(("body", "fields"), [
+    ({"text": 5}, ["text"]), ({"text": ["a"]}, ["text"]), ({}, ["text"]),
+    ({"text": "a", "label": "x"}, ["label"]),
+])
+def test_custom_action_body_is_checked(client, body, fields):
+    assert_request_invalid(client.post("/stories/s1/action", json=body), fields)
 
 
 def test_play_routes_not_mounted_when_dev_flag_off():

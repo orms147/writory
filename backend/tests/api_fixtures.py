@@ -2,10 +2,14 @@
 (cùng giao thức với bản Postgres trong `api/deps.py`), và nhà máy client model giả ghi lại key nhận
 được (để test G7 chứng minh key giải mã đi tới client model, không đi đâu khác)."""
 
+import asyncio
+import json
 import logging
+import os
 from collections.abc import Iterator
 from contextlib import contextmanager
 
+import psycopg
 from cryptography.fernet import Fernet
 from pydantic import SecretStr
 
@@ -71,6 +75,52 @@ class KeyedFactory:
     def __call__(self, api_key: SecretStr) -> LLMClient:
         self.keys.append(api_key.get_secret_value())
         return self.llm
+
+
+def own_connections() -> Iterator[psycopg.Connection]:
+    """Thay `deps.get_pg_conn` trong test graph: mỗi yêu cầu một kết nối Postgres riêng, như app
+    thật. Cần cho test khoá chống chạy đôi, vì advisory lock lồng được trên cùng một kết nối."""
+    conn = psycopg.connect(os.environ.get(
+        "POSTGRES_DSN", "postgresql://writory:change-me-local@localhost:5432/writory"),
+        autocommit=True)
+    try:
+        yield conn
+    finally:
+        conn.close()
+
+
+async def asgi_request(app, method: str, path: str, body: dict | None = None,
+                       *, on_send=None, disconnect: asyncio.Event | None = None
+                       ) -> tuple[int, bytes]:
+    """Gọi app ASGI trực tiếp trên event loop của test, để chạy nhiều yêu cầu song song (TestClient
+    chạy tuần tự). `disconnect` được đặt thì yêu cầu báo ngắt kết nối ngay sau đó; không đặt thì
+    không bao giờ ngắt."""
+    raw = b"" if body is None else json.dumps(body).encode()
+    sent_request = False
+    messages: list[dict] = []
+
+    async def receive():
+        nonlocal sent_request
+        if not sent_request:
+            sent_request = True
+            return {"type": "http.request", "body": raw, "more_body": False}
+        await (disconnect or asyncio.Event()).wait()
+        return {"type": "http.disconnect"}
+
+    async def send(message):
+        messages.append(message)
+        if on_send is not None:
+            on_send(message)
+
+    headers = [(b"host", b"testserver"), (b"content-type", b"application/json")]
+    scope = {"type": "http", "asgi": {"version": "3.0"}, "http_version": "1.1",
+             "method": method, "scheme": "http", "path": path, "raw_path": path.encode(),
+             "query_string": b"", "root_path": "", "headers": headers,
+             "client": ("testclient", 50000), "server": ("testserver", 80), "state": {}}
+    await app(scope, receive, send)
+    status = next(m["status"] for m in messages if m["type"] == "http.response.start")
+    data = b"".join(m.get("body", b"") for m in messages if m["type"] == "http.response.body")
+    return status, data
 
 
 class CaptureLogs(logging.Handler):
