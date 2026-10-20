@@ -1,0 +1,3713 @@
+{
+ "story_id": "run-20261020-tu-tien-1-d2fa5f03",
+ "plan": {
+  "acts": [
+   {
+    "name": "Khe hở trong sương",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Lời hứa giữa vòng vây",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Cái giá của linh mạch",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "f_doan_khac_tao_phu_gia",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 6,
+    "leak_terms": [
+     [
+      "Đoàn Khắc",
+      "làm giả phù âm"
+     ],
+     [
+      "Đoàn Khắc",
+      "tạo khe hở trong trận"
+     ]
+    ]
+   },
+   {
+    "fact_id": "f_doan_khac_muon_mac_ca",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 6,
+    "leak_terms": [
+     [
+      "Đoàn Khắc",
+      "thương lượng với Bạch Lộc Cốc"
+     ],
+     [
+      "Đoàn Khắc",
+      "đổi đường lui"
+     ]
+    ]
+   },
+   {
+    "fact_id": "f_tin_vat_mo_loi",
+    "reveal_from_chapter": 2,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Tín Vật Huyền Nguyệt",
+      "mở chốt phụ"
+     ],
+     [
+      "tín vật",
+      "Đường Hầm Sương"
+     ]
+    ]
+   }
+  ],
+  "must_resolve_threads": [
+   "t_cuu_dong_mon",
+   "t_giu_linh_mach",
+   "t_tin_vat_huyen_nguyet",
+   "t_phu_am_gia"
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261020-tu-tien-1-d2fa5f03-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Kỷ Trầm Uyên",
+      "personality": "Sắc sảo, thực dụng và giỏi giữ vẻ bình thản giữa lúc nguy cấp. Chàng tin rằng lòng trung thành phải được chứng minh bằng hành động, song không dễ quên những lần người khác bỏ mặc mình.",
+      "backstory": "Kỷ Trầm Uyên là đệ tử giữ sổ trận, thường phải đối chiếu mệnh lệnh phù âm với những thay đổi trên các chốt canh. Đêm vỡ trận, các chỉ thị bất nhất khiến chàng nghi ngờ có người đang cố điều khiển đường lui của cả tông môn. Sau khi nhận tín vật trong màn sương, chàng phải thuyết phục những người còn lại chọn giữa linh mạch và mạng sống của đồng môn.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "van_tinh_bach",
+     "label": "Character",
+     "props": {
+      "name": "Vạn Tinh Bách",
+      "aliases": [
+       "Vạn sư huynh"
+      ],
+      "personality": "Kiệm lời, cẩn trọng, luôn cân nhắc đường lui trước khi đặt cược.",
+      "backstory": "Đệ tử nội môn của Thanh Hư Môn, từng cùng Kỷ Trầm Uyên giữ sổ trận và thông thạo các lối dẫn vào linh mạch."
+     }
+    },
+    {
+     "id": "luc_han_suong",
+     "label": "Character",
+     "props": {
+      "name": "Lục Hàn Sương",
+      "aliases": [
+       "Lục sư tỷ"
+      ],
+      "personality": "Quyết đoán, sắc lạnh trong tranh luận, nhưng không xem mạng người là con số.",
+      "backstory": "Chấp sự trẻ của Thanh Hư Môn, phụ trách điều động những đệ tử còn lại quanh trận địa Cô Phong."
+     }
+    },
+    {
+     "id": "phan_tu_nghien",
+     "label": "Character",
+     "props": {
+      "name": "Phàn Tử Nghiên",
+      "aliases": [
+       "Phàn trưởng lão"
+      ],
+      "personality": "Điềm đạm, kín đáo, quen ra quyết định bằng những mệnh lệnh ngắn và khó dò ý.",
+      "backstory": "Trưởng lão Thanh Hư Môn trông coi linh mạch, đã dẫn số đệ tử cuối cùng cố thủ tại Cô Phong."
+     }
+    },
+    {
+     "id": "doan_khac",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khắc",
+      "personality": "Thực dụng, tự tin vào khả năng mặc cả, luôn tìm cách biến thế yếu thành lợi thế.",
+      "backstory": "Đệ tử dẫn đội tiếp ứng của Thanh Hư Môn, đến Cô Phong cùng một nhóm tu sĩ ít ỏi khi trận pháp bắt đầu rạn."
+     }
+    },
+    {
+     "id": "tao_minh_liet",
+     "label": "Character",
+     "props": {
+      "name": "Tào Minh Liệt",
+      "aliases": [
+       "Tào hộ pháp"
+      ],
+      "personality": "Cứng rắn, kiên nhẫn và giỏi ép đối thủ phải chọn trong những điều kiện do mình đặt ra.",
+      "backstory": "Hộ pháp của Huyền Sát Tông, đang chỉ huy vòng vây phía tây Cô Phong."
+     }
+    },
+    {
+     "id": "nguyen_tue_lam",
+     "label": "Character",
+     "props": {
+      "name": "Nguyên Tuệ Lâm",
+      "aliases": [
+       "Nguyên tiên tử"
+      ],
+      "personality": "Nhã nhặn nhưng khó lay chuyển, thường dùng lời hứa có điều kiện để dò xét lòng người.",
+      "backstory": "Sứ giả của Bạch Lộc Cốc, đến dưới chân Cô Phong với đề nghị tiếp quản linh mạch."
+     }
+    },
+    {
+     "id": "co_phong",
+     "label": "Location",
+     "props": {
+      "name": "Cô Phong",
+      "description": "Dãy núi hư cấu có địa thế dựng đứng, nơi Thanh Hư Môn đang cố thủ trước hai đại phái."
+     }
+    },
+    {
+     "id": "dai_tran_co_phong",
+     "label": "Location",
+     "props": {
+      "name": "Đại Trận Cô Phong",
+      "aliases": [
+       "trận hộ sơn"
+      ],
+      "description": "Trận pháp bao quanh nơi cố thủ của Thanh Hư Môn, vận hành bằng linh lực hút từ mạch núi."
+     }
+    },
+    {
+     "id": "thach_dan_tay",
+     "label": "Location",
+     "props": {
+      "name": "Thạch Đàn Tây",
+      "description": "Một đài đá ngoài trận, nơi đội tiếp ứng có thể nhìn thấy khe hở ở mặt tây."
+     }
+    },
+    {
+     "id": "dong_linh_mach",
+     "label": "Location",
+     "props": {
+      "name": "Động Linh Mạch",
+      "description": "Hang sâu chứa mạch linh lực cuối cùng mà Thanh Hư Môn còn giữ được."
+     }
+    },
+    {
+     "id": "duong_ham_suong",
+     "label": "Location",
+     "props": {
+      "name": "Đường Hầm Sương",
+      "description": "Lối ngầm hẹp nối chân núi với sườn trong, thường bị sương lạnh che khuất."
+     }
+    },
+    {
+     "id": "thanh_hu_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Hư Môn",
+      "description": "Tông môn nhỏ đang dồn lực bảo vệ linh mạch cuối cùng tại Cô Phong."
+     }
+    },
+    {
+     "id": "huyen_sat_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Sát Tông",
+      "description": "Đại phái vây đánh phía tây, muốn chiếm linh mạch để củng cố thế lực."
+     }
+    },
+    {
+     "id": "bach_loc_coc",
+     "label": "Faction",
+     "props": {
+      "name": "Bạch Lộc Cốc",
+      "description": "Đại phái áp sát phía đông, công khai đề nghị tiếp quản linh mạch để đổi lấy việc rút quân."
+     }
+    },
+    {
+     "id": "tinh_vat_huyen_nguyet",
+     "label": "Item",
+     "props": {
+      "name": "Tín Vật Huyền Nguyệt",
+      "aliases": [
+       "tín vật"
+      ],
+      "description": "Một mảnh ngọc đen khắc nửa vầng trăng, được Vạn Tinh Bách trao cho Kỷ Trầm Uyên trước khi biến mất."
+     }
+    },
+    {
+     "id": "so_tran_co_phong",
+     "label": "Item",
+     "props": {
+      "name": "Sổ Trận Cô Phong",
+      "aliases": [
+       "sổ trận"
+      ],
+      "description": "Cuốn sổ ghi các chốt canh và những lần thay đổi lệnh vận hành đại trận."
+     }
+    },
+    {
+     "id": "phu_am_tiep_ung",
+     "label": "Item",
+     "props": {
+      "name": "Phù Âm Tiếp Ứng",
+      "description": "Lá phù truyền giọng nói từ đội tiếp ứng đến các chốt canh trong trận."
+     }
+    },
+    {
+     "id": "f_thanh_hu_giu_linh_mach",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Hư Môn đang cố thủ quanh linh mạch cuối cùng của mình tại Cô Phong."
+     }
+    },
+    {
+     "id": "f_hai_phai_vay_nui",
+     "label": "Fact",
+     "props": {
+      "text": "Huyền Sát Tông vây Cô Phong từ phía tây còn Bạch Lộc Cốc áp sát từ phía đông."
+     }
+    },
+    {
+     "id": "f_tran_lo_khe",
+     "label": "Fact",
+     "props": {
+      "text": "Đại Trận Cô Phong đã mở một khe hở ở mặt tây."
+     }
+    },
+    {
+     "id": "f_dong_mon_mac_ket",
+     "label": "Fact",
+     "props": {
+      "text": "Một nhóm đệ tử Thanh Hư Môn vẫn mắc kẹt bên ngoài khe hở phía tây."
+     }
+    },
+    {
+     "id": "f_tin_vat_mo_loi",
+     "label": "Fact",
+     "props": {
+      "text": "Tín Vật Huyền Nguyệt có thể mở chốt phụ nối Đại Trận Cô Phong với Đường Hầm Sương."
+     }
+    },
+    {
+     "id": "f_phu_am_bi_doi",
+     "label": "Fact",
+     "props": {
+      "text": "Một phù âm giả đã được dùng để truyền lệnh đổi vị trí chốt canh phía tây."
+     }
+    },
+    {
+     "id": "f_doan_khac_tao_phu_gia",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khắc đã làm giả phù âm đổi vị trí chốt canh để tạo khe hở trong trận."
+     }
+    },
+    {
+     "id": "f_doan_khac_muon_mac_ca",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khắc tạo khe hở để có thể thương lượng với Bạch Lộc Cốc về đường lui cho đội tiếp ứng."
+     }
+    },
+    {
+     "id": "f_luc_han_suong_giu_chot",
+     "label": "Fact",
+     "props": {
+      "text": "Lục Hàn Sương đang giữ quyền điều động các đệ tử còn lại quanh trận địa."
+     }
+    },
+    {
+     "id": "t_cuu_dong_mon",
+     "label": "Thread",
+     "props": {
+      "description": "Kỷ Trầm Uyên phải quyết định có mở khe trận để cứu nhóm đệ tử mắc kẹt bên ngoài hay không.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "t_giu_linh_mach",
+     "label": "Thread",
+     "props": {
+      "description": "Những người còn lại phải chọn cách bảo vệ linh mạch trước sức ép của Huyền Sát Tông và Bạch Lộc Cốc.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "t_tin_vat_huyen_nguyet",
+     "label": "Thread",
+     "props": {
+      "description": "Kỷ Trầm Uyên cần tìm ra công dụng của tín vật và lý do Vạn Tinh Bách trao nó cho mình.",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "t_phu_am_gia",
+     "label": "Thread",
+     "props": {
+      "description": "Dấu vết trong sổ trận và phù âm có thể phơi bày kẻ đã làm lệch lệnh đổi chốt canh.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "t_loi_de_nghi_bach_loc",
+     "label": "Thread",
+     "props": {
+      "description": "Lời đề nghị tiếp quản linh mạch của Bạch Lộc Cốc có thể là đường lui hoặc một cái bẫy đổi chủ.",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "van_tinh_bach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>van_tinh_bach@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "van_tinh_bach",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:van_tinh_bach>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "luc_han_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>luc_han_suong@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luc_han_suong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luc_han_suong>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "phan_tu_nghien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>phan_tu_nghien@0",
+     "props": {
+      "kind": "trưởng bối",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "phan_tu_nghien",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:phan_tu_nghien>protagonist@0",
+     "props": {
+      "kind": "trưởng bối",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khac@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khac",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khac>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 0
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "van_tinh_bach",
+     "to": "duong_ham_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:van_tinh_bach>duong_ham_suong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luc_han_suong",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luc_han_suong>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "phan_tu_nghien",
+     "to": "dong_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:phan_tu_nghien>dong_linh_mach@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khac",
+     "to": "thach_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khac>thach_dan_tay@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tao_minh_liet",
+     "to": "co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tao_minh_liet>co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguyen_tue_lam",
+     "to": "thach_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguyen_tue_lam>thach_dan_tay@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tinh_vat_huyen_nguyet",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tinh_vat_huyen_nguyet>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "so_tran_co_phong",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:so_tran_co_phong>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "phu_am_tiep_ung",
+     "to": "thach_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:phu_am_tiep_ung>thach_dan_tay@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "tinh_vat_huyen_nguyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>tinh_vat_huyen_nguyet@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "so_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>so_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "doan_khac",
+     "to": "phu_am_tiep_ung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:doan_khac>phu_am_tiep_ung@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "van_tinh_bach",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:van_tinh_bach>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luc_han_suong",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luc_han_suong>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "phan_tu_nghien",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:phan_tu_nghien>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khac",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khac>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tao_minh_liet",
+     "to": "huyen_sat_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tao_minh_liet>huyen_sat_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nguyen_tue_lam",
+     "to": "bach_loc_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nguyen_tue_lam>bach_loc_coc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_thanh_hu_giu_linh_mach",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_thanh_hu_giu_linh_mach>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_thanh_hu_giu_linh_mach",
+     "to": "dong_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_thanh_hu_giu_linh_mach>dong_linh_mach@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_thanh_hu_giu_linh_mach",
+     "to": "co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_thanh_hu_giu_linh_mach>co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tinh_bach",
+     "to": "f_thanh_hu_giu_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tinh_bach>f_thanh_hu_giu_linh_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_han_suong",
+     "to": "f_thanh_hu_giu_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_han_suong>f_thanh_hu_giu_linh_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phan_tu_nghien",
+     "to": "f_thanh_hu_giu_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phan_tu_nghien>f_thanh_hu_giu_linh_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_thanh_hu_giu_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_thanh_hu_giu_linh_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_hai_phai_vay_nui",
+     "to": "huyen_sat_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_hai_phai_vay_nui>huyen_sat_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_hai_phai_vay_nui",
+     "to": "bach_loc_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_hai_phai_vay_nui>bach_loc_coc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_hai_phai_vay_nui",
+     "to": "co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_hai_phai_vay_nui>co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tinh_bach",
+     "to": "f_hai_phai_vay_nui",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tinh_bach>f_hai_phai_vay_nui@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_han_suong",
+     "to": "f_hai_phai_vay_nui",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_han_suong>f_hai_phai_vay_nui@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phan_tu_nghien",
+     "to": "f_hai_phai_vay_nui",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phan_tu_nghien>f_hai_phai_vay_nui@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_hai_phai_vay_nui",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_hai_phai_vay_nui@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_tran_lo_khe",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_tran_lo_khe>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_tran_lo_khe",
+     "to": "thach_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_tran_lo_khe>thach_dan_tay@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tinh_bach",
+     "to": "f_tran_lo_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tinh_bach>f_tran_lo_khe@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_han_suong",
+     "to": "f_tran_lo_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_han_suong>f_tran_lo_khe@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phan_tu_nghien",
+     "to": "f_tran_lo_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phan_tu_nghien>f_tran_lo_khe@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_tran_lo_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_tran_lo_khe@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_dong_mon_mac_ket",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_dong_mon_mac_ket>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_dong_mon_mac_ket",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_dong_mon_mac_ket>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_dong_mon_mac_ket",
+     "to": "thach_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_dong_mon_mac_ket>thach_dan_tay@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tinh_bach",
+     "to": "f_dong_mon_mac_ket",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tinh_bach>f_dong_mon_mac_ket@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_han_suong",
+     "to": "f_dong_mon_mac_ket",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_han_suong>f_dong_mon_mac_ket@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_dong_mon_mac_ket",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_dong_mon_mac_ket@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_tin_vat_mo_loi",
+     "to": "tinh_vat_huyen_nguyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_tin_vat_mo_loi>tinh_vat_huyen_nguyet@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_tin_vat_mo_loi",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_tin_vat_mo_loi>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_tin_vat_mo_loi",
+     "to": "duong_ham_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_tin_vat_mo_loi>duong_ham_suong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tinh_bach",
+     "to": "f_tin_vat_mo_loi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tinh_bach>f_tin_vat_mo_loi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_phu_am_bi_doi",
+     "to": "phu_am_tiep_ung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_phu_am_bi_doi>phu_am_tiep_ung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_phu_am_bi_doi",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_phu_am_bi_doi>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_phu_am_bi_doi",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_phu_am_bi_doi>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tinh_bach",
+     "to": "f_phu_am_bi_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tinh_bach>f_phu_am_bi_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phan_tu_nghien",
+     "to": "f_phu_am_bi_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phan_tu_nghien>f_phu_am_bi_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_doan_khac_tao_phu_gia",
+     "to": "doan_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_doan_khac_tao_phu_gia>doan_khac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_doan_khac_tao_phu_gia",
+     "to": "phu_am_tiep_ung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_doan_khac_tao_phu_gia>phu_am_tiep_ung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_doan_khac_tao_phu_gia",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_doan_khac_tao_phu_gia>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_doan_khac_tao_phu_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_doan_khac_tao_phu_gia@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_doan_khac_muon_mac_ca",
+     "to": "doan_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_doan_khac_muon_mac_ca>doan_khac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_doan_khac_muon_mac_ca",
+     "to": "bach_loc_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_doan_khac_muon_mac_ca>bach_loc_coc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_doan_khac_muon_mac_ca",
+     "to": "thach_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_doan_khac_muon_mac_ca>thach_dan_tay@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_doan_khac_muon_mac_ca",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_doan_khac_muon_mac_ca@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_tue_lam",
+     "to": "f_doan_khac_muon_mac_ca",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_tue_lam>f_doan_khac_muon_mac_ca@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_luc_han_suong_giu_chot",
+     "to": "luc_han_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_luc_han_suong_giu_chot>luc_han_suong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_luc_han_suong_giu_chot",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_luc_han_suong_giu_chot>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_luc_han_suong_giu_chot",
+     "to": "dai_tran_co_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_luc_han_suong_giu_chot>dai_tran_co_phong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_han_suong",
+     "to": "f_luc_han_suong_giu_chot",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_han_suong>f_luc_han_suong_giu_chot@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phan_tu_nghien",
+     "to": "f_luc_han_suong_giu_chot",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phan_tu_nghien>f_luc_han_suong_giu_chot@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khac",
+     "to": "f_luc_han_suong_giu_chot",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khac>f_luc_han_suong_giu_chot@0",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-8dd70933b29c",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "so_tran_co_phong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:so_tran_co_phong>ch1@1",
+     "props": {
+      "quote": "Tôi đặt Sổ Trận cạnh trận đồ, lấy hai viên đá chặn mép giấy đang bị gió núi lật lên.",
+      "known_as": "Sổ Trận"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_tran_lo_khe",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_tran_lo_khe>ch1@1",
+     "props": {
+      "quote": "Trên trận đồ, ánh sáng ở phía tây vẫn khuyết một mảng, khe hở chưa khép."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_tran_lo_khe",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_tran_lo_khe@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Trên trận đồ, ánh sáng ở phía tây vẫn khuyết một mảng, khe hở chưa khép."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luc_han_suong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luc_han_suong>ch1@1",
+     "props": {
+      "quote": "Lục Hàn Sương đứng bên kia phiến đá, tay nắm phù lệnh.",
+      "known_as": "Lục Hàn Sương"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "huyen_sat_tong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:huyen_sat_tong>ch1@1",
+     "props": {
+      "quote": "Bỏ mặc người bên ngoài, họ sẽ rơi vào tay Huyền Sát Tông.",
+      "known_as": "Huyền Sát Tông"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phan_tu_nghien",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phan_tu_nghien>ch1@1",
+     "props": {
+      "quote": "Từ lối đá phía sau, Phàn Tử Nghiên bước tới.",
+      "known_as": "Phàn Tử Nghiên"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tinh_vat_huyen_nguyet",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tinh_vat_huyen_nguyet>ch1@1",
+     "props": {
+      "quote": "Bàn tay tôi khép lại quanh Tín Vật Huyền Nguyệt.",
+      "known_as": "Tín Vật Huyền Nguyệt"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch1@1",
+     "props": {
+      "quote": "- Kỷ Trầm Uyên, đưa ra cách xử trí ngay.",
+      "known_as": "Kỷ Trầm Uyên"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_luc_han_suong_giu_chot",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_luc_han_suong_giu_chot@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Lục Hàn Sương giơ phù lệnh. Mấy đệ tử đang nhìn chằm chằm về phía khe hở lập tức im tiếng."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_luc_han_suong_giu_chot",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_luc_han_suong_giu_chot>ch1@1",
+     "props": {
+      "quote": "Lục Hàn Sương giơ phù lệnh. Mấy đệ tử đang nhìn chằm chằm về phía khe hở lập tức im tiếng."
+     }
+    }
+   ],
+   "close": []
+  },
+  "2": {
+   "commit_id": "ch2-10ace4655d32",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_dong_mon_mac_ket",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_dong_mon_mac_ket@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "luc_han_suong",
+      "quote": "Nhóm đệ tử Thanh Hư Môn vẫn còn bên ngoài. Ta vừa nhận được tiếng gọi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thach_dan_tay",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thach_dan_tay>ch2@2",
+     "props": {
+      "quote": "Tôi lần ngón tay theo ghi chép đổi chốt phía tây, từ Thạch Đàn Tây đến mép khe hở, rồi đối chiếu từng dấu linh quang đang hiện trên trận đồ.",
+      "known_as": "Thạch Đàn Tây"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_dong_mon_mac_ket",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_dong_mon_mac_ket>ch2@2",
+     "props": {
+      "quote": "Nhóm đệ tử Thanh Hư Môn vẫn còn bên ngoài. Ta vừa nhận được tiếng gọi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phu_am_tiep_ung",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phu_am_tiep_ung>ch2@2",
+     "props": {
+      "quote": "Lục Hàn Sương ghé lại bên bàn đá, tay vẫn giữ phù âm.",
+      "known_as": "phù âm"
+     }
+    }
+   ],
+   "close": []
+  },
+  "3": {
+   "commit_id": "ch3-9ae86eede5f7",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bach_loc_coc",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bach_loc_coc>ch3@3",
+     "props": {
+      "quote": "Huyền Sát Tông đang ép từ đó, Bạch Lộc Cốc lại áp sát phía đông.",
+      "known_as": "Bạch Lộc Cốc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dong_linh_mach",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dong_linh_mach>ch3@3",
+     "props": {
+      "quote": "Còn quanh Động Linh Mạch, mỗi người rời vị trí đều có thể để lại một khoảng trống cho hai đại phái.",
+      "known_as": "Động Linh Mạch"
+     }
+    }
+   ],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-d19f78ed31e2",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dai_tran_co_phong",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dai_tran_co_phong>ch4@4",
+     "props": {
+      "quote": "Trong lòng Đại Trận Cô Phong, tiếng đá rung lặng dần; những vạch mực dưới ngón tay tôi vẫn còn lay.",
+      "known_as": "Đại Trận Cô Phong"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_hai_phai_vay_nui",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_hai_phai_vay_nui@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "luc_han_suong",
+      "quote": "Huyền Sát Tông ép từ phía tây, Bạch Lộc Cốc đã áp sát phía đông."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "duong_ham_suong",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:duong_ham_suong>ch4@4",
+     "props": {
+      "quote": "Ánh sáng dừng ở dòng chữ nhỏ trên sơ đồ: Đường Hầm Sương.",
+      "known_as": "Đường Hầm Sương"
+     }
+    }
+   ],
+   "close": []
+  },
+  "5": {
+   "commit_id": "ch5-c301643a2296",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_tin_vat_mo_loi",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_tin_vat_mo_loi@5",
+     "props": {
+      "how": "suy ra",
+      "quote": "Chỉ một động tác đặt tín vật đã khiến ánh sáng đổi khác; bàn tay tôi vẫn còn tê, nhưng linh lực không bị hút thêm."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "t_tin_vat_huyen_nguyet",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>t_tin_vat_huyen_nguyet@5",
+     "props": {
+      "how": "tự biết",
+      "quote": "Lý do hắn chọn tôi vẫn nằm ngoài những gì tôi biết."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "co_phong",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:co_phong>ch5@5",
+     "props": {
+      "quote": "Ngoài xa, phía tây, khe hở của đại trận vẫn hắt ra một quầng sáng méo mó.",
+      "known_as": "đại trận"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_khac",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_khac>ch5@5",
+     "props": {
+      "quote": "Vạn Tinh Bách đã trao nó cho tôi giữa màn sương, không nói gì ngoài lời dặn giữ lấy.",
+      "known_as": "Vạn Tinh Bách"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_tin_vat_mo_loi",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_tin_vat_mo_loi>ch5@5",
+     "props": {
+      "quote": "Chỉ một động tác đặt tín vật đã khiến ánh sáng đổi khác; bàn tay tôi vẫn còn tê, nhưng linh lực không bị hút thêm."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luc_han_suong",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luc_han_suong>ch5@5",
+     "props": {
+      "quote": "Lục Hàn Sương bước sát mép lối đi, nhìn vào màn sương.",
+      "known_as": "Lục Hàn Sương"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "t_tin_vat_huyen_nguyet",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:t_tin_vat_huyen_nguyet>ch5@5",
+     "props": {
+      "quote": "Lý do hắn chọn tôi vẫn nằm ngoài những gì tôi biết."
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-bf6faba30cc3",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "t_cuu_dong_mon",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:t_cuu_dong_mon>ch6@6",
+     "props": {
+      "quote": "Kỷ Trầm Uyên phải chọn ngay: giữ lối hầm thêm chút nữa, hay rút linh lực về để bảo toàn trận địa."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "t_giu_linh_mach",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:t_giu_linh_mach>ch6@6",
+     "props": {
+      "quote": "Chốt phụ đang rút linh lực từ một nhánh trận khác; nếu giữ lâu, những mắt trận quanh linh mạch sẽ yếu đi."
+     }
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "tinh_vat_huyen_nguyet",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>tinh_vat_huyen_nguyet@6",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "t_cuu_dong_mon",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:t_cuu_dong_mon>ch6@6",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:protagonist>tinh_vat_huyen_nguyet@0",
+     "valid_to_chapter": 6
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tinh_vat_huyen_nguyet>dai_tran_co_phong@0",
+     "valid_to_chapter": 6
+    }
+   ]
+  }
+ },
+ "final": {
+  "chapter": 6,
+  "nodes": {
+   "bach_loc_coc": {
+    "label": "Faction",
+    "props": {
+     "name": "Bạch Lộc Cốc",
+     "description": "Đại phái áp sát phía đông, công khai đề nghị tiếp quản linh mạch để đổi lấy việc rút quân."
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "co_phong": {
+    "label": "Location",
+    "props": {
+     "name": "Cô Phong",
+     "description": "Dãy núi hư cấu có địa thế dựng đứng, nơi Thanh Hư Môn đang cố thủ trước hai đại phái."
+    }
+   },
+   "dai_tran_co_phong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "trận hộ sơn"
+     ],
+     "name": "Đại Trận Cô Phong",
+     "description": "Trận pháp bao quanh nơi cố thủ của Thanh Hư Môn, vận hành bằng linh lực hút từ mạch núi."
+    }
+   },
+   "doan_khac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đệ tử dẫn đội tiếp ứng của Thanh Hư Môn, đến Cô Phong cùng một nhóm tu sĩ ít ỏi khi trận pháp bắt đầu rạn.",
+     "personality": "Thực dụng, tự tin vào khả năng mặc cả, luôn tìm cách biến thế yếu thành lợi thế.",
+     "name": "Đoàn Khắc"
+    }
+   },
+   "dong_linh_mach": {
+    "label": "Location",
+    "props": {
+     "name": "Động Linh Mạch",
+     "description": "Hang sâu chứa mạch linh lực cuối cùng mà Thanh Hư Môn còn giữ được."
+    }
+   },
+   "duong_ham_suong": {
+    "label": "Location",
+    "props": {
+     "name": "Đường Hầm Sương",
+     "description": "Lối ngầm hẹp nối chân núi với sườn trong, thường bị sương lạnh che khuất."
+    }
+   },
+   "f_doan_khac_muon_mac_ca": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khắc tạo khe hở để có thể thương lượng với Bạch Lộc Cốc về đường lui cho đội tiếp ứng."
+    }
+   },
+   "f_doan_khac_tao_phu_gia": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khắc đã làm giả phù âm đổi vị trí chốt canh để tạo khe hở trong trận."
+    }
+   },
+   "f_dong_mon_mac_ket": {
+    "label": "Fact",
+    "props": {
+     "text": "Một nhóm đệ tử Thanh Hư Môn vẫn mắc kẹt bên ngoài khe hở phía tây."
+    }
+   },
+   "f_hai_phai_vay_nui": {
+    "label": "Fact",
+    "props": {
+     "text": "Huyền Sát Tông vây Cô Phong từ phía tây còn Bạch Lộc Cốc áp sát từ phía đông."
+    }
+   },
+   "f_luc_han_suong_giu_chot": {
+    "label": "Fact",
+    "props": {
+     "text": "Lục Hàn Sương đang giữ quyền điều động các đệ tử còn lại quanh trận địa."
+    }
+   },
+   "f_phu_am_bi_doi": {
+    "label": "Fact",
+    "props": {
+     "text": "Một phù âm giả đã được dùng để truyền lệnh đổi vị trí chốt canh phía tây."
+    }
+   },
+   "f_thanh_hu_giu_linh_mach": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Hư Môn đang cố thủ quanh linh mạch cuối cùng của mình tại Cô Phong."
+    }
+   },
+   "f_tin_vat_mo_loi": {
+    "label": "Fact",
+    "props": {
+     "text": "Tín Vật Huyền Nguyệt có thể mở chốt phụ nối Đại Trận Cô Phong với Đường Hầm Sương."
+    }
+   },
+   "f_tran_lo_khe": {
+    "label": "Fact",
+    "props": {
+     "text": "Đại Trận Cô Phong đã mở một khe hở ở mặt tây."
+    }
+   },
+   "huyen_sat_tong": {
+    "label": "Faction",
+    "props": {
+     "name": "Huyền Sát Tông",
+     "description": "Đại phái vây đánh phía tây, muốn chiếm linh mạch để củng cố thế lực."
+    }
+   },
+   "luc_han_suong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Chấp sự trẻ của Thanh Hư Môn, phụ trách điều động những đệ tử còn lại quanh trận địa Cô Phong.",
+     "aliases": [
+      "Lục sư tỷ"
+     ],
+     "personality": "Quyết đoán, sắc lạnh trong tranh luận, nhưng không xem mạng người là con số.",
+     "name": "Lục Hàn Sương"
+    }
+   },
+   "nguyen_tue_lam": {
+    "label": "Character",
+    "props": {
+     "backstory": "Sứ giả của Bạch Lộc Cốc, đến dưới chân Cô Phong với đề nghị tiếp quản linh mạch.",
+     "aliases": [
+      "Nguyên tiên tử"
+     ],
+     "personality": "Nhã nhặn nhưng khó lay chuyển, thường dùng lời hứa có điều kiện để dò xét lòng người.",
+     "name": "Nguyên Tuệ Lâm"
+    }
+   },
+   "phan_tu_nghien": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng lão Thanh Hư Môn trông coi linh mạch, đã dẫn số đệ tử cuối cùng cố thủ tại Cô Phong.",
+     "aliases": [
+      "Phàn trưởng lão"
+     ],
+     "personality": "Điềm đạm, kín đáo, quen ra quyết định bằng những mệnh lệnh ngắn và khó dò ý.",
+     "name": "Phàn Tử Nghiên"
+    }
+   },
+   "phu_am_tiep_ung": {
+    "label": "Item",
+    "props": {
+     "name": "Phù Âm Tiếp Ứng",
+     "description": "Lá phù truyền giọng nói từ đội tiếp ứng đến các chốt canh trong trận."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Kỷ Trầm Uyên là đệ tử giữ sổ trận, thường phải đối chiếu mệnh lệnh phù âm với những thay đổi trên các chốt canh. Đêm vỡ trận, các chỉ thị bất nhất khiến chàng nghi ngờ có người đang cố điều khiển đường lui của cả tông môn. Sau khi nhận tín vật trong màn sương, chàng phải thuyết phục những người còn lại chọn giữa linh mạch và mạng sống của đồng môn.",
+     "personality": "Sắc sảo, thực dụng và giỏi giữ vẻ bình thản giữa lúc nguy cấp. Chàng tin rằng lòng trung thành phải được chứng minh bằng hành động, song không dễ quên những lần người khác bỏ mặc mình.",
+     "name": "Kỷ Trầm Uyên",
+     "is_protagonist": true
+    }
+   },
+   "so_tran_co_phong": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "sổ trận"
+     ],
+     "name": "Sổ Trận Cô Phong",
+     "description": "Cuốn sổ ghi các chốt canh và những lần thay đổi lệnh vận hành đại trận."
+    }
+   },
+   "t_cuu_dong_mon": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kỷ Trầm Uyên phải quyết định có mở khe trận để cứu nhóm đệ tử mắc kẹt bên ngoài hay không.",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "t_giu_linh_mach": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Những người còn lại phải chọn cách bảo vệ linh mạch trước sức ép của Huyền Sát Tông và Bạch Lộc Cốc.",
+     "due_from_chapter": 2,
+     "due_to_chapter": 6
+    }
+   },
+   "t_loi_de_nghi_bach_loc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Lời đề nghị tiếp quản linh mạch của Bạch Lộc Cốc có thể là đường lui hoặc một cái bẫy đổi chủ.",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "t_phu_am_gia": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Dấu vết trong sổ trận và phù âm có thể phơi bày kẻ đã làm lệch lệnh đổi chốt canh.",
+     "due_from_chapter": 2,
+     "due_to_chapter": 6
+    }
+   },
+   "t_tin_vat_huyen_nguyet": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kỷ Trầm Uyên cần tìm ra công dụng của tín vật và lý do Vạn Tinh Bách trao nó cho mình.",
+     "due_from_chapter": 1,
+     "due_to_chapter": 5
+    }
+   },
+   "tao_minh_liet": {
+    "label": "Character",
+    "props": {
+     "backstory": "Hộ pháp của Huyền Sát Tông, đang chỉ huy vòng vây phía tây Cô Phong.",
+     "aliases": [
+      "Tào hộ pháp"
+     ],
+     "personality": "Cứng rắn, kiên nhẫn và giỏi ép đối thủ phải chọn trong những điều kiện do mình đặt ra.",
+     "name": "Tào Minh Liệt"
+    }
+   },
+   "thach_dan_tay": {
+    "label": "Location",
+    "props": {
+     "name": "Thạch Đàn Tây",
+     "description": "Một đài đá ngoài trận, nơi đội tiếp ứng có thể nhìn thấy khe hở ở mặt tây."
+    }
+   },
+   "thanh_hu_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Thanh Hư Môn",
+     "description": "Tông môn nhỏ đang dồn lực bảo vệ linh mạch cuối cùng tại Cô Phong."
+    }
+   },
+   "tinh_vat_huyen_nguyet": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "tín vật"
+     ],
+     "name": "Tín Vật Huyền Nguyệt",
+     "description": "Một mảnh ngọc đen khắc nửa vầng trăng, được Vạn Tinh Bách trao cho Kỷ Trầm Uyên trước khi biến mất."
+    }
+   },
+   "van_tinh_bach": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đệ tử nội môn của Thanh Hư Môn, từng cùng Kỷ Trầm Uyên giữ sổ trận và thông thạo các lối dẫn vào linh mạch.",
+     "aliases": [
+      "Vạn sư huynh"
+     ],
+     "personality": "Kiệm lời, cẩn trọng, luôn cân nhắc đường lui trước khi đặt cược.",
+     "name": "Vạn Tinh Bách"
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khac>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khac",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:luc_han_suong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "luc_han_suong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:phan_tu_nghien>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "phan_tu_nghien",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "trưởng bối"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>luc_han_suong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "luc_han_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>phan_tu_nghien@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "phan_tu_nghien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "trưởng bối"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>van_tinh_bach@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "van_tinh_bach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:van_tinh_bach>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "van_tinh_bach",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_khac>thach_dan_tay@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khac",
+    "target": "thach_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luc_han_suong>dai_tran_co_phong@0",
+    "type": "LOCATED_AT",
+    "source": "luc_han_suong",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nguyen_tue_lam>thach_dan_tay@0",
+    "type": "LOCATED_AT",
+    "source": "nguyen_tue_lam",
+    "target": "thach_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:phan_tu_nghien>dong_linh_mach@0",
+    "type": "LOCATED_AT",
+    "source": "phan_tu_nghien",
+    "target": "dong_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:phu_am_tiep_ung>thach_dan_tay@0",
+    "type": "LOCATED_AT",
+    "source": "phu_am_tiep_ung",
+    "target": "thach_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>dai_tran_co_phong@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:so_tran_co_phong>dai_tran_co_phong@0",
+    "type": "LOCATED_AT",
+    "source": "so_tran_co_phong",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tao_minh_liet>co_phong@0",
+    "type": "LOCATED_AT",
+    "source": "tao_minh_liet",
+    "target": "co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:van_tinh_bach>duong_ham_suong@0",
+    "type": "LOCATED_AT",
+    "source": "van_tinh_bach",
+    "target": "duong_ham_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:doan_khac>phu_am_tiep_ung@0",
+    "type": "HOLDS",
+    "source": "doan_khac",
+    "target": "phu_am_tiep_ung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>so_tran_co_phong@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "so_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>tinh_vat_huyen_nguyet@6",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "tinh_vat_huyen_nguyet",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khac>thanh_hu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khac",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luc_han_suong>thanh_hu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "luc_han_suong",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nguyen_tue_lam>bach_loc_coc@0",
+    "type": "MEMBER_OF",
+    "source": "nguyen_tue_lam",
+    "target": "bach_loc_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:phan_tu_nghien>thanh_hu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "phan_tu_nghien",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>thanh_hu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tao_minh_liet>huyen_sat_tong@0",
+    "type": "MEMBER_OF",
+    "source": "tao_minh_liet",
+    "target": "huyen_sat_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:van_tinh_bach>thanh_hu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "van_tinh_bach",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_khac>f_doan_khac_muon_mac_ca@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_doan_khac_muon_mac_ca",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khac>f_doan_khac_tao_phu_gia@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_doan_khac_tao_phu_gia",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khac>f_dong_mon_mac_ket@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_dong_mon_mac_ket",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khac>f_hai_phai_vay_nui@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_hai_phai_vay_nui",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khac>f_luc_han_suong_giu_chot@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_luc_han_suong_giu_chot",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khac>f_thanh_hu_giu_linh_mach@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_thanh_hu_giu_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khac>f_tran_lo_khe@0",
+    "type": "KNOWS",
+    "source": "doan_khac",
+    "target": "f_tran_lo_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_han_suong>f_dong_mon_mac_ket@0",
+    "type": "KNOWS",
+    "source": "luc_han_suong",
+    "target": "f_dong_mon_mac_ket",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_han_suong>f_hai_phai_vay_nui@0",
+    "type": "KNOWS",
+    "source": "luc_han_suong",
+    "target": "f_hai_phai_vay_nui",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_han_suong>f_luc_han_suong_giu_chot@0",
+    "type": "KNOWS",
+    "source": "luc_han_suong",
+    "target": "f_luc_han_suong_giu_chot",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_han_suong>f_thanh_hu_giu_linh_mach@0",
+    "type": "KNOWS",
+    "source": "luc_han_suong",
+    "target": "f_thanh_hu_giu_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_han_suong>f_tran_lo_khe@0",
+    "type": "KNOWS",
+    "source": "luc_han_suong",
+    "target": "f_tran_lo_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_tue_lam>f_doan_khac_muon_mac_ca@0",
+    "type": "KNOWS",
+    "source": "nguyen_tue_lam",
+    "target": "f_doan_khac_muon_mac_ca",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phan_tu_nghien>f_hai_phai_vay_nui@0",
+    "type": "KNOWS",
+    "source": "phan_tu_nghien",
+    "target": "f_hai_phai_vay_nui",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phan_tu_nghien>f_luc_han_suong_giu_chot@0",
+    "type": "KNOWS",
+    "source": "phan_tu_nghien",
+    "target": "f_luc_han_suong_giu_chot",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phan_tu_nghien>f_phu_am_bi_doi@0",
+    "type": "KNOWS",
+    "source": "phan_tu_nghien",
+    "target": "f_phu_am_bi_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phan_tu_nghien>f_thanh_hu_giu_linh_mach@0",
+    "type": "KNOWS",
+    "source": "phan_tu_nghien",
+    "target": "f_thanh_hu_giu_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phan_tu_nghien>f_tran_lo_khe@0",
+    "type": "KNOWS",
+    "source": "phan_tu_nghien",
+    "target": "f_tran_lo_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_dong_mon_mac_ket@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_dong_mon_mac_ket",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Nhóm đệ tử Thanh Hư Môn vẫn còn bên ngoài. Ta vừa nhận được tiếng gọi.",
+     "told_by": "luc_han_suong"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_hai_phai_vay_nui@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_hai_phai_vay_nui",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Huyền Sát Tông ép từ phía tây, Bạch Lộc Cốc đã áp sát phía đông.",
+     "told_by": "luc_han_suong"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_luc_han_suong_giu_chot@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_luc_han_suong_giu_chot",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Lục Hàn Sương giơ phù lệnh. Mấy đệ tử đang nhìn chằm chằm về phía khe hở lập tức im tiếng."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_tin_vat_mo_loi@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_tin_vat_mo_loi",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "suy ra",
+     "quote": "Chỉ một động tác đặt tín vật đã khiến ánh sáng đổi khác; bàn tay tôi vẫn còn tê, nhưng linh lực không bị hút thêm."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_tran_lo_khe@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_tran_lo_khe",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Trên trận đồ, ánh sáng ở phía tây vẫn khuyết một mảng, khe hở chưa khép."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>t_tin_vat_huyen_nguyet@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "t_tin_vat_huyen_nguyet",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Lý do hắn chọn tôi vẫn nằm ngoài những gì tôi biết."
+    }
+   },
+   {
+    "id": "KNOWS:van_tinh_bach>f_dong_mon_mac_ket@0",
+    "type": "KNOWS",
+    "source": "van_tinh_bach",
+    "target": "f_dong_mon_mac_ket",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tinh_bach>f_hai_phai_vay_nui@0",
+    "type": "KNOWS",
+    "source": "van_tinh_bach",
+    "target": "f_hai_phai_vay_nui",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tinh_bach>f_phu_am_bi_doi@0",
+    "type": "KNOWS",
+    "source": "van_tinh_bach",
+    "target": "f_phu_am_bi_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tinh_bach>f_thanh_hu_giu_linh_mach@0",
+    "type": "KNOWS",
+    "source": "van_tinh_bach",
+    "target": "f_thanh_hu_giu_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tinh_bach>f_tin_vat_mo_loi@0",
+    "type": "KNOWS",
+    "source": "van_tinh_bach",
+    "target": "f_tin_vat_mo_loi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tinh_bach>f_tran_lo_khe@0",
+    "type": "KNOWS",
+    "source": "van_tinh_bach",
+    "target": "f_tran_lo_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:f_doan_khac_muon_mac_ca>bach_loc_coc@0",
+    "type": "ABOUT",
+    "source": "f_doan_khac_muon_mac_ca",
+    "target": "bach_loc_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_doan_khac_muon_mac_ca>doan_khac@0",
+    "type": "ABOUT",
+    "source": "f_doan_khac_muon_mac_ca",
+    "target": "doan_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_doan_khac_muon_mac_ca>thach_dan_tay@0",
+    "type": "ABOUT",
+    "source": "f_doan_khac_muon_mac_ca",
+    "target": "thach_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_doan_khac_tao_phu_gia>dai_tran_co_phong@0",
+    "type": "ABOUT",
+    "source": "f_doan_khac_tao_phu_gia",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_doan_khac_tao_phu_gia>doan_khac@0",
+    "type": "ABOUT",
+    "source": "f_doan_khac_tao_phu_gia",
+    "target": "doan_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_doan_khac_tao_phu_gia>phu_am_tiep_ung@0",
+    "type": "ABOUT",
+    "source": "f_doan_khac_tao_phu_gia",
+    "target": "phu_am_tiep_ung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_dong_mon_mac_ket>dai_tran_co_phong@0",
+    "type": "ABOUT",
+    "source": "f_dong_mon_mac_ket",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_dong_mon_mac_ket>thach_dan_tay@0",
+    "type": "ABOUT",
+    "source": "f_dong_mon_mac_ket",
+    "target": "thach_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_dong_mon_mac_ket>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "f_dong_mon_mac_ket",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_hai_phai_vay_nui>bach_loc_coc@0",
+    "type": "ABOUT",
+    "source": "f_hai_phai_vay_nui",
+    "target": "bach_loc_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_hai_phai_vay_nui>co_phong@0",
+    "type": "ABOUT",
+    "source": "f_hai_phai_vay_nui",
+    "target": "co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_hai_phai_vay_nui>huyen_sat_tong@0",
+    "type": "ABOUT",
+    "source": "f_hai_phai_vay_nui",
+    "target": "huyen_sat_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_luc_han_suong_giu_chot>dai_tran_co_phong@0",
+    "type": "ABOUT",
+    "source": "f_luc_han_suong_giu_chot",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_luc_han_suong_giu_chot>luc_han_suong@0",
+    "type": "ABOUT",
+    "source": "f_luc_han_suong_giu_chot",
+    "target": "luc_han_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_luc_han_suong_giu_chot>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "f_luc_han_suong_giu_chot",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_phu_am_bi_doi>dai_tran_co_phong@0",
+    "type": "ABOUT",
+    "source": "f_phu_am_bi_doi",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_phu_am_bi_doi>phu_am_tiep_ung@0",
+    "type": "ABOUT",
+    "source": "f_phu_am_bi_doi",
+    "target": "phu_am_tiep_ung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_phu_am_bi_doi>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "f_phu_am_bi_doi",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_thanh_hu_giu_linh_mach>co_phong@0",
+    "type": "ABOUT",
+    "source": "f_thanh_hu_giu_linh_mach",
+    "target": "co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_thanh_hu_giu_linh_mach>dong_linh_mach@0",
+    "type": "ABOUT",
+    "source": "f_thanh_hu_giu_linh_mach",
+    "target": "dong_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_thanh_hu_giu_linh_mach>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "f_thanh_hu_giu_linh_mach",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_tin_vat_mo_loi>dai_tran_co_phong@0",
+    "type": "ABOUT",
+    "source": "f_tin_vat_mo_loi",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_tin_vat_mo_loi>duong_ham_suong@0",
+    "type": "ABOUT",
+    "source": "f_tin_vat_mo_loi",
+    "target": "duong_ham_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_tin_vat_mo_loi>tinh_vat_huyen_nguyet@0",
+    "type": "ABOUT",
+    "source": "f_tin_vat_mo_loi",
+    "target": "tinh_vat_huyen_nguyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_tran_lo_khe>dai_tran_co_phong@0",
+    "type": "ABOUT",
+    "source": "f_tran_lo_khe",
+    "target": "dai_tran_co_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_tran_lo_khe>thach_dan_tay@0",
+    "type": "ABOUT",
+    "source": "f_tran_lo_khe",
+    "target": "thach_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:t_cuu_dong_mon>ch6@6",
+    "type": "RESOLVED_IN",
+    "source": "t_cuu_dong_mon",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bach_loc_coc>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bach_loc_coc",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Huyền Sát Tông đang ép từ đó, Bạch Lộc Cốc lại áp sát phía đông.",
+     "known_as": "Bạch Lộc Cốc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:co_phong>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "co_phong",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ngoài xa, phía tây, khe hở của đại trận vẫn hắt ra một quầng sáng méo mó.",
+     "known_as": "đại trận"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dai_tran_co_phong>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dai_tran_co_phong",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trong lòng Đại Trận Cô Phong, tiếng đá rung lặng dần; những vạch mực dưới ngón tay tôi vẫn còn lay.",
+     "known_as": "Đại Trận Cô Phong"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_khac>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_khac",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vạn Tinh Bách đã trao nó cho tôi giữa màn sương, không nói gì ngoài lời dặn giữ lấy.",
+     "known_as": "Vạn Tinh Bách"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dong_linh_mach>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dong_linh_mach",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Còn quanh Động Linh Mạch, mỗi người rời vị trí đều có thể để lại một khoảng trống cho hai đại phái.",
+     "known_as": "Động Linh Mạch"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:duong_ham_suong>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "duong_ham_suong",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ánh sáng dừng ở dòng chữ nhỏ trên sơ đồ: Đường Hầm Sương.",
+     "known_as": "Đường Hầm Sương"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_dong_mon_mac_ket>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_dong_mon_mac_ket",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhóm đệ tử Thanh Hư Môn vẫn còn bên ngoài. Ta vừa nhận được tiếng gọi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_luc_han_suong_giu_chot>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_luc_han_suong_giu_chot",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Hàn Sương giơ phù lệnh. Mấy đệ tử đang nhìn chằm chằm về phía khe hở lập tức im tiếng."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_tin_vat_mo_loi>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_tin_vat_mo_loi",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chỉ một động tác đặt tín vật đã khiến ánh sáng đổi khác; bàn tay tôi vẫn còn tê, nhưng linh lực không bị hút thêm."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_tran_lo_khe>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_tran_lo_khe",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trên trận đồ, ánh sáng ở phía tây vẫn khuyết một mảng, khe hở chưa khép."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:huyen_sat_tong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "huyen_sat_tong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bỏ mặc người bên ngoài, họ sẽ rơi vào tay Huyền Sát Tông.",
+     "known_as": "Huyền Sát Tông"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luc_han_suong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luc_han_suong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Hàn Sương đứng bên kia phiến đá, tay nắm phù lệnh.",
+     "known_as": "Lục Hàn Sương"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luc_han_suong>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luc_han_suong",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Hàn Sương bước sát mép lối đi, nhìn vào màn sương.",
+     "known_as": "Lục Hàn Sương"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phan_tu_nghien>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phan_tu_nghien",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Từ lối đá phía sau, Phàn Tử Nghiên bước tới.",
+     "known_as": "Phàn Tử Nghiên"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phu_am_tiep_ung>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phu_am_tiep_ung",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Hàn Sương ghé lại bên bàn đá, tay vẫn giữ phù âm.",
+     "known_as": "phù âm"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Kỷ Trầm Uyên, đưa ra cách xử trí ngay.",
+     "known_as": "Kỷ Trầm Uyên"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:so_tran_co_phong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "so_tran_co_phong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đặt Sổ Trận cạnh trận đồ, lấy hai viên đá chặn mép giấy đang bị gió núi lật lên.",
+     "known_as": "Sổ Trận"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:t_cuu_dong_mon>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "t_cuu_dong_mon",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Kỷ Trầm Uyên phải chọn ngay: giữ lối hầm thêm chút nữa, hay rút linh lực về để bảo toàn trận địa."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:t_giu_linh_mach>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "t_giu_linh_mach",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chốt phụ đang rút linh lực từ một nhánh trận khác; nếu giữ lâu, những mắt trận quanh linh mạch sẽ yếu đi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:t_tin_vat_huyen_nguyet>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "t_tin_vat_huyen_nguyet",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lý do hắn chọn tôi vẫn nằm ngoài những gì tôi biết."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thach_dan_tay>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thach_dan_tay",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi lần ngón tay theo ghi chép đổi chốt phía tây, từ Thạch Đàn Tây đến mép khe hở, rồi đối chiếu từng dấu linh quang đang hiện trên trận đồ.",
+     "known_as": "Thạch Đàn Tây"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tinh_vat_huyen_nguyet>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tinh_vat_huyen_nguyet",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bàn tay tôi khép lại quanh Tín Vật Huyền Nguyệt.",
+     "known_as": "Tín Vật Huyền Nguyệt"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-8dd70933b29c",
+    "player_action": null,
+    "error_detail": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Kỷ Trầm Uyên phải xác định liệu có thể cứu nhóm đệ tử mắc kẹt ngoài khe hở phía tây mà không để linh mạch và trận địa rơi vào tay địch hay không.",
+      "present": [
+       "protagonist",
+       "luc_han_suong",
+       "phan_tu_nghien"
+      ],
+      "beats": [
+       "Kỷ Trầm Uyên đối chiếu Sổ Trận với những vị trí chốt đang hiện trên trận đồ; khe hở phía tây vẫn chưa khép, còn tiếng giao chiến vọng tới từ phía ngoài màn sương.",
+       "Lục Hàn Sương ra lệnh giữ người quanh trận địa, nói rằng nếu dồn lực tới phía tây, những chốt bảo vệ linh mạch sẽ mỏng đi; nàng không cho phép ai tự ý mở rộng khe hở.",
+       "Phàn Tử Nghiên phản bác rằng bỏ mặc nhóm đệ tử bên ngoài sẽ khiến họ bị Huyền Sát Tông bắt hoặc giết, nhưng ông cũng cảnh báo chỉ một sơ suất có thể khiến trận pháp sụp hẳn.",
+       "Kỷ Trầm Uyên nhận ra các phù âm truyền lệnh không khớp hoàn toàn với những thay đổi ghi trong sổ, song chàng chỉ có thể xác định sự bất nhất chứ chưa biết ai đã gây ra; tín vật Huyền Nguyệt trong tay lạnh buốt khi chàng siết lại.",
+       "Lục Hàn Sương yêu cầu Kỷ Trầm Uyên đưa ra cách xử trí ngay: giữ khe hở hẹp để cứu người, khép nó lại bảo toàn trận địa, hay tìm một phương án khác trước khi địch áp sát."
+      ],
+      "ends_at": "Cảnh kết tại trận địa phía tây, khi Kỷ Trầm Uyên còn chưa quyết định sẽ đánh đổi điều gì trước."
+     },
+     {
+      "scene": 2,
+      "goal": "在敌军逼近、阵法西侧仍有缺口的压力下，让 Kỷ Trầm Uyên权衡救援被困弟子与保住灵脉，并逼近一个必须由玩家决定的选择。",
+      "present": [
+       "protagonist",
+       "luc_han_suong",
+       "phan_tu_nghien"
+      ],
+      "beats": [
+       "阵图上的西侧光点再次摇曳，外面的呼喊被交战声压断；Kỷ Trầm Uyên从现有阵势判断，缺口若扩大，守护灵脉的几处阵位便会更薄。",
+       "Lục Hàn Sương以手中符令压住周围弟子的躁动，强调自己不会擅自扩大缺口，并追问Kỷ Trầm Uyên是否能提出一个不让阵势失控的救援办法。",
+       "Phàn Tử Nghiên指出，若继续封住缺口，困在外面的同门可能撑不到下一轮交锋；他不替众人作决定，只提醒灵脉一旦失守，留下的人也无处可退。",
+       "Kỷ Trầm Uyên再度对照 Sổ Trận 与阵图，确认两处记录与现状不合，却仍无法从字迹中判断是谁造成偏差；他没有把未经证实的猜测说成结论。",
+       "掌中的 Tín Vật Huyền Nguyệt透出一阵寒意，Kỷ Trầm Uyên察觉它似乎与阵势的震动相应，却看不出用途；Lục Hàn Sương催他在敌军逼近前表态，Phàn Tử Nghiên则等待他的答复。"
+      ],
+      "ends_at": "场景结束在 Đại Trận Cô Phong 的阵图前：西侧缺口仍未处理，Kỷ Trầm Uyên必须在救援被困同门与优先稳住灵脉之间作出选择。"
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «động linh mạch» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Huyền Sát Tông» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Tín Vật Huyền Nguyệt» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER f_tin_vat_mo_loi→ch1",
+        "Value error, REVEALED_TO_PLAYER phải kèm câu trích `quote` (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được phan_tu_nghien kể về f_dong_mon_mac_ket, nhưng phan_tu_nghien không biết điều đó ở chương 1"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «động linh mạch» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-ef617f84bf5d",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Đề nghị Lục Hàn Sương giữ nguyên thế trận, để tôi rà lại hai dòng lệnh sai lệch trước khi quyết định.",
+      "listeners": [
+       "luc_han_suong"
+      ],
+      "about": [
+       "luc_han_suong",
+       "so_tran_co_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-ce3fb7613e16",
+      "kind": "action",
+      "tone": null,
+      "text": "Đối chiếu lại Sổ Trận với trận đồ, tập trung vào các chốt gần phía tây.",
+      "listeners": [],
+      "about": [
+       "f_tran_lo_khe",
+       "so_tran_co_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-7d588a78db46",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tôi quyết tâm tìm cách cứu những người còn mắc bên ngoài mà không khiến thế trận rối thêm.",
+      "listeners": [],
+      "about": [
+       "f_tran_lo_khe"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-10ace4655d32",
+    "player_action": "[Hành động] Đối chiếu lại Sổ Trận với trận đồ, tập trung vào các chốt gần phía tây.",
+    "error_detail": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Kỷ Trầm Uyên đối chiếu Sổ Trận với trận đồ ở các chốt phía tây để xác định khe hở xuất hiện từ đâu và đề xuất cách xử trí nhóm đệ tử đang mắc kẹt.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Kỷ Trầm Uyên trải Sổ Trận bên trận đồ, lần theo các ghi chép đổi chốt phía tây; những mốc thời gian trong sổ không khớp với vị trí đang hiện trên trận đồ.",
+       "Lục Hàn Sương xác nhận nhóm đệ tử Thanh Hư Môn vẫn ở ngoài khe hở, rồi nhắc rằng mở rộng lối vào có thể khiến trận thế phía tây sụp thêm; nàng yêu cầu Kỷ Trầm Uyên đưa ra căn cứ thay vì chỉ đoán.",
+       "Kỷ Trầm Uyên nhận ra lệnh đổi chốt được ghi nhận sau khi một chốt đã chuyển vị trí, nhưng chưa thể biết đó là sai sót hay có người cố ý làm lệch lệnh; chàng không vội buộc tội ai.",
+       "Tín Vật Huyền Nguyệt trong tay Kỷ Trầm Uyên khẽ ấm lên khi chàng đặt nó gần ký hiệu chốt phụ trên trận đồ, để lộ một đường nét mờ hướng sâu vào núi nhưng chưa đủ giải thích công dụng của tín vật.",
+       "Lục Hàn Sương thúc chàng chọn giữa giữ nguyên trận thế để bảo toàn linh mạch và tìm cách mở khe vừa đủ cứu người; Kỷ Trầm Uyên đề nghị kiểm tra chốt phụ trước khi quyết định, trong khi tiếng phù âm báo rằng thời gian đang cạn."
+      ],
+      "ends_at": "Cảnh kết tại Đại Trận Cô Phong, khi Kỷ Trầm Uyên chuẩn bị kiểm tra chốt phụ phía tây nhưng vẫn chưa quyết định có mở đường cứu nhóm đệ tử hay không."
+     },
+     {
+      "scene": 2,
+      "goal": "Kỷ Trầm Uyên đối chiếu lại ghi chép các chốt phía tây để xác định liệu có thể cứu nhóm đệ tử mắc kẹt mà không làm sụp trận thế.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Tôi đối chiếu từng dòng trong Sổ Trận với các dấu linh quang phía tây, nhận ra dấu chốt đã dịch chuyển không khớp với thứ tự và thời điểm ghi lệnh, nhưng những sai lệch ấy chưa đủ để kết luận ai đã làm gì.",
+       "Lục Hàn Sương hỏi tôi có tìm được căn cứ nào để mở lối cứu người không; tôi chỉ cho nàng thấy các mốc ghi chép chồng lấn và nói rằng nếu mở rộng khe chính lúc này, trận thế có thể rạn thêm.",
+       "Tôi đặt Tín Vật Huyền Nguyệt sát ký hiệu chốt phụ; ánh kim loại ấm lên, một đường nét mảnh hiện rõ hơn trên trận đồ rồi nối vào trong núi, nhưng tôi chưa thể xác nhận lối ấy còn thông hay đủ sức đưa người qua.",
+       "Phù âm lại truyền lệnh giữ nguyên vị trí phía tây, giọng nói đứt quãng và không giải thích gì thêm; Lục Hàn Sương nhắc rằng nhóm mắc kẹt không thể chờ lâu, buộc tôi cân nhắc giữa thử chốt phụ, mở khe chính hoặc giữ nguyên trận để che linh mạch."
+      ],
+      "ends_at": "Cảnh kết bên trận đồ phía tây, khi Kỷ Trầm Uyên vẫn chưa quyết định có mở đường cứu nhóm đệ tử mắc kẹt hay không."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"tín vật huyền nguyệt\" xuất hiện 3 lần (tối đa 2); đoạn: «Tín Vật Huyền Nguyệt»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-51c238ae97cc",
+      "kind": "action",
+      "tone": null,
+      "text": "Thử dùng Tín Vật Huyền Nguyệt dò tiếp đường chốt phụ.",
+      "listeners": [],
+      "about": [
+       "tinh_vat_huyen_nguyet",
+       "thach_dan_tay"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-009d8a017ca0",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Đề nghị Lục Hàn Sương giữ nguyên vị trí, chưa mở rộng khe chính.",
+      "listeners": [
+       "luc_han_suong"
+      ],
+      "about": [
+       "f_tran_lo_khe",
+       "f_dong_mon_mac_ket"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-c5b5de11e5b7",
+      "kind": "inner",
+      "tone": null,
+      "text": "Lo lắng cho nhóm đệ tử còn mắc kẹt bên ngoài.",
+      "listeners": [],
+      "about": [
+       "f_dong_mon_mac_ket"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-9ae86eede5f7",
+    "player_action": "[Hành động] Thử dùng Tín Vật Huyền Nguyệt dò tiếp đường chốt phụ.",
+    "error_detail": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Dùng Tín Vật Huyền Nguyệt dò chốt phụ để tìm một lối đi khả dụng, đồng thời xác định cái giá phải trả trước khi chọn cứu người hay giữ linh mạch.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Kỷ Trầm Uyên đặt Tín Vật Huyền Nguyệt lên nét chốt phụ trong Sổ Trận Cô Phong; tín vật lạnh buốt rồi rung khẽ, khiến một đường mực chìm hiện ra nhưng không đủ để chàng biết lối đó dẫn tới đâu.",
+       "Chàng lần theo dấu hiệu trên trận đồ và thử truyền linh lực vào tín vật; ánh sáng bạc chỉ lóe lên thoáng chốc, để lộ một chốt phụ đang bị khóa, còn trận pháp quanh khe tây lập tức chao đảo như cảnh cáo rằng không thể cưỡng ép mở nó giữa lúc này.",
+       "Lục Hàn Sương nhận ra chàng đã tìm được dấu vết mới, hỏi thẳng liệu chốt phụ có giúp đưa nhóm đệ tử mắc kẹt bên ngoài vào hay không; Kỷ Trầm Uyên chỉ đáp rằng tín vật có phản ứng, nhưng chưa rõ đường đi hay hậu quả.",
+       "Lục Hàn Sương nhắc rằng nếu dồn người giữ trận sang phía tây, linh mạch sẽ trống chốt và hai đại phái có thể thừa cơ áp sát; nàng yêu cầu chàng nói rõ điều mình biết, không chấp nhận một lời hứa suông giữa lúc mọi mệnh lệnh đều đáng ngờ.",
+       "Kỷ Trầm Uyên đối chiếu dấu chốt với những lần đổi vị trí ghi trong sổ, thấy một chỗ lệch chưa thể kết luận là sai lệnh hay biến động của trận; chàng giữ lại nghi ngờ, rồi nói với Lục Hàn Sương rằng trước khi chọn, họ cần tìm cách xác nhận chốt phụ mà không làm khe tây rộng thêm."
+      ],
+      "ends_at": "Cảnh kết tại Đại Trận Cô Phong, khi Kỷ Trầm Uyên và Lục Hàn Sương đứng trước lựa chọn phải kiểm chứng chốt phụ trong lúc khe hở phía tây vẫn đe dọa cả nhóm mắc kẹt lẫn linh mạch."
+     },
+     {
+      "scene": 2,
+      "goal": "Kỷ Trầm Uyên thử dò chốt phụ bằng Tín Vật Huyền Nguyệt, tìm manh mối về công dụng của nó mà không khiến khe tây sụp trận.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Tôi đối chiếu dấu chốt vừa hiện trong Sổ Trận với các nét ghi về những chốt quanh đại trận; Lục Hàn Sương giữ mắt về phía cửa, nhắc rằng trận ngoài khe tây vẫn đang chao đảo.",
+       "Tôi đặt Tín Vật Huyền Nguyệt lên đúng điểm giao rồi chỉ truyền vào một tia linh lực, dò phản ứng thay vì ép mở; ánh bạc men theo đường mực chìm, làm nổi một vòng khóa hướng về chốt phụ nhưng không mở được nó.",
+       "Từ phía tây vọng đến tiếng gọi đứt quãng của nhóm đệ tử mắc kẹt, tiếp đó là một đợt va chấn khiến đường mực trên sổ nhòe đi; tôi lập tức rút linh lực, nhận ra thử nghiệm thêm lúc này có thể làm khe trận rộng hơn.",
+       "Lục Hàn Sương hỏi liệu tín vật có thể đưa người bên ngoài vào; tôi đáp rằng nó chỉ xác nhận có đường nối tới một chốt khác, chưa chứng minh được lối ấy an toàn hay dẫn tới đâu, rồi đề nghị không mở khóa khi lực lượng giữ trận chưa sẵn sàng.",
+       "Tôi ghi lại dấu chốt và nhịp phản ứng vào sổ, nhận thấy đường mực hướng khỏi vòng ngoài nhưng vẫn không đủ căn cứ để xác định đích đến; Lục Hàn Sương thúc tôi cùng nàng quyết định trước khi khe tây biến động thêm."
+      ],
+      "ends_at": "Cảnh kết tại bàn giữ trận trong Đại Trận Cô Phong, khi chốt phụ đã được xác nhận có phản ứng nhưng vẫn khóa kín, còn quyết định cứu nhóm đệ tử mắc kẹt đang bị đẩy sát thời hạn."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d4447e99de34",
+      "kind": "action",
+      "tone": null,
+      "text": "Rút Tín Vật Huyền Nguyệt khỏi điểm giao, tránh thử thêm khi khe tây còn chấn động.",
+      "listeners": [],
+      "about": [
+       "tinh_vat_huyen_nguyet",
+       "f_tran_lo_khe"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0267178c16a5",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với Lục Hàn Sương rằng chưa thể xác định đường nối có an toàn, nên không cưỡng ép mở lúc này.",
+      "listeners": [
+       "luc_han_suong"
+      ],
+      "about": [
+       "tinh_vat_huyen_nguyet",
+       "f_tran_lo_khe"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-a43e7f66baa6",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm quyết tâm tìm cách cứu nhóm đệ tử mắc kẹt mà không khiến khe tây rộng thêm.",
+      "listeners": [],
+      "about": [
+       "f_dong_mon_mac_ket",
+       "f_tran_lo_khe"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm lo lắng"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-d19f78ed31e2",
+    "player_action": "[Lời thoại, nói thật] Nói với Lục Hàn Sương rằng chưa thể xác định đường nối có an toàn, nên không cưỡng ép mở lúc này.",
+    "error_detail": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Giữ khe hở phía tây chưa bị cưỡng ép mở, đồng thời buộc Lục Hàn Sương cân nhắc rủi ro trước khi quyết định cứu nhóm đệ tử mắc kẹt.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Sau lời Kỷ Trầm Uyên nói rằng chưa thể xác định đường nối có an toàn, Lục Hàn Sương ghìm tay khỏi việc cưỡng ép mở khe, nhưng nhìn chàng lạnh lùng hỏi: «Nếu chờ đến khi chắc chắn, người bên ngoài còn sống được bao lâu?»",
+       "Kỷ Trầm Uyên đối chiếu Sổ Trận Cô Phong với những biến động đang hiện trên trận tuyến; chàng chỉ có thể xác nhận khe hở phía tây còn tồn tại, không thể bảo đảm đường nối chịu nổi một lần mở rộng, và nói rõ rằng ép trận lúc này có thể khiến khe vỡ lan vào trong.",
+       "Lục Hàn Sương nhắc rằng nhóm đệ tử Thanh Hư Môn vẫn mắc kẹt ngoài khe, còn hai đại phái đang áp sát từ hai phía; nàng không chấp nhận để họ bị bỏ mặc, nhưng cũng không muốn đổi mạng người trong trận địa lấy một lối cứu viện bất định.",
+       "Kỷ Trầm Uyên đặt Tín Vật Huyền Nguyệt cạnh sổ trận mà không tuyên bố nó có thể giải quyết vấn đề; chàng đề nghị giữ nguyên trạng trận trong lúc rà lại các dấu hiệu, và hỏi Lục Hàn Sương liệu nàng có thể giữ các đệ tử khỏi tự ý chạm vào khe hay không.",
+       "Một chấn động dội qua Đại Trận Cô Phong làm những vạch ghi trong sổ trận rung lên; Lục Hàn Sương nhận lời giữ người, nhưng cảnh báo rằng nếu không sớm có phương án, nàng sẽ phải chọn giữa mệnh lệnh của chàng và mạng sống của những người bên ngoài."
+      ],
+      "ends_at": "Cảnh kết tại Đại Trận Cô Phong, khi Kỷ Trầm Uyên và Lục Hàn Sương tạm hoãn cưỡng ép mở khe phía tây nhưng sức ép buộc họ phải sớm đưa ra quyết định."
+     },
+     {
+      "scene": 2,
+      "goal": "Tìm một phương án cứu nhóm đệ tử mắc kẹt mà không cưỡng ép mở rộng khe phía tây hay bỏ mặc linh mạch.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Tôi tiếp tục đối chiếu Sổ Trận Cô Phong với các vạch đang chập chờn, xác nhận đường nối dưới khe phía tây vẫn bất ổn; Lục Hàn Sương giữ các đệ tử tại chỗ nhưng cảnh báo thời gian không còn nhiều.",
+       "Khi trận bàn rung lên, Tín Vật Huyền Nguyệt trong tay tôi lạnh buốt và bắt nhịp với một vạch mờ ở mép sơ đồ; tôi nhận ra tín vật có thể khớp với chốt phụ, nhưng chưa biết kích hoạt nó sẽ dẫn đến đâu.",
+       "Tôi thử đặt tín vật sát chốt phụ mà không truyền linh lực vào khe chính; một đường sáng mảnh hiện lên trên trận bàn, nối về phía Đường Hầm Sương, rồi lập tức chập chờn như thể lối đi bên kia chưa ổn định.",
+       "Lục Hàn Sương hỏi liệu lối phụ có đủ sức đưa người ngoài vào; tôi đáp rằng chưa thể bảo đảm, nhưng thử mở nó có thể tránh làm khe phía tây vỡ lan, còn nàng nhắc rằng nếu chờ thêm thì nhóm mắc kẹt có thể không còn cơ hội.",
+       "Tôi giữ tín vật ngay trên chốt phụ, không kích hoạt cũng không rút tay; Lục Hàn Sương chờ quyết định của tôi giữa lối phụ chưa rõ an toàn và khe phía tây đang yếu dần."
+      ],
+      "ends_at": "Cảnh kết tại trận bàn trong Đại Trận Cô Phong, khi tôi còn chưa kích hoạt chốt phụ và Lục Hàn Sương chờ lựa chọn của tôi."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "at_most_one",
+        "block": false,
+        "feedback": "đồ vật tinh_vat_huyen_nguyet có 2 người giữ cùng hiệu lực ở chương 4; cạnh cũ phải được đóng trong gói"
+       }
+      ],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER nguyen_tue_lam→ch4",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-91841018c20c",
+      "kind": "action",
+      "tone": null,
+      "text": "Truyền linh lực vào chốt phụ, thử ổn định đường sáng dẫn tới Đường Hầm Sương.",
+      "listeners": [],
+      "about": [
+       "duong_ham_suong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-92802acc6720",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với Lục Hàn Sương rằng hãy cho nhóm mắc kẹt thử đi theo lối phụ, dù chưa thể bảo đảm an toàn.",
+      "listeners": [
+       "luc_han_suong"
+      ],
+      "about": [
+       "f_dong_mon_mac_ket",
+       "duong_ham_suong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-caa3b2e3332c",
+      "kind": "inner",
+      "tone": null,
+      "text": "Muốn giữ lối phụ đóng lại cho đến khi biết chắc nó chịu nổi người qua lại.",
+      "listeners": [],
+      "about": [
+       "duong_ham_suong"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-c301643a2296",
+    "player_action": "[Hành động] Truyền linh lực vào chốt phụ, thử ổn định đường sáng dẫn tới Đường Hầm Sương.",
+    "error_detail": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ổn định chốt phụ đủ lâu để xác định Đường Hầm Sương có thể cứu nhóm đệ tử mắc kẹt mà không làm Đại Trận Cô Phong sụp đổ hay không.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Kỷ Trầm Uyên truyền linh lực vào chốt phụ; ánh sáng dẫn tới Đường Hầm Sương chập chờn rồi sáng lên, nhưng linh lực trong kinh mạch chàng lập tức bị hút cạn một mảng.",
+       "Lục Hàn Sương nhận ra đường sáng đã thông, song nhắc rằng khe hở phía tây vẫn chưa khép và không thể vừa dồn người ra cứu đồng môn vừa giữ nguyên lực trận quanh linh mạch.",
+       "Kỷ Trầm Uyên đối chiếu những vệt sáng với Sổ Trận Cô Phong, thấy chốt phụ chỉ có thể duy trì lối đi trong thời gian ngắn; nếu tiếp tục cấp lực, phần trận bảo vệ linh mạch sẽ yếu đi.",
+       "Khi chàng đặt Tín Vật Huyền Nguyệt gần chốt, hoa văn trên tín vật khớp với rãnh đá và ánh sáng trong đường hầm ổn định thêm, hé lộ công dụng mở lối nhưng không giải đáp vì sao Vạn Tinh Bách trao nó cho chàng.",
+       "Lục Hàn Sương yêu cầu Kỷ Trầm Uyên chọn ngay: giữ lực cho linh mạch hay dùng khoảng thời gian ngắn ngủi để đưa những người mắc kẹt qua đường hầm; chàng nghe tiếng trận pháp rền lên dưới chân nhưng chưa trả lời."
+      ],
+      "ends_at": "Cảnh kết tại chốt phụ của Đại Trận Cô Phong, khi Đường Hầm Sương vừa sáng lối còn lựa chọn giữa cứu người và giữ linh mạch vẫn bỏ ngỏ."
+     },
+     {
+      "scene": 2,
+      "goal": "Kỷ Trầm Uyên thử dùng linh lực của mình giữ Đường Hầm Sương ổn định, đồng thời buộc những người còn lại đối diện cái giá phải trả cho lối cứu viện.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Tôi truyền linh lực vào chốt phụ lần nữa; lối sáng trong sương cứng lại, nhưng những đường sáng quanh Động Linh Mạch trên Sổ Trận lập tức mờ thêm, còn cánh tay tôi tê buốt đến tận vai.",
+       "Lục Hàn Sương chặn tay tôi, nói rằng cố giữ lối đi lâu hơn sẽ rút lực khỏi trận quanh linh mạch; tôi đáp rằng nếu không giữ được, những người mắc kẹt ngoài khe tây sẽ chẳng còn đường sống.",
+       "Một tiếng chấn động dội qua đại trận, khiến vệt sáng trên lối hầm chao đảo; tôi nhận ra linh lực của mình chỉ kéo dài được thêm một quãng ngắn, không thể vừa giữ đường hầm vừa bù cho trận địa đang suy yếu.",
+       "Lục Hàn Sương nói chị có thể điều người đến khe tây ngay khi tôi xác nhận, nhưng nếu linh mạch bị lộ, Thanh Hư Môn sẽ mất chỗ cố thủ; tôi nhìn tín vật đang khớp trong chốt và không thể giả vờ rằng mình có đủ sức gánh cả hai phía.",
+       "Tôi dồn thêm linh lực vào chốt phụ, giữ đường sáng khỏi tắt trong chốc lát; cơn đau buốt khiến tôi phải buông bớt, và Lục Hàn Sương chờ câu trả lời của tôi về việc đưa người qua hay giữ lực cho linh mạch."
+      ],
+      "ends_at": "Cảnh kết bên chốt phụ của Đường Hầm Sương, khi lối sáng còn mở nhưng linh mạch đã yếu đi và quyết định cứu viện vẫn chưa được đưa ra."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-57f046ce99c9",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Xác nhận để Lục Hàn Sương điều người đến khe tây, dù linh mạch có thể lộ ra.",
+      "listeners": [
+       "luc_han_suong"
+      ],
+      "about": [
+       "f_dong_mon_mac_ket",
+       "dong_linh_mach"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-be129fe3194e",
+      "kind": "action",
+      "tone": null,
+      "text": "Rút tay khỏi chốt phụ, để lối hầm mờ đi và giữ sức cho trận địa.",
+      "listeners": [],
+      "about": [
+       "dong_linh_mach",
+       "duong_ham_suong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-06aa3cee4fb6",
+      "kind": "inner",
+      "tone": null,
+      "text": "Quyết tâm giữ lối hầm thêm một quãng ngắn, bất chấp cơn đau.",
+      "listeners": [],
+      "about": [
+       "duong_ham_suong",
+       "f_tin_vat_mo_loi"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm pha lẫn đau đớn"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-bf6faba30cc3",
+    "player_action": "[Nội tâm] Quyết tâm giữ lối hầm thêm một quãng ngắn, bất chấp cơn đau.",
+    "error_detail": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Kỷ Trầm Uyên cố giữ lối hầm thêm một quãng ngắn để níu cơ hội cho những đồng môn mắc kẹt, dù cơn đau khiến chàng khó lòng tiếp tục chống đỡ.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Kỷ Trầm Uyên ghìm cơn đau, giữ vị trí bên lối hầm và kín đáo kiểm tra Tín Vật Huyền Nguyệt cùng Sổ Trận Cô Phong, cố hiểu chốt phụ còn có thể duy trì được bao lâu.",
+       "Lục Hàn Sương nhận ra chàng đang gắng sức quá mức, nhắc rằng nhóm đệ tử vẫn mắc kẹt ngoài khe hở phía tây nhưng nàng không thể để trận địa suy yếu thêm.",
+       "Kỷ Trầm Uyên đáp rằng chỉ cần thêm một quãng ngắn, lối hầm có thể giúp họ tránh bị dồn vào khe hở; chàng không hứa cứu được tất cả, chỉ xin nàng đừng vội khép đường lui.",
+       "Lục Hàn Sương chất vấn liệu chàng đang bảo vệ đồng môn hay đánh cược linh mạch vào một tín vật chưa rõ hết công dụng; lời nàng khiến Kỷ Trầm Uyên phải thừa nhận cơn đau đang làm tay mình run.",
+       "Một chấn động dội qua trận địa, buộc cả hai hiểu rằng thời gian đã cạn; Lục Hàn Sương chờ chàng quyết định có giữ lối hầm thêm nữa hay không."
+      ],
+      "ends_at": "Cảnh kết tại Đại Trận Cô Phong, khi Kỷ Trầm Uyên vẫn giữ lối hầm nhưng phải lựa chọn ngay giữa việc tiếp tục câu giờ và bảo toàn trận địa."
+     },
+     {
+      "scene": 2,
+      "goal": "Giữ Đường Hầm Sương mở thêm một quãng để nhóm đệ tử mắc kẹt có cơ hội thoát, rồi khép chốt trước khi linh mạch bị rút cạn.",
+      "present": [
+       "protagonist",
+       "luc_han_suong"
+      ],
+      "beats": [
+       "Kỷ Trầm Uyên quyết giữ chốt phụ thêm một quãng ngắn như đã chọn, ghì bàn tay run lên vì đau; Lục Hàn Sương cảnh báo rằng mỗi nhịp kéo dài đều làm yếu các mắt trận quanh linh mạch.",
+       "Chàng dùng Sổ Trận Cô Phong đối chiếu dấu khắc trên chốt với đường vận hành, nhận ra linh lực đang bị rút từ một nhánh trận trọng yếu; chàng nói chỉ cần duy trì lối hầm đủ lâu để nhóm bên ngoài nhận được tín hiệu, không thể bảo đảm tất cả sẽ qua được.",
+       "Một đợt chấn động làm chốt giật mạnh và cơn đau khiến Kỷ Trầm Uyên suýt buông tay; Lục Hàn Sương giữ vai chàng, thúc giục đóng đường hầm, còn chàng xin nàng chờ đến khi ánh phù văn báo hiệu người ngoài đã tìm thấy lối vào.",
+       "Khi phù văn chớp lên theo nhịp đáp lại từ phía đường hầm, Kỷ Trầm Uyên rút tay khỏi chốt và dùng Tín Vật Huyền Nguyệt khóa chốt phụ; ánh trận quanh họ ổn định dần, nhưng một đoạn phù văn hướng về linh mạch đã tắt hẳn.",
+       "Lục Hàn Sương nói họ đã mua được thời gian cho những người bên ngoài, nhưng cái giá là trận địa quanh linh mạch yếu đi và địch có thể đánh tới trước khi Thanh Hư Môn kịp bố trí lại; Kỷ Trầm Uyên nhìn những ghi chú lệnh đổi chốt trong sổ, thấy một sai lệch khó giải thích nhưng chưa đủ chứng cứ kết luận."
+      ],
+      "ends_at": "Cảnh kết tại chốt phụ trong Đại Trận Cô Phong, khi Kỷ Trầm Uyên và Lục Hàn Sương chuẩn bị rời đi đối phó với trận tuyến đã suy yếu."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"trận quanh linh mạch\" xuất hiện 3 lần (tối đa 2); đoạn: «trận quanh linh mạch»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d4caea043854",
+      "kind": "action",
+      "tone": null,
+      "text": "Đối chiếu nét sửa lệch ở lệnh phía tây với các ghi chú còn lại trong Sổ Trận.",
+      "listeners": [],
+      "about": [
+       "so_tran_co_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-96fe41ed639e",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với Lục Hàn Sương rằng trận tuyến quanh linh mạch cần được gia cố ngay.",
+      "listeners": [
+       "luc_han_suong"
+      ],
+      "about": [
+       "dong_linh_mach"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f3482df282c9",
+      "kind": "inner",
+      "tone": null,
+      "text": "Lo lắng cho những người bên ngoài chỉ kịp tìm thấy lối vào.",
+      "listeners": [],
+      "about": [
+       "f_dong_mon_mac_ket"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "setup:build",
+   "attempt": 1,
+   "code": "STORY_SETUP_INVALID",
+   "detail": "cạnh RELATES_TO:doan_vo_sach>huyet_nhai_tong@0: RELATES_TO không nối Character → Faction; cạnh RELATES_TO:huyet_nhai_tong>doan_vo_sach@0: RELATES_TO không nối Faction → Character"
+  }
+ ]
+}
