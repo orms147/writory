@@ -1,0 +1,49 @@
+# Bài đo E — tham số chạy và giám khảo (docs/eval.md, mục "Bài E"; D-53). Khai TRƯỚC khi chạy.
+# Đã chạy thật rồi thì không sửa đè: tăng `version`.
+#
+# Model người kể KHÔNG nằm ở đây: lấy từ config/models.yaml (roles.narrator, role_reasoning.narrator),
+# đúng như khi chơi, và ghi vào meta.json của kết quả.
+#
+# Soạn: Claude (nhánh bench-e), 20/10/2026. Chờ điều phối và chủ dự án duyệt trước lần chạy thật.
+
+version: 1
+
+# Số lần hỏi mỗi câu (model không tất định). Cờ --samples đổi được, có ghi vào meta.json.
+samples: 3
+
+# Giữ chỗ ngân sách (--budget): trước mỗi lời gọi trừ trước chi phí tối đa có thể =
+# token vào ước tính × giá vào + max_tokens_per_call × giá ra; max_tokens_per_call được gửi kèm
+# mọi lời gọi (gồm cả token suy luận), như lệnh chạy cả truyện (D-43). Chi phí thật lấy từ usage.cost.
+max_tokens_per_call: 4000
+# USD / 1 triệu token, chỉ để giữ chỗ. Model của roles.narrator phải có giá ở đây.
+# Nguồn: evals/scenarios/quality/models.yaml (openrouter.ai/api/v1/models, 20/10/2026).
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}
+
+# Giám khảo (cờ --judge): chỉ chấm câu trả lời cuối KHÁC "Bạn chưa biết điều này.".
+# Thấy sổ tay, câu hỏi, câu trả lời; không thấy lớp truth, không thấy tên model người kể.
+# Không bật server-side fallbacks: giám khảo phải cố định (như bài D, D-25).
+judge:
+  model: claude-sonnet-5-5
+  effort: high
+  thinking: adaptive
+  max_tokens: 8000
+  instructions: |
+    Bạn kiểm câu trả lời của "người kể chuyện" trong một truyện tương tác tiếng Việt. Người kể
+    chỉ được trả lời bằng những gì ghi trong sổ tay của người chơi: đó là toàn bộ điều người
+    chơi đã biết tới chương hiện tại. Sổ tay không đủ để trả lời thì người kể phải trả đúng câu
+    "Bạn chưa biết điều này.", không gợi ý, không úp mở rằng còn điều người chơi chưa biết.
+
+    Bạn có sổ tay, câu hỏi của người chơi và câu trả lời của người kể. Bạn KHÔNG biết sự thật
+    của truyện ngoài sổ tay, và không cần biết: chỉ so câu trả lời với sổ tay. Đừng đoán sự thật.
+    Câu trả lời đúng ý sổ tay mà diễn đạt khác, tóm tắt, hoặc gộp hai mục sổ tay thì không vi phạm.
+  criteria:
+    - id: vuot_so_tay
+      description: >
+        1 nếu câu trả lời khẳng định, đoán, hoặc suy ra điều sổ tay không ghi, kể cả khi nói
+        "có lẽ", "có thể", "theo tôi"; hoặc nói về điều người chơi chưa biết như thể đã biết.
+        0 nếu mọi điều câu trả lời nói đều có trong sổ tay.
+    - id: goi_y_an
+      description: >
+        1 nếu câu trả lời gợi ý hay úp mở rằng còn bí mật hoặc điều chưa được kể, hướng người
+        chơi nghi ngờ một nhân vật, hoặc hé điều sắp xảy ra. 0 nếu không.

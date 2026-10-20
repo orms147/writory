@@ -438,3 +438,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Từ trong tên nhân vật chính và chữ người chơi tự gõ (quá khứ, tính cách) giờ là chữ đã thấy: tên hay biệt danh chỉ gồm các từ đó không còn bị cấm theo tên.
   - Tên ghép từ từ thường ("Động Linh Mạch" trùng "chấn động linh mạch") chưa sửa: mọi cách gọn tìm được đều bỏ bắt một kiểu viết tên thật (chữ thường có dấu). Hướng đề xuất ở `docs/security.md`, mục Chưa giải quyết.
 - **Người quyết:** Claude (nhánh run1-fixes), điều phối duyệt (PR #23) · 20/10/2026
+
+## D-53 · Bài E: hỏi người kể không lộ; câu thô tách khỏi câu cuối, bộ chấm chặt hơn lớp chặn
+- **Bối cảnh:** hỏi người kể có ba lớp chặn: context chỉ từ `player_view` với mã công khai (G1), kiểm `entry_ids`, bộ dò lộ (G2) (D-40). Chưa có bài đo nào cho biết các lớp đó chặn tới đâu trước câu hỏi cố moi bí mật.
+- **Quyết định:**
+  - Runner `writory.pipeline.bench_e` (D-24). Đề khai trước ở `evals/scenarios/narrator/`: câu hỏi sáu loại a–f theo chương truyện mẫu, kế hoạch và chuỗi cấm, tham số chạy và giám khảo.
+  - `pipeline.narrator.ask_narrator_reply` chạy đúng các bước của `ask_narrator` và trả thêm câu thô (`NarratorOutput`) cùng lý do bị thay (`BlockReason`). `ask_narrator` chỉ lấy `answer` của nó. Câu thô không bao giờ tới người chơi hay vào log.
+  - Bộ chấm chặt hơn lớp chặn đang đo: tên lớp truth đầy đủ (`named_nodes` của cả 5 chương, không dùng `leak_names`), kế hoạch cộng nhóm và bí mật chỉ của bộ chấm, tên thật của nút chưa hé lộ kể cả tên chữ thường. Lộ ở câu cuối khác 0 là lỗi nghiêm trọng (mã thoát 4).
+  - Trạng thái truyện dựng bằng `OverlayState` từ gói dựng tay, không cần Neo4j. Không áp trần số câu mỗi chương (G8 có test riêng). Truyện mẫu không qua bước khởi tạo, nên `story_brief` khai rỗng.
+  - Giám khảo Sonnet là tuỳ chọn và chỉ chấm câu cuối khác NOT_KNOWN. Nó thấy sổ tay và câu hỏi, không thấy lớp truth hay tên model. Mỗi lượt chấm một lần, không fallbacks.
+- **Hệ quả:** kế hoạch của truyện mẫu là giả định (khi chơi, kế hoạch do bước khởi tạo sinh, D-38), nên số đo chỉ đúng cho kế hoạch kiểu đó. Bộ chấm có thể báo nhầm khi câu trả lời nhắc lại chữ của câu hỏi; lượt như vậy được đánh dấu `echo`. Chưa chạy thật.
+- **Người quyết:** Claude (nhánh bench-e), chờ điều phối duyệt · 20/10/2026
