@@ -18,6 +18,7 @@ from pydantic import SecretStr
 
 from tests.api_fixtures import (
     FAKE_KEY,
+    AllowAllQuota,
     KeyedFactory,
     asgi_request,
     dev_settings,
@@ -103,6 +104,7 @@ def make_app(pg, driver, fake: FakeLLM, *, key: bool = True, owner: str | None =
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     factory = KeyedFactory(fake)
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
+    app.dependency_overrides[deps.get_call_quota] = AllowAllQuota  # xem make_app của test_play_api
     if owner is not None:
         app.dependency_overrides[deps.get_owner_id] = lambda: owner
     if key:

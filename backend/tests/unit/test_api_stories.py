@@ -10,7 +10,7 @@ import pytest
 from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
-from tests.api_fixtures import MemoryCostLedger, MemoryKeyStore, dev_settings
+from tests.api_fixtures import MemoryCostLedger, MemoryKeyStore, dev_settings, offline
 from writory.api import create_app, deps
 from writory.api.errors import HTTP_STATUS
 from writory.api.stories import router as stories_router
@@ -47,6 +47,7 @@ def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota |
 
     # Không Docker: kết nối giả, truyện của người chơi dev, kho key rỗng, nhật ký trong bộ nhớ.
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
+    offline(app)
     app.dependency_overrides[deps.get_owned_story] = (
         lambda story_id: StoryRecord(story_id, "dev", "short", chapter))
     app.dependency_overrides[deps.get_key_store] = MemoryKeyStore

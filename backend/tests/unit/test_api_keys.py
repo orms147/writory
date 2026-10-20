@@ -17,6 +17,7 @@ from tests.api_fixtures import (
     MemoryKeyStore,
     captured_logs,
     dev_settings,
+    offline,
 )
 from writory.api import create_app, deps
 from writory.api.errors import HTTP_STATUS
@@ -40,6 +41,7 @@ def build(*, store: MemoryKeyStore | None = None, ledger: MemoryCostLedger | Non
     ledger = ledger if ledger is not None else MemoryCostLedger()
     factory = KeyedFactory(fake or FakeLLM.scripted([reply(False, None, [])]))
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
+    offline(app)
     app.dependency_overrides[deps.get_key_store] = lambda: store
     app.dependency_overrides[deps.get_cost_ledger] = lambda: ledger
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory

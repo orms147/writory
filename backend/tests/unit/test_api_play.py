@@ -6,7 +6,7 @@ import json
 import pytest
 from fastapi.testclient import TestClient
 
-from tests.api_fixtures import dev_settings
+from tests.api_fixtures import dev_settings, offline
 from writory.api import create_app, deps
 from writory.api.play import action_text, choice_from_record, choice_record, sse_event
 from writory.config import load_config
@@ -35,6 +35,7 @@ def client():
     app = create_app(dev_settings(), health_checks={"neo4j": ok}, config=CFG)
     # Không Docker: dependency chạy trước khi kiểm thân yêu cầu, nên thay cả truyện và kế hoạch.
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
+    offline(app)
     app.dependency_overrides[deps.get_owned_story] = (
         lambda story_id: StoryRecord(story_id, "dev", "short", 3))
     app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(

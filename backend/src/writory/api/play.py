@@ -19,7 +19,8 @@
 - G8: một truyện chỉ một lần viết chương cùng lúc (`db.job_lock` trong `get_chapter_job`); lần
   thứ hai báo STORY_BUSY, không gọi model.
 - G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động.
-- Chọn lựa chọn chỉ lưu hành động cho chương sau; chưa ghi `Lie`/`FEELS` vào đồ thị (D-46).
+- Chọn lựa chọn lưu hành động cho chương sau; khi viết chương đó, lời nói dối (`Lie`, `TOLD`, `TOLD_TO`,
+  `ABOUT`) và nội tâm (`FEELS`) của lựa chọn được ghi vào gói của chính chương đó (D-55).
 Chỉ mount khi bật cờ dev (D-41).
 """
 
@@ -130,6 +131,19 @@ def _action_out(conn, story_id: str, rec: ActionRecord | None) -> ActionOut | No
     return ActionOut(for_chapter=rec.for_chapter, source=rec.source, text=text)
 
 
+def _picked_choice(conn, story_id: str, chapter: int, action: ActionRecord | None) -> Choice | None:
+    """Lựa chọn người chơi đã chọn ở cuối `chapter`, để tác động của nó vào gói chương sau (D-55).
+    Ô tự viết không có dữ liệu có cấu trúc. Khoá ngoại bảo đảm lựa chọn còn đó; không còn là dữ
+    liệu hỏng, nên dừng (fail closed) thay vì viết chương mà bỏ qua lựa chọn."""
+    if action is None or action.source != "choice":
+        return None
+    record = load_choice(conn, story_id, chapter, action.choice_id)
+    if record is None:
+        raise RuntimeError(f"truyện {story_id}: hành động trỏ tới lựa chọn {action.choice_id} "
+                           f"không có ở chương {chapter}")
+    return choice_from_record(record)
+
+
 def _has_pending(conn, story_id: str) -> bool:
     return any(r.status == "pending" for r in chapter_records(conn, story_id))
 
@@ -180,6 +194,7 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
         request = ChapterRequest(
             present_ids=(), scene_count=config.story_lengths.scenes_per_chapter.min,
             story_brief=brief, player_action=None if action is None else action.text,
+            choice=_picked_choice(conn, story.id, committed, action),
         )
         run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
                          config=config, plan=plan, tracker=tracker)
@@ -239,7 +254,8 @@ def chapter_text(number: int, story: deps.OwnedStory, conn: deps.PgConn) -> Chap
 # --- lựa chọn và hành động ----------------------------------------------------------------------
 
 
-@router.post("/{story_id}/choices", response_model=ChoicesOut)
+@router.post("/{story_id}/choices", response_model=ChoicesOut,
+             dependencies=[Depends(deps.lock_story)])
 async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4jDriver,
                           config: deps.Config, plan: Plan, llm: deps.PlayerLLMs,
                           brief: deps.StoryBrief) -> ChoicesOut:
@@ -289,7 +305,8 @@ def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn,
     return ActionOut(for_chapter=chapter + 1, source="choice", text=choice.text)
 
 
-@router.post("/{story_id}/action", response_model=ActionOut)
+@router.post("/{story_id}/action", response_model=ActionOut,
+             dependencies=[Depends(deps.lock_story)])
 async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps.PgConn,
                         config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ActionOut:
     """Ô tự viết: phân loại bằng model có đầu ra enum (G5) trước khi lưu. Bị chặn thì không lưu.

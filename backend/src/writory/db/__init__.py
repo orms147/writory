@@ -47,6 +47,7 @@ from writory.db.plans import (
     set_story_brief,
     start_story,
 )
+from writory.db.rate_limit import take_llm_call
 from writory.db.setup import (
     STEPS,
     SetupNotFoundError,
@@ -117,5 +118,6 @@ __all__ = [
     "setup_spent_usd",
     "start_story",
     "story_spent_usd",
+    "take_llm_call",
     "take_narrator_question",
 ]

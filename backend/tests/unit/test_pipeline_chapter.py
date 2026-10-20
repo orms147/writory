@@ -56,6 +56,7 @@ from writory.pipeline.chapter import (
     entity_names,
     merge_scene_packages,
 )
+from writory.pipeline.choices import Choice, LieEffect, choice_effects
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import narration_instruction, normalize_dashes
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START
@@ -900,3 +901,118 @@ async def test_first_chapter_has_no_summary_block(tmp_path):
             assert 'source="chapter_summary"' not in call[-1].content
     assert chapter_run.outcome.committed and chapter_run.outcome.summaries_missing == []
     assert store.saved_summaries[1] == SUMMARY_TEXT
+
+
+# --- tác động của lựa chọn lên đồ thị (D-55) ----------------------------------------------------
+
+LIE_ID = "lie:choice-abc123def456"
+
+
+def picked_lie(*, listeners=("lan",), about=("sword",)) -> Choice:
+    return Choice(
+        id="choice-abc123def456", kind="dialogue", tone="lie", text="Nói với Lan là kiếm đã gửi.",
+        listeners=tuple(listeners), about=tuple(about),
+        lie=LieEffect("Thanh Sương đang ở chỗ cai Khải", tuple(listeners)), feeling=None,
+    )
+
+
+def picked_inner(*, about=("lan",)) -> Choice:
+    return Choice(id="choice-inner0000001", kind="inner", tone=None, text="Thầm nghĩ Lan biết.",
+                  listeners=(), about=tuple(about), lie=None, feeling="nghi ngờ")
+
+
+async def test_picked_lie_is_written_with_the_chapter_and_shows_in_player_view(tmp_path):
+    _, outcome, _, store = await run(full_script(), tmp_path,
+                                          req=request(choice=picked_lie()))
+
+    assert outcome.committed
+    [(_, _, package)] = store.commits
+    assert [n.id for n in package.nodes] == ["ch4", LIE_ID]
+    ids = {e.id for e in package.edges}
+    assert {f"TOLD:minh>{LIE_ID}@4", f"TOLD_TO:{LIE_ID}>lan@4", f"ABOUT:{LIE_ID}>sword@4"} <= ids
+    assert {e.valid_from_chapter for e in package.edges if LIE_ID in e.id} == {4}
+    # Sổ tay (player_view) ở chương 4 có lời dối, với người nghe là Lan (đã hé lộ từ trước).
+    [lie] = [x for x in store.player_view(CHAPTER).lies if x.content.startswith("Thanh Sương")]
+    assert lie.chapter == CHAPTER
+    # Người chơi chưa từng thấy lời dối ở chương 3.
+    assert not [x for x in store.player_view(3).lies if x.content.startswith("Thanh Sương")]
+
+
+async def test_picked_lie_is_visible_to_the_extractor_and_guard_from_scene_one(tmp_path):
+    _, _, llm, _ = await run(full_script(), tmp_path, req=request(choice=picked_lie()))
+
+    first = calls_of(llm, "extract")[0][-1].content
+    assert f"TOLD:minh>{LIE_ID}@4 | TOLD | minh → {LIE_ID}" in first
+    assert f"TOLD_TO:{LIE_ID}>lan@4" in first
+    assert LIE_ID in first  # cũng nằm trong danh mục thực thể
+
+
+async def test_lan_can_discover_the_lie_in_the_same_chapter(tmp_path):
+    """Danh mục thực thể có nút Lie của chương này, nên bộ trích ghi được "Lan biết đó là dối"."""
+    found = extract_reply([{"type": "KNOWS", "source": "lan", "target": LIE_ID, "how": "suy ra"}])
+    script = [outline_reply(), SCENE_1, found, outline_reply(), SCENE_2, EXTRACT_2,
+              SUMMARY, choices_reply()]
+    _, outcome, _, store = await run(script, tmp_path, req=request(choice=picked_lie()))
+
+    assert outcome.committed and outcome.scenes[0].rejected == ()
+    [(_, _, package)] = store.commits
+    assert f"KNOWS:lan>{LIE_ID}@4" in {e.id for e in package.edges}
+
+
+async def test_lie_told_only_to_the_dead_writes_nothing(tmp_path, caplog):
+    caplog.set_level(logging.WARNING)
+    _, outcome, _, store = await run(full_script(), tmp_path,
+                                     req=request(choice=picked_lie(listeners=("gu",))))
+
+    assert outcome.committed
+    [(_, _, package)] = store.commits
+    assert [n.id for n in package.nodes] == ["ch4"]
+    assert not [e for e in package.edges if e.type in ("TOLD", "TOLD_TO")]
+    assert "Lão Gù" not in caplog.text and "gu" in caplog.text  # id và lý do, không chữ lựa chọn
+
+
+async def test_choice_naming_a_node_the_graph_lacks_fails_before_any_model_call(tmp_path):
+    events, outcome, llm, store = await run(
+        [], tmp_path, req=request(choice=picked_lie(listeners=("lan", "ghost"))))
+
+    assert outcome.error is ErrorCode.INTERNAL_ERROR and not outcome.committed
+    assert llm.calls == [] and store.commits == []
+    assert kinds(events) == ["error"]
+
+
+async def test_picked_inner_feeling_replaces_the_previous_one(tmp_path):
+    store = MemoryStore()
+    store.packages.append(ChangePackage(commit_id="c3-feels", edges=[
+        EdgeSpec(type="FEELS", source="minh", target="lan", valid_from_chapter=3,
+                 props={"feeling": "tin tưởng"})]))
+    _, outcome, _, _ = await run(full_script(), tmp_path, store=store,
+                                 req=request(choice=picked_inner()))
+
+    assert outcome.committed
+    [(_, _, package)] = store.commits
+    feels = [e for e in package.edges if e.type == "FEELS"]
+    assert [(e.id, e.props["feeling"]) for e in feels] == [("FEELS:minh>lan@4", "nghi ngờ")]
+    assert [(c.type, c.id, c.valid_to_chapter) for c in package.close
+            if c.type == "FEELS"] == [("FEELS", "FEELS:minh>lan@3", 4)]
+    # Chương sau thấy đúng một cảm xúc đang hiệu lực về Lan.
+    assert [e.props["feeling"] for e in store.state().edges_at("FEELS", 4)] == ["nghi ngờ"]
+
+
+async def test_choices_without_graph_effects_leave_the_package_as_before(tmp_path):
+    plain_pick = Choice(id="choice-plain0000001", kind="dialogue", tone="truth", text="Nói thật.",
+                        listeners=("lan",), about=(), lie=None, feeling=None)
+    _, _, _, with_pick = await run(full_script(), tmp_path / "a", req=request(choice=plain_pick))
+    _, _, _, without = await run(full_script(), tmp_path / "b", req=request())
+
+    assert with_pick.commits[0][2] == without.commits[0][2]
+
+
+def test_a_scene_closing_an_edge_the_prelude_opened_cancels_it_out():
+    node = chapter_node(4)
+    prelude = choice_effects(picked_inner(), chapter=4, protagonist="minh")
+    scene = ChangePackage(commit_id="s", close=[
+        CloseSpec(type="FEELS", id="FEELS:minh>lan@4", valid_to_chapter=4)])
+
+    merged = merge_scene_packages("c", node, [scene], prelude=prelude)
+
+    assert merged.edges == [] and merged.close == []

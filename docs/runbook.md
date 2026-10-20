@@ -73,7 +73,7 @@ uv run python -c "from writory.config import Settings; from writory.db import co
 ```
 Test `-m graph` tự chạy migration trên database trong `POSTGRES_DSN`.
 
-Sau khi kéo code có migration mới thì chạy lệnh trên trước khi mở app. Ví dụ `0004_chapter_summaries` thêm bảng `chapter_summaries` (tóm tắt chương, D-49); chưa chạy thì viết chương báo `INTERNAL_ERROR` vì không đọc được bảng này. `bench_run` tự chạy migration.
+Sau khi kéo code có migration mới thì chạy lệnh trên trước khi mở app. Ví dụ `0004_chapter_summaries` thêm bảng `chapter_summaries` (tóm tắt chương, D-49); chưa chạy thì viết chương báo `INTERNAL_ERROR` vì không đọc được bảng này. `0005_llm_call_windows` thêm bảng đếm lời gọi model mỗi phút (D-56); chưa chạy thì mọi lời gọi model của API báo `INTERNAL_ERROR`. `bench_run` tự chạy migration.
 
 ## Ghi chương bị kẹt `pending`
 Chương ở lại `pending` khi Neo4j không trả lời hoặc tiến trình chết giữa chừng (D-6). Truyện đó không ghi được chương mới cho tới khi reconcile:

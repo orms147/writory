@@ -34,11 +34,11 @@ from writory.graph import ChangePackage, NodeSpec, PlayerView
 from writory.graph.context import WriterContext
 from writory.graph.schema import EDGE_TYPES, NAMED_LABELS
 from writory.guard import Severity, check_scene_package
-from writory.guard.state import OverlayState, player_view_of
+from writory.guard.state import GraphState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, reasoning_extra, require_model, role_extra
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.retry import RETRY_TRANSIENT, with_json_retries, with_retries
-from writory.pipeline.choices import Choice, make_choices
+from writory.pipeline.choices import Choice, choice_effects, make_choices
 from writory.pipeline.events import (
     ChapterCommitted,
     ChapterEvent,
@@ -90,6 +90,9 @@ class ChapterRequest:
     `safety.classify_action` + `ensure_in_story` (G5) trước khi tới đây. Chữ này và `story_brief`
     luôn được bọc như dữ liệu (G4). `story_brief` là chữ người chơi đã đọc lúc khởi tạo, nên bộ dò
     lộ của cảnh và của lựa chọn tính nó là chữ đã thấy (D-52).
+
+    `choice`: khi `player_action` đến từ một lựa chọn có sẵn (không phải ô tự viết), truyền cả lựa
+    chọn đó để lời nói dối và nội tâm của nó được ghi vào gói của chính chương này (D-55).
     """
 
     present_ids: tuple[str, ...]  # nhân vật có mặt đầu chương (nhân vật chính luôn được thêm)
@@ -98,6 +101,7 @@ class ChapterRequest:
     player_action: str | None = None
     writer_tier: str | None = None  # id trong `models.writer_tiers`; None = mức đầu
     commit_id: str | None = None  # None = tự sinh
+    choice: Choice | None = None  # lựa chọn dẫn tới chương này; tác động của nó vào gói (D-55)
 
 
 @dataclass(frozen=True)
@@ -173,14 +177,18 @@ def chapter_node(number: int) -> NodeSpec:
 
 
 def merge_scene_packages(
-    commit_id: str, node: NodeSpec, scene_packages: Sequence[ChangePackage]
+    commit_id: str, node: NodeSpec, scene_packages: Sequence[ChangePackage],
+    prelude: ChangePackage | None = None,
 ) -> ChangePackage:
     """Gói của chương = trạng thái cuối chương (graph-schema: "ở chương N" là cuối chương N).
     Cùng id cạnh ở nhiều cảnh: lấy bản của cảnh sau. Cảnh sau đóng cạnh do cảnh trước mở: cạnh
-    không vào gói (một cạnh không mở và đóng trong cùng chương, D-21)."""
+    không vào gói (một cạnh không mở và đóng trong cùng chương, D-21).
+
+    `prelude`: tác động của lựa chọn dẫn tới chương (D-55), coi như xảy ra trước cảnh 1: nút của
+    nó vào gói, cạnh và `close` của nó đi qua cùng phép gộp như một cảnh."""
     edges: dict[str, Any] = {}
     closes: dict[str, Any] = {}
-    for pkg in scene_packages:
+    for pkg in [*([prelude] if prelude else []), *scene_packages]:
         for c in pkg.close:
             if c.id in edges:
                 del edges[c.id]
@@ -188,8 +196,8 @@ def merge_scene_packages(
                 closes[c.id] = c
         for e in pkg.edges:
             edges[e.id] = e
-    return ChangePackage(commit_id=commit_id, nodes=[node], edges=list(edges.values()),
-                         close=list(closes.values()))
+    return ChangePackage(commit_id=commit_id, nodes=[node, *(prelude.nodes if prelude else [])],
+                         edges=list(edges.values()), close=list(closes.values()))
 
 
 def _prune(package: ChangePackage, flagged: set[str]) -> ChangePackage:
@@ -219,7 +227,8 @@ class _State(TypedDict, total=False):
     chapter: int
     commit_id: str
     protagonist: str
-    header: ChangePackage  # gói chỉ có nút Chapter, phủ trước các gói cảnh
+    header: ChangePackage  # nút Chapter + tác động của lựa chọn (prelude), phủ trước các gói cảnh
+    prelude: ChangePackage | None  # chỉ phần tác động của lựa chọn; None nếu không có gì để ghi
     catalogue: list[Entity]
     names: dict[str, Named]
     entity_names: list[str]  # tên, biệt danh của thực thể cho bộ kiểm lặp (D-51)
@@ -330,11 +339,17 @@ def _accepted_packages(state: _State) -> list[ChangePackage]:
     return [s.package for s in state.get("accepted", [])]
 
 
+def _earlier_packages(state: _State) -> list[ChangePackage]:
+    """Mọi gói đã có trước cảnh đang làm: phần mở đầu của chương (nút Chapter và tác động của
+    lựa chọn) rồi các cảnh đã nhận."""
+    return [state["header"], *_accepted_packages(state)]
+
+
 def _open_edges(state: _State) -> dict[str, OpenEdge]:
     """Cạnh đang hiệu lực trước cảnh này: nền đã commit, phủ các cảnh trước (cùng nghĩa với
     OverlayState: `close` trước, cạnh mới sau)."""
     open_edges = dict(state["base_edges"])
-    for pkg in _accepted_packages(state):
+    for pkg in _earlier_packages(state):
         for c in pkg.close:
             open_edges.pop(c.id, None)
         for e in pkg.edges:
@@ -344,7 +359,7 @@ def _open_edges(state: _State) -> dict[str, OpenEdge]:
 
 def _edge_ends(state: _State) -> dict[str, tuple[str, str, str]]:
     ends = {i: (o.type, o.source, o.target) for i, o in state["base_edges"].items()}
-    for pkg in _accepted_packages(state):
+    for pkg in _earlier_packages(state):
         ends |= {e.id: (e.type, e.source, e.target) for e in pkg.edges}
     return ends
 
@@ -382,6 +397,34 @@ def _candidates(ctx: WriterContext, protagonist: str) -> list[Candidate]:
 # --- các bước ----------------------------------------------------------------------------------
 
 
+def _choice_prelude(
+    choice: Choice | None, chapter: int, protagonist: str, base: GraphState,
+    base_edges: Mapping[str, OpenEdge],
+) -> ChangePackage | None:
+    """Tác động của lựa chọn dẫn tới chương này (D-55), đọc trên đồ thị đã commit tới chương trước.
+    Id không còn trong đồ thị là dữ liệu hỏng: dừng trước khi gọi model, không ghi nửa vời (G11).
+    Người nghe đã chết bị bỏ; không ai nghe được thì lời dối không ghi (ghi log, không chữ)."""
+    if choice is None:
+        return None
+    wanted = {protagonist, *choice.listeners, *choice.about}
+    missing = sorted(wanted - set(base.node_labels(sorted(wanted))))
+    if missing:
+        raise WritoryError(ErrorCode.INTERNAL_ERROR,
+                           detail=f"lựa chọn {choice.id} nhắc tới nút không có: {missing}")
+    dead = {i for i in choice.listeners if base.edges_at("DIED_IN", chapter, source_id=i)}
+    if dead:
+        log.warning("chương %s: lựa chọn %s: bỏ người nghe đã chết %s", chapter, choice.id,
+                    sorted(dead))
+    open_feels = {o.target: o.id for o in base_edges.values()
+                  if o.type == "FEELS" and o.source == protagonist}
+    prelude = choice_effects(choice, chapter=chapter, protagonist=protagonist, dead=dead,
+                             open_feels=open_feels)
+    if choice.lie is not None and not prelude.nodes:
+        log.warning("chương %s: lựa chọn %s: không ai còn sống để nghe lời dối, không ghi",
+                    chapter, choice.id)
+    return prelude if prelude.nodes or prelude.edges or prelude.close else None
+
+
 async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
     d = runtime.context
     _preflight(d)
@@ -406,6 +449,9 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
         for t in EDGE_TYPES for r in base.edges_at(t, chapter)
     }
     protagonist = base.protagonist_id()
+    prelude = _choice_prelude(d.request.choice, chapter, protagonist, base, base_edges)
+    if prelude is not None:
+        catalogue += [Entity.from_node(n.id, n.label, n.props) for n in prelude.nodes]
     # Tóm tắt các chương gần nhất (D-49). Thiếu thì chương vẫn chạy, chỉ ghi log và đếm.
     wanted = [c for c in range(chapter - SUMMARY_CHAPTERS, chapter) if c >= 1]
     found = d.store.summaries(wanted)
@@ -419,7 +465,10 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
         "chapter": chapter,
         "commit_id": d.request.commit_id or f"ch{chapter}-{uuid.uuid4().hex[:12]}",
         "protagonist": protagonist,
-        "header": ChangePackage(commit_id="header", nodes=[node]),
+        "header": ChangePackage(
+            commit_id="header", nodes=[node, *(prelude.nodes if prelude else [])],
+            edges=prelude.edges if prelude else [], close=prelude.close if prelude else []),
+        "prelude": prelude,
         "catalogue": catalogue,
         "names": {e.id: Named(e.text, e.user_authored) for e in catalogue},
         "entity_names": entity_names(catalogue, d.store.player_view(committed)),
@@ -438,7 +487,7 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
     d.llm.tracker.start_scene()
     # Mục tiêu đọc trên nền đã commit phủ các cảnh trước của chương: cảnh trước đã lộ hay đã gỡ
     # thì cảnh này không bị giục nữa (D-49).
-    before = OverlayState(d.store.state(), [state["header"], *_accepted_packages(state)])
+    before = OverlayState(d.store.state(), _earlier_packages(state))
     return {"context": _writer_context(d, state, state["present"]),
             "goals": chapter_goals(d.plan, state["chapter"], before)}
 
@@ -539,7 +588,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
 
     # 3. Người canh bằng code trên nền đã commit + gói các cảnh trước (D-23).
     base = d.store.state()
-    earlier = [state["header"], *_accepted_packages(state)]
+    earlier = _earlier_packages(state)
     guard = check_scene_package(chapter=chapter, current=result.package, earlier=earlier,
                                 committed=base, plan=d.plan, config=cfg.guard,
                                 last_scene=scene == d.request.scene_count)
@@ -616,7 +665,7 @@ async def _commit(state: _State, runtime: Runtime[_Deps]) -> dict:
     runtime.stream_writer(stage("commit"))
     accepted = state["accepted"]
     package = merge_scene_packages(state["commit_id"], state["header"].nodes[0],
-                                   [s.package for s in accepted])
+                                   [s.package for s in accepted], prelude=state["prelude"])
     d.store.commit(state["chapter"], [s.text for s in accepted], package)
     runtime.stream_writer(ChapterCommitted(chapter=state["chapter"]))
     return {"package": package, "committed": True}

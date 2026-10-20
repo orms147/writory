@@ -94,6 +94,14 @@ def get_session(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> SetupO
 # --- tạo lựa chọn (gọi model) --------------------------------------------------------------------
 
 
+def lock_setup(session_id: str, conn: deps.PgConn) -> Iterator[None]:
+    """Một phiên chỉ một lần gọi model cùng lúc, cho tạo lựa chọn từng bước lẫn chốt (G8, D-46,
+    D-56): lần thứ hai báo STORY_BUSY, không gọi model. Khoá nhả khi yêu cầu kết thúc, kể cả khi
+    lỗi."""
+    with job_lock(conn, "setup", session_id):
+        yield
+
+
 async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: AppConfig,
                    llm: deps.PlayerLLM) -> SetupOut:
     rec = get_setup(conn, session_id, owner_id=owner)
@@ -120,21 +128,24 @@ async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: A
     return SetupOut.from_record(rec)
 
 
-@router.post("/{session_id}/settings", response_model=SetupOut)
+@router.post("/{session_id}/settings", response_model=SetupOut,
+             dependencies=[Depends(lock_setup)])
 async def propose_setting_options(session_id: str, conn: deps.PgConn, owner: deps.Owner,
                                   config: deps.Config, llm: deps.PlayerLLMs) -> SetupOut:
     """3 bối cảnh mở (design §4.1 bước 4)."""
     return await _propose("settings", session_id, conn, owner, config, llm)
 
 
-@router.post("/{session_id}/plots", response_model=SetupOut)
+@router.post("/{session_id}/plots", response_model=SetupOut,
+             dependencies=[Depends(lock_setup)])
 async def propose_plot_options(session_id: str, conn: deps.PgConn, owner: deps.Owner,
                                config: deps.Config, llm: deps.PlayerLLMs) -> SetupOut:
     """3 hướng cốt truyện cho bối cảnh đã chọn (bước 5)."""
     return await _propose("plots", session_id, conn, owner, config, llm)
 
 
-@router.post("/{session_id}/characters", response_model=SetupOut)
+@router.post("/{session_id}/characters", response_model=SetupOut,
+             dependencies=[Depends(lock_setup)])
 async def propose_character_options(session_id: str, conn: deps.PgConn, owner: deps.Owner,
                                     config: deps.Config, llm: deps.PlayerLLMs) -> SetupOut:
     """3 nhân vật chính cho bối cảnh và hướng đã chọn (bước 6)."""
@@ -197,13 +208,6 @@ def _parts(rec: SetupRecord) -> tuple[StoryChoices, SettingOption, PlotOption, C
             SettingOption.model_validate(rec.chosen("settings")),
             PlotOption.model_validate(rec.chosen("plots")),
             CharacterOption.model_validate(rec.protagonist))
-
-
-def lock_setup(session_id: str, conn: deps.PgConn) -> Iterator[None]:
-    """Một phiên chỉ một lần chốt cùng lúc (G8, D-46): lần thứ hai báo STORY_BUSY, không gọi
-    model. Khoá nhả khi yêu cầu kết thúc, kể cả khi lỗi."""
-    with job_lock(conn, "setup", session_id):
-        yield
 
 
 @router.post("/{session_id}/finalize", response_model=SetupOut,
