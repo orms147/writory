@@ -39,6 +39,10 @@ class ErrorCode(StrEnum):
     ACTION_UNCLEAR = "ACTION_UNCLEAR"
     INTERNAL_ERROR = "INTERNAL_ERROR"
     SCENE_LEAK_BLOCKED = "SCENE_LEAK_BLOCKED"
+    NARRATOR_QUESTION_EMPTY = "NARRATOR_QUESTION_EMPTY"
+    NARRATOR_QUESTION_TOO_LONG = "NARRATOR_QUESTION_TOO_LONG"
+    NARRATOR_LIMIT_REACHED = "NARRATOR_LIMIT_REACHED"
+    WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
 
 
 @dataclass(frozen=True)
@@ -172,6 +176,25 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.SCENE_LEAK_BLOCKED: PlayerMessage(
         "Cảnh vừa viết không qua được bước kiểm tra cuối nên hệ thống không hiện nó.",
         "Bấm thử lại để viết lại cảnh này.",
+    ),
+    # Hỏi người kể (design §6.6, D-40). Câu trung tính: không nói gì về điều người chơi chưa biết.
+    ErrorCode.NARRATOR_QUESTION_EMPTY: PlayerMessage(
+        "Bạn chưa viết câu hỏi nào.",
+        "Viết điều bạn muốn hỏi người kể chuyện rồi gửi.",
+    ),
+    ErrorCode.NARRATOR_QUESTION_TOO_LONG: PlayerMessage(
+        "Câu hỏi bạn viết dài hơn mức cho phép.",
+        "Rút gọn câu hỏi rồi gửi lại.",
+    ),
+    ErrorCode.NARRATOR_LIMIT_REACHED: PlayerMessage(
+        "Bạn đã dùng hết số câu hỏi người kể chuyện cho chương này.",
+        "Đọc tiếp sang chương sau để hỏi thêm.",
+    ),
+    # Giới hạn tần suất của chính WriTory (G8, limits.rate_limit.llm_calls_per_minute_per_user),
+    # khác LLM_RATE_LIMITED là giới hạn của OpenRouter với key người chơi.
+    ErrorCode.WRITORY_RATE_LIMITED: PlayerMessage(
+        "Bạn đang gửi yêu cầu nhanh hơn mức WriTory cho phép.",
+        "Đợi khoảng một phút rồi thử lại.",
     ),
 }
 

@@ -23,6 +23,13 @@ curl http://127.0.0.1:8000/health   # {"neo4j": "ok"|"down", "postgres": "ok"|"d
 ```
 App tạo bằng factory (`--factory`), nên import `writory.api` không cần biến môi trường.
 
+Sổ tay và hỏi người kể (`/stories/...`) chưa có đăng nhập, nên chưa kiểm được truyện thuộc ai (G10). Router này chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ bật trên máy dev, không bật trên máy chủ thật:
+```bash
+ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
+curl http://127.0.0.1:8000/stories/<story_id>/notebook
+```
+`POST /stories/<story_id>/narrator` chưa trả lời được ở máy: chưa có nơi lưu key người chơi và `story_plan`, nên nó báo lỗi thay vì gọi model (D-41). Các trần của nó trong `config/limits.yaml` cũng đang `null`.
+
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.
 
@@ -62,6 +69,7 @@ Danh sách đầy đủ: `.env.example`. Không commit `.env`.
   uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
   ```
   Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại.
+- `ENABLE_DEV_ROUTES` (mặc định `false`): gắn router chưa có đăng nhập (sổ tay, hỏi người kể; D-41). Chỉ bật trên máy dev.
 - Cấu hình runtime nằm trong `config/*.yaml`, được nạp và kiểm schema bằng `writory.config.load_config()`. Giá trị `null` nghĩa là chưa đặt; code nào cần giá trị đó sẽ báo lỗi.
 
 ## Deploy

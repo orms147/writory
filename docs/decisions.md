@@ -280,3 +280,26 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** F1 0,78 trên 5 chương mẫu, dữ liệu nhỏ và prompt đã chỉnh theo chính bộ này, nên con số có thể lạc quan. Cần đo lại khi có bài C đầy đủ và truyện thứ hai. Các vai khác chưa chọn.
 - **Người quyết:** Claude (điều phối), theo kết quả đo; chủ dự án đồng ý cách chọn · 20/10/2026
 
+## D-40 · Hỏi người kể: context chỉ từ `player_view`, mã công khai thay id, không biết thì một câu
+- **Bối cảnh:** design §6.6 và G1/G2/G4/G8. `PlayerEntry.id` là id lớp truth, có thể lộ bí mật: ở chương 4 truyện mẫu, mục "gã lái đò mặt sẹo" có id `ly_that`.
+- **Quyết định:**
+  - `pipeline.narrator.ask_narrator` dựng context chỉ từ `PlayerView`. Mục mang mã `m1`…, lời nói dối mang `l1`… (`graph.public_entries`/`public_lies`, xếp theo chương, loại, chữ hiện, không theo id). Sổ tay API dùng cùng mã.
+  - Câu hỏi vào khối `player_data`; cả sổ tay cũng vậy, vì `PlayerEntry` không mang cờ `user_authored`.
+  - Đầu ra `NarratorOutput` (`known`, `answer`, `entry_ids`, đều bắt buộc). `known` sai, câu rỗng, `entry_ids` rỗng hoặc có mã ngoài sổ tay, hoặc `check_leaks` trúng → đúng câu "Bạn chưa biết điều này.". Log chỉ ghi số mã, loại và vị trí.
+  - Gọi model bắt buộc qua `MeteredClient`; thử lại `extract_schema_retry` lồng trong `llm_transient` (D-14).
+  - Trần `rate_limit.narrator_questions_per_chapter` và `input.narrator_question_max_chars` (mới), đều `null` tới khi chủ dự án đặt. Lượt giữ trong Postgres (`narrator_questions`) bằng một câu lệnh, trước khi gọi model, không trả lại khi lỗi. Câu hỏi rỗng, quá dài, hoặc sổ tay trống: không mất lượt, không gọi model.
+  - Mã mới: `NARRATOR_QUESTION_EMPTY`, `NARRATOR_QUESTION_TOO_LONG` (422), `NARRATOR_LIMIT_REACHED` (429).
+- **Hệ quả:** câu trả "Bạn chưa biết điều này." vẫn tính một lượt. Sổ tay không qua bộ dò lộ: chữ của nó chính là định nghĩa "người chơi đã thấy". Chưa có trần độ dài câu trả lời hay token đầu ra.
+- **Người quyết:** điều phối (yêu cầu); mã công khai, cách đếm lượt: Claude (Session narrator) · 20/10/2026
+
+## D-41 · Router `stories` chỉ mount khi bật cờ dev; dependency mặc định fail closed
+- **Bối cảnh:** sổ tay và hỏi người kể cần API trước khi có đăng nhập (tuần 5), nên chưa kiểm được truyện thuộc ai (G10).
+- **Quyết định:**
+  - `Settings.enable_dev_routes` (`ENABLE_DEV_ROUTES`), mặc định `False`. `create_app` chỉ gắn router khi cờ bật; mỗi route còn kiểm `app.state.dev_routes_enabled`, nên gắn router vào app khác vẫn 404.
+  - `GET /stories/{story_id}/notebook` → `NotebookOut` (danh sách trắng, mã công khai, D-40), đọc qua `committed_player_view`. `POST /stories/{story_id}/narrator` nhận `{question}`, trả `{answer}`.
+  - Dependency nằm trong `api/deps.py`; test thay bằng `dependency_overrides`. Chưa có nơi lưu key người chơi → LLM mặc định báo `PLAYER_KEY_MISSING`, không bao giờ dùng key chủ dự án. Chưa có nơi lưu `story_plan` → lỗi, không trả lời.
+  - `create_app` đọc `Settings()` và `load_config()` lúc gọi factory (trước đây `Settings()` đọc trong lifespan).
+  - Thêm mã `WRITORY_RATE_LIMITED` (429) cho trần mỗi phút của WriTory (G8); chưa có bộ đếm vì chưa có tài khoản.
+- **Hệ quả:** máy chủ thật không có router này tới khi có đăng nhập và kiểm quyền (TODO G10 trong `api/stories.py`). Chi phí hỏi người kể chưa cộng vào trần truyện, vì chưa có nhật ký chi phí.
+- **Người quyết:** điều phối (yêu cầu cờ dev, fail closed); cách làm: Claude (Session narrator) · 20/10/2026
+

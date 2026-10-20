@@ -1,6 +1,7 @@
 """App FastAPI (D-29). Chạy dev: docs/runbook.md.
 
 Tạo app bằng factory `create_app`, không tạo lúc import, để import không cần biến môi trường.
+Router `stories` (sổ tay, hỏi người kể) chỉ mount khi `enable_dev_routes` bật (D-41).
 """
 
 import asyncio
@@ -14,7 +15,8 @@ from fastapi.responses import JSONResponse
 from neo4j import GraphDatabase
 
 from writory.api.errors import install_error_handlers
-from writory.config import Settings
+from writory.api.stories import router as stories_router
+from writory.config import AppConfig, Settings, load_config
 from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
@@ -56,7 +58,12 @@ def create_app(
     settings: Settings | None = None,
     *,
     health_checks: dict[str, HealthCheck] | None = None,
+    config: AppConfig | None = None,
 ) -> FastAPI:
+    # Đọc biến môi trường và config/ lúc gọi factory (uvicorn --factory), không lúc import.
+    settings = settings if settings is not None else Settings()
+    config = config if config is not None else load_config()
+
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         for name in ("", *UVICORN_LOGGERS):
@@ -66,7 +73,7 @@ def create_app(
         app.state.health_checks = (
             health_checks
             if health_checks is not None
-            else _default_health_checks(app, settings or Settings())
+            else _default_health_checks(app, settings)
         )
         try:
             yield
@@ -77,6 +84,12 @@ def create_app(
 
     app = FastAPI(title="WriTory", lifespan=lifespan)
     install_error_handlers(app)
+    app.state.settings = settings
+    app.state.config = config
+    # D-41: router chưa có đăng nhập chỉ mount khi bật cờ dev; mặc định tắt (fail closed).
+    app.state.dev_routes_enabled = settings.enable_dev_routes is True
+    if app.state.dev_routes_enabled:
+        app.include_router(stories_router)
 
     @app.get("/health")
     async def health() -> JSONResponse:

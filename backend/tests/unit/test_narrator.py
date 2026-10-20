@@ -1,0 +1,480 @@
+"""Hỏi người kể (design §6.6, D-40). Test bằng FakeLLM, không mạng.
+
+G1: context model nhận chỉ dựng từ player_view, không có id lớp truth.
+G2: câu trả lời qua bộ dò lộ. G4: câu hỏi nằm trong khối player_data.
+G8: lời gọi qua MeteredClient, giới hạn số câu hỏi mỗi chương. G12: mã lỗi riêng.
+"""
+
+import html
+import json
+import logging
+import re
+import unicodedata
+from collections import Counter
+
+import pytest
+import yaml
+
+from writory.config import REPO_ROOT, AppConfig, CostLimits, load_config
+from writory.errors import ErrorCode, WritoryError
+from writory.graph import (
+    KnownRecord,
+    PlayerView,
+    build_player_view,
+    public_entries,
+    public_lies,
+    read_sample,
+)
+from writory.guard.state import EmptyState, OverlayState, player_view_of
+from writory.llm.cost import CostTracker, MeteredClient
+from writory.llm.fake import FakeLLM, render_context
+from writory.pipeline.narrator import NOT_KNOWN, NarratorOutput, ask_narrator
+from writory.pipeline.story_plan import StoryPlan
+from writory.safety.leak import check_leaks, strip_diacritics
+from writory.safety.wrap import CLOSE_TAG
+
+SAMPLE = read_sample()
+STORY = "s-narrator"
+PLAN = StoryPlan.model_validate({
+    "acts": [{"name": "mở đầu", "from_chapter": 1, "to_chapter": 12}],
+    "secrets": [
+        {"fact_id": "f_gu_old_hac_ky", "reveal_from_chapter": 2, "reveal_to_chapter": 3,
+         "leak_terms": [["Lão Gù", "Hội Hắc Kỳ"]]},
+        {"fact_id": "f_lan_spy", "reveal_from_chapter": 5, "reveal_to_chapter": 6,
+         "leak_terms": [["Lan", "gián điệp"], ["Lan", "người của Hội Hắc Kỳ"]]},
+        {"fact_id": "f_lan_killed_gu", "reveal_from_chapter": 7, "reveal_to_chapter": 9,
+         "leak_terms": [["Lan", "giết", "Lão Gù"]]},
+    ],
+})
+REDTEAM = yaml.safe_load(
+    (REPO_ROOT / "evals" / "redteam" / "g4_prompt_injection.yaml").read_text(encoding="utf-8")
+)["cases"]
+OPEN_RE = re.compile(r'<player_data source="[a-z_]+">')
+
+REPO = load_config()
+CFG = REPO.model_copy(update={
+    "limits": REPO.limits.model_copy(update={
+        "input": REPO.limits.input.model_copy(update={"narrator_question_max_chars": 300}),
+        "rate_limit": REPO.limits.rate_limit.model_copy(
+            update={"narrator_questions_per_chapter": 3}
+        ),
+    }),
+    "models": REPO.models.model_copy(update={
+        "roles": REPO.models.roles.model_copy(update={"narrator": "test/narrator"}),
+    }),
+})
+
+
+def with_limits(**changes) -> AppConfig:
+    """CFG với vài giá trị đổi; khoá dạng `<phần>__<tên>`: input, rate_limit, roles, reasoning."""
+    cfg = CFG
+    for key, value in changes.items():
+        section, name = key.split("__")
+        if section == "roles":
+            roles = cfg.models.roles.model_copy(update={name: value})
+            cfg = cfg.model_copy(update={"models": cfg.models.model_copy(update={"roles": roles})})
+        elif section == "reasoning":
+            rr = cfg.models.role_reasoning.model_copy(update={name: value})
+            cfg = cfg.model_copy(
+                update={"models": cfg.models.model_copy(update={"role_reasoning": rr})}
+            )
+        else:
+            part = getattr(cfg.limits, section).model_copy(update={name: value})
+            cfg = cfg.model_copy(update={"limits": cfg.limits.model_copy(update={section: part})})
+    return cfg
+
+
+def state(chapter: int) -> OverlayState:
+    return OverlayState(EmptyState(), [c.package for c in SAMPLE.chapters if c.number <= chapter])
+
+
+def view(chapter: int) -> PlayerView:
+    return player_view_of(state(chapter), chapter, story_id=STORY)
+
+
+def ref(v: PlayerView, truth_id: str) -> str:
+    refs = {e.id: r for r, e in public_entries(v)} | {lie.id: r for r, lie in public_lies(v)}
+    return refs[truth_id]
+
+
+class MemoryQuota:
+    """Bộ đếm trong bộ nhớ, cùng giao thức với bộ đếm Postgres."""
+
+    def __init__(self) -> None:
+        self.taken: Counter = Counter()
+
+    async def take(self, story_id: str, chapter: int, limit: int) -> bool:
+        if self.taken[(story_id, chapter)] >= limit:
+            return False
+        self.taken[(story_id, chapter)] += 1
+        return True
+
+
+def metered(fake: FakeLLM, cap: float = 1.0) -> MeteredClient:
+    return MeteredClient(fake, CostTracker(CostLimits(per_scene=cap, per_chapter=cap,
+                                                      per_story=cap)))
+
+
+def reply(known: bool, answer: str | None, ids: list[str]) -> str:
+    return json.dumps({"known": known, "answer": answer, "entry_ids": ids}, ensure_ascii=False)
+
+
+async def ask(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN) -> str:
+    if isinstance(llm, FakeLLM):
+        llm = metered(llm)
+    return await ask_narrator(
+        question, view(chapter), llm=llm, config=config,
+        truth_names=state(chapter).named_nodes(), plan=plan,
+        quota=quota if quota is not None else MemoryQuota(),
+    )
+
+
+def flat(text: str) -> str:
+    return strip_diacritics(unicodedata.normalize("NFC", text)).casefold()
+
+
+# --- luồng ----------------------------------------------------------------------------------
+
+
+async def test_answer_from_notebook_is_returned():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
+    assert await ask("Lão Gù chết ở đâu?", 3, fake) == "Lão Gù chết sau miếu Bà."
+    assert fake.schemas == [NarratorOutput]
+    assert fake.extras == [None]
+
+
+async def test_answer_about_a_lie_the_protagonist_told():
+    v = view(3)
+    fake = FakeLLM.scripted([
+        reply(True, "Minh đã nói với Trần Văn Khải rằng đêm đó anh ở nhà.",
+              [ref(v, "l_home_night")]),
+    ])
+    answer = await ask("Tôi đã nói gì với cai Khải?", 3, fake)
+    assert answer.startswith("Minh đã nói")
+
+
+async def test_answer_dashes_are_normalized_like_scene_text():
+    """D-31: mọi chữ hiện cho người chơi dùng cùng dấu gạch."""
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù — người thợ rèn — đã chết.",
+                                   [ref(v, "e_gu_death")])])
+    assert await ask("Lão Gù sao rồi?", 3, fake) == "Lão Gù - người thợ rèn - đã chết."
+
+
+async def test_role_reasoning_is_passed_when_set():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Ở miếu Bà.", [ref(v, "mieu_ba")])])
+    await ask("Ở đâu?", 3, fake, config=with_limits(reasoning__narrator="low"))
+    assert fake.extras == [{"reasoning": {"effort": "low"}}]
+
+
+# --- "Bạn chưa biết điều này." (design §6.6) ------------------------------------------------
+
+
+def test_not_known_text_is_exactly_the_design_sentence():
+    assert NOT_KNOWN == "Bạn chưa biết điều này."
+
+
+@pytest.mark.parametrize("output", [
+    reply(False, None, []),
+    reply(False, "Lan là gián điệp.", []),  # known=false: bỏ answer, kể cả khi model có viết
+    reply(True, "Có.", []),  # không dựa vào mục nào
+    reply(True, None, ["m1"]),
+    reply(True, "   ", ["m1"]),
+    reply(True, "Có.", ["m999"]),  # mã bịa
+    reply(True, "Có.", ["m1", "f_lan_spy"]),  # id lớp truth, không phải mã của sổ tay
+    reply(True, "Có.", ["ly_that"]),
+], ids=["known-false", "known-false-with-answer", "no-entries", "null-answer", "blank-answer",
+        "made-up-ref", "truth-id-mixed", "truth-id"])
+async def test_unknown_or_unsupported_answers_become_not_known(output):
+    assert await ask("Lan là ai?", 4, FakeLLM.scripted([output])) == NOT_KNOWN
+
+
+async def test_empty_notebook_answers_not_known_without_calling_model():
+    fake = FakeLLM.scripted([])
+    quota = MemoryQuota()
+    assert await ask("Tôi là ai?", 0, fake, quota=quota) == NOT_KNOWN
+    assert fake.calls == []
+    assert sum(quota.taken.values()) == 0
+
+
+# --- G2: câu trả lời qua bộ dò lộ ------------------------------------------------------------
+
+
+@pytest.mark.parametrize(("chapter", "answer"), [
+    (4, "Gã lái đò mặt sẹo tên thật là Lý Thất."),
+    (4, "Gã lái đò mặt sẹo tên thật là Ly That."),
+    (4, "Lan là gián điệp của Hội Hắc Kỳ."),
+    (4, "Lan là người của Hội Hắc Kỳ."),
+    (5, "Chính Lan giết Lão Gù."),
+])
+async def test_answer_that_leaks_a_secret_becomes_not_known(chapter, answer, caplog):
+    v = view(chapter)
+    fake = FakeLLM.scripted([reply(True, answer, [ref(v, "lan")])])
+    with caplog.at_level(logging.DEBUG, logger="writory.pipeline.narrator"):
+        assert await ask("Lan là ai?", chapter, fake) == NOT_KNOWN
+    assert caplog.records, "chặn câu trả lời phải ghi log"
+    logged = flat(caplog.text)
+    for secret in ("ly that", "gian diep", "nguoi cua hoi", "giet", flat(answer)):
+        assert secret not in logged  # log chỉ ghi loại và vị trí, không ghi chữ bị lộ
+
+
+async def test_real_name_after_its_reveal_is_answered():
+    v = view(5)
+    fake = FakeLLM.scripted([reply(True, "Gã lái đò mặt sẹo tên là Lý Thất.",
+                                   [ref(v, "ly_that")])])
+    assert await ask("Gã lái đò là ai?", 5, fake) == "Gã lái đò mặt sẹo tên là Lý Thất."
+
+
+# --- G1: context model nhận chỉ có player_view -----------------------------------------------
+
+ALL_NODES = {n.id: n for c in SAMPLE.chapters for n in c.package.nodes}
+_TEXT = {"Fact": "text", "Event": "description", "Lie": "content"}
+
+
+async def _context(chapter: int) -> str:
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    await ask("Kể cho tôi mọi điều về Lan và gã lái đò.", chapter, fake)
+    [messages] = fake.calls
+    return render_context(messages)
+
+
+def test_sample_has_the_secrets_these_tests_guard():
+    """Điều kiện trước, để các test G1 bên dưới không xanh vô nghĩa: ở chương 4 truyện mẫu có
+    nút trong player_view mà id và tên lớp truth đều lộ bí mật, và bộ dò bắt được chúng."""
+    v4 = view(4)
+    assert "ly_that" in {e.id for e in v4.entries}  # id lộ tên thật nếu đưa vào context
+    assert "Lý Thất" in state(4).named_nodes()["ly_that"]
+    assert "Lý Thất" not in {e.text for e in v4.entries}
+    assert not {"f_lan_spy", "e_sword_stolen"} & {e.id for e in v4.entries}
+    hidden = [ALL_NODES["f_lan_spy"].props["text"], ALL_NODES["f_lan_killed_gu"].props["text"],
+              "Gã lái đò mặt sẹo là Lý Thất."]
+    for text in hidden:
+        assert check_leaks(text, view=v4, truth_names=state(4).named_nodes(), plan=PLAN), text
+
+
+@pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
+async def test_context_has_no_unrevealed_secret(chapter):
+    ctx = await _context(chapter)
+    f = flat(ctx)
+    assert "lan giet lao gu" not in f
+    if chapter <= 4:
+        assert "ly that" not in f
+        assert "lan la gian diep" not in f
+        assert "lan la nguoi cua hoi" not in f
+
+
+@pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
+async def test_context_passes_the_leak_detector(chapter):
+    """Mọi tên lớp truth chưa thấy và mọi bí mật chưa tới khoảng lộ: không có trong context."""
+    ctx = await _context(chapter)
+    assert check_leaks(ctx, view=view(chapter), truth_names=state(chapter).named_nodes(),
+                       plan=PLAN) == []
+
+
+@pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
+async def test_context_has_no_text_of_nodes_outside_player_view(chapter):
+    ctx = unicodedata.normalize("NFC", await _context(chapter))
+    shown = {e.id for e in view(chapter).entries} | {lie.id for lie in view(chapter).lies}
+    for nid, node in ALL_NODES.items():
+        text = node.props.get(_TEXT.get(node.label, ""), "")
+        if text and nid not in shown:
+            assert html.escape(text, quote=False) not in ctx, nid
+            assert text not in ctx, nid
+
+
+@pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
+async def test_context_never_contains_truth_ids(chapter):
+    """Id lớp truth có thể chứa tên thật (`ly_that` của "gã lái đò mặt sẹo"): model chỉ thấy mã
+    công khai m1, l1, ..."""
+    ctx = await _context(chapter)
+    for nid in ALL_NODES:
+        if "_" in nid:
+            assert nid not in ctx, nid
+
+
+async def test_echo_answer_returned_to_player_has_no_secret():
+    """Chế độ echo cho vai trả JSON: model trả nguyên context làm câu trả lời. Chữ người chơi
+    nhận không được chứa bí mật nào."""
+    v = view(4)
+
+    class EchoJSON(FakeLLM):
+        def _next(self, messages):
+            return reply(True, super()._next(messages), [ref(v, "lan")])
+
+    answer = await ask("Lan là ai?", 4, EchoJSON(None))
+    assert answer != NOT_KNOWN  # echo sạch nên được trả về...
+    f = flat(answer)
+    for secret in ("ly that", "ly_that", "lan la gian diep", "lan giet lao gu"):
+        assert secret not in f  # ...và không chứa bí mật
+
+
+def test_public_refs_do_not_depend_on_truth_ids():
+    """Hai nút cùng chương: mã công khai theo chữ hiện, không theo id lớp truth."""
+
+    def rec(nid: str, known_as: str) -> KnownRecord:
+        return KnownRecord(nid, ("Character",), {}, f"r-{nid}", 1, known_as, known_as)
+
+    a = build_player_view("s", 1, [rec("aaa", "Bình"), rec("zzz", "An")], [], [])
+    b = build_player_view("s", 1, [rec("zzz", "Bình"), rec("aaa", "An")], [], [])
+    assert [(r, e.text) for r, e in public_entries(a)] == [("m1", "An"), ("m2", "Bình")]
+    assert [(r, e.text) for r, e in public_entries(a)] == [(r, e.text)
+                                                           for r, e in public_entries(b)]
+
+
+# --- G4: câu hỏi là dữ liệu -------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("case", REDTEAM, ids=[c["id"] for c in REDTEAM])
+async def test_question_is_wrapped_and_never_in_system(case):
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    await ask(case["text"], 3, fake)
+    [messages] = fake.calls
+    system = [m.content for m in messages if m.role == "system"]
+    [user] = [m.content for m in messages if m.role == "user"]
+    assert system and all("<player_data" not in s for s in system)
+    assert all(case["text"].strip() not in s for s in system)
+    opener = '<player_data source="narrator_question">'
+    assert user.count(opener) == 1
+    inner = user.split(opener, 1)[1].split(CLOSE_TAG, 1)[0]
+    assert html.unescape(inner.strip("\n")) == case["text"]
+    # Câu tấn công không đóng được khối: chỉ có đúng hai khối (sổ tay, câu hỏi).
+    assert len(OPEN_RE.findall(user)) == 2
+    assert user.count(CLOSE_TAG) == 2
+
+
+async def test_notebook_is_also_wrapped_as_data():
+    """PlayerEntry không mang cờ user_authored, nên cả sổ tay đi vào khối dữ liệu (D-40)."""
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    await ask("Lan là ai?", 3, fake)
+    [messages] = fake.calls
+    [user] = [m.content for m in messages if m.role == "user"]
+    notebook = user.split('<player_data source="notebook">', 1)[1].split(CLOSE_TAG, 1)[0]
+    assert "Phạm Thị Lan" in notebook
+    assert "Phạm Thị Lan" not in user.replace(notebook, "")
+
+
+# --- G8: giới hạn và chi phí -------------------------------------------------------------------
+
+
+async def test_questions_per_chapter_are_limited():
+    v = view(3)
+    quota = MemoryQuota()
+    fake = FakeLLM.scripted([reply(True, "Ở miếu Bà.", [ref(v, "mieu_ba")])] * 3)
+    for _ in range(3):
+        await ask("Lão Gù chết ở đâu?", 3, fake, quota=quota)
+    with pytest.raises(WritoryError) as exc:
+        await ask("Thêm một câu?", 3, fake, quota=quota)
+    assert exc.value.code is ErrorCode.NARRATOR_LIMIT_REACHED
+    assert len(fake.calls) == 3  # hết lượt thì không gọi model
+
+
+async def test_limit_counts_per_chapter():
+    quota = MemoryQuota()
+    cfg = with_limits(rate_limit__narrator_questions_per_chapter=1)
+    await ask("Câu một?", 3, FakeLLM.scripted([reply(False, None, [])]), quota=quota, config=cfg)
+    with pytest.raises(WritoryError):
+        await ask("Câu hai?", 3, FakeLLM.scripted([]), quota=quota, config=cfg)
+    assert await ask("Chương mới?", 4, FakeLLM.scripted([reply(False, None, [])]),
+                     quota=quota, config=cfg) == NOT_KNOWN
+
+
+async def test_zero_questions_allowed_means_none():
+    fake = FakeLLM.scripted([])
+    with pytest.raises(WritoryError) as exc:
+        await ask("Lan là ai?", 3, fake,
+                  config=with_limits(rate_limit__narrator_questions_per_chapter=0))
+    assert exc.value.code is ErrorCode.NARRATOR_LIMIT_REACHED
+    assert fake.calls == []
+
+
+@pytest.mark.parametrize(("change", "code"), [
+    ({"rate_limit__narrator_questions_per_chapter": None}, ErrorCode.CONFIG_LIMIT_NOT_SET),
+    ({"input__narrator_question_max_chars": None}, ErrorCode.CONFIG_LIMIT_NOT_SET),
+    ({"roles__narrator": None}, ErrorCode.CONFIG_MODEL_NOT_SET),
+])
+async def test_unset_config_fails_closed_before_anything(change, code):
+    fake, quota = FakeLLM.scripted([]), MemoryQuota()
+    with pytest.raises(WritoryError) as exc:
+        await ask("Lan là ai?", 3, fake, quota=quota, config=with_limits(**change))
+    assert exc.value.code is code
+    assert fake.calls == [] and sum(quota.taken.values()) == 0
+
+
+async def test_repo_config_is_not_set_yet_so_narrator_is_off():
+    """Số liệu chưa đặt trong config/ thật: người kể dừng, không đoán giới hạn hay model."""
+    if REPO.models.roles.narrator is not None:
+        pytest.skip("config thật đã chọn model cho vai narrator")
+    with pytest.raises(WritoryError) as exc:
+        await ask("Lan là ai?", 3, FakeLLM.scripted([]), config=REPO)
+    assert exc.value.code in {ErrorCode.CONFIG_LIMIT_NOT_SET, ErrorCode.CONFIG_MODEL_NOT_SET}
+
+
+@pytest.mark.parametrize(("question", "code"), [
+    ("", ErrorCode.NARRATOR_QUESTION_EMPTY),
+    ("   \n ", ErrorCode.NARRATOR_QUESTION_EMPTY),
+    ("a" * 301, ErrorCode.NARRATOR_QUESTION_TOO_LONG),
+])
+async def test_bad_question_is_rejected_without_using_a_turn(question, code):
+    fake, quota = FakeLLM.scripted([]), MemoryQuota()
+    with pytest.raises(WritoryError) as exc:
+        await ask(question, 3, fake, quota=quota)
+    assert exc.value.code is code
+    assert fake.calls == [] and sum(quota.taken.values()) == 0
+
+
+async def test_question_at_max_length_is_accepted():
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    assert await ask("a" * 300, 3, fake) == NOT_KNOWN
+
+
+async def test_model_call_must_be_metered():
+    with pytest.raises(TypeError):
+        await ask_narrator("Lan là ai?", view(3), llm=FakeLLM.scripted([]), config=CFG,
+                           truth_names={}, plan=PLAN, quota=MemoryQuota())
+
+
+async def test_cost_is_recorded_and_cap_stops_before_calling():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Ở miếu Bà.", [ref(v, "mieu_ba")])], cost_usd=0.4)
+    llm = metered(fake, cap=0.4)
+    await ask("Ở đâu?", 3, llm)
+    assert llm.tracker.story_usd == pytest.approx(0.4)
+    with pytest.raises(WritoryError) as exc:
+        await ask("Ở đâu nữa?", 3, llm)
+    assert exc.value.code in {ErrorCode.COST_LIMIT_SCENE, ErrorCode.COST_LIMIT_CHAPTER,
+                              ErrorCode.COST_LIMIT_STORY}
+    assert len(fake.calls) == 1
+
+
+async def test_bad_json_is_retried_then_fails_closed():
+    """G11: JSON sai schema thử lại theo extract_schema_retry, vẫn sai thì báo lỗi, không đoán."""
+    n = CFG.limits.retries.extract_schema_retry + 1
+    fake = FakeLLM.scripted(["không phải JSON"] * n)
+    with pytest.raises(WritoryError) as exc:
+        await ask("Lan là ai?", 3, fake)
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED
+    assert len(fake.calls) == n
+
+
+async def test_extra_field_in_output_is_a_schema_error():
+    good = reply(False, None, [])
+    bad = json.dumps({"known": False, "answer": None, "entry_ids": [], "secret": "x"})
+    fake = FakeLLM.scripted([bad, good])
+    assert await ask("Lan là ai?", 3, fake) == NOT_KNOWN
+    assert len(fake.calls) == 2
+
+
+async def test_transient_error_is_retried_within_limit():
+    fake = FakeLLM.scripted([WritoryError(ErrorCode.LLM_UNAVAILABLE), reply(False, None, [])])
+    assert await ask("Lan là ai?", 3, fake) == NOT_KNOWN
+    assert len(fake.calls) == 2
+
+
+async def test_rate_limit_from_provider_is_not_retried():
+    fake = FakeLLM.scripted([WritoryError(ErrorCode.LLM_RATE_LIMITED)])
+    with pytest.raises(WritoryError) as exc:
+        await ask("Lan là ai?", 3, fake)
+    assert exc.value.code is ErrorCode.LLM_RATE_LIMITED
+    assert len(fake.calls) == 1

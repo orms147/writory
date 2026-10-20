@@ -38,10 +38,11 @@ Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
 
 | Mã | Code | Test |
 |---|---|---|
-| G4 | `backend/src/writory/safety/wrap.py` (D-12) | `tests/unit/test_safety_wrap.py`, chạy trên bộ câu `evals/redteam/g4_prompt_injection.yaml` |
+| G1 | Hỏi người kể: `pipeline/narrator.py` (context chỉ từ `PlayerView`, mã công khai `graph.public_entries`/`public_lies` thay id lớp truth, D-40). Sổ tay: `api/schemas.py` (`NotebookOut`, danh sách trắng), `api/stories.py` (D-41) | `tests/unit/test_narrator.py` (context trong `FakeLLM.calls` ở mọi chương truyện mẫu, echo JSON), `test_api_stories.py`, `tests/graph/test_notebook_api.py` |
+| G4 | `backend/src/writory/safety/wrap.py` (D-12); câu hỏi người kể và sổ tay đi vào khối `player_data` (D-40) | `tests/unit/test_safety_wrap.py`, chạy trên bộ câu `evals/redteam/g4_prompt_injection.yaml`; `test_narrator.py::test_question_is_wrapped_and_never_in_system` trên cùng bộ câu |
 | G7 | `safety/crypto.py` (D-11), `safety/redact.py` (bộ lọc log, gắn bằng `install_log_redaction`; app gắn cho root và logger `uvicorn*` lúc khởi động, D-29); `Settings`/`BenchKeys` đặt `hide_input_in_errors` để lỗi cấu hình không in giá trị đầu vào | `tests/unit/test_safety_keys.py`, `test_llm_openrouter.py::test_key_never_appears_in_error_even_if_server_echoes_it`, `test_config.py::test_settings_validation_error_never_echoes_secret_values` |
-| G2 | `safety/leak.py` (`check_leaks`, `ensure_no_leak`, D-26); tên lớp truth qua `graph.named_nodes` | `tests/unit/test_leak.py` |
-| G8 | `llm/cost.py` (`CostTracker`, `MeteredClient`) (D-10), `llm/retry.py` (D-14) | `tests/unit/test_llm_cost.py`, `test_llm_retry.py` |
+| G2 | `safety/leak.py` (`check_leaks`, `ensure_no_leak`, D-26); tên lớp truth qua `graph.named_nodes`. Câu trả lời người kể trúng thì thành "Bạn chưa biết điều này." (`pipeline/narrator.py`, D-40) | `tests/unit/test_leak.py`, `test_narrator.py` |
+| G8 | `llm/cost.py` (`CostTracker`, `MeteredClient`) (D-10), `llm/retry.py` (D-14); hỏi người kể bắt buộc qua `MeteredClient`, số câu mỗi chương đếm trong Postgres (`db/narrator.py`, D-40) | `tests/unit/test_llm_cost.py`, `test_llm_retry.py`, `test_narrator.py`, `tests/graph/test_notebook_api.py` |
 | G5 | `safety/classify.py` (`classify_action`, `ensure_in_story`, D-27) | `tests/unit/test_classify.py` |
 | G12 | `backend/src/writory/errors.py`; `api/errors.py` (bảng `HTTP_STATUS`, lỗi lạ → `INTERNAL_ERROR`, D-29) | `tests/unit/test_errors.py`, `test_api.py` |
 
@@ -53,6 +54,8 @@ Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, 
 - Mỗi lỗi bảo mật tìm được thêm thành một test hồi quy trước khi sửa.
 
 ## Chưa giải quyết
+- G10 ở API: chưa kiểm truyện thuộc người đang đăng nhập (chưa có đăng nhập). Router `stories` chỉ mount khi bật `ENABLE_DEV_ROUTES` (D-41); TODO trong `api/stories.py`.
+- G8: chưa có bộ đếm `rate_limit.llm_calls_per_minute_per_user` (mã `WRITORY_RATE_LIMITED` đã có, D-41). Chi phí hỏi người kể chưa cộng vào trần truyện vì chưa có nhật ký chi phí.
 - Nghị định 147/2024/NĐ-CP có áp dụng cho app này không (design §14). Phải kiểm trước khi mở cho người lạ.
 - Model kiểm duyệt cho tiếng Việt (G9).
 - Model vẫn có thể *tự suy ra* bí mật từ manh mối hợp lệ. Đó là việc của bản kế hoạch truyện và người canh, không phải lỗi rò rỉ.

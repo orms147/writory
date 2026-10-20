@@ -155,3 +155,13 @@ def test_role_reasoning_rejects_unknown_effort(config_dir):
     with pytest.raises(ConfigError) as exc:
         load_config(config_dir)
     assert "role_reasoning" in str(exc.value)
+
+
+def test_narrator_limits_exist_in_config():
+    """D-40: số câu hỏi mỗi chương và độ dài câu hỏi người kể nằm trong limits.yaml; chưa đo
+    thì để null (code dùng tới thì báo CONFIG_LIMIT_NOT_SET)."""
+    limits = load_config().limits
+    assert "narrator_question_max_chars" in type(limits.input).model_fields
+    assert "narrator_questions_per_chapter" in type(limits.rate_limit).model_fields
+    text = (REPO_CONFIG_DIR / "limits.yaml").read_text(encoding="utf-8")
+    assert "narrator_question_max_chars:" in text

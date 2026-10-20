@@ -9,10 +9,11 @@ retries:
   llm_transient: 2            # lỗi mạng/model tạm thời (LLM_UNAVAILABLE), D-14
 rate_limit:
   llm_calls_per_minute_per_user: null
-  narrator_questions_per_chapter: null
+  narrator_questions_per_chapter: null   # đếm cả câu trả "Bạn chưa biết điều này." (D-40)
 input:
   custom_action_max_chars: null
   character_name_max_chars: null
   backstory_max_chars: null
+  narrator_question_max_chars: null   # câu hỏi người kể (D-40)
 context:
   writer_max_neighbors: null  # số nút lân cận tối đa trong ngữ cảnh model viết; đặt sau khi đo (D-28)
