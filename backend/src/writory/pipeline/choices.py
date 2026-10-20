@@ -11,11 +11,15 @@ lựa chọn nội tâm) qua `check_leaks`. Trúng một chỗ thì không hiệ
 (`CHOICES_LEAK_BLOCKED`); chương đã ghi xong từ trước, gọi lại hàm này để tạo bộ mới.
 
 G4: toàn bộ view và văn bản cảnh nằm trong khối dữ liệu, vì view không mang cờ `user_authored`.
+
+G9, D-57: cổng `moderate` kiểm mọi chữ người chơi sẽ thấy (chữ lựa chọn, lời nói dối, cảm xúc)
+sau dò lộ. Vượt mức hay thuộc loại bị chặn thì không hiện bộ nào, như dò lộ: không tự viết lại,
+người chơi bấm thử lại để tạo bộ mới.
 """
 
 import logging
 import uuid
-from collections.abc import Collection, Mapping
+from collections.abc import Awaitable, Callable, Collection, Mapping
 from dataclasses import dataclass
 from typing import Any, Self
 
@@ -31,6 +35,7 @@ from writory.pipeline.events import KIND_LABELS, TONE_LABELS, ChoiceKind, Player
 from writory.pipeline.narrator import render_notebook
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.leak import check_leaks
+from writory.safety.moderate import ModerationResult, Verdict
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
 log = logging.getLogger(__name__)
@@ -248,13 +253,44 @@ def _ensure_no_leak(choices: list[Choice], *, view: PlayerView,
                            detail=f"chương {view.chapter}: {len(hits)} chỗ trúng ({where})")
 
 
+# Cổng kiểm duyệt nội dung (G9, D-57): nhận mọi chữ người chơi sẽ thấy trong bộ lựa chọn.
+ChoicesGate = Callable[[str], Awaitable[ModerationResult]]
+
+
+def _player_facing_text(choices: list[Choice]) -> str:
+    """Mọi chuỗi của bộ lựa chọn có thể tới người chơi: chữ lựa chọn, nội dung lời nói dối (vào sổ
+    tay), cảm xúc thầm của lựa chọn nội tâm."""
+    parts: list[str] = []
+    for c in choices:
+        parts.append(c.text)
+        if c.lie is not None:
+            parts.append(c.lie.content)
+        if c.feeling:
+            parts.append(c.feeling)
+    return "\n".join(parts)
+
+
+async def _ensure_allowed(choices: list[Choice], moderate: ChoicesGate, chapter: int) -> None:
+    """Bộ lựa chọn vượt mức hay thuộc loại bị chặn thì không hiện bộ nào (như dò lộ, D-37): chương
+    đã ghi, người chơi bấm thử lại để tạo bộ mới. Log chỉ ghi kết luận và loại, không ghi chữ."""
+    result = await moderate(_player_facing_text(choices))
+    if result.verdict is not Verdict.ALLOW:
+        cats = ", ".join(c.value for c in result.categories)
+        log.warning("chương %s: chặn bộ lựa chọn (kiểm duyệt: %s [%s])", chapter,
+                    result.verdict.value, cats)
+        raise WritoryError(ErrorCode.CHOICES_LEAK_BLOCKED,
+                           detail=f"chương {chapter}: kiểm duyệt {result.verdict.value} [{cats}]")
+
+
 async def make_choices(
     llm: LLMClient, model: str, *, view: PlayerView, protagonist_id: str, last_scene_text: str,
     truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan, story_brief: str,
     retries: RetryLimits, extra: Mapping[str, Any] | None = None,
+    moderate: ChoicesGate | None = None,
 ) -> list[Choice]:
     """`view`: player_view ở chương vừa ghi. `truth_names`, `plan`, `story_brief` (thiết lập truyện
-    người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ bằng code, không bao giờ vào prompt."""
+    người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ bằng code, không bao giờ vào prompt. `moderate`:
+    cổng kiểm duyệt nội dung (G9); đường của người chơi phải truyền."""
     messages, refs = build_choice_messages(view, protagonist_id=protagonist_id,
                                            last_scene_text=last_scene_text)
     kinds = {e.id: e.kind for e in view.entries}
@@ -267,4 +303,6 @@ async def make_choices(
                                       transient_retries=retries.llm_transient)
     _ensure_no_leak(choices, view=view, truth_names=truth_names, plan=plan,
                     story_brief=story_brief)
+    if moderate is not None:
+        await _ensure_allowed(choices, moderate, view.chapter)
     return choices

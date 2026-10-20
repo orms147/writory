@@ -59,6 +59,7 @@ from writory.errors import ErrorCode, WritoryError
 from writory.graph import story_snapshot
 from writory.pipeline.choices import Choice, LieEffect
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.moderate import ModerationOutput
 from writory.safety.wrap import CLOSE_TAG
 
 pytestmark = pytest.mark.graph
@@ -174,8 +175,9 @@ def test_chapter_stream_commits_and_saves_choices(pg, driver, story, tmp_path):
     # G8: mỗi lời gọi một dòng nhật ký, theo vai, ở chương đang viết.
     rows = pg.execute("SELECT role, chapter FROM llm_costs WHERE story_id = %s ORDER BY id",
                       (sid,)).fetchall()
-    assert [r for r, _ in rows] == ["outline", "writer", "extract", "outline", "writer", "extract",
-                                    "summary", "choices"]
+    # Kiểm duyệt (G9, D-57): sau mỗi lượt soát cảnh và sau bộ lựa chọn.
+    assert [r for r, _ in rows] == ["outline", "writer", "extract", "moderate", "outline", "writer",
+                                    "extract", "moderate", "summary", "choices", "moderate"]
     assert {c for _, c in rows} == {4}
 
 
@@ -344,7 +346,8 @@ class HangingLLM(ScriptedLLM):
         self.cancelled = False
 
     async def chat(self, model, messages, *, response_schema=None, extra=None):
-        if len(self.calls) + 1 == self.hang_at:
+        # Lời gọi kiểm duyệt (G9) có hàng đợi riêng, không đếm vào `hang_at`.
+        if response_schema is not ModerationOutput and len(self.calls) + 1 == self.hang_at:
             self.calls.append(list(messages))
             try:
                 await asyncio.Event().wait()
@@ -381,7 +384,7 @@ async def test_disconnect_mid_chapter_cancels_and_writes_nothing(pg, driver, sto
     # Chi phí của các lời gọi đã chạy vẫn được ghi (G8), dù chương không ghi.
     roles = [r for (r,) in pg.execute("SELECT role FROM llm_costs WHERE story_id = %s "
                                       "ORDER BY id", (sid,)).fetchall()]
-    assert roles == ["outline", "writer", "extract"]
+    assert roles == ["outline", "writer", "extract", "moderate"]
 
     # Khoá của truyện đã nhả khi ngắt kết nối: viết lại được ngay, và lần này chạy trọn.
     llm.hang_at, llm._script = None, deque(full_script())

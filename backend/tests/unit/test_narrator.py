@@ -600,3 +600,69 @@ async def test_reply_also_requires_metered_client():
     with pytest.raises(TypeError):
         await ask_narrator_reply("Lan là ai?", view(3), llm=FakeLLM.scripted([]), config=CFG,
                                  truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota())
+
+
+# --- kiểm duyệt đầu vào (G9, D-57): cổng `moderate` -------------------------------------------------
+
+
+class Gate:
+    """Cổng kiểm duyệt giả: ghi lại chữ được kiểm; ném lỗi nếu `block`."""
+
+    def __init__(self, *, block: bool = False) -> None:
+        self.texts: list[str] = []
+        self.block = block
+
+    async def __call__(self, text: str) -> None:
+        self.texts.append(text)
+        if self.block:
+            raise WritoryError(ErrorCode.INPUT_BLOCKED, detail="blocked: test")
+
+
+async def ask_gated(question, chapter, fake, gate, *, quota=None):
+    return await ask_narrator_reply(
+        question, view(chapter), llm=metered(fake), config=CFG,
+        truth_names=state(chapter).named_nodes(), plan=PLAN, story_brief="",
+        quota=quota if quota is not None else MemoryQuota(), moderate=gate,
+    )
+
+
+async def test_blocked_question_is_refused_before_quota_and_model():
+    quota, fake, gate = MemoryQuota(), FakeLLM.scripted([]), Gate(block=True)
+    with pytest.raises(WritoryError) as exc:
+        await ask_gated("Câu hỏi bị chặn", 3, fake, gate, quota=quota)
+    assert exc.value.code is ErrorCode.INPUT_BLOCKED
+    assert gate.texts == ["Câu hỏi bị chặn"]
+    assert fake.calls == [] and not quota.taken  # không mất lượt, không gọi model
+
+
+async def test_allowed_question_goes_through_the_gate_once_then_to_the_model():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
+    gate = Gate()
+    out = await ask_gated("Lão Gù chết ở đâu?", 3, fake, gate)
+    assert out.answer == "Lão Gù chết sau miếu Bà."
+    assert gate.texts == ["Lão Gù chết ở đâu?"]
+
+
+@pytest.mark.parametrize(("question", "chapter"), [
+    pytest.param("", 3, id="empty"),
+    pytest.param("a" * 5000, 3, id="too-long"),
+    pytest.param("Lan là ai?", 0, id="empty-notebook"),
+])
+async def test_gate_is_not_called_for_invalid_or_unanswerable_questions(question, chapter):
+    """Câu rỗng, quá dài (lỗi riêng) và sổ tay trống (không gọi model nào) không cần kiểm duyệt."""
+    gate = Gate()
+    try:
+        await ask_gated(question, chapter, FakeLLM.scripted([]), gate)
+    except WritoryError:
+        pass
+    assert gate.texts == []
+
+
+async def test_gate_is_optional_for_the_bench_path():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
+    out = await ask_narrator_reply(
+        "Lão Gù chết ở đâu?", v, llm=metered(fake), config=CFG,
+        truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=MemoryQuota())
+    assert out.blocked is None

@@ -6,6 +6,7 @@ from fastapi.testclient import TestClient
 from pydantic import SecretStr
 
 from tests.api_fixtures import FAKE_KEY, AllowAllQuota, KeyedFactory, dev_settings
+from tests.moderation_fixtures import ModeratedLLM
 from tests.unit.test_narrator import CFG, PLAN, reply
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
@@ -47,7 +48,7 @@ def _app(pg, driver, fake: FakeLLM):
     app = create_app(dev_settings(), health_checks={"neo4j": _ok}, config=CFG)
     app.dependency_overrides[deps.get_pg_conn] = lambda: pg
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
-    factory = KeyedFactory(fake)
+    factory = KeyedFactory(ModeratedLLM(fake))  # kiểm duyệt đầu vào (G9) mặc định cho qua
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
     app.dependency_overrides[deps.get_call_quota] = AllowAllQuota  # xem make_app của test_play_api
     return app, factory
@@ -68,9 +69,11 @@ def test_narrator_reads_plan_and_key_from_postgres_and_logs_cost(pg, driver, new
         resp = client.post(f"/stories/{sid}/narrator", json={"question": "Lão Gù chết ở đâu?"})
     assert resp.json() == {"answer": "Lão Gù chết sau miếu Bà."}
     assert factory.keys == [FAKE_KEY]
-    rows = pg.execute("SELECT owner_id, chapter, role, model FROM llm_costs WHERE story_id = %s",
-                      (sid,)).fetchall()
-    assert rows == [(DEV_OWNER_ID, 3, "narrator", CFG.models.roles.narrator)]
+    rows = pg.execute("SELECT owner_id, chapter, role, model FROM llm_costs WHERE story_id = %s "
+                      "ORDER BY id", (sid,)).fetchall()
+    # Kiểm duyệt câu hỏi (G9, D-57) rồi người kể; cả hai ghi nhật ký ở chương đang đọc.
+    assert rows == [(DEV_OWNER_ID, 3, "moderate", CFG.models.roles.moderate),
+                    (DEV_OWNER_ID, 3, "narrator", CFG.models.roles.narrator)]
     assert story_spent_usd(pg, sid) == pytest.approx(0.003)
 
 

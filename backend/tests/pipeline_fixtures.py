@@ -14,6 +14,7 @@ from typing import Any
 
 import yaml
 
+from tests.moderation_fixtures import ModerationScript
 from writory.config import REPO_CONFIG_DIR, AppConfig, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage, PlayerView, read_sample
@@ -37,6 +38,7 @@ from writory.pipeline import summary as summary_mod
 from writory.pipeline.extract import Entity
 from writory.pipeline.store import entities_from_rows
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.moderate import ModerationOutput
 
 SAMPLE = read_sample()
 COMMITTED_THROUGH = 3
@@ -131,12 +133,18 @@ class ScriptedLLM(FakeLLM):
     """FakeLLM.scripted, thêm một kiểu câu trả lời: hàm nhận messages trả chuỗi (để câu trả lời
     dùng được ref do pipeline đặt, ví dụ ref của mục trong player_view)."""
 
-    def __init__(self, responses, *, cost_usd: float | None = 0.0) -> None:
+    def __init__(self, responses, *, cost_usd: float | None = 0.0,
+                 moderation=(), moderation_cost: float | None = 0.0) -> None:
         super().__init__([], cost_usd=cost_usd)
         self._script = deque(responses)
         self.models: list[str] = []  # song song với `calls`
+        # Lời gọi kiểm duyệt (G9, D-57) có hàng đợi riêng, mặc định cho qua; không nằm trong
+        # `calls`/`models`, nên kịch bản và đếm lời gọi của các vai khác không đổi.
+        self.moderation = ModerationScript(moderation, cost_usd=moderation_cost)
 
     async def chat(self, model, messages, *, response_schema=None, extra=None):
+        if response_schema is ModerationOutput:
+            return self.moderation.answer(model, messages, extra)
         self.models.append(model)
         return await super().chat(model, messages, response_schema=response_schema, extra=extra)
 

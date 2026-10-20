@@ -88,15 +88,18 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     report = json.loads((out / "report.json").read_text(encoding="utf-8"))
     assert report["status"] == "done" and report["chapters_committed"] == total
     by_role = report["cost"]["by_role"]
-    assert set(by_role) == {"setup", "outline", "writer", "extract", "summary", "choices"}
+    assert set(by_role) == {"setup", "outline", "writer", "extract", "summary", "choices",
+                            "moderate"}
     assert all(v > 0 for v in by_role.values())
     assert sorted(report["cost"]["by_chapter"]) == [str(n) for n in range(total + 1)]
     calls = report["calls"]["by_role"]
     scenes = total * run.scenario.scene_count
     # Chương cuối: không tạo lựa chọn (D-50). Cảnh cuối của nó viết lại một lần vì model giả không
     # bao giờ hé lộ bí mật hay gỡ mạch đến hạn ở chương cuối (trễ hạn, D-49).
+    # Kiểm duyệt (G9, D-57): mỗi lượt soát một cảnh một lời gọi, và mỗi bộ lựa chọn một lời gọi.
     assert calls == {"setup": 4, "outline": scenes, "writer": scenes + 1, "extract": scenes + 1,
-                     "summary": total - 1, "choices": total - 1}
+                     "summary": total - 1, "choices": total - 1,
+                     "moderate": scenes + 1 + (total - 1)}
     assert report["setup_repairs"] == {"used": 0, "kinds": {}}
     assert len(rows(out / "calls.jsonl")) == len(llm.calls)
 
@@ -127,7 +130,8 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     assert meta["status"] == "done" and meta["exit_code"] == 0 and meta["dry_run"] is True
     assert meta["seed"] == run.scenario.seed and meta["git"]["commit"]
-    assert set(meta["models"]) == {"setup", "outline", "writer", "extract", "summary", "choices"}
+    assert set(meta["models"]) == {"setup", "outline", "writer", "extract", "summary", "choices",
+                                 "moderate"}
     assert meta["models"]["writer"]["reasoning"] == "none"
     assert meta["config"]["sha256"] and meta["scenario"]["content"]["tags"]["genre"] == "tu tiên"
     chapter_1 = (out / "chapters" / "ch01.md").read_text(encoding="utf-8")

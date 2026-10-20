@@ -24,6 +24,7 @@ from tests.api_fixtures import (
     dev_settings,
     own_connections,
 )
+from tests.moderation_fixtures import ModeratedLLM, moderation_reply
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.config import load_config
@@ -97,12 +98,15 @@ def created(pg, driver):
 
 
 def make_app(pg, driver, fake: FakeLLM, *, key: bool = True, owner: str | None = None,
-             own_conns: bool = False):
-    """`own_conns`: mỗi yêu cầu một kết nối Postgres riêng như app thật (test khoá chống chạy đôi)."""
+             own_conns: bool = False, moderation=()):
+    """`own_conns`: mỗi yêu cầu một kết nối Postgres riêng như app thật (test khoá chống chạy đôi).
+    Lời gọi kiểm duyệt (G9, D-57) có hàng đợi `moderation` riêng, mặc định cho qua; đọc lại ở
+    `app.state.moderated`."""
     app = create_app(dev_settings(), health_checks={"neo4j": _ok})
     app.dependency_overrides[deps.get_pg_conn] = own_connections if own_conns else (lambda: pg)
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
-    factory = KeyedFactory(fake)
+    app.state.moderated = ModeratedLLM(fake, moderation)
+    factory = KeyedFactory(app.state.moderated)
     app.dependency_overrides[deps.get_llm_factory] = lambda: factory
     app.dependency_overrides[deps.get_call_quota] = AllowAllQuota  # xem make_app của test_play_api
     if owner is not None:
@@ -217,10 +221,11 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
     blocks = re.findall(rf'<player_data source="protagonist_backstory">\n(.*?)\n'
                         rf'{re.escape(CLOSE_TAG)}', user, flags=re.DOTALL)
     assert blocks == [ATTACK]
-    # G8: 4 lời gọi khởi tạo ghi vào nhật ký, gắn vào truyện vừa tạo.
+    # G8: 4 lời gọi khởi tạo và 2 lời gọi kiểm duyệt (tag, phần sửa nhân vật; G9, D-57) ghi vào
+    # nhật ký, gắn vào truyện vừa tạo.
     rows = pg.execute("SELECT role, story_id FROM llm_costs WHERE setup_session_id = %s",
                       (sid,)).fetchall()
-    assert rows == [("setup", story_id)] * 4
+    assert sorted(rows) == sorted([("setup", story_id)] * 4 + [("moderate", story_id)] * 2)
 
 
 def test_finalize_twice_returns_the_same_story(pg, driver, created):
@@ -456,3 +461,72 @@ def test_setup_spending_counts_toward_story_cap(pg, driver, created):
         resp = client.post(f"/setup/{sid}/settings")
     assert (resp.status_code, resp.json()["code"]) == (402, "COST_LIMIT_STORY")
     assert fake.calls == []
+
+
+# --- kiểm duyệt đầu vào (G9, D-57): tag tự gõ và phần sửa nhân vật ---------------------------------
+
+
+def to_characters(client, created) -> str:
+    sid = start(client, created)["session_id"]
+    for step in ("settings", "plots"):
+        assert client.post(f"/setup/{sid}/{step}").status_code == 200
+        assert client.put(f"/setup/{sid}/{step}", json={"index": 0}).status_code == 200
+    assert client.post(f"/setup/{sid}/characters").status_code == 200
+    return sid
+
+
+def test_blocked_tags_stop_generation_and_save_nothing(pg, driver, created):
+    fake = FakeLLM.scripted([])  # model tạo bối cảnh bị gọi thì test đỏ
+    block = [moderation_reply(("incitement_real_group", "strong"))]
+    app = make_app(pg, driver, fake, moderation=block)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = start(client, created)["session_id"]
+        resp = client.post(f"/setup/{sid}/settings")
+        body = client.get(f"/setup/{sid}").json()
+    assert resp.status_code == 422 and resp.json()["code"] == "INPUT_BLOCKED"
+    assert "incitement" not in resp.text
+    assert fake.calls == [] and body["settings"] is None
+
+
+def test_clean_tags_are_moderated_once_when_options_are_generated(pg, driver, created):
+    fake = FakeLLM.scripted([options("settings")])
+    app = make_app(pg, driver, fake)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = start(client, created)["session_id"]
+        assert client.post(f"/setup/{sid}/settings").status_code == 200
+        assert client.post(f"/setup/{sid}/settings").status_code == 200  # trả lại bộ đã có
+    [messages] = app.state.moderated.moderation_calls
+    for tag in ("kiếm hiệp", "cổ đại", "trầm", "vừa"):
+        assert tag in messages[-1].content
+    assert len(fake.calls) == 1  # bộ đã có thì không gọi model lần nữa, cũng không kiểm duyệt lại
+
+
+def test_blocked_character_edit_is_refused_and_changes_nothing(pg, driver, created):
+    fake = FakeLLM.scripted([options("settings"), options("plots"), options("characters")])
+    block = [moderation_reply(), moderation_reply(("real_world_harm", "strong"))]
+    app = make_app(pg, driver, fake, moderation=block)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = to_characters(client, created)
+        resp = client.put(f"/setup/{sid}/characters",
+                          json={"index": 1, "backstory": "Hắn học chế thuốc nổ ngoài đời thật."})
+        body = client.get(f"/setup/{sid}").json()
+    assert resp.status_code == 422 and resp.json()["code"] == "INPUT_BLOCKED"
+    assert (body["character_index"], body["protagonist"], body["step"]) == (None, None,
+                                                                            "characters")
+
+
+def test_only_the_edited_fields_are_moderated(pg, driver, created):
+    fake = FakeLLM.scripted([options("settings"), options("plots"), options("characters")])
+    app = make_app(pg, driver, fake)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = to_characters(client, created)
+        before = len(app.state.moderated.moderation_calls)  # kiểm duyệt tag đã chạy ở bước đầu
+        resp = client.put(f"/setup/{sid}/characters",
+                          json={"index": 2, "name": "Lục Vân Phi", "backstory": "Mồ côi từ nhỏ."})
+        no_edit = client.put(f"/setup/{sid}/characters", json={"index": 0})
+    assert resp.status_code == 200 and no_edit.status_code == 200
+    calls = app.state.moderated.moderation_calls[before:]
+    assert len(calls) == 1  # lần chọn không sửa gì thì không tốn lời gọi nào
+    content = calls[0][-1].content
+    assert "Lục Vân Phi" in content and "Mồ côi từ nhỏ." in content
+    assert "Ít nói, cố chấp." not in content  # tính cách gốc của lựa chọn không bị gửi

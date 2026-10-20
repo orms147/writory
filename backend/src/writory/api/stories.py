@@ -8,6 +8,7 @@ TODO(G10, tuần 5): `deps.get_owner_id` lấy người đang đăng nhập.
 """
 
 from collections.abc import Mapping
+from functools import partial
 from typing import Annotated
 
 from fastapi import APIRouter, Depends
@@ -19,8 +20,13 @@ from writory.graph import PlayerView
 from writory.llm.cost import MeteredClient
 from writory.pipeline.narrator import NarratorQuota, ask_narrator
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.moderate import ensure_input_allowed
 
 router = APIRouter(prefix="/stories", dependencies=[Depends(deps.dev_routes_only)])
+
+
+async def _moderate_input(text: str, *, llm: MeteredClient, config: AppConfig) -> None:
+    await ensure_input_allowed(text, llm=llm, config=config)
 
 
 @router.get("/{story_id}/notebook", response_model=NotebookOut)
@@ -41,9 +47,11 @@ async def narrator(
     brief: deps.StoryBrief,
     quota: Annotated[NarratorQuota, Depends(deps.get_narrator_quota)],
 ) -> NarratorAnswerOut:
-    """Hỏi người kể: không mất lượt truyện; số câu mỗi chương có trần (G8)."""
+    """Hỏi người kể: không mất lượt truyện; số câu mỗi chương có trần (G8). Câu hỏi qua kiểm duyệt
+    (G9, D-57) sau khi kiểm độ dài, trước khi giữ lượt và trước model người kể."""
     answer = await ask_narrator(
         body.question, view, llm=llm, config=config, truth_names=truth_names, plan=plan,
         story_brief=brief, quota=quota,
+        moderate=partial(_moderate_input, llm=llm, config=config),
     )
     return NarratorAnswerOut(answer=answer)

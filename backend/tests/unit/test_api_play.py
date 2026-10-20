@@ -110,3 +110,94 @@ def test_play_routes_not_mounted_when_dev_flag_off():
         assert c.post("/stories/s1/choice", json={"choice_id": "choice-0123456789ab"}
                       ).status_code == 404
         assert c.post("/stories/s1/action", json={"text": "Tôi đi."}).status_code == 404
+
+
+# --- ô tự viết: kiểm duyệt đầu vào (G9, D-57) trước phân loại ý định (G5) ------------------------
+
+
+class _PlayerLLM:
+    """Thay `deps.PlayerLLM`: trả client đo chi phí quanh model giả, không key, không Postgres."""
+
+    def __init__(self, llm) -> None:
+        self.llm = llm
+
+    def metered(self, **_kw):
+        from writory.llm.cost import CostTracker, MeteredClient
+        return MeteredClient(self.llm, CostTracker(CFG.limits.cost_usd))
+
+
+def _action_client(monkeypatch, llm):
+    saved: list[str] = []
+    monkeypatch.setattr("writory.api.play.save_action",
+                        lambda conn, story_id, chapter, **kw: saved.append(kw["text"]))
+    app = create_app(dev_settings(), health_checks={"neo4j": ok}, config=CFG)
+    app.dependency_overrides[deps.get_pg_conn] = lambda: None
+    app.dependency_overrides[deps.get_owned_story] = (
+        lambda story_id: StoryRecord(story_id, "dev", "short", 3))
+    app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(
+        {"acts": [{"name": "một", "from_chapter": 1, "to_chapter": 6}]})
+    app.dependency_overrides[deps.get_player_llm] = lambda: _PlayerLLM(llm)
+    return TestClient(app, raise_server_exceptions=False), saved
+
+
+def _classify(label: str = "in_story_action") -> str:
+    return json.dumps({"label": label, "reason": "thử"}, ensure_ascii=False)
+
+
+def test_blocked_action_is_moderated_before_classify_and_not_saved(monkeypatch):
+    from tests.moderation_fixtures import ModeratedLLM, moderation_reply
+    from writory.llm.fake import FakeLLM
+
+    fake = FakeLLM.scripted([])  # phân loại G5 bị gọi thì test đỏ
+    llm = ModeratedLLM(fake, [moderation_reply(("sexual_minors", "strong"))])
+    client, saved = _action_client(monkeypatch, llm)
+    with client as c:
+        resp = c.post("/stories/s1/action", json={"text": "một yêu cầu bị chặn"})
+    assert resp.status_code == 422 and resp.json()["code"] == "INPUT_BLOCKED"
+    assert "sexual" not in resp.text and "yêu cầu bị chặn" not in resp.text
+    assert fake.calls == [] and saved == []
+    assert len(llm.moderation_calls) == 1
+
+
+def test_allowed_action_is_moderated_then_classified_then_saved(monkeypatch):
+    from tests.moderation_fixtures import ModeratedLLM
+    from writory.llm.fake import FakeLLM
+
+    fake = FakeLLM.scripted([_classify()])
+    llm = ModeratedLLM(fake)
+    client, saved = _action_client(monkeypatch, llm)
+    with client as c:
+        resp = c.post("/stories/s1/action", json={"text": "  Tôi rút kiếm.  "})
+    assert resp.status_code == 200
+    assert saved == ["Tôi rút kiếm."]
+    assert len(llm.moderation_calls) == 1 and len(fake.calls) == 1
+
+
+@pytest.mark.parametrize(("text", "code"), [
+    ("   ", "ACTION_EMPTY"),
+    ("a" * (CFG.limits.input.custom_action_max_chars + 1), "ACTION_TOO_LONG"),
+])
+def test_invalid_length_is_refused_before_any_model_call(monkeypatch, text, code):
+    from tests.moderation_fixtures import ModeratedLLM
+    from writory.llm.fake import FakeLLM
+
+    fake = FakeLLM.scripted([])
+    llm = ModeratedLLM(fake)
+    client, saved = _action_client(monkeypatch, llm)
+    with client as c:
+        resp = c.post("/stories/s1/action", json={"text": text})
+    assert resp.json()["code"] == code
+    assert fake.calls == [] and llm.moderation_calls == [] and saved == []
+
+
+def test_moderation_failure_fails_closed_not_open(monkeypatch):
+    from tests.moderation_fixtures import ModeratedLLM
+    from writory.llm.fake import FakeLLM
+
+    fake = FakeLLM.scripted([_classify()])
+    llm = ModeratedLLM(fake, ["không phải json"] * 6)
+    client, saved = _action_client(monkeypatch, llm)
+    with client as c:
+        resp = c.post("/stories/s1/action", json={"text": "Tôi mở cửa."})
+    assert resp.status_code >= 400 and saved == []
+    assert fake.calls == []

@@ -4,6 +4,7 @@ Nền: truyện mẫu đã commit tới chương 3; viết chương 4 thành 2 c
 một cảnh: dàn ý → viết → trích [→ viết lại → trích]; hết chương: tạo lựa chọn.
 """
 
+import html
 import json
 import logging
 import re
@@ -11,6 +12,7 @@ from pathlib import Path
 
 import pytest
 
+from tests.moderation_fixtures import ALLOW, moderation_reply
 from tests.pipeline_fixtures import (
     CHAPTER,
     CLICHE,
@@ -75,10 +77,12 @@ def request(**kw) -> ChapterRequest:
     return ChapterRequest(**(base | kw))
 
 
-async def run(script, tmp_path, *, store=None, config=None, cost_usd=0.0, req=None, **cfg):
+async def run(script, tmp_path, *, store=None, config=None, cost_usd=0.0, req=None,
+              moderation=(), moderation_cost=0.0, **cfg):
     config = config or make_config(tmp_path, **cfg)
     store = store or MemoryStore()
-    llm = ScriptedLLM(script, cost_usd=cost_usd)
+    llm = ScriptedLLM(script, cost_usd=cost_usd, moderation=moderation,
+                      moderation_cost=moderation_cost)
     chapter_run = ChapterRun(
         req or request(), llm=llm, store=store, config=config, plan=PLAN,
         tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE,
@@ -1016,3 +1020,155 @@ def test_a_scene_closing_an_edge_the_prelude_opened_cancels_it_out():
     merged = merge_scene_packages("c", node, [scene], prelude=prelude)
 
     assert merged.edges == [] and merged.close == []
+
+# --- kiểm duyệt nội dung đầu ra (G9, D-57) -------------------------------------------------------------
+
+GORY = "Hắn chặt đứt tay gã, máu phun thành vòi."
+SCENE_1_GORE = SCENE_1.replace("Cô ở lại thêm một lúc", GORY + " Cô ở lại thêm một lúc")
+assert GORY in SCENE_1_GORE
+OVER = moderation_reply(("gore", "extreme"), reason="TRÍCH-LÝ-DO-ZZZ")  # trần gore mặc định: mild
+HARD = moderation_reply(("sexual_minors", "strong"), reason="TRÍCH-LÝ-DO-ZZZ")
+SHOWN_CHAPTER = ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+
+
+async def test_each_shown_scene_is_moderated_once_on_the_exact_text(tmp_path):
+    events, _, llm, _ = await run(full_script(), tmp_path)
+    assert kinds(events) == SHOWN_CHAPTER
+    scene_calls = llm.moderation.moderation_calls[:2]
+    for call, scene in zip(scene_calls, (SCENE_1, SCENE_2), strict=True):
+        content = html.unescape(call[-1].content)
+        assert normalize_dashes(scene) in content  # đúng chữ người chơi sẽ thấy
+        assert '<player_data source="moderated_text">' in content
+        assert all(normalize_dashes(scene) not in m.content for m in call if m.role == "system")
+    assert llm.moderation.moderation_extras[0] == role_extra(load_config().models, "moderate")
+
+
+async def test_over_limit_scene_is_rewritten_once_and_the_bad_draft_never_shown(tmp_path):
+    script = [outline_reply(), SCENE_1_GORE, EXTRACT_1, SCENE_1, EXTRACT_1,
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    events, outcome, llm, _ = await run(script, tmp_path, moderation=[OVER, ALLOW, ALLOW, ALLOW])
+
+    assert kinds(events) == SHOWN_CHAPTER
+    assert all(GORY not in e.model_dump_json() for e in events)
+    assert [(r.scene, r.attempt, r.verdict) for r in outcome.reviews] == [
+        (1, 1, "rewrite"), (1, 2, "accept"), (2, 1, "accept")]
+    [issue] = outcome.reviews[0].issues
+    assert (issue.source, issue.kind, issue.block) == ("moderation", "gore", True)
+    # Lời nhắn viết lại nêu loại và trần theo config, không có lý do của bộ kiểm.
+    rewrite = calls_of(llm, "writer")[1][-1].content
+    assert "vượt mức cho phép" in rewrite and "gore" in rewrite
+    assert "TRÍCH-LÝ-DO-ZZZ" not in rewrite
+
+
+async def test_over_limit_in_every_draft_blocks_the_scene(tmp_path):
+    script = [outline_reply(), SCENE_1_GORE, EXTRACT_1, SCENE_1_GORE, EXTRACT_1]
+    events, outcome, llm, store = await run(script, tmp_path, moderation=[OVER, OVER])
+    assert kinds(events) == ["scene_blocked"]
+    [blocked] = of_type(events, "scene_blocked")
+    assert blocked.code == ErrorCode.SCENE_LEAK_BLOCKED  # câu trung tính dùng chung (G2, G9)
+    assert blocked.message == MESSAGES[ErrorCode.SCENE_LEAK_BLOCKED].text()
+    assert not store.commits and outcome.blocked_scene == 1
+    assert all(GORY not in e.model_dump_json() for e in events)
+    assert len(calls_of(llm, "writer")) == 2  # đúng một lượt viết lại (D-36)
+
+
+async def test_hard_block_is_never_shown_even_if_it_is_the_only_draft(tmp_path):
+    script = [outline_reply(), SCENE_1_GORE, EXTRACT_1, SCENE_1_GORE, EXTRACT_1]
+    events, outcome, _, store = await run(script, tmp_path, moderation=[HARD, HARD])
+    assert kinds(events) == ["scene_blocked"] and not store.commits
+    assert [i.kind for i in outcome.reviews[-1].issues] == ["sexual_minors"]
+    assert all(GORY not in e.model_dump_json() for e in events)
+
+
+async def test_rewrite_into_a_blocked_draft_falls_back_to_the_clean_earlier_draft(tmp_path):
+    """Bản đầu chỉ có sáo ngữ (viết lại được), bản viết lại vượt mức: hiện bản đầu (D-50)."""
+    script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, SCENE_1_GORE, EXTRACT_1,
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    events, outcome, _, _ = await run(script, tmp_path, moderation=[ALLOW, OVER, ALLOW, ALLOW])
+    assert kinds(events) == SHOWN_CHAPTER
+    assert of_type(events, "scene_ready")[0].text == normalize_dashes(SCENE_1_CLICHE)
+    assert all(GORY not in e.model_dump_json() for e in events)
+    assert [r.verdict for r in outcome.reviews[:2]] == ["rewrite", "fallback"]
+
+
+@pytest.mark.parametrize(("level", "rewritten"), [(None, False), ("moderate", False),
+                                                  ("light", True)])
+async def test_darkness_level_of_the_story_sets_the_ceiling(tmp_path, level, rewritten):
+    violent = moderation_reply(("violence", "strong"))
+    script = [outline_reply(), SCENE_1, EXTRACT_1]
+    if rewritten:
+        script += [SCENE_1, EXTRACT_1]
+    script += [outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    mod = [violent, ALLOW, ALLOW, ALLOW] if rewritten else [violent, ALLOW, ALLOW]
+    events, outcome, llm, _ = await run(script, tmp_path, req=request(darkness_level=level),
+                                        moderation=mod)
+    assert kinds(events) == SHOWN_CHAPTER
+    assert len(calls_of(llm, "writer")) == (3 if rewritten else 2)
+    assert next(r.verdict for r in outcome.reviews) == ("rewrite" if rewritten else "accept")
+
+
+def test_unknown_darkness_level_is_refused_when_the_run_is_created(tmp_path):
+    with pytest.raises(ValueError, match="không có"):
+        ChapterRun(request(darkness_level="không-có"), llm=ScriptedLLM([]), store=MemoryStore(),
+                   config=make_config(tmp_path), plan=PLAN,
+                   tracker=CostTracker(load_config().limits.cost_usd), style_guide=STYLE)
+
+
+async def test_unset_moderate_model_fails_before_any_model_call(tmp_path):
+    repo = load_config()
+    roles = repo.models.roles.model_copy(update={"moderate": None})
+    config = repo.model_copy(update={"models": repo.models.model_copy(update={"roles": roles})})
+    [problem] = config_problems(config)
+    assert problem.code is ErrorCode.CONFIG_MODEL_NOT_SET and "roles.moderate" in problem.detail
+    events, _, llm, store = await run(full_script(), tmp_path, config=config)
+    assert of_type(events, "error")[0].code is ErrorCode.CONFIG_MODEL_NOT_SET
+    assert llm.calls == [] and llm.moderation.moderation_calls == [] and not store.commits
+
+
+async def test_moderation_failure_fails_closed_nothing_shown_or_written(tmp_path):
+    script = [outline_reply(), SCENE_1, EXTRACT_1]
+    events, outcome, _, store = await run(script, tmp_path, moderation=["không phải json"] * 6)
+    assert kinds(events) == ["error"] and of_type(events, "error")[0].code in (
+        ErrorCode.RETRY_LIMIT_REACHED, ErrorCode.LLM_BAD_RESPONSE)
+    assert not store.commits and outcome.scenes == []
+
+
+async def test_moderation_cost_counts_toward_the_chapter(tmp_path):
+    _, outcome, _, _ = await run(full_script(), tmp_path, moderation_cost=0.001)
+    assert outcome.cost_usd == pytest.approx(0.003)  # 2 cảnh + bộ lựa chọn, mỗi lời gọi 0,001
+
+
+async def test_log_names_the_category_never_the_text_or_the_reason(tmp_path, caplog):
+    script = [outline_reply(), SCENE_1_GORE, EXTRACT_1, SCENE_1_GORE, EXTRACT_1]
+    with caplog.at_level(logging.INFO):
+        await run(script, tmp_path, moderation=[OVER, OVER])
+    assert "moderation:gore" in caplog.text
+    assert GORY not in caplog.text and "TRÍCH-LÝ-DO-ZZZ" not in caplog.text
+
+
+# --- bộ lựa chọn (G9): kiểm trước khi hiện, không tự viết lại (như dò lộ, D-37) ---------------------
+
+
+async def test_choices_are_moderated_with_every_player_facing_string(tmp_path):
+    events, _, llm, _ = await run(full_script(), tmp_path)
+    assert kinds(events) == SHOWN_CHAPTER
+    choices_call = llm.moderation.moderation_calls[2]
+    content = html.unescape(choices_call[-1].content)
+    for part in ("Xuống bến hỏi chuyện gã lái đò mặt sẹo.", "Nói với Lan rằng kiếm đã gửi",
+                 "Thanh Sương đang ở chỗ cai Khải", "nghi ngờ"):  # chữ, lời nói dối, cảm xúc
+        assert part in content, part
+
+
+async def test_flagged_choices_are_not_shown_but_the_chapter_stays_written(tmp_path):
+    violent = moderation_reply(("violence", "extreme"))
+    events, outcome, _, store = await run(full_script(), tmp_path,
+                                          moderation=[ALLOW, ALLOW, violent])
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "error"]
+    assert of_type(events, "error")[0].code == ErrorCode.CHOICES_LEAK_BLOCKED
+    assert store.commits and outcome.committed and outcome.choices == []
+
+
+async def test_blocked_category_in_choices_is_never_shown(tmp_path):
+    blocked = moderation_reply(("political_propaganda_real", "mild"))
+    events, outcome, _, _ = await run(full_script(), tmp_path, moderation=[ALLOW, ALLOW, blocked])
+    assert of_type(events, "choices_ready") == [] and outcome.choices == []

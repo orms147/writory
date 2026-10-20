@@ -12,6 +12,8 @@
   dựa vào mã không có trong sổ tay → đúng câu `NOT_KNOWN`.
 - G2: câu trả lời qua `check_leaks`; trúng thì cũng trả `NOT_KNOWN`, log chỉ ghi loại và vị trí.
 - G8: lời gọi phải qua `MeteredClient`; số câu hỏi mỗi chương có trần, giữ lượt trước khi gọi.
+- G9, D-57: cổng `moderate` (kiểm duyệt đầu vào) chạy sau các kiểm tra độ dài và sau lối tắt sổ
+  tay trống, trước khi giữ lượt và trước model người kể: câu bị chặn không mất lượt.
 
 `ask_narrator` là đường của người chơi. `ask_narrator_reply` chạy đúng các bước đó, và trả thêm
 câu thô của model cùng lý do code thay bằng `NOT_KNOWN`, cho bài đo E (D-53). `ask_narrator` chỉ
@@ -19,7 +21,7 @@ lấy `answer` của nó, nên hai đường không thể lệch nhau.
 """
 
 import logging
-from collections.abc import Mapping
+from collections.abc import Awaitable, Callable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Protocol
@@ -84,6 +86,11 @@ class NarratorReply:
     total: int = 0
 
 
+# Cổng kiểm duyệt chữ người chơi (G9, D-57): ném WritoryError nếu chữ bị chặn. Đường của người chơi
+# phải truyền; bài đo E (đo người kể, không đo kiểm duyệt) không truyền.
+InputGate = Callable[[str], Awaitable[None]]
+
+
 class NarratorQuota(Protocol):
     """Bộ đếm câu hỏi theo truyện và chương. Trả False khi đã dùng đủ `limit` lượt."""
 
@@ -146,6 +153,7 @@ async def ask_narrator(
     plan: StoryPlan,
     story_brief: str,
     quota: NarratorQuota,
+    moderate: InputGate | None = None,
 ) -> str:
     """Câu trả lời hiện cho người chơi: chữ của model đã qua các phép kiểm, hoặc `NOT_KNOWN`.
 
@@ -155,7 +163,7 @@ async def ask_narrator(
     """
     reply = await ask_narrator_reply(question, view, llm=llm, config=config,
                                      truth_names=truth_names, plan=plan, story_brief=story_brief,
-                                     quota=quota)
+                                     quota=quota, moderate=moderate)
     return reply.answer
 
 
@@ -169,6 +177,7 @@ async def ask_narrator_reply(
     plan: StoryPlan,
     story_brief: str,
     quota: NarratorQuota,
+    moderate: InputGate | None = None,
 ) -> NarratorReply:
     """Như `ask_narrator`, kèm câu thô của model và lý do bị thay. Câu thô có thể chứa bí mật:
     chỉ bộ đo đọc nó, không bao giờ trả cho người chơi hay ghi vào log."""
@@ -190,6 +199,9 @@ async def ask_narrator_reply(
     if not view.entries and not view.lies:
         # Sổ tay trống: không có gì để trả lời, không gọi model, không mất lượt.
         return NarratorReply(NOT_KNOWN, None, BlockReason.EMPTY_NOTEBOOK)
+    if moderate is not None:
+        # Trước khi giữ lượt và trước model: câu bị chặn không mất lượt (G9, D-57).
+        await moderate(question)
     if not await quota.take(view.story_id, view.chapter, limit):
         raise WritoryError(
             ErrorCode.NARRATOR_LIMIT_REACHED, detail=f"chương {view.chapter}: đủ {limit} câu"
