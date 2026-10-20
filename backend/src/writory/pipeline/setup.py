@@ -440,6 +440,24 @@ def _clean_protagonist(pc: CharacterOption) -> CharacterOption:
     return cleaned
 
 
+def story_brief(
+    choices: StoryChoices, setting: SettingOption, plot: PlotOption, protagonist: CharacterOption
+) -> str:
+    """Thiết lập truyện người chơi đã chọn, cho đề dàn ý và đề viết mỗi chương
+    (`ChapterRequest.story_brief`; nơi dùng luôn bọc như dữ liệu, G4). Có quy ước tên và địa danh,
+    vì prompt mọi bước sinh nội dung phải nhận nó (D-32)."""
+    pc = _clean_protagonist(protagonist)
+    naming = choices.naming
+    return "\n".join([
+        _tags_text(choices.tags),
+        _POV_TEXT[choices.pov],
+        f"Quy ước tên và địa danh: {NAMES_TEXT[naming.names]}; {PLACES_TEXT[naming.places]}.",
+        f"Bối cảnh: {setting.title}\n{setting.intro}",
+        f"Hướng cốt truyện: {plot.title}\n{plot.summary}",
+        f"Nhân vật chính: {pc.name}\nTính cách: {pc.personality}\nQuá khứ: {pc.backstory}",
+    ])
+
+
 async def build_story(
     choices: StoryChoices, setting: SettingOption, plot: PlotOption, protagonist: CharacterOption,
     *, llm: LLMClient, config: AppConfig, commit_id: str,

@@ -15,6 +15,8 @@ uv run pytest -m "not graph"  # test nhanh: không mạng, không gọi model th
 uv run pytest -m graph        # test cần Neo4j + Postgres ở trên; mỗi test dùng story_id riêng và chỉ dọn story_id đó
 ```
 
+Chạy cả một truyện từ dòng lệnh (`writory.pipeline.bench_run`; lệnh, đề và kết quả: `docs/eval.md`, mục "Chạy cả truyện"). Lệnh đọc `NEO4J_*`, `POSTGRES_DSN` và, khi chạy thật, `OPENROUTER_API_KEY` từ biến môi trường hoặc `.env`; tự chạy migration và tạo ràng buộc Neo4j. Mỗi lần chạy dùng một story_id mới `run-<ngày>-<nhãn>-<mã>`, ghi trong `meta.json`. Truyện của lần chạy thật được giữ lại trong Neo4j + Postgres; xem bằng sổ tay (`ENABLE_DEV_ROUTES`, bên dưới) hoặc xoá bằng `delete_story_record` và `graph.delete_story`.
+
 Chạy API ở máy (đọc biến môi trường từ `.env` ở gốc repo):
 ```bash
 cd backend
@@ -61,7 +63,7 @@ uv run python -c "from neo4j import GraphDatabase; from writory.config import Se
 ## Biến môi trường
 Danh sách đầy đủ: `.env.example`. Không commit `.env`.
 
-- `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`: key của chủ dự án, chỉ cho bộ đo. Runner bài đo chỉ đọc đúng hai tên này; thiếu thì báo lỗi và không gọi model.
+- `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`: key của chủ dự án, chỉ cho bộ đo và lệnh chạy cả truyện (`bench_run`, chỉ cần `OPENROUTER_API_KEY`). Runner chỉ đọc đúng các tên này; thiếu thì báo lỗi và không gọi model.
 - `ANTHROPIC_WORKSPACE_ID` (tuỳ chọn): cần khi key Anthropic không gắn với workspace. Lệnh: `docs/eval.md`.
 
 - `PLAYER_KEY_ENCRYPTION_KEY`: khoá Fernet mã hoá key OpenRouter của người chơi (G7, D-11). Tạo bằng lệnh sau, chạy trong `backend/`:

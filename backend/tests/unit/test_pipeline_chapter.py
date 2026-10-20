@@ -39,7 +39,13 @@ from writory.graph import ChangePackage, EdgeSpec
 from writory.graph.package import CloseSpec
 from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker
-from writory.pipeline.chapter import ChapterRequest, ChapterRun, chapter_node, merge_scene_packages
+from writory.pipeline.chapter import (
+    ChapterRequest,
+    ChapterRun,
+    chapter_node,
+    config_problems,
+    merge_scene_packages,
+)
 from writory.quality import normalize_dashes
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START
 
@@ -137,11 +143,23 @@ async def test_writer_uses_first_writer_tier_and_style_guide(tmp_path):
     by_role: dict[str, set] = {}
     for model, extra, call in zip(llm.models, llm.extras, llm.calls, strict=True):
         by_role.setdefault(role_of(call), set()).add((model, repr(extra)))
-    assert by_role["writer"] == {(config.models.writer_tiers[0].model, "None")}
+    # Mức "standard" đặt reasoning none cho khớp bài D (D-43).
+    assert by_role["writer"] == {(config.models.writer_tiers[0].model,
+                                  "{'reasoning': {'effort': 'none'}}")}
     for role in ("outline", "choices"):
         assert by_role[role] == {(f"test/{role}", repr(role_extra(config.models, role)))}
     # role_reasoning.extract = low (D-35)
     assert by_role["extract"] == {(config.models.roles.extract, "{'reasoning': {'effort': 'low'}}")}
+
+
+async def test_writer_tier_without_reasoning_sends_no_extra(tmp_path):
+    """`writer_tiers[].reasoning` null: không gửi tham số suy luận, dùng mặc định của model."""
+    tiers = [{"id": "standard", "label": "Thử", "model": "test/writer", "eval_result": "x"}]
+    config = make_config(tmp_path, models={"writer_tiers": tiers})
+    _, _, llm, _ = await run(full_script(), tmp_path, config=config)
+    writer = [(m, e) for m, e, c in zip(llm.models, llm.extras, llm.calls, strict=True)
+              if role_of(c) == "writer"]
+    assert writer == [("test/writer", None), ("test/writer", None)]
 
 
 # --- viết lại -----------------------------------------------------------------------------------
@@ -198,6 +216,27 @@ async def test_guard_issue_left_after_rewrite_is_not_written_to_graph(tmp_path):
 
 
 # --- chặn ---------------------------------------------------------------------------------------
+
+
+async def test_outcome_keeps_every_review_for_measurement(tmp_path):
+    """Mỗi lượt soát được giữ ở phía máy chủ (loại lỗi, mức chặn, cạnh bị bỏ), kể cả lỗi đã sửa
+    ở lượt viết lại: dữ liệu để đo người canh và kiểm văn (D-43)."""
+    script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, SCENE_1, EXTRACT_1,
+              outline_reply(), SCENE_2, EXTRACT_2, choices_reply()]
+    _, outcome, _, _ = await run(script, tmp_path)
+    assert [(r.scene, r.attempt, r.verdict) for r in outcome.reviews] == [
+        (1, 1, "rewrite"), (1, 2, "accept"), (2, 1, "accept")]
+    assert [(i.source, i.kind, i.block) for i in outcome.reviews[0].issues] == [
+        ("quality", "cliche", False)]
+    assert outcome.reviews[1].issues == () and outcome.reviews[2].issues == ()
+    assert [s.attempts for s in outcome.scenes] == [2, 1]
+
+
+async def test_outcome_keeps_error_detail_for_server_log(tmp_path):
+    events, outcome, _, _ = await run([unavailable() for _ in range(10)], tmp_path)
+    assert outcome.error == ErrorCode.RETRY_LIMIT_REACHED
+    assert "giả lập" in (outcome.error_detail or "")
+    assert "giả lập" not in repr(events)  # chi tiết không tới người chơi (G12)
 
 
 async def test_leak_in_both_drafts_blocks_scene(tmp_path):
@@ -298,6 +337,25 @@ async def test_unset_config_fails_before_any_model_call(tmp_path):
     [err] = of_type(events, "error")
     assert err.code in (ErrorCode.CONFIG_MODEL_NOT_SET, ErrorCode.CONFIG_LIMIT_NOT_SET)
     assert llm.calls == [] and not store.commits
+
+
+def test_config_problems_lists_every_unset_value():
+    """Lệnh chạy cả truyện báo một lần mọi giá trị còn null, trước lời gọi đầu (D-42)."""
+    repo = load_config()
+    assert config_problems(repo) == []
+    roles = repo.models.roles.model_copy(update={"outline": None, "choices": None})
+    cost = repo.limits.cost_usd.model_copy(update={"per_chapter": None})
+    config = repo.model_copy(update={
+        "models": repo.models.model_copy(update={"roles": roles}),
+        "limits": repo.limits.model_copy(update={"cost_usd": cost}),
+    })
+    problems = config_problems(config)
+    assert [p.code for p in problems] == [ErrorCode.CONFIG_MODEL_NOT_SET,
+                                          ErrorCode.CONFIG_MODEL_NOT_SET,
+                                          ErrorCode.CONFIG_LIMIT_NOT_SET]
+    details = " ".join(p.detail for p in problems)
+    for key in ("roles.outline", "roles.choices", "cost_usd.per_chapter"):
+        assert key in details
 
 
 async def test_pending_chapter_refuses_to_start(tmp_path):

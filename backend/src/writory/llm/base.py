@@ -20,11 +20,15 @@ def require_model(roles: RoleModels, role: str) -> str:
         raise WritoryError(ErrorCode.CONFIG_MODEL_NOT_SET, detail=str(e)) from None
 
 
+def reasoning_extra(effort: str | None) -> dict[str, Any] | None:
+    """`extra` cho một mức suy luận (tham số `reasoning` của OpenRouter). null thì không gửi gì."""
+    return {"reasoning": {"effort": effort}} if effort is not None else None
+
+
 def role_extra(models: ModelsConfig, role: str) -> dict[str, Any] | None:
     """Tham số riêng của một vai cho `chat`/`chat_json` (`extra`): mức suy luận trong
     `role_reasoning` (tham số `reasoning` của OpenRouter, như bài C). null thì không gửi gì."""
-    effort = getattr(models.role_reasoning, role)
-    return {"reasoning": {"effort": effort}} if effort is not None else None
+    return reasoning_extra(getattr(models.role_reasoning, role))
 
 
 class Message(BaseModel):

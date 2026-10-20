@@ -288,7 +288,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Soát trên chữ đã chuẩn hoá (D-31), tức đúng chữ sẽ hiện. Mọi loại lỗi đều được viết lại tối đa `retries.rewrite_per_scene` lần, kèm danh sách lỗi. Nếu bản cuối còn lỗi mức chặn (bộ dò lộ, `meta_leak` D-30, người canh báo lộ sớm) thì phát `scene_blocked`, dừng chương, không ghi gì. Nếu chỉ còn lỗi mức viết lại thì hiện bản cuối, log chỉ ghi loại lỗi, và bỏ khỏi gói các cạnh người canh báo.
   - Gói chương gồm nút `Chapter` (id `ch<N>`) và cạnh của các cảnh. Hai cảnh cùng id thì lấy cảnh sau; cạnh mở rồi đóng trong cùng chương thì bỏ. Ghi bằng `commit_chapter`.
   - Kiểm config trước lời gọi đầu: model các vai, trần chi phí, ngưỡng kiểm văn và người canh, `writer_max_neighbors`. Chương trước còn `pending` thì báo `CHAPTER_PENDING`. Mọi lời gọi đi qua `MeteredClient`; JSON qua `with_json_retries` (D-14). Chữ model đặt ngoài khối dữ liệu đều qua `escape_text` (G4).
-- **Hệ quả:** chưa có checkpointer, nên bấm thử lại sau `scene_blocked` sẽ viết lại cả chương. Chưa tạo thực thể mới (D-34). Chưa có tóm tắt chương trước, chưa có nhật ký người canh và nhật ký chi phí trong Postgres. Model viết chưa đặt `reasoning`/`max_tokens` như bài D.
+- **Hệ quả:** chưa có checkpointer, nên bấm thử lại sau `scene_blocked` sẽ viết lại cả chương. Chưa tạo thực thể mới (D-34). Chưa có tóm tắt chương trước, chưa có nhật ký người canh và nhật ký chi phí trong Postgres. Model viết chưa đặt `max_tokens` như bài D; `reasoning` của model viết: D-43.
 - **Người quyết:** Claude (nhánh pipeline-chapter), điều phối duyệt (PR #18). Bỏ cạnh người canh báo sai khi giữ bản thứ hai: Chủ dự án đồng ý · 20/10/2026
 
 ## D-37 · Lựa chọn cuối chương: chỉ từ sổ tay, mã công khai; một chỗ lộ thì không hiện bộ nào
@@ -343,6 +343,28 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Thêm mã `WRITORY_RATE_LIMITED` (429) cho trần mỗi phút của WriTory (G8); chưa có bộ đếm vì chưa có tài khoản.
 - **Hệ quả:** máy chủ thật không có router này tới khi có đăng nhập và kiểm quyền (TODO G10 trong `api/stories.py`). Chi phí hỏi người kể chưa cộng vào trần truyện, vì chưa có nhật ký chi phí.
 - **Người quyết:** điều phối (yêu cầu cờ dev, fail closed); cách làm: Claude (Session narrator) · 20/10/2026
+
+## D-42 · Lệnh chạy cả truyện `writory.pipeline.bench_run`; file chung chỉ có chữ người chơi thấy
+- **Bối cảnh:** mốc tuần 2 (design §12) là chạy liền nhiều chương từ dòng lệnh; trần chi phí D-47 là số tạm, cần chi phí đo theo vai. D-24 quy ước runner `bench_<x>`.
+- **Quyết định:**
+  - Tên `writory.pipeline.bench_run`, kết quả `evals/results/<ngày>-run-<nhãn>/` (`bench_run` ↔ `-run-`, như D-24). Giữ tiền tố `bench_` vì lệnh dùng key của chủ dự án và ghi vào `evals/results/`; code app không đọc key đó (D-2, D-41).
+  - Đề khai trước ở `evals/scenarios/story_run/`. Mọi bước có 3 lựa chọn chọn bằng `random.Random(seed)`; lựa chọn cuối chương thành `player_action` của chương sau, đúng chữ trên nút. Thiết lập truyện cho mỗi chương: `setup.story_brief` (có quy ước tên, D-32).
+  - Cảnh hay bộ lựa chọn bị chặn, model trả sai, mạng lỗi: tự "bấm thử lại" tối đa `player_retries` lần. Trần, key, cấu hình: dừng ngay.
+  - Config còn null hay đề thiếu giá: liệt kê hết một lần, trước lời gọi đầu và trước khi kết nối kho (`chapter.config_problems`).
+  - File chung (meta, setup, events, chapters, calls, report, summary) chỉ có chữ người chơi thấy, số đếm, mã và loại lỗi. `truth_dump.json` giữ kế hoạch, gói từng chương, đồ thị cuối, dàn ý, góp ý viết lại, chi tiết lỗi.
+  - Kho: `GraphStore`, story_id mới mỗi lần chạy; dry-run xoá truyện khi xong, trừ khi có `--keep-story`. Kế hoạch và chi phí giữ trong bộ nhớ rồi ra file; không thêm migration.
+- **Hệ quả:** dry-run vẫn cần Docker, vì `writer_context` chỉ có bản Neo4j. Truyện ngắn có 4–8 chương, nên mốc "10 chương" cần mức Truyện vừa hoặc chủ dự án chấp nhận số chương của kế hoạch; `--chapters` không vượt kế hoạch. Lựa chọn đã chọn chưa ghi dữ liệu có cấu trúc vào đồ thị (D-37).
+- **Người quyết:** hướng đề (tu tiên, tên Hán Việt, địa danh hư cấu, Truyện ngắn, không dùng làng quê bình dị): Chủ dự án duyệt 20/10/2026. Phần còn lại: Claude (nhánh story-run), chờ điều phối duyệt · 20/10/2026
+
+## D-43 · Model viết `reasoning: none`; lần chạy giữ chỗ ngân sách bằng `max_tokens`; giữ mọi lượt soát
+- **Bối cảnh:** bài D đo GPT-6 Luna với reasoning none, còn runtime dùng mặc định của model (D-36). Trần `--budget` cứng cần chi phí tối đa của từng lời gọi. Báo cáo cần lỗi của mọi lượt soát, kể cả lỗi đã sửa ở lượt viết lại.
+- **Quyết định:**
+  - `WriterTier.reasoning` (tuỳ chọn, kiểu `ReasoningEffort`, mặc định null); `chapter.py` gửi nó vào lời gọi model viết như `role_extra`. Mức `standard` đặt `none`.
+  - `bench_run`: trước mỗi lời gọi giữ chỗ = token vào ước tính × giá vào + `max_tokens_per_call` × giá ra (giá trong đề), và gửi `max_tokens` đó kèm mọi lời gọi của lần chạy. Không giữ chỗ được thì dừng (`COST_LIMIT_STORY`), ghi phần đã có, mã thoát 2. Trần trong config vẫn áp như khi chơi.
+  - `ChapterOutcome.reviews`: mọi lượt soát (loại lỗi, mức chặn, cạnh bị bỏ). `ChapterOutcome.error_detail`: chỉ cho log máy chủ.
+  - Vai của lời gọi nhận ra qua schema JSON; cảnh nhận qua `CostTracker.start_scene()`.
+- **Hệ quả:** lần chạy khác app ở `max_tokens`: app chưa đặt. Giá trong đề phải sửa khi giá OpenRouter đổi. Chưa đo được độ trễ tới chữ đầu, vì pipeline chưa stream.
+- **Người quyết:** `reasoning: none` cho mức `standard`: Chủ dự án duyệt 20/10/2026. Phần còn lại: Claude (nhánh story-run), chờ điều phối duyệt · 20/10/2026
 
 ## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
 - **Bối cảnh:** pipeline (D-36..D-40) dừng ở lỗi cấu hình vì `roles.*`, trần chi phí và ngưỡng còn `null`. Chưa có bài đo riêng cho dàn ý, lựa chọn, người kể, phân loại, người canh, khởi tạo. Bài D đo riêng bước viết của Luna khoảng 0,001 USD một cảnh (`evals/results/2026-10-20-quality-r2/`); cả đường đi chưa đo.

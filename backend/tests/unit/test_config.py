@@ -185,3 +185,23 @@ def test_unset_role_raises_clear_error(config_dir):
     path.write_text(text.replace(old, "  setup: null"), encoding="utf-8")
     with pytest.raises(LimitNotSetError, match="roles.setup"):
         load_config(config_dir).models.roles.require("setup")
+
+
+def test_writer_tier_reasoning_none_matches_bench_d():
+    """D-43: mức "standard" đặt reasoning none, như bài D đã đo GPT-6 Luna."""
+    [tier] = load_config().models.writer_tiers
+    assert (tier.id, tier.reasoning) == ("standard", "none")
+
+
+def test_writer_tier_reasoning_is_optional_and_checked(config_dir):
+    path = config_dir / "models.yaml"
+    text = path.read_text(encoding="utf-8")
+    without = "".join(line for line in text.splitlines(keepends=True)
+                      if not line.startswith("    reasoning: none"))
+    assert without != text, "test hỏng: config thật đã đổi"
+    path.write_text(without, encoding="utf-8")
+    assert load_config(config_dir).models.writer_tiers[0].reasoning is None
+    path.write_text(text.replace("reasoning: none", "reasoning: rat-cao"), encoding="utf-8")
+    with pytest.raises(ConfigError) as exc:
+        load_config(config_dir)
+    assert "writer_tiers" in str(exc.value)

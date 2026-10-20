@@ -1,0 +1,39 @@
+# Đề chạy cả một truyện từ dòng lệnh: writory.pipeline.bench_run (docs/eval.md, mục "Chạy cả
+# truyện"; D-42). Khai TRƯỚC mọi lần chạy thật. Đã chạy thật rồi thì không sửa đè: tăng `version`
+# hoặc thêm file đề mới.
+#
+# Hướng đề: chủ dự án duyệt 20/10/2026. Tu tiên, tên kiểu Hán Việt, địa danh hư cấu (D-32),
+# độ dài Truyện ngắn. Không dùng bối cảnh làng quê bình dị.
+# Soạn chữ tag và số chạy: Claude (nhánh story-run), chờ điều phối duyệt.
+
+version: 1
+
+# Người chơi chọn ở bước khởi tạo (design §4.1 bước 1–3). Tag là chữ người chơi (G4).
+tags:
+  genre: tu tiên
+  era: loạn thế, các đại tông môn tranh đoạt linh mạch
+  voice: căng thẳng, nhiều mưu tính và đối đáp sắc
+  darkness: vừa phải, có phản bội và chết chóc, không tả máu me
+length_level: short                         # config/story_lengths.yaml
+naming: {names: han_viet, places: hu_cau}   # mặc định của thể loại tu tiên (design §4.1)
+pov: protagonist
+writer_tier: null                           # null = mức đầu của config/models.yaml
+
+# Bước nào có 3 lựa chọn (bối cảnh, hướng, nhân vật, lựa chọn cuối chương) thì chọn bằng
+# random.Random(seed). Nhân vật chính giữ nguyên chữ model đề xuất (không sửa tay).
+seed: 20261020
+scene_count: 2        # số cảnh mỗi chương, trong story_lengths.scenes_per_chapter
+
+# Cảnh hoặc bộ lựa chọn bị chặn, hay model trả sai sau mọi lần thử lại của pipeline: lệnh tự "bấm
+# thử lại" tối đa chừng này lần, như người chơi. Lỗi khác (trần, key, cấu hình) dừng ngay.
+player_retries: 1
+
+# Giữ chỗ ngân sách (--budget): trước mỗi lời gọi trừ trước chi phí tối đa có thể =
+# token vào ước tính × giá vào + max_tokens_per_call × giá ra. max_tokens_per_call được gửi kèm mọi
+# lời gọi (gồm cả token suy luận) để chi phí tối đa là thật (D-43). Chi phí thật lấy từ usage.cost.
+max_tokens_per_call: 16000
+# USD / 1 triệu token, chỉ để giữ chỗ. Mọi model config đang dùng cho setup, outline, viết,
+# extract, choices phải có giá ở đây, không thì lệnh báo lỗi trước lời gọi đầu.
+# Nguồn: evals/scenarios/quality/models.yaml (openrouter.ai/api/v1/models, 20/10/2026).
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}

@@ -36,6 +36,7 @@ from writory.pipeline.setup import (
     propose_characters,
     propose_plots,
     propose_settings,
+    story_brief,
     to_story_setup,
 )
 from writory.safety.wrap import CLOSE_TAG
@@ -504,3 +505,15 @@ def test_initial_problems_flags_protagonist_knowledge():
                                        "to": "f_chuoi_kiem_ban_do", "valid_from_chapter": 0,
                                        "how": "tự biết"}])
     assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, chapters=SHORT))
+
+
+def test_story_brief_carries_every_player_choice_and_naming():
+    """Thiết lập truyện cho mỗi chương (`ChapterRequest.story_brief`): tag, quy ước tên và địa danh
+    (D-32), bối cảnh, hướng và nhân vật chính đã chọn. Nhân vật chính bỏ khoảng trắng hai đầu."""
+    padded = PC.model_copy(update={"name": "  " + PC.name + " "})
+    brief = story_brief(CHOICES, SETTING, PLOT, padded)
+    for part in ("kiếm hiệp", "cổ đại", "trầm, chậm", NAMES_TEXT["han_viet"], PLACES_TEXT["hu_cau"],
+                 SETTING.title, SETTING.intro, PLOT.title, PLOT.summary, PC.personality,
+                 PC.backstory):
+        assert part in brief
+    assert f"Nhân vật chính: {PC.name}\n" in brief
