@@ -243,7 +243,7 @@ Mọi điểm nghi do LLM báo phải kèm **câu trích nguyên văn** từ c�
 
 ## 9. Bộ đo
 
-Ba bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở người canh hay ở bước trích:
+Các bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở người canh, ở bước trích, ở model viết hay ở người kể:
 
 **A. Bộ nhớ (QA trên truyện cố định).** Mọi đối thủ đọc **cùng một bộ chương đã viết sẵn** rồi trả lời cùng bộ câu hỏi. Không dùng kịch bản lựa chọn ghi sẵn để sinh lại truyện, vì mỗi hệ thống sẽ viết ra truyện khác nhau và câu hỏi không còn khớp. Câu hỏi chia nhóm (đồ vật, sống/chết, ai biết gì, quan hệ hiện tại, lời nói dối), và chia theo **khoảng cách**: sự thật gieo ở đầu, giữa hay cuối truyện, hỏi ở chương cách đó bao xa. Lỗi của truyện dài hay dồn ở phần giữa. Đáp án lấy từ đồ thị đã được **người kiểm tay**, không lấy từ chính hệ thống được đo.
 

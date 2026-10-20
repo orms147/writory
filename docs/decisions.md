@@ -448,4 +448,4 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Trạng thái truyện dựng bằng `OverlayState` từ gói dựng tay, không cần Neo4j. Không áp trần số câu mỗi chương (G8 có test riêng). Truyện mẫu không qua bước khởi tạo, nên `story_brief` khai rỗng.
   - Giám khảo Sonnet là tuỳ chọn và chỉ chấm câu cuối khác NOT_KNOWN. Nó thấy sổ tay và câu hỏi, không thấy lớp truth hay tên model. Mỗi lượt chấm một lần, không fallbacks.
 - **Hệ quả:** kế hoạch của truyện mẫu là giả định (khi chơi, kế hoạch do bước khởi tạo sinh, D-38), nên số đo chỉ đúng cho kế hoạch kiểu đó. Bộ chấm có thể báo nhầm khi câu trả lời nhắc lại chữ của câu hỏi; lượt như vậy được đánh dấu `echo`. Chưa chạy thật.
-- **Người quyết:** Claude (nhánh bench-e), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh bench-e), điều phối duyệt (PR #24) · 20/10/2026
