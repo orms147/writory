@@ -12,6 +12,7 @@ from writory.graph import public_entries
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.pipeline.choices import (
     SYSTEM_PROMPT,
+    TONE_GUIDANCE,
     ChoicesOutput,
     build_choice_messages,
     make_choices,
@@ -88,10 +89,10 @@ def _refs_by_text():
     return {text[eid]: ref for ref, eid in refs.items()}
 
 
-async def _make(llm):
+async def _make(llm, *, brief: str = ""):
     return await make_choices(
         llm, "m", view=VIEW, protagonist_id="minh", last_scene_text=SCENE,
-        truth_names=STATE.named_nodes(), plan=PLAN, retries=RETRIES,
+        truth_names=STATE.named_nodes(), plan=PLAN, retries=RETRIES, story_brief=brief,
     )
 
 
@@ -132,3 +133,27 @@ async def test_leak_in_lie_content_blocks_all_choices():
         await _make(ScriptedLLM([leak]))
     assert exc.value.code is ErrorCode.CHOICES_LEAK_BLOCKED
     assert "gián điệp" not in str(exc.value)
+
+
+async def test_name_from_setup_text_is_not_a_leak_in_choices():
+    """D-52: tên người chơi đã đọc lúc khởi tạo (thiết lập truyện) là chữ đã thấy; tên lớp truth
+    khác vẫn bị dò như cũ."""
+    named = _reply(_refs_by_text(), **{"0": {"text": "Xuống bến tìm Lý Thất."}})
+    with pytest.raises(WritoryError) as exc:
+        await _make(ScriptedLLM([named]))
+    assert exc.value.code is ErrorCode.CHOICES_LEAK_BLOCKED
+    choices = await _make(ScriptedLLM([named]), brief="Bối cảnh: bến Sương, lái đò Lý Thất.")
+    assert choices[0].text == "Xuống bến tìm Lý Thất."
+
+
+def test_prompt_asks_to_vary_dialogue_tone_when_the_scene_fits():
+    """Lần chạy tu-tien-1 (notes.md mục 6): cả 6 chương, mọi lời thoại đều "nói thật". Đề khuyến
+    khích nói dối hoặc im lặng khi hợp cảnh; code không ép (design §6.2 chỉ đòi tối thiểu 2 loại)."""
+    [system, _], _ = build_choice_messages(VIEW, protagonist_id="minh", last_scene_text=SCENE)
+    assert TONE_GUIDANCE in system.content
+    for word in ('"lie"', '"silence"', '"truth"', "hợp cảnh"):
+        assert word in TONE_GUIDANCE
+    lan = _refs_by_text()["Phạm Thị Lan"]
+    honest = _reply(_refs_by_text(), **{"1": {"tone": "truth", "lie_content": None,
+                                               "listeners": [lan]}})
+    ChoicesOutput.model_validate_json(honest)  # nói thật vẫn hợp lệ: không ép bằng code

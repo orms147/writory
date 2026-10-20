@@ -9,6 +9,16 @@ repetition:
   ngram_words: 4             # độ dài cụm từ, tính bằng số từ
   max_repeats: 2             # một cụm xuất hiện quá số lần này trong một cảnh thì báo
 
+narration:
+  # D-51: ngôi kể của lời kể (không tính dòng thoại "- " và chữ trong ngoặc kép).
+  # first: người kể là nhân vật chính, xưng "tôi"; third: lời kể không xưng "tôi".
+  # Đề của model viết nói ngôi này (quality.narration_instruction), nên phép kiểm và đề cùng một nguồn.
+  person: first
+  # Số tạm (D-51), đo trên lần chạy evals/results/2026-10-20-run-tu-tien-1/ và truyện mẫu.
+  min_words: 80                         # lời kể ít từ hơn thì không kiểm (cảnh gần như toàn thoại)
+  first_person_min_per_100_words: 0.5   # person first: "tôi" ít hơn mức này thì báo lệch ngôi
+  first_person_max_per_100_words: 0.5   # person third: "tôi" nhiều hơn mức này thì báo lệch ngôi
+
 foreign_script:
   # Số từ Latin không phải âm tiết tiếng Việt, đứng liền nhau (không bị từ có dấu chen ngang),
   # thì báo là lẫn chữ khác hệ. Chữ Hán/Kana/Hangul luôn bị báo, không cần ngưỡng.

@@ -37,11 +37,12 @@ async def narrator(
     llm: Annotated[MeteredClient, Depends(deps.get_narrator_llm)],
     plan: Annotated[StoryPlan, Depends(deps.get_story_plan)],
     truth_names: Annotated[Mapping[str, tuple[str, ...]], Depends(deps.get_truth_names)],
+    brief: deps.StoryBrief,
     quota: Annotated[NarratorQuota, Depends(deps.get_narrator_quota)],
 ) -> NarratorAnswerOut:
     """Hỏi người kể: không mất lượt truyện; số câu mỗi chương có trần (G8)."""
     answer = await ask_narrator(
         body.question, view, llm=llm, config=config, truth_names=truth_names, plan=plan,
-        quota=quota,
+        story_brief=brief, quota=quota,
     )
     return NarratorAnswerOut(answer=answer)

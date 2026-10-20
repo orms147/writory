@@ -46,7 +46,7 @@ Cách chấm: D-25. Vị trí code, dữ liệu, kết quả: D-24. Code: `writo
   - bài chạm max_tokens (`truncated`), bài rỗng, bài bị lọc nội dung, và bài giám khảo từ chối (`judge_refusal`) được ghi riêng;
   - lỗi API, hết giờ, model trả lời khác model đã yêu cầu thì vào `errors.jsonl` và được chạy lại khi chạy tiếp;
   - model không trả `usage.cost`: ghi `LLM_COST_UNKNOWN`, tính chi phí bằng ước tính tối đa, và bỏ model đó cho phần còn lại của lượt chạy.
-- **Kiểm văn bằng code:** bốn bộ kiểm của `writory.quality` (lặp, sáo ngữ, chữ khác hệ, lời thoại), cộng độ dài theo case. Ngưỡng tạm là cờ của bài đo (`--ngram`, `--max-repeats`, `--latin-min`), có ghi vào kết quả. `config/quality.yaml` không đổi.
+- **Kiểm văn bằng code:** bốn bộ kiểm của `writory.quality` (lặp, sáo ngữ, chữ khác hệ, lời thoại), cộng độ dài theo case. Ngưỡng tạm là cờ của bài đo (`--ngram`, `--max-repeats`, `--latin-min`), có ghi vào kết quả. `config/quality.yaml` không đổi. Khác với pipeline (D-51): bài D không kiểm ngôi kể (ngôi theo từng case) và kiểm lặp không bỏ qua tên thực thể, nên số lỗi kiểm văn của bài D không so thẳng được với lần chạy cả truyện.
 - **Chỉ số** (`summary.md`, mỗi model một hàng):
   - trung bình ± khoảng tin cậy 95% của từng tiêu chí, tính theo t trên số case, sau khi gộp các mẫu và các lần chấm trong cùng case;
   - tỉ lệ lộ bí mật; số cảnh lọt suy luận hoặc chữ của prompt (`check_meta_leak`, D-30, tính từ văn bản đã lưu); số lỗi kiểm văn; độ dài trung vị;

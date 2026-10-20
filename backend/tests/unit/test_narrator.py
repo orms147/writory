@@ -47,6 +47,8 @@ PLAN = StoryPlan.model_validate({
          "leak_terms": [["Lan", "giết", "Lão Gù"]]},
     ],
 })
+# Thiết lập truyện mẫu người chơi đọc lúc khởi tạo (D-52): không có tên lớp truth nào chưa hé lộ.
+BRIEF = "Kiếm hiệp, phố Bến Sương. Nhân vật chính: Trần Minh, người chép sách thuê."
 REDTEAM = yaml.safe_load(
     (REPO_ROOT / "evals" / "redteam" / "g4_prompt_injection.yaml").read_text(encoding="utf-8")
 )["cases"]
@@ -120,12 +122,13 @@ def reply(known: bool, answer: str | None, ids: list[str]) -> str:
     return json.dumps({"known": known, "answer": answer, "entry_ids": ids}, ensure_ascii=False)
 
 
-async def ask(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN) -> str:
+async def ask(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN,
+              brief: str = "") -> str:
     if isinstance(llm, FakeLLM):
         llm = metered(llm)
     return await ask_narrator(
         question, view(chapter), llm=llm, config=config,
-        truth_names=state(chapter).named_nodes(), plan=plan,
+        truth_names=state(chapter).named_nodes(), plan=plan, story_brief=brief,
         quota=quota if quota is not None else MemoryQuota(),
     )
 
@@ -228,6 +231,17 @@ async def test_real_name_after_its_reveal_is_answered():
     assert await ask("Gã lái đò là ai?", 5, fake) == "Gã lái đò mặt sẹo tên là Lý Thất."
 
 
+async def test_name_from_setup_text_is_answered():
+    """D-52: tên người chơi đã đọc lúc khởi tạo không làm câu trả lời thành "chưa biết"."""
+    answer = "Gã lái đò mặt sẹo buộc thuyền trước quán, chỗ Lý Thất hay ngồi."
+    v = view(4)
+    assert await ask("Gã lái đò là ai?", 4,
+                     FakeLLM.scripted([reply(True, answer, [ref(v, "ly_that")])])) == NOT_KNOWN
+    assert await ask("Gã lái đò là ai?", 4,
+                     FakeLLM.scripted([reply(True, answer, [ref(v, "ly_that")])]),
+                     brief=f"{BRIEF} Ở bến có lái đò Lý Thất.") == answer
+
+
 # --- G1: context model nhận chỉ có player_view -----------------------------------------------
 
 ALL_NODES = {n.id: n for c in SAMPLE.chapters for n in c.package.nodes}
@@ -252,7 +266,8 @@ def test_sample_has_the_secrets_these_tests_guard():
     hidden = [ALL_NODES["f_lan_spy"].props["text"], ALL_NODES["f_lan_killed_gu"].props["text"],
               "Gã lái đò mặt sẹo là Lý Thất."]
     for text in hidden:
-        assert check_leaks(text, view=v4, truth_names=state(4).named_nodes(), plan=PLAN), text
+        assert check_leaks(text, view=v4, truth_names=state(4).named_nodes(), plan=PLAN,
+                           story_brief=BRIEF), text
 
 
 @pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
@@ -271,7 +286,7 @@ async def test_context_passes_the_leak_detector(chapter):
     """Mọi tên lớp truth chưa thấy và mọi bí mật chưa tới khoảng lộ: không có trong context."""
     ctx = await _context(chapter)
     assert check_leaks(ctx, view=view(chapter), truth_names=state(chapter).named_nodes(),
-                       plan=PLAN) == []
+                       plan=PLAN, story_brief="") == []
 
 
 @pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
@@ -424,7 +439,7 @@ async def test_question_at_max_length_is_accepted():
 async def test_model_call_must_be_metered():
     with pytest.raises(TypeError):
         await ask_narrator("Lan là ai?", view(3), llm=FakeLLM.scripted([]), config=CFG,
-                           truth_names={}, plan=PLAN, quota=MemoryQuota())
+                           truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota())
 
 
 async def test_cost_is_recorded_and_cap_stops_before_calling():

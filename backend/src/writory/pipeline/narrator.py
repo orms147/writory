@@ -134,12 +134,14 @@ async def ask_narrator(
     config: AppConfig,
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
+    story_brief: str,
     quota: NarratorQuota,
 ) -> str:
     """Câu trả lời hiện cho người chơi: chữ của model đã qua các phép kiểm, hoặc `NOT_KNOWN`.
 
-    `view`: player_view ở chương đã commit (`db.committed_player_view`). `truth_names` và `plan`
-    chỉ dùng cho bộ dò lộ (G2), không bao giờ vào context của model.
+    `view`: player_view ở chương đã commit (`db.committed_player_view`). `truth_names`, `plan` và
+    `story_brief` (thiết lập truyện người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ (G2), không bao
+    giờ vào context của model.
     """
     if not isinstance(llm, MeteredClient):
         raise TypeError("hỏi người kể phải gọi model qua MeteredClient (G8)")
@@ -174,7 +176,8 @@ async def ask_narrator(
         return output
 
     output = await with_retries(call, max_retries=retries.llm_transient, retry_on=RETRY_TRANSIENT)
-    return _checked_answer(output, view, truth_names=truth_names, plan=plan)
+    return _checked_answer(output, view, truth_names=truth_names, plan=plan,
+                           story_brief=story_brief)
 
 
 def _checked_answer(
@@ -183,6 +186,7 @@ def _checked_answer(
     *,
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
+    story_brief: str,
 ) -> str:
     """Không ghi chữ của model hay câu hỏi vào log: có thể chứa bí mật truyện (G12)."""
     answer = normalize_dashes((output.answer or "").strip())
@@ -195,7 +199,8 @@ def _checked_answer(
         log.warning("người kể: chương %d, %d mã mục không có trong sổ tay; trả NOT_KNOWN",
                     view.chapter, len(unknown))
         return NOT_KNOWN
-    hits = check_leaks(answer, view=view, truth_names=truth_names, plan=plan)
+    hits = check_leaks(answer, view=view, truth_names=truth_names, plan=plan,
+                       story_brief=story_brief)
     if hits:
         where = ", ".join(f"{h.kind.value}@{h.start}-{h.end}" for h in hits)
         log.warning("người kể: chương %d, chặn câu trả lời (G2): %d chỗ trúng (%s)",

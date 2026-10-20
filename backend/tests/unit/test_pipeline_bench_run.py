@@ -9,7 +9,7 @@ from pathlib import Path
 import httpx
 import pytest
 
-from tests.pipeline_fixtures import OverlayStore, make_config
+from tests.pipeline_fixtures import FIRST_PERSON, OverlayStore, make_config
 from writory.config import ConfigError, load_config
 from writory.llm.openrouter import OpenRouterClient
 from writory.pipeline import bench_run
@@ -22,6 +22,7 @@ from writory.pipeline.bench_run import (
     models_in_use,
     openrouter_client,
 )
+from writory.quality import check_scene
 
 SCENARIO_PATH = bench_run.DEFAULT_SCENARIO
 GENERAL_FILES = ("meta.json", "setup.json", "events.jsonl", "calls.jsonl", "report.json",
@@ -45,7 +46,7 @@ def scenario_for(config, **changes):
 def trial_config(tmp_path):
     """Bản sao config/ với ngưỡng thử (tests/pipeline_fixtures.make_config), dựng một lần."""
     target = tmp_path / "config"
-    return load_config(target) if target.exists() else make_config(tmp_path)
+    return load_config(target) if target.exists() else make_config(tmp_path, **FIRST_PERSON)
 
 
 def make_run(tmp_path, *, llm=None, config=None, scenario=None, store=None, out=None, **options):
@@ -117,6 +118,16 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     assert meta["config"]["sha256"] and meta["scenario"]["content"]["tags"]["genre"] == "tu tiên"
     chapter_1 = (out / "chapters" / "ch01.md").read_text(encoding="utf-8")
     assert bench_run.DRY_RUN_NPC_NAME in chapter_1 and "Lựa chọn" in chapter_1
+
+
+def test_dry_run_scene_passes_the_repo_quality_config():
+    """`--dry-run` chạy với config thật: cảnh viết tay phải qua kiểm văn, kể cả ngôi kể (D-51),
+    để dry-run không tự sinh lượt viết lại."""
+    repo = load_config()
+    scenario, _ = load_scenario(SCENARIO_PATH)
+    issues = check_scene(bench_run.DRY_RUN_SCENE, scenes_in_chapter=scenario.scene_count,
+                         quality=repo.quality, lengths=repo.story_lengths)
+    assert issues == []
 
 
 def test_result_paths_are_relative_to_the_repo():

@@ -94,10 +94,14 @@ _TRIAL = {
                "context": {"writer_max_neighbors": 10}},
     "models": {"roles": {"outline": "test/outline", "choices": "test/choices"}},
     "quality": {"repetition": {"ngram_words": 6, "max_repeats": 2},
-                "foreign_script": {"latin_run_min_words": 3}},
+                "foreign_script": {"latin_run_min_words": 3},
+                # Văn cảnh thử lấy từ truyện mẫu, kể ngôi thứ ba (D-51: ngôi theo config).
+                "narration": {"person": "third"}},
     "story_lengths": {"chapter_chars": {"min": 1000, "max": 10000}},
     "guard": {"relationship": {"max_score_jump_without_event": 50}},
 }
+# Cảnh của model giả `bench_run.DryRunLLM` kể ngôi thứ nhất như config thật (D-51).
+FIRST_PERSON = {"quality": {"narration": {"person": "first"}}}
 
 
 def _merge(base: dict, extra: dict) -> dict:

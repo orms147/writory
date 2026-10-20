@@ -6,10 +6,13 @@ Biến thể "</player_data >" (có khoảng trắng) lọt qua phép kiểm chu
 nên chỉ escape mới chặn được nó.
 """
 
+from pathlib import Path
+
 import pytest
 from pydantic import ValidationError
 
 from tests.pipeline_fixtures import writer_context_ch4
+from writory.config import load_config
 from writory.graph import ChangePackage, CloseSpec, EdgeSpec, NodeSpec
 from writory.graph.context import FactInfo
 from writory.pipeline.extract import Entity, build_messages
@@ -20,6 +23,7 @@ from writory.pipeline.scene import (
     SceneBrief,
     SceneOutline,
     load_style_guide,
+    outline_foreign_script,
     outline_messages,
     render_changes,
     writer_messages,
@@ -100,3 +104,33 @@ def test_extract_prompt_escapes_catalogue_text():
     [_, user] = build_messages(chapter=4, chapter_id="ch4", protagonist_id="minh",
                                chapter_text="Văn.", entities=entities, open_edges=[])
     _check(user.content)
+
+
+# --- dàn ý phải viết tiếng Việt (D-51) -------------------------------------------------------
+
+OUTLINE_ZH = SceneOutline.model_validate_json(
+    (Path(__file__).parents[1] / "fixtures" / "llm" / "outline_zh_run_tu_tien_1.json")
+    .read_text(encoding="utf-8"))
+
+
+def test_outline_prompt_says_write_in_vietnamese():
+    [system, _] = outline_messages(BRIEF, _ctx(), [Candidate("minh", Named("Trần Minh"), True)],
+                                   NAMES, {})
+    assert "tiếng Việt có dấu" in system.content and "chữ Hán" in system.content
+
+
+def test_outline_foreign_script_names_every_field_in_other_script():
+    """Lần chạy tu-tien-1: mọi trường chữ của dàn ý chương 1 cảnh 2 là tiếng Trung."""
+    bad = outline_foreign_script(OUTLINE_ZH, load_config().quality)
+    assert bad == ["goal", *(f"beats[{i}]" for i in range(len(OUTLINE_ZH.beats))), "ends_at"]
+
+
+def test_vietnamese_outline_with_names_and_ids_is_fine():
+    outline = SceneOutline(
+        goal="Kỷ Trầm Uyên phải chọn giữ khe hở hay cứu người.", present=["protagonist"],
+        beats=["protagonist đối chiếu Sổ Trận với trận đồ.", "Lục Hàn Sương ra lệnh giữ trận."],
+        ends_at="Cảnh kết khi chưa ai quyết.")
+    assert outline_foreign_script(outline, load_config().quality) == []
+    english = outline.model_copy(update={"beats": ["The disciple checks the formation log.",
+                                                   "Lục Hàn Sương ra lệnh giữ trận."]})
+    assert outline_foreign_script(english, load_config().quality) == ["beats[0]"]

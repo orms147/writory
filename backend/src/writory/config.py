@@ -195,11 +195,27 @@ class ClicheConfig(_Strict):
     phrases: list[str]
 
 
+NarrationPerson = Literal["first", "third"]
+
+
+class NarrationConfig(_Section):
+    """Ngôi kể của lời kể (D-51). `person` là ngôi đã chốt của truyện; ngưỡng tính bằng số lần
+    "tôi" trên 100 từ lời kể."""
+
+    _path = "narration"
+    _file = "quality.yaml"
+    person: NarrationPerson
+    min_words: PositiveInt | None
+    first_person_min_per_100_words: NonNegativeFloat | None
+    first_person_max_per_100_words: NonNegativeFloat | None
+
+
 class QualityConfig(_Strict):
     dialogue_style: Literal["dash", "quotes"]
     repetition: RepetitionConfig
     foreign_script: ForeignScriptConfig
     cliches: ClicheConfig
+    narration: NarrationConfig
 
 
 # --- guard.yaml ------------------------------------------------------------------------

@@ -3,12 +3,13 @@
 import json
 import logging
 import unicodedata
+from pathlib import Path
 
 import pytest
 
 from tests.pipeline_fixtures import SETUP_PC_NAME, setup_chapter_0
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerEntry, PlayerView, read_sample
+from writory.graph import ChangePackage, PlayerEntry, PlayerView, read_sample
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.pipeline.setup import PROTAGONIST_ID
 from writory.pipeline.story_plan import StoryPlan
@@ -38,10 +39,12 @@ def through(chapter: int) -> OverlayState:
     return OverlayState(EmptyState(), [c.package for c in SAMPLE.chapters if c.number <= chapter])
 
 
-def leaks(text: str, chapter: int, plan: StoryPlan = PLAN, state: OverlayState | None = None):
+def leaks(text: str, chapter: int, plan: StoryPlan = PLAN, state: OverlayState | None = None,
+          brief: str = ""):
     state = state or through(chapter)
     return check_leaks(
-        text, view=player_view_of(state, chapter), truth_names=state.named_nodes(), plan=plan
+        text, view=player_view_of(state, chapter), truth_names=state.named_nodes(), plan=plan,
+        story_brief=brief,
     )
 
 
@@ -165,14 +168,15 @@ def test_leak_reads_only_player_view():
     entry = PlayerEntry("ly_that", "Character", "Lý Thất", (), 4, "Lý Thất", (), ("Lý Thất",))
     patched = PlayerView(view.story_id, 4, (*view.entries, entry), view.lies)
     text = "Lý Thất cười."
-    assert check_leaks(text, view=view, truth_names=through(4).named_nodes(), plan=PLAN)
-    assert check_leaks(text, view=patched, truth_names=through(4).named_nodes(), plan=PLAN) == []
+    names = through(4).named_nodes()
+    assert check_leaks(text, view=view, truth_names=names, plan=PLAN, story_brief="")
+    assert check_leaks(text, view=patched, truth_names=names, plan=PLAN, story_brief="") == []
 
 
 def test_ensure_no_leak_blocks_without_revealing_the_secret():
     with pytest.raises(WritoryError) as exc:
         ensure_no_leak("Minh không ngờ Lan là gián điệp.", view=player_view_of(through(4), 4),
-                       truth_names=through(4).named_nodes(), plan=PLAN)
+                       truth_names=through(4).named_nodes(), plan=PLAN, story_brief="")
     err = exc.value
     assert err.code is ErrorCode.SCENE_LEAK_BLOCKED
     shown = json.dumps(err.player_payload(), ensure_ascii=False) + str(err)
@@ -182,7 +186,7 @@ def test_ensure_no_leak_blocks_without_revealing_the_secret():
 
 def test_ensure_no_leak_passes_clean_text():
     ensure_no_leak("Minh rót trà.", view=player_view_of(through(4), 4),
-                   truth_names=through(4).named_nodes(), plan=PLAN)
+                   truth_names=through(4).named_nodes(), plan=PLAN, story_brief="")
 
 
 # --- tên do người chơi viết (D-48) -----------------------------------------------------------
@@ -211,13 +215,100 @@ def test_player_written_name_is_not_a_leak_before_any_reveal():
     view = player_view_of(state, 1)
     assert view.entries == ()  # chương 0 người chơi chưa biết gì (D-38)
     text = f"{_PC_NAME} đẩy cửa lò rèn bước ra sân."
-    assert check_leaks(text, view=view, truth_names=leak_names(state), plan=plan) == []
+    assert check_leaks(text, view=view, truth_names=leak_names(state), plan=plan,
+                       story_brief="") == []
 
 
 def test_unrevealed_truth_name_and_protagonist_alias_still_leak():
     state, plan = setup_world(protagonist_aliases=("Vân Nhi",))
     text = f"{_PC_NAME} nhìn Tô Nguyệt Hoa gọi Vân Nhi lại."
     hits = check_leaks(text, view=player_view_of(state, 1), truth_names=leak_names(state),
-                       plan=plan)
+                       plan=plan, story_brief="")
     terms = {h.term for h in hits}
     assert {"Tô Nguyệt Hoa", "Vân Nhi"} <= terms and _PC_NAME not in terms
+
+
+# --- chữ người chơi đã đọc lúc khởi tạo (D-52) ------------------------------------------------
+# Bối cảnh, hướng truyện và nhân vật chính đã hiện cho người chơi lúc khởi tạo (G1, D-37); thiết lập
+# truyện (`setup.story_brief`, lưu ở `stories.brief`) gom đúng chữ đó. Tên có trong đó không còn là
+# bí mật đối với người chơi. Nhóm `leak_terms` của bí mật thì vẫn dò như cũ.
+
+RUN1_NAMES = {"Huyền Sát Tông", "Tín Vật Huyền Nguyệt", "Động Linh Mạch"}  # notes.md mục 4
+RUN1_BRIEF = (Path(__file__).parents[1] / "fixtures" / "leak" / "run-tu-tien-1-brief.txt"
+              ).read_text(encoding="utf-8")
+RUN1_SCENE = ("Người bên ngoài sẽ rơi vào tay Huyền Sát Tông. Bàn tay tôi khép lại quanh Tín Vật "
+              "Huyền Nguyệt. Phía động linh mạch, một đoạn phù văn tắt hẳn.")
+
+
+def run1_world() -> tuple[OverlayState, StoryPlan]:
+    """Thế giới thu nhỏ của lần chạy tu-tien-1 ở chương 0: người chơi chưa biết gì (D-38)."""
+    def node(i, label, name, **props):
+        return {"id": i, "label": label, "props": {"name": name, **props}}
+
+    package = ChangePackage.model_validate({"commit_id": "c0", "nodes": [
+        node(PROTAGONIST_ID, "Character", "Kỷ Trầm Uyên", is_protagonist=True, user_authored=True),
+        node("doan_khac", "Character", "Đoàn Khắc"),
+        node("huyen_sat_tong", "Faction", "Huyền Sát Tông"),
+        node("tinh_vat_huyen_nguyet", "Item", "Tín Vật Huyền Nguyệt", aliases=["tín vật"]),
+        node("dong_linh_mach", "Location", "Động Linh Mạch"),
+        {"id": "f_doan_khac_tao_phu_gia", "label": "Fact",
+         "props": {"text": "Đoàn Khắc làm giả phù âm"}},
+    ]})
+    plan = StoryPlan.model_validate({
+        "acts": [{"name": "a", "from_chapter": 1, "to_chapter": 6}],
+        "secrets": [{"fact_id": "f_doan_khac_tao_phu_gia", "reveal_from_chapter": 3,
+                     "reveal_to_chapter": 6, "leak_terms": [["Đoàn Khắc", "làm giả phù âm"]]}],
+    })
+    return OverlayState(EmptyState(), [package]), plan
+
+
+def run1_hits(text: str, brief: str) -> list:
+    state, plan = run1_world()
+    return check_leaks(text, view=player_view_of(state, 1), truth_names=leak_names(state),
+                       plan=plan, story_brief=brief)
+
+
+def test_names_in_setup_text_the_player_read_are_not_secret():
+    """Hồi quy lần chạy tu-tien-1 (notes.md mục 4): tên đã hiện cho người chơi lúc khởi tạo không bị
+    cấm, kể cả khi trang chưa hé lộ nút đó. Không có thiết lập truyện thì cả ba tên đều bị cấm."""
+    assert {h.term for h in run1_hits(RUN1_SCENE, brief="")} == RUN1_NAMES
+    brief = ("Bối cảnh: Cô Phong bị Huyền Sát Tông vây. Sư huynh trao cho bạn Tín Vật Huyền "
+             "Nguyệt rồi biến mất về phía Động Linh Mạch.")
+    assert run1_hits(RUN1_SCENE, brief=brief) == []
+
+
+def test_run1_names_absent_from_its_setup_text_still_leak():
+    """Thiết lập truyện thật của lần chạy không có ba tên này (chỉ có "tín vật", "linh mạch" viết
+    thường, mà tên chỉ được tính là đã thấy theo từ viết hoa, D-26), nên chúng vẫn bị cấm khi trang
+    chưa hé lộ nút. Tên chưa hiện ở đâu cho người chơi vẫn là tên lớp truth chưa biết (G2)."""
+    assert {h.term for h in run1_hits(RUN1_SCENE, brief=RUN1_BRIEF)} == RUN1_NAMES
+
+
+def test_setup_text_never_unlocks_secret_leak_terms():
+    """Chữ khởi tạo chỉ tính cho tên. Bí mật theo kế hoạch vẫn dò theo `leak_terms` (D-26), kể cả
+    khi thiết lập truyện có đủ các cụm (người chơi tự gõ vào quá khứ nhân vật chính chẳng hạn)."""
+    hits = run1_hits("Tôi biết Đoàn Khắc làm giả phù âm.",
+                     brief="Quá khứ: nghi Đoàn Khắc làm giả phù âm.")
+    assert [h.kind for h in hits] == [LeakKind.SECRET]
+    assert leaks("Minh không ngờ Lan là gián điệp.", 4, brief="Lan là gián điệp.")
+
+
+def test_protagonist_name_in_setup_text_counts_as_seen_but_new_words_do_not():
+    """D-52 đổi một phần D-48: thiết lập truyện có tên nhân vật chính, nên từ của tên đó là chữ đã
+    thấy. Biệt danh chỉ gồm các từ ấy không còn bị cấm; biệt danh có từ mới vẫn bị cấm."""
+    state, plan = setup_world(protagonist_aliases=("Thanh Vân", "Vân Nhi"))
+    brief = f"Nhân vật chính: {_PC_NAME}. Quá khứ: con một thợ rèn."
+    text = "Có người gọi Thanh Vân, rồi gọi Vân Nhi."
+
+    def terms(b: str) -> set[str]:
+        return {h.term for h in check_leaks(text, view=player_view_of(state, 1), plan=plan,
+                                            truth_names=leak_names(state), story_brief=b)}
+
+    assert terms("") == {"Thanh Vân", "Vân Nhi"}
+    assert terms(brief) == {"Vân Nhi"}
+
+
+def test_setup_text_counts_only_the_names_it_contains():
+    """Tên lớp truth khác vẫn bị cấm dù thiết lập truyện có chữ khác (D-26, D-48 giữ nguyên)."""
+    hits = leaks("Gã lái đò, tức Lý Thất, buộc thuyền.", 4, brief="Kiếm hiệp, phố Bến Sương.")
+    assert [h.term for h in hits] == ["Lý Thất"]
