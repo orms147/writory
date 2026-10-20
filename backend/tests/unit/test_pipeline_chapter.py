@@ -4,7 +4,9 @@ Nền: truyện mẫu đã commit tới chương 3; viết chương 4 thành 2 c
 một cảnh: dàn ý → viết → trích [→ viết lại → trích]; hết chương: tạo lựa chọn.
 """
 
+import json
 import logging
+import re
 
 import pytest
 
@@ -21,8 +23,10 @@ from tests.pipeline_fixtures import (
     SCENE_1_LEAK,
     SCENE_1_META,
     SCENE_2,
+    SETUP_PC_NAME,
     TRUTH_AT_4,
     MemoryStore,
+    OverlayStore,
     ScriptedLLM,
     calls_of,
     choices_reply,
@@ -31,6 +35,7 @@ from tests.pipeline_fixtures import (
     make_config,
     outline_reply,
     role_of,
+    setup_chapter_0,
     unavailable,
 )
 from writory.config import load_config
@@ -260,6 +265,73 @@ async def test_leak_in_first_draft_only_is_rewritten_and_shown_clean(tmp_path):
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     assert all("gián điệp" not in e.model_dump_json() for e in events)
     assert "lộ" in calls_of(llm, "writer")[1][-1].content
+
+
+# --- tên do người chơi viết không phải bí mật với người chơi (D-48) ------------------------------
+# Truyện mới từ bước khởi tạo: chương 0 người chơi chưa biết gì, nhân vật chính `user_authored`.
+
+_HA_LAO = "Hà lão gọi với theo từ hiên nhà."  # hé lộ ha_ba_tung bằng biệt danh "Hà lão"
+SCENE_PC = f"{SETUP_PC_NAME} đẩy cửa lò rèn bước ra sân. {_HA_LAO}\n\n{SCENE_1}"
+EXTRACT_REVEAL_HA = extract_reply([{"type": "REVEALED_TO_PLAYER", "source": "ha_ba_tung",
+                                    "target": "ch1", "quote": _HA_LAO, "known_as": "Hà lão"}])
+
+
+def _choices_naming_protagonist(messages) -> str:
+    [ha] = re.findall(r"\[(m\d+)\] Nhân vật: Hà lão", messages[-1].content)
+    none = {"tone": None, "lie_content": None, "listeners": [], "about": [], "feeling": None}
+    return json.dumps({"choices": [
+        none | {"kind": "action", "text": f"{SETUP_PC_NAME} quay vào lò rèn nhóm lửa."},
+        none | {"kind": "dialogue", "text": "Hỏi Hà lão về thanh kiếm cũ.", "tone": "truth",
+                "listeners": [ha], "about": [ha]},
+        none | {"kind": "inner", "text": "Thầm nghĩ Hà lão còn giấu điều gì.", "about": [ha],
+                "feeling": "nghi ngờ"},
+    ]}, ensure_ascii=False)
+
+
+async def run_new_story(script, tmp_path, *, aliases: tuple[str, ...] = ()):
+    package, plan = setup_chapter_0(protagonist_aliases=aliases)
+    store = OverlayStore("new-story")
+    store.commit(0, [], package)
+    config = make_config(tmp_path)
+    llm = ScriptedLLM(script)
+    chapter_run = ChapterRun(
+        ChapterRequest(present_ids=(), scene_count=2, story_brief="Kiếm hiệp, Hán Việt.",
+                       commit_id="c-ch1"),
+        llm=llm, store=store, config=config, plan=plan,
+        tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE,
+    )
+    events = [e async for e in chapter_run.events()]
+    return events, chapter_run.outcome, store
+
+
+async def test_protagonist_name_is_not_a_leak_even_if_never_revealed(tmp_path):
+    """Hồi quy D-48: cảnh chương 1 nêu tên nhân vật chính, bộ trích KHÔNG hé lộ nhân vật chính.
+    Tên do người chơi chọn, nên cảnh không bị chặn; lựa chọn nêu tên đó cũng hiện."""
+    outline = outline_reply(present=("protagonist", "ha_ba_tung"))
+    script = [outline, SCENE_PC, EXTRACT_REVEAL_HA, outline, SCENE_PC, extract_reply(),
+              _choices_naming_protagonist]
+    events, outcome, store = await run_new_story(script, tmp_path)
+
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert all(r.verdict == "accept" and r.issues == () for r in outcome.reviews)
+    assert [e.id for e in store.player_view(1).entries] == ["ha_ba_tung"]  # không hé lộ nhân vật chính
+    assert SETUP_PC_NAME in of_type(events, "scene_ready")[0].text
+    assert SETUP_PC_NAME in of_type(events, "choices_ready")[0].choices[0].text
+
+
+@pytest.mark.parametrize(("opening", "aliases"), [
+    ("Tô Nguyệt Hoa đứng ngoài cổng.", ()),  # tên lớp truth của nút không user_authored
+    ("Vân Nhi đẩy cửa lò rèn.", ("Vân Nhi",)),  # biệt danh model gán cho nhân vật chính
+])
+async def test_unrevealed_names_still_block_beside_the_protagonist_name(tmp_path, opening, aliases):
+    """D-48 chỉ miễn `name` của nút user_authored: tên chưa hé lộ khác, kể cả biệt danh của nhân
+    vật chính, vẫn chặn cảnh (G2)."""
+    text = f"{opening} {SETUP_PC_NAME} không quay lại.\n\n{SCENE_1}"
+    script = [outline_reply(present=("protagonist",)), text, extract_reply(), text, extract_reply()]
+    events, outcome, store = await run_new_story(script, tmp_path, aliases=aliases)
+    assert kinds(events) == ["scene_blocked"]
+    assert store.committed == 0 and not outcome.committed
+    assert {i.kind for r in outcome.reviews for i in r.issues if i.source == "leak"} == {"name"}
 
 
 async def test_reasoning_tag_in_both_drafts_blocks_scene(tmp_path):

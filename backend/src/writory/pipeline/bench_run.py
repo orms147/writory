@@ -112,6 +112,7 @@ from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách
     git_state,
     load_keys,
 )
+from writory.safety.leak import leak_names
 from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
@@ -706,7 +707,7 @@ class StoryRun:
         return await make_choices(
             self.metered, require_model(self.config.models.roles, "choices"),
             view=self.store.player_view(number), protagonist_id=state.protagonist_id(),
-            last_scene_text=out.scenes[-1].text, truth_names=state.named_nodes(), plan=self.plan,
+            last_scene_text=out.scenes[-1].text, truth_names=leak_names(state), plan=self.plan,
             retries=self.config.limits.retries, extra=role_extra(self.config.models, "choices"),
         )
 

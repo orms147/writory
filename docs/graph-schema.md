@@ -123,7 +123,7 @@ Câu hỏi design §7.3, mỗi câu một hàm trong `graph/queries.py` hoặc `
 | Lời nói dối nào của nhân vật chính chưa bị phát hiện, đã nói với ai? | `undiscovered_lies` |
 | Mạch nào đang mở và đã quá khoảng chương dự kiến gỡ? | `overdue_threads` |
 
-Thêm: `relationship`, `is_alive`, `find_characters` (tên hoặc biệt danh, khớp nguyên cụm), `protagonist_id`. Cho người canh: `edges_at` (cạnh một kiểu còn hiệu lực ở chương N, kèm id) và `node_labels`. Cho bộ dò lộ (G2): `named_nodes` (tên và biệt danh lớp truth; không bao giờ trả cho người chơi). Cho bộ trích của pipeline (D-36): `story_nodes` (mọi nút của truyện, kể cả nút chưa có cạnh, làm danh mục thực thể; lớp truth).
+Thêm: `relationship`, `is_alive`, `find_characters` (tên hoặc biệt danh, khớp nguyên cụm), `protagonist_id`. Cho người canh: `edges_at` (cạnh một kiểu còn hiệu lực ở chương N, kèm id) và `node_labels`. Cho bộ dò lộ (G2): `named_nodes` (tên và biệt danh lớp truth; không bao giờ trả cho người chơi). Bộ dò lộ đọc qua `safety.leak.leak_names`, bỏ `name` của nút `user_authored` (D-48). Cho bộ trích của pipeline (D-36): `story_nodes` (mọi nút của truyện, kể cả nút chưa có cạnh, làm danh mục thực thể; lớp truth).
 
 Cypher mẫu (người giữ đồ vật ở chương N):
 ```cypher

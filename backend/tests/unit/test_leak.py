@@ -6,11 +6,19 @@ import unicodedata
 
 import pytest
 
+from tests.pipeline_fixtures import SETUP_PC_NAME, setup_chapter_0
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerEntry, PlayerView, read_sample
 from writory.guard.state import EmptyState, OverlayState, player_view_of
+from writory.pipeline.setup import PROTAGONIST_ID
 from writory.pipeline.story_plan import StoryPlan
-from writory.safety.leak import LeakKind, check_leaks, ensure_no_leak, strip_diacritics
+from writory.safety.leak import (
+    LeakKind,
+    check_leaks,
+    ensure_no_leak,
+    leak_names,
+    strip_diacritics,
+)
 
 SAMPLE = read_sample()
 PLAN = StoryPlan.model_validate({
@@ -175,3 +183,41 @@ def test_ensure_no_leak_blocks_without_revealing_the_secret():
 def test_ensure_no_leak_passes_clean_text():
     ensure_no_leak("Minh rót trà.", view=player_view_of(through(4), 4),
                    truth_names=through(4).named_nodes(), plan=PLAN)
+
+
+# --- tên do người chơi viết (D-48) -----------------------------------------------------------
+
+_PC_NAME = SETUP_PC_NAME
+
+
+def setup_world(*, protagonist_aliases: tuple[str, ...] = ()) -> tuple[OverlayState, StoryPlan]:
+    package, plan = setup_chapter_0(protagonist_aliases=protagonist_aliases)
+    return OverlayState(EmptyState(), [package]), plan
+
+
+def test_leak_names_spare_only_the_name_the_player_wrote():
+    state, _ = setup_world(protagonist_aliases=("Vân Nhi",))
+    names = leak_names(state)
+    assert names[PROTAGONIST_ID] == ("Vân Nhi",)  # chỉ miễn `name`; biệt danh vẫn bị dò
+    assert names["to_nguyet_hoa"] == ("Tô Nguyệt Hoa", "Nguyệt Hoa", "cô gái áo lam")
+    assert {k: v for k, v in names.items() if k != PROTAGONIST_ID} == {
+        k: v for k, v in state.named_nodes().items() if k != PROTAGONIST_ID}
+    plain, _ = setup_world()
+    assert PROTAGONIST_ID not in leak_names(plain)
+
+
+def test_player_written_name_is_not_a_leak_before_any_reveal():
+    state, plan = setup_world()
+    view = player_view_of(state, 1)
+    assert view.entries == ()  # chương 0 người chơi chưa biết gì (D-38)
+    text = f"{_PC_NAME} đẩy cửa lò rèn bước ra sân."
+    assert check_leaks(text, view=view, truth_names=leak_names(state), plan=plan) == []
+
+
+def test_unrevealed_truth_name_and_protagonist_alias_still_leak():
+    state, plan = setup_world(protagonist_aliases=("Vân Nhi",))
+    text = f"{_PC_NAME} nhìn Tô Nguyệt Hoa gọi Vân Nhi lại."
+    hits = check_leaks(text, view=player_view_of(state, 1), truth_names=leak_names(state),
+                       plan=plan)
+    terms = {h.term for h in hits}
+    assert {"Tô Nguyệt Hoa", "Vân Nhi"} <= terms and _PC_NAME not in terms

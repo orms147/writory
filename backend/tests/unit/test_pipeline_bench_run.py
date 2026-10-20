@@ -9,12 +9,8 @@ from pathlib import Path
 import httpx
 import pytest
 
-from tests.pipeline_fixtures import make_config
+from tests.pipeline_fixtures import OverlayStore, make_config
 from writory.config import ConfigError, load_config
-from writory.graph import ChangePackage, PlayerView
-from writory.graph.context import CharacterInfo, NeighborInfo, WriterContext
-from writory.graph.package import chapter_rule_problems
-from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.openrouter import OpenRouterClient
 from writory.pipeline import bench_run
 from writory.pipeline.bench_run import (
@@ -26,78 +22,11 @@ from writory.pipeline.bench_run import (
     models_in_use,
     openrouter_client,
 )
-from writory.pipeline.extract import Entity
-from writory.pipeline.store import entities_from_rows
 
 SCENARIO_PATH = bench_run.DEFAULT_SCENARIO
 GENERAL_FILES = ("meta.json", "setup.json", "events.jsonl", "calls.jsonl", "report.json",
                  "summary.md")
 STYLE = "Văn phong thử."
-
-
-# --- kho truyện trong bộ nhớ --------------------------------------------------------------------
-
-
-class RunMemoryStore:
-    """Cùng giao thức với kho Neo4j + Postgres của lệnh chạy. `writer_context` dựng tối giản từ
-    trạng thái trong bộ nhớ (nhân vật có mặt + nhân vật khác làm lân cận)."""
-
-    def __init__(self, story_id: str = "mem-run") -> None:
-        self.story_id = story_id
-        self.packages: list[ChangePackage] = []
-        self.committed: int | None = None
-        self.created: str | None = None
-        self.deleted = False
-        self.commits: list[tuple[int, list[str]]] = []
-
-    def create_story(self, length_level: str) -> None:
-        self.created = length_level
-
-    def delete_story(self) -> None:
-        self.deleted = True
-
-    def committed_chapter(self) -> int | None:
-        return self.committed
-
-    def has_pending(self) -> bool:
-        return False
-
-    def state(self) -> OverlayState:
-        return OverlayState(EmptyState(), self.packages)
-
-    def catalogue(self) -> list[Entity]:
-        return entities_from_rows(self.state().nodes([n.id for p in self.packages for n in p.nodes]))
-
-    def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors) -> WriterContext:
-        rows = {i: r for i, r in self.state().nodes([e.id for e in self.catalogue()]).items()
-                if r.label == "Character"}
-
-        def ua(i):
-            return bool(rows[i].props.get("user_authored"))
-
-        present = tuple(
-            CharacterInfo(i, rows[i].props["name"], tuple(rows[i].props.get("aliases", ())), True,
-                          None, (), ua(i))
-            for i in present_ids if i in rows
-        )
-        neighbors = tuple(
-            NeighborInfo(i, "Character", r.props["name"], tuple(r.props.get("aliases", ())), 1,
-                         True, ua(i))
-            for i, r in rows.items() if i not in present_ids
-        )
-        return WriterContext(self.story_id, as_of_chapter, as_of_chapter + 1, present, (), (), (),
-                             (), neighbors, ())
-
-    def commit(self, number: int, scenes: list[str], package: ChangePackage) -> None:
-        expected = 0 if self.committed is None else self.committed + 1
-        assert number == expected, (number, expected)
-        assert chapter_rule_problems(package, number) == []
-        self.packages.append(package)
-        self.committed = number
-        self.commits.append((number, scenes))
-
-    def player_view(self, chapter: int) -> PlayerView:
-        return player_view_of(self.state(), chapter, story_id=self.story_id)
 
 
 # --- dựng một lần chạy --------------------------------------------------------------------------
@@ -124,7 +53,7 @@ def make_run(tmp_path, *, llm=None, config=None, scenario=None, store=None, out=
     scenario = scenario or scenario_for(config)
     total = config.story_lengths.levels[scenario.length_level].chapters.min
     llm = llm if llm is not None else DryRunLLM(total)
-    store = store or RunMemoryStore()
+    store = store or OverlayStore()
     out = out or tmp_path / "out"
     run = StoryRun(scenario, "sha-test", config, llm=llm, store=store,
                    options=RunOptions(out=out, dry_run=True, **options), style_guide=STYLE,
@@ -372,7 +301,7 @@ async def test_budget_stops_before_a_call_that_could_exceed_and_keeps_what_was_d
 
 async def test_budget_is_required_for_a_real_run(tmp_path):
     config = trial_config(tmp_path)
-    run = StoryRun(scenario_for(config), "sha", config, llm=DryRunLLM(4), store=RunMemoryStore(),
+    run = StoryRun(scenario_for(config), "sha", config, llm=DryRunLLM(4), store=OverlayStore(),
                    options=RunOptions(out=tmp_path / "o", dry_run=False), log=lambda _: None)
     with pytest.raises(ConfigError, match="--budget"):
         await run.run()
@@ -419,7 +348,7 @@ async def test_unset_config_fails_before_the_first_call_and_lists_every_gap(tmp_
         "limits": repo.limits.model_copy(update={"cost_usd": cost}),
     })
     scenario = scenario_for(repo, prices={"khac/model": {"in": 0.1, "out": 0.5}})
-    llm, store = DryRunLLM(4), RunMemoryStore()
+    llm, store = DryRunLLM(4), OverlayStore()
     run, _, _, out = make_run(tmp_path, llm=llm, config=config, scenario=scenario, store=store)
     with pytest.raises(ConfigError) as exc:
         await run.run()
@@ -450,15 +379,15 @@ def test_cli_reports_unset_config_without_touching_services(tmp_path, capsys, mo
 KEY = "sk-or-v1-" + "f00dfeed" * 8
 
 
-def _transport(world: DryRunLLM, seen_auth: list[str]):
-    """OpenRouter giả: lần đầu trả 500 có chép lại key (lỗi giữa đường), sau đó trả lời như
-    model giả của --dry-run."""
+def _transport(world: DryRunLLM, seen_auth: list[str], *, fails: int):
+    """OpenRouter giả: `fails` lần đầu trả 500 có chép lại key (lỗi giữa đường), sau đó trả lời
+    như model giả của --dry-run."""
     count = {"n": 0}
 
     def handler(request: httpx.Request) -> httpx.Response:
         seen_auth.append(request.headers["Authorization"])
         count["n"] += 1
-        if count["n"] == 1:
+        if count["n"] <= fails:
             return httpx.Response(500, json={"error": {"code": 500,
                                                        "message": f"upstream lỗi, key={KEY}"}})
         body = json.loads(request.content)
@@ -479,7 +408,10 @@ async def test_key_is_never_written_to_results_or_logs(tmp_path, monkeypatch, ca
     config = trial_config(tmp_path)
     total = config.story_lengths.levels["short"].chapters.min
     seen: list[str] = []
-    http = httpx.AsyncClient(transport=_transport(DryRunLLM(total), seen))
+    # Lỗi 500 lặp lại quá `retries.llm_transient` lần ở bước khởi tạo đầu (D-14) thành
+    # RETRY_LIMIT_REACHED; lệnh "bấm thử lại" như người chơi.
+    fails = config.limits.retries.llm_transient + 1
+    http = httpx.AsyncClient(transport=_transport(DryRunLLM(total), seen, fails=fails))
     client = openrouter_client(tmp_path / "none.env", http=http)
     assert isinstance(client, OpenRouterClient)
     run, _, _, out = make_run(tmp_path, llm=client, config=config, chapters=1, budget_usd=1.0)
@@ -495,10 +427,10 @@ async def test_key_is_never_written_to_results_or_logs(tmp_path, monkeypatch, ca
                         ("stdout", printed.out), ("stderr", printed.err)):
         assert KEY not in text, where
         assert "f00dfeedf00dfeed" not in text, where
-    # Lỗi 500 (LLM_UNAVAILABLE) ở bước khởi tạo đầu: lệnh "bấm thử lại" như người chơi; chi tiết
-    # lỗi (có chép key) chỉ vào truth_dump, đã redact.
+    # Chi tiết lỗi (có chép key) chỉ vào truth_dump, đã redact.
     report = json.loads((out / "report.json").read_text(encoding="utf-8"))
     assert report["player_retries_used"]["setup"] == 1
+    assert report["calls"]["by_status"]["LLM_UNAVAILABLE"] == fails
     assert "[REDACTED]" in (out / "truth_dump.json").read_text(encoding="utf-8")
 
 

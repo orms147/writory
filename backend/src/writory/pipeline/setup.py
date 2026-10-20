@@ -15,7 +15,8 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
 - G1: lựa chọn ở bước 1–3 hiện cho người chơi, nên prompt cấm viết bí mật vào đó. Gói chương 0
   không có REVEALED_TO_PLAYER và nhân vật chính không KNOWS gì; code kiểm player_view ở chương 0
   rỗng bằng định nghĩa duy nhất (`guard.state.player_view_of`).
-- G11, D-39: JSON sai schema thử lại theo `retries.extract_schema_retry`; sai quy tắc thì báo
+- G11, D-39, D-14: JSON sai schema thử lại theo `retries.extract_schema_retry`, lỗi mạng tạm thời
+  theo `retries.llm_transient` (`with_json_retries`); sai quy tắc thì báo
   STORY_SETUP_INVALID ngay, không tự gọi lại model, không trả kế hoạch hay gói nửa vời.
 """
 
@@ -32,7 +33,7 @@ from writory.graph.package import ChangePackage, chapter_rule_problems
 from writory.graph.schema import NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
-from writory.llm.retry import RETRY_SCHEMA, with_retries
+from writory.llm.retry import with_json_retries
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
@@ -381,10 +382,10 @@ async def _ask[T: BaseModel](
 ) -> T:
     model = require_model(config.models.roles, ROLE)
     extra = role_extra(config.models, ROLE)
-    output, _ = await with_retries(
+    retries = config.limits.retries
+    output, _ = await with_json_retries(
         lambda: llm.chat_json(model, messages, schema, extra=extra),
-        max_retries=config.limits.retries.extract_schema_retry,
-        retry_on=RETRY_SCHEMA,
+        schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
     )
     return output
 

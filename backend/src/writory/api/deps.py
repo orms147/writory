@@ -15,10 +15,12 @@ from neo4j import Driver
 from writory.config import AppConfig
 from writory.db import committed_player_view, connect, take_narrator_question
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerView, named_nodes
+from writory.graph import PlayerView
+from writory.guard.state import Neo4jState
 from writory.llm.cost import MeteredClient
 from writory.pipeline.narrator import NarratorQuota
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.leak import leak_names
 
 
 def get_app_config(request: Request) -> AppConfig:
@@ -53,8 +55,9 @@ def get_player_view(story_id: str, conn: PgConn, driver: Neo4jDriver) -> PlayerV
 
 
 def get_truth_names(story_id: str, driver: Neo4jDriver) -> Mapping[str, tuple[str, ...]]:
-    """Tên lớp truth, CHỈ cho bộ dò lộ (G2). Không bao giờ đưa vào phản hồi hay context model."""
-    return named_nodes(driver, story_id)
+    """Tên lớp truth, CHỈ cho bộ dò lộ (G2), theo đúng quy tắc của `leak_names` (D-48). Không bao
+    giờ đưa vào phản hồi hay context model."""
+    return leak_names(Neo4jState(driver, story_id))
 
 
 def get_story_plan(story_id: str) -> StoryPlan:

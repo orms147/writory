@@ -204,6 +204,34 @@ async def test_bad_then_good_json_succeeds_within_retry():
     assert len(await propose_settings(CHOICES, llm=llm, config=CFG)) == 3
 
 
+TRANSIENT = CFG.limits.retries.llm_transient
+
+
+def _down() -> WritoryError:
+    return WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="giả lập")
+
+
+async def test_network_error_is_retried_by_transient_limit():
+    """D-14: lỗi mạng tạm thời thử lại theo `retries.llm_transient`, lồng ngoài lớp schema."""
+    llm = FakeLLM.scripted([_down()] * TRANSIENT + [_options("settings")])
+    assert len(await propose_settings(CHOICES, llm=llm, config=CFG)) == 3
+    assert len(llm.calls) == TRANSIENT + 1
+
+
+async def test_network_down_stops_after_transient_limit():
+    llm = FakeLLM.scripted([_down()] * (TRANSIENT + 5))
+    err = await _error(propose_settings(CHOICES, llm=llm, config=CFG))
+    assert err.code is ErrorCode.RETRY_LIMIT_REACHED
+    assert len(llm.calls) == TRANSIENT + 1
+
+
+async def test_rate_limit_is_never_retried():
+    """D-14: lỗi 429 không thử lại (không trừ thêm tiền key người chơi)."""
+    llm = FakeLLM.scripted([WritoryError(ErrorCode.LLM_RATE_LIMITED, "429"), _options("settings")])
+    err = await _error(propose_settings(CHOICES, llm=llm, config=CFG))
+    assert err.code is ErrorCode.LLM_RATE_LIMITED and len(llm.calls) == 1
+
+
 async def test_model_not_chosen_fails_before_any_call():
     roles = REPO.models.roles.model_copy(update={"setup": None})
     cfg = REPO.model_copy(update={"models": REPO.models.model_copy(update={"roles": roles})})

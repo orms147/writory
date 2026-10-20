@@ -315,7 +315,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Bối cảnh:** bốn bước khởi tạo cần một model (D-3: các vai cố định nằm trong config) và một cách xử lý khi model trả sai.
 - **Quyết định:**
   - Thêm `roles.setup` và `role_reasoning.setup` vào `config/models.yaml`, đều `null`. Gọi qua `require_model`, nên chưa chọn model thì báo `CONFIG_MODEL_NOT_SET`. `llm.role_extra` đổi `role_reasoning.<vai>` thành `extra`, dùng được cho mọi vai.
-  - JSON sai schema thử lại theo `retries.extract_schema_retry` (`RETRY_SCHEMA`, D-14). Không thêm khoá riêng, vì G11 đã nói "thử lại 1 lần".
+  - JSON sai schema thử lại theo `retries.extract_schema_retry`, lỗi mạng tạm thời theo `retries.llm_transient` (`with_json_retries`, D-14; lớp lỗi mạng: điều phối yêu cầu, nhánh story-run). Không thêm khoá riêng, vì G11 đã nói "thử lại 1 lần".
   - Sai quy tắc (số lựa chọn, kế hoạch, gói chương 0) báo ngay mã mới `STORY_SETUP_INVALID` (HTTP 502), không tự gọi lại model, để không trừ tiền key người chơi khi chưa hỏi. Câu báo không nói sai ở đâu, vì chi tiết có thể chạm bản kế hoạch ẩn; chi tiết vào log, chỉ ghi id và số chương.
   - Không trả nửa vời: có một lỗi là không trả kế hoạch hay gói. Module không ghi gì.
 - **Hệ quả:** người chơi phải bấm thử lại khi model sai quy tắc. Muốn tự thử lại thì đổi `retry_on`, cần chủ dự án đồng ý vì tốn tiền.
@@ -353,8 +353,8 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Config còn null hay đề thiếu giá: liệt kê hết một lần, trước lời gọi đầu và trước khi kết nối kho (`chapter.config_problems`).
   - File chung (meta, setup, events, chapters, calls, report, summary) chỉ có chữ người chơi thấy, số đếm, mã và loại lỗi. `truth_dump.json` giữ kế hoạch, gói từng chương, đồ thị cuối, dàn ý, góp ý viết lại, chi tiết lỗi.
   - Kho: `GraphStore`, story_id mới mỗi lần chạy; dry-run xoá truyện khi xong, trừ khi có `--keep-story`. Kế hoạch và chi phí giữ trong bộ nhớ rồi ra file; không thêm migration.
-- **Hệ quả:** dry-run vẫn cần Docker, vì `writer_context` chỉ có bản Neo4j. Truyện ngắn có 4–8 chương, nên mốc "10 chương" cần mức Truyện vừa hoặc chủ dự án chấp nhận số chương của kế hoạch; `--chapters` không vượt kế hoạch. Lựa chọn đã chọn chưa ghi dữ liệu có cấu trúc vào đồ thị (D-37).
-- **Người quyết:** hướng đề (tu tiên, tên Hán Việt, địa danh hư cấu, Truyện ngắn, không dùng làng quê bình dị): Chủ dự án duyệt 20/10/2026. Phần còn lại: Claude (nhánh story-run), chờ điều phối duyệt · 20/10/2026
+- **Hệ quả:** dry-run vẫn cần Docker, vì `writer_context` chỉ có bản Neo4j. Lần chạy thật đầu dùng số chương của kế hoạch Truyện ngắn (4–8 chương), chưa tới mốc "10 chương"; đề Truyện vừa để sau. `--chapters` không vượt kế hoạch. Lựa chọn đã chọn chưa ghi dữ liệu có cấu trúc vào đồ thị (D-37).
+- **Người quyết:** hướng đề (tu tiên, tên Hán Việt, địa danh hư cấu, Truyện ngắn, không dùng làng quê bình dị): Chủ dự án duyệt 20/10/2026. Phần còn lại, gồm các số trong đề và việc dùng số chương của kế hoạch: Claude (nhánh story-run), điều phối duyệt · 20/10/2026
 
 ## D-43 · Model viết `reasoning: none`; lần chạy giữ chỗ ngân sách bằng `max_tokens`; giữ mọi lượt soát
 - **Bối cảnh:** bài D đo GPT-6 Luna với reasoning none, còn runtime dùng mặc định của model (D-36). Trần `--budget` cứng cần chi phí tối đa của từng lời gọi. Báo cáo cần lỗi của mọi lượt soát, kể cả lỗi đã sửa ở lượt viết lại.
@@ -364,7 +364,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `ChapterOutcome.reviews`: mọi lượt soát (loại lỗi, mức chặn, cạnh bị bỏ). `ChapterOutcome.error_detail`: chỉ cho log máy chủ.
   - Vai của lời gọi nhận ra qua schema JSON; cảnh nhận qua `CostTracker.start_scene()`.
 - **Hệ quả:** lần chạy khác app ở `max_tokens`: app chưa đặt. Giá trong đề phải sửa khi giá OpenRouter đổi. Chưa đo được độ trễ tới chữ đầu, vì pipeline chưa stream.
-- **Người quyết:** `reasoning: none` cho mức `standard`: Chủ dự án duyệt 20/10/2026. Phần còn lại: Claude (nhánh story-run), chờ điều phối duyệt · 20/10/2026
+- **Người quyết:** `reasoning: none` cho mức `standard`: Chủ dự án duyệt 20/10/2026. Phần còn lại, gồm `max_tokens_per_call: 16000` chỉ cho lần chạy: Claude (nhánh story-run), điều phối duyệt · 20/10/2026
 
 ## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
 - **Bối cảnh:** pipeline (D-36..D-40) dừng ở lỗi cấu hình vì `roles.*`, trần chi phí và ngưỡng còn `null`. Chưa có bài đo riêng cho dàn ý, lựa chọn, người kể, phân loại, người canh, khởi tạo. Bài D đo riêng bước viết của Luna khoảng 0,001 USD một cảnh (`evals/results/2026-10-20-quality-r2/`); cả đường đi chưa đo.
@@ -375,3 +375,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Test không còn dựa vào việc config thật để `null`: test "chưa đặt thì báo lỗi" dùng bản config có chỗ `null`.
 - **Hệ quả:** mọi số trên là tạm. Sau lần chạy thật đầu (một truyện ngắn tu tiên, trần 0,30 USD), chỉnh theo chi phí và tỉ lệ lỗi đo được rồi ghi quyết định mới.
 - **Người quyết:** Claude đề xuất số; Chủ dự án duyệt · 20/10/2026
+
+## D-48 · Tên người chơi tự viết không phải bí mật đối với người chơi (bổ sung D-26)
+- **Bối cảnh:** bộ dò lộ (D-26) cấm tên lớp truth mà `player_view` chưa có. Ở chương 0 người chơi chưa biết gì (D-38), nên cảnh chương 1 nêu tên nhân vật chính sẽ bị chặn nếu bộ trích quên hé lộ nhân vật chính, dù tên đó do người chơi chọn hoặc tự viết (lệnh chạy cả truyện, D-42, chỉ ra).
+- **Quyết định:**
+  - Bộ dò lộ không coi `name` của nút mang `user_authored: true` là tên bị cấm. `aliases` của nút đó vẫn bị dò, vì model có thể gán bí danh bí mật.
+  - Quy tắc nằm một chỗ: `safety.leak.leak_names(state)`, đọc `GraphState.named_nodes()` và `nodes()`, nên đúng cho cả Neo4j lẫn `OverlayState`. Mọi nơi gọi bộ dò lộ lấy `truth_names` từ đó: soát cảnh và tạo lựa chọn (`pipeline/chapter.py`), tạo lại lựa chọn (`pipeline/bench_run.py`), hỏi người kể (`api/deps.get_truth_names`).
+  - Tên đó không được tính là chữ người chơi đã thấy: tên lớp truth khác trùng một phần chữ vẫn bị cấm như cũ.
+- **Hệ quả:** nhân vật chính không cần hé lộ trên trang để được gọi tên. `named_nodes` vẫn trả đủ tên lớp truth cho chỗ khác dùng. Nếu bản 3 cho người chơi viết thêm nút (nhập nhân vật bằng đoạn văn), tên các nút đó cũng được miễn theo quy tắc này.
+- **Người quyết:** điều phối (quyết định và phạm vi miễn); cách làm: Claude (nhánh story-run) · 20/10/2026

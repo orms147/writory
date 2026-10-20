@@ -58,7 +58,7 @@ from writory.pipeline.scene import (
 from writory.pipeline.store import ChapterStore
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import IssueKind, check_meta_leak, check_scene, normalize_dashes
-from writory.safety.leak import check_leaks
+from writory.safety.leak import check_leaks, leak_names
 from writory.safety.redact import redact
 
 log = logging.getLogger(__name__)
@@ -477,7 +477,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     # 4. Dò lộ trên chữ cảnh, với player_view gồm cả các hé lộ của chính cảnh này (G2, D-26).
     overlay = OverlayState(base, [*earlier, package])
     hits = check_leaks(text, view=player_view_of(overlay, chapter), plan=d.plan,
-                       truth_names=overlay.named_nodes())
+                       truth_names=leak_names(overlay))
     issues += [ReviewIssue("leak", h.kind.value, True,
                            f"lộ bí mật: đoạn «{h.excerpt}» nói ra điều người đọc chưa được biết; "
                            "viết lại để không nói ra điều đó")
@@ -550,7 +550,7 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
         d.llm, require_model(d.config.models.roles, "choices"),
         view=d.store.player_view(chapter), protagonist_id=state["protagonist"],
         last_scene_text=state["accepted"][-1].text,
-        truth_names=d.store.state().named_nodes(), plan=d.plan,
+        truth_names=leak_names(d.store.state()), plan=d.plan,
         retries=d.config.limits.retries, extra=role_extra(d.config.models, "choices"),
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,
