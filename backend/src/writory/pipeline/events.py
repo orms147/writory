@@ -76,6 +76,14 @@ class ChoicesReady(_Event):
     choices: list[PlayerChoice]
 
 
+class StoryFinished(_Event):
+    """Chương cuối theo bản kế hoạch đã ghi: truyện kết, không có lựa chọn (design §4.3, D-50).
+    Chỉ mang số chương: không id, không chữ của kế hoạch (G1)."""
+
+    type: Literal["story_finished"] = "story_finished"
+    chapter: int
+
+
 class ErrorEvent(_Event):
     """Lỗi G12: mã và câu tiếng Việt cố định. Chi tiết chỉ vào log."""
 
@@ -85,7 +93,8 @@ class ErrorEvent(_Event):
 
 
 ChapterEvent = Annotated[
-    StageEvent | SceneReady | SceneBlocked | ChapterCommitted | ChoicesReady | ErrorEvent,
+    StageEvent | SceneReady | SceneBlocked | ChapterCommitted | ChoicesReady | StoryFinished
+    | ErrorEvent,
     Field(discriminator="type"),
 ]
 

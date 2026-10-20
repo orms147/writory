@@ -1,8 +1,10 @@
 """Đường đi một chương (design §6.2; D-1, D-6, D-8, D-36). Toàn bộ đồ thị LangGraph nằm ở đây.
 
-Mỗi cảnh: dựng ngữ cảnh → dàn ý → viết → soát (chuẩn hoá dấu gạch, kiểm văn, trích thay đổi,
-người canh, dò lộ) → viết lại tối đa `limits.retries.rewrite_per_scene` lần → hiện. Hết cảnh cuối:
-gộp gói các cảnh → `store.commit` (D-6, tất cả hoặc không gì) → tạo lựa chọn từ player_view (G1).
+Mỗi cảnh: dựng ngữ cảnh và mục tiêu của chương (`pipeline.pacing`, D-49) → dàn ý → viết → soát
+(chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, người canh, dò lộ) → viết lại tối đa
+`limits.retries.rewrite_per_scene` lần → hiện. Hết cảnh cuối: gộp gói các cảnh → `store.commit`
+(D-6, tất cả hoặc không gì) → tạo lựa chọn từ player_view (G1). Chương cuối của bản kế hoạch thì
+không tạo lựa chọn mà phát `story_finished` (D-50); chương sau đó bị từ chối (`STORY_COMPLETE`).
 
 - Người chơi chỉ nhận sự kiện (`pipeline.events`): chữ cảnh đã qua mọi phép kiểm (D-1), lựa chọn đã
   qua dò lộ (G2), câu lỗi G12. Cảnh chưa kiểm không bao giờ được phát ra.
@@ -39,11 +41,13 @@ from writory.pipeline.events import (
     ChapterEvent,
     ChoicesReady,
     SceneReady,
+    StoryFinished,
     blocked_event,
     error_event,
     stage,
 )
 from writory.pipeline.extract import Entity, OpenEdge, extract_changes
+from writory.pipeline.pacing import ChapterGoals, chapter_goals
 from writory.pipeline.scene import (
     Candidate,
     EarlierScene,
@@ -145,6 +149,7 @@ class ChapterOutcome:
     committed: bool = False
     blocked_scene: int | None = None
     choices: list[Choice] = field(default_factory=list)
+    finished: bool = False  # chương cuối của kế hoạch đã ghi: truyện kết, không có lựa chọn
     error: ErrorCode | None = None
     error_detail: str | None = None  # chi tiết cho log máy chủ (đã redact); không tới người chơi
     reviews: list[ReviewRecord] = field(default_factory=list)  # mọi lượt soát, theo thứ tự
@@ -215,6 +220,7 @@ class _State(TypedDict, total=False):
     scene: int  # cảnh đang làm, 1-based
     present: list[str]
     context: WriterContext
+    goals: ChapterGoals  # mục tiêu của chương cho cảnh đang làm (D-49)
     outline: SceneOutline
     attempt: int
     draft: str
@@ -227,6 +233,8 @@ class _State(TypedDict, total=False):
     package: ChangePackage
     committed: bool
     choices: list[Choice]
+    final: bool  # chương này là chương cuối của bản kế hoạch
+    finished: bool
 
 
 def _require(section, name: str):
@@ -336,7 +344,7 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
         chapter=chapter, scene=state["scene"], scene_count=count,
         min_chars=lengths.min // count, max_chars=lengths.max // count, act=act,
         story_brief=d.request.story_brief, player_action=d.request.player_action,
-        earlier=earlier,
+        earlier=earlier, goals=state["goals"],
     )
 
 
@@ -369,6 +377,9 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
     if committed is None:
         raise ValueError("truyện chưa có chương 0 (thế giới lúc khởi tạo)")
     chapter = committed + 1
+    if chapter > d.plan.total_chapters:
+        raise WritoryError(ErrorCode.STORY_COMPLETE,
+                           detail=f"chương {chapter} vượt kế hoạch {d.plan.total_chapters} chương")
     d.llm.tracker.start_chapter()
     node = chapter_node(chapter)
     catalogue = d.store.catalogue()
@@ -394,6 +405,7 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
         "scene": 1,
         "present": list(dict.fromkeys([protagonist, *d.request.present_ids])),
         "accepted": [],
+        "final": chapter >= d.plan.total_chapters,
     }
 
 
@@ -401,7 +413,11 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
     d = runtime.context
     runtime.stream_writer(stage("context", scene=state["scene"]))
     d.llm.tracker.start_scene()
-    return {"context": _writer_context(d, state, state["present"])}
+    # Mục tiêu đọc trên nền đã commit phủ các cảnh trước của chương: cảnh trước đã lộ hay đã gỡ
+    # thì cảnh này không bị giục nữa (D-49).
+    before = OverlayState(d.store.state(), [state["header"], *_accepted_packages(state)])
+    return {"context": _writer_context(d, state, state["present"]),
+            "goals": chapter_goals(d.plan, state["chapter"], before)}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -501,7 +517,8 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     base = d.store.state()
     earlier = [state["header"], *_accepted_packages(state)]
     guard = check_scene_package(chapter=chapter, current=result.package, earlier=earlier,
-                                committed=base, plan=d.plan, config=cfg.guard)
+                                committed=base, plan=d.plan, config=cfg.guard,
+                                last_scene=scene == d.request.scene_count)
     issues += [ReviewIssue("guard", g.kind.value, g.severity is Severity.BLOCK, g.detail)
                for g in guard]
     package = _prune(result.package, {i for g in guard for i in g.ids})
@@ -590,6 +607,12 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
     return {"choices": choices}
 
 
+async def _finish(state: _State, runtime: Runtime[_Deps]) -> dict:
+    """Chương cuối của kế hoạch đã ghi: truyện kết, không tạo lựa chọn (design §4.3, D-50)."""
+    runtime.stream_writer(StoryFinished(chapter=state["chapter"]))
+    return {"finished": True}
+
+
 def _after_review(state: _State) -> str:
     return {"accept": "accept", "rewrite": "write", "block": "blocked"}[state["verdict"]]
 
@@ -598,11 +621,16 @@ def _after_accept(state: _State) -> str:
     return "context" if len(state["accepted"]) < state["scene_count"] else "commit"
 
 
+def _after_commit(state: _State) -> str:
+    return "finish" if state["final"] else "choices"
+
+
 def _build():
     g = StateGraph(_State, context_schema=_Deps)
     for name, node in (("start", _start), ("context", _context), ("outline", _outline),
                        ("write", _write), ("review", _review), ("accept", _accept),
-                       ("blocked", _blocked), ("commit", _commit), ("choices", _choices)):
+                       ("blocked", _blocked), ("commit", _commit), ("choices", _choices),
+                       ("finish", _finish)):
         g.add_node(name, node)
     g.add_edge(START, "start")
     g.add_edge("start", "context")
@@ -612,8 +640,9 @@ def _build():
     g.add_conditional_edges("review", _after_review, ["accept", "write", "blocked"])
     g.add_conditional_edges("accept", _after_accept, ["context", "commit"])
     g.add_edge("blocked", END)
-    g.add_edge("commit", "choices")
+    g.add_conditional_edges("commit", _after_commit, ["choices", "finish"])
     g.add_edge("choices", END)
+    g.add_edge("finish", END)
     return g.compile()
 
 
@@ -671,5 +700,6 @@ class ChapterRun:
         out.committed = bool(final.get("committed", False))
         out.blocked_scene = final.get("blocked_scene")
         out.choices = list(final.get("choices", []))
+        out.finished = bool(final.get("finished", False))
         out.reviews = list(final.get("reviews", []))
         out.cost_usd = self._deps.llm.tracker.chapter_usd

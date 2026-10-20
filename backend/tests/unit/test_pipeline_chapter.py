@@ -53,6 +53,7 @@ from writory.pipeline.chapter import (
     entity_names,
     merge_scene_packages,
 )
+from writory.pipeline.story_plan import StoryPlan
 from writory.quality import narration_instruction, normalize_dashes
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START
 
@@ -568,6 +569,105 @@ async def test_choices_model_never_receives_truth(tmp_path):
     # Đối chứng: model viết có nhận bí mật (test sẽ đỏ nếu lọc sai đường).
     writer = "\n".join(m.content for m in calls_of(llm, "writer")[0])
     assert "Lan giết Lão Gù" in writer and "Lý Thất" in writer
+
+
+# --- mục tiêu của chương, chương cuối (D-49, D-50) ---------------------------------------------
+
+SPY = "Lan là gián điệp của Hội Hắc Kỳ"
+GOAL_MARKERS = ("Mục tiêu của chương", "ĐẾN HẠN", "CHƯƠNG CUỐI", "Mốc cốt truyện")
+
+
+def plan_with(**changes) -> StoryPlan:
+    return StoryPlan.model_validate(PLAN.model_dump(mode="json") | changes)
+
+
+# f_lan_spy (chưa lộ ở nền chương 3) có khoảng lộ 3–4: chương 4 là chương đến hạn.
+DUE_PLAN = plan_with(secrets=[s | {"reveal_from_chapter": 3, "reveal_to_chapter": 4}
+                              if s["fact_id"] == "f_lan_spy" else s
+                              for s in PLAN.model_dump(mode="json")["secrets"][:2]])
+# Truyện 4 chương: chương 4 là chương cuối. f_gu_old_hac_ky đã lộ ở chương 2.
+FINAL_PLAN = plan_with(acts=[{"name": "kết", "from_chapter": 1, "to_chapter": 4}],
+                       secrets=PLAN.model_dump(mode="json")["secrets"][:1])
+
+
+async def test_chapter_goals_reach_outline_and_writer_but_never_choices(tmp_path):
+    """Mục tiêu của chương (có chữ bí mật đến hạn) vào đề dàn ý và đề viết; không vào đề tạo
+    lựa chọn hay sự kiện cho người chơi (G1)."""
+    script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2,
+              SCENE_2, EXTRACT_2, choices_reply()]
+    llm = ScriptedLLM(script)
+    config = make_config(tmp_path)
+    chapter_run = ChapterRun(request(), llm=llm, store=MemoryStore(), config=config,
+                             plan=DUE_PLAN, tracker=CostTracker(config.limits.cost_usd),
+                             style_guide=STYLE)
+    events = [e async for e in chapter_run.events()]
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            assert "Mục tiêu của chương theo bản kế hoạch" in call[-1].content
+            assert "ĐẾN HẠN" in call[-1].content and SPY in call[-1].content
+    [choices_call] = calls_of(llm, "choices")
+    seen = "\n".join(m.content for m in choices_call)
+    assert [t for t in (*GOAL_MARKERS, SPY, "f_lan_spy") if t in seen] == []
+    assert all(t not in e.model_dump_json() for e in events for t in (*GOAL_MARKERS, SPY))
+
+
+async def test_overdue_secret_rewrites_last_scene_once_and_never_blocks(tmp_path):
+    """Trễ hạn (D-49): hết chương đến hạn mà bí mật chưa lộ → viết lại cảnh cuối một lần (D-36),
+    kèm góp ý; vẫn chưa lộ thì hiện bản hai, ghi chương, có lựa chọn như thường."""
+    script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2,
+              SCENE_2, EXTRACT_2, choices_reply()]
+    llm = ScriptedLLM(script)
+    config = make_config(tmp_path)
+    store = MemoryStore()
+    chapter_run = ChapterRun(request(), llm=llm, store=store, config=config, plan=DUE_PLAN,
+                             tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE)
+    events = [e async for e in chapter_run.events()]
+    outcome = chapter_run.outcome
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert [(r.scene, r.attempt, r.verdict) for r in outcome.reviews] == [
+        (1, 1, "accept"), (2, 1, "rewrite"), (2, 2, "accept")]
+    assert [(i.kind, i.block) for i in outcome.scenes[1].unresolved] == [("overdue_secret", False)]
+    rewrite = calls_of(llm, "writer")[2][-1].content
+    assert "chưa được hé lộ" in rewrite and SPY in rewrite
+    assert store.commits and outcome.committed
+
+
+async def test_last_chapter_of_the_plan_ends_the_story_without_choices(tmp_path):
+    """Chương cuối (D-50): đề đòi kết truyện; không gọi model lựa chọn; phát `story_finished`
+    chỉ mang số chương."""
+    script = full_script()[:-1]  # không có câu trả lời cho bước lựa chọn
+    llm = ScriptedLLM(script)
+    config = make_config(tmp_path)
+    store = MemoryStore()
+    chapter_run = ChapterRun(request(), llm=llm, store=store, config=config, plan=FINAL_PLAN,
+                             tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE)
+    events = [e async for e in chapter_run.events()]
+    outcome = chapter_run.outcome
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "story_finished"]
+    [finished] = of_type(events, "story_finished")
+    assert finished.model_dump() == {"type": "story_finished", "chapter": CHAPTER}
+    assert "choices" not in {e.stage for e in of_type(events, "stage")}
+    assert calls_of(llm, "choices") == []
+    assert outcome.finished and outcome.committed and outcome.choices == []
+    assert store.committed == CHAPTER
+    outline_1, outline_2 = (c[-1].content for c in calls_of(llm, "outline"))
+    writer_2 = calls_of(llm, "writer")[1][-1].content
+    assert "CHƯƠNG CUỐI" in outline_1 and "cảnh kết của cả truyện" not in outline_1
+    assert "cảnh kết của cả truyện" in outline_2 and "cảnh kết của cả truyện" in writer_2
+
+
+async def test_chapter_past_the_last_planned_chapter_is_refused(tmp_path):
+    short = plan_with(acts=[{"name": "kết", "from_chapter": 1, "to_chapter": 3}],
+                      secrets=PLAN.model_dump(mode="json")["secrets"][:1])
+    llm = ScriptedLLM(full_script())
+    config = make_config(tmp_path)
+    store = MemoryStore()
+    chapter_run = ChapterRun(request(), llm=llm, store=store, config=config, plan=short,
+                             tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE)
+    events = [e async for e in chapter_run.events()]
+    assert [(e.type, e.code) for e in of_type(events, "error")] == [
+        ("error", ErrorCode.STORY_COMPLETE)]
+    assert llm.calls == [] and not store.commits
 
 
 def _only_inside_blocks(content: str, marker: str) -> bool:

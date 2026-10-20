@@ -336,7 +336,7 @@ def setup_chapter_0(*, protagonist_aliases: tuple[str, ...] = ()) -> tuple[Chang
         BuildOutput.model_validate_json(raw),
         protagonist=CharacterOption(name=SETUP_PC_NAME, personality="Ít nói, cố chấp.",
                                     backstory="Con trai một thợ rèn; cha mất năm cậu mười hai."),
-        commit_id="setup-c0", chapters=load_config().story_lengths.levels["short"].chapters,
+        commit_id="setup-c0", level=load_config().story_lengths.levels["short"],
     )
     package = setup.package
     if protagonist_aliases:

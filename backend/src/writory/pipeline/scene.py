@@ -6,8 +6,10 @@ của chúng chỉ tới người chơi sau khi qua kiểm văn, người canh v
 G4: chữ người chơi (thiết lập truyện, hành động dẫn tới chương) và mọi văn bản cảnh (có thể nhắc lại
 chữ người chơi) chỉ vào vai user, bọc bằng `UserAuthored`. Mọi chữ khác không phải hằng của code
 (tên và chữ nút do model khởi tạo hay model trích viết, `kind`/`role` của cạnh, id, tên hồi, dàn ý,
-đoạn trích lỗi, phần render của `writer_context`) đi vào vai user qua `escape_text`, nên không mở
-hay đóng được khối dữ liệu.
+đoạn trích lỗi, phần render của `writer_context`, mục tiêu của chương) đi vào vai user qua
+`escape_text`, nên không mở hay đóng được khối dữ liệu.
+
+Mục tiêu của chương theo bản kế hoạch (`pipeline.pacing`, D-49) vào cả đề dàn ý lẫn đề viết.
 """
 
 import re
@@ -22,6 +24,7 @@ from writory.config import REPO_ROOT, QualityConfig
 from writory.graph import ChangePackage
 from writory.graph.context import WriterContext, render_writer_context
 from writory.llm.base import Message
+from writory.pipeline.pacing import ChapterGoals, render_chapter_goals
 from writory.quality import check_foreign_script
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -31,8 +34,9 @@ from writory.safety.wrap import (
     user_message,
 )
 
-OUTLINE_PROMPT_VERSION = "outline-2"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-2"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-3, writer-3: thêm mục tiêu của chương theo bản kế hoạch (D-49).
+OUTLINE_PROMPT_VERSION = "outline-3"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-3"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -103,6 +107,7 @@ class SceneBrief:
     story_brief: str  # thiết lập truyện người chơi chọn: luôn bọc như dữ liệu
     player_action: str | None  # lựa chọn hoặc hành động tự viết dẫn tới chương (đã qua G5)
     earlier: tuple[EarlierScene, ...]
+    goals: ChapterGoals | None = None  # mục tiêu của chương theo bản kế hoạch (D-49)
 
 
 @dataclass(frozen=True)
@@ -219,6 +224,14 @@ def _earlier(out: _Lines, brief: SceneBrief, names: Mapping[str, Named],
             out.line(*line)
 
 
+def _goals(out: _Lines, brief: SceneBrief) -> None:
+    """Mục tiêu của chương (D-49). `render_chapter_goals` đã escape chữ của model và bọc chữ
+    người chơi, nên các phần đi thẳng vào `line`, không escape lần nữa."""
+    if brief.goals is not None:
+        out.line(*render_chapter_goals(brief.goals, scene=brief.scene,
+                                       scene_count=brief.scene_count))
+
+
 OUTLINE_SYSTEM_PROMPT = """Bạn lập dàn ý cho MỘT cảnh của một truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính; truyện kể theo góc nhìn nhân vật chính. Bạn được biết sự thật của thế giới, kể cả bí mật, để dàn ý nhất quán; dàn ý không được làm lộ bí mật trước khoảng lộ.
 
 Quy tắc:
@@ -248,6 +261,7 @@ def outline_messages(
         # Id giữ nguyên để model chép lại vào `present`; ID_PATTERN không cho `<`, `&`.
         out.line(f"- {c.id} | ", _name(c.name), mark)
     _earlier(out, brief, names, edge_ends)
+    _goals(out, brief)
     return [system_message(OUTLINE_SYSTEM_PROMPT, DATA_NOTICE), user_message(*out.done())]
 
 
@@ -260,6 +274,7 @@ def writer_messages(
     _head(out, brief)
     out.extend(render_writer_context(ctx))
     _earlier(out, brief, names, edge_ends)
+    _goals(out, brief)
     out.line("## Dàn ý cảnh này (các nhịp, theo thứ tự)")
     out.line(f"Mục tiêu: {escape_text(outline.goal)}")
     for i, beat in enumerate(outline.beats, 1):

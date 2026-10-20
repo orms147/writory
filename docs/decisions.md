@@ -418,6 +418,25 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** nhân vật chính không cần hé lộ trên trang để được gọi tên. `named_nodes` vẫn trả đủ tên lớp truth cho chỗ khác dùng. Nếu bản 3 cho người chơi viết thêm nút (nhập nhân vật bằng đoạn văn), tên các nút đó cũng được miễn theo quy tắc này.
 - **Người quyết:** điều phối (quyết định và phạm vi miễn); cách làm: Claude (nhánh story-run) · 20/10/2026
 
+## D-49 · Kế hoạch định trước nhịp: mốc, khoảng gỡ mạch; mục tiêu mỗi chương; người canh báo trễ hạn
+- **Bối cảnh:** lần chạy thật đầu (`evals/results/2026-10-20-run-tu-tien-1/notes.md`): hai bí mật chính hết truyện chưa lộ, 4 mạch phải gỡ mới gỡ 1, sáu chương quanh một tình huống. Đề dàn ý và đề viết chưa có mục tiêu của chương (design §6.2 bước 1); kế hoạch chưa định trước mạch nào gỡ ở chương nào.
+- **Quyết định:**
+  - `StoryPlan`: `must_resolve_threads` là `ThreadPlan` (id, khoảng phải gỡ); thêm `milestones` (bước ngoặt, cao trào, kết; khoảng chương; một câu mục tiêu). Validator: mọi khoảng nằm trong số chương, đúng một mốc kết ở chương cuối, mỗi hồi có mốc hết hạn trong hồi. Kế hoạch cũ (danh sách id, không mốc) vẫn đọc được; khoảng gỡ khi đó lấy trên nút `Thread`.
+  - Nhịp theo độ dài: `story_lengths.levels.*.milestones` (min/max) và `max_due_per_chapter` (số bí mật, mạch, mốc có hạn ở cùng một chương), số tạm; `initial_problems` kiểm. Đề `build_story` (`setup-3`) nêu các số này. Khoảng phải gỡ = khoảng dự kiến gỡ model khai cho mạch.
+  - `pipeline/pacing.chapter_goals(plan, chapter, state)`: chỉ đọc; "đã lộ" theo player_view, "đã gỡ" theo RESOLVED_IN, hạn theo `guard/plan.py` (một định nghĩa chung với người canh). Tính đầu mỗi cảnh trên nền phủ các cảnh trước; vào đề dàn ý và đề viết (`outline-3`, `writer-3`), không vào vai phục vụ người chơi (G1). Dòng "trong khoảng lộ" của ngữ cảnh model viết trỏ về mục tiêu của chương.
+  - Người canh: `overdue_secret`, `overdue_thread`, chỉ ở cảnh cuối chương, mức viết lại, không bỏ cạnh nào. Bài B thêm ca cho hai loại này.
+- **Hệ quả:** viết lại tối đa 1 lần như D-36; bản hai vẫn trễ thì hiện và ghi lại. Lượt viết lại vì trễ hạn có thể sinh lỗi chặn mà bản đầu không có (chưa xử lý). Mốc không kiểm được bằng code. Kế hoạch hỏng nhịp thì `STORY_SETUP_INVALID` (D-39). Đề mục tiêu có thêm một câu chung: "đẩy truyện tới, không lặp tình huống của chương trước".
+- **Người quyết:** Chủ dự án (yêu cầu kế hoạch định trước khoảng gỡ mạch và mốc, nhịp theo độ dài); cách làm và số tạm: Claude (nhánh plan-pacing), chờ điều phối duyệt · 20/10/2026
+
+## D-50 · Chương cuối kết truyện: không có lựa chọn, sự kiện `story_finished`; report so kế hoạch với kết quả
+- **Bối cảnh:** design §4.3. Ở lần chạy thật đầu, chương 6 (chương cuối) vẫn đưa ra 3 lựa chọn. Lệnh chạy cả truyện chưa cho biết bí mật lộ và mạch gỡ ở chương nào.
+- **Quyết định:**
+  - `ChapterRun`: chương = `plan.total_chapters` thì ghi chương rồi phát `StoryFinished` (`story_finished`, chỉ có số chương), không gọi model lựa chọn; `ChapterOutcome.finished`. Chương sau đó báo `STORY_COMPLETE` trước lời gọi đầu.
+  - API: truyện đã kết thì `POST .../choices` trả bộ rỗng, không gọi model; `POST .../choice` và `.../action` báo `STORY_COMPLETE` (không phân loại, G8). `GET /stories/{id}` tính `finished` từ kế hoạch như cũ.
+  - `bench_run`: dừng sau chương cuối. `report.json`, `summary.md` thêm `story_finished` và `plan_vs_result`: bí mật và mạch phải gỡ gọi bằng số thứ tự trong kế hoạch, kèm khoảng, chương lộ hay gỡ, đánh giá (`on_time`, `early`, `late`, `missed`, `pending`). Bản có id và chữ nằm ở `truth_dump.json` (`plan_progress`), như D-42.
+- **Hệ quả:** khoảng chương và số bí mật, số mạch của kế hoạch có trong file chung (không id, không chữ). Chưa có trang kết (bản 2). Giao diện (tuần 4) phải xử lý `story_finished`.
+- **Người quyết:** điều phối (yêu cầu); cách làm: Claude (nhánh plan-pacing), chờ điều phối duyệt · 20/10/2026
+
 ## D-51 · Kiểm văn sau lần chạy thật đầu: ngôi kể, tên trong kiểm lặp, dàn ý phải là tiếng Việt
 - **Bối cảnh:** lần chạy `evals/results/2026-10-20-run-tu-tien-1/` (`notes.md` mục 2, 3, 5): chương 6 đổi sang ngôi thứ ba mà không phép kiểm nào bắt; một dàn ý viết tiếng Trung; kiểm lặp đếm cả tên đồ vật 4 từ. Chưa đề nào nói ngôi kể cho model viết: style guide chỉ dặn "ngôi thứ nhất thì xưng tôi", không chốt ngôi.
 - **Quyết định:**

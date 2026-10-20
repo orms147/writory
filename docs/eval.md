@@ -13,7 +13,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 
 ## Bài B — Người canh
 - **Phần kiểm bằng code** (D-23), không gọi model:
-  - Dữ liệu: `evals/scenarios/guard-b/cases.yaml`, gồm gói cảnh cài lỗi và gói sạch dựng trên truyện mẫu, kèm `story_plan` và ngưỡng thử. Mỗi phép kiểm có ít nhất 2 ca lỗi và 2 ca sạch.
+  - Dữ liệu: `evals/scenarios/guard-b/cases.yaml`, gồm gói cảnh cài lỗi và gói sạch dựng trên truyện mẫu, kèm `story_plan` và ngưỡng thử. Mỗi phép kiểm có ít nhất 2 ca lỗi và 2 ca sạch. Ca có `last_scene: true` là cảnh cuối chương, nơi phép kiểm trễ hạn chạy (D-49).
   - Chỉ số: recall theo phép kiểm; số ca sạch bị báo nhầm; số loại lỗi báo ngoài `expect`. Phần này tất định, nên kỳ vọng 100% và 0. Ca nào không đạt là lỗi code.
   - Lệnh: `cd backend && uv run python -m writory.guard.bench_b --out ../evals/results/<ngày>-guard-b`. Lệnh trả mã khác 0 khi có ca sai. Test nhanh cũng chạy bài này (`tests/unit/test_guard_rules.py`).
   - Kết quả mới nhất: [`evals/results/2026-10-19-guard-b-r2/`](../evals/results/2026-10-19-guard-b-r2/README.md). Lần trước: [`2026-10-19-guard-b/`](../evals/results/2026-10-19-guard-b/README.md).
@@ -128,15 +128,15 @@ uv run python -m writory.pipeline.bench_e summary --out <thư mục kết quả>
 ## Chạy cả truyện
 Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đi hết đường người chơi trên một truyện để đo chi phí theo vai, đếm lỗi, và để đọc tay. Cách làm: D-42, D-43. Code: `writory.pipeline.bench_run`.
 - **Đề** (khai trước, `evals/scenarios/story_run/`; đã chạy thật thì không sửa đè, tăng `version` hoặc thêm file đề): tag, độ dài, quy ước tên, seed, số cảnh mỗi chương, số lần tự bấm thử lại, `max_tokens_per_call`, giá USD/1M token của mọi model config đang dùng (chỉ để giữ chỗ ngân sách). Đề mặc định: `tu-tien-ngan.yaml`.
-- **Đường đi:** khởi tạo 4 bước (bước nào có 3 lựa chọn thì chọn theo seed) → ghi chương 0 → `ChapterRun` từng chương, tới chương cuối của kế hoạch hoặc `--chapters` (không vượt kế hoạch). Lựa chọn cuối chương chọn theo seed và thành hành động dẫn tới chương sau. Bị chặn, model trả sai, mạng lỗi: tự thử lại tối đa `player_retries` lần.
+- **Đường đi:** khởi tạo 4 bước (bước nào có 3 lựa chọn thì chọn theo seed) → ghi chương 0 → `ChapterRun` từng chương, tới chương cuối của kế hoạch hoặc `--chapters` (không vượt kế hoạch). Lựa chọn cuối chương chọn theo seed và thành hành động dẫn tới chương sau. Chương cuối của kế hoạch kết truyện: không có lựa chọn, sự kiện `story_finished`, lệnh dừng ở đó (D-50). Bị chặn, model trả sai, mạng lỗi: tự thử lại tối đa `player_retries` lần.
 - **Kết quả** `evals/results/<ngày>-run-<nhãn>/`:
   - `meta.json`: commit, sha256 của đề và từng file config, model và mức suy luận từng vai, seed, trần, phiên bản prompt, story_id, trạng thái;
   - `setup.json`: các lựa chọn ở 3 bước khởi tạo và lựa chọn đã chọn;
   - `chapters/chNN.md`: văn từng chương và lựa chọn cuối chương, đánh dấu lựa chọn đã chọn;
   - `events.jsonl`: sự kiện người chơi thấy (văn cảnh, lựa chọn, câu lỗi G12);
   - `calls.jsonl`: mỗi lời gọi một dòng (vai, chương, lượt, cảnh, model, chi phí, token, mức giữ chỗ), không có chữ của lời gọi;
-  - `report.json`, `summary.md`: chi phí theo vai (setup, outline, writer, extract, choices) và theo chương; cảnh và lượt chương đắt nhất so với trần config; lỗi người canh và kiểm văn theo loại (tìm thấy, còn lại khi hiện); số lần viết lại; cạnh bộ trích bỏ theo nhóm lý do; số lần tự thử lại;
-  - `truth_dump.json`: kế hoạch, gói từng chương, đồ thị cuối, dàn ý, góp ý viết lại, chi tiết lỗi. File này có bí mật của truyện, chỉ để chấm tay.
+  - `report.json`, `summary.md`: chi phí theo vai (setup, outline, writer, extract, choices) và theo chương; cảnh và lượt chương đắt nhất so với trần config; lỗi người canh và kiểm văn theo loại (tìm thấy, còn lại khi hiện; gồm trễ hạn `overdue_secret`, `overdue_thread`, D-49); số lần viết lại; cạnh bộ trích bỏ theo nhóm lý do; số lần tự thử lại; có kết truyện không (`story_finished`); **kế hoạch so với kết quả** (`plan_vs_result`, D-50): mỗi bí mật lộ ở chương nào so với khoảng lộ, mỗi mạch phải gỡ gỡ ở chương nào so với hạn gỡ, đánh giá đúng khoảng / sớm / trễ / quá hạn chưa có / chưa tới hạn. Bí mật và mạch gọi bằng số thứ tự trong kế hoạch, không id, không chữ;
+  - `truth_dump.json`: kế hoạch, kế hoạch so với kết quả có id và chữ (`plan_progress`), gói từng chương, đồ thị cuối, dàn ý, góp ý viết lại, chi tiết lỗi. File này có bí mật của truyện, chỉ để chấm tay.
 
   Mọi file trừ `truth_dump.json` không có kế hoạch, id nút hay chi tiết lỗi (`tests/unit/test_pipeline_bench_run.py`).
 - **Key:** chỉ đọc `OPENROUTER_API_KEY` (biến môi trường hoặc `--env-file`). **Trần:** chạy thật bắt buộc `--budget` (USD); trước mỗi lời gọi giữ chỗ chi phí tối đa của nó, nên không vượt trần (D-43).

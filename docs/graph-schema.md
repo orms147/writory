@@ -85,8 +85,9 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 - **Cạnh:** `RELATES_TO` (bắt buộc `kind`, `score` −100…100), `LOCATED_AT` (mỗi thứ một nơi), `HOLDS` (mỗi đồ vật một người giữ), `MEMBER_OF`, `ABOUT`, `KNOWS`. Hai đầu đúng nhãn như bảng Cạnh, và đều là nút trong gói.
 - **`KNOWS` ở chương 0** luôn có `how: "tự biết"`. **Nhân vật chính không `KNOWS` gì**, và **không có `REVEALED_TO_PLAYER`**: người chơi chưa đọc trang nào, nên `player_view` ở chương 0 rỗng (code kiểm lại bằng `player_view_of`). Điều nhân vật chính biết từ quá khứ được ghi khi trang kể tới, kèm câu trích (G3).
 - **Bí mật** trong `story_plan` trỏ tới `Fact` có trong gói; khoảng lộ nằm trong số chương của kế hoạch; mỗi bí mật có `leak_terms`, mỗi nhóm có ít nhất `LEAK_GROUP_MIN_PHRASES` cụm (D-26).
-- **Mạch** của kế hoạch là nút `Thread` có `planted_chapter: 0`, khoảng gỡ nằm trong số chương; `must_resolve_threads` trỏ tới các nút đó.
+- **Mạch** của kế hoạch là nút `Thread` có `planted_chapter: 0`, khoảng gỡ nằm trong số chương; `must_resolve_threads` trỏ tới các nút đó, kèm khoảng phải gỡ bằng đúng khoảng dự kiến gỡ của nút (D-49). Kế hoạch cũ chỉ có id; khi đó khoảng lấy trên nút.
 - **Hồi** phủ liền từ chương 1; chương cuối nằm trong khoảng `chapters` của mức độ dài (`config/story_lengths.yaml`).
+- **Mốc và nhịp** (D-49): số mốc trong khoảng `milestones` của mức độ dài, mỗi hồi có mốc, mốc kết ở chương cuối; mỗi chương không quá `max_due_per_chapter` việc đến hạn. Luật luôn đúng nằm trong validator của `StoryPlan`, luật theo mức độ dài trong `initial_problems`.
 
 ## Chương 1 trở đi (pipeline, D-36)
 Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:

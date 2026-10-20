@@ -5,6 +5,10 @@ Kiểm gói thay đổi của MỘT cảnh trước khi ghi. Trạng thái đọ
 - `earlier`: gói của các cảnh trước trong cùng chương, chưa ghi;
 - `current`: gói của cảnh đang kiểm.
 Theo D-21, mọi cạnh của gói chương N mở ở N, nên "ở chương N" đọc trên trạng thái phủ là đủ.
+
+Trễ hạn (D-49) chỉ kiểm ở cảnh cuối chương (`last_scene`): hết chương mà bí mật đã đến hạn chưa
+lộ, hay mạch phải gỡ đã đến hạn chưa gỡ. Mức viết lại, không bao giờ chặn người chơi: model không
+lộ kịp thì truyện vẫn đi tiếp.
 """
 
 from collections.abc import Sequence
@@ -15,6 +19,7 @@ from writory.config import GuardConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage, EdgeSpec
 from writory.graph.package import TOLD, chapter_rule_problems
+from writory.guard.plan import deadline, plan_progress
 from writory.guard.state import GraphState, OverlayState
 from writory.pipeline.story_plan import StoryPlan
 
@@ -26,6 +31,8 @@ class GuardKind(StrEnum):
     TELLER_DOES_NOT_KNOW = "teller_does_not_know"
     EARLY_REVEAL = "early_reveal"
     SUDDEN_RELATIONSHIP = "sudden_relationship"
+    OVERDUE_SECRET = "overdue_secret"
+    OVERDUE_THREAD = "overdue_thread"
 
 
 class Severity(StrEnum):
@@ -57,7 +64,9 @@ def check_scene_package(
     committed: GraphState,
     plan: StoryPlan,
     config: GuardConfig,
+    last_scene: bool = False,
 ) -> list[GuardIssue]:
+    """`last_scene`: `current` là cảnh cuối của chương (bật phép kiểm trễ hạn)."""
     before = OverlayState(committed, list(earlier))
     after = OverlayState(committed, [*earlier, current])
     return [
@@ -67,6 +76,7 @@ def check_scene_package(
         *_teller_does_not_know(current, chapter, after),
         *_early_reveal(current, chapter, after, plan),
         *_sudden_relationship(current, [*earlier, current], chapter, before, config),
+        *(_overdue(chapter, after, plan) if last_scene else []),
     ]
 
 
@@ -180,6 +190,42 @@ def _early_reveal(
                 f"bí mật {node} lộ ở chương {chapter}, kế hoạch cho lộ từ chương "
                 f"{secret.reveal_from_chapter}; không có lựa chọn nào dẫn tới",
                 Severity.BLOCK,
+            ))
+    return issues
+
+
+def _overdue(chapter: int, after: GraphState, plan: StoryPlan) -> list[GuardIssue]:
+    """Cuối chương N: bí mật đến hạn (hoặc quá hạn) chưa lộ, mạch phải gỡ đến hạn chưa gỡ (D-49).
+    Hạn theo `guard.plan` (cùng định nghĩa với mục tiêu của chương). Chương cuối của truyện thì
+    mọi bí mật và mạch phải gỡ đều đến hạn.
+
+    Mức viết lại; `ids` rỗng vì không có cạnh nào sai để bỏ. `detail` là góp ý cho model viết lại
+    (vai được thấy truth): có chữ của bí mật hay mạch, trừ chữ người chơi viết (G4)."""
+    progress = plan_progress(plan, after, chapter)
+
+    def text(value: str, user_authored: bool) -> str:
+        return "(xem mục tiêu của chương)" if user_authored else f"«{value}»"
+
+    issues = []
+    for s in progress.secrets:
+        if s.revealed_chapter is None and deadline(
+                chapter, s.from_chapter, s.to_chapter, final=progress.final) in ("due", "overdue"):
+            issues.append(_issue(
+                GuardKind.OVERDUE_SECRET, (),
+                f"bí mật {s.fact_id} (khoảng lộ chương {s.from_chapter}–{s.to_chapter}) đến hết "
+                f"chương {chapter} vẫn chưa được hé lộ cho người đọc: viết lại để cảnh hé lộ rõ "
+                f"điều này một cách hợp lý, có câu nói thẳng trên trang: "
+                f"{text(s.text, s.user_authored)}",
+            ))
+    for t in progress.threads:
+        if t.resolved_chapter is None and deadline(
+                chapter, t.from_chapter, t.to_chapter, final=progress.final) in ("due", "overdue"):
+            window = (f"hạn gỡ chương {t.from_chapter}–{t.to_chapter}"
+                      if t.to_chapter is not None else "phải gỡ trước khi kết")
+            issues.append(_issue(
+                GuardKind.OVERDUE_THREAD, (),
+                f"mạch {t.thread_id} ({window}) đến hết chương {chapter} vẫn chưa được gỡ: viết "
+                f"lại để cảnh gỡ mạch này một cách hợp lý: {text(t.description, t.user_authored)}",
             ))
     return issues
 

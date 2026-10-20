@@ -164,6 +164,10 @@ class LengthLevel(_Strict):
     label: str
     target_chars: PositiveInt
     chapters: IntRange
+    # Nhịp của bản kế hoạch (design §6.1, D-49): số mốc cốt truyện, và số việc đến hạn tối đa ở
+    # một chương (bí mật, mạch phải gỡ, mốc có chương cuối của khoảng là chương đó).
+    milestones: IntRange
+    max_due_per_chapter: PositiveInt
 
 
 class StoryLengthsConfig(_Strict):

@@ -256,6 +256,35 @@ def test_story_past_its_last_planned_chapter_is_complete(pg, driver, story, tmp_
     assert state["finished"] is True and state["next_ready"] is False
 
 
+def test_last_planned_chapter_finishes_the_story_without_choices(pg, driver, story, tmp_path):
+    """Chương cuối (D-50): SSE phát `story_finished` thay cho `choices_ready`, không gọi model lựa
+    chọn. Sau đó: trạng thái `finished`, tạo lựa chọn trả bộ rỗng không gọi model, chọn lựa chọn
+    hay tự viết hành động báo STORY_COMPLETE (không phân loại, không tốn tiền)."""
+    final = PLAN.model_copy(update={"acts": [PLAN.acts[0].model_copy(update={"to_chapter": 4})],
+                                    "secrets": []})
+    sid = story(plan=final)
+    llm = ScriptedLLM(full_script()[:-1])  # không có câu trả lời cho bước lựa chọn
+    with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
+        resp = write_next(client, sid)
+        state = client.get(f"/stories/{sid}").json()
+        regenerated = client.post(f"/stories/{sid}/choices")
+        pick = client.post(f"/stories/{sid}/choice", json={"choice_id": "choice-000000000000"})
+        custom = client.post(f"/stories/{sid}/action", json={"text": "Tôi rời phố Bến Sương."})
+        again = write_next(client, sid)
+    events = sse(resp.text)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "story_finished"]
+    assert [d for name, d in events if name == "story_finished"] == [
+        {"type": "story_finished", "chapter": 4}]
+    assert calls_of(llm, "choices") == [] and len(llm.calls) == 6
+    assert current_chapter(pg, sid) == 4 and load_choices(pg, sid, 4) == []
+    assert state["finished"] is True and state["next_ready"] is False and state["choices"] == []
+    assert (regenerated.status_code, regenerated.json()) == (200, {"chapter": 4, "choices": []})
+    for r in (pick, custom, again):
+        assert (r.status_code, r.json()["code"]) == (409, "STORY_COMPLETE")
+    assert len(llm.calls) == 6
+    assert_no_truth(resp.text)
+
+
 # --- G11: không ghi nửa vời --------------------------------------------------------------------
 
 
