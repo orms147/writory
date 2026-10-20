@@ -159,6 +159,25 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** một sự thật chỉ phát hiện ra ở chương N (ví dụ "hoá ra Lan là người của Hội từ trước") được ghi là đúng từ chương N, không ghi lùi về trước. Chi tiết quá khứ mới do model nghĩ ra ở chương N cũng mang `valid_from_chapter = N`, nghĩa là "đồ thị biết từ chương N". Muốn hỏi "thật ra từ khi nào" thì phải thêm thuộc tính riêng.
 - **Người quyết:** Claude (Session 1), điều phối đã duyệt · 19/10/2026
 
+## D-22 · `KNOWS.how` là danh sách đóng; "được kể" phải có người kể
+- **Bối cảnh:** người canh (design §8 mục 1) cần kiểm "người kể có biết điều đó không". Trước đây `how` là chuỗi tự do ("được Lão Gù kể"), nên phép kiểm có thể bị bỏ qua.
+- **Quyết định:**
+  - `how` chỉ nhận một trong `chứng kiến`, `được kể`, `suy ra`, `tự biết`, `tự làm` (`KNOWS_HOW`, chuẩn hoá NFC).
+  - `được kể` bắt buộc có `told_by` là id người kể; `told_by` chỉ dùng với `được kể`.
+  - `by_choice` (id lựa chọn dẫn tới lần lộ, design §6.1) chỉ đặt trên KNOWS/REVEALED_TO_PLAYER.
+  - Truyện mẫu sửa theo văn (sửa dữ liệu gốc bài A): Minh được Lão Gù kể (`told_by: gu`, thêm `gu KNOWS f_gu_old_hac_ky` ở chương 0); Lan biết lời nói dối của Minh là `suy ra`. Đáp án `answers.yaml` không đổi.
+- **Hệ quả:** extractor (tuần 2) phải xuất `how` theo danh sách này. Chưa kiểm được `by_choice` trỏ tới lựa chọn có thật (chưa có nút Choice).
+- **Người quyết:** Claude (Session 2), điều phối đã duyệt · 19/10/2026
+
+## D-23 · Người canh kiểm bằng code trước khi ghi; ngưỡng trong `config/guard.yaml`
+- **Bối cảnh:** design §8 yêu cầu phần nào kiểm được bằng code thì kiểm bằng code. Gói của các cảnh trước trong chương chưa nằm trong Neo4j.
+- **Quyết định:**
+  - `writory.guard.check_scene_package` đọc trạng thái phủ: nền đã commit + gói các cảnh trước + gói cảnh này (`OverlayState`).
+  - Các phép kiểm: quy tắc D-21; người chết hành động, kể cả làm người kể (`told_by`) (chết ở chương trước hoặc ở cảnh trước, chết trong chính cảnh này thì không tính); "tối đa một" cho HOLDS theo đồ vật, LOCATED_AT của Item, RELATES_TO theo cặp; người kể không biết; lộ sớm so với `story_plan` (mức `block`, trừ khi có `by_choice`); quan hệ đổi quá ngưỡng mà chương không có Event liên quan.
+  - Ngưỡng nằm trong file mới `config/guard.yaml`, để `null` tới khi đo.
+- **Hệ quả:** phép kiểm tất định, đo bằng bài B. Lỗi của gói (D-21) cũng xếp mức `rewrite`, dù sửa gói có thể chỉ cần trích lại.
+- **Người quyết:** Claude (Session 2), điều phối đã duyệt · 19/10/2026
+
 ## D-24 · Runner bài đo nằm trong module được đo
 - **Bối cảnh:** bài đo cần import code của gói (client LLM, kiểm văn). CLAUDE.md §3 chưa nói runner đặt ở đâu.
 - **Quyết định:**

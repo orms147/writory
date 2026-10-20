@@ -1,0 +1,269 @@
+# Bài B (design §9, docs/eval.md): người canh, PHẦN KIỂM BẰNG CODE, trên lỗi cài sẵn.
+# Khai trước khi chạy; không sửa expect sau khi đã thấy kết quả.
+#
+# Nền: truyện mẫu data/sample-story/ đã commit tới chương `committed_through` (-1 = rỗng).
+# Mỗi ca kiểm một gói cảnh `current` ở chương `chapter`, có thể kèm gói của các cảnh trước
+# trong cùng chương (`earlier`, chưa ghi). `current_sample: N` = dùng nguyên gói chương N
+# của truyện mẫu (văn đã kiểm tay, nên phải sạch).
+# `targets`: phép kiểm mà ca này dùng để đo. `expect`: đúng tập loại lỗi phải báo.
+# Phần kiểm bằng code là tất định: kỳ vọng recall 100% và 0 báo nhầm.
+#
+# Loại: chapter_rule, dead_actor, at_most_one, teller_does_not_know, early_reveal,
+#       sudden_relationship.
+
+plan:
+  acts:
+    - {name: "mở đầu", from_chapter: 1, to_chapter: 3}
+    - {name: "phát triển", from_chapter: 4, to_chapter: 8}
+    - {name: "cao trào", from_chapter: 9, to_chapter: 10}
+    - {name: "kết", from_chapter: 11, to_chapter: 12}
+  secrets:
+    - {fact_id: f_gu_old_hac_ky, reveal_from_chapter: 2, reveal_to_chapter: 3}
+    - {fact_id: f_lan_spy, reveal_from_chapter: 5, reveal_to_chapter: 6}
+    - {fact_id: f_lan_killed_gu, reveal_from_chapter: 7, reveal_to_chapter: 9}
+  must_resolve_threads: [t_who_killed, t_sealed_letter]
+
+# config/guard.yaml đang null (chưa đo). Bài B dùng NGƯỠNG THỬ khai ở đây.
+trial_config:
+  relationship: {max_score_jump_without_event: 50}
+
+cases:
+  # ===== Ca sạch: nguyên các chương của truyện mẫu =====
+  - {id: sample-ch0, targets: [chapter_rule], committed_through: -1, chapter: 0, current_sample: 0, expect: []}
+  - {id: sample-ch1, targets: [chapter_rule], committed_through: 0, chapter: 1, current_sample: 1, expect: []}
+  - id: sample-ch2
+    targets: [at_most_one, teller_does_not_know, early_reveal, sudden_relationship]
+    committed_through: 1
+    chapter: 2
+    current_sample: 2
+    expect: []
+  - {id: sample-ch3, targets: [dead_actor, sudden_relationship], committed_through: 2, chapter: 3, current_sample: 3, expect: []}
+  - {id: sample-ch4, targets: [dead_actor, at_most_one], committed_through: 3, chapter: 4, current_sample: 4, expect: []}
+  - {id: sample-ch5, targets: [early_reveal, at_most_one, sudden_relationship], committed_through: 4, chapter: 5, current_sample: 5, expect: []}
+
+  # ===== Ca sạch dựng tay =====
+  - id: clean-dead-in-same-scene
+    # Chết trong chính cảnh này: hành động trước khi chết trong cùng cảnh là hợp lệ.
+    targets: [dead_actor]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: e_ambush, label: Event, chapter: 4, description: "Khải bị phục kích ở bến"}]
+      edges:
+        - {type: PARTICIPATED_IN, from: khai, to: e_ambush, valid_from_chapter: 4}
+        - {type: DIED_IN, from: khai, to: e_ambush, valid_from_chapter: 4}
+    expect: []
+  - id: clean-holds-closed-in-earlier-scene
+    targets: [at_most_one]
+    committed_through: 3
+    chapter: 4
+    earlier:
+      - close: [{type: HOLDS, id: holds_sword_minh_2, valid_to_chapter: 4}]
+    current:
+      edges: [{type: HOLDS, from: lan, to: sword, valid_from_chapter: 4}]
+    expect: []
+  - id: clean-teller-learned-in-same-scene
+    targets: [teller_does_not_know]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: f_khai_saw_boat, label: Fact, text: "Đêm Lão Gù chết có một chiếc đò cập bến miếu Bà"}]
+      edges:
+        - {type: KNOWS, from: khai, to: f_khai_saw_boat, valid_from_chapter: 4, how: "chứng kiến"}
+        - {type: KNOWS, from: minh, to: f_khai_saw_boat, valid_from_chapter: 4, how: "được kể", told_by: khai}
+    expect: []
+  - id: clean-teller-knew-from-before
+    targets: [teller_does_not_know]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges:
+        # Lan biết f_lan_spy từ chương 0 (tự biết).
+        - {type: KNOWS, from: khai, to: f_lan_spy, valid_from_chapter: 4, how: "được kể", told_by: lan}
+    expect: []
+  - id: clean-early-reveal-by-choice
+    # Người chơi chủ động điều tra Lan: lộ sớm được, vì có lựa chọn dẫn tới (design §6.1).
+    targets: [early_reveal]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: ch4, label: Chapter, number: 4}]
+      edges:
+        - {type: REVEALED_TO_PLAYER, from: f_lan_spy, to: ch4, valid_from_chapter: 4,
+           quote: "Lan là người của Hội Hắc Kỳ.", by_choice: choice-ch3-investigate-lan}
+    expect: []
+  - id: clean-rel-small-jump
+    targets: [sudden_relationship]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges: [{type: RELATES_TO, from: khai, to: minh, valid_from_chapter: 4, kind: "nghi ngờ", score: -30}]
+      close: [{type: RELATES_TO, id: "RELATES_TO:khai>minh@1", valid_to_chapter: 4}]
+    expect: []
+  - id: clean-rel-big-jump-with-event
+    targets: [sudden_relationship]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: e_khai_arrests_minh, label: Event, chapter: 4, description: "Khải bắt Minh về đồn hỏi chuyện đêm Lão Gù chết"}]
+      edges:
+        - {type: PARTICIPATED_IN, from: khai, to: e_khai_arrests_minh, valid_from_chapter: 4}
+        - {type: RELATES_TO, from: khai, to: minh, valid_from_chapter: 4, kind: "nghi phạm", score: -80}
+      close: [{type: RELATES_TO, id: "RELATES_TO:khai>minh@1", valid_to_chapter: 4}]
+    expect: []
+
+  # ===== Ca lỗi =====
+  # --- D-21: gói chương N chỉ mở và đóng cạnh ở N
+  - id: err-chapter-rule-edge
+    targets: [chapter_rule]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges: [{type: LOCATED_AT, from: lan, to: mieu_ba, valid_from_chapter: 3}]
+    expect: [chapter_rule]
+  - id: err-chapter-rule-close
+    targets: [chapter_rule]
+    committed_through: 3
+    chapter: 4
+    current:
+      close: [{type: LOCATED_AT, id: "LOCATED_AT:lan>quan_tra@1", valid_to_chapter: 3}]
+    expect: [chapter_rule]
+
+  # --- người đã chết hành động
+  - id: err-dead-participates
+    targets: [dead_actor]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: e_gu_at_market, label: Event, chapter: 4, description: "Lão Gù ra chợ mua than"}]
+      edges: [{type: PARTICIPATED_IN, from: gu, to: e_gu_at_market, valid_from_chapter: 4}]
+    expect: [dead_actor]
+  - id: err-dead-is-told
+    targets: [dead_actor]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: l_to_gu, label: Lie, chapter: 4, content: "Minh nói với Lão Gù rằng kiếm vẫn an toàn"}]
+      edges:
+        - {type: TOLD, from: minh, to: l_to_gu, valid_from_chapter: 4}
+        - {type: TOLD_TO, from: l_to_gu, to: gu, valid_from_chapter: 4}
+    expect: [dead_actor]
+  - id: err-dead-in-earlier-scene
+    # Chết ở cảnh 1 của chương, cảnh 2 lại đi lại.
+    targets: [dead_actor]
+    committed_through: 3
+    chapter: 4
+    earlier:
+      - nodes: [{id: e_ambush, label: Event, chapter: 4, description: "Khải bị phục kích ở bến"}]
+        edges: [{type: DIED_IN, from: khai, to: e_ambush, valid_from_chapter: 4}]
+    current:
+      edges: [{type: LOCATED_AT, from: khai, to: mieu_ba, valid_from_chapter: 4}]
+    expect: [dead_actor]
+
+  - id: err-dead-teller
+    # Thêm 19/10/2026 (sau lần chạy 2026-10-19-guard-b): Lão Gù chết ở chương 3 mà chương 4 còn kể.
+    targets: [dead_actor]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges:
+        - {type: KNOWS, from: khai, to: f_lan_spy, valid_from_chapter: 4, how: "được kể", told_by: gu}
+    expect: [dead_actor]
+  - id: clean-teller-dies-after-telling
+    # Thêm 19/10/2026: Lan kể cho Khải rồi chết ngay trong cảnh này: hợp lệ.
+    targets: [dead_actor, teller_does_not_know]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: e_lan_drowns, label: Event, chapter: 4, description: "Lan rơi xuống sông ở bến Sương"}]
+      edges:
+        - {type: KNOWS, from: khai, to: f_lan_spy, valid_from_chapter: 4, how: "được kể", told_by: lan}
+        - {type: DIED_IN, from: lan, to: e_lan_drowns, valid_from_chapter: 4}
+    expect: []
+
+  # --- tối đa một
+  - id: err-two-holders
+    targets: [at_most_one]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges: [{type: HOLDS, from: lan, to: sword, valid_from_chapter: 4}]
+    expect: [at_most_one]
+  - id: err-two-relations-same-pair
+    targets: [at_most_one]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges: [{type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 4, kind: "yêu", score: 70}]
+    expect: [at_most_one]
+  - id: err-item-in-two-places
+    targets: [at_most_one]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges:
+        - {type: LOCATED_AT, from: sealed_letter, to: mieu_ba, valid_from_chapter: 4}
+        - {type: LOCATED_AT, from: sealed_letter, to: quan_tra, valid_from_chapter: 4}
+    expect: [at_most_one]
+
+  # --- biết điều người kể không biết
+  - id: err-teller-does-not-know
+    targets: [teller_does_not_know]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: f_rumor_khai, label: Fact, text: "Khải nhận tiền của Hội Hắc Kỳ"}]
+      edges:
+        - {type: KNOWS, from: minh, to: f_rumor_khai, valid_from_chapter: 4, how: "được kể", told_by: khai}
+    expect: [teller_does_not_know]
+  - id: err-teller-does-not-know-2
+    targets: [teller_does_not_know]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges:
+        - {type: KNOWS, from: lan, to: f_gu_old_hac_ky, valid_from_chapter: 4, how: "được kể", told_by: khai}
+    expect: [teller_does_not_know]
+
+  # --- lộ sớm (block)
+  - id: err-early-reveal-on-page
+    targets: [early_reveal]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: ch4, label: Chapter, number: 4}]
+      edges:
+        - {type: REVEALED_TO_PLAYER, from: f_lan_killed_gu, to: ch4, valid_from_chapter: 4,
+           quote: "Chính Lan đã giết Lão Gù."}
+    expect: [early_reveal]
+  - id: err-early-protagonist-knows
+    targets: [early_reveal]
+    committed_through: 2
+    chapter: 3
+    current:
+      edges:
+        - {type: KNOWS, from: minh, to: f_lan_spy, valid_from_chapter: 3, how: "suy ra",
+           quote: "Lan là người của Hội Hắc Kỳ."}
+    expect: [early_reveal]
+
+  # --- quan hệ đổi đột ngột
+  - id: err-rel-flip-without-event
+    targets: [sudden_relationship]
+    committed_through: 3
+    chapter: 4
+    current:
+      edges: [{type: RELATES_TO, from: minh, to: lan, valid_from_chapter: 4, kind: "thù", score: -50}]
+      close: [{type: RELATES_TO, id: rel_minh_lan_3, valid_to_chapter: 4}]
+    expect: [sudden_relationship]
+  - id: err-rel-jump-event-unrelated
+    # Có Event trong chương nhưng không dính tới Khải hay Minh.
+    targets: [sudden_relationship]
+    committed_through: 3
+    chapter: 4
+    current:
+      nodes: [{id: e_lan_buys_tea, label: Event, chapter: 4, description: "Lan nhập một chuyến trà mới"}]
+      edges:
+        - {type: PARTICIPATED_IN, from: lan, to: e_lan_buys_tea, valid_from_chapter: 4}
+        - {type: RELATES_TO, from: khai, to: minh, valid_from_chapter: 4, kind: "bạn thân", score: 90}
+      close: [{type: RELATES_TO, id: "RELATES_TO:khai>minh@1", valid_to_chapter: 4}]
+    expect: [sudden_relationship]

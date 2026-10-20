@@ -12,9 +12,12 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 - Lệnh: *(chưa có)*
 
 ## Bài B — Người canh
-- Dữ liệu: cảnh sạch + cảnh đã cài lỗi, có nhãn loại lỗi.
-- Chỉ số: recall theo loại lỗi; tỉ lệ báo nhầm trên cảnh sạch.
-- Lệnh: *(chưa có)*
+- **Phần kiểm bằng code** (D-23), không gọi model:
+  - Dữ liệu: `evals/scenarios/guard-b/cases.yaml`, gồm gói cảnh cài lỗi và gói sạch dựng trên truyện mẫu, kèm `story_plan` và ngưỡng thử. Mỗi phép kiểm có ít nhất 2 ca lỗi và 2 ca sạch.
+  - Chỉ số: recall theo phép kiểm; số ca sạch bị báo nhầm; số loại lỗi báo ngoài `expect`. Phần này tất định, nên kỳ vọng 100% và 0. Ca nào không đạt là lỗi code.
+  - Lệnh: `cd backend && uv run python -m writory.guard.bench_b --out ../evals/results/<ngày>-guard-b`. Lệnh trả mã khác 0 khi có ca sai. Test nhanh cũng chạy bài này (`tests/unit/test_guard_rules.py`).
+  - Kết quả mới nhất: [`evals/results/2026-10-19-guard-b-r2/`](../evals/results/2026-10-19-guard-b-r2/README.md). Lần trước: [`2026-10-19-guard-b/`](../evals/results/2026-10-19-guard-b/README.md).
+- **Phần LLM** (đọc văn tìm điểm nghi): dữ liệu và lệnh *(chưa có, tuần 3)*.
 
 ## Bài C — Trích thực thể (bản 2)
 - Dữ liệu: câu tiếng Việt khó (trùng họ, biệt danh, đổi tên, xưng hô đổi theo quan hệ).

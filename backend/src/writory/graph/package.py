@@ -12,6 +12,11 @@ ID_PATTERN = r"^[A-Za-z0-9_.:\->@]{1,128}$"
 
 PropValue = str | int | float | bool | list[str] | list[int] | list[float] | None
 
+# Cách một nhân vật biết điều gì (cạnh KNOWS, D-22). "được kể" bắt buộc có `told_by`.
+KNOWS_HOW = ("chứng kiến", "được kể", "suy ra", "tự biết", "tự làm")
+TOLD = "được kể"
+_ID_RE = re.compile(ID_PATTERN)
+
 
 def _split_props(data: Any, known: set[str]) -> Any:
     """Cho phép dạng phẳng (như trong graph.yaml): khoá lạ được gom vào `props`."""
@@ -85,10 +90,34 @@ class EdgeSpec(BaseModel):
                 known_as, quote
             ):
                 raise ValueError("`known_as` phải nằm trong `quote` (D-17)")
+        self._check_knowledge_props()
         if not self.id:
             key = f"{self.type}:{self.source}>{self.target}@{self.valid_from_chapter}"
             object.__setattr__(self, "id", key)
         return self
+
+
+    def _check_knowledge_props(self) -> None:
+        """D-22: `how` thuộc KNOWS_HOW; "được kể" kèm `told_by`; `by_choice` là id lựa chọn."""
+        props = self.props
+        if "how" in props:
+            how = props["how"]
+            how = unicodedata.normalize("NFC", how) if isinstance(how, str) else how
+            if self.type != "KNOWS" or how not in KNOWS_HOW:
+                raise ValueError(f"`how` chỉ dùng cho KNOWS, một trong {KNOWS_HOW}; nhận {how!r}")
+            object.__setattr__(self, "props", {**props, "how": how})
+        told = self.props.get("how") == TOLD
+        told_by = props.get("told_by")
+        if told and not (isinstance(told_by, str) and _ID_RE.fullmatch(told_by)):
+            raise ValueError("KNOWS với how = \"được kể\" phải có `told_by` là id người kể")
+        if not told and "told_by" in props:
+            raise ValueError("`told_by` chỉ dùng khi how = \"được kể\"")
+        if "by_choice" in props:
+            choice = props["by_choice"]
+            if self.type not in ("KNOWS", "REVEALED_TO_PLAYER") or not (
+                isinstance(choice, str) and _ID_RE.fullmatch(choice)
+            ):
+                raise ValueError("`by_choice` là id lựa chọn, chỉ trên KNOWS/REVEALED_TO_PLAYER")
 
 
 class CloseSpec(BaseModel):

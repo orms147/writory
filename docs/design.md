@@ -233,7 +233,7 @@ Chạy sau mỗi chương, trên kết quả trích thay đổi và văn bản c
 2. **Lộ sớm:** chương hé lộ cho người chơi một `Fact` mà bản kế hoạch chưa tới khoảng lộ, và không có lựa chọn/cảnh nào của người chơi dẫn tới việc đó.
 3. **Lộ qua giao diện:** sổ tay, câu trả lời của người kể, văn bản lựa chọn không được chứa điều thuộc lớp sự thật mà người chơi chưa biết. Kiểm bằng code (lọc theo `REVEALED_TO_PLAYER`/`KNOWS` của nhân vật chính), không chỉ nhờ LLM.
 
-Kiểm tra gồm phần quy tắc bằng code (truy vấn đồ thị) và phần LLM (đọc văn bản tìm điểm nghi). Phần nào kiểm được bằng code thì phải kiểm bằng code.
+Kiểm tra gồm phần quy tắc bằng code (truy vấn đồ thị) và phần LLM (đọc văn bản tìm điểm nghi). Phần nào kiểm được bằng code thì phải kiểm bằng code. Phần code kiểm gói thay đổi của từng cảnh trước khi ghi (D-23).
 
 Mọi điểm nghi do LLM báo phải kèm **câu trích nguyên văn** từ cảnh; code kiểm câu trích có thật trong văn bản, không có thì bỏ điểm nghi đó. Việc đánh dấu một bí mật là "đã hé lộ cho người chơi" cũng phải kèm câu trích, vì đánh dấu sai sẽ làm sổ tay lộ bí mật. Chi tiết guardrail: `docs/security.md`.
 

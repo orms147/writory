@@ -1,0 +1,24 @@
+"""OverlayState trên nền rỗng + gói truyện mẫu phải trả đúng như Neo4j (graph.edges_at).
+Nhờ vậy unit test và bài B chạy không cần Neo4j mà vẫn đúng nghĩa của lớp graph/."""
+
+import pytest
+
+from writory.graph import read_sample
+from writory.graph.schema import EDGE_TYPES
+from writory.guard.state import EmptyState, Neo4jState, OverlayState
+
+pytestmark = pytest.mark.graph
+
+
+def test_overlay_matches_neo4j_for_every_edge_type_and_chapter(driver, sample_story_id):
+    sample = read_sample()
+    memory = OverlayState(EmptyState(), [c.package for c in sample.chapters])
+    neo4j = Neo4jState(driver, sample_story_id)
+    for chapter in range(7):
+        for edge_type in EDGE_TYPES:
+            assert memory.edges_at(edge_type, chapter) == neo4j.edges_at(edge_type, chapter), (
+                edge_type, chapter
+            )
+    every_id = [n.id for c in sample.chapters for n in c.package.nodes]
+    assert memory.node_labels(every_id) == neo4j.node_labels(every_id)
+    assert memory.protagonist_id() == neo4j.protagonist_id()

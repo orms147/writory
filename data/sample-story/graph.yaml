@@ -27,6 +27,8 @@ chapters:
       - {id: hac_ky, label: Faction, name: "Hội Hắc Kỳ"}
       - {id: f_lan_spy, label: Fact, text: "Lan là gián điệp của Hội Hắc Kỳ, tới phố Bến Sương để tìm thanh kiếm Thanh Sương"}
       - {id: ly_that, label: Character, name: "Lý Thất", aliases: ["gã lái đò mặt sẹo"]}
+      - {id: gu, label: Character, name: "Hồ Sĩ Bằng", aliases: ["Lão Gù"]}
+      - {id: f_gu_old_hac_ky, label: Fact, text: "Ba mươi năm trước Lão Gù từng đi thuyền với Hội Hắc Kỳ"}
     edges:
       - {type: MEMBER_OF, from: lan, to: hac_ky, valid_from_chapter: 0}
       - {type: KNOWS, from: lan, to: f_lan_spy, valid_from_chapter: 0, how: "tự biết"}
@@ -34,6 +36,10 @@ chapters:
       - {type: ABOUT, from: f_lan_spy, to: hac_ky, valid_from_chapter: 0}
       # Lý Thất: người của Hội. Ra mắt bằng biệt danh ở chương 4; tên thật chỉ lộ ở chương 5 (D-17).
       - {type: MEMBER_OF, from: ly_that, to: hac_ky, valid_from_chapter: 0}
+      # Quá khứ của Lão Gù, lão tự biết; Minh được lão kể ở chương 2 (told_by, D-22).
+      - {type: KNOWS, from: gu, to: f_gu_old_hac_ky, valid_from_chapter: 0, how: "tự biết"}
+      - {type: ABOUT, from: f_gu_old_hac_ky, to: gu, valid_from_chapter: 0}
+      - {type: ABOUT, from: f_gu_old_hac_ky, to: hac_ky, valid_from_chapter: 0}
     close: []
   - number: 1
     file: ch01.md
@@ -41,7 +47,6 @@ chapters:
     nodes:
       - {id: ch1, label: Chapter, number: 1, title: "Quán trà mới ở bến Sương"}
       - {id: minh, label: Character, name: "Trần Minh", aliases: ["Minh"], is_protagonist: true}
-      - {id: gu, label: Character, name: "Hồ Sĩ Bằng", aliases: ["Lão Gù"]}
       - {id: khai, label: Character, name: "Trần Văn Khải", aliases: ["Khải", "cai Khải"]}
       - {id: sword, label: Item, name: "Thanh Sương", aliases: ["thanh kiếm"]}
       - {id: ben_suong, label: Location, name: "phố Bến Sương"}
@@ -80,7 +85,6 @@ chapters:
       - {id: ch2, label: Chapter, number: 2, title: "Thanh kiếm và lá thư niêm phong"}
       - {id: e_gu_gives_sword, label: Event, chapter: 2, description: "Lão Gù giao Thanh Sương và một lá thư niêm sáp đỏ cho Minh"}
       - {id: sealed_letter, label: Item, name: "lá thư niêm sáp đỏ", aliases: ["lá thư của Lão Gù"]}
-      - {id: f_gu_old_hac_ky, label: Fact, text: "Ba mươi năm trước Lão Gù từng đi thuyền với Hội Hắc Kỳ"}
       - {id: t_sealed_letter, label: Thread, description: "Lá thư niêm phong Lão Gù dặn đợi ngày rằm mới mở",
          planted_chapter: 2, due_from_chapter: 3, due_to_chapter: 4}
       - {id: l_sword_father, label: Lie, chapter: 2, content: "Thanh kiếm là của cha Minh để lại"}
@@ -90,9 +94,7 @@ chapters:
       - {type: HOLDS, from: minh, to: sealed_letter, valid_from_chapter: 2}
       - {type: PARTICIPATED_IN, from: gu, to: e_gu_gives_sword, valid_from_chapter: 2}
       - {type: PARTICIPATED_IN, from: minh, to: e_gu_gives_sword, valid_from_chapter: 2}
-      - {type: ABOUT, from: f_gu_old_hac_ky, to: gu, valid_from_chapter: 2}
-      - {type: ABOUT, from: f_gu_old_hac_ky, to: hac_ky, valid_from_chapter: 2}
-      - {type: KNOWS, from: minh, to: f_gu_old_hac_ky, valid_from_chapter: 2, how: "được kể",
+      - {type: KNOWS, from: minh, to: f_gu_old_hac_ky, valid_from_chapter: 2, how: "được kể", told_by: gu,
          quote: "Ba mươi năm trước ta từng đi thuyền với chúng."}
       - {type: TOLD, from: minh, to: l_sword_father, valid_from_chapter: 2}
       - {type: TOLD_TO, from: l_sword_father, to: lan, valid_from_chapter: 2}
@@ -151,7 +153,8 @@ chapters:
          planted_chapter: 4, due_from_chapter: 5, due_to_chapter: 6}
     edges:
       # Lan nói ra trên trang: lời nói dối của Minh bị phát hiện.
-      - {type: KNOWS, from: lan, to: l_sword_father, valid_from_chapter: 4, how: "được Lão Gù kể"}
+      # Lão Gù kể với Lan đó là kiếm của lão (ch04); từ đó Lan suy ra Minh nói dối.
+      - {type: KNOWS, from: lan, to: l_sword_father, valid_from_chapter: 4, how: "suy ra"}
       - {id: holds_sword_lan, type: HOLDS, from: lan, to: sword, valid_from_chapter: 4}
       - {type: PARTICIPATED_IN, from: lan, to: e_sword_stolen, valid_from_chapter: 4}
       - {type: PARTICIPATED_IN, from: minh, to: e_sword_missing, valid_from_chapter: 4}

@@ -126,3 +126,52 @@ def test_package_json_roundtrip():
     for ch in read_sample().chapters:
         raw = ch.package.model_dump(mode="json", by_alias=True)
         assert ChangePackage.model_validate(raw) == ch.package
+
+
+def knows_edge(**props) -> dict:
+    return {"type": "KNOWS", "from": "minh", "to": "f1", "valid_from_chapter": 2, **props}
+
+
+@pytest.mark.parametrize("how", ["chứng kiến", "được kể", "suy ra", "tự biết", "tự làm"])
+def test_knows_how_accepts_the_five_values(how):
+    extra = {"told_by": "gu"} if how == "được kể" else {}
+    assert EdgeSpec.model_validate(knows_edge(how=how, **extra)).props["how"] == how
+
+
+@pytest.mark.parametrize("how", ["được Lão Gù kể", "nghe Lan kể", "", 3])
+def test_knows_how_outside_enum_rejected(how):
+    # D-22: chuỗi tự do làm phép kiểm "được kể" của người canh bị bỏ qua.
+    with pytest.raises(ValidationError, match="how"):
+        EdgeSpec.model_validate(knows_edge(how=how))
+
+
+def test_knows_how_decomposed_unicode_is_accepted():
+    how = unicodedata.normalize("NFD", "chứng kiến")
+    assert EdgeSpec.model_validate(knows_edge(how=how)).props["how"] == "chứng kiến"
+
+
+def test_told_requires_told_by_character_id():
+    with pytest.raises(ValidationError, match="told_by"):
+        EdgeSpec.model_validate(knows_edge(how="được kể"))
+    with pytest.raises(ValidationError, match="told_by"):
+        EdgeSpec.model_validate(knows_edge(how="được kể", told_by="có dấu cách"))
+
+
+def test_told_by_only_with_told():
+    with pytest.raises(ValidationError, match="told_by"):
+        EdgeSpec.model_validate(knows_edge(how="suy ra", told_by="gu"))
+
+
+def test_by_choice_must_be_an_id_on_reveal_edges():
+    ok = EdgeSpec.model_validate(
+        {"type": "REVEALED_TO_PLAYER", "from": "f1", "to": "ch2", "valid_from_chapter": 2,
+         "quote": "x", "by_choice": "choice-ch1-2"}
+    )
+    assert ok.props["by_choice"] == "choice-ch1-2"
+    with pytest.raises(ValidationError, match="by_choice"):
+        EdgeSpec.model_validate(knows_edge(how="suy ra", by_choice=""))
+    with pytest.raises(ValidationError, match="by_choice"):
+        EdgeSpec.model_validate(
+            {"type": "HOLDS", "from": "minh", "to": "sword", "valid_from_chapter": 2,
+             "by_choice": "c1"}
+        )
