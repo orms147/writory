@@ -1,0 +1,8 @@
+version: 1
+writers:
+  - {id: vendor-x/alpha-model, label: Alpha Nhãn, in: 0.1, out: 0.2, reasoning: none}
+  - {id: vendor-y/beta-model, label: Beta Nhãn, in: 0.1, out: 0.2, reasoning: mandatory-minimal}
+judge:
+  model: claude-sonnet-5-5
+  effort: high
+  thinking: adaptive

@@ -10,7 +10,7 @@ Theo docs openrouter.ai (tra ngày 19/10/2026; chưa đối chiếu với lời 
 """
 
 import json
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Mapping
 from typing import Any
 
 import httpx
@@ -104,6 +104,7 @@ class OpenRouterClient(LLMClient):
         *,
         stream: bool,
         response_schema: type[BaseModel] | None = None,
+        extra: Mapping[str, Any] | None = None,
     ) -> dict[str, Any]:
         body: dict[str, Any] = {
             "model": model,
@@ -120,6 +121,11 @@ class OpenRouterClient(LLMClient):
                     "schema": response_schema.model_json_schema(),
                 },
             }
+        if extra:
+            clash = sorted(set(extra) & {"model", "messages", "stream", "response_format"})
+            if clash:
+                raise ValueError(f"extra không được ghi đè trường lõi: {', '.join(clash)}")
+            body.update(extra)
         return body
 
     async def chat(
@@ -128,8 +134,11 @@ class OpenRouterClient(LLMClient):
         messages: list[Message],
         *,
         response_schema: type[BaseModel] | None = None,
+        extra: Mapping[str, Any] | None = None,
     ) -> ChatResult:
-        body = self._body(model, messages, stream=False, response_schema=response_schema)
+        body = self._body(
+            model, messages, stream=False, response_schema=response_schema, extra=extra
+        )
         try:
             resp = await self._http.post(self._url, json=body, headers=self._headers())
         except httpx.HTTPError as e:
@@ -143,12 +152,20 @@ class OpenRouterClient(LLMClient):
         if data is None:
             raise _bad_response(f"HTTP {resp.status_code}: thân phản hồi không phải JSON")
         try:
-            text = data["choices"][0]["message"]["content"]
+            choice = data["choices"][0]
+            text = choice["message"]["content"]
         except (KeyError, IndexError, TypeError):
             raise _bad_response("thiếu choices[0].message.content") from None
         if not isinstance(text, str):
             raise _bad_response("choices[0].message.content không phải chuỗi")
-        return ChatResult(text=text, usage=_usage(data.get("usage")))
+        served = data.get("model")
+        finish = choice.get("finish_reason") if isinstance(choice, dict) else None
+        return ChatResult(
+            text=text,
+            usage=_usage(data.get("usage")),
+            model=served if isinstance(served, str) else None,
+            finish_reason=finish if isinstance(finish, str) else None,
+        )
 
     async def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
         body = self._body(model, messages, stream=True)

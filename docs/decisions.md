@@ -159,6 +159,26 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** một sự thật chỉ phát hiện ra ở chương N (ví dụ "hoá ra Lan là người của Hội từ trước") được ghi là đúng từ chương N, không ghi lùi về trước. Chi tiết quá khứ mới do model nghĩ ra ở chương N cũng mang `valid_from_chapter = N`, nghĩa là "đồ thị biết từ chương N". Muốn hỏi "thật ra từ khi nào" thì phải thêm thuộc tính riêng.
 - **Người quyết:** Claude (Session 1), điều phối đã duyệt · 19/10/2026
 
+## D-24 · Runner bài đo nằm trong module được đo
+- **Bối cảnh:** bài đo cần import code của gói (client LLM, kiểm văn). CLAUDE.md §3 chưa nói runner đặt ở đâu.
+- **Quyết định:**
+  - Runner của bài X nằm trong module được đo, tên `writory.<module>.bench_<x>`, chạy bằng `cd backend && uv run python -m writory.<module>.bench_<x>`. Bài D: `writory.quality.bench_d`; bài B: `writory.guard.bench_b`.
+  - Dữ liệu khai trước ở `evals/scenarios/<bài>/`. Kết quả ở `evals/results/<ngày>-<bài>-<nhãn>/`, kèm `meta.json` (commit SHA, sha256 dữ liệu, tên model).
+  - Thư viện chỉ bộ đo cần (`anthropic`) nằm trong nhóm phụ thuộc `eval` và được import muộn, nên gói chính không phụ thuộc nó. `default-groups` gồm `eval`, để test của runner chạy được trong CI.
+- **Hệ quả:** không có thư mục code riêng cho bộ đo. Kết quả dry-run (`*-dryrun/`) không commit.
+- **Người quyết:** Claude (điều phối); nhóm `eval` mặc định: Claude (Session 3) · 19/10/2026
+
+## D-25 · Bài D: Sonnet chấm tuyệt đối theo rubric
+- **Bối cảnh:** design §9 cũ ghi người chấm là chính, LLM chấm so cặp chỉ để sàng lọc, chấm ≥ 3 lần, dùng 3 cảnh mẫu.
+- **Quyết định:**
+  - Giám khảo `claude-sonnet-5-5`, effort high, thinking adaptive, structured output. Không temperature, không fallbacks: giám khảo phải cố định.
+  - Chấm tuyệt đối theo `rubric.yaml`, mỗi tiêu chí kèm câu trích. Giám khảo không biết model nào viết. Bài viết là dữ liệu, được bọc trong khối `<scene>`.
+  - Chấm 2 lần mỗi bài. Lần 3 chỉ chạy khi một tiêu chí thang 1–5 lệch ≥ 2 điểm, hoặc `giu_bi_mat` bất đồng. Điểm cuối là trung vị các lần chấm.
+  - Dùng 10 dàn ý, vì độ biến thiên giữa các đề lớn hơn giữa các lần sinh. Khoảng tin cậy 95% tính theo t trên số case, sau khi gộp mẫu và lần chấm trong case.
+  - Model viết họ `anthropic/` bị từ chối. Chủ dự án chấm tay 15 cảnh để hiệu chỉnh giám khảo.
+- **Hệ quả:** chi phí giám khảo lớn hơn chi phí viết. Bài bị cắt, bị từ chối hoặc gặp lỗi được ghi riêng, không thành điểm 0. Thay phần chấm của bài D trong design §9 cũ.
+- **Người quyết:** Chủ dự án (yêu cầu Sonnet chấm theo rubric); cách làm do điều phối chốt · 19/10/2026
+
 ## D-27 · Phân loại ô tự viết: một lời gọi enum, fail closed
 - **Bối cảnh:** G5 yêu cầu đọc ý định của ô tự viết bằng LLM có đầu ra enum, không dùng regex. Câu phủ định, câu dài và tấn công đội lốt hành động phải ra đúng.
 - **Quyết định:**
@@ -188,3 +208,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `GET /health`: `ok`/`down` cho Neo4j và Postgres, 503 nếu có phần down; lỗi chỉ vào log.
 - **Hệ quả:** nhánh nào thêm mã lỗi phải thêm status vào bảng. Lỗi 404/422 của FastAPI vẫn theo mặc định, chưa theo G12. Chưa gọi `reconcile_pending` lúc khởi động (TODO).
 - **Người quyết:** Claude (Session 2) · 19/10/2026
+
+## D-30 · Kiểm văn bắt suy luận và chữ của prompt lọt vào cảnh
+- **Bối cảnh:** ở pilot bài D, một model viết đã đặt `reasoning: none` mà vẫn để ghi chú kế hoạch cùng thẻ `</think…>` lọt vào đầu cảnh. Ghi chú đó nhắc tới cách giữ bí mật. Giám khảo thấy nhưng vẫn cho 4; kiểm văn chỉ bắt được tình cờ qua luật chữ Latin.
+- **Quyết định:**
+  - Thêm hàm thuần `check_meta_leak` trong `writory/quality/checks.py`, loại lỗi `meta_leak`, không cần config.
+  - Hàm bắt thẻ suy luận (`<think`, `</think…>`, `thinking`, `reasoning`) và một danh sách hẹp các cụm chỉ có trong đề bài hoặc hướng dẫn văn phong (`_META_PHRASES`).
+  - Có test cho ca lọt thật lấy từ pilot, cho các ca gần giống mà sạch, và cho toàn bộ văn sạch có sẵn.
+  - Bài D tính cột "Lọt suy luận" từ văn bản đã lưu khi dựng `summary.md`, không gọi lại model.
+- **Hệ quả:** chưa đưa vào `check_scene`, nên chưa làm pipeline viết lại cảnh. Đưa vào lúc nào sẽ quyết khi làm pipeline (tuần 2); khi đó cảnh có lỗi này phải bị chặn trước khi hiện (G2). Danh sách cụm hẹp, nên có thể bỏ sót ghi chú viết bằng chữ khác.
+- **Người quyết:** điều phối (yêu cầu hàm và cột); danh sách mẫu: Claude (Session 3) · 19/10/2026

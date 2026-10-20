@@ -246,7 +246,7 @@ Ba bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở người 
 
 **C. Trích thực thể.** Bộ câu tiếng Việt khó: trùng họ ("Nguyễn"), biệt danh, đổi tên, đại từ xưng hô đổi theo quan hệ (anh/em → mày/tao). Đo gộp/tách thực thể đúng bao nhiêu.
 
-**D. Chất lượng văn theo model.** Cùng 3 cảnh mẫu (cùng dàn ý), mỗi model ứng viên viết, chấm theo thang khai trước (tự nhiên, đúng xưng hô, không văn dịch, bám dàn ý). Người chấm là chính; LLM chấm so cặp chỉ để sàng lọc. Kết quả quyết định danh sách model ở §6.5. Chạy lại khi thêm model mới.
+**D. Chất lượng văn theo model.** Mọi model ứng viên viết cùng một bộ dàn ý cảnh khai trước, đủ nhiều đề vì độ biến thiên giữa các đề lớn hơn giữa các lần sinh. Giám khảo LLM chấm tuyệt đối theo thang khai trước (tiếng Việt tự nhiên, xưng hô, bám dàn ý, giữ bí mật, …), mỗi tiêu chí kèm câu trích. Chủ dự án chấm tay một mẫu cảnh để đo mức đồng thuận với giám khảo. Kết quả quyết định danh sách model ở §6.5. Chạy lại khi thêm model mới. Cách chấm: D-25; lệnh: `docs/eval.md`.
 
 **Đối thủ cho bài A:**
 1. Không bộ nhớ (chỉ chương trước).
@@ -257,7 +257,7 @@ Ba bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở người 
 
 Bản 1 chạy đối thủ 2, 4, 5, bài B, và bài D (tuần 2, để chọn model). Đối thủ 1, 3 và bài C để bản 2.
 
-**LLM làm giám khảo** (khi cần): khác họ model với model viết, chạy ít nhất 3 lần, bắt trích nguyên văn, và có một mẫu do người chấm để báo mức đồng thuận.
+**LLM làm giám khảo** (khi cần): khác họ model với model viết, chấm nhiều lần và chấm thêm khi các lần lệch nhau (số lần của bài D: D-25), bắt trích nguyên văn, và có một mẫu do người chấm để báo mức đồng thuận.
 
 **Chỉ số**
 - Độ đúng trên bộ câu kiểm (kèm số mẫu `n` và khoảng tin cậy).
@@ -283,7 +283,7 @@ Bản 1 chạy đối thủ 2, 4, 5, bài B, và bài D (tuần 2, để chọn 
 - **Đồ thị:** Neo4j, truy vấn bằng Cypher, **tự viết lớp truy cập** (không dùng thư viện bộ nhớ có sẵn như Graphiti; lý do: `docs/decisions.md`). Phát triển bằng Docker trên máy. Gói AuraDB Free tự tạm dừng sau 3 ngày không dùng và chỉ dành cho dùng thử, nên khi có người chơi thật thì tự chạy Neo4j Community trên VPS hoặc trả tiền.
 - **Dữ liệu khác:** PostgreSQL — tài khoản, truyện, văn bản chương, lựa chọn, nhật ký chi phí, nhật ký người canh.
 - **Điều phối chương:** LangGraph (các bước §6.2).
-- **LLM:** qua OpenRouter. Chọn model viết bằng thử tiếng Việt ở tuần 2 (chấm văn trên cùng 3 cảnh mẫu).
+- **LLM:** qua OpenRouter. Chọn model viết bằng thử tiếng Việt ở tuần 2 (bài D, §9).
 - **Vector** (chỉ cho đối thủ số 3 trong bộ đo): dùng gì cũng được [Để người làm quyết].
 
 ## 12. Kế hoạch bản 1 (6 tuần, ~10 giờ/tuần, một người)

@@ -24,6 +24,14 @@ async def test_scripted_returns_in_order_and_records_calls():
     assert llm.calls == [MSGS, MSGS]
 
 
+async def test_chat_reports_requested_model_and_records_extra():
+    llm = FakeLLM.scripted(["một"])
+    result = await llm.chat("m/x", MSGS, extra={"max_tokens": 10})
+    assert result.model == "m/x"
+    assert result.finish_reason == "stop"
+    assert llm.extras == [{"max_tokens": 10}]
+
+
 async def test_scripted_exhausted_fails_loudly():
     llm = FakeLLM.scripted([])
     with pytest.raises(AssertionError, match="hết câu"):

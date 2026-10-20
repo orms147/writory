@@ -1,9 +1,9 @@
 """Interface tối giản cho mọi client LLM: chat, chat theo schema JSON, stream."""
 
 from abc import ABC, abstractmethod
-from collections.abc import AsyncIterator
+from collections.abc import AsyncIterator, Mapping
 from dataclasses import dataclass
-from typing import Literal
+from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict, ValidationError
 
@@ -36,6 +36,9 @@ class Usage(BaseModel):
 class ChatResult(BaseModel):
     text: str
     usage: Usage
+    # Model thật sự trả lời (theo phản hồi) và lý do dừng ("length" = chạm max_tokens).
+    model: str | None = None
+    finish_reason: str | None = None
 
 
 @dataclass(frozen=True)
@@ -59,7 +62,9 @@ class LLMClient(ABC):
         messages: list[Message],
         *,
         response_schema: type[BaseModel] | None = None,
-    ) -> ChatResult: ...
+        extra: Mapping[str, Any] | None = None,
+    ) -> ChatResult:
+        """`extra`: tham số riêng theo model (ví dụ max_tokens, reasoning), thêm vào thân yêu cầu."""
 
     @abstractmethod
     def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
