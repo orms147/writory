@@ -25,6 +25,7 @@ from tests.api_fixtures import (
 )
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
+from writory.config import load_config
 from writory.db import (
     ChapterCommitError,
     CostEntry,
@@ -323,8 +324,12 @@ def _dev_story_count(pg) -> int:
                       (DEV_OWNER_ID,)).fetchone()[0]
 
 
+# Kế hoạch sai quy tắc ở lời gọi đầu và ở cả lượt sửa (D-54).
+INVALID_BUILDS = [build_reply(secrets=[])] * (1 + load_config().limits.retries.setup_repair)
+
+
 def test_invalid_build_creates_no_story(pg, driver, created):
-    fake = FakeLLM.scripted([*script()[:3], build_reply(secrets=[])])
+    fake = FakeLLM.scripted([*script()[:3], *INVALID_BUILDS])
     before = _dev_story_count(pg)
     with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
         sid = to_finalize(client, created)
@@ -334,11 +339,12 @@ def test_invalid_build_creates_no_story(pg, driver, created):
         assert_no_truth(resp.text)
         assert client.get(f"/setup/{sid}").json()["step"] == "finalize"
     assert _dev_story_count(pg) == before
+    assert len(fake.calls) == 3 + len(INVALID_BUILDS)
 
 
 def test_finalize_can_be_retried_after_a_failed_attempt(pg, driver, created):
     """Khoá chống chạy đôi nhả khi lần chốt lỗi: bấm lại được ngay (D-46)."""
-    fake = FakeLLM.scripted([*script()[:3], build_reply(secrets=[]), build_reply()])
+    fake = FakeLLM.scripted([*script()[:3], *INVALID_BUILDS, build_reply()])
     with TestClient(make_app(pg, driver, fake, own_conns=True),
                     raise_server_exceptions=False) as client:
         sid = to_finalize(client, created)

@@ -8,6 +8,7 @@ retries:
   rewrite_per_scene: 1        # design §6.2
   extract_schema_retry: 1     # G11: chỉ cho lỗi JSON sai schema
   llm_transient: 2            # lỗi mạng/model tạm thời (LLM_UNAVAILABLE), D-14
+  setup_repair: 1             # build_story sai quy tắc: số lượt gọi model sửa, kèm danh sách lỗi (D-54)
 rate_limit:
   llm_calls_per_minute_per_user: 30
   narrator_questions_per_chapter: 5   # đếm cả câu trả "Bạn chưa biết điều này." (D-40)

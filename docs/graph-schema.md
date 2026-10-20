@@ -79,7 +79,8 @@ Phần Neo4j:
 - `delete_commit(driver, story_id, commit_id)`: xoá nút/cạnh commit đó tạo, mở lại cạnh nó đóng. Có commit sau dựa vào thì từ chối.
 
 ## Chương 0 (khởi tạo, D-38)
-Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.setup.build_story` dựng cùng `story_plan`, rồi ghi như mọi chương (`commit_chapter(..., 0, ...)`). Code kiểm bằng `initial_problems`; sai một điều thì không trả gì (`STORY_SETUP_INVALID`, D-39).
+Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.setup.build_story` dựng cùng `story_plan`, rồi ghi như mọi chương (`commit_chapter(..., 0, ...)`). Code chuẩn hoá id rồi kiểm bằng `initial_problems`; sai thì model được `retries.setup_repair` lượt sửa kèm danh sách lỗi, vẫn sai một điều thì không trả gì (`STORY_SETUP_INVALID`, D-39, D-54).
+- **Id:** đề yêu cầu dạng `SAFE_ID_PATTERN` (`pipeline/setup.py`: chữ ASCII thường không dấu, chữ số, `_`). Id không khớp `ID_PATTERN` thì code đổi (`normalize_id`: bỏ dấu, đ → d, chữ thường, khoảng trắng và ký tự lạ thành `_`, cắt còn `ID_MAX_LEN`), cùng một cách ở chỗ khai và mọi chỗ nhắc tới (cạnh, `about`, `known_by`, bí mật, mạch). Hai id khác nhau ra cùng một id, kể cả trùng `protagonist`, thì không gộp: đó là lỗi (D-54).
 - **Nút:** chỉ `Character`, `Location`, `Item`, `Faction`, `Fact`, `Thread`. Không có `Chapter`, `Event`, `Lie`. Nút có tên phải có `name`, không trùng tên trong cùng nhãn.
 - **Nhân vật chính:** đúng một, id `protagonist` (`PROTAGONIST_ID`), do code dựng từ chữ người chơi (tên, tính cách, quá khứ), mang `user_authored: true` (G4). Model chỉ nhắc tới nó qua id.
 - **Cạnh:** `RELATES_TO` (bắt buộc `kind`, `score` −100…100), `LOCATED_AT` (mỗi thứ một nơi), `HOLDS` (mỗi đồ vật một người giữ), `MEMBER_OF`, `ABOUT`, `KNOWS`. Hai đầu đúng nhãn như bảng Cạnh, và đều là nút trong gói.
@@ -87,7 +88,7 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 - **Bí mật** trong `story_plan` trỏ tới `Fact` có trong gói; khoảng lộ nằm trong số chương của kế hoạch; mỗi bí mật có `leak_terms`, mỗi nhóm có ít nhất `LEAK_GROUP_MIN_PHRASES` cụm (D-26).
 - **Mạch** của kế hoạch là nút `Thread` có `planted_chapter: 0`, khoảng gỡ nằm trong số chương; `must_resolve_threads` trỏ tới các nút đó, kèm khoảng phải gỡ bằng đúng khoảng dự kiến gỡ của nút (D-49). Kế hoạch cũ chỉ có id; khi đó khoảng lấy trên nút.
 - **Hồi** phủ liền từ chương 1; chương cuối nằm trong khoảng `chapters` của mức độ dài (`config/story_lengths.yaml`).
-- **Mốc và nhịp** (D-49): số mốc trong khoảng `milestones` của mức độ dài, mỗi hồi có mốc, mốc kết ở chương cuối; mỗi chương không quá `max_due_per_chapter` việc đến hạn. Luật luôn đúng nằm trong validator của `StoryPlan`, luật theo mức độ dài trong `initial_problems`.
+- **Mốc và nhịp** (D-49): số mốc trong khoảng `milestones` của mức độ dài, mỗi hồi có mốc, mốc kết ở chương cuối; mỗi chương, trừ chương cuối, không quá `max_due_per_chapter` việc đến hạn (chương kết gỡ nhiều mạch cùng lúc, D-54). Luật luôn đúng nằm trong validator của `StoryPlan`, luật theo mức độ dài trong `initial_problems`.
 
 ## Chương 1 trở đi (pipeline, D-36)
 Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:

@@ -8,7 +8,8 @@ from pydantic import BaseModel, ConfigDict, Field, model_validator
 
 from writory.graph.schema import RESERVED_PROPS, EdgeType, NodeLabel
 
-ID_PATTERN = r"^[A-Za-z0-9_.:\->@]{1,128}$"
+ID_MAX_LEN = 128
+ID_PATTERN = rf"^[A-Za-z0-9_.:\->@]{{1,{ID_MAX_LEN}}}$"
 
 PropValue = str | int | float | bool | list[str] | list[int] | list[float] | None
 
