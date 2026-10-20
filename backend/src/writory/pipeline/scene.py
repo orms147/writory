@@ -18,10 +18,11 @@ from typing import Self
 
 from pydantic import BaseModel, ConfigDict, model_validator
 
-from writory.config import REPO_ROOT
+from writory.config import REPO_ROOT, QualityConfig
 from writory.graph import ChangePackage
 from writory.graph.context import WriterContext, render_writer_context
 from writory.llm.base import Message
+from writory.quality import check_foreign_script
 from writory.safety.wrap import (
     DATA_NOTICE,
     UserAuthored,
@@ -30,8 +31,8 @@ from writory.safety.wrap import (
     user_message,
 )
 
-OUTLINE_PROMPT_VERSION = "outline-1"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-1"
+OUTLINE_PROMPT_VERSION = "outline-2"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-2"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -61,6 +62,15 @@ class SceneOutline(BaseModel):
         if not MIN_BEATS <= len(self.beats) <= MAX_BEATS or any(not b.strip() for b in self.beats):
             raise ValueError(f"beats phải có {MIN_BEATS}–{MAX_BEATS} nhịp, không nhịp nào rỗng")
         return self
+
+
+def outline_foreign_script(outline: SceneOutline, quality: QualityConfig) -> list[str]:
+    """Tên các trường chữ của dàn ý có lẫn chữ khác hệ (`quality.check_foreign_script`: chữ Hán,
+    Nhật, Hàn; chuỗi từ Latin dài). Dàn ý phải viết tiếng Việt (D-51); nơi gọi coi dàn ý như vậy là
+    sai schema. Chỉ trả tên trường, không chép chữ (chi tiết lỗi vào log)."""
+    fields = [("goal", outline.goal), *((f"beats[{i}]", b) for i, b in enumerate(outline.beats)),
+              ("ends_at", outline.ends_at)]
+    return [name for name, text in fields if check_foreign_script(text, quality)]
 
 
 @dataclass(frozen=True)
@@ -218,7 +228,7 @@ Quy tắc:
 - Bí mật ghi "KHÔNG để lộ" chỉ được gợi bằng manh mối mơ hồ.
 - Không thêm nhân vật, nơi chốn hay đồ vật quan trọng mới.
 
-Đầu ra JSON đúng schema:
+Đầu ra JSON đúng schema, mọi chữ viết bằng tiếng Việt có dấu (không chữ Hán, không tiếng Anh):
 - goal: mục tiêu của cảnh, một câu.
 - present: id các nhân vật có mặt, chỉ lấy từ danh sách "Nhân vật có thể có mặt"; luôn có nhân vật chính.
 - beats: 3 đến 6 nhịp theo thứ tự, mỗi nhịp một câu: chuyện gì xảy ra, ai nói gì.

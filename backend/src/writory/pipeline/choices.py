@@ -34,7 +34,7 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "choices-1"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "choices-2"  # đổi chữ prompt thì tăng số
 CHOICE_COUNT = 3
 MIN_KINDS = 2  # design §6.2 bước 6: tối thiểu 2 loại khác nhau
 
@@ -115,12 +115,18 @@ class Choice:
         )
 
 
-SYSTEM_PROMPT = """Bạn tạo lựa chọn cho người chơi ở cuối một chương truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính và chỉ biết những gì có trong khối dữ liệu: sổ tay (các mục người chơi đã biết) và cảnh vừa đọc. Không bịa thêm sự thật về thế giới, không đoán bí mật, không nhắc tới điều không có trong khối dữ liệu.
+# Lần chạy evals/results/2026-10-20-run-tu-tien-1/: cả 6 chương, mọi lời thoại đều "truth". Đề khuyến
+# khích đổi sắc thái khi hợp cảnh; code không ép, vì design §6.2 chỉ đòi tối thiểu 2 loại.
+TONE_GUIDANCE = """Sắc thái của lời thoại: đừng mặc định "truth". Khi trong cảnh có người dò hỏi, nghi ngờ, gây sức ép, hoặc nhân vật chính có điều cần giấu, hãy cân nhắc cho lời thoại là "lie" (nói dối, kèm lie_content) hoặc "silence" (im lặng, không trả lời). Chọn sắc thái hợp cảnh nhất; nói thật vẫn được khi đó là lựa chọn hợp cảnh."""
+
+SYSTEM_PROMPT = f"""Bạn tạo lựa chọn cho người chơi ở cuối một chương truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính và chỉ biết những gì có trong khối dữ liệu: sổ tay (các mục người chơi đã biết) và cảnh vừa đọc. Không bịa thêm sự thật về thế giới, không đoán bí mật, không nhắc tới điều không có trong khối dữ liệu.
 
 Tạo đúng 3 lựa chọn cho bước tiếp theo của nhân vật chính, mỗi lựa chọn một hướng khác nhau, hợp với cảnh vừa đọc. Có ít nhất 2 loại khác nhau; nên đủ cả 3 loại:
 - action: một hành động.
 - dialogue: một câu nói với người khác; tone là "truth" (nói thật), "lie" (nói dối) hoặc "silence" (im lặng, không trả lời); listeners là mã người nghe; khi nói dối thì lie_content là nội dung lời nói dối, một câu.
 - inner: một cảm xúc hay ý định thầm của nhân vật chính, người khác không biết; feeling là cảm xúc đó (vài chữ); about là mã người hay điều mà cảm xúc hướng tới.
+
+{TONE_GUIDANCE}
 
 Mỗi lựa chọn:
 - text: câu ngắn tiếng Việt mô tả lựa chọn, như người chơi sẽ đọc trên nút bấm.
@@ -181,13 +187,15 @@ def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str,
 
 
 def _ensure_no_leak(choices: list[Choice], *, view: PlayerView,
-                    truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan) -> None:
+                    truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan,
+                    story_brief: str) -> None:
     hits = [
         (i, h)
         for i, c in enumerate(choices, 1)
         for text in (c.text, c.lie.content if c.lie else None, c.feeling)
         if text
-        for h in check_leaks(text, view=view, truth_names=truth_names, plan=plan)
+        for h in check_leaks(text, view=view, truth_names=truth_names, plan=plan,
+                             story_brief=story_brief)
     ]
     if hits:
         # Log và lỗi chỉ ghi loại và vị trí, không ghi chữ bị lộ (D-26).
@@ -199,11 +207,11 @@ def _ensure_no_leak(choices: list[Choice], *, view: PlayerView,
 
 async def make_choices(
     llm: LLMClient, model: str, *, view: PlayerView, protagonist_id: str, last_scene_text: str,
-    truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan, retries: RetryLimits,
-    extra: Mapping[str, Any] | None = None,
+    truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan, story_brief: str,
+    retries: RetryLimits, extra: Mapping[str, Any] | None = None,
 ) -> list[Choice]:
-    """`view`: player_view ở chương vừa ghi. `truth_names`, `plan` chỉ dùng cho bộ dò lộ bằng code,
-    không bao giờ vào prompt."""
+    """`view`: player_view ở chương vừa ghi. `truth_names`, `plan`, `story_brief` (thiết lập truyện
+    người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ bằng code, không bao giờ vào prompt."""
     messages, refs = build_choice_messages(view, protagonist_id=protagonist_id,
                                            last_scene_text=last_scene_text)
     kinds = {e.id: e.kind for e in view.entries}
@@ -214,5 +222,6 @@ async def make_choices(
 
     choices = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
                                       transient_retries=retries.llm_transient)
-    _ensure_no_leak(choices, view=view, truth_names=truth_names, plan=plan)
+    _ensure_no_leak(choices, view=view, truth_names=truth_names, plan=plan,
+                    story_brief=story_brief)
     return choices

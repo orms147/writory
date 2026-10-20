@@ -8,6 +8,7 @@ Regex ở đây chỉ kiểm định dạng chữ, không đọc ý định ngư
 import re
 import unicodedata
 from collections import defaultdict
+from collections.abc import Iterable
 from dataclasses import dataclass
 from enum import StrEnum
 
@@ -25,6 +26,7 @@ class IssueKind(StrEnum):
     DIALOGUE_FORMAT = "dialogue_format"
     UNCLOSED_QUOTE = "unclosed_quote"
     META_LEAK = "meta_leak"
+    NARRATION_PERSON = "narration_person"
 
 
 @dataclass(frozen=True)
@@ -85,13 +87,51 @@ def check_length(
 _WORD = re.compile(r"[^\W\d_]+")
 
 
-def check_repetition(text: str, quality: QualityConfig) -> list[QualityIssue]:
+def _name_spans(text: str, names: Iterable[str]) -> list[tuple[int, int, str]]:
+    """Chỗ các tên xuất hiện trong `text` (đã NFC): trọn từ, không phân biệt hoa thường. Tên dài
+    được chọn trước; các chỗ không chồng lên nhau."""
+    keys = sorted({" ".join(w.casefold() for w in _WORD.findall(_nfc(n))) for n in names} - {""},
+                  key=lambda k: -len(k.split()))
+    taken: list[tuple[int, int, str]] = []
+    for key in keys:
+        pattern = re.compile(r"(?<!\w)" + r"\W+".join(map(re.escape, key.split())) + r"(?!\w)",
+                             re.IGNORECASE)  # \W+: "Sổ Trận Cô Phong", cả "Hạ-Trần"
+        for m in pattern.finditer(text):
+            if all(m.end() <= s or m.start() >= e for s, e, _ in taken):
+                taken.append((m.start(), m.end(), key))
+    return sorted(taken)
+
+
+def _tokens(text: str, names: Iterable[str]) -> list[tuple[str, int, int]]:
+    """Từ của `text` (đã NFC), chữ thường. Mỗi chỗ tên xuất hiện gộp thành MỘT từ (D-51): tên hay
+    biệt danh của thực thể nhắc lại nhiều lần không phải cụm lặp, nhưng câu lặp quanh tên vẫn là."""
+    spans = _name_spans(text, names)
+    out: list[tuple[str, int, int]] = []
+    i = 0
+    for m in _WORD.finditer(text):
+        while i < len(spans) and spans[i][1] <= m.start():
+            i += 1
+        if i < len(spans) and spans[i][0] <= m.start() < spans[i][1]:
+            start, end, key = spans[i]
+            if not out or out[-1][1] != start:
+                out.append((f"<{key}>", start, end))
+            continue
+        out.append((m.group().casefold(), m.start(), m.end()))
+    return out
+
+
+def check_repetition(
+    text: str, quality: QualityConfig, *, names: Iterable[str] = ()
+) -> list[QualityIssue]:
     """Cụm `ngram_words` từ xuất hiện quá `max_repeats` lần. Báo ở các lần vượt; các lần vượt
-    chồng lên nhau (một câu dài bị lặp) gộp thành một lỗi."""
+    chồng lên nhau (một câu dài bị lặp) gộp thành một lỗi.
+
+    `names`: tên và biệt danh của thực thể người chơi đã biết hay đang có trong ngữ cảnh. Mỗi chỗ
+    tên xuất hiện tính là một từ, nên nhắc tên nhiều lần không bị coi là lặp (D-51)."""
     n = _require(quality.repetition, "ngram_words")
     max_repeats = _require(quality.repetition, "max_repeats")
     text = _nfc(text)
-    words = [(m.group().casefold(), m.start(), m.end()) for m in _WORD.finditer(text)]
+    words = _tokens(text, names)
     occurrences: dict[tuple[str, ...], list[int]] = defaultdict(list)
     for i in range(len(words) - n + 1):
         occurrences[tuple(w for w, _, _ in words[i : i + n])].append(i)
@@ -319,6 +359,68 @@ def check_meta_leak(text: str) -> list[QualityIssue]:
     return sorted(issues, key=lambda i: (i.start, i.end))
 
 
+# --- ngôi kể --------------------------------------------------------------------------------
+# D-51. Lời kể = mọi dòng không phải dòng thoại "- " (D-31), bỏ chữ trong ngoặc kép (thư, chữ
+# khắc, lời trích). Đo bằng số lần "tôi" trên 100 từ lời kể: đây là đếm đại từ trong văn, không
+# phải đọc ý định người dùng (G5). Đề của model viết lấy câu ngôi kể từ `narration_instruction`,
+# cùng một nguồn `quality.narration.person` với phép kiểm.
+
+_FIRST_PERSON = frozenset({"tôi"})  # style guide: người kể ngôi thứ nhất xưng "tôi"
+_QUOTED = re.compile(r"“[^”\n]*”|\"[^\"\n]*\"")
+
+NARRATION_INSTRUCTIONS = {
+    "first": 'Ngôi kể: ngôi thứ nhất. Người kể là nhân vật chính, xưng "tôi" trong lời kể ở mọi '
+             'cảnh, mọi chương. Lời kể không gọi nhân vật chính bằng tên hay bằng "chàng", "nàng", '
+             '"hắn", "anh", "cô"; tên nhân vật chính chỉ có khi người khác gọi trong lời thoại.',
+    "third": 'Ngôi kể: ngôi thứ ba, bám sát nhân vật chính. Lời kể gọi nhân vật chính bằng tên '
+             'hoặc đại từ ngôi thứ ba, không xưng "tôi"; "tôi" chỉ có trong lời thoại.',
+}
+
+
+def narration_instruction(quality: QualityConfig) -> str:
+    """Câu ngôi kể cho đề của model viết, đúng ngôi mà `check_narration` đòi."""
+    return NARRATION_INSTRUCTIONS[quality.narration.person]
+
+
+def _narration_words(text: str) -> list[str]:
+    words: list[str] = []
+    for line in normalize_dashes(text).split("\n"):
+        body = line.strip()
+        if not body or body.startswith(_DIALOGUE_DASH):
+            continue
+        words += [w.casefold() for w in _WORD.findall(_QUOTED.sub(" ", body))]
+    return words
+
+
+def check_narration(text: str, quality: QualityConfig) -> list[QualityIssue]:
+    """Lời kể lệch ngôi đã chốt (`quality.narration.person`). Một lỗi cho cả cảnh, mức viết lại.
+    Lời kể ngắn hơn `min_words` từ thì không kết luận."""
+    cfg = quality.narration
+    min_words = _require(cfg, "min_words")
+    text = _nfc(text)
+    words = _narration_words(text)
+    if len(words) < min_words:
+        return []
+    count = sum(w in _FIRST_PERSON for w in words)
+    rate = 100 * count / len(words)
+    measured = f'cảnh có {count} lần "tôi" trên {len(words)} từ lời kể ({rate:.1f} trên 100 từ'
+    if cfg.person == "first":
+        limit = _require(cfg, "first_person_min_per_100_words")
+        if rate >= limit:
+            return []
+        detail = (f'lời kể phải do nhân vật chính kể, xưng "tôi"; {measured}, cần từ {limit}), '
+                  'như đang kể về nhân vật chính từ bên ngoài. Viết lại lời kể xưng "tôi", '
+                  'giữ nguyên lời thoại')
+    else:
+        limit = _require(cfg, "first_person_max_per_100_words")
+        if rate <= limit:
+            return []
+        detail = (f'lời kể không được xưng "tôi", truyện kể về nhân vật chính từ bên ngoài; '
+                  f'{measured}, tối đa {limit}). Viết lại lời kể không xưng "tôi", giữ nguyên '
+                  'lời thoại')
+    return [_issue(text, IssueKind.NARRATION_PERSON, 0, len(text), detail)]
+
+
 # --- gộp ----------------------------------------------------------------------------------
 
 
@@ -328,16 +430,19 @@ def check_scene(
     scenes_in_chapter: int,
     quality: QualityConfig,
     lengths: StoryLengthsConfig,
+    names: Iterable[str] = (),
 ) -> list[QualityIssue]:
     """Chạy mọi bộ kiểm; trả danh sách lỗi xếp theo vị trí, để người canh gộp vào lượt viết lại.
     Văn bản được chuẩn hoá NFC và dấu gạch (D-31) một lần ở đây, nên mọi vị trí lỗi cùng tính trên
-    văn bản đã chuẩn hoá: đó cũng là chữ người chơi sẽ thấy."""
+    văn bản đã chuẩn hoá: đó cũng là chữ người chơi sẽ thấy. `names`: tên thực thể cho bộ kiểm lặp
+    (`check_repetition`)."""
     text = normalize_dashes(_nfc(text))
     issues = (
         check_length(text, scenes_in_chapter, lengths)
-        + check_repetition(text, quality)
+        + check_repetition(text, quality, names=names)
         + check_cliches(text, quality)
         + check_foreign_script(text, quality)
         + check_dialogue(text, quality)
+        + check_narration(text, quality)
     )
     return sorted(issues, key=lambda i: (i.start, i.end, i.kind))

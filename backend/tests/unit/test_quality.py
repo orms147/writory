@@ -37,6 +37,8 @@ TRIAL = REPO.quality.model_copy(
         "foreign_script": REPO.quality.foreign_script.model_copy(
             update={"latin_run_min_words": 4}
         ),
+        # Văn sạch trong fixtures/quality/clean/ kể ngôi thứ ba (D-51: ngôi theo config).
+        "narration": REPO.quality.narration.model_copy(update={"person": "third"}),
     }
 )
 
@@ -98,6 +100,44 @@ def test_overlapping_repeats_become_one_issue():
     issues = check_repetition(text, TRIAL)
     assert len(issues) == 1
     assert "3" in issues[0].detail
+
+
+# Lần chạy tu-tien-1 (notes.md mục 5): tên một đồ vật 4 từ nhắc 3 lần trong cảnh bị bắt viết lại.
+ITEM = "Tín Vật Huyền Nguyệt"
+NAMED_THRICE = ("Tôi siết Tín Vật Huyền Nguyệt trong tay. Gió lùa qua khe đá. Lục Hàn Sương nhìn "
+                "Tín Vật Huyền Nguyệt rồi quay đi. Tới lúc trời sáng, tín vật huyền nguyệt vẫn lạnh.")
+
+
+def test_entity_name_repeated_is_not_repetition():
+    """Tên hay biệt danh của thực thể không phải cụm lặp (D-51): tên tính như một từ."""
+    [issue] = check_repetition(NAMED_THRICE, TRIAL)  # không biết tên: bị đếm như trước
+    assert "tín vật huyền nguyệt" in issue.detail
+    assert check_repetition(NAMED_THRICE, TRIAL, names=[ITEM]) == []
+    nfd = unicodedata.normalize("NFD", NAMED_THRICE)
+    assert check_repetition(nfd, TRIAL, names=[unicodedata.normalize("NFD", ITEM)]) == []
+
+
+def test_phrase_around_a_name_still_counts_as_repetition():
+    """Tên tính như một từ, nên câu lặp quanh tên vẫn bị bắt: "đặt <tên> lên bàn" là 4 từ."""
+    text = ("Tôi đặt Tín Vật Huyền Nguyệt lên bàn đá. Nàng bảo tôi đặt Tín Vật Huyền Nguyệt lên bàn "
+            "gỗ. Lát sau tôi lại đặt Tín Vật Huyền Nguyệt lên bàn cũ.")
+    [issue] = check_repetition(text, TRIAL, names=[ITEM])
+    assert text[issue.start:issue.end].startswith("đặt Tín Vật Huyền Nguyệt lên bàn")
+
+
+def test_repeated_phrase_that_is_not_a_name_still_counts():
+    """"trận quanh linh mạch" (lần chạy tu-tien-1, chương 6) không phải tên thực thể nào."""
+    text = ("Mỗi nhịp giữ thêm, trận quanh linh mạch yếu đi. Chàng biết trận quanh linh mạch sắp "
+            "vỡ. Nàng nhắc rằng trận quanh linh mạch cần người giữ.")
+    [issue] = check_repetition(text, TRIAL, names=["Động Linh Mạch", ITEM])
+    assert "trận quanh linh mạch" in issue.detail
+
+
+def test_check_scene_passes_names_to_the_repetition_check():
+    kw = {"scenes_in_chapter": 2, "quality": TRIAL, "lengths": REPO.story_lengths}
+    assert IssueKind.REPETITION in {i.kind for i in check_scene(NAMED_THRICE, **kw)}
+    assert IssueKind.REPETITION not in {i.kind for i in check_scene(NAMED_THRICE, names=[ITEM],
+                                                                     **kw)}
 
 
 def test_each_cjk_run_is_one_issue():

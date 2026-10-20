@@ -7,7 +7,7 @@ import os
 import pytest
 import yaml
 
-from tests.pipeline_fixtures import make_config
+from tests.pipeline_fixtures import FIRST_PERSON, make_config
 from writory.db import (
     StoryNotFoundError,
     chapter_records,
@@ -37,7 +37,7 @@ def services_env(monkeypatch):
 
 def _cli(tmp_path, *extra: str) -> tuple[int, dict]:
     """Chạy `main` với bản sao config thử và đề mẫu có giá cho đúng các model của config đó."""
-    config = make_config(tmp_path)
+    config = make_config(tmp_path, **FIRST_PERSON)
     base, _ = bench_run.load_scenario(bench_run.DEFAULT_SCENARIO)
     data = base.model_dump(mode="json", by_alias=True)
     data["prices"] = {info["model"]: {"in": 0.1, "out": 0.5}

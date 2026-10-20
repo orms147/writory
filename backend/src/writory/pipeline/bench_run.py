@@ -708,6 +708,7 @@ class StoryRun:
             self.metered, require_model(self.config.models.roles, "choices"),
             view=self.store.player_view(number), protagonist_id=state.protagonist_id(),
             last_scene_text=out.scenes[-1].text, truth_names=leak_names(state), plan=self.plan,
+            story_brief=self.brief,
             retries=self.config.limits.retries, extra=role_extra(self.config.models, "choices"),
         )
 
@@ -1000,15 +1001,16 @@ DRY_RUN_NPC = "mac_van_ha"
 DRY_RUN_NPC_NAME = "Mạc Vân Hà"
 DRY_RUN_HIDDEN_NAME = "Hạ Trần"  # nhân vật có thật trong đồ thị, chưa từng hé lộ
 DRY_RUN_SECRET_TEXT = "Hạ Trần là nội gián của Huyết Ảnh Các trong tông môn"
-_DRY_QUOTE = (f"Đó là {DRY_RUN_NPC_NAME}, người duy nhất trong tông môn chịu chỉ cho hắn vài thế "
+_DRY_QUOTE = (f"Đó là {DRY_RUN_NPC_NAME}, người duy nhất trong tông môn chịu chỉ cho tôi vài thế "
               "kiếm cơ bản.")
-# Một cảnh tu tiên viết tay, qua được kiểm văn với ngưỡng của config hiện hành. Nhân vật chính chỉ
-# được gọi là "hắn", nên cảnh không phụ thuộc tên nhân vật được chọn.
-DRY_RUN_SCENE = f"""Sương sớm còn phủ kín bậc đá dẫn lên lưng núi khi hắn ôm bó củi đi qua sân \
+# Một cảnh tu tiên viết tay, qua được kiểm văn với ngưỡng của config hiện hành, kể cả ngôi kể
+# (`quality.narration.person: first`, D-51). Nhân vật chính chỉ xưng "tôi", nên cảnh không phụ thuộc
+# tên nhân vật được chọn.
+DRY_RUN_SCENE = f"""Sương sớm còn phủ kín bậc đá dẫn lên lưng núi khi tôi ôm bó củi đi qua sân \
 luyện kiếm. Tiếng chuông trên đỉnh vừa dứt, đám đệ tử ngoại môn đã đứng thành hàng chờ điểm danh, \
 ai nấy cúi đầu tránh ánh nhìn của vị chấp sự mặt lạnh.
 
-Hắn đặt bó củi xuống cạnh giếng, phủi lớp tro bám trên tay áo. Từ hành lang phía đông, một nữ đệ \
+Tôi đặt bó củi xuống cạnh giếng, phủi lớp tro bám trên tay áo. Từ hành lang phía đông, một nữ đệ \
 tử áo xanh bước tới, tay cầm thanh trúc kiếm còn ướt sương. {_DRY_QUOTE}
 
 - Đêm qua đệ lại lên vách đá phía sau núi phải không? - nàng hỏi, giọng nhỏ nhưng sắc.
@@ -1017,11 +1019,11 @@ tử áo xanh bước tới, tay cầm thanh trúc kiếm còn ướt sương. {
 
 - Củi không mọc trên vách đá. Lần sau mà để chấp sự bắt gặp, ta cũng không đỡ cho đệ được nữa.
 
-Hắn không đáp. Miếng ngọc bội trong ngực áo vẫn còn hơi ấm, thứ hơi ấm kỳ lạ mà hắn chưa từng kể \
-với ai. Mấy đêm nay, mỗi lần hắn ngồi thiền gần vách đá, linh khí quanh người lại tụ về nhanh hơn \
+Tôi không đáp. Miếng ngọc bội trong ngực áo vẫn còn hơi ấm, thứ hơi ấm kỳ lạ mà tôi chưa từng kể \
+với ai. Mấy đêm nay, mỗi lần tôi ngồi thiền gần vách đá, linh khí quanh người lại tụ về nhanh hơn \
 hẳn, như có dòng suối ngầm chảy dưới chân.
 
-Nàng nhìn hắn một lúc lâu rồi thở dài, rút từ tay áo ra một gói giấy dầu, đặt vào tay hắn.
+Nàng nhìn tôi một lúc lâu rồi thở dài, rút từ tay áo ra một gói giấy dầu, đặt vào tay tôi.
 
 - Đan dược bổ khí, phần của ta tháng này. Đệ cầm lấy mà dùng, đừng để linh lực cạn rồi lại ngất \
 giữa buổi tập.
@@ -1031,11 +1033,11 @@ giữa buổi tập.
 - Ta sắp vào nội môn, ở đó không thiếu thứ này. - Nàng quay đi, rồi dừng lại nửa bước. - Còn nữa, \
 mấy hôm nay có kẻ lạ mặt dò hỏi về đệ ở chân núi. Đi đâu cũng nhớ mang theo kiếm.
 
-Hắn nắm chặt gói giấy, cảm thấy mép giấy cứa vào lòng bàn tay. Người ngoài tìm tới một đệ tử ngoại \
-môn vô danh thì chỉ có một lý do, và lý do ấy đang nằm yên sát ngực hắn.
+Tôi nắm chặt gói giấy, cảm thấy mép giấy cứa vào lòng bàn tay. Người ngoài tìm tới một đệ tử ngoại \
+môn vô danh thì chỉ có một lý do, và lý do ấy đang nằm yên sát ngực tôi.
 
-Khi tiếng điểm danh vang lên lần thứ hai, hắn chạy vội về hàng. Phía trên bậc đá, vị chấp sự mặt \
-lạnh đã ghi tên hắn vào sổ phạt, nét bút dài và chậm như cố ý cho cả sân cùng thấy."""
+Khi tiếng điểm danh vang lên lần thứ hai, tôi chạy vội về hàng. Phía trên bậc đá, vị chấp sự mặt \
+lạnh đã ghi tên tôi vào sổ phạt, nét bút dài và chậm như cố ý cho cả sân cùng thấy."""
 
 _DRY_SETTINGS = [
     {"title": "Tông môn trên mây",

@@ -25,6 +25,7 @@ from writory.db import (
     connect,
     delete_player_key,
     load_player_key,
+    load_story_brief,
     load_story_plan,
     record_cost,
     save_player_key,
@@ -109,6 +110,16 @@ def get_truth_names(story: OwnedStory, driver: Neo4jDriver) -> Mapping[str, tupl
     """Tên lớp truth, CHỈ cho bộ dò lộ (G2), theo đúng quy tắc của `leak_names` (D-48). Không bao
     giờ đưa vào phản hồi hay context model."""
     return leak_names(Neo4jState(driver, story.id))
+
+
+def get_story_brief(story: OwnedStory, conn: PgConn) -> str:
+    """Thiết lập truyện người chơi đã đọc lúc khởi tạo (`stories.brief`), CHỈ cho bộ dò lộ (G2):
+    tên có trong đó là chữ đã thấy (D-52). Truyện không có (nạp tay) thì rỗng: bộ dò chỉ chặt
+    hơn, không lỏng hơn."""
+    return load_story_brief(conn, story.id) or ""
+
+
+StoryBrief = Annotated[str, Depends(get_story_brief)]
 
 
 def get_story_plan(story: OwnedStory, conn: PgConn) -> StoryPlan:

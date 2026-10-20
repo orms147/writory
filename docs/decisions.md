@@ -414,6 +414,27 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:**
   - Bộ dò lộ không coi `name` của nút mang `user_authored: true` là tên bị cấm. `aliases` của nút đó vẫn bị dò, vì model có thể gán bí danh bí mật.
   - Quy tắc nằm một chỗ: `safety.leak.leak_names(state)`, đọc `GraphState.named_nodes()` và `nodes()`, nên đúng cho cả Neo4j lẫn `OverlayState`. Mọi nơi gọi bộ dò lộ lấy `truth_names` từ đó: soát cảnh và tạo lựa chọn (`pipeline/chapter.py`), tạo lại lựa chọn (`pipeline/bench_run.py`), hỏi người kể (`api/deps.get_truth_names`).
-  - Tên đó không được tính là chữ người chơi đã thấy: tên lớp truth khác trùng một phần chữ vẫn bị cấm như cũ.
+  - Tên đó không được tính là chữ người chơi đã thấy: tên lớp truth khác trùng một phần chữ vẫn bị cấm như cũ. **Đã thay một phần (D-52):** thiết lập truyện có tên nhân vật chính và được tính là chữ đã thấy.
 - **Hệ quả:** nhân vật chính không cần hé lộ trên trang để được gọi tên. `named_nodes` vẫn trả đủ tên lớp truth cho chỗ khác dùng. Nếu bản 3 cho người chơi viết thêm nút (nhập nhân vật bằng đoạn văn), tên các nút đó cũng được miễn theo quy tắc này.
 - **Người quyết:** điều phối (quyết định và phạm vi miễn); cách làm: Claude (nhánh story-run) · 20/10/2026
+
+## D-51 · Kiểm văn sau lần chạy thật đầu: ngôi kể, tên trong kiểm lặp, dàn ý phải là tiếng Việt
+- **Bối cảnh:** lần chạy `evals/results/2026-10-20-run-tu-tien-1/` (`notes.md` mục 2, 3, 5): chương 6 đổi sang ngôi thứ ba mà không phép kiểm nào bắt; một dàn ý viết tiếng Trung; kiểm lặp đếm cả tên đồ vật 4 từ. Chưa đề nào nói ngôi kể cho model viết: style guide chỉ dặn "ngôi thứ nhất thì xưng tôi", không chốt ngôi.
+- **Quyết định:**
+  - Ngôi đã chốt: `quality.narration.person` (`config/quality.yaml`), hiện `first`. Model viết nhận câu ngôi kể sinh từ cùng giá trị (`quality.narration_instruction`, nối sau style guide trong system prompt; `writer-2`).
+  - `quality.check_narration` trong `check_scene`: đếm "tôi" trên 100 từ lời kể (bỏ dòng thoại "- " và chữ trong ngoặc kép); lệch ngưỡng là lỗi `narration_person`, mức viết lại. Ngưỡng tạm trong config, đặt giữa các cảnh ngôi thứ nhất (chương 1–5) và ngôi thứ ba (chương 6, truyện mẫu) của lần chạy trên. Chế độ `third` dùng cho truyện mẫu và văn thử.
+  - `check_repetition(names=...)`: mỗi chỗ tên hay biệt danh thực thể (danh mục và player_view của chương đã commit, `chapter.entity_names`) tính là một từ.
+  - Dàn ý có trường lẫn chữ khác hệ (`scene.outline_foreign_script`) là sai schema, thử lại theo D-14; đề dàn ý dặn viết tiếng Việt (`outline-2`).
+- **Hệ quả:** đổi ngôi một đoạn ngắn giữa cảnh có thể lọt, vì đo trên cả cảnh. "ta" trong lời kể không tính là ngôi thứ nhất. Cụm lặp không phải tên ("trận quanh linh mạch") vẫn bị bắt. Config thử của test đặt `third` vì văn thử lấy từ truyện mẫu. Bài D không chạy ngôi kể (ngôi theo từng case).
+- **Người quyết:** Claude (nhánh run1-fixes), chờ điều phối duyệt. Chốt ngôi thứ nhất cho cả bản 1: cần chủ dự án xác nhận · 20/10/2026
+
+## D-52 · Bộ dò lộ: thiết lập truyện người chơi đã đọc là chữ đã thấy (bổ sung D-26, thay một phần D-48)
+- **Bối cảnh:** `notes.md` mục 4: chương 1 bị viết lại vì "Huyền Sát Tông", "Tín Vật Huyền Nguyệt", "động linh mạch". Bối cảnh, hướng truyện, nhân vật chính đã chọn là chữ người chơi đọc lúc khởi tạo (G1, D-37, D-45), nhưng bộ dò chỉ tính `player_view`.
+- **Quyết định:**
+  - `check_leaks`, `ensure_no_leak`, `make_choices`, `ask_narrator` nhận bắt buộc `story_brief` (`setup.story_brief`, lưu ở `stories.brief`). Một chỗ, `leak._seen_text`, cộng nó vào chữ đã thấy, chỉ cho phần tên; nhóm `leak_terms` không đổi.
+  - Nơi gọi: soát cảnh và tạo lựa chọn (`chapter.py`, `ChapterRequest.story_brief`), tạo lại lựa chọn (`bench_run.py`, `api/play.py`), hỏi người kể (`api/stories.py`); API đọc qua `deps.get_story_brief`, truyện không có thì "" (chỉ chặt hơn).
+- **Hệ quả:**
+  - Đo lại: thiết lập thật của lần chạy không có ba tên trên (chỉ có "tín vật", "linh mạch" viết thường; tên tính theo từ viết hoa), nên sửa này không bỏ được ba lượt viết lại đó. Nguyên nhân thật: bộ trích không hé lộ thực thể ở lần đầu cảnh nêu tên (`test_leak.py::test_run1_names_absent_from_its_setup_text_still_leak`).
+  - Từ trong tên nhân vật chính và chữ người chơi tự gõ (quá khứ, tính cách) giờ là chữ đã thấy: tên hay biệt danh chỉ gồm các từ đó không còn bị cấm theo tên.
+  - Tên ghép từ từ thường ("Động Linh Mạch" trùng "chấn động linh mạch") chưa sửa: mọi cách gọn tìm được đều bỏ bắt một kiểu viết tên thật (chữ thường có dấu). Hướng đề xuất ở `docs/security.md`, mục Chưa giải quyết.
+- **Người quyết:** Claude (nhánh run1-fixes), chờ điều phối duyệt · 20/10/2026

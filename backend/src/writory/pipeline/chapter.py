@@ -25,9 +25,9 @@ from langgraph.runtime import Runtime
 
 from writory.config import AppConfig, LimitNotSetError, WriterTier
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import ChangePackage, NodeSpec
+from writory.graph import ChangePackage, NodeSpec, PlayerView
 from writory.graph.context import WriterContext
-from writory.graph.schema import EDGE_TYPES
+from writory.graph.schema import EDGE_TYPES, NAMED_LABELS
 from writory.guard import Severity, check_scene_package
 from writory.guard.state import OverlayState, player_view_of
 from writory.llm.base import LLMClient, reasoning_extra, require_model, role_extra
@@ -52,12 +52,19 @@ from writory.pipeline.scene import (
     SceneBrief,
     SceneOutline,
     load_style_guide,
+    outline_foreign_script,
     outline_messages,
     writer_messages,
 )
 from writory.pipeline.store import ChapterStore
 from writory.pipeline.story_plan import StoryPlan
-from writory.quality import IssueKind, check_meta_leak, check_scene, normalize_dashes
+from writory.quality import (
+    IssueKind,
+    check_meta_leak,
+    check_scene,
+    narration_instruction,
+    normalize_dashes,
+)
 from writory.safety.leak import check_leaks, leak_names
 from writory.safety.redact import redact
 
@@ -73,7 +80,8 @@ class ChapterRequest:
 
     `player_action`: lựa chọn hoặc hành động tự viết dẫn tới chương này. Hành động tự viết phải qua
     `safety.classify_action` + `ensure_in_story` (G5) trước khi tới đây. Chữ này và `story_brief`
-    luôn được bọc như dữ liệu (G4).
+    luôn được bọc như dữ liệu (G4). `story_brief` là chữ người chơi đã đọc lúc khởi tạo, nên bộ dò
+    lộ của cảnh và của lựa chọn tính nó là chữ đã thấy (D-52).
     """
 
     present_ids: tuple[str, ...]  # nhân vật có mặt đầu chương (nhân vật chính luôn được thêm)
@@ -201,6 +209,7 @@ class _State(TypedDict, total=False):
     header: ChangePackage  # gói chỉ có nút Chapter, phủ trước các gói cảnh
     catalogue: list[Entity]
     names: dict[str, Named]
+    entity_names: list[str]  # tên, biệt danh của thực thể cho bộ kiểm lặp (D-51)
     base_edges: dict[str, OpenEdge]  # cạnh đang hiệu lực ở cuối chương trước
     scene_count: int
     scene: int  # cảnh đang làm, 1-based
@@ -265,10 +274,17 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.quality.repetition, "ngram_words"),
         (config.quality.repetition, "max_repeats"),
         (config.quality.foreign_script, "latin_run_min_words"),
+        (config.quality.narration, "min_words"),
+        (config.quality.narration, _NARRATION_LIMIT[config.quality.narration.person]),
         (config.guard.relationship, "max_score_jump_without_event"),
     ):
         check(_require, section, name)
     return problems
+
+
+# Ngưỡng ngôi kể dùng tới, theo ngôi đã chốt (D-51).
+_NARRATION_LIMIT = {"first": "first_person_min_per_100_words",
+                    "third": "first_person_max_per_100_words"}
 
 
 def _preflight(d: _Deps) -> None:
@@ -277,6 +293,15 @@ def _preflight(d: _Deps) -> None:
     if problems:
         raise problems[0]
     d.llm.tracker.ensure_budget()
+
+
+def entity_names(catalogue: Sequence[Entity], view: PlayerView) -> list[str]:
+    """Tên và biệt danh thực thể cho bộ kiểm lặp (D-51): tên thật và biệt danh của mọi nút có tên
+    trong danh mục, cộng tên người chơi biết (`known_as`) và biệt danh trong player_view. Nhắc lại
+    các tên này không phải lặp từ. Chỉ dùng để đếm, không vào prompt hay tới người chơi."""
+    named = [t for e in catalogue if e.label in NAMED_LABELS for t in (e.text, *e.aliases)]
+    known = [t for e in view.entries if e.kind in NAMED_LABELS for t in (e.text, *e.aliases)]
+    return list(dict.fromkeys(named + known))
 
 
 def _accepted_packages(state: _State) -> list[ChangePackage]:
@@ -363,6 +388,7 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
         "header": ChangePackage(commit_id="header", nodes=[node]),
         "catalogue": catalogue,
         "names": {e.id: Named(e.text, e.user_authored) for e in catalogue},
+        "entity_names": entity_names(catalogue, d.store.player_view(committed)),
         "base_edges": base_edges,
         "scene_count": d.request.scene_count,
         "scene": 1,
@@ -391,6 +417,10 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
     async def call() -> SceneOutline:
         outline, _ = await d.llm.chat_json(model, messages, SceneOutline,
                                            extra=role_extra(d.config.models, "outline"))
+        foreign = outline_foreign_script(outline, d.config.quality)
+        if foreign:  # dàn ý phải viết tiếng Việt: sai thì như sai schema, thử lại (D-51, D-14)
+            raise WritoryError(ErrorCode.LLM_BAD_RESPONSE,
+                               detail=f"SceneOutline: chữ khác hệ ở {', '.join(foreign)}")
         return outline
 
     outline = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
@@ -429,6 +459,7 @@ _QUALITY_LABELS = {
     IssueKind.FOREIGN_SCRIPT: "lẫn chữ khác hệ", IssueKind.DIALOGUE_FORMAT: "định dạng lời thoại",
     IssueKind.UNCLOSED_QUOTE: "ngoặc kép không đóng",
     IssueKind.META_LEAK: "lọt chữ của đề bài hoặc suy nghĩ của người viết",
+    IssueKind.NARRATION_PERSON: "ngôi kể",
 }
 
 
@@ -441,7 +472,8 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
 
     # 1. Kiểm văn bằng code (design §6.5 mục 5). Lọt suy luận/chữ của prompt là mức chặn (D-30).
     quality = check_scene(text, scenes_in_chapter=d.request.scene_count, quality=cfg.quality,
-                          lengths=cfg.story_lengths) + check_meta_leak(text)
+                          lengths=cfg.story_lengths, names=state["entity_names"]
+                          ) + check_meta_leak(text)
     issues = [
         ReviewIssue("quality", q.kind.value, q.kind is IssueKind.META_LEAK,
                     f"{_QUALITY_LABELS[q.kind]}: {q.detail}; đoạn: «{q.excerpt}»")
@@ -477,7 +509,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     # 4. Dò lộ trên chữ cảnh, với player_view gồm cả các hé lộ của chính cảnh này (G2, D-26).
     overlay = OverlayState(base, [*earlier, package])
     hits = check_leaks(text, view=player_view_of(overlay, chapter), plan=d.plan,
-                       truth_names=leak_names(overlay))
+                       truth_names=leak_names(overlay), story_brief=d.request.story_brief)
     issues += [ReviewIssue("leak", h.kind.value, True,
                            f"lộ bí mật: đoạn «{h.excerpt}» nói ra điều người đọc chưa được biết; "
                            "viết lại để không nói ra điều đó")
@@ -550,7 +582,7 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
         d.llm, require_model(d.config.models.roles, "choices"),
         view=d.store.player_view(chapter), protagonist_id=state["protagonist"],
         last_scene_text=state["accepted"][-1].text,
-        truth_names=leak_names(d.store.state()), plan=d.plan,
+        truth_names=leak_names(d.store.state()), plan=d.plan, story_brief=d.request.story_brief,
         retries=d.config.limits.retries, extra=role_extra(d.config.models, "choices"),
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,
@@ -603,8 +635,10 @@ class ChapterRun:
         if not allowed.min <= request.scene_count <= allowed.max:
             raise ValueError(f"scene_count={request.scene_count} ngoài khoảng "
                              f"{allowed.min}–{allowed.max} (story_lengths.yaml)")
+        guide = style_guide if style_guide is not None else load_style_guide()
+        # Câu ngôi kể lấy từ cùng config mà kiểm văn dùng để bắt lệch ngôi (D-51).
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,
-                           style_guide if style_guide is not None else load_style_guide())
+                           f"{guide}\n\n{narration_instruction(config.quality)}")
         self.outcome = ChapterOutcome()
 
     async def events(self) -> AsyncIterator[ChapterEvent]:

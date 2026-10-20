@@ -45,7 +45,7 @@ backend/
     graph/         lớp truy cập Neo4j DUY NHẤT: Cypher, ràng buộc, hàm player_view
     pipeline/      LangGraph: dàn ý → viết → trích → canh → ghi → lựa chọn (một module)
     guard/         người canh: kiểm bằng code + phần LLM
-    quality/       kiểm văn bằng code: độ dài, lặp, sáo ngữ, lẫn chữ khác hệ
+    quality/       kiểm văn bằng code: độ dài, lặp, sáo ngữ, lẫn chữ khác hệ, ngôi kể
     llm/           client OpenRouter, ghi chi phí, model giả cho test
     safety/        phân loại đầu vào, bọc chữ người chơi, dò lộ bí mật, kiểm duyệt
     db/            Postgres: tài khoản, truyện, chương, key (mã hoá), nhật ký

@@ -47,6 +47,7 @@ def build(*, store: MemoryKeyStore | None = None, ledger: MemoryCostLedger | Non
         lambda story_id: StoryRecord(story_id, "dev", "short", chapter))
     app.dependency_overrides[deps.get_player_view] = lambda: view(chapter)
     app.dependency_overrides[deps.get_truth_names] = lambda: state(chapter).named_nodes()
+    app.dependency_overrides[deps.get_story_brief] = lambda: ""
     app.dependency_overrides[deps.get_story_plan] = lambda: PLAN
     quota = MemoryQuota()
     app.dependency_overrides[deps.get_narrator_quota] = lambda: quota

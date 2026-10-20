@@ -237,7 +237,8 @@ def chapter_text(number: int, story: deps.OwnedStory, conn: deps.PgConn) -> Chap
 
 @router.post("/{story_id}/choices", response_model=ChoicesOut)
 async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4jDriver,
-                          config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ChoicesOut:
+                          config: deps.Config, plan: Plan, llm: deps.PlayerLLMs,
+                          brief: deps.StoryBrief) -> ChoicesOut:
     """Bộ lựa chọn của chương hiện tại; chưa có (bị chặn vì lộ, hoặc mất kết nối sau khi chương
     đã ghi) thì tạo lại từ player_view (G1, D-37). Đã có thì trả lại, không gọi model."""
     chapter = _committed(story)
@@ -255,7 +256,7 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
         view=player_view(driver, story.id, chapter), protagonist_id=protagonist_id(driver, story.id),
         last_scene_text=scenes[-1],
         truth_names=leak_names(Neo4jState(driver, story.id)),  # D-48: một quy tắc cho mọi nơi
-        plan=plan,
+        plan=plan, story_brief=brief,  # D-52: chữ khởi tạo người chơi đã đọc
         retries=config.limits.retries, extra=role_extra(config.models, "choices"),
     )
     saved = save_choices(conn, story.id, chapter, [choice_record(c) for c in choices])

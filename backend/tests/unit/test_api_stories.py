@@ -53,6 +53,7 @@ def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota |
     app.dependency_overrides[deps.get_cost_ledger] = MemoryCostLedger
     app.dependency_overrides[deps.get_player_view] = player_view
     app.dependency_overrides[deps.get_truth_names] = lambda: state(chapter).named_nodes()
+    app.dependency_overrides[deps.get_story_brief] = lambda: ""
     q = quota or MemoryQuota()
     app.dependency_overrides[deps.get_narrator_quota] = lambda: q
     if override_plan:
@@ -157,6 +158,18 @@ def test_narrator_leak_is_hidden_as_not_known():
         resp = client.post("/stories/s1/narrator", json={"question": "Gã lái đò là ai?"})
     assert (resp.status_code, resp.json()) == (200, {"answer": NOT_KNOWN})
     assert "Lý Thất" not in json.dumps(resp.json(), ensure_ascii=False)
+
+
+def test_narrator_leak_check_counts_the_story_brief_as_seen():
+    """D-52: bộ dò lộ của người kể nhận thiết lập truyện (`stories.brief`) qua
+    `deps.get_story_brief`, như mọi nơi gọi khác."""
+    v = view(4)
+    fake = FakeLLM.scripted([reply(True, "Gã đó là Lý Thất.", [ref(v, "ly_that")])])
+    app = build(4, fake=fake)
+    app.dependency_overrides[deps.get_story_brief] = lambda: "Bối cảnh: bến có lái đò Lý Thất."
+    with TestClient(app) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Gã lái đò là ai?"})
+    assert (resp.status_code, resp.json()) == (200, {"answer": "Gã đó là Lý Thất."})
 
 
 def test_narrator_limit_is_429_g12_payload():
