@@ -38,13 +38,16 @@ cases:
     text: "Minh đi ra bến sông. Sáng hôm sau Minh đi ra bến sông lần nữa để tìm Lan. Chiều đó Minh đi ra bến sông thêm một lần, vẫn không thấy ai."
     expect: [repetition]
 
-  # --- định dạng lời thoại (dash, D-18) ---
+  # --- định dạng lời thoại (D-18; dấu thoại "- " theo D-31: mọi dấu gạch được chuẩn hoá trước khi kiểm) ---
   - id: gach-ngan
     text: "Lan rót trà.\n\n– Anh uống đi, kẻo nguội.\n\nMinh cầm chén lên."
-    expect: [dialogue_format]
+    expect: []
   - id: gach-noi
     text: "Có tiếng gõ cửa.\n\n- Ai đó?\n\nKhông ai trả lời."
-    expect: [dialogue_format]
+    expect: []
+  - id: gach-dai-khong-cach
+    text: "Có tiếng gõ cửa.\n\n—Ai đó?\n\nKhông ai trả lời."
+    expect: []
   - id: mo-dau-ngoac-kep
     text: "“Anh đi đâu thế?” Lan hỏi, tay vẫn lau chén."
     expect: [dialogue_format]

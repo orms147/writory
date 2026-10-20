@@ -140,8 +140,19 @@ def test_fixture_loads_and_style_guide_comment_is_stripped():
 def test_committed_bench_data_loads():
     data = bd.load_data(bd.DATA_DIR)
     assert len(data.cases.cases) == 10
-    assert len(data.models.writers) == 10
+    assert data.models.writers  # số model đổi theo lượt đo (models.yaml có version)
     assert data.rubric.criteria[-1].id == bd.SECRET_CRITERION
+    assert all(c.naming for c in data.cases.cases)  # cases.yaml v2: mọi đề có quy ước tên (D-32)
+
+
+def test_brief_states_naming_convention():
+    data = bd.load_data(bd.DATA_DIR)
+    tu_tien = data.case("tu-tien-dot-pha")
+    brief = bd.case_brief(tu_tien, data.cases.length_for(tu_tien))
+    assert "tên nhân vật kiểu Hán Việt" in brief and "địa danh hư cấu" in brief
+    do_thi = data.case("do-thi-chia-tay")
+    assert "được dùng địa danh có thật" in bd.case_brief(do_thi, data.cases.length_for(do_thi))
+    assert bd.BRIEF_TEMPLATE_VERSION == "d-brief-2"
 
 
 def _mutate(tmp_path, name: str, change) -> Path:
@@ -846,3 +857,15 @@ def test_exclude_rejects_unknown_model(tmp_path, capsys):
                     "--reason", "r"])
     assert code == bd.EXIT_CONFIG
     assert "x/khong-co" in capsys.readouterr().err
+
+
+def test_judge_and_code_metrics_see_normalised_dashes():
+    """D-31: giám khảo và bộ đo bằng code thấy đúng chữ người chơi sẽ thấy ("- ", không "—")."""
+    data = bd.load_data(FIX)
+    case = data.cases.cases[0]
+    request = bd.judge_request(data, case, "— Anh đi đâu? — cô hỏi.")
+    scene_block = request["messages"][0]["content"][-1]["text"]
+    assert "—" not in scene_block and "- Anh đi đâu? - cô hỏi." in scene_block
+    quality = bd.bench_quality_config(load_config().quality, bd.QualityParams())
+    metrics = bd.code_metrics("—Anh đi đâu?", data.cases.length_for(case), quality)
+    assert metrics["quality_by_kind"].get("dialogue_format", 0) == 0

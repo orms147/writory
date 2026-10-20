@@ -8,6 +8,7 @@ from writory.quality.checks import (
     check_meta_leak,
     check_repetition,
     check_scene,
+    normalize_dashes,
 )
 
 __all__ = [
@@ -20,4 +21,5 @@ __all__ = [
     "check_meta_leak",
     "check_repetition",
     "check_scene",
+    "normalize_dashes",
 ]

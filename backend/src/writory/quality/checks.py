@@ -203,9 +203,17 @@ def check_foreign_script(text: str, quality: QualityConfig) -> list[QualityIssue
 
 # --- lời thoại ----------------------------------------------------------------------------
 
-_EM_DASH = "—"
-_WRONG_DASHES = "–-−"  # en dash, gạch nối, dấu trừ
-_ONLY_DASHES = re.compile(rf"[{_EM_DASH}{_WRONG_DASHES}\s]+")
+_DIALOGUE_DASH = "-"  # D-31: dấu thoại là gạch ngang thường
+_LONG_DASHES = re.compile("[—–]")  # em dash, en dash: backend đổi hết thành "-"
+_LINE_START_DASH = re.compile(r"(?m)^([ \t]*)-[ \t]*(?=\S)")
+_ONLY_DASHES = re.compile(r"[—–\-−\s]+")
+
+
+def normalize_dashes(text: str) -> str:
+    """D-31: thay mọi em/en dash bằng "-", và dòng thoại thành "- " (gạch ngang + một khoảng trắng).
+    Gạch nối trong từ ghép hay khoảng số giữ nguyên dạng "-". Chạy lại không đổi gì."""
+    text = _LONG_DASHES.sub(_DIALOGUE_DASH, text)
+    return _LINE_START_DASH.sub(rf"\1{_DIALOGUE_DASH} ", text)
 
 
 def _unclosed_quotes(line: str) -> list[int]:
@@ -242,14 +250,16 @@ def _quote_wraps_whole(body: str) -> bool:
 
 
 def check_dialogue(text: str, quality: QualityConfig) -> list[QualityIssue]:
-    """Kiểu dash (D-18): dòng thoại mở đầu bằng "— ". Ngoặc kép giữa đoạn là hợp lệ.
+    """Kiểu dash (D-18): dòng thoại mở đầu bằng "- " (D-31). Ngoặc kép giữa đoạn là hợp lệ.
 
+    Văn bản được chuẩn hoá dấu gạch trước (`normalize_dashes`), nên dòng mở bằng em/en dash hay
+    gạch nối không cách đều hợp lệ; vị trí lỗi tính trên văn bản đã chuẩn hoá.
     Ngoại lệ (D-18): đoạn được ngoặc kép bao trọn, ngay sau đoạn kết thúc bằng ":", là trích
     nguyên văn (thư, chữ khắc). Hệ quả đã biết: lời thoại sai kiểu đứng trọn đoạn sau ":" bị lọt.
     """
     if quality.dialogue_style != "dash":
         raise ValueError(f"dialogue_style={quality.dialogue_style} chưa hỗ trợ (D-18)")
-    text = _nfc(text)
+    text = normalize_dashes(_nfc(text))
     issues = []
     previous = ""
     for m in re.finditer(r"[^\n]+", text):
@@ -263,13 +273,9 @@ def check_dialogue(text: str, quality: QualityConfig) -> list[QualityIssue]:
         if _ONLY_DASHES.fullmatch(body):
             issues.append(_issue(text, IssueKind.DIALOGUE_FORMAT, start, end,
                                  "dòng chỉ có dấu gạch, không có lời thoại"))
-        elif body[0] in _WRONG_DASHES:
-            issues.append(_issue(text, IssueKind.DIALOGUE_FORMAT, start, end,
-                                 f'mở đầu lời thoại bằng "{_EM_DASH} " (U+2014), '
-                                 f'không dùng "{body[0]}"'))
         elif body[0] in "“\"" and not (after_colon and _quote_wraps_whole(body)):
             issues.append(_issue(text, IssueKind.DIALOGUE_FORMAT, start, end,
-                                 f'lời thoại mở đầu bằng "{_EM_DASH} ", không dùng ngoặc kép'))
+                                 f'lời thoại mở đầu bằng "{_DIALOGUE_DASH} ", không dùng ngoặc kép'))
         for pos in _unclosed_quotes(line):
             issues.append(_issue(text, IssueKind.UNCLOSED_QUOTE, m.start() + pos, m.end(),
                                  "ngoặc kép mở nhưng không đóng trong cùng đoạn"))
@@ -323,7 +329,10 @@ def check_scene(
     quality: QualityConfig,
     lengths: StoryLengthsConfig,
 ) -> list[QualityIssue]:
-    """Chạy mọi bộ kiểm; trả danh sách lỗi xếp theo vị trí, để người canh gộp vào lượt viết lại."""
+    """Chạy mọi bộ kiểm; trả danh sách lỗi xếp theo vị trí, để người canh gộp vào lượt viết lại.
+    Văn bản được chuẩn hoá NFC và dấu gạch (D-31) một lần ở đây, nên mọi vị trí lỗi cùng tính trên
+    văn bản đã chuẩn hoá: đó cũng là chữ người chơi sẽ thấy."""
+    text = normalize_dashes(_nfc(text))
     issues = (
         check_length(text, scenes_in_chapter, lengths)
         + check_repetition(text, quality)
