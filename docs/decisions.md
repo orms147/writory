@@ -280,6 +280,27 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** F1 0,78 trên 5 chương mẫu, dữ liệu nhỏ và prompt đã chỉnh theo chính bộ này, nên con số có thể lạc quan. Cần đo lại khi có bài C đầy đủ và truyện thứ hai. Các vai khác chưa chọn.
 - **Người quyết:** Claude (điều phối), theo kết quả đo; chủ dự án đồng ý cách chọn · 20/10/2026
 
+## D-36 · Đường đi một chương: LangGraph một module; lỗi mức chặn còn sau lượt viết lại thì không hiện cảnh
+- **Bối cảnh:** design §6.2, D-1, D-6, D-8. Mỗi cảnh cần dàn ý → viết → kiểm văn → trích → người canh → dò lộ, rồi gộp gói, ghi, tạo lựa chọn. Gói của các cảnh trước chưa nằm trong Neo4j.
+- **Quyết định:**
+  - Đồ thị LangGraph trong `pipeline/chapter.py` (phụ thuộc qua runtime context, sự kiện qua custom stream). Đề dàn ý và đề viết ở `scene.py`; giao thức kho ở `store.py` (`GraphStore` = Neo4j + Postgres). Sự kiện cho giao diện ở `events.py`: `stage`, `scene_ready`, `scene_blocked`, `chapter_committed`, `choices_ready`, `error`.
+  - Ngữ cảnh mỗi cảnh: `writer_context` ở chương đã commit, theo người có mặt của dàn ý, cộng văn và thay đổi đã trích của các cảnh trước. Bộ trích, người canh và bộ dò lộ đọc nền đã commit phủ gói các cảnh trước (`OverlayState`). Bộ dò lộ tính cả hé lộ của chính cảnh đó.
+  - Soát trên chữ đã chuẩn hoá (D-31), tức đúng chữ sẽ hiện. Mọi loại lỗi đều được viết lại tối đa `retries.rewrite_per_scene` lần, kèm danh sách lỗi. Nếu bản cuối còn lỗi mức chặn (bộ dò lộ, `meta_leak` D-30, người canh báo lộ sớm) thì phát `scene_blocked`, dừng chương, không ghi gì. Nếu chỉ còn lỗi mức viết lại thì hiện bản cuối, log chỉ ghi loại lỗi, và bỏ khỏi gói các cạnh người canh báo.
+  - Gói chương gồm nút `Chapter` (id `ch<N>`) và cạnh của các cảnh. Hai cảnh cùng id thì lấy cảnh sau; cạnh mở rồi đóng trong cùng chương thì bỏ. Ghi bằng `commit_chapter`.
+  - Kiểm config trước lời gọi đầu: model các vai, trần chi phí, ngưỡng kiểm văn và người canh, `writer_max_neighbors`. Chương trước còn `pending` thì báo `CHAPTER_PENDING`. Mọi lời gọi đi qua `MeteredClient`; JSON qua `with_json_retries` (D-14). Chữ model đặt ngoài khối dữ liệu đều qua `escape_text` (G4).
+- **Hệ quả:** chưa có checkpointer, nên bấm thử lại sau `scene_blocked` sẽ viết lại cả chương. Chưa tạo thực thể mới (D-34). Chưa có tóm tắt chương trước, chưa có nhật ký người canh và nhật ký chi phí trong Postgres. Model viết chưa đặt `reasoning`/`max_tokens` như bài D.
+- **Người quyết:** Claude (nhánh pipeline-chapter), chờ điều phối duyệt · 20/10/2026
+
+## D-37 · Lựa chọn cuối chương: chỉ từ sổ tay, mã công khai; một chỗ lộ thì không hiện bộ nào
+- **Bối cảnh:** design §6.2 bước 6, §6.3; G1, G2. Lựa chọn hiện cho người chơi và mang dữ liệu để ghi về sau.
+- **Quyết định:**
+  - `pipeline.choices.make_choices` nhận `PlayerView` của chương vừa ghi, dựng sổ tay bằng `narrator.render_notebook` (mã `public_entries`, D-40), và văn cảnh cuối đã hiện. Cả hai nằm trong khối dữ liệu. Hàm không nhận kế hoạch truyện hay ngữ cảnh model viết.
+  - Đầu ra `ChoicesOutput` có đúng 3 lựa chọn, tối thiểu 2 loại (`action`/`dialogue`/`inner`). Lời thoại có `tone` (`truth`/`lie`/`silence`) và người nghe. Lựa chọn nói dối có `lie_content`; lựa chọn nội tâm có `feeling` và `about`. Sai một trong các điều này, mã lạ, hay người nghe không phải nhân vật đều tính là sai schema và được thử lại theo D-14.
+  - Phía máy chủ, `Choice` đổi mã về id nút (`LieEffect`: nói dối X với Y). Người chơi nhận `PlayerChoice`: id mờ `choice-…`, loại, sắc thái, chữ.
+  - `check_leaks` chạy trên chữ lựa chọn, `lie_content` và `feeling`. Trúng một chỗ thì không hiện bộ nào và báo mã mới `CHOICES_LEAK_BLOCKED` (502, câu trung tính), không tự gọi lại model. Chương đã ghi xong; gọi lại `make_choices` để tạo bộ mới.
+- **Hệ quả:** chưa ghi dữ liệu của lựa chọn vào đồ thị khi người chơi chọn (Lie, FEELS ở chương sau). Văn cảnh cuối là chữ trên trang và đã qua bộ dò lộ, nhưng không nằm trong `player_view`.
+- **Người quyết:** Claude (nhánh pipeline-chapter), chờ điều phối duyệt · 20/10/2026
+
 ## D-38 · Khởi tạo truyện: bốn bước, nhân vật chính do code dựng, chương 0 người chơi chưa biết gì
 - **Bối cảnh:** design §4.1 cần 3 bối cảnh / 3 hướng / 3 nhân vật rồi bản kế hoạch và đồ thị ban đầu. Chương 0 là thế giới lúc khởi tạo (D-21). `KNOWS` của nhân vật chính là điều người chơi biết (D-16), mà ở chương 0 chưa có trang nào để trích câu (G3).
 - **Quyết định:** `writory.pipeline.setup`:

@@ -1,0 +1,218 @@
+"""Tạo 3 lựa chọn cuối chương (design §6.2 bước 6, §6.3; D-37).
+
+G1: model chỉ nhận `PlayerView` của chương vừa ghi (dựng thành sổ tay bằng đúng hàm của người kể,
+`render_notebook`) và văn bản cảnh người chơi vừa đọc (đã qua dò lộ). Không nhận `story_plan`, ngữ
+cảnh model viết, tên lớp truth hay id nút: mỗi mục được gọi bằng mã công khai của
+`graph.public_entries` (`m1`, `m2`, …; D-40), vì id có thể ghép từ tên thật (ví dụ `ly_that`). Code
+đổi mã về id khi dựng dữ liệu có cấu trúc.
+
+G2: mọi chữ có thể tới người chơi (chữ lựa chọn, nội dung lời nói dối sẽ vào sổ tay, cảm xúc của
+lựa chọn nội tâm) qua `check_leaks`. Trúng một chỗ thì không hiện bộ lựa chọn nào
+(`CHOICES_LEAK_BLOCKED`); chương đã ghi xong từ trước, gọi lại hàm này để tạo bộ mới.
+
+G4: toàn bộ view và văn bản cảnh nằm trong khối dữ liệu, vì view không mang cờ `user_authored`.
+"""
+
+import logging
+import uuid
+from collections.abc import Mapping
+from dataclasses import dataclass
+from typing import Any, Self
+
+from pydantic import BaseModel, ConfigDict, model_validator
+
+from writory.config import RetryLimits
+from writory.errors import ErrorCode, WritoryError
+from writory.graph import PlayerView, public_entries
+from writory.llm.base import LLMClient, Message
+from writory.llm.retry import with_json_retries
+from writory.pipeline.events import KIND_LABELS, TONE_LABELS, ChoiceKind, PlayerChoice, Tone
+from writory.pipeline.narrator import render_notebook
+from writory.pipeline.story_plan import StoryPlan
+from writory.safety.leak import check_leaks
+from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
+
+log = logging.getLogger(__name__)
+
+PROMPT_VERSION = "choices-1"  # đổi chữ prompt thì tăng số
+CHOICE_COUNT = 3
+MIN_KINDS = 2  # design §6.2 bước 6: tối thiểu 2 loại khác nhau
+
+
+class ChoiceDraft(BaseModel):
+    """Một lựa chọn do model trả. Mọi trường bắt buộc (JSON schema strict); không dùng thì null/[]."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    kind: ChoiceKind
+    text: str
+    tone: Tone | None  # chỉ cho lời thoại
+    lie_content: str | None  # tone = lie: nội dung lời nói dối
+    listeners: list[str]  # ref người nghe; chỉ cho lời thoại
+    about: list[str]  # ref các mục lựa chọn nói tới
+    feeling: str | None  # chỉ cho nội tâm: cảm xúc hay ý định thầm
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Self:
+        if not self.text.strip():
+            raise ValueError("text rỗng")
+        if self.kind == "dialogue":
+            if self.tone is None or not self.listeners:
+                raise ValueError("lời thoại phải có tone và người nghe")
+            lie = bool(self.lie_content and self.lie_content.strip())
+            if (self.tone == "lie") != lie:
+                raise ValueError("lie_content có khi và chỉ khi tone = lie")
+        elif self.tone is not None or self.lie_content is not None or self.listeners:
+            raise ValueError("tone, lie_content, listeners chỉ dùng cho lời thoại")
+        if self.kind == "inner":
+            if not (self.feeling and self.feeling.strip()) or not self.about:
+                raise ValueError("nội tâm phải có feeling và about")
+        elif self.feeling is not None:
+            raise ValueError("feeling chỉ dùng cho nội tâm")
+        return self
+
+
+class ChoicesOutput(BaseModel):
+    model_config = ConfigDict(extra="forbid", frozen=True)
+
+    choices: list[ChoiceDraft]
+
+    @model_validator(mode="after")
+    def _shape(self) -> Self:
+        if len(self.choices) != CHOICE_COUNT:
+            raise ValueError(f"cần đúng {CHOICE_COUNT} lựa chọn")
+        if len({c.kind for c in self.choices}) < MIN_KINDS:
+            raise ValueError(f"cần tối thiểu {MIN_KINDS} loại lựa chọn khác nhau")
+        return self
+
+
+@dataclass(frozen=True)
+class LieEffect:
+    """"Nói dối X với Y": người nói là nhân vật chính (design §6.3)."""
+
+    content: str
+    told_to: tuple[str, ...]  # id nhân vật
+
+
+@dataclass(frozen=True)
+class Choice:
+    """Lựa chọn phía máy chủ, kèm dữ liệu có cấu trúc để ghi khi người chơi chọn (id nút thật).
+    Người chơi chỉ nhận `for_player()`."""
+
+    id: str
+    kind: ChoiceKind
+    tone: Tone | None
+    text: str
+    listeners: tuple[str, ...]
+    about: tuple[str, ...]
+    lie: LieEffect | None
+    feeling: str | None
+
+    def for_player(self) -> PlayerChoice:
+        return PlayerChoice(
+            id=self.id, kind=self.kind, kind_label=KIND_LABELS[self.kind], tone=self.tone,
+            tone_label=TONE_LABELS[self.tone] if self.tone else None, text=self.text,
+        )
+
+
+SYSTEM_PROMPT = """Bạn tạo lựa chọn cho người chơi ở cuối một chương truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính và chỉ biết những gì có trong khối dữ liệu: sổ tay (các mục người chơi đã biết) và cảnh vừa đọc. Không bịa thêm sự thật về thế giới, không đoán bí mật, không nhắc tới điều không có trong khối dữ liệu.
+
+Tạo đúng 3 lựa chọn cho bước tiếp theo của nhân vật chính, mỗi lựa chọn một hướng khác nhau, hợp với cảnh vừa đọc. Có ít nhất 2 loại khác nhau; nên đủ cả 3 loại:
+- action: một hành động.
+- dialogue: một câu nói với người khác; tone là "truth" (nói thật), "lie" (nói dối) hoặc "silence" (im lặng, không trả lời); listeners là mã người nghe; khi nói dối thì lie_content là nội dung lời nói dối, một câu.
+- inner: một cảm xúc hay ý định thầm của nhân vật chính, người khác không biết; feeling là cảm xúc đó (vài chữ); about là mã người hay điều mà cảm xúc hướng tới.
+
+Mỗi lựa chọn:
+- text: câu ngắn tiếng Việt mô tả lựa chọn, như người chơi sẽ đọc trên nút bấm.
+- about: mã các mục lựa chọn nói tới (có thể rỗng với action, dialogue).
+- Chỉ dùng mã mục dạng m1, m2… có trong sổ tay; listeners chỉ là mã của nhân vật.
+- Trường không dùng để null (tone, lie_content, feeling) hoặc [] (listeners, about).
+
+Trả về JSON đúng schema."""
+
+
+def build_choice_messages(
+    view: PlayerView, *, protagonist_id: str, last_scene_text: str
+) -> tuple[list[Message], dict[str, str]]:
+    """Tin nhắn cho model tạo lựa chọn và bảng mã công khai → id nút. Chỉ đọc `view` (G1)."""
+    entries = public_entries(view)
+    refs = {ref: e.id for ref, e in entries}
+    me = next((f"[{ref}] {e.text}" for ref, e in entries if e.id == protagonist_id),
+              "(chưa có tên trên trang)")
+    notebook = f"Nhân vật chính: {me}\n\n{render_notebook(view)}"
+    messages = [
+        system_message(SYSTEM_PROMPT, DATA_NOTICE),
+        user_message(
+            f"Sổ tay của người chơi (tới hết chương {view.chapter}):",
+            UserAuthored(notebook, "notebook"),
+            "Cảnh người chơi vừa đọc:",
+            UserAuthored(last_scene_text, "scene_text"),
+            "Tạo 3 lựa chọn cho nhân vật chính.",
+        ),
+    ]
+    return messages, refs
+
+
+def _bad(detail: str) -> WritoryError:
+    return WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail=f"ChoicesOutput: {detail}")
+
+
+def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str, str]) -> list[Choice]:
+    """Ref → id nút. Ref lạ, hoặc người nghe không phải nhân vật: sai schema (G11), để thử lại."""
+
+    def ids(values: list[str]) -> tuple[str, ...]:
+        unknown = [v for v in values if v not in refs]
+        if unknown:
+            raise _bad(f"ref không có trong danh sách: {unknown}")
+        return tuple(dict.fromkeys(refs[v] for v in values))
+
+    choices = []
+    for draft in output.choices:
+        listeners = ids(draft.listeners)
+        if any(kinds[i] != "Character" for i in listeners):
+            raise _bad("listeners có mục không phải nhân vật")
+        lie = LieEffect(draft.lie_content.strip(), listeners) if draft.tone == "lie" else None
+        choices.append(Choice(
+            id=f"choice-{uuid.uuid4().hex[:12]}", kind=draft.kind, tone=draft.tone,
+            text=draft.text.strip(), listeners=listeners, about=ids(draft.about), lie=lie,
+            feeling=draft.feeling.strip() if draft.feeling else None,
+        ))
+    return choices
+
+
+def _ensure_no_leak(choices: list[Choice], *, view: PlayerView,
+                    truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan) -> None:
+    hits = [
+        (i, h)
+        for i, c in enumerate(choices, 1)
+        for text in (c.text, c.lie.content if c.lie else None, c.feeling)
+        if text
+        for h in check_leaks(text, view=view, truth_names=truth_names, plan=plan)
+    ]
+    if hits:
+        # Log và lỗi chỉ ghi loại và vị trí, không ghi chữ bị lộ (D-26).
+        where = ", ".join(f"lựa chọn {i}: {h.kind.value}@{h.start}-{h.end}" for i, h in hits)
+        log.warning("chương %s: chặn bộ lựa chọn (%s)", view.chapter, where)
+        raise WritoryError(ErrorCode.CHOICES_LEAK_BLOCKED,
+                           detail=f"chương {view.chapter}: {len(hits)} chỗ trúng ({where})")
+
+
+async def make_choices(
+    llm: LLMClient, model: str, *, view: PlayerView, protagonist_id: str, last_scene_text: str,
+    truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan, retries: RetryLimits,
+    extra: Mapping[str, Any] | None = None,
+) -> list[Choice]:
+    """`view`: player_view ở chương vừa ghi. `truth_names`, `plan` chỉ dùng cho bộ dò lộ bằng code,
+    không bao giờ vào prompt."""
+    messages, refs = build_choice_messages(view, protagonist_id=protagonist_id,
+                                           last_scene_text=last_scene_text)
+    kinds = {e.id: e.kind for e in view.entries}
+
+    async def call() -> list[Choice]:
+        output, _ = await llm.chat_json(model, messages, ChoicesOutput, extra=extra)
+        return _resolve(output, refs, kinds)
+
+    choices = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
+                                      transient_retries=retries.llm_transient)
+    _ensure_no_leak(choices, view=view, truth_names=truth_names, plan=plan)
+    return choices

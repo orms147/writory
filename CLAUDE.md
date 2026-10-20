@@ -132,5 +132,5 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
 - Quyết định đang hiệu lực: D-1 đến D-33 (`docs/decisions.md`).
 - Model viết: GPT-6 Luna, một mức (D-33). Vai trích: GPT-6 Luna, suy luận thấp (D-35). Các vai khác (`roles.*`) chưa chọn (`config/models.yaml`).
-- Đã có bộ trích `pipeline/extract.py` (bước 3 của design §6.2). Chưa có: model cho các vai còn lại, trần chi phí, phần còn lại của pipeline, frontend (tuần 4).
+- Đã có bộ trích `pipeline/extract.py` và đường đi một chương `pipeline/chapter.py` (dàn ý → viết → soát → ghi → lựa chọn; D-36, D-37), mới chạy với model giả. Chưa có: model cho `outline`, `choices` và các vai khác, trần chi phí, ngưỡng kiểm văn và người canh (config thật còn null nên pipeline báo lỗi cấu hình), frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).

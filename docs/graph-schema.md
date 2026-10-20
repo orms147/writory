@@ -88,6 +88,11 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 - **Mạch** của kế hoạch là nút `Thread` có `planted_chapter: 0`, khoảng gỡ nằm trong số chương; `must_resolve_threads` trỏ tới các nút đó.
 - **Hồi** phủ liền từ chương 1; chương cuối nằm trong khoảng `chapters` của mức độ dài (`config/story_lengths.yaml`).
 
+## Chương 1 trở đi (pipeline, D-36)
+Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:
+- **Nút:** chỉ nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Chưa có nút mới nào khác, vì bộ trích chỉ tham chiếu id có sẵn (D-34).
+- **Cạnh:** của bộ trích, từng cảnh một, đã qua người canh. Cạnh người canh báo sai không vào gói. Gộp các cảnh theo trạng thái cuối chương: cùng id thì lấy cảnh sau; cạnh cảnh trước mở mà cảnh sau đóng thì không vào gói.
+
 ## Ngữ cảnh cho model viết (D-28)
 `writory.graph.context.writer_context(driver, story_id, as_of_chapter, present_ids, plan, max_neighbors=...)` đọc lớp `truth` ở cuối chương `as_of_chapter` (chương đã commit, lấy từ `writory.db.current_chapter`) để viết chương kế tiếp. Ngữ cảnh gồm:
 - nhân vật có mặt: còn sống, nơi đang ở, đồ vật đang giữ;
@@ -118,7 +123,7 @@ Câu hỏi design §7.3, mỗi câu một hàm trong `graph/queries.py` hoặc `
 | Lời nói dối nào của nhân vật chính chưa bị phát hiện, đã nói với ai? | `undiscovered_lies` |
 | Mạch nào đang mở và đã quá khoảng chương dự kiến gỡ? | `overdue_threads` |
 
-Thêm: `relationship`, `is_alive`, `find_characters` (tên hoặc biệt danh, khớp nguyên cụm), `protagonist_id`. Cho người canh: `edges_at` (cạnh một kiểu còn hiệu lực ở chương N, kèm id) và `node_labels`. Cho bộ dò lộ (G2): `named_nodes` (tên và biệt danh lớp truth; không bao giờ trả cho người chơi).
+Thêm: `relationship`, `is_alive`, `find_characters` (tên hoặc biệt danh, khớp nguyên cụm), `protagonist_id`. Cho người canh: `edges_at` (cạnh một kiểu còn hiệu lực ở chương N, kèm id) và `node_labels`. Cho bộ dò lộ (G2): `named_nodes` (tên và biệt danh lớp truth; không bao giờ trả cho người chơi). Cho bộ trích của pipeline (D-36): `story_nodes` (mọi nút của truyện, kể cả nút chưa có cạnh, làm danh mục thực thể; lớp truth).
 
 Cypher mẫu (người giữ đồ vật ở chương N):
 ```cypher
@@ -134,6 +139,6 @@ Truyện mẫu có chương 0 (gói khởi tạo, không có văn bản) và ch�
 ## Chưa làm
 - **Lời người chơi đã nghe.** Người chơi đã nghe lời nói dối của nhân vật khác (ví dụ `l_lan_cover`, `TOLD_TO` nhân vật chính), nhưng `player_view` chưa có gì về chuyện đó. Vì vậy sổ tay thiếu "Lan kể rằng cô trốn hôn nhân". Cần hiện dưới dạng **lời kể** ("Lan kể: …") và **không** được gắn nhãn `Lie`, vì gắn nhãn là lộ. Làm cùng sổ tay ở tuần 5, kèm test G1.
 - `player_view` chưa có quan hệ và người giữ đồ vật cho sổ tay (D-16).
-- G3 đối chiếu câu trích với văn bản mới được kiểm trong `validate_sample`. `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`; pipeline phải gọi `quote_in_text` với văn bản cảnh trước khi ghi.
+- G3 ở `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`. Đối chiếu câu trích với văn bản nằm ở `validate_sample` (truyện mẫu) và ở bộ trích (`to_package` gọi `quote_in_text` trên đúng chữ cảnh sẽ hiện, D-36); gói do nơi khác dựng thì chưa được đối chiếu.
 - **Tự reconcile lúc khởi động app.** Hiện `reconcile_pending` chỉ chạy tay (lệnh trong `docs/runbook.md`). Khi có app FastAPI, gọi nó lúc khởi động, để truyện không kẹt `pending` sau khi máy chủ chết giữa chừng.
-- **`writer_context` chạy trên `GraphState`.** Hiện chỉ đọc từ Neo4j. `GraphState` của người canh (nhánh guard-rules) mới trả cạnh, chưa trả thuộc tính nút (tên, chữ của Fact), nên cần mở rộng giao thức đó trước. Khi đã mở rộng, ngữ cảnh mới tính được cả các gói chưa ghi của chương đang viết (cảnh 2–3 đọc thay đổi của cảnh 1).
+- **`writer_context` chạy trên `GraphState`.** Hiện chỉ đọc từ Neo4j ở chương đã commit. Pipeline (D-36) bù bằng cách đưa thêm văn và thay đổi đã trích của các cảnh trước vào đề, nhưng các mục của ngữ cảnh (người có mặt đang ở đâu, giữ gì, biết gì) chưa tính các gói chưa ghi đó.

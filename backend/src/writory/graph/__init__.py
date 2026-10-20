@@ -52,6 +52,7 @@ from writory.graph.queries import (
     overdue_threads,
     protagonist_id,
     relationship,
+    story_nodes,
     undiscovered_lies,
 )
 from writory.graph.sample import load_sample_story, read_sample, validate_sample
@@ -104,6 +105,7 @@ __all__ = [
     "quote_in_text",
     "read_sample",
     "relationship",
+    "story_nodes",
     "story_snapshot",
     "undiscovered_lies",
     "validate_sample",

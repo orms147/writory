@@ -319,3 +319,22 @@ def node_rows(driver: Driver, story_id: str, ids: list[str]) -> dict[str, NodeRo
         r["id"]: NodeRow(r["label"], {k: v for k, v in r["props"].items() if k not in RESERVED_PROPS})
         for r in rows
     }
+
+
+def story_nodes(driver: Driver, story_id: str) -> dict[str, NodeRow]:
+    """Mọi nút của một truyện (id → nhãn loại + thuộc tính của truyện), kể cả nút chưa có cạnh.
+    Danh mục thực thể cho bộ trích (D-36); là lớp truth, không bao giờ trả cho người chơi."""
+    rows = _read(
+        driver,
+        f"""
+        MATCH (n:{ENTITY} {{story_id: $story_id}})
+        RETURN n.id AS id, [l IN labels(n) WHERE l <> '{ENTITY}'][0] AS label,
+               properties(n) AS props
+        ORDER BY id
+        """,
+        story_id,
+    )
+    return {
+        r["id"]: NodeRow(r["label"], {k: v for k, v in r["props"].items() if k not in RESERVED_PROPS})
+        for r in rows
+    }

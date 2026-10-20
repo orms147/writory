@@ -18,7 +18,13 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 from writory.graph.commit import needs_known_as
 from writory.graph.package import KNOWS_HOW, ChangePackage, CloseSpec, EdgeSpec, quote_in_text
 from writory.llm.base import ChatResult, LLMClient
-from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
+from writory.safety.wrap import (
+    DATA_NOTICE,
+    UserAuthored,
+    escape_text,
+    system_message,
+    user_message,
+)
 
 PROMPT_VERSION = "extract-2"  # đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1
 
@@ -60,6 +66,15 @@ class Entity:
     text: str  # tên (nút có tên), chữ của Fact/Event/Lie/Thread, hoặc tiêu đề chương
     aliases: tuple[str, ...] = ()
     user_authored: bool = False
+
+    @classmethod
+    def from_node(cls, node_id: str, label: str, props: Mapping[str, Any]) -> "Entity":
+        """Mục danh mục từ thuộc tính một nút (lớp truth: tên thật, không phải known_as)."""
+        text = (props.get("name") or props.get("text") or props.get("description")
+                or props.get("content") or props.get("title") or node_id)
+        aliases = tuple(props.get("aliases") or ()) if "name" in props else ()
+        return cls(id=node_id, label=label, text=str(text), aliases=aliases,
+                   user_authored=bool(props.get("user_authored", False)))
 
 
 @dataclass(frozen=True)
@@ -109,11 +124,13 @@ Không ghi trùng: mỗi bộ (kiểu, từ, tới) chỉ một cạnh.
 
 
 def _entity_line(e: Entity) -> list[str | UserAuthored]:
+    # Tên/chữ nút do model khởi tạo hay model trích viết: ngoài khối dữ liệu thì escape (G4).
+    # Id giữ nguyên để model chép lại được: ID_PATTERN không cho `<`, `&`, nên id không tạo được thẻ.
     head = f"- {e.id} | {e.label} | "
     aliases = f" (gọi là: {', '.join(e.aliases)})" if e.aliases else ""
     if e.user_authored:
         return [head, UserAuthored(e.text + aliases, "entity")]
-    return [head + e.text + aliases]
+    return [head + escape_text(e.text + aliases)]
 
 
 def build_messages(

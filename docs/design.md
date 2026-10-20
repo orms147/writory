@@ -154,9 +154,9 @@ Hết cảnh cuối: **ghi thay đổi của cả chương vào đồ thị** �
 1. **Lấy phần đồ thị liên quan:** nhân vật có mặt và hàng xóm 1–2 bước của họ, địa điểm, đồ vật đang giữ, quan hệ hiện tại, bí mật người có mặt biết, lời nói dối đang "treo", mạch đang mở, mục tiêu của chương theo bản kế hoạch, tóm tắt 1–2 chương gần nhất, và các cảnh đã viết của chương này (kèm thay đổi đã trích, chưa ghi).
 2. **Viết cảnh** với model viết văn; tổng độ dài chương theo mức đã chọn.
 3. **Trích thay đổi** từ cảnh vừa viết, dạng JSON có cấu trúc: thực thể mới, quan hệ đổi, ai biết thêm điều gì, đồ vật đổi chủ, ai chết, lời hứa/món nợ mới, điều gì vừa được hé lộ cho người chơi. Extractor chỉ được tham chiếu id thực thể có sẵn trong danh sách được đưa vào; thực thể mới phải khai riêng.
-4. **Kiểm tra** (§8). Nếu sai: viết lại cảnh một lần kèm danh sách lỗi. Nếu vẫn sai: giữ bản thứ hai, ghi lỗi vào nhật ký để đo, không chặn người chơi — **trừ lỗi lộ bí mật**: không hiện cảnh đó, báo lỗi rõ ràng cho người chơi (thử lại được).
+4. **Kiểm tra** (§8). Nếu sai: viết lại cảnh một lần kèm danh sách lỗi. Nếu vẫn sai: giữ bản thứ hai, ghi lỗi vào nhật ký để đo, không chặn người chơi — **trừ lỗi lộ bí mật** (bộ dò lộ, người canh báo lộ sớm, chữ suy luận hay chữ của đề lọt vào văn): không hiện cảnh đó, báo lỗi rõ ràng cho người chơi (thử lại được). Khi giữ bản thứ hai, thay đổi mà người canh báo sai không được ghi vào đồ thị. Cách làm: `docs/decisions.md` D-36.
 5. **Ghi đồ thị** sau cảnh cuối, tất cả hoặc không gì (cách làm: `docs/decisions.md`).
-6. **Tạo 3 lựa chọn** từ trạng thái mới, chỉ dựa trên lớp người chơi biết (§8.3): một hành động, một lời thoại, một nội tâm (không bắt buộc đúng một mỗi loại nếu cảnh không hợp; tối thiểu 2 loại khác nhau). Lựa chọn mang kèm dữ liệu có cấu trúc (ví dụ "nói dối X với Y"), để chọn xong là ghi được vào đồ thị mà không phải trích lại.
+6. **Tạo 3 lựa chọn** từ trạng thái mới, chỉ dựa trên lớp người chơi biết (§8.3): một hành động, một lời thoại, một nội tâm (không bắt buộc đúng một mỗi loại nếu cảnh không hợp; tối thiểu 2 loại khác nhau). Lựa chọn mang kèm dữ liệu có cấu trúc (ví dụ "nói dối X với Y"), để chọn xong là ghi được vào đồ thị mà không phải trích lại. Chữ lựa chọn cũng qua bộ dò lộ; có một chỗ lộ thì không hiện bộ nào, người chơi bấm tạo lại (D-37).
 
 ### 6.3 Ba kiểu lựa chọn
 - **Hành động:** đổi sự kiện.

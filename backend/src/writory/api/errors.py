@@ -57,6 +57,7 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.WRITORY_RATE_LIMITED: 429,  # G8: giới hạn mỗi phút của WriTory, chưa có bộ đếm
     # Khởi tạo truyện (D-39): kết quả của model không dùng được, giống LLM_BAD_RESPONSE.
     ErrorCode.STORY_SETUP_INVALID: 502,
+    ErrorCode.CHOICES_LEAK_BLOCKED: 502,  # D-37: như SCENE_LEAK_BLOCKED
 }
 
 

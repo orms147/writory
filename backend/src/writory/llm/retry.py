@@ -35,3 +35,16 @@ async def with_retries[T](
         ErrorCode.RETRY_LIMIT_REACHED,
         detail=f"{max_retries + 1} lần thử đều lỗi; lỗi cuối: {last}",
     ) from last
+
+
+async def with_json_retries[T](
+    op: Callable[[], Awaitable[T]], *, schema_retries: int, transient_retries: int
+) -> T:
+    """Lời gọi trả JSON theo schema: hai lớp lồng nhau (D-14). Lớp trong thử lại JSON sai schema
+    (`retries.extract_schema_retry`), lớp ngoài thử lại lỗi mạng (`retries.llm_transient`)."""
+
+    async def schema_layer() -> T:
+        return await with_retries(op, max_retries=schema_retries, retry_on=RETRY_SCHEMA)
+
+    return await with_retries(schema_layer, max_retries=transient_retries,
+                              retry_on=RETRY_TRANSIENT)

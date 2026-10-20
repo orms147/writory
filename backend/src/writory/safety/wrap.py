@@ -39,6 +39,13 @@ class UserAuthored:
         return f'{OPEN_TAG_START} source="{self.label}">\n{escaped}\n{CLOSE_TAG}'
 
 
+def escape_text(text: str) -> str:
+    """Chữ do model sinh ra (tên do model đặt, trường tự do của bộ trích, dàn ý…) đặt NGOÀI khối
+    dữ liệu trong vai user: escape `&`, `<`, `>` như trong khối, để nó không mở hay đóng được khối,
+    kể cả biến thể lọt qua phép kiểm chuỗi của `user_message` (ví dụ "</player_data >")."""
+    return html.escape(text, quote=False)
+
+
 def _has_data_block(text: str) -> bool:
     return OPEN_TAG_START in text or CLOSE_TAG in text
 
