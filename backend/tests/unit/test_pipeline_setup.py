@@ -14,6 +14,7 @@ from writory.config import REPO_ROOT, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph.package import ChangePackage, chapter_rule_problems
 from writory.guard.state import EmptyState, OverlayState, player_view_of
+from writory.llm.base import role_extra
 from writory.llm.fake import FakeLLM
 from writory.pipeline.setup import (
     NAMES_TEXT,
@@ -156,7 +157,7 @@ async def test_propose_settings_returns_three_options_with_strict_schema():
     assert [o.title for o in options] == ["Bối cảnh 1", "Bối cảnh 2", "Bối cảnh 3"]
     assert all(isinstance(o, SettingOption) for o in options)
     assert llm.schemas == [SettingsOutput]
-    assert llm.extras == [None]  # role_reasoning.setup chưa đặt
+    assert llm.extras == [role_extra(CFG.models, "setup")]  # mức suy luận lấy từ config
 
 
 async def test_propose_plots_and_characters_return_three_options():
@@ -203,10 +204,10 @@ async def test_bad_then_good_json_succeeds_within_retry():
 
 
 async def test_model_not_chosen_fails_before_any_call():
-    if REPO.models.roles.setup is not None:
-        pytest.skip("config thật đã chọn model cho vai setup")
+    roles = REPO.models.roles.model_copy(update={"setup": None})
+    cfg = REPO.model_copy(update={"models": REPO.models.model_copy(update={"roles": roles})})
     llm = FakeLLM.scripted([])
-    err = await _error(propose_settings(CHOICES, llm=llm, config=REPO))
+    err = await _error(propose_settings(CHOICES, llm=llm, config=cfg))
     assert err.code is ErrorCode.CONFIG_MODEL_NOT_SET
     assert llm.calls == []
 

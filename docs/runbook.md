@@ -28,7 +28,7 @@ Sổ tay và hỏi người kể (`/stories/...`) chưa có đăng nhập, nên 
 ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
 curl http://127.0.0.1:8000/stories/<story_id>/notebook
 ```
-`POST /stories/<story_id>/narrator` chưa trả lời được ở máy: chưa có nơi lưu key người chơi và `story_plan`, nên nó báo lỗi thay vì gọi model (D-41). Các trần của nó trong `config/limits.yaml` cũng đang `null`.
+`POST /stories/<story_id>/narrator` chưa trả lời được ở máy: chưa có nơi lưu key người chơi và `story_plan`, nên nó báo lỗi thay vì gọi model (D-41).
 
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.

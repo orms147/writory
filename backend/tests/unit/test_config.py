@@ -29,19 +29,21 @@ def test_repo_config_loads():
 def test_null_means_not_set(config_dir: Path):
     (config_dir / "limits.yaml").write_text(
         (config_dir / "limits.yaml").read_text(encoding="utf-8").replace(
-            "per_scene: null", "per_scene: 0.05"
+            "per_chapter: 0.08", "per_chapter: null"
         ),
         encoding="utf-8",
     )
     cfg = load_config(config_dir)
-    assert cfg.limits.cost_usd.per_scene == 0.05
+    assert cfg.limits.cost_usd.per_scene == 0.02
     assert cfg.limits.cost_usd.per_chapter is None
 
 
-def test_using_unset_limit_raises_clear_error():
-    cfg = load_config()
-    if cfg.limits.cost_usd.per_story is not None:
-        pytest.skip("trần per_story đã được đặt trong config thật")
+def test_using_unset_limit_raises_clear_error(config_dir: Path):
+    path = config_dir / "limits.yaml"
+    text = path.read_text(encoding="utf-8")
+    assert "per_story: 1.00" in text, "test hỏng: config thật đã đổi"
+    path.write_text(text.replace("per_story: 1.00", "per_story: null"), encoding="utf-8")
+    cfg = load_config(config_dir)
     with pytest.raises(LimitNotSetError) as exc:
         cfg.limits.cost_usd.require("per_story")
     msg = str(exc.value)
@@ -53,7 +55,7 @@ def test_require_returns_value_when_set(config_dir: Path):
     path = config_dir / "limits.yaml"
     path.write_text(
         path.read_text(encoding="utf-8").replace(
-            "\n  per_chapter: null", "\n  per_chapter: 0.2"
+            "\n  per_chapter: 0.08", "\n  per_chapter: 0.2"
         ),
         encoding="utf-8",
     )
@@ -63,16 +65,16 @@ def test_require_returns_value_when_set(config_dir: Path):
 @pytest.mark.parametrize(
     ("file", "old", "new", "expect_in_msg"),
     [
-        ("limits.yaml", "per_scene: null", "per_scene: abc", "per_scene"),
-        ("limits.yaml", "per_scene: null", "per_scene: -1", "per_scene"),
-        ("limits.yaml", "per_scene: null", "per_scene: null\n  per_sceen: 1", "per_sceen"),
+        ("limits.yaml", "per_scene: 0.02", "per_scene: abc", "per_scene"),
+        ("limits.yaml", "per_scene: 0.02", "per_scene: -1", "per_scene"),
+        ("limits.yaml", "per_scene: 0.02", "per_scene: 0.02\n  per_sceen: 1", "per_sceen"),
         ("limits.yaml", "rewrite_per_scene: 1", "rewrite_per_scene: -1", "rewrite_per_scene"),
         ("models.yaml", '    model: "openai/gpt-6-luna"\n', "", "model"),  # mức thiếu model
         ("story_lengths.yaml", "chapter_chars: {min: 3000, max: 10000}",
          "chapter_chars: {min: 10000, max: 3000}", "chapter_chars"),
         ("quality.yaml", "dialogue_style: dash", "dialogue_style: html", "dialogue_style"),
-        ("quality.yaml", "  max_repeats: null", "  max_repeats: 0", "max_repeats"),
-        ("guard.yaml", "max_score_jump_without_event: null",
+        ("quality.yaml", "  max_repeats: 2", "  max_repeats: 0", "max_repeats"),
+        ("guard.yaml", "max_score_jump_without_event: 40",
          "max_score_jump_without_event: -5", "max_score_jump_without_event"),
     ],
 )
@@ -145,7 +147,6 @@ def test_role_extract_uses_luna_with_low_reasoning():
     models = load_config().models
     assert models.roles.require("extract") == "openai/gpt-6-luna"
     assert models.role_reasoning.extract == "low"
-    assert models.role_reasoning.outline is None  # vai khác chưa chọn
 
 
 def test_role_reasoning_rejects_unknown_effort(config_dir):
@@ -167,10 +168,20 @@ def test_narrator_limits_exist_in_config():
     assert "narrator_question_max_chars:" in text
 
 
-def test_role_setup_exists_and_is_not_chosen_yet():
-    """D-39: vai `setup` (khởi tạo truyện) chưa chọn model; dùng thì báo lỗi rõ, không đoán model."""
+def test_provisional_roles_use_luna_with_low_reasoning():
+    """D-47: các vai chưa có bài đo riêng dùng tạm GPT-6 Luna; vai trả JSON suy luận thấp."""
     models = load_config().models
-    assert models.roles.setup is None
-    assert models.role_reasoning.setup is None
+    for role in ("outline", "guard", "choices", "narrator", "classify", "setup"):
+        assert models.roles.require(role) == "openai/gpt-6-luna"
+        assert getattr(models.role_reasoning, role) == "low"
+
+
+def test_unset_role_raises_clear_error(config_dir):
+    """D-39: vai chưa chọn model thì báo lỗi rõ, không đoán model."""
+    path = config_dir / "models.yaml"
+    text = path.read_text(encoding="utf-8")
+    old = "  setup: openai/gpt-6-luna"
+    assert old in text, "test hỏng: config thật đã đổi"
+    path.write_text(text.replace(old, "  setup: null"), encoding="utf-8")
     with pytest.raises(LimitNotSetError, match="roles.setup"):
-        models.roles.require("setup")
+        load_config(config_dir).models.roles.require("setup")

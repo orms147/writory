@@ -75,7 +75,7 @@ evals/
 ## 5. Guardrail: bản rút gọn
 Bản đầy đủ, kèm test cho từng mục: `docs/security.md`. **An toàn nằm trong code, không nằm trong prompt.**
 
-- **G1** Sổ tay, người kể, lựa chọn chỉ nhận dữ liệu từ `player_view`, lọc bằng code; model ở các đường đó không bao giờ thấy `truth`.
+- **G1** Sổ tay, người kể, lựa chọn chỉ nhận dữ liệu từ `player_view` và chữ đã hiện trên trang, lọc bằng code; model ở các đường đó không bao giờ thấy `truth`.
 - **G2** Dò lộ bí mật trên mọi chữ trả về người chơi trước khi hiện.
 - **G3** Đánh dấu "đã hé lộ" phải kèm câu trích có thật trong cảnh.
 - **G4** Chữ người chơi là **dữ liệu, không phải lệnh**: không vào vai system, luôn được bọc, kể cả khi đọc lại từ đồ thị (`user_authored`).
@@ -130,7 +130,8 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 - Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`), `safety/` (bọc chữ G4, mã hoá key G7, lọc log, phân loại hành động G5, dò lộ bí mật G2), lõi đồ thị (`graph/`: `player_view` một định nghĩa thuần, ngữ cảnh model viết `context.py`; truyện mẫu `data/sample-story/`), người canh bằng code (`guard/`), kiểm văn (`quality/`, chuẩn hoá dấu gạch D-31), ghi chương phía Postgres (`db/`), khung FastAPI (`api/`), bài đo B, C và D (`evals/results/`). Pipeline: khởi tạo truyện và chương 0 `pipeline/setup.py` (D-38, D-39), bản kế hoạch `story_plan.py`, bộ trích `extract.py` (D-34), đường đi một chương `chapter.py` (dàn ý → viết → soát → ghi → lựa chọn; D-36, D-37), hỏi người kể `narrator.py` (D-40). API sổ tay và người kể chỉ bật bằng `ENABLE_DEV_ROUTES` (D-41).
 - CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
-- Quyết định đang hiệu lực: D-1 đến D-41 (`docs/decisions.md`).
-- Model viết: GPT-6 Luna, một mức (D-33). Vai trích: GPT-6 Luna, suy luận thấp (D-35). Các vai khác (`roles.*`) chưa chọn (`config/models.yaml`).
-- Chưa có: model cho `outline`, `choices`, `narrator`, `setup`, `classify`, `guard`; trần chi phí và các ngưỡng còn `null` (pipeline thật báo lỗi cấu hình trước lời gọi đầu); nơi lưu key người chơi và `story_plan`; route SSE; đăng nhập (G10); frontend (tuần 4).
+- Quyết định đang hiệu lực: D-1 đến D-41 và D-47 (`docs/decisions.md`).
+- Model viết: GPT-6 Luna, một mức (D-33). Vai trích: GPT-6 Luna, suy luận thấp (D-35). Các vai khác: GPT-6 Luna tạm, suy luận thấp (D-47, `config/models.yaml`).
+- Trần chi phí, ngưỡng kiểm văn và người canh, giới hạn người chơi: số tạm (D-47), chỉnh lại sau lần chạy thật đầu.
+- Chưa có: nơi lưu key người chơi và `story_plan`; route SSE; đăng nhập (G10); frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).

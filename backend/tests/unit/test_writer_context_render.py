@@ -99,9 +99,9 @@ def test_system_authored_text_is_not_wrapped():
     assert not any(isinstance(p, UserAuthored) and p.text == PLAYER_NAME for p in parts)
 
 
-def test_neighbor_limit_is_in_config_and_unset():
-    # Đặt sau khi đo kích thước ngữ cảnh (D-28).
-    assert load_config().limits.context.writer_max_neighbors is None
+def test_neighbor_limit_is_in_config():
+    # D-28: số nằm trong config; D-47: số tạm, đo lại sau lần chạy thật đầu.
+    assert load_config().limits.context.writer_max_neighbors >= 1
 
 
 def test_every_player_text_position_is_wrapped():

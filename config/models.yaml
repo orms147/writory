@@ -1,20 +1,25 @@
 # Model theo vai. Lý do tách vai: docs/design.md §6.5, docs/decisions.md D-3.
-# null = chưa chọn; chọn ở tuần 2 sau bài đo D (docs/eval.md).
+# null = chưa chọn. D-47: các vai chưa có bài đo riêng dùng tạm GPT-6 Luna, đo lại sau lần chạy thật đầu.
 
 # Vai giữ trí nhớ: cố định, người chơi không đổi được.
 roles:
-  outline: null      # dàn ý cảnh
+  outline: openai/gpt-6-luna    # dàn ý cảnh (tạm, D-47)
   extract: openai/gpt-6-luna   # trích thay đổi -> JSON (D-35, bài C v2)
-  guard: null        # người canh (phần LLM)
-  choices: null      # tạo 3 lựa chọn
-  narrator: null     # hỏi người kể
-  classify: null     # phân loại ô tự viết (G5)
-  setup: null        # khởi tạo truyện: bối cảnh, cốt truyện, nhân vật, kế hoạch + chương 0 (D-39)
+  guard: openai/gpt-6-luna      # người canh, phần LLM (tạm, D-47)
+  choices: openai/gpt-6-luna    # tạo 3 lựa chọn (tạm, D-47)
+  narrator: openai/gpt-6-luna   # hỏi người kể (tạm, D-47)
+  classify: openai/gpt-6-luna   # phân loại ô tự viết, G5 (tạm, D-47)
+  setup: openai/gpt-6-luna      # khởi tạo truyện: bối cảnh, cốt truyện, nhân vật, kế hoạch + chương 0 (D-39; tạm, D-47)
 
 # Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model.
 role_reasoning:
   extract: low   # D-35: bài C v2, suy luận thấp tăng F1 lớp người chơi biết 0,63 → 0,78
-  setup: null    # chọn cùng model cho vai setup (D-39)
+  outline: low   # D-47: các vai trả JSON dùng suy luận thấp như vai trích
+  guard: low
+  choices: low
+  narrator: low
+  classify: low
+  setup: low
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
 # D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).

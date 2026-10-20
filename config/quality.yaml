@@ -1,18 +1,18 @@
 # Kiểm văn bằng code (design §6.5 mục 5; docs/decisions.md D-18, D-19).
 # null = chưa đặt. Code dùng ngưỡng chưa đặt thì báo lỗi CONFIG_LIMIT_NOT_SET.
-# Ngưỡng đặt ở tuần 2, sau khi đo trên văn thật (truyện mẫu + cảnh model viết).
+# D-47: số tạm bằng đúng số bài đo D đã dùng (`QualityParams` trong quality/bench_d.py); chỉnh lại sau lần chạy thật đầu.
 # Độ dài cảnh lấy từ story_lengths.yaml (chapter_chars chia cho số cảnh của chương).
 
 dialogue_style: dash            # D-18. "quotes" để dành, chưa hỗ trợ.
 
 repetition:
-  ngram_words: null             # độ dài cụm từ, tính bằng số từ
-  max_repeats: null             # một cụm xuất hiện quá số lần này trong một cảnh thì báo
+  ngram_words: 4             # độ dài cụm từ, tính bằng số từ
+  max_repeats: 2             # một cụm xuất hiện quá số lần này trong một cảnh thì báo
 
 foreign_script:
   # Số từ Latin không phải âm tiết tiếng Việt, đứng liền nhau (không bị từ có dấu chen ngang),
   # thì báo là lẫn chữ khác hệ. Chữ Hán/Kana/Hangul luôn bị báo, không cần ngưỡng.
-  latin_run_min_words: null
+  latin_run_min_words: 4
   # Từ mượn hay gặp, không tính vào chuỗi trên. So không phân biệt hoa thường.
   allowed_latin_words: [ok, email, wifi, internet, video, online, offline, laptop, website, app]
 
