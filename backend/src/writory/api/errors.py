@@ -19,6 +19,7 @@ log = logging.getLogger(__name__)
 # Mỗi mã lỗi đúng một status. Test bắt buộc đủ mọi mã: thêm mã mới thì thêm vào đây.
 HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.CONFIG_LIMIT_NOT_SET: 503,
+    ErrorCode.CONFIG_MODEL_NOT_SET: 503,
     ErrorCode.COST_LIMIT_SCENE: 402,
     ErrorCode.COST_LIMIT_CHAPTER: 402,
     ErrorCode.COST_LIMIT_STORY: 402,
@@ -33,6 +34,18 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.LLM_BAD_RESPONSE: 502,
     ErrorCode.PLAYER_KEY_MISSING: 400,
     ErrorCode.PLAYER_KEY_UNREADABLE: 400,
+    # Ghi chương (D-6, db/chapters.py)
+    ErrorCode.STORY_NOT_FOUND: 404,  # G10: truyện không có hoặc không thuộc người này
+    ErrorCode.CHAPTER_SAVE_FAILED: 409,  # Neo4j từ chối gói; đã gỡ, truyện giữ nguyên
+    ErrorCode.CHAPTER_PENDING: 409,
+    ErrorCode.CHAPTER_OUT_OF_ORDER: 409,
+    ErrorCode.CHAPTER_PACKAGE_INVALID: 500,  # gói do hệ thống tạo sai, không do người chơi
+    # Ô tự viết hành động (G5, D-27): chữ người chơi không xử lý được
+    ErrorCode.ACTION_EMPTY: 422,
+    ErrorCode.ACTION_TOO_LONG: 422,
+    ErrorCode.ACTION_OUT_OF_STORY: 422,
+    ErrorCode.ACTION_FORBIDDEN: 422,
+    ErrorCode.ACTION_UNCLEAR: 422,
     ErrorCode.INTERNAL_ERROR: 500,
 }
 

@@ -62,7 +62,7 @@ def create_app(
         for name in ("", *UVICORN_LOGGERS):
             install_log_redaction(logging.getLogger(name or None))
         # TODO(D-6, docs/graph-schema.md "Ghi theo commit_id"): gọi reconcile_pending lúc khởi
-        # động khi nhánh chapter-commit đã vào main.
+        # động. writory.db đã có hàm này; chưa nối vì chưa có quyết định.
         app.state.health_checks = (
             health_checks
             if health_checks is not None

@@ -186,5 +186,5 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Lúc khởi động gắn `install_log_redaction` cho root và `uvicorn`, `uvicorn.error`, `uvicorn.access`. Bộ lọc giữ nguyên `record.args`, chỉ redact từng arg, vì `AccessFormatter` của uvicorn đọc args.
   - `WritoryError` → `player_payload()` với status trong bảng duy nhất `api/errors.HTTP_STATUS`; test bắt mọi mã phải có status. Exception khác → `INTERNAL_ERROR` (500), câu cố định; traceback chỉ vào log, đã redact.
   - `GET /health`: `ok`/`down` cho Neo4j và Postgres, 503 nếu có phần down; lỗi chỉ vào log.
-- **Hệ quả:** nhánh nào thêm mã lỗi phải thêm status vào bảng. Lỗi 404/422 của FastAPI vẫn theo mặc định, chưa theo G12. Chưa gọi `reconcile_pending` lúc khởi động (TODO, chờ chapter-commit).
+- **Hệ quả:** nhánh nào thêm mã lỗi phải thêm status vào bảng. Lỗi 404/422 của FastAPI vẫn theo mặc định, chưa theo G12. Chưa gọi `reconcile_pending` lúc khởi động (TODO).
 - **Người quyết:** Claude (Session 2) · 19/10/2026

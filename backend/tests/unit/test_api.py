@@ -155,3 +155,24 @@ async def test_default_postgres_check_works_on_any_event_loop():
             await checks["postgres"]()
     finally:
         app.state.neo4j_driver.close()
+
+
+def test_chapter_errors_from_db_layer_get_their_status():
+    """Lỗi ghi chương (db/chapters.py) là lớp con WritoryError: handler trả đúng status, không detail."""
+    from writory.db.chapters import PendingChapterError, StoryNotFoundError
+
+    app = build()
+
+    @app.get("/test/no-story")
+    async def no_story():
+        raise StoryNotFoundError("story test-123 của user khác")
+
+    @app.get("/test/pending")
+    async def pending():
+        raise PendingChapterError("chương 4 pending")
+
+    with TestClient(app, raise_server_exceptions=False) as client:
+        a, b = client.get("/test/no-story"), client.get("/test/pending")
+    assert (a.status_code, a.json()["code"]) == (404, "STORY_NOT_FOUND")
+    assert (b.status_code, b.json()["code"]) == (409, "CHAPTER_PENDING")
+    assert "test-123" not in a.text and "pending" not in b.json()["message"]
