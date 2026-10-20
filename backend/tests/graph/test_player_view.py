@@ -54,7 +54,9 @@ def test_event_revealed_later_than_it_happened(driver, sample_story_id):
 def test_view_exposes_only_whitelisted_fields(driver, sample_story_id):
     view = player_view(driver, sample_story_id, 5)
     fields = {f.name for f in dataclasses.fields(view.entries[0])}
-    assert fields == {"id", "kind", "text", "aliases", "since_chapter", "quote", "about"}
+    # `quotes`: mọi câu trích đã hiện trên trang, cho bộ dò lộ G2 (D-26). Không phải chữ của lớp truth.
+    assert fields == {"id", "kind", "text", "aliases", "since_chapter", "quote", "about", "quotes"}
+    assert all(q.strip() for e in view.entries for q in e.quotes)
 
 
 def test_protagonist_lies_are_listed_without_discovery_state(driver, sample_story_id):

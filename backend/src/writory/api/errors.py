@@ -47,6 +47,9 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.ACTION_FORBIDDEN: 422,
     ErrorCode.ACTION_UNCLEAR: 422,
     ErrorCode.INTERNAL_ERROR: 500,
+    # Dò lộ bí mật (G2, D-26): bản viết của model không dùng được, giống LLM_BAD_RESPONSE.
+    # Status chung, không gợi rằng có bí mật.
+    ErrorCode.SCENE_LEAK_BLOCKED: 502,
 }
 
 

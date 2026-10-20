@@ -10,7 +10,7 @@ from dataclasses import dataclass
 
 from neo4j import Driver, RoutingControl
 
-from writory.graph.schema import EDGE_TYPES, ENTITY, RESERVED_PROPS
+from writory.graph.schema import EDGE_TYPES, ENTITY, NAMED_LABELS, RESERVED_PROPS
 from writory.graph.story import require_chapter, require_story_id
 
 # Điều kiện "cạnh r còn hiệu lực ở chương $chapter", dùng chung cho mọi truy vấn.
@@ -238,16 +238,19 @@ def edges_at(
     *,
     source_id: str | None = None,
     target_id: str | None = None,
+    ever: bool = False,
 ) -> list[EdgeRow]:
     """Cạnh một kiểu còn hiệu lực ở chương N, kèm id. Cho người canh kiểm trước khi ghi.
+    `ever=True`: mọi cạnh đã mở tới chương N, kể cả đã đóng (cách player_view đọc).
     `props` chỉ gồm thuộc tính của truyện, không gồm thuộc tính do lớp graph/ đặt."""
     if edge_type not in EDGE_TYPES:
         raise ValueError(f"kiểu cạnh không hợp lệ: {edge_type!r}")
+    when = "r.valid_from_chapter <= $chapter" if ever else VALID_AT
     rows = _read(
         driver,
         f"""
         MATCH (a:{ENTITY} {{story_id: $story_id}})-[r:{edge_type}]->(b:{ENTITY} {{story_id: $story_id}})
-        WHERE r.story_id = $story_id AND {VALID_AT}
+        WHERE r.story_id = $story_id AND {when}
           AND ($source_id IS NULL OR a.id = $source_id)
           AND ($target_id IS NULL OR b.id = $target_id)
         RETURN r.id AS id, a.id AS source, b.id AS target, r.valid_from_chapter AS vf,
@@ -277,3 +280,42 @@ def node_labels(driver: Driver, story_id: str, ids: list[str]) -> dict[str, str]
         story_id, ids=list(ids),
     )
     return {r["id"]: r["label"] for r in rows}
+
+
+def named_nodes(driver: Driver, story_id: str) -> dict[str, tuple[str, ...]]:
+    """Tên thật và biệt danh (lớp truth) của mọi nút có tên: id → (name, *aliases).
+    Chỉ cho người canh và bộ dò lộ (G2); không bao giờ trả cho người chơi (D-17)."""
+    rows = _read(
+        driver,
+        f"""
+        MATCH (n:{ENTITY} {{story_id: $story_id}})
+        WHERE any(l IN labels(n) WHERE l IN $labels)
+        RETURN n.id AS id, n.name AS name, coalesce(n.aliases, []) AS aliases
+        ORDER BY id
+        """,
+        story_id, labels=sorted(NAMED_LABELS),
+    )
+    return {r["id"]: (r["name"], *r["aliases"]) for r in rows}
+
+
+@dataclass(frozen=True)
+class NodeRow:
+    label: str
+    props: dict
+
+
+def node_rows(driver: Driver, story_id: str, ids: list[str]) -> dict[str, NodeRow]:
+    """Nhãn loại và thuộc tính của truyện (không gồm thuộc tính do graph/ đặt) của các nút."""
+    rows = _read(
+        driver,
+        f"""
+        UNWIND $ids AS id
+        MATCH (n:{ENTITY} {{story_id: $story_id, id: id}})
+        RETURN id, [l IN labels(n) WHERE l <> '{ENTITY}'][0] AS label, properties(n) AS props
+        """,
+        story_id, ids=list(ids),
+    )
+    return {
+        r["id"]: NodeRow(r["label"], {k: v for k, v in r["props"].items() if k not in RESERVED_PROPS})
+        for r in rows
+    }

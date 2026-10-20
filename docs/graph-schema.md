@@ -53,12 +53,12 @@ Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu 
 Lời nói dối "đã bị phát hiện ở chương N" khi có nhân vật khác người nói `KNOWS` nút `Lie` từ chương ≤ N.
 
 ## `player_view`
-Hàm `writory.graph.player_view(driver, story_id, chapter)` (D-16). Ở chương N, người chơi biết:
+Hàm `writory.graph.player_view(driver, story_id, chapter)` (D-16). Định nghĩa nằm trong một hàm thuần, `build_player_view`. `player_view` gom bản ghi từ Neo4j; `guard.state.player_view_of` gom từ GraphState (nền đã commit + gói chưa ghi). Test so hai đường ở mọi chương của truyện mẫu. Ở chương N, người chơi biết:
 1. nút có `REVEALED_TO_PLAYER` tới chương ≤ N, kèm câu trích;
 2. nút mà nhân vật chính `KNOWS` từ chương ≤ N;
-3. lời nói dối do nhân vật chính nói (người chơi đã chọn nói), không kèm trạng thái bị phát hiện.
+3. lời nói dối do nhân vật chính nói (người chơi đã chọn nói), không kèm trạng thái bị phát hiện. Người nghe hiện bằng chữ hiện của họ trong cùng view (`known_as`); chưa có trong view thì hiện "(người chưa rõ tên)", không bỏ lời nói dối (D-17).
 
-Chỉ trả trường trong danh sách trắng: id, loại, chữ hiện, biệt danh, chương biết lần đầu, câu trích lần đầu, và `about` (chỉ gồm id cũng nằm trong `player_view`).
+Chỉ trả trường trong danh sách trắng: id, loại, chữ hiện, biệt danh, chương biết lần đầu, câu trích lần đầu, mọi câu trích (`quotes`, đều là chữ đã có trên trang; bộ dò lộ G2 dùng, giao diện chỉ cần câu đầu), và `about` (chỉ gồm id cũng nằm trong `player_view`).
 - Nút có tên: chữ hiện là `known_as` của cạnh hé lộ mới nhất tới chương N; biệt danh là các `known_as` khác đã hé lộ tới chương N. **Không bao giờ** hiện `name` hay `aliases` của lớp sự thật (D-17). Nút có tên mà không có `known_as` nào thì không hiện.
 - `Fact`/`Event`/`Lie`: chữ hiện là `text`/`description`/`content` của nút.
  Không trả cạnh, quan hệ, vai trong sự kiện hay người giữ đồ vật. Nút `Thread` và `Chapter` không bao giờ vào `player_view`.
@@ -106,7 +106,7 @@ Câu hỏi design §7.3, mỗi câu một hàm trong `graph/queries.py` hoặc `
 | Lời nói dối nào của nhân vật chính chưa bị phát hiện, đã nói với ai? | `undiscovered_lies` |
 | Mạch nào đang mở và đã quá khoảng chương dự kiến gỡ? | `overdue_threads` |
 
-Thêm: `relationship`, `is_alive`, `find_characters` (tên hoặc biệt danh, khớp nguyên cụm), `protagonist_id`. Cho người canh: `edges_at` (cạnh một kiểu còn hiệu lực ở chương N, kèm id) và `node_labels`.
+Thêm: `relationship`, `is_alive`, `find_characters` (tên hoặc biệt danh, khớp nguyên cụm), `protagonist_id`. Cho người canh: `edges_at` (cạnh một kiểu còn hiệu lực ở chương N, kèm id) và `node_labels`. Cho bộ dò lộ (G2): `named_nodes` (tên và biệt danh lớp truth; không bao giờ trả cho người chơi).
 
 Cypher mẫu (người giữ đồ vật ở chương N):
 ```cypher

@@ -32,15 +32,27 @@ class Act(_Strict):
 
 
 class Secret(_Strict):
-    """Một bí mật và khoảng chương dự kiến lộ cho người chơi."""
+    """Một bí mật và khoảng chương dự kiến lộ cho người chơi.
+
+    `leak_terms`: các nhóm cụm từ cho bộ dò lộ (G2, D-26). Một nhóm "trúng" khi mọi cụm trong
+    nhóm cùng nằm trong một câu, ví dụ [["Lan", "gián điệp"], ["Lan", "người của Hội Hắc Kỳ"]].
+    """
 
     fact_id: str = Field(pattern=ID_PATTERN)
     reveal_from_chapter: PositiveInt
     reveal_to_chapter: PositiveInt
+    leak_terms: list[list[str]] = []
 
     @model_validator(mode="after")
     def _range(self) -> Self:
         _ordered(self.reveal_from_chapter, self.reveal_to_chapter, f"bí mật {self.fact_id}")
+        for group in self.leak_terms:
+            phrases = [p.strip() for p in group]
+            if not phrases or not all(phrases) or len(set(phrases)) != len(phrases):
+                raise ValueError(
+                    f"bí mật {self.fact_id}: mỗi nhóm leak_terms phải có ít nhất một cụm, "
+                    "không rỗng, không trùng"
+                )
         return self
 
 
