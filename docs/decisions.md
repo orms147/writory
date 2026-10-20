@@ -376,21 +376,22 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** lời gọi lỗi và stream đứt không có dòng chi phí. Thêm schema mới mà quên bảng vai thì nhật ký ghi tên lớp. Cột `model` là model được yêu cầu, không phải model OpenRouter thật sự dùng. Truy vấn Postgres chạy đồng bộ.
 - **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
 
-## D-45 · Key người chơi qua API; lỗi 422 không chép lại đầu vào
-- **Bối cảnh:** design §10, G7. Lỗi 422 mặc định của FastAPI trả `input` của từng lỗi, tức chép lại chữ người chơi gửi lên, kể cả key.
+## D-45 · API key người chơi và API khởi tạo; lỗi 422 không chép lại đầu vào
+- **Bối cảnh:** design §4.1, §10; G7. Lỗi 422 mặc định của FastAPI trả `input` của từng lỗi, tức chép lại chữ người chơi gửi lên, kể cả key.
 - **Quyết định:**
-  - `GET/PUT/DELETE /player/key` (router dev, D-41). Phản hồi chỉ có `has_key` và `last4`; 4 ký tự tính sau khi giải mã, không lưu riêng.
-  - Key phải bắt đầu bằng `sk-or-` và được bộ lọc log nhận ra trọn vẹn (`safety.crypto.validate_player_key`), để nếu lọt vào log thì vẫn bị xoá. Sai dạng: mã mới `PLAYER_KEY_INVALID` (422). Chưa gọi OpenRouter để thử key.
+  - `GET/PUT/DELETE /player/key`: phản hồi chỉ có `has_key`, `last4` (tính sau khi giải mã, không lưu riêng). Key phải bắt đầu bằng `sk-or-` và được bộ lọc log nhận ra trọn vẹn (`safety.crypto.validate_player_key`); sai dạng: mã mới `PLAYER_KEY_INVALID` (422). Chưa gọi OpenRouter để thử key. Bật router dev thì `KeyCipher` dựng lúc tạo app: khoá sai thì app không khởi động (D-11).
   - Lỗi kiểm thân yêu cầu thành mã mới `REQUEST_INVALID` (422) cho mọi route; log chỉ ghi vị trí và loại lỗi.
-  - Bật router dev thì `create_app` dựng `KeyCipher` ngay: khoá sai thì app không khởi động (D-11).
-- **Hệ quả:** key dạng khác (nếu OpenRouter đổi tiền tố) bị từ chối tới khi sửa bộ lọc log và hàm kiểm. Giao diện không nhận được chi tiết trường nào sai.
+  - `/setup`: tạo phiên → POST một bước (trả bộ đã có; chưa có mới gọi model) → PUT `{index}` là số nguyên JSON 0–2 → `finalize`. Đổi lựa chọn bước trước thì xoá các bước sau. Sai thứ tự: mã mới `SETUP_STEP_NOT_READY` (409), không gọi model; phiên của người khác: `SETUP_NOT_FOUND` (404).
+  - Sửa nhân vật chính: trường người chơi gửi lên kiểm theo `input.character_name_max_chars`, `personality_max_chars` (khoá mới, 300, số tạm như D-47), `backstory_max_chars`; rỗng hoặc quá dài: mã mới `CHARACTER_EDIT_INVALID` (422).
+  - `finalize`: `build_story` → `db.start_story` (truyện + kế hoạch + chương 0; lỗi thì gỡ hết theo `story_id`) → gắn truyện vào phiên. Thiết lập truyện (`pipeline.setup.story_brief`) lưu ở `stories.brief`.
+- **Hệ quả:** chưa chống hai yêu cầu chốt cùng lúc: yêu cầu sau gỡ truyện của nó nhưng đã tốn một lời gọi `build_story`. Bối cảnh, hướng giờ do máy chủ giữ, không còn do trình duyệt gửi lại; vẫn bọc như dữ liệu như D-38. Key dạng khác bị từ chối tới khi sửa bộ lọc log.
 - **Người quyết:** Claude (nhánh story-api), chờ điều phối duyệt · 20/10/2026
 
 ## D-47 · Số tạm cho lần chạy thật đầu: GPT-6 Luna cho mọi vai, trần và ngưỡng ban đầu
 - **Bối cảnh:** pipeline (D-36..D-40) dừng ở lỗi cấu hình vì `roles.*`, trần chi phí và ngưỡng còn `null`. Chưa có bài đo riêng cho dàn ý, lựa chọn, người kể, phân loại, người canh, khởi tạo. Bài D đo riêng bước viết của Luna khoảng 0,001 USD một cảnh (`evals/results/2026-10-20-quality-r2/`); cả đường đi chưa đo.
 - **Quyết định:**
   - Các vai `outline`, `guard`, `choices`, `narrator`, `classify`, `setup` dùng tạm `openai/gpt-6-luna`, `role_reasoning: low` như vai trích (D-35).
-  - Trần chi phí, giới hạn người chơi, `writer_max_neighbors`, ngưỡng người canh: số trong `config/limits.yaml`, `config/guard.yaml`. Trần đặt rộng gấp nhiều lần ước tính, để lần chạy đầu đo được chi phí thật.
+  - Trần chi phí, giới hạn người chơi, `writer_max_neighbors`, ngưỡng người canh: số trong `config/limits.yaml`, `config/guard.yaml`. Trần đặt rộng gấp nhiều lần ước tính, để lần chạy đầu đo được chi phí thật. Khoá `input.personality_max_chars` (D-45) thêm sau, cùng loại số tạm.
   - Ngưỡng kiểm văn (`config/quality.yaml`) lấy đúng số bài D đã dùng (`QualityParams`).
   - Test không còn dựa vào việc config thật để `null`: test "chưa đặt thì báo lỗi" dùng bản config có chỗ `null`.
 - **Hệ quả:** mọi số trên là tạm. Sau lần chạy thật đầu (một truyện ngắn tu tiên, trần 0,30 USD), chỉnh theo chi phí và tỉ lệ lỗi đo được rồi ghi quyết định mới.

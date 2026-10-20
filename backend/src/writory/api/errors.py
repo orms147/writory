@@ -64,6 +64,7 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.SETUP_STEP_NOT_READY: 409,
     ErrorCode.PLAYER_KEY_INVALID: 422,
     ErrorCode.REQUEST_INVALID: 422,  # D-45: lỗi kiểm thân yêu cầu, không chép lại đầu vào
+    ErrorCode.CHARACTER_EDIT_INVALID: 422,
 }
 
 

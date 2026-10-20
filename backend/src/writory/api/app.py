@@ -18,6 +18,7 @@ from neo4j import GraphDatabase
 
 from writory.api.errors import install_error_handlers
 from writory.api.keys import router as keys_router
+from writory.api.setup import router as setup_router
 from writory.api.stories import router as stories_router
 from writory.config import AppConfig, Settings, load_config
 from writory.llm.openrouter import DEFAULT_TIMEOUT
@@ -27,7 +28,7 @@ from writory.safety.redact import install_log_redaction, redact
 log = logging.getLogger(__name__)
 
 # Router chưa có đăng nhập (D-41): chỉ mount khi bật ENABLE_DEV_ROUTES.
-DEV_ROUTERS = (stories_router, keys_router)
+DEV_ROUTERS = (stories_router, setup_router, keys_router)
 
 # Logger của uvicorn có handler riêng và không truyền record lên root, nên phải gắn riêng (G7).
 UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")

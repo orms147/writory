@@ -49,6 +49,7 @@ class ErrorCode(StrEnum):
     SETUP_STEP_NOT_READY = "SETUP_STEP_NOT_READY"
     PLAYER_KEY_INVALID = "PLAYER_KEY_INVALID"
     REQUEST_INVALID = "REQUEST_INVALID"
+    CHARACTER_EDIT_INVALID = "CHARACTER_EDIT_INVALID"
 
 
 @dataclass(frozen=True)
@@ -235,6 +236,11 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Yêu cầu gửi lên không đúng dạng: thiếu trường, sai kiểu, hoặc giá trị nằm ngoài khoảng "
         "cho phép.",
         "Tải lại trang rồi thử lại. " + _REPORT,
+    ),
+    # Sửa nhân vật chính lúc khởi tạo (D-45): giới hạn trong config/limits.yaml `input`.
+    ErrorCode.CHARACTER_EDIT_INVALID: PlayerMessage(
+        "Tên, tính cách hoặc quá khứ bạn sửa đang để trống hoặc dài hơn mức cho phép.",
+        "Sửa lại cho ngắn gọn rồi gửi.",
     ),
 }
 

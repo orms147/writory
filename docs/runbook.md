@@ -31,7 +31,17 @@ ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
 curl -X PUT http://127.0.0.1:8000/player/key -H 'content-type: application/json' -d '{"api_key": "sk-or-v1-..."}'
 curl http://127.0.0.1:8000/stories/<story_id>/notebook
 ```
-Lời gọi model (ví dụ `POST /stories/<story_id>/narrator`) trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`. Truyện phải có `story_plan` trong Postgres; truyện mẫu nạp tay không có, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).
+Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2:
+```bash
+curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short"}'
+curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings
+curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
+# tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:
+curl -X POST http://127.0.0.1:8000/setup/<session_id>/finalize   # trả story_id
+```
+Danh sách route và schema: `http://127.0.0.1:8000/docs` (OpenAPI của FastAPI).
+
+Lời gọi model trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`, và có trần trong `config/limits.yaml`. Truyện phải có `story_plan` trong Postgres: truyện tạo qua `/setup` có; truyện mẫu nạp tay thì không, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).
 
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.

@@ -39,10 +39,12 @@ from writory.db.migrate import migrate
 from writory.db.narrator import take_narrator_question
 from writory.db.plans import (
     create_story_with_plan,
+    discard_story,
     load_story_brief,
     load_story_plan,
     save_story_plan,
     set_story_brief,
+    start_story,
 )
 from writory.db.setup import (
     STEPS,
@@ -86,6 +88,7 @@ __all__ = [
     "current_chapter",
     "delete_player_key",
     "delete_story_record",
+    "discard_story",
     "finish_setup",
     "get_owned_story",
     "get_setup",
@@ -106,6 +109,7 @@ __all__ = [
     "save_story_plan",
     "set_story_brief",
     "setup_spent_usd",
+    "start_story",
     "story_spent_usd",
     "take_narrator_question",
 ]

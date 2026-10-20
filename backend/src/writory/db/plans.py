@@ -4,12 +4,49 @@ Bản kế hoạch chứa bí mật và khoảng lộ: chỉ pipeline, người 
 nào đưa nó ra API (G1).
 """
 
+import logging
+
 import psycopg
+from neo4j import Driver
 from psycopg.types.json import Jsonb
 
-from writory.db.chapters import StoryRecord, get_story
+from writory.db.chapters import StoryRecord, commit_chapter, delete_story_record, get_story
+from writory.graph import ChangePackage, delete_story
 from writory.graph.story import require_story_id
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.redact import redact
+
+log = logging.getLogger(__name__)
+
+
+def start_story(
+    conn: psycopg.Connection, driver: Driver, story_id: str, *, owner_id: str, length_level: str,
+    brief: str, plan: StoryPlan, initial: ChangePackage,
+) -> StoryRecord:
+    """Tạo truyện, bản kế hoạch và chương 0 (gói `initial`), tất cả hoặc không gì (G11, D-45).
+
+    Lỗi ở bước ghi chương 0 (kể cả khi chương ở lại `pending` vì Neo4j không trả lời) thì gỡ hết
+    theo `story_id` rồi ném lại lỗi: người chơi không thấy truyện nửa vời, bấm thử lại được."""
+    create_story_with_plan(conn, story_id, owner_id=owner_id, length_level=length_level,
+                           brief=brief, plan=plan)
+    try:
+        commit_chapter(conn, driver, story_id, 0, [], initial)
+    except BaseException:
+        discard_story(conn, driver, story_id)
+        raise
+    return get_story(conn, story_id)
+
+
+def discard_story(conn: psycopg.Connection, driver: Driver, story_id: str) -> None:
+    """Gỡ một truyện vừa tạo dở: Postgres trước (truyện, kế hoạch, chương, gói), rồi Neo4j.
+    Neo4j không trả lời thì có thể còn nút mồ côi theo `story_id` này; không đọc được nữa, vì mọi
+    lần đọc đi qua truyện trong Postgres (D-6)."""
+    delete_story_record(conn, story_id)
+    try:
+        delete_story(driver, story_id)
+    except Exception as exc:  # noqa: BLE001 — đã gỡ phần Postgres; chỉ ghi log phần còn lại
+        log.warning("gỡ truyện %s trên Neo4j không được: %s", story_id,
+                    redact(f"{type(exc).__name__}: {exc}"))
 
 
 def create_story_with_plan(
