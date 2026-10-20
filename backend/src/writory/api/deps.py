@@ -47,6 +47,7 @@ from writory.pipeline.narrator import NarratorOutput, NarratorQuota
 from writory.pipeline.scene import SceneOutline
 from writory.pipeline.setup import BuildOutput, CharactersOutput, PlotsOutput, SettingsOutput
 from writory.pipeline.story_plan import StoryPlan
+from writory.pipeline.summary import SummaryOutput
 from writory.safety.classify import Classification
 from writory.safety.crypto import KeyCipher
 from writory.safety.leak import leak_names
@@ -212,6 +213,7 @@ ROLE_OF_SCHEMA: dict[type[BaseModel], str] = {
     PlotsOutput: "setup",
     CharactersOutput: "setup",
     BuildOutput: "setup",
+    SummaryOutput: "summary",  # tóm tắt chương (D-49)
 }
 
 

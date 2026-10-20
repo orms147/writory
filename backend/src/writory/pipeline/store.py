@@ -14,7 +14,13 @@ from typing import Protocol
 import psycopg
 from neo4j import Driver
 
-from writory.db import chapter_records, commit_chapter, current_chapter
+from writory.db import (
+    chapter_records,
+    commit_chapter,
+    current_chapter,
+    load_chapter_summaries,
+    save_chapter_summary,
+)
 from writory.graph import ChangePackage, NodeRow, PlayerView, player_view, story_nodes
 from writory.graph.context import PlanLike, WriterContext, writer_context
 from writory.guard.state import GraphState, Neo4jState
@@ -53,6 +59,14 @@ class ChapterStore(Protocol):
         """Lớp người chơi biết ở chương đã commit (G1)."""
         ...
 
+    def summaries(self, chapters: Sequence[int]) -> dict[int, str]:
+        """Tóm tắt đã lưu của các chương này (D-49); chương thiếu thì không có khoá."""
+        ...
+
+    def save_summary(self, chapter: int, text: str) -> None:
+        """Lưu tóm tắt của chương đã ghi. Đã có thì giữ bản cũ."""
+        ...
+
 
 def entities_from_rows(rows: Mapping[str, NodeRow]) -> list[Entity]:
     return [Entity.from_node(nid, row.label, row.props) for nid, row in sorted(rows.items())]
@@ -87,3 +101,9 @@ class GraphStore:
 
     def player_view(self, chapter: int) -> PlayerView:
         return player_view(self._driver, self._story_id, chapter)
+
+    def summaries(self, chapters: Sequence[int]) -> dict[int, str]:
+        return load_chapter_summaries(self._conn, self._story_id, chapters)
+
+    def save_summary(self, chapter: int, text: str) -> None:
+        save_chapter_summary(self._conn, self._story_id, chapter, text)

@@ -139,24 +139,26 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 ### 6.1 Bản kế hoạch truyện (ẩn) [Quyết định thiết kế]
 Tạo lúc khởi tạo, cập nhật khi lựa chọn làm lệch hướng:
 - Các hồi (mở đầu, phát triển, cao trào, kết) quy ra số chương theo mức độ dài: các hồi phủ liền từ chương 1, tổng số chương nằm trong khoảng của mức đã chọn (§3).
+- Các **mốc** chính của cốt truyện (bước ngoặt, cao trào, kết), mỗi mốc có khoảng chương và một câu mục tiêu. Mỗi hồi có ít nhất một mốc; mốc kết nằm ở chương cuối. Số mốc theo mức độ dài (`config/story_lengths.yaml`).
 - Vài bí mật lớn (số lượng cho phép: `SECRETS_MIN`, `SECRETS_MAX` trong `backend/src/writory/pipeline/setup.py`), mỗi cái là một sự thật có trong đồ thị ban đầu, kèm **khoảng chương dự kiến lộ** (ví dụ "Lan là gián điệp: lộ trong chương 12–16") và các cụm từ để bộ dò lộ nhận ra khi bí mật bị nói ra sớm (D-26).
-- Các mạch chính và phụ, mạch nào phải gỡ trước khi kết.
+- Các mạch chính và phụ; mạch phải gỡ trước khi kết mang **khoảng chương phải gỡ**.
+- **Nhịp** định trước từ đầu, dày hay thưa theo độ dài truyện: mỗi chương có tối đa một số việc đến hạn (bí mật, mạch phải gỡ, mốc), số trong `config/story_lengths.yaml`, để hạn không dồn vào một chương. Mọi khoảng nằm trong số chương của truyện. Kiểm bằng code lúc khởi tạo (D-49).
 
-Bản kế hoạch là nguồn để người canh biết "lộ sớm" là gì. Lựa chọn của người chơi được phép kéo sớm hoặc lùi một lần lộ (ví dụ người chơi chủ động điều tra Lan), nhưng việc đó phải xảy ra qua một cảnh hợp lý, không tự nhiên lộ ra.
+Bản kế hoạch là nguồn để người canh biết thế nào là "lộ sớm" và "trễ hạn", và là nguồn của mục tiêu mỗi chương (§6.2 bước 1). Lựa chọn của người chơi được phép kéo sớm hoặc lùi một lần lộ (ví dụ người chơi chủ động điều tra Lan), nhưng việc đó phải xảy ra qua một cảnh hợp lý, không tự nhiên lộ ra.
 
 ### 6.2 Đường đi của một chương
 Một chương = 2–3 cảnh. Mỗi cảnh đi qua:
 ```
 lấy phần đồ thị liên quan  →  viết cảnh  →  trích thay đổi  →  kiểm tra  →  (sai? viết lại 1 lần)  →  hiện cho người chơi
 ```
-Hết cảnh cuối: **ghi thay đổi của cả chương vào đồ thị** → **tạo 3 lựa chọn**.
+Hết cảnh cuối: **ghi thay đổi của cả chương vào đồ thị** → **tóm tắt chương** → **tạo 3 lựa chọn**. Tóm tắt do vai `summary` viết từ chữ đã hiện của chương, lưu ở Postgres, chỉ vào đề của các chương sau; lỗi khi tóm tắt không làm hỏng chương đã ghi, chương sau chạy thiếu tóm tắt đó (D-49). Chương cuối của bản kế hoạch thì không tóm tắt, không tạo lựa chọn: truyện kết, giao diện nhận sự kiện `story_finished` (D-50).
 
-1. **Lấy phần đồ thị liên quan:** nhân vật có mặt và hàng xóm 1–2 bước của họ, địa điểm, đồ vật đang giữ, quan hệ hiện tại, bí mật người có mặt biết, lời nói dối đang "treo", mạch đang mở, mục tiêu của chương theo bản kế hoạch, tóm tắt 1–2 chương gần nhất, và các cảnh đã viết của chương này (kèm thay đổi đã trích, chưa ghi).
+1. **Lấy phần đồ thị liên quan:** nhân vật có mặt và hàng xóm 1–2 bước của họ, địa điểm, đồ vật đang giữ, quan hệ hiện tại, bí mật người có mặt biết, lời nói dối đang "treo", mạch đang mở, mục tiêu của chương theo bản kế hoạch, tóm tắt 2 chương gần nhất (chương 1 không có; bọc như dữ liệu vì viết từ văn có chữ người chơi), lựa chọn hay hành động dẫn tới chương, và các cảnh đã viết của chương này (kèm thay đổi đã trích, chưa ghi). Mục tiêu của chương (D-49) gồm hồi và vị trí trong hồi, mốc của chương và mốc kế tiếp, bí mật đã tới khoảng lộ (bí mật nào đến hạn), mạch phải gỡ và hạn gỡ, và chương này có phải chương cuối không; chỉ vào đề dàn ý và đề viết. Ở chương cuối, đề đòi kết truyện: gỡ các mạch còn mở, lộ các bí mật còn lại nếu hợp lý, cảnh cuối không bỏ lửng.
 2. **Viết cảnh** với model viết văn; tổng độ dài chương theo mức đã chọn.
 3. **Trích thay đổi** từ cảnh vừa viết, dạng JSON có cấu trúc: thực thể mới, quan hệ đổi, ai biết thêm điều gì, đồ vật đổi chủ, ai chết, lời hứa/món nợ mới, điều gì vừa được hé lộ cho người chơi. Extractor chỉ được tham chiếu id thực thể có sẵn trong danh sách được đưa vào; thực thể mới phải khai riêng.
-4. **Kiểm tra** (§8). Nếu sai: viết lại cảnh một lần kèm danh sách lỗi. Nếu vẫn sai: giữ bản thứ hai, ghi lỗi vào nhật ký để đo, không chặn người chơi — **trừ lỗi lộ bí mật** (bộ dò lộ, người canh báo lộ sớm, chữ suy luận hay chữ của đề lọt vào văn): không hiện cảnh đó, báo lỗi rõ ràng cho người chơi (thử lại được). Khi giữ bản thứ hai, thay đổi mà người canh báo sai không được ghi vào đồ thị. Cách làm: `docs/decisions.md` D-36.
+4. **Kiểm tra** (§8). Nếu sai: viết lại cảnh một lần kèm danh sách lỗi. Nếu vẫn sai: giữ bản thứ hai, ghi lỗi vào nhật ký để đo, không chặn người chơi. Nếu bản đầu chỉ có lỗi mức viết lại mà bản viết lại sinh thêm lỗi mức chặn, thì hiện bản đầu (log ghi loại lỗi), không chặn người chơi (D-50). Chặn chỉ khi không bản nào thoát được **lỗi lộ bí mật** (bộ dò lộ, người canh báo lộ sớm, chữ suy luận hay chữ của đề lọt vào văn): không hiện cảnh đó, báo lỗi rõ ràng cho người chơi (thử lại được). Khi giữ bản thứ hai (hay bản đầu), thay đổi mà người canh báo sai không được ghi vào đồ thị. Cách làm: `docs/decisions.md` D-36, D-50.
 5. **Ghi đồ thị** sau cảnh cuối, tất cả hoặc không gì (cách làm: `docs/decisions.md`).
-6. **Tạo 3 lựa chọn** từ trạng thái mới, chỉ dựa trên lớp người chơi biết (§8.3): một hành động, một lời thoại, một nội tâm (không bắt buộc đúng một mỗi loại nếu cảnh không hợp; tối thiểu 2 loại khác nhau). Lựa chọn mang kèm dữ liệu có cấu trúc (ví dụ "nói dối X với Y"), để chọn xong là ghi được vào đồ thị mà không phải trích lại. Chữ lựa chọn cũng qua bộ dò lộ; có một chỗ lộ thì không hiện bộ nào, người chơi bấm tạo lại (D-37).
+6. **Tạo 3 lựa chọn** (trừ ở chương cuối) từ trạng thái mới, chỉ dựa trên lớp người chơi biết (§8.3): một hành động, một lời thoại, một nội tâm (không bắt buộc đúng một mỗi loại nếu cảnh không hợp; tối thiểu 2 loại khác nhau). Lựa chọn mang kèm dữ liệu có cấu trúc (ví dụ "nói dối X với Y"), để chọn xong là ghi được vào đồ thị mà không phải trích lại. Chữ lựa chọn cũng qua bộ dò lộ; có một chỗ lộ thì không hiện bộ nào, người chơi bấm tạo lại (D-37).
 
 ### 6.3 Ba kiểu lựa chọn
 - **Hành động:** đổi sự kiện.
@@ -171,7 +173,7 @@ Hết cảnh cuối: **ghi thay đổi của cả chương vào đồ thị** �
 Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ ý**, vì một model yếu viết hỏng truyện, rồi người chơi nghĩ là app dở.
 
 1. **Danh sách model đã thử.** Người chơi chọn một trong vài mức (ví dụ Tiết kiệm / Cân bằng / Cao cấp). Mỗi mức hiện giá ước tính mỗi chương và điểm chất lượng đã đo ở bài D (§9). Chỉ model đã qua bài D mới vào danh sách (danh sách nằm trong `config/`).
-2. **Tách vai.** Mức người chơi chọn chỉ đổi model **viết**. Các vai giữ trí nhớ (trích thay đổi, người canh, tạo lựa chọn, hỏi người kể) luôn dùng model đã chọn sẵn, vẫn trả bằng key người chơi. Nhờ vậy truyện ở mức rẻ có thể văn kém hơn, nhưng không quên nhiều hơn.
+2. **Tách vai.** Mức người chơi chọn chỉ đổi model **viết**. Các vai giữ trí nhớ (trích thay đổi, người canh, tóm tắt chương, tạo lựa chọn, hỏi người kể) luôn dùng model đã chọn sẵn, vẫn trả bằng key người chơi. Nhờ vậy truyện ở mức rẻ có thể văn kém hơn, nhưng không quên nhiều hơn.
 3. **Dàn ý trước, văn sau.** Trước mỗi cảnh, model đáng tin viết dàn ý ngắn (các nhịp: chuyện gì xảy ra, ai nói gì, kết cảnh ở đâu). Model viết chỉ mở rộng dàn ý thành văn. Model yếu viết tốt hơn hẳn khi có nhịp rõ. Dàn ý viết tiếng Việt; dàn ý lẫn chữ khác hệ coi như sai schema và được thử lại (D-51).
 4. **Hướng dẫn văn phong tiếng Việt** dùng chung cho mọi model: xưng hô đúng quan hệ, tránh văn dịch, tránh sáo ngữ hay gặp ở văn AI, nhịp câu theo giọng văn đã chọn, kèm vài đoạn mẫu. Lời thoại theo kiểu gạch đầu dòng (D-18): mỗi lượt một dòng, mở bằng "- "; backend chuẩn hoá mọi "—"/"–" thành "-" trước khi kiểm và trước khi hiện (D-31). Bản hiện hành: `evals/scenarios/quality/style_guide_vi.md`.
 5. **Kiểm chất lượng bằng code** trên mỗi cảnh, không tốn lời gọi model (ngưỡng và danh sách sáo ngữ: `config/quality.yaml`, D-19):
@@ -236,6 +238,7 @@ Chạy sau mỗi chương, trên kết quả trích thay đổi và văn bản c
 1. **Mâu thuẫn:** người đã chết xuất hiện/hành động; đồ vật ở hai nơi; nhân vật biết điều họ chưa biết (đối chiếu `KNOWS`); quan hệ đổi đột ngột không có sự kiện giải thích; vi phạm `Rule` (bản 3).
 2. **Lộ sớm:** chương hé lộ cho người chơi một `Fact` mà bản kế hoạch chưa tới khoảng lộ, và không có lựa chọn/cảnh nào của người chơi dẫn tới việc đó.
 3. **Lộ qua giao diện:** sổ tay, câu trả lời của người kể, văn bản lựa chọn không được chứa điều thuộc lớp sự thật mà người chơi chưa biết. Kiểm bằng code (lọc theo `REVEALED_TO_PLAYER`/`KNOWS` của nhân vật chính), không chỉ nhờ LLM.
+4. **Trễ hạn:** hết chương mà bí mật đã tới chương cuối của khoảng lộ vẫn chưa lộ, hoặc mạch phải gỡ đã tới hạn vẫn chưa gỡ (ở chương cuối thì mọi bí mật và mạch phải gỡ đều đến hạn). Chỉ kiểm ở cảnh cuối chương, mức viết lại: model không lộ kịp thì truyện vẫn đi tiếp, không chặn người chơi (D-49).
 
 Kiểm tra gồm phần quy tắc bằng code (truy vấn đồ thị) và phần LLM (đọc văn bản tìm điểm nghi). Phần nào kiểm được bằng code thì phải kiểm bằng code. Phần code kiểm gói thay đổi của từng cảnh trước khi ghi (D-23).
 

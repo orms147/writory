@@ -444,7 +444,8 @@ def render_writer_context(ctx: WriterContext) -> list[str | UserAuthored]:
             elif s.status == "not_yet":
                 out.line("- KHÔNG để lộ: ", text, f" (dự kiến lộ {window})")
             elif s.status == "in_window":
-                out.line("- Chỉ lộ nếu cảnh dẫn tới một cách hợp lý: ", text,
+                # Có đến hạn ở chương này không: mục "Mục tiêu của chương" của đề (D-49).
+                out.line("- Trong khoảng lộ, hé lộ theo mục tiêu của chương: ", text,
                          f" (khoảng lộ {window})")
             else:
                 out.line(f"- Đã quá khoảng lộ ({window}), nên tìm cách hé lộ hợp lý: ", text)

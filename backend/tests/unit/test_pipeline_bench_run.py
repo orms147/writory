@@ -88,13 +88,15 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     report = json.loads((out / "report.json").read_text(encoding="utf-8"))
     assert report["status"] == "done" and report["chapters_committed"] == total
     by_role = report["cost"]["by_role"]
-    assert set(by_role) == {"setup", "outline", "writer", "extract", "choices"}
+    assert set(by_role) == {"setup", "outline", "writer", "extract", "summary", "choices"}
     assert all(v > 0 for v in by_role.values())
     assert sorted(report["cost"]["by_chapter"]) == [str(n) for n in range(total + 1)]
     calls = report["calls"]["by_role"]
     scenes = total * run.scenario.scene_count
-    assert calls == {"setup": 4, "outline": scenes, "writer": scenes, "extract": scenes,
-                     "choices": total}
+    # Chương cuối: không tạo lựa chọn (D-50). Cảnh cuối của nó viết lại một lần vì model giả không
+    # bao giờ hé lộ bí mật hay gỡ mạch đến hạn ở chương cuối (trễ hạn, D-49).
+    assert calls == {"setup": 4, "outline": scenes, "writer": scenes + 1, "extract": scenes + 1,
+                     "summary": total - 1, "choices": total - 1}
     assert len(rows(out / "calls.jsonl")) == len(llm.calls)
 
     events = rows(out / "events.jsonl")
@@ -102,18 +104,29 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     assert kinds.count("setup_options") == 3
     assert kinds.count("scene_ready") == scenes
     assert kinds.count("chapter_committed") == total + 1  # gồm chương 0
-    assert kinds.count("choice_picked") == total
+    assert kinds.count("choice_picked") == total - 1
+    assert kinds.count("story_finished") == 1 and kinds[-1] == "story_finished"
+    assert report["story_finished"] is True
+    # Tóm tắt mọi chương trừ chương cuối (D-49); chương 1 không cần tóm tắt nào trước nó.
+    assert report["summaries"] == {"made": total - 1, "failed": 0,
+                                   "chapters_missing_previous": 0}
+    assert report["cost"]["by_role"]["summary"] > 0
+    summary_md = (out / "summary.md").read_text(encoding="utf-8")
+    assert "| summary |" in summary_md and "Tóm tắt chương: tạo" in summary_md
+    assert report["issues"]["left_when_shown"] == {"guard:overdue_secret": 1,
+                                                   "guard:overdue_thread": 1}
 
     # Lựa chọn tự chọn ở chương 1 là hành động dẫn tới chương 2, đúng như người chơi bấm.
     picked = next(e for e in events if e["type"] == "choice_picked" and e["chapter"] == 1)
     writer_ch2 = [c for c in llm.calls if c[0].content.startswith(STYLE)
                   and "Chương 2, cảnh 1" in c[-1].content]
     assert writer_ch2 and picked["choice"]["text"] in writer_ch2[0][-1].content
+    assert bench_run.DRY_RUN_SUMMARY in writer_ch2[0][-1].content  # tóm tắt chương 1 (D-49)
 
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     assert meta["status"] == "done" and meta["exit_code"] == 0 and meta["dry_run"] is True
     assert meta["seed"] == run.scenario.seed and meta["git"]["commit"]
-    assert set(meta["models"]) == {"setup", "outline", "writer", "extract", "choices"}
+    assert set(meta["models"]) == {"setup", "outline", "writer", "extract", "summary", "choices"}
     assert meta["models"]["writer"]["reasoning"] == "none"
     assert meta["config"]["sha256"] and meta["scenario"]["content"]["tags"]["genre"] == "tu tiên"
     chapter_1 = (out / "chapters" / "ch01.md").read_text(encoding="utf-8")
@@ -128,6 +141,49 @@ def test_dry_run_scene_passes_the_repo_quality_config():
     issues = check_scene(bench_run.DRY_RUN_SCENE, scenes_in_chapter=scenario.scene_count,
                          quality=repo.quality, lengths=repo.story_lengths)
     assert issues == []
+
+
+async def test_run_stops_after_the_last_chapter_and_compares_plan_with_result(tmp_path):
+    """Chương cuối kết truyện, lệnh dừng ngay sau đó (D-50). Report có mục so kế hoạch với kết quả:
+    số thứ tự, khoảng, chương lộ hay gỡ; không id, không chữ (D-42)."""
+    run, _, store, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    total = run.plan.total_chapters
+    assert store.committed == total
+    last = (out / "chapters" / f"ch{total:02d}.md").read_text(encoding="utf-8")
+    assert "Lựa chọn cuối chương" not in last and "Hết truyện" in last
+
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["plan_vs_result"] == {
+        "chapter": total, "total_chapters": total,
+        "secrets": [{"n": 1, "window": [total, total], "revealed_chapter": None,
+                     "status": "missed"}],
+        "threads": [{"n": 1, "window": [total - 1, total], "resolved_chapter": None,
+                     "status": "missed"}],
+    }
+    summary = (out / "summary.md").read_text(encoding="utf-8")
+    assert "## Kế hoạch so với kết quả" in summary and "Kết truyện: có" in summary
+    general = all_text(out, skip=("truth_dump.json",))
+    for text in ("t_ngoc_boi", "Bí ẩn của miếng ngọc bội", *(m.goal for m in run.plan.milestones)):
+        assert text not in general, text
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    assert [t["thread_id"] for t in dump["plan_progress"]["threads"]] == ["t_ngoc_boi"]
+
+
+def test_report_status_of_each_plan_item():
+    from writory.guard.plan import PlanProgress, SecretProgress, ThreadProgress
+
+    def secret(low, high, done):
+        return SecretProgress("f", "x", False, low, high, done)
+
+    progress = PlanProgress(5, 6, (secret(2, 3, 2), secret(2, 3, 1), secret(2, 3, 4),
+                                   secret(4, 5, None), secret(5, 6, None)),
+                            (ThreadProgress("t", "y", False, None, None, None),))
+    report = bench_run.plan_vs_result(progress)
+    assert [s["status"] for s in report["secrets"]] == [
+        "on_time", "early", "late", "missed", "pending"]
+    assert report["threads"] == [{"n": 1, "window": None, "resolved_chapter": None,
+                                  "status": "pending"}]
 
 
 def test_result_paths_are_relative_to_the_repo():
@@ -176,6 +232,9 @@ async def test_secret_text_only_goes_to_truth_dump(tmp_path):
     assert dump["final"]["chapter"] == run.plan.total_chapters
     assert any(e["type"] == "REVEALED_TO_PLAYER" for e in dump["final"]["edges"])
     assert dump["chapters"]["1"][0]["outlines"][0]["beats"]
+    # Tóm tắt là chữ nội bộ (D-49): chỉ ở truth_dump, không ở file chung.
+    assert dump["chapters"]["1"][0]["summary"] == bench_run.DRY_RUN_SUMMARY
+    assert bench_run.DRY_RUN_SUMMARY not in general
 
 
 # --- đếm lỗi, viết lại, cạnh bị bỏ ----------------------------------------------------------

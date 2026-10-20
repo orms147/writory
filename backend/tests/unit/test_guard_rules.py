@@ -84,6 +84,47 @@ def test_death_in_later_scene_does_not_affect_earlier_scene_actions():
     assert issues == []
 
 
+def _chapter_node(n: int) -> dict:
+    return {"id": f"ch{n}", "label": "Chapter", "number": n}
+
+
+def test_overdue_is_checked_on_the_last_scene_only_and_never_blocks():
+    """Trễ hạn (D-49): mạch t_sealed_letter hạn gỡ 3–4 (khoảng trên nút, kế hoạch cũ) chưa gỡ ở
+    cuối chương 4. Cảnh đầu chương chưa bị báo; cảnh cuối bị báo mức viết lại, không chặn
+    người chơi, không bỏ cạnh nào khỏi gói."""
+    kw = {"chapter": 4, "current": pkg(nodes=[_chapter_node(4)]), "earlier": [],
+          "committed": committed(3), "plan": SCEN.plan, "config": SCEN.config}
+    assert check_scene_package(**kw) == []
+    [issue] = check_scene_package(**kw, last_scene=True)
+    assert (issue.kind, issue.severity, issue.ids) == (GuardKind.OVERDUE_THREAD, Severity.REWRITE,
+                                                       ())
+    assert "t_sealed_letter" in issue.detail and "Lá thư niêm phong" in issue.detail
+
+
+def test_overdue_uses_the_plan_window_and_counts_reveals_of_this_chapter():
+    plan = SCEN.plan.model_validate({
+        **SCEN.plan.model_dump(mode="json"),
+        "must_resolve_threads": [{"thread_id": "t_sealed_letter", "resolve_from_chapter": 3,
+                                  "resolve_to_chapter": 6}],
+    })
+    base = {"chapter": 6, "earlier": [], "committed": committed(4), "plan": plan,
+            "config": SCEN.config, "last_scene": True}
+    # Nền tới chương 4: f_lan_spy (khoảng lộ 5–6) chưa lộ; mạch theo khoảng của kế hoạch tới 6.
+    issues = check_scene_package(current=pkg(nodes=[_chapter_node(6)]), **base)
+    assert sorted(i.kind for i in issues) == [GuardKind.OVERDUE_SECRET, GuardKind.OVERDUE_THREAD]
+    assert all(i.severity is Severity.REWRITE for i in issues)
+    done = pkg(nodes=[_chapter_node(6)], edges=[
+        {"type": "REVEALED_TO_PLAYER", "from": "f_lan_spy", "to": "ch6", "valid_from_chapter": 6,
+         "quote": "Lan là người của Hội Hắc Kỳ."},
+        {"type": "RESOLVED_IN", "from": "t_sealed_letter", "to": "ch6", "valid_from_chapter": 6}])
+    assert check_scene_package(current=done, **base) == []
+    # Hé lộ ở cảnh trước của cùng chương cũng tính.
+    reveal, resolve = (e.model_dump(mode="json", by_alias=True) for e in done.edges)
+    earlier = pkg(nodes=[_chapter_node(6)], edges=[reveal])
+    later = pkg(edges=[resolve])
+    assert check_scene_package(current=later, **(base | {"earlier": [earlier]})) == []
+
+
 def test_item_held_by_character_located_elsewhere_is_not_flagged():
     """LOCATED_AT chỉ kiểm "tối đa một" cho Item; nhân vật ở đâu không thuộc bất biến này."""
     current = pkg(edges=[{"type": "LOCATED_AT", "from": "minh", "to": "mieu_ba",

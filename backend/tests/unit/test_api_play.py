@@ -14,6 +14,7 @@ from writory.db import StoryRecord
 from writory.errors import ErrorCode, WritoryError
 from writory.pipeline.choices import Choice, LieEffect
 from writory.pipeline.events import ChoicesReady, SceneReady, error_event, stage
+from writory.pipeline.story_plan import StoryPlan
 
 CFG = load_config()
 LIE = Choice(id="choice-0123456789ab", kind="dialogue", tone="lie",
@@ -32,10 +33,12 @@ async def ok() -> bool:
 @pytest.fixture
 def client():
     app = create_app(dev_settings(), health_checks={"neo4j": ok}, config=CFG)
-    # Không Docker: dependency chạy trước khi kiểm thân yêu cầu, nên thay cả truyện.
+    # Không Docker: dependency chạy trước khi kiểm thân yêu cầu, nên thay cả truyện và kế hoạch.
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
     app.dependency_overrides[deps.get_owned_story] = (
         lambda story_id: StoryRecord(story_id, "dev", "short", 3))
+    app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(
+        {"acts": [{"name": "một", "from_chapter": 1, "to_chapter": 6}]})
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c
 

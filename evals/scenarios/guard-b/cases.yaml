@@ -7,9 +7,10 @@
 # của truyện mẫu (văn đã kiểm tay, nên phải sạch).
 # `targets`: phép kiểm mà ca này dùng để đo. `expect`: đúng tập loại lỗi phải báo.
 # Phần kiểm bằng code là tất định: kỳ vọng recall 100% và 0 báo nhầm.
+# `last_scene: true`: gói là cảnh cuối của chương; phép kiểm trễ hạn chỉ chạy ở đó (D-49).
 #
 # Loại: chapter_rule, dead_actor, at_most_one, teller_does_not_know, early_reveal,
-#       sudden_relationship.
+#       sudden_relationship, overdue_secret, overdue_thread.
 
 plan:
   acts:
@@ -267,3 +268,90 @@ cases:
         - {type: RELATES_TO, from: khai, to: minh, valid_from_chapter: 4, kind: "bạn thân", score: 90}
       close: [{type: RELATES_TO, id: "RELATES_TO:khai>minh@1", valid_to_chapter: 4}]
     expect: [sudden_relationship]
+
+  # ===== Trễ hạn (D-49): chỉ kiểm ở cảnh cuối chương, mức viết lại =====
+  # Kế hoạch ở trên là kế hoạch cũ (mạch chỉ có id), nên khoảng gỡ lấy trên nút Thread của truyện
+  # mẫu: t_sealed_letter 3–4, t_who_killed 5–8. Bí mật hay mạch chưa có nút ở nền (gieo sau) thì
+  # bỏ qua. Vài ca dùng nền ngắn hơn chương đang viết để có bí mật chưa lộ; ghi rõ ở từng ca.
+  - {id: sample-ch2-last-scene, targets: [overdue_secret, overdue_thread], committed_through: 1, chapter: 2, current_sample: 2, last_scene: true, expect: []}
+  - {id: sample-ch3-last-scene, targets: [overdue_secret, overdue_thread], committed_through: 2, chapter: 3, current_sample: 3, last_scene: true, expect: []}
+  - id: clean-overdue-not-last-scene
+    # Cảnh đầu của chương 4: mạch hạn gỡ ở chương 4 vẫn còn cảnh sau để gỡ.
+    targets: [overdue_thread]
+    committed_through: 3
+    chapter: 4
+    current: {nodes: [{id: ch4, label: Chapter, number: 4}]}
+    expect: []
+  - id: clean-thread-resolved-this-scene
+    targets: [overdue_thread]
+    committed_through: 3
+    chapter: 4
+    last_scene: true
+    current:
+      nodes: [{id: ch4, label: Chapter, number: 4}]
+      edges: [{type: RESOLVED_IN, from: t_sealed_letter, to: ch4, valid_from_chapter: 4}]
+    expect: []
+  - id: clean-thread-resolved-earlier-scene
+    targets: [overdue_thread]
+    committed_through: 3
+    chapter: 4
+    last_scene: true
+    earlier:
+      - nodes: [{id: ch4, label: Chapter, number: 4}]
+        edges: [{type: RESOLVED_IN, from: t_sealed_letter, to: ch4, valid_from_chapter: 4}]
+    current: {}
+    expect: []
+  - id: clean-secret-revealed-this-scene
+    # Nền chỉ tới chương 1 (chưa có chương 2 của truyện mẫu, nơi bí mật lộ); viết chương 3.
+    targets: [overdue_secret]
+    committed_through: 1
+    chapter: 3
+    last_scene: true
+    current:
+      nodes: [{id: ch3, label: Chapter, number: 3}]
+      edges:
+        - {type: REVEALED_TO_PLAYER, from: f_gu_old_hac_ky, to: ch3, valid_from_chapter: 3,
+           quote: "Lão Gù từng đi thuyền với Hội Hắc Kỳ."}
+    expect: []
+  - id: clean-secret-known-by-protagonist
+    # Nhân vật chính biết điều đó (player_view, D-16) cũng là đã lộ. Nền như ca trên.
+    targets: [overdue_secret]
+    committed_through: 1
+    chapter: 3
+    last_scene: true
+    current:
+      edges:
+        - {type: KNOWS, from: minh, to: f_gu_old_hac_ky, valid_from_chapter: 3, how: "được kể",
+           told_by: gu, quote: "Lão Gù từng đi thuyền với Hội Hắc Kỳ."}
+    expect: []
+  - id: err-overdue-thread-deadline
+    # t_sealed_letter hạn gỡ 3–4; truyện mẫu chưa gỡ ở chương 4.
+    targets: [overdue_thread]
+    committed_through: 3
+    chapter: 4
+    last_scene: true
+    current: {nodes: [{id: ch4, label: Chapter, number: 4}]}
+    expect: [overdue_thread]
+  - id: err-overdue-thread-past-window
+    targets: [overdue_thread]
+    committed_through: 4
+    chapter: 5
+    last_scene: true
+    current: {nodes: [{id: ch5, label: Chapter, number: 5}]}
+    expect: [overdue_thread]
+  - id: err-overdue-secret-deadline
+    # f_gu_old_hac_ky khoảng lộ 2–3; nền tới chương 1 nên chưa lộ ở cuối chương 3.
+    targets: [overdue_secret]
+    committed_through: 1
+    chapter: 3
+    last_scene: true
+    current: {nodes: [{id: ch3, label: Chapter, number: 3}]}
+    expect: [overdue_secret]
+  - id: err-overdue-secret-past-window
+    # Nền như ca trên; viết chương 4.
+    targets: [overdue_secret]
+    committed_through: 1
+    chapter: 4
+    last_scene: true
+    current: {nodes: [{id: ch4, label: Chapter, number: 4}]}
+    expect: [overdue_secret]

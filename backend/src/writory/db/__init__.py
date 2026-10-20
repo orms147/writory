@@ -1,6 +1,6 @@
 """Postgres: truyện, chương, gói thay đổi (outbox), luồng ghi chương theo D-6, bộ đếm câu hỏi người
 kể (D-40), và lưu trữ của API truyện (D-44): bản kế hoạch ẩn, key người chơi đã mã hoá, phiên khởi
-tạo, nhật ký chi phí, lựa chọn và hành động.
+tạo, nhật ký chi phí, lựa chọn và hành động; tóm tắt chương (D-49).
 Migration: SQL thuần trong db/migrations/, chạy bằng `migrate` (D-20)."""
 
 from writory.db.chapters import (
@@ -59,6 +59,7 @@ from writory.db.setup import (
     get_setup,
     save_setup_options,
 )
+from writory.db.summaries import load_chapter_summaries, save_chapter_summary
 
 __all__ = [
     "STEPS",
@@ -97,6 +98,7 @@ __all__ = [
     "get_story",
     "job_lock",
     "load_action",
+    "load_chapter_summaries",
     "load_choice",
     "load_choices",
     "load_player_key",
@@ -106,6 +108,7 @@ __all__ = [
     "reconcile_pending",
     "record_cost",
     "save_action",
+    "save_chapter_summary",
     "save_choices",
     "save_player_key",
     "save_setup_options",

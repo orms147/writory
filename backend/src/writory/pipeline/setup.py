@@ -27,17 +27,17 @@ from typing import Any, Literal, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from writory.config import AppConfig, IntRange, LengthLevel
+from writory.config import AppConfig, LengthLevel
 from writory.errors import ErrorCode, WritoryError
 from writory.graph.package import ChangePackage, chapter_rule_problems
 from writory.graph.schema import NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
 from writory.llm.retry import with_json_retries
-from writory.pipeline.story_plan import StoryPlan
+from writory.pipeline.story_plan import MilestoneKind, StoryPlan
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
-PROMPT_VERSION = "setup-2"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "setup-3"  # đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49)
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -233,6 +233,13 @@ class OutSecret(_Out):
     leak_terms: list[list[str]]
 
 
+class OutMilestone(_Out):
+    kind: MilestoneKind
+    goal: str
+    from_chapter: int
+    to_chapter: int
+
+
 class BuildOutput(_Out):
     acts: list[OutAct]
     characters: list[OutCharacter]
@@ -243,6 +250,7 @@ class BuildOutput(_Out):
     edges: list[OutEdge]
     threads: list[OutThread]
     secrets: list[OutSecret]
+    milestones: list[OutMilestone]
 
 
 @dataclass(frozen=True)
@@ -309,7 +317,12 @@ hiện ra trên trang khi truyện kể tới.
 - `edges`: tình trạng lúc truyện bắt đầu, theo bảng "Cạnh trong `edges`" ở cuối đề.
 - `threads`: các mạch chính và phụ: `description`, khoảng chương dự kiến gỡ (`due_from_chapter`, \
 `due_to_chapter`) trong số chương của truyện, `must_resolve` là true nếu mạch phải gỡ trước khi \
-kết.
+kết. Mạch phải gỡ thì phải gỡ xong trong đúng khoảng này.
+- `milestones`: các mốc chính của cốt truyện, ẩn với người chơi: `kind` là `turning_point` (bước \
+ngoặt), `climax` (cao trào) hoặc `ending` (kết); `goal`: một câu, điều phải xảy ra ở mốc đó; \
+`from_chapter`, `to_chapter`: khoảng chương mốc phải xảy ra. Mỗi hồi có ít nhất một mốc có \
+`to_chapter` nằm trong hồi. Đúng một mốc `ending`, nằm ở chương cuối (`from_chapter` = \
+`to_chapter` = chương cuối).
 - `secrets`: từ {SECRETS_MIN} tới {SECRETS_MAX} bí mật lớn, mỗi cái là một cú lật người chơi chưa \
 biết. `fact_id`: id fact chứa bí mật. `reveal_from_chapter`, `reveal_to_chapter`: khoảng chương \
 dự kiến lộ cho người chơi, trong số chương của truyện. `leak_terms`: các nhóm cụm từ; khi mọi cụm \
@@ -318,6 +331,16 @@ của một nhóm cùng nằm trong một câu thì coi như bí mật đã lộ
 ["Lan", "người của Hội Kiếm"]].
 
 Ở bước này chưa có gì được hé lộ cho người chơi: người chơi chưa đọc trang nào."""
+
+
+def _pacing_rule(level: LengthLevel) -> str:
+    """Nhịp theo độ dài truyện (D-49): số trong config/story_lengths.yaml, kiểm lại ở
+    `initial_problems`."""
+    m = level.milestones
+    return (f"Nhịp cho độ dài này: {m.min}–{m.max} mốc. Mỗi chương có tối đa "
+            f"{level.max_due_per_chapter} việc đến hạn; một việc đến hạn ở chương N là một bí mật "
+            "có `reveal_to_chapter` = N, một mạch phải gỡ có `due_to_chapter` = N, hoặc một mốc "
+            "có `to_chapter` = N. Rải các hạn ra nhiều chương, không dồn vào chương cuối.")
 
 _POV_TEXT = {
     "protagonist": "Góc nhìn: chỉ nhân vật chính. Người chơi chỉ biết những gì nhân vật chính "
@@ -464,7 +487,7 @@ async def build_story(
     pc = _clean_protagonist(protagonist)
     level = choices.level(config)
     messages = _messages(
-        build_task(), choices, level,
+        build_task(level), choices, level,
         "Bối cảnh đã chọn:", _setting_data(setting),
         "Hướng cốt truyện đã chọn:", _plot_data(plot),
         f"Nhân vật chính (id `{PROTAGONIST_ID}`), người chơi đã chọn và có thể đã sửa:",
@@ -473,12 +496,13 @@ async def build_story(
         "Quá khứ:", UserAuthored(pc.backstory, "protagonist_backstory"),
     )
     output = await _ask(llm, config, messages, BuildOutput)
-    return to_story_setup(output, protagonist=pc, commit_id=commit_id, chapters=level.chapters)
+    return to_story_setup(output, protagonist=pc, commit_id=commit_id, level=level)
 
 
-def build_task() -> str:
-    """Đề của bước 4: phần việc, rồi khối bảng cạnh sinh từ luật (`edge_rules`) đứng riêng."""
-    return f"{BUILD_TASK}\n\n{edge_rules()}"
+def build_task(level: LengthLevel) -> str:
+    """Đề của bước 4: phần việc, luật nhịp theo độ dài (D-49), rồi khối bảng cạnh sinh từ luật
+    (`edge_rules`) đứng riêng."""
+    return f"{BUILD_TASK}\n\n{_pacing_rule(level)}\n\n{edge_rules()}"
 
 
 # --- đổi đầu ra thành kế hoạch + gói, rồi kiểm -------------------------------------------------
@@ -509,7 +533,7 @@ def _validated[M: BaseModel](
 
 
 def to_story_setup(
-    output: BuildOutput, *, protagonist: CharacterOption, commit_id: str, chapters: IntRange
+    output: BuildOutput, *, protagonist: CharacterOption, commit_id: str, level: LengthLevel
 ) -> StorySetup:
     """Đổi đầu ra của model thành `StoryPlan` + gói chương 0 rồi kiểm (`initial_problems`).
     Có lỗi thì ném STORY_SETUP_INVALID kèm toàn bộ danh sách lỗi, không trả phần nào."""
@@ -546,10 +570,16 @@ def to_story_setup(
     plan = _validated(StoryPlan, {
         "acts": [a.model_dump() for a in output.acts],
         "secrets": [s.model_dump() for s in output.secrets],
-        "must_resolve_threads": [t.id for t in output.threads if t.must_resolve],
+        # Khoảng phải gỡ = khoảng dự kiến gỡ của chính mạch đó (một nguồn: đầu ra của model).
+        "must_resolve_threads": [
+            {"thread_id": t.id, "resolve_from_chapter": t.due_from_chapter,
+             "resolve_to_chapter": t.due_to_chapter}
+            for t in output.threads if t.must_resolve
+        ],
+        "milestones": [m.model_dump() for m in output.milestones],
     }, "bản kế hoạch", problems)
     if package is not None and plan is not None:
-        problems += initial_problems(plan, package, chapters=chapters)
+        problems += initial_problems(plan, package, level=level)
     if problems or package is None or plan is None:
         raise _invalid(problems)
     return StorySetup(plan=plan, package=package)
@@ -612,8 +642,10 @@ def _is_int(value: object) -> bool:
     return isinstance(value, int) and not isinstance(value, bool)
 
 
-def initial_problems(plan: StoryPlan, package: ChangePackage, *, chapters: IntRange) -> list[str]:
-    """Kiểm bằng code bản kế hoạch và gói chương 0 (D-38). Rỗng là hợp lệ.
+def initial_problems(plan: StoryPlan, package: ChangePackage, *, level: LengthLevel) -> list[str]:
+    """Kiểm bằng code bản kế hoạch và gói chương 0 (D-38), kể cả nhịp theo mức độ dài (D-49).
+    Rỗng là hợp lệ. Luật luôn đúng của kế hoạch (khoảng trong số chương, mốc kết, hồi có mốc)
+    nằm trong validator của `StoryPlan`.
 
     Lỗi chỉ nêu id, nhãn và số chương, không chép chữ của truyện: chi tiết vào log (G12)."""
     labels = {n.id: n.label for n in package.nodes}
@@ -624,7 +656,7 @@ def initial_problems(plan: StoryPlan, package: ChangePackage, *, chapters: IntRa
         problems.append(f"cần đúng một nhân vật chính (Character có is_protagonist), "
                         f"có {len(protagonists)}: {sorted(protagonists)}")
     problems += _edge_problems(package, labels, protagonists)
-    problems += _plan_problems(plan, package, labels, chapters)
+    problems += _plan_problems(plan, package, labels, level)
     if not problems:
         # Lưới cuối, theo định nghĩa duy nhất của player_view (G1): người chơi chưa biết gì.
         view = player_view_of(OverlayState(EmptyState(), [package]), INITIAL_CHAPTER)
@@ -696,7 +728,7 @@ def _edge_problems(
 
 
 def _plan_problems(
-    plan: StoryPlan, package: ChangePackage, labels: dict[str, str], chapters: IntRange
+    plan: StoryPlan, package: ChangePackage, labels: dict[str, str], level: LengthLevel
 ) -> list[str]:
     problems = []
     expected = 1
@@ -705,18 +737,20 @@ def _plan_problems(
             problems.append(f"hồi thứ {i} bắt đầu ở chương {act.from_chapter}, cần chương "
                             f"{expected}: các hồi phải liền nhau từ chương 1")
         expected = act.to_chapter + 1
-    total = plan.total_chapters
+    total, chapters, milestones = plan.total_chapters, level.chapters, level.milestones
     if not chapters.min <= total <= chapters.max:
         problems.append(f"kế hoạch có {total} chương, mức độ dài cần "
                         f"{chapters.min}–{chapters.max}")
+    if not milestones.min <= len(plan.milestones) <= milestones.max:
+        problems.append(f"cần {milestones.min}–{milestones.max} mốc, có {len(plan.milestones)}")
+    crowded = {c: n for c, n in plan.deadlines().items() if n > level.max_due_per_chapter}
+    problems += [f"chương {c} có {n} việc đến hạn, tối đa {level.max_due_per_chapter}"
+                 for c, n in crowded.items()]
     if not SECRETS_MIN <= len(plan.secrets) <= SECRETS_MAX:
         problems.append(f"cần {SECRETS_MIN}–{SECRETS_MAX} bí mật, có {len(plan.secrets)}")
     for s in plan.secrets:
         if labels.get(s.fact_id) != "Fact":
             problems.append(f"bí mật {s.fact_id} không trỏ tới Fact có trong gói")
-        if s.reveal_to_chapter > total:
-            problems.append(f"bí mật {s.fact_id}: khoảng lộ {s.reveal_from_chapter}–"
-                            f"{s.reveal_to_chapter} vượt quá {total} chương")
         if not s.leak_terms:
             problems.append(f"bí mật {s.fact_id} thiếu leak_terms (D-26)")
         elif any(len(group) < LEAK_GROUP_MIN_PHRASES for group in s.leak_terms):
@@ -724,7 +758,7 @@ def _plan_problems(
                             f"{LEAK_GROUP_MIN_PHRASES} cụm")
     threads = {n.id: n.props for n in package.nodes if n.label == "Thread"}
     problems += [f"mạch {t} không có nút Thread trong gói"
-                 for t in plan.must_resolve_threads if t not in threads]
+                 for t in plan.thread_ids if t not in threads]
     for tid, props in threads.items():
         planted = props.get("planted_chapter")
         low, high = props.get("due_from_chapter"), props.get("due_to_chapter")

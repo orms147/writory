@@ -58,7 +58,8 @@ CFG = REPO.model_copy(update={
     }),
 })
 RETRIES = CFG.limits.retries.extract_schema_retry
-SHORT = CFG.story_lengths.levels["short"].chapters
+SHORT_LEVEL = CFG.story_lengths.levels["short"]
+SHORT = SHORT_LEVEL.chapters
 
 CHOICES = StoryChoices(
     tags=StoryTags(genre="kiếm hiệp", era="cổ đại", voice="trầm, chậm", darkness="vừa"),
@@ -94,7 +95,7 @@ def _build(**changes) -> str:
 
 def _valid_setup():
     return to_story_setup(BuildOutput.model_validate(FIXTURE), protagonist=PC, commit_id="setup-c0",
-                          chapters=SHORT)
+                          level=SHORT_LEVEL)
 
 
 def _system(llm: FakeLLM) -> list[str]:
@@ -297,6 +298,16 @@ async def test_length_from_config_appears_in_prompt():
     assert f"{SHORT.min}–{SHORT.max} chương" in user
 
 
+async def test_build_prompt_asks_for_milestones_and_spread_deadlines_by_length():
+    """Nhịp theo độ dài (D-49): số mốc và số việc đến hạn tối đa mỗi chương lấy từ config."""
+    llm = FakeLLM.scripted([_build()])
+    await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0")
+    [system] = _system(llm)
+    m = SHORT_LEVEL.milestones
+    assert "`milestones`" in system and f"{m.min}–{m.max} mốc" in system
+    assert f"tối đa {SHORT_LEVEL.max_due_per_chapter} việc đến hạn" in system
+
+
 @pytest.mark.parametrize("case", G4_CASES, ids=[c["id"] for c in G4_CASES])
 async def test_g4_tags_are_player_data_never_system(case):
     choices = CHOICES.model_copy(update={"tags": StoryTags(genre=case["text"])})
@@ -352,20 +363,26 @@ async def test_build_story_returns_plan_and_valid_chapter_0_package():
     assert [a.name for a in plan.acts] == ["mở đầu", "phát triển", "cao trào", "kết"]
     assert [s.fact_id for s in plan.secrets] == ["f_nguyet_hoa_huyet_y", "f_ha_lao_giet_cha"]
     assert all(s.leak_terms for s in plan.secrets)
-    assert plan.must_resolve_threads == ["t_ai_giet_cha", "t_chuoi_kiem"]
+    assert plan.thread_ids == ("t_ai_giet_cha", "t_chuoi_kiem")
+    # Khoảng phải gỡ của mạch trong kế hoạch = khoảng dự kiến gỡ model khai cho mạch đó (D-49).
+    assert [(t.resolve_from_chapter, t.resolve_to_chapter) for t in plan.must_resolve_threads] == [
+        (5, 6), (4, 5)]
+    assert [(m.kind, m.from_chapter, m.to_chapter) for m in plan.milestones] == [
+        ("turning_point", 1, 1), ("turning_point", 2, 3), ("climax", 4, 5), ("ending", 6, 6)]
+    assert max(plan.deadlines().values()) <= SHORT_LEVEL.max_due_per_chapter
 
     assert pkg.commit_id == "story-x-c0"
     assert chapter_rule_problems(pkg, 0) == []
     assert ChangePackage.model_validate(pkg.model_dump(mode="json", by_alias=True)) == pkg
-    assert initial_problems(plan, pkg, chapters=SHORT) == []
+    assert initial_problems(plan, pkg, level=SHORT_LEVEL) == []
 
     nodes = {n.id: n for n in pkg.nodes}
     assert [n.id for n in pkg.nodes if n.props.get("is_protagonist")] == [PROTAGONIST_ID]
     assert {s.fact_id for s in plan.secrets} <= {i for i, n in nodes.items() if n.label == "Fact"}
-    assert set(plan.must_resolve_threads) <= {i for i, n in nodes.items() if n.label == "Thread"}
+    assert set(plan.thread_ids) <= {i for i, n in nodes.items() if n.label == "Thread"}
     assert all(e.source in nodes and e.target in nodes for e in pkg.edges)
     assert all(e.type != "REVEALED_TO_PLAYER" for e in pkg.edges)
-    assert all(nodes[i].props["planted_chapter"] == 0 for i in plan.must_resolve_threads)
+    assert all(nodes[i].props["planted_chapter"] == 0 for i in plan.thread_ids)
 
     knows = [e for e in pkg.edges if e.type == "KNOWS"]
     assert {(e.source, e.target) for e in knows} == {
@@ -434,6 +451,19 @@ INVALID_BUILDS = {
     "relation_score_out_of_range": {"edges": lambda e: [e[2] | {"score": 150}] + e[:2] + e[3:]},
     "duplicate_relation": {"edges": lambda e: e + [e[2]]},
     "thread_due_beyond_story": {"threads": lambda t: [t[0] | {"due_to_chapter": 7}] + t[1:]},
+    # Mốc và nhịp (D-49). Fixture: hồi 1, 2–3, 4–5, 6; mốc hạn 1, 3, 5, 6; mức ngắn 3–5 mốc,
+    # tối đa 3 việc đến hạn mỗi chương (chương 6 đã có bí mật, mạch t_ai_giet_cha và mốc kết).
+    "no_milestones": {"milestones": []},
+    "too_many_milestones": {"milestones": lambda m: m + [
+        {"kind": "turning_point", "goal": "Thêm một bước ngoặt", "from_chapter": 2,
+         "to_chapter": 2},
+        {"kind": "turning_point", "goal": "Thêm bước ngoặt nữa", "from_chapter": 4,
+         "to_chapter": 4}]},
+    "ending_not_at_last_chapter": {"milestones": lambda m: m[:3] + [m[3] | {"from_chapter": 5}]},
+    "milestone_beyond_story": {"milestones": lambda m: m[:2] + [m[2] | {"to_chapter": 7}, m[3]]},
+    "act_without_milestone": {"milestones": lambda m: m[1:]},
+    "deadlines_crowded_in_one_chapter": {
+        "threads": lambda t: [t[0], t[1] | {"due_to_chapter": 6}] + t[2:]},
     "id_not_matching_pattern": {"characters": lambda c: [c[0] | {"id": "tô nguyệt hoa"}] + c[1:]},
     "duplicate_node_id": {"locations": lambda loc: loc + [loc[0] | {"name": "bến Lạc Hà"}]},
     "blank_name": {"characters": lambda c: [c[0] | {"name": "  "}] + c[1:]},
@@ -506,7 +536,7 @@ def _checker_accepts(etype: str, source: str, target: str) -> bool:
     data = json.loads(_build(items=lambda i: i + [_EXTRA_ITEM], edges=lambda e: e + [edge]))
     try:
         to_story_setup(BuildOutput.model_validate(data), protagonist=PC, commit_id="c0",
-                       chapters=SHORT)
+                       level=SHORT_LEVEL)
     except WritoryError as e:
         return f"{etype} không nối" not in e.detail
     return True
@@ -536,7 +566,7 @@ def test_error_detail_names_ids_not_story_text():
     bad = json.loads(_build(secrets=lambda s: [s[0] | {"fact_id": "f_khong_co"}, s[1]]))
     with pytest.raises(WritoryError) as exc:
         to_story_setup(BuildOutput.model_validate(bad), protagonist=PC, commit_id="c0",
-                       chapters=SHORT)
+                       level=SHORT_LEVEL)
     assert "f_khong_co" in exc.value.detail
     for text in ("Tô Nguyệt Hoa là người", PC.name, PC.backstory):
         assert text not in exc.value.detail
@@ -565,7 +595,7 @@ def test_initial_problems_flags_revealed_to_player():
     pkg = _with(setup.package, nodes=[{"id": "ch1", "label": "Chapter", "number": 1}],
                 edges=[{"type": "REVEALED_TO_PLAYER", "from": "lac_ha", "to": "ch1",
                         "valid_from_chapter": 0, "quote": "trấn Lạc Hà", "known_as": "Lạc Hà"}])
-    problems = initial_problems(setup.plan, pkg, chapters=SHORT)
+    problems = initial_problems(setup.plan, pkg, level=SHORT_LEVEL)
     assert any("REVEALED_TO_PLAYER" in p for p in problems)
     assert any("Chapter" in p for p in problems)
 
@@ -574,14 +604,14 @@ def test_initial_problems_flags_two_protagonists():
     setup = _valid_setup()
     pkg = _with(setup.package, nodes=[{"id": "pc2", "label": "Character", "name": "Lục Thanh Sơn",
                                        "is_protagonist": True}])
-    assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, chapters=SHORT))
+    assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, level=SHORT_LEVEL))
 
 
 def test_initial_problems_flags_edges_opened_after_chapter_0():
     setup = _valid_setup()
     pkg = _with(setup.package, edges=[{"type": "MEMBER_OF", "from": "ha_ba_tung",
                                        "to": "huyet_y_mon", "valid_from_chapter": 1}])
-    assert any("chương 1" in p for p in initial_problems(setup.plan, pkg, chapters=SHORT))
+    assert any("chương 1" in p for p in initial_problems(setup.plan, pkg, level=SHORT_LEVEL))
 
 
 def test_initial_problems_flags_secret_missing_from_package():
@@ -589,7 +619,7 @@ def test_initial_problems_flags_secret_missing_from_package():
     data = setup.package.model_dump(mode="json", by_alias=True)
     data["nodes"] = [n for n in data["nodes"] if n["id"] != "f_ha_lao_giet_cha"]
     data["edges"] = [e for e in data["edges"] if "f_ha_lao_giet_cha" not in (e["from"], e["to"])]
-    problems = initial_problems(setup.plan, ChangePackage.model_validate(data), chapters=SHORT)
+    problems = initial_problems(setup.plan, ChangePackage.model_validate(data), level=SHORT_LEVEL)
     assert any("f_ha_lao_giet_cha" in p for p in problems)
 
 
@@ -599,7 +629,7 @@ def test_initial_problems_flags_protagonist_knowledge():
     pkg = _with(setup.package, edges=[{"type": "KNOWS", "from": PROTAGONIST_ID,
                                        "to": "f_chuoi_kiem_ban_do", "valid_from_chapter": 0,
                                        "how": "tự biết"}])
-    assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, chapters=SHORT))
+    assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, level=SHORT_LEVEL))
 
 
 def test_story_brief_carries_every_player_choice_and_naming():

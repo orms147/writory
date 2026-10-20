@@ -103,6 +103,28 @@ def test_plan_is_deleted_with_story(pg, new_db_story_id):
                       (sid,)).fetchone()[0] == 0
 
 
+# --- tóm tắt chương (migration 0004, D-49) -------------------------------------------------------
+
+
+def test_chapter_summaries_keep_the_first_and_go_with_the_story(pg, new_db_story_id):
+    from writory.db import delete_story_record, load_chapter_summaries, save_chapter_summary
+
+    sid = new_db_story_id()
+    create_story(pg, sid, length_level="short")
+    save_chapter_summary(pg, sid, 1, "Chương một.")
+    save_chapter_summary(pg, sid, 2, "Chương hai.")
+    save_chapter_summary(pg, sid, 2, "Bản sau không đè bản đầu.")
+    assert load_chapter_summaries(pg, sid, [1, 2, 3]) == {1: "Chương một.", 2: "Chương hai."}
+    assert load_chapter_summaries(pg, sid, []) == {}
+    with pytest.raises(ValueError):
+        save_chapter_summary(pg, sid, 0, "chương 0 không có trang")
+    with pytest.raises(ValueError):
+        save_chapter_summary(pg, sid, 3, "   ")
+    delete_story_record(pg, sid)
+    assert pg.execute("SELECT count(*) FROM chapter_summaries WHERE story_id = %s",
+                      (sid,)).fetchone()[0] == 0
+
+
 # --- key người chơi (G7) -----------------------------------------------------------------------
 
 

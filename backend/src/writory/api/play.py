@@ -3,8 +3,12 @@
 
 - `POST /stories/{id}/chapters/next` (SSE, `text/event-stream`): chạy `ChapterRun` và phát
   `pipeline.events` (sự kiện `stage`, `scene_ready`, `scene_blocked`, `chapter_committed`,
-  `choices_ready`, `error`). Mọi điều kiện kiểm được trước khi viết (truyện, chương dở, hành động
-  dẫn tới chương, key, trần) nằm trong dependency, nên lỗi đó là JSON thường có status (G12).
+  `choices_ready`, `story_finished`, `error`). Mọi điều kiện kiểm được trước khi viết (truyện,
+  chương dở, hành động dẫn tới chương, key, trần) nằm trong dependency, nên lỗi đó là JSON thường
+  có status (G12).
+- Chương cuối của bản kế hoạch (D-50): pipeline phát `story_finished` thay cho `choices_ready`.
+  Truyện đã kết thì `POST .../choices` trả bộ rỗng, không gọi model; chọn lựa chọn hay gửi hành động
+  tự viết báo STORY_COMPLETE.
 - G1: sự kiện là schema người chơi của `pipeline.events`; lựa chọn có cấu trúc (id nút, lời nói
   dối) chỉ lưu ở `chapter_choices`. `choices_ready` chỉ phát sau khi bộ lựa chọn đã lưu, để id mờ
   người chơi bấm luôn có ở máy chủ.
@@ -242,8 +246,8 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
     """Bộ lựa chọn của chương hiện tại; chưa có (bị chặn vì lộ, hoặc mất kết nối sau khi chương
     đã ghi) thì tạo lại từ player_view (G1, D-37). Đã có thì trả lại, không gọi model."""
     chapter = _committed(story)
-    if chapter == 0:
-        return ChoicesOut(chapter=0, choices=[])
+    if chapter == 0 or chapter >= plan.total_chapters:  # chương cuối không có lựa chọn (D-50)
+        return ChoicesOut(chapter=chapter, choices=[])
     existing = load_choices(conn, story.id, chapter)
     if existing:
         return ChoicesOut(chapter=chapter, choices=_for_player(existing))
@@ -263,10 +267,19 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
     return ChoicesOut(chapter=chapter, choices=_for_player(saved))
 
 
-@router.post("/{story_id}/choice", response_model=ActionOut)
-def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn) -> ActionOut:
-    """Chọn một lựa chọn của chương hiện tại bằng id mờ. Chọn lại được tới khi viết chương sau."""
+def _not_finished(story, plan: StoryPlan) -> int:
+    """Chương đã ghi cuối; truyện đã tới chương cuối của kế hoạch thì báo STORY_COMPLETE (D-50)."""
     chapter = _committed(story)
+    if chapter >= plan.total_chapters:
+        raise WritoryError(ErrorCode.STORY_COMPLETE, detail=f"truyện {story.id}: {chapter}")
+    return chapter
+
+
+@router.post("/{story_id}/choice", response_model=ActionOut)
+def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn,
+                plan: Plan) -> ActionOut:
+    """Chọn một lựa chọn của chương hiện tại bằng id mờ. Chọn lại được tới khi viết chương sau."""
+    chapter = _not_finished(story, plan)
     record = load_choice(conn, story.id, chapter, body.choice_id) if chapter >= 1 else None
     if record is None:
         raise WritoryError(ErrorCode.CHOICE_NOT_FOUND, detail=f"{story.id} ch{chapter}")
@@ -278,9 +291,10 @@ def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn) -> Ac
 
 @router.post("/{story_id}/action", response_model=ActionOut)
 async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps.PgConn,
-                        config: deps.Config, llm: deps.PlayerLLMs) -> ActionOut:
-    """Ô tự viết: phân loại bằng model có đầu ra enum (G5) trước khi lưu. Bị chặn thì không lưu."""
-    chapter = _committed(story) + 1
+                        config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ActionOut:
+    """Ô tự viết: phân loại bằng model có đầu ra enum (G5) trước khi lưu. Bị chặn thì không lưu.
+    Truyện đã kết thì báo trước khi gọi model (G8)."""
+    chapter = _not_finished(story, plan) + 1
     client = llm.metered(story_id=story.id, chapter=chapter)
     result = await with_retries(lambda: classify_action(body.text, llm=client, config=config),
                                 max_retries=config.limits.retries.llm_transient,

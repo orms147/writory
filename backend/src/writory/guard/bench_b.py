@@ -75,6 +75,7 @@ def run_case(case: dict, scen: Scenarios, sample: SampleStory) -> list[GuardIssu
     return check_scene_package(
         chapter=case["chapter"], current=current, earlier=earlier,
         committed=committed, plan=scen.plan, config=scen.config,
+        last_scene=case.get("last_scene", False),
     )
 
 
