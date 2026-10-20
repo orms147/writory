@@ -6,6 +6,7 @@ import json
 import re
 import unicodedata
 from pathlib import Path
+from typing import get_args
 
 import pytest
 import yaml
@@ -23,6 +24,7 @@ from writory.pipeline.setup import (
     BuildOutput,
     CharacterOption,
     CharactersOutput,
+    InitialEdgeType,
     Naming,
     PlotOption,
     PlotsOutput,
@@ -32,6 +34,7 @@ from writory.pipeline.setup import (
     StoryTags,
     build_story,
     default_naming,
+    edge_rules,
     initial_problems,
     propose_characters,
     propose_plots,
@@ -462,6 +465,70 @@ async def test_revealed_to_player_in_model_output_is_rejected():
     assert err.code is ErrorCode.RETRY_LIMIT_REACHED
     assert err.__cause__.code is ErrorCode.LLM_BAD_RESPONSE
     assert len(llm.calls) == RETRIES + 1
+
+
+# --- bảng cặp nhãn của cạnh trong đề build_story -------------------------------------------------
+# Hồi quy lần chạy tu-tien-1 (notes.md mục 7): lượt khởi tạo đầu hỏng vì model nối RELATES_TO giữa
+# Character và Faction. Đề liệt kê kiểu cạnh được nối giữa những nhãn nào, sinh từ đúng luật mà
+# `initial_problems` dùng; test so bảng trong đề với chính phép kiểm, nên hai chỗ không lệch nhau.
+
+_SECTION_LABEL = {"characters": "Character", PROTAGONIST_ID: "Character", "locations": "Location",
+                  "items": "Item", "factions": "Faction"}
+# Đại diện mỗi nhãn ở hai đầu cạnh, chọn để cạnh thêm vào không trùng cạnh có sẵn của fixture.
+_SOURCE = {"Character": "doan_khuong", "Location": "nui_hac_phong", "Item": "kiem_thiet_van",
+           "Faction": "thanh_long_bang"}
+_TARGET = {"Character": "to_nguyet_hoa", "Location": "lac_ha", "Item": "ngoc_boi",
+           "Faction": "huyet_y_mon"}
+_EXTRA_ITEM = {"id": "ngoc_boi", "name": "Ngọc Bội Hàn", "aliases": [], "description": "Ngọc."}
+
+
+async def _build_system_prompt() -> str:
+    llm = FakeLLM.scripted([_build()])
+    await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0")
+    [system] = [m.content for m in llm.calls[0] if m.role == "system"]
+    return system
+
+
+def _pairs_in_prompt(system: str, etype: str) -> set[tuple[str, str]]:
+    [line] = [ln for ln in system.splitlines() if ln.startswith(f"- `{etype}`:")]
+    left, right = line.split(":", 1)[1].split("→")
+
+    def labels(side: str) -> set[str]:
+        return {_SECTION_LABEL[s] for s in re.findall(r"`(\w+)`", side) if s in _SECTION_LABEL}
+
+    return {(a, b) for a in labels(left) for b in labels(right)}
+
+
+def _checker_accepts(etype: str, source: str, target: str) -> bool:
+    edge = {"type": etype, "source": source, "target": target, "kind": None, "score": None}
+    if etype == "RELATES_TO":
+        edge |= {"kind": "quen biết", "score": 10}
+    data = json.loads(_build(items=lambda i: i + [_EXTRA_ITEM], edges=lambda e: e + [edge]))
+    try:
+        to_story_setup(BuildOutput.model_validate(data), protagonist=PC, commit_id="c0",
+                       chapters=SHORT)
+    except WritoryError as e:
+        return f"{etype} không nối" not in e.detail
+    return True
+
+
+async def test_build_prompt_edge_table_matches_the_rules_initial_problems_checks():
+    system = await _build_system_prompt()
+    assert edge_rules() in system  # một khối riêng, sinh từ luật
+    for etype in get_args(InitialEdgeType):
+        in_prompt = _pairs_in_prompt(system, etype)
+        assert in_prompt, etype
+        for a, source in _SOURCE.items():
+            for b, target in _TARGET.items():
+                assert ((a, b) in in_prompt) == _checker_accepts(etype, source, target), \
+                    (etype, a, b)
+
+
+async def test_build_prompt_rules_out_the_run1_character_faction_relation():
+    system = await _build_system_prompt()
+    assert ("Character", "Faction") not in _pairs_in_prompt(system, "RELATES_TO")
+    assert ("Character", "Faction") in _pairs_in_prompt(system, "MEMBER_OF")
+    assert not _checker_accepts("RELATES_TO", "doan_khuong", "huyet_y_mon")
 
 
 def test_error_detail_names_ids_not_story_text():

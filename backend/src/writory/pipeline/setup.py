@@ -23,7 +23,7 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
 import unicodedata
 from collections import Counter
 from dataclasses import dataclass
-from typing import Any, Literal
+from typing import Any, Literal, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
@@ -37,7 +37,7 @@ from writory.llm.retry import with_json_retries
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
-PROMPT_VERSION = "setup-1"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "setup-2"  # đổi chữ prompt thì tăng số
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -306,10 +306,7 @@ của một bí mật (ai làm, vì sao) là fact riêng. `about`: id những th
 `known_by`: id nhân vật đã biết điều đó từ trước khi truyện bắt đầu. Nhân vật chính lúc này chưa \
 biết fact nào: không bao giờ ghi `{PROTAGONIST_ID}` vào `known_by`; điều nhân vật chính biết sẽ \
 hiện ra trên trang khi truyện kể tới.
-- `edges`: tình trạng lúc truyện bắt đầu. `RELATES_TO` (nhân vật → nhân vật: `kind` như bạn, thù, \
-thầy trò, người yêu; `score` từ -100 đến 100; có hướng, mỗi chiều một cạnh). `LOCATED_AT` (nhân \
-vật hoặc đồ vật → nơi chốn; mỗi thứ một nơi). `HOLDS` (nhân vật → đồ vật đang giữ; mỗi đồ vật một \
-người giữ). `MEMBER_OF` (nhân vật → phe). Kiểu khác `RELATES_TO` thì `kind` và `score` là null.
+- `edges`: tình trạng lúc truyện bắt đầu, theo bảng "Cạnh trong `edges`" ở cuối đề.
 - `threads`: các mạch chính và phụ: `description`, khoảng chương dự kiến gỡ (`due_from_chapter`, \
 `due_to_chapter`) trong số chương của truyện, `must_resolve` là true nếu mạch phải gỡ trước khi \
 kết.
@@ -467,7 +464,7 @@ async def build_story(
     pc = _clean_protagonist(protagonist)
     level = choices.level(config)
     messages = _messages(
-        BUILD_TASK, choices, level,
+        build_task(), choices, level,
         "Bối cảnh đã chọn:", _setting_data(setting),
         "Hướng cốt truyện đã chọn:", _plot_data(plot),
         f"Nhân vật chính (id `{PROTAGONIST_ID}`), người chơi đã chọn và có thể đã sửa:",
@@ -477,6 +474,11 @@ async def build_story(
     )
     output = await _ask(llm, config, messages, BuildOutput)
     return to_story_setup(output, protagonist=pc, commit_id=commit_id, chapters=level.chapters)
+
+
+def build_task() -> str:
+    """Đề của bước 4: phần việc, rồi khối bảng cạnh sinh từ luật (`edge_rules`) đứng riêng."""
+    return f"{BUILD_TASK}\n\n{edge_rules()}"
 
 
 # --- đổi đầu ra thành kế hoạch + gói, rồi kiểm -------------------------------------------------
@@ -564,6 +566,46 @@ _ENDPOINTS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
     "ABOUT": (frozenset({"Fact"}), NAMED_LABELS | {"Fact"}),
 }
 _TEXT_PROP = {"Fact": "text", "Thread": "description"}
+
+# --- bảng cạnh trong đề build_story, sinh từ `_ENDPOINTS` --------------------------------------
+# Lần chạy evals/results/2026-10-20-run-tu-tien-1/ hỏng lượt khởi tạo đầu vì model nối RELATES_TO
+# giữa Character và Faction. Đề nói kiểu cạnh nào nối những nhãn nào bằng đúng luật mà
+# `initial_problems` kiểm, nên đề và phép kiểm không lệch nhau. Chữ chú thích mỗi kiểu ở đây; cặp
+# nhãn chỉ ở `_ENDPOINTS`.
+
+# Nhãn → phần trong đầu ra của model (chữ model thấy trong schema).
+_LABEL_SECTIONS = {
+    "Character": f"nhân vật (`characters` hoặc `{PROTAGONIST_ID}`)",
+    "Location": "nơi chốn (`locations`)",
+    "Item": "đồ vật (`items`)",
+    "Faction": "phe (`factions`)",
+}
+_EDGE_NOTES = {
+    "RELATES_TO": "`kind` như bạn, thù, thầy trò, người yêu; `score` từ -100 đến 100; có hướng, "
+                  "mỗi chiều một cạnh",
+    "LOCATED_AT": "mỗi thứ ở một nơi",
+    "HOLDS": "đồ vật đang giữ; mỗi đồ vật một người giữ",
+    "MEMBER_OF": "nhân vật là thành viên của phe",
+}
+
+
+def edge_rules() -> str:
+    """Khối "Cạnh trong `edges`" của đề build_story: mỗi kiểu cạnh model được khai ở chương 0, nối
+    từ nhãn nào tới nhãn nào, đọc thẳng từ `_ENDPOINTS`."""
+
+    def side(labels: frozenset[str]) -> str:
+        return " hoặc ".join(_LABEL_SECTIONS[label] for label in sorted(labels))
+
+    head = ("Cạnh trong `edges` (chỉ các kiểu và cặp nhãn dưới đây, theo chiều từ → tới; nối khác "
+            "bảng này thì thế giới không dựng được):")
+    lines = [head]
+    for etype in get_args(InitialEdgeType):
+        sources, targets = _ENDPOINTS[etype]
+        lines.append(f"- `{etype}`: {side(sources)} → {side(targets)}; {_EDGE_NOTES[etype]}.")
+    lines.append("Kiểu khác `RELATES_TO` thì `kind` và `score` là null. Quan hệ không có trong "
+                 "bảng (ví dụ một nhân vật ngầm qua lại với một phe mà mình không thuộc về) thì "
+                 "viết thành một fact, không viết thành cạnh.")
+    return "\n".join(lines)
 
 
 def _is_int(value: object) -> bool:
