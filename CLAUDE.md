@@ -127,11 +127,10 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 *Chỉ ghi trạng thái hiện tại, kèm link tới quyết định. Cập nhật khi có thay đổi.*
 
 - Bản đang làm: **Bản 1, cuối tuần 1 sang tuần 2**.
-- Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`, `safety/` gồm bọc chữ, mã hoá key, lọc log, phân loại hành động G5), lõi đồ thị (`graph/` gồm `player_view`, ngữ cảnh model viết `context.py`; truyện mẫu `data/sample-story/`), kiểm văn (`quality/`), ghi chương phía Postgres (`db/`), khung FastAPI (`api/`).
-- Đang chờ merge: người canh bằng code (`guard/`, chờ chủ dự án duyệt sửa truyện mẫu), dò lộ bí mật G2 (`safety/leak.py`), kết quả bài đo D (chờ chủ dự án chấm tay 15 cảnh).
+- Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`), `safety/` (bọc chữ G4, mã hoá key G7, lọc log, phân loại hành động G5, dò lộ bí mật G2), lõi đồ thị (`graph/`: `player_view` một định nghĩa thuần, ngữ cảnh model viết `context.py`; truyện mẫu `data/sample-story/`), người canh bằng code (`guard/`), kiểm văn (`quality/`, chuẩn hoá dấu gạch D-31), ghi chương phía Postgres (`db/`), khung FastAPI (`api/`), `pipeline/story_plan.py`, bài đo B và D (`evals/results/`).
 - CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
-- Quyết định đang hiệu lực trên `main`: D-1 đến D-21, D-27 đến D-29 (`docs/decisions.md`). D-22..D-26, D-30 nằm ở các nhánh chờ merge.
+- Quyết định đang hiệu lực: D-1 đến D-33 (`docs/decisions.md`).
 - Model viết: GPT-6 Luna, một mức (`config/models.yaml`, D-33). Các vai giữ trí nhớ (`roles.*`) chưa chọn model.
 - Chưa có: model cho các vai giữ trí nhớ, trần chi phí (tuần 2), pipeline, frontend (tuần 4).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).
