@@ -138,3 +138,20 @@ def test_settings_validation_error_never_echoes_secret_values(monkeypatch, tmp_p
         Settings(_env_file=tmp_path / "missing.env")
     text = str(exc.value) + repr(exc.value)
     assert "7777777777" not in text
+
+
+def test_role_extract_uses_luna_with_low_reasoning():
+    """D-35: vai trích dùng GPT-6 Luna, suy luận mức thấp (bài C v2). Mức suy luận nằm trong config."""
+    models = load_config().models
+    assert models.roles.require("extract") == "openai/gpt-6-luna"
+    assert models.role_reasoning.extract == "low"
+    assert models.role_reasoning.outline is None  # vai khác chưa chọn
+
+
+def test_role_reasoning_rejects_unknown_effort(config_dir):
+    path = config_dir / "models.yaml"
+    path.write_text(path.read_text(encoding="utf-8").replace("  extract: low", "  extract: rat-cao"),
+                    encoding="utf-8")
+    with pytest.raises(ConfigError) as exc:
+        load_config(config_dir)
+    assert "role_reasoning" in str(exc.value)

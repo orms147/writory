@@ -113,6 +113,20 @@ class RoleModels(_Section):
     classify: str | None
 
 
+ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
+
+
+class RoleReasoning(_Strict):
+    """Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model."""
+
+    outline: ReasoningEffort | None = None
+    extract: ReasoningEffort | None = None
+    guard: ReasoningEffort | None = None
+    choices: ReasoningEffort | None = None
+    narrator: ReasoningEffort | None = None
+    classify: ReasoningEffort | None = None
+
+
 class WriterTier(_Strict):
     id: str
     label: str
@@ -122,6 +136,7 @@ class WriterTier(_Strict):
 
 class ModelsConfig(_Strict):
     roles: RoleModels
+    role_reasoning: RoleReasoning = RoleReasoning()
     writer_tiers: list[WriterTier]
 
 

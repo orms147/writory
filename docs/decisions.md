@@ -274,3 +274,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** chưa đo phát hiện thực thể mới; pipeline phải tạo nút mới ở bước khác (dàn ý/lựa chọn) trước khi trích. `chat_json` nhận `extra` (tham số riêng theo model).
 - **Người quyết:** Claude (điều phối); chủ dự án đồng ý làm bài đo này · 20/10/2026
 
+## D-35 · Vai trích dùng GPT-6 Luna, suy luận mức thấp
+- **Bối cảnh:** bài C (`evals/results/2026-10-20-extract-v1/`, `-v2/`, `-v2-qwen/`, `-v2-luna-reasoning/`). Prompt `extract-2` kèm sửa G3 đưa số lần hé lộ sai của Luna từ 4 về 0. Bật suy luận thấp tăng F1 lớp người chơi biết từ 0,63 lên 0,78, vẫn 0 hé lộ sai, chưa tới 0,001 USD/chương. DeepSeek V4.1 Flash thấp hơn hẳn (0,35). Qwen 3.8 Flash bị giới hạn tần suất 60% lời gọi.
+- **Quyết định:** `roles.extract = openai/gpt-6-luna`, `role_reasoning.extract = low` (`config/models.yaml`). Thêm mục `role_reasoning` vào config.
+- **Hệ quả:** F1 0,78 trên 5 chương mẫu, dữ liệu nhỏ và prompt đã chỉnh theo chính bộ này, nên con số có thể lạc quan. Cần đo lại khi có bài C đầy đủ và truyện thứ hai. Các vai khác chưa chọn.
+- **Người quyết:** Claude (điều phối), theo kết quả đo; chủ dự án đồng ý cách chọn · 20/10/2026
+
