@@ -83,6 +83,7 @@ class InputLimits(_Section):
     custom_action_max_chars: PositiveInt | None
     character_name_max_chars: PositiveInt | None
     backstory_max_chars: PositiveInt | None
+    narrator_question_max_chars: PositiveInt | None  # câu hỏi người kể (D-40)
 
 
 class ContextLimits(_Section):
@@ -269,3 +270,6 @@ class Settings(BaseSettings):
     postgres_dsn: SecretStr
     # Khoá Fernet mã hoá key OpenRouter của người chơi (G7). Cách tạo: docs/runbook.md
     player_key_encryption_key: SecretStr
+    # Mount router chưa có đăng nhập (sổ tay, hỏi người kể; D-41). Mặc định tắt: chưa kiểm được
+    # truyện thuộc ai (G10), nên chỉ bật trên máy dev.
+    enable_dev_routes: bool = False

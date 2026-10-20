@@ -29,6 +29,8 @@ from writory.graph.player_view import (
     build_player_view,
     player_knowledge_about,
     player_view,
+    public_entries,
+    public_lies,
 )
 from writory.graph.queries import (
     EdgeRow,
@@ -97,6 +99,8 @@ __all__ = [
     "player_knowledge_about",
     "player_view",
     "protagonist_id",
+    "public_entries",
+    "public_lies",
     "quote_in_text",
     "read_sample",
     "relationship",

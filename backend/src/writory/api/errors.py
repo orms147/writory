@@ -50,6 +50,11 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     # Dò lộ bí mật (G2, D-26): bản viết của model không dùng được, giống LLM_BAD_RESPONSE.
     # Status chung, không gợi rằng có bí mật.
     ErrorCode.SCENE_LEAK_BLOCKED: 502,
+    # Hỏi người kể (D-40)
+    ErrorCode.NARRATOR_QUESTION_EMPTY: 422,
+    ErrorCode.NARRATOR_QUESTION_TOO_LONG: 422,
+    ErrorCode.NARRATOR_LIMIT_REACHED: 429,
+    ErrorCode.WRITORY_RATE_LIMITED: 429,  # G8: giới hạn mỗi phút của WriTory, chưa có bộ đếm
 }
 
 

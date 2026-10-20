@@ -63,6 +63,8 @@ Chỉ trả trường trong danh sách trắng: id, loại, chữ hiện, biệt
 - `Fact`/`Event`/`Lie`: chữ hiện là `text`/`description`/`content` của nút.
  Không trả cạnh, quan hệ, vai trong sự kiện hay người giữ đồ vật. Nút `Thread` và `Chapter` không bao giờ vào `player_view`.
 
+**Mã công khai (D-40).** `id` của mục là id lớp truth và có thể lộ bí mật (mục "gã lái đò mặt sẹo" có id `ly_that`), nên chỉ dùng bên trong backend, ví dụ cho bộ dò lộ. Mọi đường ra cho người chơi (sổ tay API) và context của model phục vụ người chơi (hỏi người kể) dùng mã do `public_entries(view)` (`m1`, `m2`…) và `public_lies(view)` (`l1`…) gắn, xếp theo chương, loại, chữ hiện, không theo id.
+
 Câu trích của `REVEALED_TO_PLAYER` và của `KNOWS` từ nhân vật chính phải có nguyên văn trong chương (`quote_in_text`, chuẩn hoá NFC và khoảng trắng). Truyện mẫu được kiểm điều này trong `validate_sample`.
 
 ## Ghi theo `commit_id` (D-6)

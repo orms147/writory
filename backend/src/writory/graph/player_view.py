@@ -151,6 +151,24 @@ def build_player_view(
     return PlayerView(story_id, chapter, entries, lie_rows)
 
 
+def public_entries(view: PlayerView) -> tuple[tuple[str, PlayerEntry], ...]:
+    """Mục của view kèm mã công khai "m1", "m2"…, theo thứ tự chương, loại, chữ hiện.
+
+    Mọi đường ra cho người chơi, và mọi context của model phục vụ người chơi, dùng mã này thay
+    cho `PlayerEntry.id`. Id lớp truth có thể chứa tên thật hay bí mật (ví dụ `ly_that` của
+    "gã lái đò mặt sẹo"), nên không bao giờ ra ngoài (G1, D-40). Thứ tự không theo id, để cả thứ
+    tự cũng không mang thông tin của lớp truth.
+    """
+    ordered = sorted(view.entries, key=lambda e: (e.since_chapter, e.kind, e.text, e.quote or ""))
+    return tuple((f"m{i}", e) for i, e in enumerate(ordered, 1))
+
+
+def public_lies(view: PlayerView) -> tuple[tuple[str, PlayerLie], ...]:
+    """Lời nói dối của nhân vật chính kèm mã công khai "l1", "l2"…; cùng lý do `public_entries`."""
+    ordered = sorted(view.lies, key=lambda lie: (lie.chapter, lie.content, lie.told_to))
+    return tuple((f"l{i}", lie) for i, lie in enumerate(ordered, 1))
+
+
 _KNOWN_QUERY = f"""
 MATCH (x:{ENTITY} {{story_id: $story_id}})-[r:REVEALED_TO_PLAYER]->(:{ENTITY}:Chapter {{story_id: $story_id}})
 WHERE r.valid_from_chapter <= $chapter
