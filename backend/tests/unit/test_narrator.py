@@ -29,7 +29,13 @@ from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM, render_context
-from writory.pipeline.narrator import NOT_KNOWN, NarratorOutput, ask_narrator
+from writory.pipeline.narrator import (
+    NOT_KNOWN,
+    BlockReason,
+    NarratorOutput,
+    ask_narrator,
+    ask_narrator_reply,
+)
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.leak import check_leaks, strip_diacritics
 from writory.safety.wrap import CLOSE_TAG
@@ -127,6 +133,17 @@ async def ask(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=
     if isinstance(llm, FakeLLM):
         llm = metered(llm)
     return await ask_narrator(
+        question, view(chapter), llm=llm, config=config,
+        truth_names=state(chapter).named_nodes(), plan=plan, story_brief=brief,
+        quota=quota if quota is not None else MemoryQuota(),
+    )
+
+
+async def ask_reply(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN,
+                    brief: str = ""):
+    if isinstance(llm, FakeLLM):
+        llm = metered(llm)
+    return await ask_narrator_reply(
         question, view(chapter), llm=llm, config=config,
         truth_names=state(chapter).named_nodes(), plan=plan, story_brief=brief,
         quota=quota if quota is not None else MemoryQuota(),
@@ -485,3 +502,101 @@ async def test_rate_limit_from_provider_is_not_retried():
         await ask("Lan là ai?", 3, fake)
     assert exc.value.code is ErrorCode.LLM_RATE_LIMITED
     assert len(fake.calls) == 1
+
+
+# --- ask_narrator_reply: câu thô cho bài đo E (D-53); ask_narrator giữ nguyên hành vi ----------
+
+
+def _scripted_outputs(v: PlayerView) -> dict[str, tuple[str, BlockReason | None]]:
+    good = ref(v, "e_gu_death")
+    return {
+        "answered": (reply(True, "Lão Gù chết sau miếu Bà.", [good]), None),
+        "dashes": (reply(True, "Lão Gù — người thợ rèn — đã chết.", [good]), None),
+        "lie-ref": (reply(True, "Minh nói với Khải là ở nhà.", [ref(v, "l_home_night")]), None),
+        "known-false": (reply(False, None, []), BlockReason.MODEL_NOT_KNOWN),
+        "known-false-with-answer": (reply(False, "Lan là gián điệp.", []),
+                                    BlockReason.MODEL_NOT_KNOWN),
+        "null-answer": (reply(True, None, [good]), BlockReason.EMPTY_ANSWER),
+        "blank-answer": (reply(True, "   ", [good]), BlockReason.EMPTY_ANSWER),
+        "no-entries": (reply(True, "Có.", []), BlockReason.NO_ENTRIES),
+        "made-up-ref": (reply(True, "Có.", ["m999"]), BlockReason.UNKNOWN_REF),
+        "truth-id": (reply(True, "Có.", ["ly_that"]), BlockReason.UNKNOWN_REF),
+        "leak-secret": (reply(True, "Lan là gián điệp của Hội Hắc Kỳ.", [good]), BlockReason.LEAK),
+        "leak-name": (reply(True, "Lý Thất giết lão.", [good]), BlockReason.LEAK),
+    }
+
+
+_OUTPUT_NAMES = list(_scripted_outputs(view(3)))
+
+
+@pytest.mark.parametrize("name", _OUTPUT_NAMES)
+async def test_reply_answer_is_exactly_what_ask_narrator_returns(name):
+    """Bài đo E đọc câu thô qua `ask_narrator_reply`; người chơi vẫn nhận đúng chữ như trước."""
+    raw, reason = _scripted_outputs(view(3))[name]
+    plain = await ask("Lão Gù sao rồi?", 3, FakeLLM.scripted([raw]))
+    detailed = await ask_reply("Lão Gù sao rồi?", 3, FakeLLM.scripted([raw]))
+    assert detailed.answer == plain
+    assert detailed.blocked is reason
+    assert (detailed.answer == NOT_KNOWN) is (reason is not None)
+    # Câu thô là đúng đầu ra model đã qua schema, trước mọi phép kiểm của code.
+    assert detailed.output == NarratorOutput.model_validate_json(raw)
+
+
+@pytest.mark.parametrize("brief", ["", f"{BRIEF} Ở bến có lái đò Lý Thất."])
+async def test_reply_honors_story_brief_like_ask_narrator(brief):
+    """D-52 đi qua cả hai đường như nhau: tên đã đọc lúc khởi tạo không còn bị cấm."""
+    v = view(4)
+    raw = reply(True, "Gã lái đò mặt sẹo buộc thuyền trước quán, chỗ Lý Thất hay ngồi.",
+                [ref(v, "ly_that")])
+    plain = await ask("Gã lái đò là ai?", 4, FakeLLM.scripted([raw]), brief=brief)
+    detailed = await ask_reply("Gã lái đò là ai?", 4, FakeLLM.scripted([raw]), brief=brief)
+    assert detailed.answer == plain
+    assert (detailed.blocked is BlockReason.LEAK) is (brief == "")
+
+
+async def test_reply_keeps_the_raw_secret_that_code_blocked():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lan là gián điệp của Hội Hắc Kỳ.", [ref(v, "lan")])])
+    detailed = await ask_reply("Lan là ai?", 3, fake)
+    assert detailed.answer == NOT_KNOWN
+    assert detailed.output is not None
+    assert detailed.output.answer == "Lan là gián điệp của Hội Hắc Kỳ."
+
+
+async def test_reply_with_empty_notebook_has_no_model_output():
+    fake, quota = FakeLLM.scripted([]), MemoryQuota()
+    detailed = await ask_reply("Tôi là ai?", 0, fake, quota=quota)
+    assert (detailed.answer, detailed.output, detailed.blocked) == (
+        NOT_KNOWN, None, BlockReason.EMPTY_NOTEBOOK)
+    assert fake.calls == [] and sum(quota.taken.values()) == 0
+
+
+async def test_reply_raw_output_is_the_one_after_schema_retry():
+    v = view(3)
+    good = reply(True, "Ở miếu Bà.", [ref(v, "mieu_ba")])
+    fake = FakeLLM.scripted(["không phải JSON", good])
+    detailed = await ask_reply("Ở đâu?", 3, fake)
+    assert detailed.answer == "Ở miếu Bà." and len(fake.calls) == 2
+    assert detailed.output == NarratorOutput.model_validate_json(good)
+
+
+@pytest.mark.parametrize(("question", "change", "code"), [
+    ("", {}, ErrorCode.NARRATOR_QUESTION_EMPTY),
+    ("a" * 301, {}, ErrorCode.NARRATOR_QUESTION_TOO_LONG),
+    ("Lan?", {"rate_limit__narrator_questions_per_chapter": 0}, ErrorCode.NARRATOR_LIMIT_REACHED),
+    ("Lan?", {"roles__narrator": None}, ErrorCode.CONFIG_MODEL_NOT_SET),
+])
+async def test_reply_raises_the_same_errors_as_ask_narrator(question, change, code):
+    cfg = with_limits(**change) if change else CFG
+    for fn in (ask, ask_reply):
+        fake, quota = FakeLLM.scripted([]), MemoryQuota()
+        with pytest.raises(WritoryError) as exc:
+            await fn(question, 3, fake, quota=quota, config=cfg)
+        assert exc.value.code is code
+        assert fake.calls == []
+
+
+async def test_reply_also_requires_metered_client():
+    with pytest.raises(TypeError):
+        await ask_narrator_reply("Lan là ai?", view(3), llm=FakeLLM.scripted([]), config=CFG,
+                                 truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota())

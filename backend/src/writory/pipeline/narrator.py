@@ -9,10 +9,16 @@
   dựa vào mã không có trong sổ tay → đúng câu `NOT_KNOWN`.
 - G2: câu trả lời qua `check_leaks`; trúng thì cũng trả `NOT_KNOWN`, log chỉ ghi loại và vị trí.
 - G8: lời gọi phải qua `MeteredClient`; số câu hỏi mỗi chương có trần, giữ lượt trước khi gọi.
+
+`ask_narrator` là đường của người chơi. `ask_narrator_reply` chạy đúng các bước đó, và trả thêm
+câu thô của model cùng lý do code thay bằng `NOT_KNOWN`, cho bài đo E (D-53). `ask_narrator` chỉ
+lấy `answer` của nó, nên hai đường không thể lệch nhau.
 """
 
 import logging
 from collections.abc import Mapping
+from dataclasses import dataclass
+from enum import StrEnum
 from typing import Protocol
 
 from pydantic import BaseModel, ConfigDict
@@ -43,6 +49,27 @@ class NarratorOutput(BaseModel):
     known: bool
     answer: str | None
     entry_ids: list[str]
+
+
+class BlockReason(StrEnum):
+    """Vì sao người chơi nhận `NOT_KNOWN` thay cho chữ của model."""
+
+    EMPTY_NOTEBOOK = "empty_notebook"  # sổ tay trống: không gọi model
+    MODEL_NOT_KNOWN = "model_not_known"  # model trả known = false
+    EMPTY_ANSWER = "empty_answer"  # known = true nhưng câu trả lời rỗng
+    NO_ENTRIES = "no_entries"  # không dẫn mục sổ tay nào
+    UNKNOWN_REF = "unknown_ref"  # dẫn mã không có trong sổ tay
+    LEAK = "leak"  # bộ dò lộ trúng (G2)
+
+
+@dataclass(frozen=True)
+class NarratorReply:
+    """`answer`: chữ người chơi thấy. `output`: câu thô của model đã qua schema, None khi không
+    gọi model. `blocked`: None khi `answer` là chữ của model."""
+
+    answer: str
+    output: NarratorOutput | None
+    blocked: BlockReason | None
 
 
 class NarratorQuota(Protocol):
@@ -143,6 +170,25 @@ async def ask_narrator(
     `story_brief` (thiết lập truyện người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ (G2), không bao
     giờ vào context của model.
     """
+    reply = await ask_narrator_reply(question, view, llm=llm, config=config,
+                                     truth_names=truth_names, plan=plan, story_brief=story_brief,
+                                     quota=quota)
+    return reply.answer
+
+
+async def ask_narrator_reply(
+    question: str,
+    view: PlayerView,
+    *,
+    llm: MeteredClient,
+    config: AppConfig,
+    truth_names: Mapping[str, tuple[str, ...]],
+    plan: StoryPlan,
+    story_brief: str,
+    quota: NarratorQuota,
+) -> NarratorReply:
+    """Như `ask_narrator`, kèm câu thô của model và lý do bị thay. Câu thô có thể chứa bí mật:
+    chỉ bộ đo đọc nó, không bao giờ trả cho người chơi hay ghi vào log."""
     if not isinstance(llm, MeteredClient):
         raise TypeError("hỏi người kể phải gọi model qua MeteredClient (G8)")
     require_story_id(view.story_id)
@@ -156,7 +202,8 @@ async def ask_narrator(
             ErrorCode.NARRATOR_QUESTION_TOO_LONG, detail=f"{len(question)} > {max_chars} ký tự"
         )
     if not view.entries and not view.lies:
-        return NOT_KNOWN  # sổ tay trống: không có gì để trả lời, không gọi model, không mất lượt
+        # Sổ tay trống: không có gì để trả lời, không gọi model, không mất lượt.
+        return NarratorReply(NOT_KNOWN, None, BlockReason.EMPTY_NOTEBOOK)
     if not await quota.take(view.story_id, view.chapter, limit):
         raise WritoryError(
             ErrorCode.NARRATOR_LIMIT_REACHED, detail=f"chương {view.chapter}: đủ {limit} câu"
@@ -176,8 +223,9 @@ async def ask_narrator(
         return output
 
     output = await with_retries(call, max_retries=retries.llm_transient, retry_on=RETRY_TRANSIENT)
-    return _checked_answer(output, view, truth_names=truth_names, plan=plan,
-                           story_brief=story_brief)
+    answer, blocked = _checked_answer(output, view, truth_names=truth_names, plan=plan,
+                                      story_brief=story_brief)
+    return NarratorReply(answer, output, blocked)
 
 
 def _checked_answer(
@@ -187,24 +235,26 @@ def _checked_answer(
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
     story_brief: str,
-) -> str:
+) -> tuple[str, BlockReason | None]:
     """Không ghi chữ của model hay câu hỏi vào log: có thể chứa bí mật truyện (G12)."""
     answer = normalize_dashes((output.answer or "").strip())
     if not output.known or not answer or not output.entry_ids:
         log.info("người kể: chương %d, không biết", view.chapter)
-        return NOT_KNOWN
+        reason = (BlockReason.MODEL_NOT_KNOWN if not output.known
+                  else BlockReason.EMPTY_ANSWER if not answer else BlockReason.NO_ENTRIES)
+        return NOT_KNOWN, reason
     refs = {r for r, _ in public_entries(view)} | {r for r, _ in public_lies(view)}
     unknown = [i for i in output.entry_ids if i not in refs]
     if unknown:
         log.warning("người kể: chương %d, %d mã mục không có trong sổ tay; trả NOT_KNOWN",
                     view.chapter, len(unknown))
-        return NOT_KNOWN
+        return NOT_KNOWN, BlockReason.UNKNOWN_REF
     hits = check_leaks(answer, view=view, truth_names=truth_names, plan=plan,
                        story_brief=story_brief)
     if hits:
         where = ", ".join(f"{h.kind.value}@{h.start}-{h.end}" for h in hits)
         log.warning("người kể: chương %d, chặn câu trả lời (G2): %d chỗ trúng (%s)",
                     view.chapter, len(hits), where)
-        return NOT_KNOWN
+        return NOT_KNOWN, BlockReason.LEAK
     log.info("người kể: chương %d, trả lời dựa trên %d mục", view.chapter, len(output.entry_ids))
-    return answer
+    return answer, None

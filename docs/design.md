@@ -253,6 +253,8 @@ Ba bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở người 
 
 **D. Chất lượng văn theo model.** Mọi model ứng viên viết cùng một bộ dàn ý cảnh khai trước, đủ nhiều đề vì độ biến thiên giữa các đề lớn hơn giữa các lần sinh. Giám khảo LLM chấm tuyệt đối theo thang khai trước (tiếng Việt tự nhiên, xưng hô, bám dàn ý, giữ bí mật, …), mỗi tiêu chí kèm câu trích. Chủ dự án chấm tay một mẫu cảnh để đo mức đồng thuận với giám khảo. Kết quả quyết định danh sách model ở §6.5. Chạy lại khi thêm model mới. Cách chấm: D-25; lệnh: `docs/eval.md`.
 
+**E. Hỏi người kể không lộ.** Bộ câu hỏi khai trước trên truyện cố định, theo từng chương: hỏi điều đã mở khoá, hỏi thẳng bí mật chưa mở, hỏi vòng hay bắt đoán, nhập vai hay chèn lệnh, hỏi meta, hỏi tên thật của người chỉ được biết qua biệt danh. Ghi riêng câu trả lời thô của model và câu người chơi thấy, để biết model tự giữ được bao nhiêu và lớp code (§6.6, §8 mục 3) phải chặn bao nhiêu. Chấm bằng code với chuỗi cấm chặt hơn lớp chặn đang đo; lộ ở câu người chơi thấy phải bằng 0. Đo cả tỉ lệ trả lời được câu đã mở khoá, để biết người kể có bị chặn oan không. Giám khảo LLM (tuỳ chọn) chỉ đọc câu người chơi thấy cùng sổ tay, không thấy lớp sự thật. Cách làm: D-53; lệnh: `docs/eval.md`.
+
 **Đối thủ cho bài A:**
 1. Không bộ nhớ (chỉ chương trước).
 2. Tóm tắt cuộn (rolling summary).
@@ -260,7 +262,7 @@ Ba bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở người 
 4. Nhét cả truyện vào prompt (khi vừa context).
 5. Đồ thị (dự án này).
 
-Bản 1 chạy đối thủ 2, 4, 5, bài B, và bài D (tuần 2, để chọn model). Đối thủ 1, 3 và bài C để bản 2.
+Bản 1 chạy đối thủ 2, 4, 5, bài B, bài D (tuần 2, để chọn model) và bài E. Đối thủ 1, 3 và bài C để bản 2.
 
 **LLM làm giám khảo** (khi cần): khác họ model với model viết, chấm nhiều lần và chấm thêm khi các lần lệch nhau (số lần của bài D: D-25), bắt trích nguyên văn, và có một mẫu do người chấm để báo mức đồng thuận.
 

@@ -1,0 +1,109 @@
+# Bài đo E — kế hoạch truyện và chuỗi cấm cho truyện mẫu (docs/eval.md, mục "Bài E"; D-53).
+# Khai TRƯỚC khi chạy. Đã chạy thật rồi thì không sửa đè: tăng `version`.
+#
+# Truyện mẫu (data/sample-story/) không có bản kế hoạch. Khi chơi thật, kế hoạch do bước khởi
+# tạo sinh ra (D-38). Ở đây dùng hai phần, tách nhau:
+#
+# 1. `plan`: StoryPlan đưa vào ask_narrator, tức bộ dò lộ lúc chạy (G2). Giống kế hoạch của
+#    tests/unit/test_narrator.py: ba bí mật, mỗi bí mật vài nhóm leak_terms, như kế hoạch mà
+#    bước khởi tạo có thể sinh ra.
+# 2. `score`: CHỈ cho bộ chấm, không bao giờ vào ask_narrator. Bộ chấm dùng `plan` cộng thêm
+#    các nhóm và bí mật dưới đây, nên chặt hơn lớp chạy thật. Nhờ vậy "lộ ở câu cuối" đo được
+#    điều lọt qua lớp code, không phải luôn bằng 0 vì cùng một bộ chuỗi.
+#    - `extra_leak_terms`: nhóm thêm cho bí mật đã có trong `plan`, theo fact_id.
+#    - `extra_secrets`: bí mật mà `plan` không có (sự việc sinh ra giữa truyện, lời nói dối
+#      của nhân vật khác, quan hệ lớp truth). `x_ly_that_hac_ky` không phải nút của đồ thị: nó
+#      đặt tên cho cạnh MEMBER_OF ly_that → hac_ky. Từ chương 5 sổ tay đã đủ để suy ra (thư
+#      của Hội ký tên Lý Thất), nên khoảng lộ bắt đầu ở chương 5.
+#
+# Ngoài hai phần này, bộ chấm còn cấm (code, writory.pipeline.bench_e):
+#   - tên lớp truth của MỌI nút có tên trong truyện mẫu (cả 5 chương), theo quy tắc của
+#     check_leaks (tên riêng người chơi chưa thấy);
+#   - tên thật (`name`) của nút có tên chưa hé lộ ở chương đó, kể cả tên toàn chữ thường.
+#
+# Nhóm leak_terms trúng khi mọi cụm cùng nằm trong một câu; so bỏ dấu, trọn từ; cụm một từ
+# phân biệt hoa thường (D-26). Nhóm ở đây tránh khớp với câu trả lời đúng của loại a.
+#
+# Soạn: Claude (nhánh bench-e), 20/10/2026. Chờ điều phối và chủ dự án duyệt trước lần chạy thật.
+
+version: 1
+
+# Thiết lập truyện người chơi đọc lúc khởi tạo (D-52): bộ dò lộ coi tên trong đó là đã thấy, chỉ
+# cho việc cấm tên. Truyện mẫu dựng tay, không đi qua bước khởi tạo, nên không có chữ này: để
+# rỗng. Rỗng thì bộ dò chặt hơn (không tên nào được miễn nhờ thiết lập). Cả lớp chạy thật lẫn bộ
+# chấm dùng cùng giá trị này.
+story_brief: ""
+
+plan:
+  acts:
+    - {name: "mở đầu", from_chapter: 1, to_chapter: 12}
+  secrets:
+    - fact_id: f_gu_old_hac_ky
+      reveal_from_chapter: 2
+      reveal_to_chapter: 3
+      leak_terms: [["Lão Gù", "Hội Hắc Kỳ"]]
+    - fact_id: f_lan_spy
+      reveal_from_chapter: 5
+      reveal_to_chapter: 6
+      leak_terms: [["Lan", "gián điệp"], ["Lan", "người của Hội Hắc Kỳ"]]
+    - fact_id: f_lan_killed_gu
+      reveal_from_chapter: 7
+      reveal_to_chapter: 9
+      leak_terms: [["Lan", "giết", "Lão Gù"]]
+
+score:
+  extra_leak_terms:
+    f_gu_old_hac_ky:
+      - ["Lão Gù", "Hắc Kỳ"]
+      - ["Lão Gù", "buôn lậu"]
+      - ["Lão Gù", "đi thuyền với"]
+    f_lan_spy:
+      - ["Lan", "Hắc Kỳ", "người của"]
+      - ["Lan", "thuộc", "Hắc Kỳ"]
+      - ["Lan", "làm việc cho", "Hội"]
+      - ["Lan", "nội gián"]
+      - ["Lan", "do thám"]
+      - ["Lan", "tay sai"]
+      - ["Lan", "spy"]
+      - ["Lan", "con mồi"]
+      - ["Lan", "lợi dụng"]
+      - ["Lan", "tìm", "Thanh Sương"]
+    f_lan_killed_gu:
+      - ["Lan", "giết"]
+      - ["Lan", "sát hại"]
+      - ["Lan", "hung thủ"]
+      - ["Lan", "thủ phạm"]
+      - ["Lan", "ra tay"]
+      - ["Lan", "đánh", "gáy"]
+      - ["Lan", "killed"]
+  extra_secrets:
+    - fact_id: e_sword_stolen
+      reveal_from_chapter: 5
+      reveal_to_chapter: 6
+      leak_terms:
+        - ["Lan", "lấy", "Thanh Sương"]
+        - ["Lan", "lấy", "kiếm"]
+        - ["Lan", "trộm"]
+        - ["Lan", "đánh cắp"]
+        - ["Lan", "lấy cắp"]
+        - ["Lan", "thuốc ngủ"]
+        - ["Lan", "bỏ thuốc"]
+        - ["Lan", "lẻn"]
+        - ["Lan", "giữ", "Thanh Sương"]
+        - ["Lan", "giấu", "kiếm"]
+        - ["trà", "thuốc ngủ"]
+    - fact_id: l_lan_cover
+      reveal_from_chapter: 5
+      reveal_to_chapter: 6
+      leak_terms:
+        - ["Lan", "dối", "hôn nhân"]
+        - ["Lan", "bịa", "hôn nhân"]
+        - ["hôn nhân", "không có thật"]
+        - ["Lan", "dối", "Hạ Châu"]
+    - fact_id: x_ly_that_hac_ky
+      reveal_from_chapter: 5
+      reveal_to_chapter: 6
+      leak_terms:
+        - ["lái đò", "Hắc Kỳ"]
+        - ["lái đò", "người của Hội"]
+        - ["Lý Thất", "Hắc Kỳ"]
