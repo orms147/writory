@@ -43,6 +43,7 @@ class ErrorCode(StrEnum):
     NARRATOR_QUESTION_TOO_LONG = "NARRATOR_QUESTION_TOO_LONG"
     NARRATOR_LIMIT_REACHED = "NARRATOR_LIMIT_REACHED"
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
+    STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
 
 
 @dataclass(frozen=True)
@@ -195,6 +196,13 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.WRITORY_RATE_LIMITED: PlayerMessage(
         "Bạn đang gửi yêu cầu nhanh hơn mức WriTory cho phép.",
         "Đợi khoảng một phút rồi thử lại.",
+    ),
+    # Khởi tạo truyện (D-39): kết quả model sai quy tắc. Không nói sai ở đâu, vì chi tiết có thể
+    # nhắc tới bản kế hoạch ẩn (bí mật, khoảng lộ).
+    ErrorCode.STORY_SETUP_INVALID: PlayerMessage(
+        "Bước khởi tạo truyện vừa rồi cho ra kết quả không hợp lệ nên hệ thống chưa dùng và chưa "
+        "lưu gì. Lỗi ở phía hệ thống, không phải do bạn.",
+        "Bấm thử lại bước này. " + _REPORT,
     ),
 }
 

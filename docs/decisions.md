@@ -280,6 +280,26 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** F1 0,78 trên 5 chương mẫu, dữ liệu nhỏ và prompt đã chỉnh theo chính bộ này, nên con số có thể lạc quan. Cần đo lại khi có bài C đầy đủ và truyện thứ hai. Các vai khác chưa chọn.
 - **Người quyết:** Claude (điều phối), theo kết quả đo; chủ dự án đồng ý cách chọn · 20/10/2026
 
+## D-38 · Khởi tạo truyện: bốn bước, nhân vật chính do code dựng, chương 0 người chơi chưa biết gì
+- **Bối cảnh:** design §4.1 cần 3 bối cảnh / 3 hướng / 3 nhân vật rồi bản kế hoạch và đồ thị ban đầu. Chương 0 là thế giới lúc khởi tạo (D-21). `KNOWS` của nhân vật chính là điều người chơi biết (D-16), mà ở chương 0 chưa có trang nào để trích câu (G3).
+- **Quyết định:** `writory.pipeline.setup`:
+  - `propose_settings`, `propose_plots`, `propose_characters`: đúng 3 lựa chọn, không trường rỗng. Prompt cấm viết bí mật vào lựa chọn, vì người chơi đọc chúng (G1). Đầu vào gom trong `StoryChoices` (tag, độ dài, góc nhìn, quy ước tên).
+  - `build_story` trả `StoryPlan` + gói chương 0, kiểm bằng `initial_problems` (luật: graph-schema.md, mục Chương 0). Nhân vật chính do code dựng từ chữ người chơi, id `protagonist`, `user_authored: true`. Nhân vật chính không `KNOWS` gì, không có `REVEALED_TO_PLAYER`; `KNOWS` khác có `how: "tự biết"`. Mạch của kế hoạch là nút `Thread` có `planted_chapter: 0`.
+  - Tag, bối cảnh và hướng đã chọn, nhân vật chính đã sửa đều bọc `UserAuthored`, vì trình duyệt gửi lại chúng (G4).
+  - `Naming` chuyển từ bài đo D sang đây, dùng chung một chỗ. `default_naming` theo bảng design §4.1. Thể loại ngoài bảng dùng tên Việt, địa danh hư cấu.
+- **Hệ quả:** chưa kiểm bằng code tên có đúng kiểu Hán Việt hay Việt; điều này chỉ nằm trong prompt. Chưa kiểm độ dài chữ người chơi sửa (`limits.input.*` đang null, chưa có khoá cho tính cách). Chưa lưu `StoryPlan` vào Postgres. `writer_context` chưa đọc `personality`/`backstory`.
+- **Người quyết:** Claude (nhánh pipeline-setup), chờ điều phối duyệt · 20/10/2026
+
+## D-39 · Vai `setup`; JSON sai schema thì thử lại, sai quy tắc thì báo `STORY_SETUP_INVALID`
+- **Bối cảnh:** bốn bước khởi tạo cần một model (D-3: các vai cố định nằm trong config) và một cách xử lý khi model trả sai.
+- **Quyết định:**
+  - Thêm `roles.setup` và `role_reasoning.setup` vào `config/models.yaml`, đều `null`. Gọi qua `require_model`, nên chưa chọn model thì báo `CONFIG_MODEL_NOT_SET`. `llm.role_extra` đổi `role_reasoning.<vai>` thành `extra`, dùng được cho mọi vai.
+  - JSON sai schema thử lại theo `retries.extract_schema_retry` (`RETRY_SCHEMA`, D-14). Không thêm khoá riêng, vì G11 đã nói "thử lại 1 lần".
+  - Sai quy tắc (số lựa chọn, kế hoạch, gói chương 0) báo ngay mã mới `STORY_SETUP_INVALID` (HTTP 502), không tự gọi lại model, để không trừ tiền key người chơi khi chưa hỏi. Câu báo không nói sai ở đâu, vì chi tiết có thể chạm bản kế hoạch ẩn; chi tiết vào log, chỉ ghi id và số chương.
+  - Không trả nửa vời: có một lỗi là không trả kế hoạch hay gói. Module không ghi gì.
+- **Hệ quả:** người chơi phải bấm thử lại khi model sai quy tắc. Muốn tự thử lại thì đổi `retry_on`, cần chủ dự án đồng ý vì tốn tiền.
+- **Người quyết:** Claude (nhánh pipeline-setup), chờ điều phối duyệt · 20/10/2026
+
 ## D-40 · Hỏi người kể: context chỉ từ `player_view`, mã công khai thay id, không biết thì một câu
 - **Bối cảnh:** design §6.6 và G1/G2/G4/G8. `PlayerEntry.id` là id lớp truth, có thể lộ bí mật: ở chương 4 truyện mẫu, mục "gã lái đò mặt sẹo" có id `ly_that`.
 - **Quyết định:**

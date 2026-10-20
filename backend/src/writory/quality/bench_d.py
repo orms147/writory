@@ -58,6 +58,7 @@ from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient, Message
 from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import OpenRouterClient
+from writory.pipeline.setup import NAMES_TEXT, PLACES_TEXT, Naming  # quy ước tên D-32, một chỗ
 from writory.quality import (
     check_cliches,
     check_dialogue,
@@ -136,18 +137,6 @@ class LengthRange(_Strict):
 class Character(_Strict):
     name: str = Field(min_length=1)
     desc: str
-
-
-class Naming(_Strict):
-    """Quy ước tên nhân vật và địa danh của một cảnh (D-32)."""
-
-    names: Literal["han_viet", "viet"]
-    places: Literal["hu_cau", "that"]
-
-
-NAMES_TEXT = {"han_viet": "tên nhân vật kiểu Hán Việt", "viet": "tên nhân vật kiểu Việt"}
-PLACES_TEXT = {"hu_cau": "địa danh hư cấu, không dùng địa danh có thật",
-               "that": "được dùng địa danh có thật"}
 
 
 class Case(_Strict):

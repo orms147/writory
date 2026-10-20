@@ -115,3 +115,15 @@ def test_require_model_returns_role_model_or_model_not_set():
         require_model(roles, "guard")
     assert exc.value.code is ErrorCode.CONFIG_MODEL_NOT_SET
     assert "roles.guard" in str(exc.value)
+
+
+def test_role_extra_carries_reasoning_effort_from_config():
+    """`role_reasoning.<vai>` (config/models.yaml) đi vào `extra` của lời gọi; null thì không gửi gì."""
+    from writory.llm.base import role_extra
+
+    models = load_config().models
+    models = models.model_copy(update={
+        "role_reasoning": models.role_reasoning.model_copy(update={"extract": "low", "setup": None}),
+    })
+    assert role_extra(models, "extract") == {"reasoning": {"effort": "low"}}
+    assert role_extra(models, "setup") is None

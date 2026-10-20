@@ -9,10 +9,12 @@ roles:
   choices: null      # tạo 3 lựa chọn
   narrator: null     # hỏi người kể
   classify: null     # phân loại ô tự viết (G5)
+  setup: null        # khởi tạo truyện: bối cảnh, cốt truyện, nhân vật, kế hoạch + chương 0 (D-39)
 
 # Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model.
 role_reasoning:
   extract: low   # D-35: bài C v2, suy luận thấp tăng F1 lớp người chơi biết 0,63 → 0,78
+  setup: null    # chọn cùng model cho vai setup (D-39)
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
 # D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).

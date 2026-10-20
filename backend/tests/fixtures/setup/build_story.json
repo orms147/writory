@@ -1,0 +1,64 @@
+{
+  "acts": [
+    {"name": "mở đầu", "from_chapter": 1, "to_chapter": 1},
+    {"name": "phát triển", "from_chapter": 2, "to_chapter": 3},
+    {"name": "cao trào", "from_chapter": 4, "to_chapter": 5},
+    {"name": "kết", "from_chapter": 6, "to_chapter": 6}
+  ],
+  "characters": [
+    {"id": "to_nguyet_hoa", "name": "Tô Nguyệt Hoa", "aliases": ["Nguyệt Hoa", "cô gái áo lam"],
+     "personality": "Dịu dàng ngoài mặt, tính toán từng bước.",
+     "backstory": "Tới trấn Lạc Hà nửa năm trước, mở một sạp thuốc nhỏ bên bến."},
+    {"id": "ha_ba_tung", "name": "Hà Bá Tùng", "aliases": ["Hà lão"],
+     "personality": "Hiền hậu, ít nói về quá khứ.",
+     "backstory": "Bạn cũ của cha nhân vật chính, nuôi cậu từ khi cha mất."},
+    {"id": "doan_khuong", "name": "Đoàn Khương", "aliases": ["Đoàn đại ca"],
+     "personality": "Nóng nảy, trọng nghĩa.",
+     "backstory": "Từng là đường chủ Thanh Long Bang, nay làm phu khuân vác ở bến."}
+  ],
+  "locations": [
+    {"id": "lac_ha", "name": "trấn Lạc Hà", "aliases": ["Lạc Hà"], "description": "Trấn nhỏ ven sông, nơi thuyền buôn ghé lấy nước."},
+    {"id": "lo_ren_ho_luc", "name": "lò rèn họ Lục", "aliases": [], "description": "Lò rèn cũ cuối trấn, cha nhân vật chính để lại."},
+    {"id": "nui_hac_phong", "name": "núi Hắc Phong", "aliases": [], "description": "Ngọn núi đá đen phía bắc trấn, quanh năm mây mù."}
+  ],
+  "factions": [
+    {"id": "huyet_y_mon", "name": "Huyết Y Môn", "aliases": [], "description": "Môn phái sát thủ áo đỏ, làm việc trong bóng tối."},
+    {"id": "thanh_long_bang", "name": "Thanh Long Bang", "aliases": [], "description": "Bang hội đường thuỷ đã tan rã mười năm trước."}
+  ],
+  "items": [
+    {"id": "kiem_thiet_van", "name": "kiếm Thiết Vân", "aliases": ["thanh kiếm cũ"], "description": "Thanh kiếm sắt xám cha nhân vật chính rèn."}
+  ],
+  "facts": [
+    {"id": "f_nguyet_hoa_huyet_y", "text": "Tô Nguyệt Hoa là người của Huyết Y Môn",
+     "about": ["to_nguyet_hoa", "huyet_y_mon"], "known_by": ["to_nguyet_hoa"]},
+    {"id": "f_ha_lao_giet_cha", "text": "Hà Bá Tùng là kẻ đã giết cha của nhân vật chính",
+     "about": ["ha_ba_tung", "protagonist"], "known_by": ["ha_ba_tung"]},
+    {"id": "f_chuoi_kiem_ban_do", "text": "Chuôi kiếm Thiết Vân giấu bản đồ tới kho binh khí cũ của Thanh Long Bang",
+     "about": ["kiem_thiet_van", "thanh_long_bang"], "known_by": ["ha_ba_tung", "doan_khuong"]}
+  ],
+  "edges": [
+    {"type": "MEMBER_OF", "source": "to_nguyet_hoa", "target": "huyet_y_mon", "kind": null, "score": null},
+    {"type": "MEMBER_OF", "source": "doan_khuong", "target": "thanh_long_bang", "kind": null, "score": null},
+    {"type": "RELATES_TO", "source": "protagonist", "target": "ha_ba_tung", "kind": "thầy trò", "score": 70},
+    {"type": "RELATES_TO", "source": "ha_ba_tung", "target": "protagonist", "kind": "đồ đệ", "score": 40},
+    {"type": "RELATES_TO", "source": "doan_khuong", "target": "protagonist", "kind": "người quen", "score": 20},
+    {"type": "HOLDS", "source": "protagonist", "target": "kiem_thiet_van", "kind": null, "score": null},
+    {"type": "LOCATED_AT", "source": "protagonist", "target": "lo_ren_ho_luc", "kind": null, "score": null},
+    {"type": "LOCATED_AT", "source": "ha_ba_tung", "target": "lac_ha", "kind": null, "score": null},
+    {"type": "LOCATED_AT", "source": "to_nguyet_hoa", "target": "lac_ha", "kind": null, "score": null}
+  ],
+  "threads": [
+    {"id": "t_ai_giet_cha", "description": "Ai đã giết cha của nhân vật chính, và vì sao",
+     "due_from_chapter": 5, "due_to_chapter": 6, "must_resolve": true},
+    {"id": "t_chuoi_kiem", "description": "Bí ẩn trong chuôi kiếm Thiết Vân",
+     "due_from_chapter": 4, "due_to_chapter": 6, "must_resolve": true},
+    {"id": "t_doan_khuong", "description": "Vì sao Đoàn Khương rời Thanh Long Bang",
+     "due_from_chapter": 3, "due_to_chapter": 5, "must_resolve": false}
+  ],
+  "secrets": [
+    {"fact_id": "f_nguyet_hoa_huyet_y", "reveal_from_chapter": 3, "reveal_to_chapter": 4,
+     "leak_terms": [["Nguyệt Hoa", "Huyết Y Môn"], ["cô gái áo lam", "Huyết Y Môn"]]},
+    {"fact_id": "f_ha_lao_giet_cha", "reveal_from_chapter": 5, "reveal_to_chapter": 6,
+     "leak_terms": [["Hà Bá Tùng", "giết cha"], ["Hà lão", "giết cha"]]}
+  ]
+}

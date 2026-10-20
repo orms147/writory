@@ -165,3 +165,12 @@ def test_narrator_limits_exist_in_config():
     assert "narrator_questions_per_chapter" in type(limits.rate_limit).model_fields
     text = (REPO_CONFIG_DIR / "limits.yaml").read_text(encoding="utf-8")
     assert "narrator_question_max_chars:" in text
+
+
+def test_role_setup_exists_and_is_not_chosen_yet():
+    """D-39: vai `setup` (khởi tạo truyện) chưa chọn model; dùng thì báo lỗi rõ, không đoán model."""
+    models = load_config().models
+    assert models.roles.setup is None
+    assert models.role_reasoning.setup is None
+    with pytest.raises(LimitNotSetError, match="roles.setup"):
+        models.roles.require("setup")
