@@ -6,7 +6,7 @@
 # Chỉ số chính: F1 trên lớp người chơi biết (PV) và số lần hé lộ sai một Fact (rủi ro G1/G2).
 # Soạn: Claude (điều phối), chủ dự án đồng ý làm bài đo này cho vai "trích" (20/10/2026).
 
-version: 1
+version: 2  # v2: thêm Luna bật suy luận mức thấp (cùng model, khác cấu hình). Chương và cách chấm không đổi.
 chapters: [1, 2, 3, 4, 5]
 samples: 2
 schema_retries: 1      # G11: JSON sai schema thử lại 1 lần
@@ -18,3 +18,4 @@ models:
   - {id: openai/gpt-6-luna,                 label: GPT-6 Luna,          reasoning: none}
   - {id: deepseek/deepseek-v4.1-flash-1017, label: DeepSeek V4.1 Flash, reasoning: none}
   - {id: qwen/qwen3.8-flash,                label: Qwen 3.8 Flash,      reasoning: none}
+  - {id: openai/gpt-6-luna@reasoning-low, model: openai/gpt-6-luna, label: GPT-6 Luna (suy luận thấp), reasoning: low}

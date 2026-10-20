@@ -44,7 +44,9 @@ class _Strict(BaseModel):
 class ModelEntry(_Strict):
     id: str
     label: str
-    reasoning: Literal["none", "mandatory-minimal"] = "none"
+    reasoning: Literal["none", "mandatory-minimal", "low"] = "none"
+    # Cùng model với cấu hình khác (ví dụ suy luận): id riêng cho kết quả, `model` là id gọi OpenRouter.
+    model: str | None = None
 
 
 class BenchConfig(_Strict):
@@ -207,7 +209,7 @@ async def run_one(
 
     async def call():
         return await extract_changes(
-            llm, model.id, chapter=chapter, chapter_id=chapter_node,
+            llm, model.model or model.id, chapter=chapter, chapter_id=chapter_node,
             commit_id=f"bench-c-{chapter}", protagonist_id=sample.protagonist, chapter_text=text,
             entities=entities, open_edges=open_edges, extra=_extra_for(model, cfg),
         )
@@ -318,7 +320,7 @@ class _GoldFake(LLMClient):
 
 def _extra_for(model: ModelEntry, cfg: BenchConfig) -> dict[str, Any]:
     extra: dict[str, Any] = {"max_tokens": cfg.max_tokens}
-    extra["reasoning"] = {"effort": "none"} if model.reasoning == "none" else {"effort": "minimal"}
+    extra["reasoning"] = {"effort": {"none": "none", "mandatory-minimal": "minimal", "low": "low"}[model.reasoning]}
     return extra
 
 
