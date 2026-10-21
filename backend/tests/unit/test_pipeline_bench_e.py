@@ -16,7 +16,7 @@ pytest.importorskip("anthropic")
 from writory.config import ConfigError, load_config
 from writory.graph.sample import read_sample
 from writory.pipeline import bench_e as be
-from writory.pipeline.narrator import NOT_KNOWN, build_messages
+from writory.pipeline.narrator import NOT_KNOWN, PROMPT_VERSION, build_messages
 from writory.quality.bench_d import mock_judge_client
 from writory.safety.leak import check_leaks
 
@@ -267,8 +267,11 @@ async def test_oracle_dry_run_has_no_leak_and_full_marks(tmp_path):
     assert meta["fingerprint"]["dry_run"] is True and meta["fingerprint"]["fake"] == "oracle"
     assert meta["narrator"]["model"] == CONFIG.models.roles.narrator
     assert set(meta["fingerprint"]["data_sha256"]) >= {"questions.yaml", "plan.yaml", "run.yaml"}
+    # Phiên bản đề người kể (D-77): kết quả của đề khác không so trực tiếp được.
+    assert meta["fingerprint"]["narrator_prompt"] == PROMPT_VERSION
     summary = (store.root / "summary.md").read_text(encoding="utf-8")
     assert "Lộ ở câu cuối: 0" in summary
+    assert f"đề `{PROMPT_VERSION}`" in summary
 
 
 async def test_leaker_is_caught_raw_and_never_reaches_the_player(tmp_path):

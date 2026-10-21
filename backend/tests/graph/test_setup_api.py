@@ -213,7 +213,8 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
     # mang user_authored.
     assert notebook.json() == {"chapter": 0, "lies": [], "entries": [{
         "ref": "m1", "kind": "Character", "text": "Lục Thanh Vân", "aliases": [],
-        "since_chapter": 0, "quote": "Nhân vật chính: Lục Thanh Vân", "about": []}]}
+        "since_chapter": 0, "quote": "Nhân vật chính: Lục Thanh Vân", "about": [],
+        "is_protagonist": True}]}
     view = player_view(driver, story_id, 0)
     assert [(e.id, e.is_protagonist) for e in view.entries] == [(PROTAGONIST_ID, True)]
     assert view.lies == ()

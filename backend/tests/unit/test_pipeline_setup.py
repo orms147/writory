@@ -533,8 +533,7 @@ INVALID_BUILDS = {
     "too_many_chapters_for_level": {"acts": lambda a: a[:-1] + [a[-1] | {"to_chapter": 10}]},
     "acts_not_starting_at_1": {"acts": lambda a: a[1:]},  # hồi đầu bắt đầu ở chương 2
     "acts_with_gap": {"acts": lambda a: [a[0], a[1] | {"from_chapter": 3}] + a[2:]},
-    "protagonist_knows_a_fact_at_chapter_0": {
-        "facts": lambda f: [f[0] | {"known_by": ["to_nguyet_hoa", PROTAGONIST_ID]}] + f[1:]},
+    # `protagonist` trong `known_by` không còn là lỗi: code tự bỏ (D-76), xem mục D-76 bên dưới.
     "edge_to_unknown_id": {"edges": lambda e: e + [{"type": "MEMBER_OF", "source": "doan_khuong",
                                                     "target": "phe_bia", "kind": None,
                                                     "score": None}]},
@@ -771,6 +770,76 @@ async def test_on_repair_gets_the_problems_before_each_repair_call(caplog):
     assert seen == [(1, ["secrets"])]
     assert "secrets" in caplog.text and "f_khong_co" not in caplog.text
     assert "f_khong_co" not in str(err) and any("f_khong_co" in p.text for p in err.problems)
+
+
+# --- KNOWS của nhân vật chính ở chương 0: code tự bỏ (D-76, thay một phần D-38 và D-54) ----------
+# Hồi quy tu-tien-4 (notes.md mục 1): model ghi `protagonist` vào `known_by` của 5 fact bối cảnh
+# ("ba tông môn tranh quyền"), tốn một lượt sửa. Nhân vật chính không biết gì ở chương 0 (D-16,
+# D-38), nên code bỏ các cạnh đó trước mọi phép kiểm, không gọi lại model.
+
+
+def _knows_of_protagonist(facts):
+    return [f | {"known_by": f["known_by"] + [PROTAGONIST_ID]} for f in facts]
+
+
+async def test_protagonist_knows_from_the_model_is_dropped_without_a_repair_call(caplog):
+    caplog.set_level(logging.INFO, logger="writory.pipeline.setup")
+    repairs: list = []
+    llm = FakeLLM.scripted([_build(facts=_knows_of_protagonist)])
+    result = await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG,
+                               commit_id="setup-c0", on_repair=repairs.append)
+    assert len(llm.calls) == 1 and repairs == []
+    assert not [e for e in result.package.edges
+                if e.type == "KNOWS" and e.source == PROTAGONIST_ID]
+    assert result == _valid_setup()  # các KNOWS khác và mọi phần còn lại giữ nguyên
+    # Log chỉ có số cạnh bị bỏ và loại, không id hay chữ của fact (G12).
+    assert f"bỏ {len(FIXTURE['facts'])} cạnh KNOWS của nhân vật chính" in caplog.text
+    for f in FIXTURE["facts"]:
+        assert f["id"] not in caplog.text and f["text"] not in caplog.text
+
+
+async def test_fact_known_only_by_the_protagonist_stays_a_fact_with_no_knows():
+    llm = FakeLLM.scripted([_build(facts=lambda f: [f[0] | {"known_by": [PROTAGONIST_ID]}]
+                                   + f[1:])])
+    result = await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0")
+    fact = FIXTURE["facts"][0]["id"]
+    assert fact in {n.id for n in result.package.nodes} and len(llm.calls) == 1
+    assert not [e for e in result.package.edges if e.type == "KNOWS" and e.target == fact]
+
+
+def test_to_story_setup_drops_protagonist_knows_too():
+    data = json.loads(_build(facts=_knows_of_protagonist))
+    setup = to_story_setup(BuildOutput.model_validate(data), protagonist=PC, commit_id="setup-c0",
+                           level=SHORT_LEVEL)
+    assert setup == _valid_setup()
+
+
+async def test_other_rules_still_get_the_repair_and_the_dropped_knows_is_not_a_problem():
+    """Các luật khác giữ nguyên: lỗi khác vẫn tốn đúng một lượt sửa, danh sách lỗi không còn
+    `edges` của nhân vật chính, và câu trả lời trước gửi lại đã bỏ `protagonist` khỏi `known_by`."""
+    bad = json.loads(BAD_SECRET)
+    bad["facts"] = _knows_of_protagonist(bad["facts"])
+    seen: list[list[str]] = []
+    llm = FakeLLM.scripted([json.dumps(bad, ensure_ascii=False), _build()])
+    await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0",
+                      on_repair=lambda problems: seen.append([p.kind for p in problems]))
+    assert seen == [["secrets"]] and len(llm.calls) == 1 + REPAIRS
+    [user] = _users(llm.calls[1])
+    previous = json.loads(html.unescape(_block(user, "previous_answer")))
+    assert all(PROTAGONIST_ID not in f["known_by"] for f in previous["facts"])
+
+
+# Gói dựng tay có KNOWS của nhân vật chính vẫn bị `initial_problems` bắt (lưới cuối, không qua
+# `build_story`): test_initial_problems_flags_protagonist_knowledge.
+
+
+def test_build_prompt_says_background_knowledge_is_not_known_by_the_protagonist():
+    """Đề nói rõ: kể cả bối cảnh chung nhân vật chính hẳn đã biết, không ghi `protagonist` vào
+    `known_by` (setup-6)."""
+    assert PROMPT_VERSION == "setup-6"
+    assert f"`{PROTAGONIST_ID}`" in BUILD_TASK and "`known_by`" in BUILD_TASK
+    assert "bối cảnh chung" in BUILD_TASK
+    assert "chỉ ghi các nhân vật khác" in BUILD_TASK
 
 
 # --- luật nhịp không tính chương cuối (D-54) -------------------------------------------------------
@@ -1019,7 +1088,6 @@ async def test_protects_reaches_the_plan_and_its_ids_are_normalized():
 
 def test_prompt_asks_for_protects_on_identity_secrets():
     assert "`protects`" in BUILD_TASK and "danh tính" in BUILD_TASK
-    assert PROMPT_VERSION == "setup-5"
     assert "protects" in OutSecret.model_json_schema()["required"]  # JSON schema strict
 
 

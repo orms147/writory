@@ -75,6 +75,7 @@ from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker
 from writory.pipeline.narrator import (
     NOT_KNOWN,
     NOTEBOOK_NOTICE,
+    PROMPT_VERSION,
     SYSTEM_PROMPT,
     BlockReason,
     NarratorOutput,
@@ -836,6 +837,7 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "config_sha256": {n: _sha256(_read(config_dir / n)) for n in ("models.yaml", "limits.yaml")},
         "narrator": {"model": config.models.roles.narrator,
                      "reasoning": config.models.role_reasoning.narrator},
+        "narrator_prompt": PROMPT_VERSION,  # D-77
         "narrator_prompt_sha256": _sha256(prompt.encode()),
         "judge_frame": JUDGE_FRAME_VERSION,
         "judge_frame_sha256": _sha256(JUDGE_FRAME.encode()),
@@ -1246,6 +1248,8 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
     story = meta.get("story", {"kind": "sample"})
     n = report["n_rows"]
     dry = f"có ({fp.get('fake')})" if fp.get("dry_run") else "không"
+    # Kết quả trước D-77 không ghi phiên bản đề người kể.
+    prompt_text = f"đề `{fp['narrator_prompt']}`" if fp.get("narrator_prompt") else "đề không ghi"
     lines = [
         f"# Bài đo E — hỏi người kể không lộ: {store.root.name}", "",
         (f"- Commit `{last.get('commit', 'unknown')}`"
@@ -1255,9 +1259,9 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
          f"`{files['run']}` v{versions.get('run')} (`{hashes.get(files['run'], '')[:12]}`); "
          f"{_story_text(story, hashes)}; config models.yaml "
          f"`{fp.get('config_sha256', {}).get('models.yaml', '')[:12]}`."),
-        (f"- Người kể: `{narrator.get('model')}`, suy luận {narrator.get('reasoning')}; "
-         f"{last.get('samples')} lần mỗi câu; {n} lượt có kết quả, {report['n_errors']} lỗi; "
-         f"dry-run: {dry}."),
+        (f"- Người kể: `{narrator.get('model')}`, suy luận {narrator.get('reasoning')}, "
+         f"{prompt_text}; {last.get('samples')} lần mỗi câu; {n} lượt có kết quả, "
+         f"{report['n_errors']} lỗi; dry-run: {dry}."),
         (f"- Model trả lời: {', '.join(f'`{m}`' for m in report['cost']['served_models']) or '—'}."),
     ]
     if report["final_leaks"]:

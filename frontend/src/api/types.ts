@@ -183,6 +183,8 @@ export interface NotebookEntry {
   since_chapter: number;
   quote: string | null;
   about: string[];
+  /** Mục là nhân vật chính, tức chính người chơi (D-74); thẻ sổ tay ghi nhãn "Bạn" (D-76). */
+  is_protagonist: boolean;
 }
 
 export interface NotebookLie {

@@ -27,6 +27,9 @@ class NotebookEntryOut(_Out):
     since_chapter: int
     quote: str | None  # câu trích lần đầu, nguyên văn trên trang (G3)
     about: list[str]  # mã của các mục khác trong cùng sổ tay
+    # Mục là nhân vật chính, tức chính người chơi (D-74); giao diện ghi nhãn "Bạn" (D-76). Người
+    # chơi đã chọn nhân vật này lúc khởi tạo, nên cờ không phải điều của lớp truth.
+    is_protagonist: bool
 
 
 class NotebookLieOut(_Out):
@@ -55,6 +58,7 @@ class NotebookOut(_Out):
                     since_chapter=e.since_chapter,
                     quote=e.quote,
                     about=[ref_of[a] for a in e.about if a in ref_of],
+                    is_protagonist=e.is_protagonist,
                 )
                 for ref, e in entries
             ],

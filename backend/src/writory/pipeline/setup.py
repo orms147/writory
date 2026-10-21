@@ -16,8 +16,9 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
   `previous_answer`; danh sách lỗi (id lớp truth, chữ model viết) đứng ngoài khối, qua
   `escape_text`. Cả hai ở vai user; vai `setup` vốn được thấy lớp truth.
 - G1: lựa chọn ở bước 1–3 hiện cho người chơi, nên prompt cấm viết bí mật vào đó. Gói chương 0
-  không có REVEALED_TO_PLAYER và nhân vật chính không KNOWS gì; code kiểm player_view ở chương 0
-  rỗng bằng định nghĩa duy nhất (`guard.state.player_view_of`).
+  chỉ có REVEALED_TO_PLAYER của nhân vật chính (D-74) và nhân vật chính không KNOWS gì (D-76);
+  code kiểm player_view ở chương 0 chỉ có mục nhân vật chính bằng định nghĩa duy nhất
+  (`guard.state.player_view_of`).
 - G11, D-39, D-14: JSON sai schema thử lại theo `retries.extract_schema_retry`, lỗi mạng tạm thời
   theo `retries.llm_transient` (`with_json_retries`). Bước 1–3 sai quy tắc thì báo
   STORY_SETUP_INVALID ngay, không tự gọi lại model.
@@ -25,6 +26,9 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
   quy tắc thì gọi model sửa tối đa `retries.setup_repair` lượt, kèm danh sách lỗi; lượt sửa vẫn
   thử lại JSON sai schema riêng như trên. Vẫn sai thì `SetupInvalidError` (STORY_SETUP_INVALID):
   log chỉ có loại lỗi, không trả kế hoạch hay gói nửa vời.
+- D-76: `protagonist` trong `known_by` (KNOWS của nhân vật chính ở chương 0) thì code bỏ
+  (`drop_protagonist_knows`) sau chuẩn hoá id, trước mọi phép kiểm; không tính là lỗi, không tốn
+  lượt sửa. Log chỉ có số cạnh bị bỏ.
 """
 
 import logging
@@ -64,8 +68,8 @@ log = logging.getLogger(__name__)
 
 # Đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49). setup-4: luật id có dạng và
 # ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54). setup-5: `protects` của bí mật về
-# danh tính (D-61).
-PROMPT_VERSION = "setup-5"
+# danh tính (D-61). setup-6: `known_by` chỉ gồm nhân vật khác, kể cả với bối cảnh chung (D-76).
+PROMPT_VERSION = "setup-6"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -422,6 +426,24 @@ def normalize_ids(output: BuildOutput) -> tuple[BuildOutput, list[SetupProblem]]
     return BuildOutput.model_validate(data), problems
 
 
+# --- KNOWS của nhân vật chính ở chương 0 (D-76) -------------------------------------------------
+# Lần chạy tu-tien-4 tốn một lượt sửa vì model ghi `protagonist` vào `known_by` của 5 fact bối
+# cảnh, dù đề cấm. KNOWS của nhân vật chính là điều người chơi biết (D-16), mà ở chương 0 người chơi
+# chưa đọc trang nào (D-38), nên các cạnh này luôn bỏ được, không mất gì của thế giới: fact vẫn còn,
+# nhân vật khác vẫn biết nó.
+
+
+def drop_protagonist_knows(output: BuildOutput) -> tuple[BuildOutput, int]:
+    """Bỏ `PROTAGONIST_ID` khỏi `known_by` của mọi fact. Trả đầu ra mới và số cạnh KNOWS đã bỏ."""
+    dropped = sum(f.known_by.count(PROTAGONIST_ID) for f in output.facts)
+    if not dropped:
+        return output, 0
+    data = output.model_dump()
+    for f in data["facts"]:
+        f["known_by"] = [i for i in f["known_by"] if i != PROTAGONIST_ID]
+    return BuildOutput.model_validate(data), dropped
+
+
 # --- prompt ----------------------------------------------------------------------------------
 
 _COMMON = """Bạn là người thiết kế truyện cho WriTory, trò chơi truyện tương tác tiếng Việt: người \
@@ -477,9 +499,11 @@ danh sách rỗng), `personality`, `backstory`.
 `description` (một câu).
 - `facts`: sự thật của thế giới lúc truyện bắt đầu, mỗi cái đúng MỘT mệnh đề (`text`); chi tiết \
 của một bí mật (ai làm, vì sao) là fact riêng. `about`: id những thứ mệnh đề nói tới. \
-`known_by`: id nhân vật đã biết điều đó từ trước khi truyện bắt đầu. Nhân vật chính lúc này chưa \
-biết fact nào: không bao giờ ghi `{PROTAGONIST_ID}` vào `known_by`; điều nhân vật chính biết sẽ \
-hiện ra trên trang khi truyện kể tới.
+`known_by`: id nhân vật đã biết điều đó từ trước khi truyện bắt đầu; chỉ ghi các nhân vật khác, \
+không bao giờ ghi `{PROTAGONIST_ID}`. Điều này đúng cả với bối cảnh chung mà nhân vật chính hẳn \
+đã biết (thế cục, phe phái, lời đồn, chuyện trong quá khứ của họ): `known_by` của nhân vật chính \
+là sổ tay của người chơi, mà người chơi chưa đọc trang nào. Điều nhân vật chính biết sẽ hiện ra \
+trên trang khi truyện kể tới. Fact chỉ nhân vật chính biết thì để `known_by` rỗng.
 - `edges`: tình trạng lúc truyện bắt đầu, theo bảng "Cạnh trong `edges`" ở cuối đề.
 - `threads`: các mạch chính và phụ: `description`, khoảng chương dự kiến gỡ (`due_from_chapter`, \
 `due_to_chapter`) trong số chương của truyện, `must_resolve` là true nếu mạch phải gỡ trước khi \
@@ -765,8 +789,13 @@ def to_story_setup(
 def _check_build(
     output: BuildOutput, *, protagonist: CharacterOption, commit_id: str, level: LengthLevel
 ) -> tuple[BuildOutput, StorySetup | None, list[SetupProblem]]:
-    """(đầu ra đã chuẩn hoá id, kết quả nếu không có lỗi nào, danh sách lỗi)."""
+    """(đầu ra đã chuẩn hoá id và bỏ KNOWS của nhân vật chính, kết quả nếu không có lỗi nào, danh
+    sách lỗi)."""
     output, problems = normalize_ids(output)
+    output, dropped = drop_protagonist_knows(output)
+    if dropped:
+        # Chỉ số cạnh và loại, không id hay chữ của fact (G12).
+        log.info("khởi tạo: bỏ %d cạnh KNOWS của nhân vật chính ở chương 0 (D-76)", dropped)
     pc = _clean_protagonist(protagonist)
     nodes: list[dict[str, Any]] = [{
         "id": PROTAGONIST_ID, "label": "Character",

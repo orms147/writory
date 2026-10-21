@@ -122,18 +122,20 @@ export function makeChoices(chapter: number): PlayerChoice[] {
 
 export function notebookFor(chapter: number): NotebookOut {
   const all: NotebookOut['entries'] = [
-    { ref: 'm1', kind: 'Character', text: 'Lão Tần', aliases: ['lão gác cổng'], since_chapter: 1, quote: '- Ngươi nghe thấy không? - Lão Tần gác cổng thò đầu ra khỏi chòi, tay còn cầm bát rượu.', about: [] },
-    { ref: 'm2', kind: 'Location', text: 'Đèo Lạc Nhạn', aliases: [], since_chapter: 1, quote: 'Gió trên đèo Lạc Nhạn thổi ngược, mang theo mùi tuyết chưa kịp rơi.', about: [] },
-    { ref: 'm3', kind: 'Location', text: 'Tháp chuông', aliases: [], since_chapter: 1, quote: 'Kha Diệp kéo cao cổ áo, đếm từng bậc đá dẫn lên tháp chuông như mọi đêm trực.', about: [] },
-    { ref: 'm4', kind: 'Item', text: 'Chuông đồng', aliases: ['chiếc chuông'], since_chapter: 1, quote: 'Chiếc chuông đồng treo giữa bốn cột gỗ lim, to bằng một gian nhà.', about: [] },
-    { ref: 'm5', kind: 'Fact', text: 'Đêm ấy chuông kêu ba tiếng rồi im bặt', aliases: [], since_chapter: 1, quote: 'Đêm nay nó kêu ba tiếng, rồi im bặt.', about: ['m4'] },
-    { ref: 'm6', kind: 'Character', text: 'Đỗ Khiêm', aliases: ['kẻ giữ sổ thông hành'], since_chapter: 1, quote: 'Người mất tích là Đỗ Khiêm, kẻ giữ sổ thông hành.', about: [] },
-    { ref: 'm7', kind: 'Character', text: 'Lương Phục', aliases: ['trưởng trạm'], since_chapter: 1, quote: '- Hắn bỏ đi theo khách lạ à? - Trưởng trạm Lương Phục hỏi, giọng khàn vì thức trắng.', about: [] },
-    { ref: 'm8', kind: 'Event', text: 'Đỗ Khiêm mất tích sau đêm chuông kêu', aliases: [], since_chapter: 1, quote: 'Trạm gác đèo có bảy người, kể cả con chó vàng tên Mốc. Sáng hôm sau chỉ còn sáu.', about: ['m6'] },
-    { ref: 'm9', kind: 'Location', text: 'Khe Liễu', aliases: [], since_chapter: 2, quote: 'Con đường mòn sau tháp chuông dẫn xuống khe Liễu, nơi mùa hè có suối, mùa đông chỉ còn đá.', about: [] },
-    { ref: 'm10', kind: 'Item', text: 'Đèn lồng giấy đỏ', aliases: ['chiếc đèn lồng'], since_chapter: 2, quote: 'Dưới gốc thông có một chiếc đèn lồng giấy, khung tre gãy, giấy đỏ đã bạc.', about: [] },
-    { ref: 'm11', kind: 'Character', text: 'Bà cụ bên kia khe', aliases: [], since_chapter: 2, quote: 'Một bà cụ ngồi bên bếp lửa, đang hơ đôi tay gầy.', about: [] },
-    { ref: 'm12', kind: 'Fact', text: 'Đêm qua có hai người qua khe: một người đi lên, một người đi xuống', aliases: [], since_chapter: 2, quote: '- Đêm qua có hai người, - bà nói. - Một người đi lên. Một người đi xuống. Cháu muốn hỏi người nào?', about: [] },
+    // Nhân vật chính có mục từ chương 0 (D-74): câu trích là dòng của thiết lập truyện.
+    { ref: 'm1', kind: 'Character', text: 'Kha Diệp', aliases: [], since_chapter: 0, quote: 'Nhân vật chính: Kha Diệp', about: [], is_protagonist: true },
+    { ref: 'm2', kind: 'Character', text: 'Lão Tần', aliases: ['lão gác cổng'], since_chapter: 1, quote: '- Ngươi nghe thấy không? - Lão Tần gác cổng thò đầu ra khỏi chòi, tay còn cầm bát rượu.', about: [], is_protagonist: false },
+    { ref: 'm3', kind: 'Location', text: 'Đèo Lạc Nhạn', aliases: [], since_chapter: 1, quote: 'Gió trên đèo Lạc Nhạn thổi ngược, mang theo mùi tuyết chưa kịp rơi.', about: [], is_protagonist: false },
+    { ref: 'm4', kind: 'Location', text: 'Tháp chuông', aliases: [], since_chapter: 1, quote: 'Kha Diệp kéo cao cổ áo, đếm từng bậc đá dẫn lên tháp chuông như mọi đêm trực.', about: [], is_protagonist: false },
+    { ref: 'm5', kind: 'Item', text: 'Chuông đồng', aliases: ['chiếc chuông'], since_chapter: 1, quote: 'Chiếc chuông đồng treo giữa bốn cột gỗ lim, to bằng một gian nhà.', about: [], is_protagonist: false },
+    { ref: 'm6', kind: 'Fact', text: 'Đêm ấy chuông kêu ba tiếng rồi im bặt', aliases: [], since_chapter: 1, quote: 'Đêm nay nó kêu ba tiếng, rồi im bặt.', about: ['m5'], is_protagonist: false },
+    { ref: 'm7', kind: 'Character', text: 'Đỗ Khiêm', aliases: ['kẻ giữ sổ thông hành'], since_chapter: 1, quote: 'Người mất tích là Đỗ Khiêm, kẻ giữ sổ thông hành.', about: [], is_protagonist: false },
+    { ref: 'm8', kind: 'Character', text: 'Lương Phục', aliases: ['trưởng trạm'], since_chapter: 1, quote: '- Hắn bỏ đi theo khách lạ à? - Trưởng trạm Lương Phục hỏi, giọng khàn vì thức trắng.', about: [], is_protagonist: false },
+    { ref: 'm9', kind: 'Event', text: 'Đỗ Khiêm mất tích sau đêm chuông kêu', aliases: [], since_chapter: 1, quote: 'Trạm gác đèo có bảy người, kể cả con chó vàng tên Mốc. Sáng hôm sau chỉ còn sáu.', about: ['m7'], is_protagonist: false },
+    { ref: 'm10', kind: 'Location', text: 'Khe Liễu', aliases: [], since_chapter: 2, quote: 'Con đường mòn sau tháp chuông dẫn xuống khe Liễu, nơi mùa hè có suối, mùa đông chỉ còn đá.', about: [], is_protagonist: false },
+    { ref: 'm11', kind: 'Item', text: 'Đèn lồng giấy đỏ', aliases: ['chiếc đèn lồng'], since_chapter: 2, quote: 'Dưới gốc thông có một chiếc đèn lồng giấy, khung tre gãy, giấy đỏ đã bạc.', about: [], is_protagonist: false },
+    { ref: 'm12', kind: 'Character', text: 'Bà cụ bên kia khe', aliases: [], since_chapter: 2, quote: 'Một bà cụ ngồi bên bếp lửa, đang hơ đôi tay gầy.', about: [], is_protagonist: false },
+    { ref: 'm13', kind: 'Fact', text: 'Đêm qua có hai người qua khe: một người đi lên, một người đi xuống', aliases: [], since_chapter: 2, quote: '- Đêm qua có hai người, - bà nói. - Một người đi lên. Một người đi xuống. Cháu muốn hỏi người nào?', about: [], is_protagonist: false },
   ];
   const lies: NotebookOut['lies'] =
     chapter >= 3

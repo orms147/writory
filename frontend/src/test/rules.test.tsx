@@ -109,8 +109,8 @@ describe('key chỉ hiện last4', () => {
 
 describe('sổ tay', () => {
   const book = (entries: NotebookOut['entries'], lies: NotebookOut['lies'] = []): NotebookOut => ({ chapter: 2, entries, lies });
-  const entry = (ref: string, kind: NotebookOut['entries'][number]['kind'], text: string) => ({
-    ref, kind, text, aliases: [], since_chapter: 1, quote: `Câu trích của ${text}.`, about: [],
+  const entry = (ref: string, kind: NotebookOut['entries'][number]['kind'], text: string, is_protagonist = false) => ({
+    ref, kind, text, aliases: [], since_chapter: 1, quote: `Câu trích của ${text}.`, about: [], is_protagonist,
   });
 
   it('ẩn hẳn tab không có mục, không ghi "chưa có"', () => {
@@ -120,6 +120,17 @@ describe('sổ tay', () => {
     expect(screen.queryByText(/chưa có/i)).toBeNull();
     expect(screen.queryByRole('tab', { name: 'Nơi chốn' })).toBeNull();
     expect(screen.queryByRole('tab', { name: 'Lời nói dối của tôi' })).toBeNull();
+  });
+
+  it('mục nhân vật chính có nhãn "Bạn" (D-76), mục khác không có', () => {
+    render(<NotebookView book={book([entry('m1', 'Character', 'Kha Diệp', true), entry('m2', 'Character', 'Lão Tần')])} />);
+    const cards = within(screen.getByRole('tabpanel')).getAllByRole('listitem');
+    const [me, other] = cards;
+    if (cards.length !== 2 || !me || !other) throw new Error('cần đúng hai thẻ');
+    expect(within(me).getByText('Bạn')).toBeInTheDocument();
+    expect(within(me).getByText('Kha Diệp')).toBeInTheDocument();
+    expect(within(other).queryByText('Bạn')).toBeNull();
+    expect(screen.getAllByText('Bạn')).toHaveLength(1);
   });
 
   it('Faction là "Phe phái"; Fact và Event chung "Sự thật"; lời nói dối có người nghe và chương', async () => {

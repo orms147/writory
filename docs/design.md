@@ -190,6 +190,7 @@ Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ �
 ### 6.6 Hỏi người kể chuyện
 - Câu hỏi về thế giới, không mất lượt.
 - Chỉ trả lời từ **lớp người chơi biết** (§7). Câu chưa được hé lộ → "Bạn chưa biết điều này." Không gợi ý, không úp mở về sự tồn tại của bí mật.
+- Người chơi gọi một người, nơi hay vật bằng chữ khác sổ tay thì người kể vẫn nhận ra. Câu hỏi chỉ biết được một phần thì người kể nói phần đã biết, không đoán phần còn lại (D-77).
 - Câu trả lời kèm số câu hỏi còn lại của chương và nguồn: các chương mà người chơi đã biết những mục sổ tay câu trả lời dựa vào (D-65).
 - Số câu hỏi mỗi chương có trần (`config/limits.yaml`, G8). Hết lượt thì báo bằng câu trung tính; sang chương sau thì có lượt mới.
 
