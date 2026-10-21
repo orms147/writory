@@ -19,7 +19,14 @@ from pydantic import BaseModel, ConfigDict, Field, PositiveInt, model_validator
 from writory.config import REPO_ROOT, ConfigError
 from writory.graph.sample import DEFAULT_SAMPLE_DIR, SampleStory, read_sample
 from writory.guard.state import EmptyState, GraphState, OverlayState
-from writory.pipeline.bench_a_systems import AliasIndex, contains_phrase, edge_key, flat
+from writory.pipeline.bench_a_systems import (
+    OPTIONAL_SYSTEMS,
+    SYSTEMS,
+    AliasIndex,
+    contains_phrase,
+    edge_key,
+    flat,
+)
 from writory.pipeline.bench_run import Price
 from writory.quality.bench_d import _parse_yaml
 
@@ -129,17 +136,31 @@ class RagSettings(_Strict):
 
 
 class GraphSettings(_Strict):
-    recent_chapter: bool  # hệ đồ thị có thấy chương N không (mọi hệ trừ `full` đều thấy)
+    recent_chapter: bool  # hai hệ đồ thị có thấy chương N không (mọi hệ trừ `full` đều thấy)
+
+
+class GraphQuotesSettings(_Strict):
+    """Hệ đồ thị + câu trích (D-81). Cắt đoạn theo `rag.chunk_chars`, nên chỉ khác `rag` ở `top_k`."""
+
+    enabled: bool  # false: không chạy khi bỏ trống --systems; chọn bằng --systems là lỗi
+    top_k: PositiveInt
 
 
 class RunFile(_Strict):
     version: PositiveInt
     samples: PositiveInt
     max_tokens_per_call: PositiveInt
-    # Model trả lời lấy từ config/models.yaml vai `narrator` (cùng một model cho cả năm hệ).
+    # Model trả lời lấy từ config/models.yaml vai `narrator` (cùng một model cho mọi hệ).
     prices: Mapping[str, Price] = Field(min_length=1)
     rag: RagSettings
     graph: GraphSettings
+    graph_quotes: GraphQuotesSettings
+
+    @property
+    def systems(self) -> tuple[str, ...]:
+        """Hệ chạy khi bỏ trống --systems: mọi hệ, trừ hệ tuỳ chọn đang tắt (OPTIONAL_SYSTEMS)."""
+        enabled = {s: getattr(self, s).enabled for s in OPTIONAL_SYSTEMS}
+        return tuple(s for s in SYSTEMS if enabled.get(s, True))
 
 
 # --- đề ------------------------------------------------------------------------------------------
@@ -455,8 +476,17 @@ def support_keys(spec: Mapping[str, Any], state: GraphState, chapter: int) -> se
 
 def context_supports(q: Question, ctx: Any, data: BenchData) -> bool:
     """Ngữ cảnh có đủ chứng cứ để trả lời câu `q` không. Hệ đồ thị: đủ khoá `facts` mà `derive` cần.
-    Hệ khác: mọi câu trích bằng chứng của trang nằm trong chữ ngữ cảnh."""
-    if ctx.system == "graph":
+    Hệ khác: mọi câu trích bằng chứng của trang nằm trong chữ ngữ cảnh. Hệ đồ thị + câu trích
+    (D-81): một trong hai nguồn đủ là đủ."""
+    def graph_ok() -> bool:
         return support_keys(q.derive, data.state_at(q.state_chapter), q.state_chapter) <= ctx.facts
-    flat_ctx = flat(ctx.text)
-    return all(flat(ev.quote) in flat_ctx for ev in q.evidence)
+
+    def page_ok() -> bool:
+        flat_ctx = flat(ctx.text)
+        return all(flat(ev.quote) in flat_ctx for ev in q.evidence)
+
+    if ctx.system == "graph":
+        return graph_ok()
+    if ctx.system == "graph_quotes":
+        return graph_ok() or page_ok()
+    return page_ok()

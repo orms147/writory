@@ -1,4 +1,4 @@
-"""Bài đo A: năm hệ dựng đúng ngữ cảnh (D-72, D-73). Không mạng, không Neo4j."""
+"""Bài đo A: sáu hệ dựng đúng ngữ cảnh (D-72, D-73, D-81). Không mạng, không Neo4j."""
 
 from collections.abc import Sequence
 from pathlib import Path
@@ -15,6 +15,7 @@ from writory.pipeline.bench_a_systems import (
     build_graph_context,
     chunk_chapter,
     context_full,
+    context_graph_quotes,
     context_none,
     context_rag,
     context_rolling,
@@ -201,10 +202,88 @@ def test_graph_recent_chapter_can_be_switched_off():
     assert "[Chương 5]" in with_page.text and "[Chương 5]" not in without.text
 
 
-def test_graph_competitor_has_enough_facts_for_every_question():
+@pytest.mark.parametrize("system", ["graph", "graph_quotes"])
+def test_graph_competitor_has_enough_facts_for_every_question(system):
     """Chứng cứ mà `derive` cần đều nằm trong khoá của ngữ cảnh đồ thị: nền của "oracle = 100%"."""
-    missing = [q.id for q in QUESTIONS if not context_supports(q, BUILDER.build("graph", q), DATA)]
+    missing = [q.id for q in QUESTIONS if not context_supports(q, BUILDER.build(system, q), DATA)]
     assert missing == []
+
+
+def test_lie_06_and_07_graph_context_carries_lans_knows_edge():
+    """Điều tra lần đo lan-1: cạnh KNOWS lan>l_sword_father (chương 4) CÓ trong ngữ cảnh đồ thị, ở
+    cả khối của Lan lẫn khối lời nói dối. "Không" ở lie-06/07 không do phần đọc đồ thị."""
+    for qid in ("lie-06", "lie-07"):
+        ctx = BUILDER.build("graph", DATA.question(qid))
+        assert "edge:KNOWS:lan>l_sword_father@4" in ctx.facts, qid
+        assert ("Đã biết đó là lời nói dối: «Thanh kiếm là của cha Minh để lại»; cách biết: suy ra "
+                "(đúng từ cuối chương 4 tới nay)") in ctx.text, qid
+        assert ("những người ngoài người nói đã biết đó là lời dối: Phạm Thị Lan "
+                "(từ cuối chương 4)") in ctx.text, qid
+
+
+# --- hệ đồ thị + câu trích (D-81) -------------------------------------------------------------------
+
+
+def graph_only(q) -> str:
+    return build_graph_context(DATA.state_at(q.ask_chapter), q.question, q.ask_chapter,
+                               story=STORY, recent=False).text
+
+
+def test_graph_quotes_is_the_graph_context_plus_a_few_passages_plus_chapter_n():
+    run = DATA.run
+    for q in QUESTIONS:
+        graph = BUILDER.build("graph", q)
+        ctx = BUILDER.build("graph_quotes", q)
+        assert ctx.system == "graph_quotes" and ctx.facts == graph.facts, q.id
+        assert ctx.text.startswith(graph_only(q)), q.id  # đúng phần đồ thị của hệ `graph`
+        assert ctx.text.endswith(f"[Chương {q.ask_chapter}]\n{STORY[q.ask_chapter].strip()}"), q.id
+        retrieved = ctx.detail["retrieved"]
+        assert len(retrieved) <= run.graph_quotes.top_k, q.id
+        assert all(chapter < q.ask_chapter for chapter, _ in retrieved), q.id  # chương N đã có
+        rag = context_rag(STORY, q.ask_chapter, q.question, top_k=run.graph_quotes.top_k,
+                          chunk_chars=run.rag.chunk_chars)
+        assert retrieved == rag.detail["retrieved"], q.id  # cùng BM25, cùng cách cắt đoạn
+
+
+def test_graph_quotes_reads_fewer_passages_than_rag():
+    assert DATA.run.graph_quotes.top_k < DATA.run.rag.top_k
+
+
+def test_graph_quotes_brings_back_the_page_lines_the_graph_has_no_edge_for():
+    """Lỗi của hệ đồ thị ở lan-1: chi tiết chỉ có trong chữ (alive-07: lời cai Khải) và điều phủ
+    định (rel-08, rel-09: cùng họ Trần nhưng không họ hàng). Câu trích nằm ở chương cũ hơn N."""
+    for qid in ("alive-07", "rel-08", "rel-09"):
+        q = DATA.question(qid)
+        [evidence] = q.evidence
+        assert evidence.chapter < q.ask_chapter, qid
+        assert flat(evidence.quote) not in flat(BUILDER.build("graph", q).text), qid
+        assert flat(evidence.quote) in flat(BUILDER.build("graph_quotes", q).text), qid
+
+
+def test_graph_quotes_at_chapter_one_has_nothing_older_to_retrieve():
+    ctx = context_graph_quotes(DATA.state_at(1), "Lão Gù là ai?", 1, story=STORY, top_k=2,
+                               chunk_chars=500)
+    assert ctx.detail["retrieved"] == [] and ctx.detail["pool"] == 0
+    assert "[Đoạn trên trang" not in ctx.text and "[Chương 1]" in ctx.text
+
+
+def test_graph_quotes_without_chapter_n_searches_chapter_n_too():
+    q = DATA.question("item-10")  # chứng cứ ở chính chương 5
+    ctx = context_graph_quotes(DATA.state_at(5), q.question, 5, story=STORY, top_k=2,
+                               chunk_chars=500, recent=False)
+    assert "[Chương 5]" not in ctx.text
+    assert any(chapter == 5 for chapter, _ in ctx.detail["retrieved"])
+
+
+def test_graph_quotes_oracle_falls_back_to_page_evidence_when_the_graph_part_is_cut(monkeypatch):
+    """Oracle của hệ lai: đủ khi phần đồ thị đủ khoá HOẶC câu trích trên trang có trong ngữ cảnh."""
+    monkeypatch.setattr(bench_a_systems, "GRAPH_CHARS_CAP", 400)
+    builder = ContextBuilder(DATA, DATA.state_at, SUMMARIES)
+    found = DATA.question("rel-08")  # câu trích chương 1 được BM25 tìm lại
+    missed = DATA.question("lie-07")  # câu trích chương 4 không vào top_k
+    assert not context_supports(found, builder.build("graph", found), DATA)
+    assert context_supports(found, builder.build("graph_quotes", found), DATA)
+    assert not context_supports(missed, builder.build("graph_quotes", missed), DATA)
 
 
 def test_oracle_support_depends_on_the_context_not_the_system_name():
@@ -269,6 +348,9 @@ def test_runner_builds_contexts_through_the_injected_graph_state():
     spy = SpyState(DATA.state_at(5))
     builder = ContextBuilder(DATA, lambda _n: spy, SUMMARIES)  # type: ignore[arg-type]
     builder.build("graph", DATA.question("item-05"))
+    assert spy.used
+    spy.used.clear()
+    builder.build("graph_quotes", DATA.question("item-05"))
     assert spy.used
     spy.used.clear()
     builder.build("none", DATA.question("item-05"))

@@ -1,5 +1,5 @@
-"""Bài đo A (D-72): hệ đồ thị đọc Neo4j qua lớp graph/ cho CÙNG ngữ cảnh như đọc gói trong bộ nhớ.
-Nhờ vậy lần chạy khô (nền bộ nhớ) đại diện đúng cho lần chạy thật (nền Neo4j)."""
+"""Bài đo A (D-72, D-81): hai hệ đồ thị đọc Neo4j qua lớp graph/ cho CÙNG ngữ cảnh như đọc gói trong
+bộ nhớ. Nhờ vậy lần chạy khô (nền bộ nhớ) đại diện đúng cho lần chạy thật (nền Neo4j)."""
 
 import asyncio
 
@@ -7,7 +7,7 @@ import pytest
 
 from writory.config import load_config
 from writory.guard.state import Neo4jState
-from writory.pipeline.bench_a import RunOptions, open_graph_backend, run_bench
+from writory.pipeline.bench_a import ContextBuilder, RunOptions, open_graph_backend, run_bench
 from writory.pipeline.bench_a_data import load_data
 from writory.pipeline.bench_a_systems import build_graph_context
 from writory.quality.bench_d import Store
@@ -27,9 +27,19 @@ def test_neo4j_and_memory_give_the_same_graph_context_for_every_question(driver,
         assert from_neo4j.facts == from_memory.facts, q.id
 
 
-def test_dry_run_on_the_neo4j_backend_is_perfect_for_the_oracle(tmp_path):
+def test_neo4j_and_memory_give_the_same_hybrid_context_for_every_question(driver, sample_story_id):
+    neo4j = Neo4jState(driver, sample_story_id)
+    on_neo4j = ContextBuilder(DATA, lambda _n: neo4j, {})
+    in_memory = ContextBuilder(DATA, DATA.state_at, {})
+    for q in DATA.questions.questions:
+        a, b = on_neo4j.build("graph_quotes", q), in_memory.build("graph_quotes", q)
+        assert a.text == b.text and a.facts == b.facts, q.id
+
+
+@pytest.mark.parametrize("system", ["graph", "graph_quotes"])
+def test_dry_run_on_the_neo4j_backend_is_perfect_for_the_oracle(tmp_path, system):
     out = tmp_path / "neo4j-run"
-    opts = RunOptions(out=out, dry_run=True, samples=1, systems=["graph"], graph_backend="neo4j")
+    opts = RunOptions(out=out, dry_run=True, samples=1, systems=[system], graph_backend="neo4j")
     assert asyncio.run(run_bench(DATA, opts, config=load_config(), log=lambda _: None)) == 0
     rows = Store(out).rows("results.jsonl")
     assert len(rows) == len(DATA.questions.questions) and all(r["correct"] for r in rows)

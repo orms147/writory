@@ -1,12 +1,14 @@
-# Bài đo A — tham số chạy (docs/eval.md, mục "Bài A"; D-72, D-73). Khai TRƯỚC khi chạy.
+# Bài đo A — tham số chạy (docs/eval.md, mục "Bài A"; D-72, D-73, D-81). Khai TRƯỚC khi chạy.
 # Đã chạy thật rồi thì không sửa đè: tăng `version`.
 #
 # Model trả lời KHÔNG nằm ở đây: lấy từ config/models.yaml (roles.narrator, role_reasoning.narrator),
-# cùng một model cho cả năm hệ, và ghi vào meta.json. Tóm tắt của hệ "rolling" dùng vai `summary`.
+# cùng một model cho mọi hệ, và ghi vào meta.json. Tóm tắt của hệ "rolling" dùng vai `summary`.
 #
 # Soạn: Claude (nhánh bench-a-memory), 21/10/2026. Chờ điều phối và chủ dự án duyệt trước lần chạy thật.
+# v1 dùng cho lần chạy thật evals/results/2026-10-21-memory-lan-1/. v2: thêm hệ `graph_quotes`
+# (D-81; Claude, nhánh bench-a-hybrid, 21/10/2026, chờ duyệt); các tham số cũ giữ nguyên.
 
-version: 1
+version: 2
 
 # Số lần hỏi mỗi (câu, hệ). Model không tất định; cờ --samples đổi được, có ghi vào meta.json.
 samples: 3
@@ -24,7 +26,15 @@ rag:
   top_k: 4
   chunk_chars: 500
 
-# Hệ đồ thị: có thêm chương N (chương người viết vừa viết xong) không. Giữ true để công bằng:
-# hệ "không bộ nhớ", "tóm tắt cuộn" và "RAG" đều được xem chương N. Bài đo là bộ nhớ về chương CŨ.
+# Hai hệ đồ thị (`graph`, `graph_quotes`): có thêm chương N (chương người viết vừa viết xong) không.
+# Giữ true để công bằng: hệ "không bộ nhớ", "tóm tắt cuộn" và "RAG" đều được xem chương N. Bài đo
+# là bộ nhớ về chương CŨ.
 graph:
   recent_chapter: true
+
+# Hệ đồ thị + câu trích (D-81): phần đồ thị của hệ `graph`, cộng `top_k` đoạn BM25 của chương 1..N-1
+# (cùng cách cắt đoạn `rag.chunk_chars`, ít đoạn hơn hệ RAG), cộng chương N như hệ `graph`.
+# Hệ tuỳ chọn: `enabled: false` thì không chạy khi bỏ trống --systems, và chọn nó bằng --systems là lỗi.
+graph_quotes:
+  enabled: true
+  top_k: 2

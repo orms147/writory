@@ -14,7 +14,7 @@ Lần đo thật đầu tiên của bài A. Truyện mẫu 5 chương, đề 44 
 ## Hệ đồ thị sai ở đâu (12/132 lượt)
 1. **Chi tiết nhỏ chỉ có trong chữ:** `alive-07` ("Lão Gù bị đánh vào chỗ nào?") và `item-10` (ai giữ xấp thư). Đồ thị không lưu chi tiết này nên đồ thị trả "Không biết", trong khi các hệ đọc chữ trả đúng.
 2. **Điều phủ định:** `rel-08`, `rel-09` ("Cai Trần Văn Khải có phải họ hàng của Minh?"). Đồ thị không có cạnh "không họ hàng", nên model đoán "Có" từ chuyện cùng họ Trần. Các hệ đọc chữ thấy câu phủ định trên trang.
-3. **Ai biết lời nói dối:** `lie-06`, `lie-07`. Đồ thị trả "Không". Cần đọc ngữ cảnh đồ thị thật trong `results.jsonl` để biết là đồ thị dựng tay thiếu cạnh `KNOWS` hay là phần đọc đồ thị không đưa cạnh đó vào ngữ cảnh. Chưa kiểm.
+3. **Ai biết lời nói dối:** `lie-06`, `lie-07`. Đồ thị trả "Không". Cần đọc ngữ cảnh đồ thị thật trong `results.jsonl` để biết là đồ thị dựng tay thiếu cạnh `KNOWS` hay là phần đọc đồ thị không đưa cạnh đó vào ngữ cảnh. **Đã kiểm (D-81):** không phải cả hai; cạnh có trong ngữ cảnh hai lần, model trả lời lệch giữa các lần hỏi.
 
 ## Việc tiếp
 - Thử **hệ lai**: đồ thị cộng các câu trích trên trang mà đồ thị đã lưu, hoặc đồ thị cộng BM25. Hai loại lỗi 1 và 2 đều là chỗ đọc chữ mạnh hơn.
