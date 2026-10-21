@@ -44,3 +44,22 @@ def test_payload_lists_fields_only_when_given():
                            fields=["index", "tags.genre"]).player_payload()
     assert set(payload) == {"code", "message", "fields"}
     assert payload["fields"] == ["index", "tags.genre"]
+
+
+@pytest.mark.parametrize("code", list(ErrorCode))
+def test_no_message_offers_a_cheaper_writer_tier(code: ErrorCode):
+    """Bản 1 chỉ có một mức model viết (D-33): không câu lỗi nào bảo người chơi đổi mức model
+    (README bàn giao thiết kế, mục 8 điểm 2; D-67)."""
+    text = MESSAGES[code].text().casefold()
+    assert "mức model" not in text
+    assert "rẻ hơn" not in text
+
+
+@pytest.mark.parametrize("code", [ErrorCode.COST_LIMIT_SCENE, ErrorCode.COST_LIMIT_CHAPTER])
+def test_cost_limit_messages_say_saved_work_is_kept_and_retry(code: ErrorCode):
+    """G11: chạm trần thì không ghi nửa chừng, nên câu lỗi nói phần đã lưu vẫn còn; bước tiếp là
+    thử lại (trần do hệ thống đặt, người chơi không nâng được)."""
+    msg = MESSAGES[code]
+    assert "trần chi phí" in msg.what
+    assert "vẫn còn" in msg.what
+    assert "thử lại" in msg.next_step.casefold()

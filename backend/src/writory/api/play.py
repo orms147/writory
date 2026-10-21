@@ -194,12 +194,12 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
             raise RuntimeError(f"truyện {story.id} không có thiết lập truyện")  # fail closed
         client, tracker = llm.open(story_id=story.id, chapter=chapter)
         tracker.ensure_budget()  # trần chưa đặt hoặc đã chạm: báo trước khi mở stream
-        # `darkness_level` để trống: tag mức u tối là chữ tự do, chưa có bước đổi thành một mức
-        # trong config/moderation.yaml nên dùng mức mặc định (D-58, câu hỏi mở).
+        # Mức u tối lưu theo truyện là trần kiểm duyệt đầu ra (D-58, D-67); None = mức mặc định.
         request = ChapterRequest(
             present_ids=(), scene_count=config.story_lengths.scenes_per_chapter.min,
             story_brief=brief, player_action=None if action is None else action.text,
             choice=_picked_choice(conn, story.id, committed, action),
+            darkness_level=story.darkness_level,
         )
         run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
                          config=config, plan=plan, tracker=tracker)
@@ -296,8 +296,9 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
         truth_names=leak_names(Neo4jState(driver, story.id)),  # D-48: một quy tắc cho mọi nơi
         plan=plan, story_brief=brief,  # D-52: chữ khởi tạo người chơi đã đọc
         retries=config.limits.retries, extra=role_extra(config.models, "choices"),
-        # G9, D-57: kiểm duyệt như đường của pipeline. Mức u tối chưa lưu theo truyện: dùng mặc định.
-        moderate=partial(moderate, source=Source.CHOICES, llm=client, config=config),
+        # G9, D-57: kiểm duyệt như đường của pipeline, ở mức u tối của truyện (D-67).
+        moderate=partial(moderate, source=Source.CHOICES, llm=client, config=config,
+                         darkness_level=story.darkness_level),
     )
     saved = save_choices(conn, story.id, chapter, [choice_record(c) for c in choices])
     return ChoicesOut(chapter=chapter, choices=_for_player(saved))

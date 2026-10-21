@@ -397,6 +397,7 @@ class OverlayStore:
         self.packages: list[ChangePackage] = []
         self.committed: int | None = None
         self.created: str | None = None
+        self.created_darkness: str | None = None
         self.deleted = False
         self.commits: list[tuple[int, list[str]]] = []
         self.saved_summaries: dict[int, str] = {}
@@ -407,8 +408,9 @@ class OverlayStore:
     def save_summary(self, chapter: int, text: str) -> None:
         self.saved_summaries.setdefault(chapter, text)
 
-    def create_story(self, length_level: str) -> None:
+    def create_story(self, length_level: str, darkness_level: str | None = None) -> None:
         self.created = length_level
+        self.created_darkness = darkness_level
 
     def delete_story(self) -> None:
         self.deleted = True

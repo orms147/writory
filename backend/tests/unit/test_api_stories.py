@@ -5,6 +5,7 @@ G12: lỗi trả payload có mã. Router chỉ mount khi bật cờ dev (fail cl
 """
 
 import json
+from dataclasses import replace
 
 import pytest
 from fastapi import FastAPI
@@ -18,7 +19,7 @@ from writory.api.stories import router as stories_router
 from writory.config import Settings
 from writory.db import StoryNotFoundError, StoryRecord
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerView, public_entries
+from writory.graph import PlayerView, public_entries, public_lies
 from writory.llm.fake import FakeLLM
 from writory.pipeline.narrator import NOT_KNOWN
 
@@ -45,13 +46,17 @@ def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota |
     def player_view(story_id: str) -> PlayerView:
         if story_id == "khong-co":
             raise StoryNotFoundError(f"không có truyện {story_id}")
-        return view(chapter)
+        return replace(view(chapter), story_id=story_id)  # như app thật: view của chính truyện
 
     # Không Docker: kết nối giả, truyện của người chơi dev, kho key rỗng, nhật ký trong bộ nhớ.
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
     offline(app)
-    app.dependency_overrides[deps.get_owned_story] = (
-        lambda story_id: StoryRecord(story_id, "dev", "short", chapter))
+    def owned_story(story_id: str) -> StoryRecord:
+        if story_id == "khong-co":  # truyện không có, hoặc của người khác (G10): cùng một lỗi
+            raise StoryNotFoundError(f"không có truyện {story_id}")
+        return StoryRecord(story_id, "dev", "short", chapter)
+
+    app.dependency_overrides[deps.get_owned_story] = owned_story
     app.dependency_overrides[deps.get_key_store] = MemoryKeyStore
     app.dependency_overrides[deps.get_cost_ledger] = MemoryCostLedger
     app.dependency_overrides[deps.get_player_view] = player_view
@@ -140,19 +145,29 @@ def test_notebook_story_not_found_is_g12_payload():
 # --- hỏi người kể -----------------------------------------------------------------------------
 
 
-def test_narrator_returns_answer_only():
+LIMIT = CFG.limits.rate_limit.narrator_questions_per_chapter
+NARRATOR_KEYS = {"answer", "remaining", "source_chapters"}
+
+
+def answered(answer: str, *, remaining: int = LIMIT - 1, sources=()) -> dict:
+    return {"answer": answer, "remaining": remaining, "source_chapters": list(sources)}
+
+
+def test_narrator_returns_answer_remaining_and_sources_only():
     v = view(3)
-    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
+    gu = ref(v, "e_gu_death")
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [gu])])
     with TestClient(build(3, fake=fake)) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
     assert resp.status_code == 200
-    assert resp.json() == {"answer": "Lão Gù chết sau miếu Bà."}
+    since = next(e.since_chapter for r, e in public_entries(v) if r == gu)
+    assert resp.json() == answered("Lão Gù chết sau miếu Bà.", sources=[since])
 
 
 def test_narrator_not_known_is_a_normal_answer():
     with TestClient(build(4)) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Ai giết Lão Gù?"})
-    assert (resp.status_code, resp.json()) == (200, {"answer": NOT_KNOWN})
+    assert (resp.status_code, resp.json()) == (200, answered(NOT_KNOWN))
 
 
 def test_narrator_leak_is_hidden_as_not_known():
@@ -160,7 +175,8 @@ def test_narrator_leak_is_hidden_as_not_known():
     fake = FakeLLM.scripted([reply(True, "Gã đó là Lý Thất.", [ref(v, "ly_that")])])
     with TestClient(build(4, fake=fake)) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Gã lái đò là ai?"})
-    assert (resp.status_code, resp.json()) == (200, {"answer": NOT_KNOWN})
+    # Câu bị chặn không có nguồn: mã model dẫn (ở đây là mục "gã lái đò") không lộ ra.
+    assert (resp.status_code, resp.json()) == (200, answered(NOT_KNOWN))
     assert "Lý Thất" not in json.dumps(resp.json(), ensure_ascii=False)
 
 
@@ -173,7 +189,10 @@ def test_narrator_leak_check_counts_the_story_brief_as_seen():
     app.dependency_overrides[deps.get_story_brief] = lambda: "Bối cảnh: bến có lái đò Lý Thất."
     with TestClient(app) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Gã lái đò là ai?"})
-    assert (resp.status_code, resp.json()) == (200, {"answer": "Gã đó là Lý Thất."})
+    assert resp.status_code == 200
+    assert resp.json() == answered("Gã đó là Lý Thất.",
+                                   sources=[next(e.since_chapter for e in v.entries
+                                                 if e.id == "ly_that")])
 
 
 def test_narrator_limit_is_429_g12_payload():
@@ -185,6 +204,88 @@ def test_narrator_limit_is_429_g12_payload():
         resp = client.post("/stories/s1/narrator", json={"question": "Thêm?"})
     assert resp.status_code == 429 == HTTP_STATUS[ErrorCode.NARRATOR_LIMIT_REACHED]
     assert resp.json() == WritoryError(ErrorCode.NARRATOR_LIMIT_REACHED).player_payload()
+
+
+def test_remaining_counts_down_then_the_limit_error_is_unchanged():
+    """D-65: `remaining` lấy từ bộ đếm `narrator_questions` sau khi giữ lượt; câu "Bạn chưa biết
+    điều này." vẫn tính một lượt (D-40). Hết lượt thì lỗi giữ nguyên như cũ."""
+    fake = FakeLLM.scripted([reply(False, None, [])] * LIMIT)
+    with TestClient(build(3, fake=fake), raise_server_exceptions=False) as client:
+        before = client.get("/stories/s1/narrator").json()
+        got = [client.post("/stories/s1/narrator", json={"question": "?"}).json()["remaining"]
+               for _ in range(LIMIT)]
+        after = client.get("/stories/s1/narrator").json()
+        over = client.post("/stories/s1/narrator", json={"question": "Thêm?"})
+    assert before == {"remaining": LIMIT}
+    assert got == list(range(LIMIT - 1, -1, -1))
+    assert after == {"remaining": 0}
+    assert over.status_code == 429
+    assert over.json() == WritoryError(ErrorCode.NARRATOR_LIMIT_REACHED).player_payload()
+
+
+def test_remaining_is_per_chapter():
+    quota = MemoryQuota()
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    with TestClient(build(3, fake=fake, quota=quota)) as client:
+        client.post("/stories/s1/narrator", json={"question": "?"})
+    with TestClient(build(4, quota=quota)) as client:
+        assert client.get("/stories/s1/narrator").json() == {"remaining": LIMIT}
+
+
+def test_empty_notebook_answer_does_not_use_a_question():
+    """Chương 0: sổ tay trống, không gọi model, không mất lượt (D-40), không có nguồn."""
+    fake = FakeLLM.scripted([])
+    with TestClient(build(0, fake=fake)) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Tôi là ai?"})
+    assert resp.json() == answered(NOT_KNOWN, remaining=LIMIT)
+    assert fake.calls == []
+
+
+def test_blocked_question_does_not_use_a_question():
+    moderated = ModeratedLLM(FakeLLM.scripted([]), [moderation_reply(("real_world_harm", "strong"))])
+    with TestClient(build(3, moderated=moderated), raise_server_exceptions=False) as client:
+        assert client.post("/stories/s1/narrator", json={"question": "x"}).status_code == 422
+        assert client.get("/stories/s1/narrator").json() == {"remaining": LIMIT}
+
+
+def test_sources_of_a_lie_answer_are_the_chapter_it_was_told():
+    v = view(5)
+    lie = next((r, x) for r, x in public_lies(v) if x.id == "l_sword_father")
+    spy = ref(v, "f_lan_spy")
+    fake = FakeLLM.scripted([reply(True, "Minh từng nói thanh kiếm là của cha để lại.",
+                                   [spy, lie[0], spy])])
+    with TestClient(build(5, fake=fake)) as client:
+        body = client.post("/stories/s1/narrator", json={"question": "Kiếm của ai?"}).json()
+    assert body["source_chapters"] == sorted({lie[1].chapter, 5})
+    assert all(isinstance(c, int) for c in body["source_chapters"])
+
+
+def test_narrator_get_has_only_remaining_and_needs_no_key_or_model():
+    """GET không gọi model, không cần key: chỉ đọc bộ đếm."""
+    fake = FakeLLM.scripted([])
+    with TestClient(build(3, fake=fake, override_llm=False)) as client:
+        resp = client.get("/stories/s1/narrator")
+    assert (resp.status_code, resp.json()) == (200, {"remaining": LIMIT})
+    assert fake.calls == []
+
+
+def test_narrator_get_of_unknown_story_is_404():
+    """G10 (TODO đăng nhập): truyện không có hay của người khác báo cùng một lỗi."""
+    with TestClient(build(), raise_server_exceptions=False) as client:
+        resp = client.get("/stories/khong-co/narrator")
+    assert resp.status_code == 404
+    assert resp.json() == WritoryError(ErrorCode.STORY_NOT_FOUND).player_payload()
+
+
+def test_narrator_get_with_limit_not_set_fails_closed():
+    from .test_narrator import with_limits
+
+    app = build(3)
+    app.state.config = with_limits(rate_limit__narrator_questions_per_chapter=None)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.get("/stories/s1/narrator")
+    assert resp.status_code == 503
+    assert resp.json()["code"] == "CONFIG_LIMIT_NOT_SET"
 
 
 def test_narrator_bad_question_is_g12_payload():
@@ -240,11 +341,15 @@ def test_router_not_mounted_when_dev_flag_off():
     with TestClient(app) as client:
         assert client.get("/stories/s1/notebook").status_code == 404
         assert client.post("/stories/s1/narrator", json={"question": "?"}).status_code == 404
+        assert client.get("/stories/s1/narrator").status_code == 404
+        assert client.get("/stories").status_code == 404
 
 
 def test_router_mounted_when_dev_flag_on():
     app = create_app(settings(dev=True), health_checks={"neo4j": ok}, config=CFG)
-    assert {"/stories/{story_id}/notebook", "/stories/{story_id}/narrator"} <= _paths(app)
+    assert {"/stories", "/stories/{story_id}/notebook", "/stories/{story_id}/narrator"} <= _paths(
+        app)
+    assert {"get", "post"} <= set(app.openapi()["paths"]["/stories/{story_id}/narrator"])
 
 
 def test_router_mounted_elsewhere_without_flag_still_refuses():

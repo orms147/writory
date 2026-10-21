@@ -889,7 +889,7 @@ def test_story_brief_carries_every_player_choice_and_naming():
     """Thiết lập truyện cho mỗi chương (`ChapterRequest.story_brief`): tag, quy ước tên và địa danh
     (D-32), bối cảnh, hướng và nhân vật chính đã chọn. Nhân vật chính bỏ khoảng trắng hai đầu."""
     padded = PC.model_copy(update={"name": "  " + PC.name + " "})
-    brief = story_brief(CHOICES, SETTING, PLOT, padded)
+    brief = story_brief(CHOICES, SETTING, PLOT, padded, moderation=CFG.moderation)
     for part in ("kiếm hiệp", "cổ đại", "trầm, chậm", NAMES_TEXT["han_viet"], PLACES_TEXT["hu_cau"],
                  SETTING.title, SETTING.intro, PLOT.title, PLOT.summary, PC.personality,
                  PC.backstory):
@@ -930,3 +930,47 @@ def test_old_plan_without_protects_still_loads():
     for secret in plan["secrets"]:
         del secret["protects"]
     assert all(s.protects == [] for s in StoryPlan.model_validate(plan).secrets)
+
+
+# --- mức u tối chọn sẵn (D-67) --------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("level", [None, "light", "dark"])
+async def test_every_setup_prompt_states_the_chosen_darkness_level_as_data(level):
+    """Mức u tối là một trong các mức của config (không còn chữ tự do). Đề mọi bước khởi tạo có
+    nhãn và trần của mức, trong khối dữ liệu như tag, không ở vai system."""
+    from writory.safety.moderate import darkness_brief
+
+    choices = CHOICES.model_copy(update={"darkness_level": level})
+    llm = FakeLLM.scripted([_options("settings"), _options("plots"), _options("characters"),
+                            _build()])
+    await propose_settings(choices, llm=llm, config=CFG)
+    await propose_plots(choices, SETTING, llm=llm, config=CFG)
+    await propose_characters(choices, SETTING, PLOT, llm=llm, config=CFG)
+    await build_story(choices, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0")
+    want = html.escape(darkness_brief(CFG.moderation, level), quote=False)
+    label = CFG.moderation.darkness_levels[level or CFG.moderation.default_darkness_level].label
+    users = _user(llm)
+    assert len(users) == 4
+    for user in users:
+        assert _block(user, "darkness_level") == want
+        assert label in want
+    assert all(want not in s for s in _system(llm))
+
+
+async def test_unknown_darkness_level_fails_before_any_call():
+    choices = CHOICES.model_copy(update={"darkness_level": "không-có"})
+    llm = FakeLLM.scripted([])
+    with pytest.raises(ValueError, match="không có"):
+        await propose_settings(choices, llm=llm, config=CFG)
+    assert llm.calls == []
+
+
+@pytest.mark.parametrize("level", [None, "light"])
+def test_story_brief_carries_the_darkness_level(level):
+    """Thiết lập truyện vào đề dàn ý và đề viết mỗi chương: có nhãn và trần của mức đã chọn."""
+    from writory.safety.moderate import darkness_brief
+
+    choices = CHOICES.model_copy(update={"darkness_level": level})
+    brief = story_brief(choices, SETTING, PLOT, PC, moderation=CFG.moderation)
+    assert darkness_brief(CFG.moderation, level) in brief

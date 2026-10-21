@@ -5,9 +5,13 @@ truyện tính cả các chương trước, câu hỏi người kể và bước
 hồi không có usage.cost, client không ước tính) không cộng được; `CostTracker` đã dừng ở lời gọi
 đó (D-10). Dòng `estimated` mang chi phí tối đa của lời gọi không có usage và được cộng như số
 thật, tới khi tra lại theo `generation_id` thay bằng số thật (D-64, migration 0007).
+
+`owner_costs` là số người chơi đã trả bằng key của mình (`/player/costs`, D-66): theo `owner_id` của
+dòng, kể cả phiên khởi tạo bỏ dở và dòng ước tính chưa tra lại; tháng là tháng dương lịch theo UTC.
 """
 
 from dataclasses import dataclass
+from datetime import UTC, datetime
 
 import psycopg
 
@@ -80,3 +84,38 @@ def settle_cost_estimate(
         "estimated = false WHERE id = %s AND estimated",
         (cost_usd, prompt_tokens, completion_tokens, row_id),
     )
+
+
+def utc_month(now: datetime) -> tuple[datetime, datetime]:
+    """Tháng dương lịch theo UTC chứa `now`: [đầu tháng, đầu tháng sau) (D-66)."""
+    if now.tzinfo is None:
+        raise ValueError("now phải có múi giờ")
+    start = now.astimezone(UTC).replace(day=1, hour=0, minute=0, second=0, microsecond=0)
+    end = (start.replace(year=start.year + 1, month=1) if start.month == 12
+           else start.replace(month=start.month + 1))
+    return start, end
+
+
+@dataclass(frozen=True)
+class OwnerCosts:
+    total_usd: float
+    this_month_usd: float
+    stories: tuple[tuple[str, float], ...]  # (story_id, đã tiêu), truyện tiêu gần nhất trước
+
+
+def owner_costs(conn: psycopg.Connection, owner_id: str, *, now: datetime) -> OwnerCosts:
+    """Số đã tiêu của một người chơi: tổng, tháng UTC chứa `now`, và theo từng truyện."""
+    start, end = utc_month(now)
+    total, month = conn.execute(
+        "SELECT COALESCE(SUM(cost_usd), 0), "
+        "COALESCE(SUM(cost_usd) FILTER (WHERE created_at >= %s AND created_at < %s), 0) "
+        "FROM llm_costs WHERE owner_id = %s",
+        (start, end, owner_id),
+    ).fetchone()
+    rows = conn.execute(
+        "SELECT story_id, COALESCE(SUM(cost_usd), 0) FROM llm_costs "
+        "WHERE owner_id = %s AND story_id IS NOT NULL "
+        "GROUP BY story_id ORDER BY MAX(created_at) DESC, story_id",
+        (owner_id,),
+    ).fetchall()
+    return OwnerCosts(float(total), float(month), tuple((sid, float(usd)) for sid, usd in rows))

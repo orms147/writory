@@ -64,8 +64,10 @@ def test_run_story_brief_is_exactly_what_the_pipeline_function_returns():
     def pick(step, cls):
         return cls(**setup[step]["options"][setup[step]["picked"]])
 
+    # Lần chạy trước D-67: đề không có `darkness_level`, thiết lập không có dòng mức u tối.
+    assert "darkness_level" not in c
     want = story_brief(choices, pick("settings", SettingOption), pick("plots", PlotOption),
-                       pick("characters", CharacterOption))
+                       pick("characters", CharacterOption), moderation=None)
     assert story.brief == want
 
 

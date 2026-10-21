@@ -76,6 +76,7 @@ class StoryRecord:
     owner_id: str | None
     length_level: str
     committed_chapter: int | None
+    darkness_level: str | None = None  # khoá moderation.darkness_levels; None = mặc định (D-67)
 
 
 @dataclass(frozen=True)
@@ -96,19 +97,21 @@ class ReconcileResult:
 
 
 def create_story(
-    conn: psycopg.Connection, story_id: str, *, length_level: str, owner_id: str | None = None
+    conn: psycopg.Connection, story_id: str, *, length_level: str, owner_id: str | None = None,
+    darkness_level: str | None = None,
 ) -> StoryRecord:
     require_story_id(story_id)
     conn.execute(
-        "INSERT INTO stories (id, owner_id, length_level) VALUES (%s, %s, %s)",
-        (story_id, owner_id, length_level),
+        "INSERT INTO stories (id, owner_id, length_level, darkness_level) VALUES (%s, %s, %s, %s)",
+        (story_id, owner_id, length_level, darkness_level),
     )
     return get_story(conn, story_id)
 
 
 def get_story(conn: psycopg.Connection, story_id: str) -> StoryRecord:
     row = conn.execute(
-        "SELECT id, owner_id, length_level, committed_chapter FROM stories WHERE id = %s",
+        "SELECT id, owner_id, length_level, committed_chapter, darkness_level FROM stories "
+        "WHERE id = %s",
         (story_id,),
     ).fetchone()
     if row is None:

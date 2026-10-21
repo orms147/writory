@@ -193,11 +193,27 @@ def rewrite_feedback(
     for category in result.categories:
         rule = config.categories[category]
         if rule.level is Level.DARKNESS_LIMITED:
-            limit = ceiling[category]
-            allowed = "không miêu tả" if limit is Intensity.NONE else (
-                f"tối đa mức {limit.name.lower()} ({config.intensity_scale[limit]})")
+            allowed = _allowed(ceiling[category], config)
             parts.append(f"{category.value} ({rule.description}): {allowed}")
         else:
             parts.append(f"{category.value} ({rule.description}): không được có")
     return ("nội dung vượt mức cho phép của truyện: " + "; ".join(parts)
             + ". Viết lại cảnh, giữ diễn biến, nhưng bỏ hoặc làm nhẹ phần vượt mức.")
+
+
+def _allowed(limit: Intensity, config: ModerationConfig) -> str:
+    return "không miêu tả" if limit is Intensity.NONE else (
+        f"tối đa mức {limit.name.lower()} ({config.intensity_scale[limit]})")
+
+
+def darkness_brief(config: ModerationConfig, darkness_level: str | None) -> str:
+    """Mức u tối người chơi chọn, cho đề khởi tạo và thiết lập truyện của mỗi chương (D-67): nhãn,
+    rồi trần miêu tả của từng loại bị giới hạn. Cùng nguồn với `decide`, nên điều model được dặn
+    và điều bộ kiểm duyệt chặn không lệch nhau. None là mức mặc định; mức lạ là lỗi."""
+    name = config.default_darkness_level if darkness_level is None else darkness_level
+    ceiling = config.ceiling(name)
+    lines = [f"Mức độ u tối: {config.darkness_levels[name].label}"]
+    for category, limit in ceiling.items():
+        description = config.categories[category].description.strip().rstrip(".")
+        lines.append(f"- {description}: {_allowed(limit, config)}")
+    return "\n".join(lines)

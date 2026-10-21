@@ -547,3 +547,46 @@ def test_real_client_reads_only_the_openrouter_key(tmp_path, monkeypatch):
     with pytest.raises(ConfigError, match="OPENROUTER_API_KEY") as exc:
         openrouter_client(env)
     assert "sk-ant" not in str(exc.value)
+
+
+# --- mức u tối của đề (D-67) ----------------------------------------------------------------------
+
+
+def _spy_requests(monkeypatch) -> list:
+    seen = []
+
+    class Spy(bench_run.ChapterRun):
+        def __init__(self, request, **kw):
+            seen.append(request)
+            super().__init__(request, **kw)
+
+    monkeypatch.setattr(bench_run, "ChapterRun", Spy)
+    return seen
+
+
+@pytest.mark.parametrize("level", ["light", None])
+async def test_scenario_darkness_level_is_stored_and_reaches_every_chapter(tmp_path, monkeypatch,
+                                                                         level):
+    """Đề khai `darkness_level` (không khai: mức mặc định). Mức được lưu theo truyện, vào thiết
+    lập truyện của mọi chương và là trần kiểm duyệt của mọi chương, như đường chơi."""
+    from writory.safety.moderate import darkness_brief
+
+    config = trial_config(tmp_path)
+    want = level or config.moderation.default_darkness_level
+    seen = _spy_requests(monkeypatch)
+    run, _, store, _ = make_run(tmp_path, config=config,
+                                scenario=scenario_for(config, darkness_level=level))
+    assert await run.run() == bench_run.EXIT_OK
+    assert store.created_darkness == want
+    assert seen and {r.darkness_level for r in seen} == {want}
+    assert all(darkness_brief(config.moderation, want) in r.story_brief for r in seen)
+
+
+async def test_unknown_scenario_darkness_level_fails_before_the_first_call(tmp_path):
+    config = trial_config(tmp_path)
+    llm, store = DryRunLLM(4), OverlayStore()
+    run, _, _, out = make_run(tmp_path, llm=llm, config=config, store=store,
+                              scenario=scenario_for(config, darkness_level="rat-toi"))
+    with pytest.raises(ConfigError, match="darkness_level"):
+        await run.run()
+    assert llm.calls == [] and store.created is None and not out.exists()

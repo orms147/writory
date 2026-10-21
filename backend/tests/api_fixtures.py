@@ -11,6 +11,7 @@ import threading
 from collections.abc import Iterator
 from contextlib import contextmanager
 from dataclasses import replace
+from datetime import datetime
 
 import psycopg
 import uvicorn
@@ -18,7 +19,7 @@ from cryptography.fernet import Fernet
 from pydantic import SecretStr
 
 from writory.config import Settings
-from writory.db import CostEntry
+from writory.db import CostEntry, OwnerCosts
 from writory.llm.base import GenerationCost, LLMClient
 from writory.llm.ledger import PendingEstimate
 
@@ -56,6 +57,7 @@ class MemoryKeyStore:
 class MemoryCostLedger:
     def __init__(self, *, story_spent: float = 0.0, setup_spent: float = 0.0) -> None:
         self.rows: list[tuple[CostEntry, str | None, str | None, int | None]] = []
+        self.asked_now: list[datetime] = []
         self._story_spent = story_spent
         self._setup_spent = setup_spent
 
@@ -82,6 +84,17 @@ class MemoryCostLedger:
             self.rows[row_id] = (replace(entry, cost_usd=cost.cost_usd, estimated=False,
                                          prompt_tokens=cost.prompt_tokens,
                                          completion_tokens=cost.completion_tokens), *where)
+
+    def owner_costs(self, now: datetime) -> OwnerCosts:
+        """Như bản Postgres, trừ tháng: dòng trong bộ nhớ không có giờ, nên mọi dòng tính vào tháng
+        của `now`. Truyện tiêu gần nhất đứng trước."""
+        self.asked_now.append(now)
+        total = sum(e.cost_usd or 0 for e, *_ in self.rows)
+        by_story: dict[str, float] = {}
+        for e, story_id, _, _ in reversed(self.rows):
+            if story_id is not None:
+                by_story[story_id] = by_story.get(story_id, 0.0) + (e.cost_usd or 0)
+        return OwnerCosts(total, total, tuple(by_story.items()))
 
 
 class KeyedFactory:

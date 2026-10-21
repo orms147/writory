@@ -80,13 +80,20 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Máy chủ chưa chọn model cho bước này nên đã dừng lại.",
         "Đây là lỗi cấu hình phía máy chủ, không phải do bạn; hãy báo cho người quản trị.",
     ),
+    # Bản 1 chỉ có một mức model viết (D-33): không bảo người chơi đổi mức (D-66). Trần mỗi cảnh
+    # cũng áp cho bước tóm tắt và bước lựa chọn sau khi chương đã ghi, nên câu không nói chương
+    # chưa lưu; G11 bảo đảm không có gì ghi nửa chừng.
     ErrorCode.COST_LIMIT_SCENE: PlayerMessage(
-        "Cảnh này đã chạm trần chi phí cho một cảnh nên hệ thống dừng viết.",
-        "Bấm thử lại để viết lại cảnh từ đầu, hoặc chọn mức model rẻ hơn.",
+        "Lần viết vừa rồi đã chạm trần chi phí mỗi cảnh nên hệ thống dừng lại. Phần đã hiện và "
+        "đã lưu vẫn còn.",
+        "Bấm thử lại để viết lại phần còn dở. Trần do hệ thống đặt; nếu lần nào cũng dừng ở "
+        "đây, hãy báo cho người quản trị.",
     ),
     ErrorCode.COST_LIMIT_CHAPTER: PlayerMessage(
-        "Chương này đã chạm trần chi phí cho một chương nên hệ thống dừng viết.",
-        "Bấm thử lại để viết lại chương, hoặc chọn mức model rẻ hơn.",
+        "Chương đang viết đã chạm trần chi phí mỗi chương nên hệ thống dừng lại. Phần đã hiện và "
+        "đã lưu vẫn còn.",
+        "Bấm thử lại để viết lại phần còn dở. Trần do hệ thống đặt; nếu lần nào cũng dừng ở "
+        "đây, hãy báo cho người quản trị.",
     ),
     ErrorCode.COST_LIMIT_STORY: PlayerMessage(
         "Truyện này đã dùng hết trần chi phí cho một truyện.",

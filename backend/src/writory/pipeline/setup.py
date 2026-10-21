@@ -37,7 +37,7 @@ from typing import Any, Literal, get_args
 
 from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
-from writory.config import AppConfig, LengthLevel
+from writory.config import AppConfig, LengthLevel, ModerationConfig
 from writory.errors import ErrorCode, WritoryError
 from writory.graph.package import ID_MAX_LEN, ID_PATTERN, ChangePackage, chapter_rule_problems
 from writory.graph.schema import NAMED_LABELS
@@ -45,6 +45,7 @@ from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
 from writory.llm.retry import with_json_retries
 from writory.pipeline.story_plan import MilestoneKind, StoryPlan
+from writory.safety.moderate import darkness_brief
 from writory.safety.wrap import (
     DATA_NOTICE,
     UserAuthored,
@@ -129,7 +130,10 @@ def default_naming(genre: str) -> Naming:
 
 
 class StoryTags(_Strict):
-    """Tag người chơi chọn (design §4.1 bước 1). Coi là chữ người chơi (G4): có thể là chữ tự gõ."""
+    """Tag người chơi chọn (design §4.1 bước 1). Coi là chữ người chơi (G4): có thể là chữ tự gõ.
+
+    `darkness`: chữ tự do cũ, chỉ còn để đọc phiên và đề đã lưu trước D-67; mức u tối giờ là
+    `StoryChoices.darkness_level`, API không nhận trường này nữa."""
 
     genre: str = Field(min_length=1)
     era: str | None = None
@@ -147,6 +151,8 @@ class StoryChoices(_Strict):
     length_level: str  # khoá trong config/story_lengths.yaml `levels`
     pov: PovMode = "protagonist"
     naming: Naming
+    # Khoá trong config/moderation.yaml `darkness_levels` (D-67); None = `default_darkness_level`.
+    darkness_level: str | None = None
 
     def level(self, config: AppConfig) -> LengthLevel:
         try:
@@ -521,13 +527,17 @@ def _plot_data(plot: PlotOption) -> UserAuthored:
 
 
 def _messages(
-    task: str, choices: StoryChoices, level: LengthLevel, *parts: str | UserAuthored
+    task: str, choices: StoryChoices, config: AppConfig, *parts: str | UserAuthored
 ) -> list[Message]:
+    level = choices.level(config)
     brief: list[str | UserAuthored] = [
         f"Độ dài truyện: {level.label}, {level.chapters.min}–{level.chapters.max} chương.",
         _POV_TEXT[choices.pov],
         "Tag người chơi đã chọn:",
         UserAuthored(_tags_text(choices.tags), "story_tags"),
+        # Mức u tối người chơi chọn (D-67): bọc như tag, vì đi cùng lựa chọn của người chơi.
+        "Mức u tối người chơi đã chọn:",
+        UserAuthored(darkness_brief(config.moderation, choices.darkness_level), "darkness_level"),
     ]
     return [
         system_message(_COMMON, _naming_rule(choices.naming), task, DATA_NOTICE),
@@ -571,16 +581,14 @@ def _three[O: _Out](options: list[O]) -> list[O]:
 async def propose_settings(
     choices: StoryChoices, *, llm: LLMClient, config: AppConfig
 ) -> list[SettingOption]:
-    level = choices.level(config)
-    out = await _ask(llm, config, _messages(SETTINGS_TASK, choices, level), SettingsOutput)
+    out = await _ask(llm, config, _messages(SETTINGS_TASK, choices, config), SettingsOutput)
     return _three(out.options)
 
 
 async def propose_plots(
     choices: StoryChoices, setting: SettingOption, *, llm: LLMClient, config: AppConfig
 ) -> list[PlotOption]:
-    level = choices.level(config)
-    messages = _messages(PLOTS_TASK, choices, level, "Bối cảnh đã chọn:", _setting_data(setting))
+    messages = _messages(PLOTS_TASK, choices, config, "Bối cảnh đã chọn:", _setting_data(setting))
     return _three((await _ask(llm, config, messages, PlotsOutput)).options)
 
 
@@ -588,9 +596,8 @@ async def propose_characters(
     choices: StoryChoices, setting: SettingOption, plot: PlotOption, *,
     llm: LLMClient, config: AppConfig,
 ) -> list[CharacterOption]:
-    level = choices.level(config)
     messages = _messages(
-        CHARACTERS_TASK, choices, level,
+        CHARACTERS_TASK, choices, config,
         "Bối cảnh đã chọn:", _setting_data(setting),
         "Hướng cốt truyện đã chọn:", _plot_data(plot),
     )
@@ -607,15 +614,20 @@ def _clean_protagonist(pc: CharacterOption) -> CharacterOption:
 
 
 def story_brief(
-    choices: StoryChoices, setting: SettingOption, plot: PlotOption, protagonist: CharacterOption
+    choices: StoryChoices, setting: SettingOption, plot: PlotOption, protagonist: CharacterOption,
+    *, moderation: ModerationConfig | None,
 ) -> str:
     """Thiết lập truyện người chơi đã chọn, cho đề dàn ý và đề viết mỗi chương
     (`ChapterRequest.story_brief`; nơi dùng luôn bọc như dữ liệu, G4). Có quy ước tên và địa danh,
-    vì prompt mọi bước sinh nội dung phải nhận nó (D-32)."""
+    vì prompt mọi bước sinh nội dung phải nhận nó (D-32), và mức u tối đã chọn cùng trần của nó
+    (`moderation`, D-67), để model viết biết trần mà kiểm duyệt đầu ra sẽ áp. `moderation=None`
+    chỉ để dựng lại thiết lập của lần chạy trước D-67 (không có dòng mức u tối, bài đo E)."""
     pc = _clean_protagonist(protagonist)
     naming = choices.naming
+    darkness = [] if moderation is None else [darkness_brief(moderation, choices.darkness_level)]
     return "\n".join([
         _tags_text(choices.tags),
+        *darkness,  # D-67
         _POV_TEXT[choices.pov],
         f"Quy ước tên và địa danh: {NAMES_TEXT[naming.names]}; {PLACES_TEXT[naming.places]}.",
         f"Bối cảnh: {setting.title}\n{setting.intro}",
@@ -645,7 +657,7 @@ async def build_story(
         "Tính cách:", UserAuthored(pc.personality, "protagonist_personality"),
         "Quá khứ:", UserAuthored(pc.backstory, "protagonist_backstory"),
     )
-    output = await _ask(llm, config, _messages(task, choices, level, *parts), BuildOutput)
+    output = await _ask(llm, config, _messages(task, choices, config, *parts), BuildOutput)
     limit = config.limits.retries.setup_repair
     repairs = 0
     while True:
@@ -662,7 +674,7 @@ async def build_story(
                  _kinds_text(problems), repairs, limit)
         if on_repair is not None:
             on_repair(problems)
-        messages = _messages(task, choices, level, *parts, *_repair_parts(output, problems))
+        messages = _messages(task, choices, config, *parts, *_repair_parts(output, problems))
         output = await _ask(llm, config, messages, BuildOutput)
 
 

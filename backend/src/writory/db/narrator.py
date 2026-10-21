@@ -1,4 +1,4 @@
-"""Đếm câu hỏi người kể theo truyện và chương trong Postgres (G8, D-40)."""
+"""Đếm câu hỏi người kể theo truyện và chương trong Postgres (G8, D-40, D-66)."""
 
 import psycopg
 
@@ -29,3 +29,14 @@ def take_narrator_question(
     except psycopg.errors.ForeignKeyViolation as exc:
         raise StoryNotFoundError(f"không có truyện {story_id}") from exc
     return row is not None
+
+
+def narrator_questions_asked(conn: psycopg.Connection, story_id: str, chapter: int) -> int:
+    """Số lượt đã giữ ở chương `chapter` (0 khi chưa hỏi câu nào), để báo số câu còn lại."""
+    require_story_id(story_id)
+    require_chapter(chapter)
+    row = conn.execute(
+        "SELECT asked FROM narrator_questions WHERE story_id = %s AND chapter = %s",
+        (story_id, chapter),
+    ).fetchone()
+    return 0 if row is None else row[0]

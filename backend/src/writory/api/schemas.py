@@ -2,11 +2,14 @@
 một từ `PlayerView`, không chép cả object. Không có id lớp truth: mục mang mã công khai
 (`graph.public_entries`, D-40)."""
 
+import re
+from datetime import UTC
 from typing import Annotated, Literal
 
 from pydantic import BaseModel, ConfigDict, Field, SecretStr, StringConstraints
 
-from writory.db import SetupRecord
+from writory.config import AppConfig, StoryLengthsConfig
+from writory.db import OwnerCosts, SetupRecord, StorySummaryRecord
 from writory.graph import PlayerView, public_entries, public_lies
 from writory.pipeline.events import PlayerChoice
 from writory.pipeline.setup import OPTION_COUNT, StoryChoices
@@ -70,6 +73,12 @@ class NarratorQuestionIn(_Out):
 
 class NarratorAnswerOut(_Out):
     answer: str
+    remaining: int  # số câu còn hỏi được ở chương này, sau câu vừa rồi (D-65)
+    source_chapters: list[int]  # chương của các mục câu trả lời dẫn; rỗng khi NOT_KNOWN (D-65)
+
+
+class NarratorRemainingOut(_Out):
+    remaining: int
 
 
 # --- key người chơi (G7, D-45) ---------------------------------------------------------------
@@ -100,10 +109,10 @@ Edit = Annotated[str | None, Field(max_length=EDIT_HARD_MAX_CHARS)]
 
 
 class StoryTagsIn(_Out):
+    # Không còn `darkness` chữ tự do: mức u tối là `SetupStartIn.darkness_level` (D-67).
     genre: Tag
     era: Tag | None = None
     voice: Tag | None = None
-    darkness: Tag | None = None
 
 
 class NamingIn(_Out):
@@ -115,6 +124,8 @@ class SetupStartIn(_Out):
     tags: StoryTagsIn
     length_level: str = Field(max_length=32)  # khoá trong config/story_lengths.yaml
     naming: NamingIn | None = None  # None: mặc định theo thể loại (D-32)
+    # Khoá trong config/moderation.yaml `darkness_levels`; None: `default_darkness_level` (D-67).
+    darkness_level: str | None = Field(default=None, max_length=32)
 
 
 class OptionChoiceIn(_Out):
@@ -134,7 +145,6 @@ class TagsOut(_Out):
     genre: str
     era: str | None
     voice: str | None
-    darkness: str | None
 
 
 class NamingOut(_Out):
@@ -170,6 +180,7 @@ class SetupOut(_Out):
     tags: TagsOut
     length_level: str
     naming: NamingOut
+    darkness_level: str | None  # khoá mức u tối đã chọn (D-67); None chỉ ở phiên tạo trước D-67
     settings: list[SettingOut] | None
     setting_index: int | None
     plots: list[PlotOut] | None
@@ -201,9 +212,10 @@ class SetupOut(_Out):
         return cls(
             session_id=rec.id,
             step=step,
-            tags=TagsOut(genre=tags.genre, era=tags.era, voice=tags.voice, darkness=tags.darkness),
+            tags=TagsOut(genre=tags.genre, era=tags.era, voice=tags.voice),
             length_level=choices.length_level,
             naming=NamingOut(names=choices.naming.names, places=choices.naming.places),
+            darkness_level=choices.darkness_level,
             settings=None if rec.settings is None else [
                 SettingOut(title=o["title"], intro=o["intro"]) for o in rec.settings],
             setting_index=rec.setting_index,
@@ -260,3 +272,149 @@ class StoryOut(_Out):
     action: ActionOut | None  # hành động đã chọn cho chương sau
     next_ready: bool  # viết được chương sau ngay
     finished: bool  # đã tới chương cuối theo kế hoạch
+
+
+# --- giao diện: tủ truyện, cấu hình công khai, chi phí (D-66) -----------------------------------
+
+# Hết câu: dấu chấm, chấm than, chấm hỏi, ba chấm (kể cả "…"), kèm ngoặc đóng ngay sau, rồi khoảng
+# trắng. Regex chỉ để tách câu (định dạng), không đọc ý định.
+_SENTENCE_END = re.compile(r"[.!?…]+[\"”’»)\]]*(?=\s)")
+_DIALOGUE = "- "  # dấu thoại sau chuẩn hoá (D-31)
+
+
+def last_sentence(text: str) -> str | None:
+    """Câu cuối của dòng có chữ cuối cùng, đúng chữ đã hiện (một đoạn con của `text`). Bỏ dấu thoại
+    "- " ở đầu dòng. Không có chữ thì None."""
+    lines = [line.strip() for line in text.splitlines() if line.strip()]
+    if not lines:
+        return None
+    line = lines[-1]
+    if line.startswith(_DIALOGUE) or line == _DIALOGUE.strip():
+        line = line[len(_DIALOGUE):].strip()
+    start = 0
+    for m in _SENTENCE_END.finditer(line):
+        start = m.end()
+    sentence = line[start:].strip()
+    return sentence or None
+
+
+class StorySummaryOut(_Out):
+    """Một truyện trong tủ truyện. Chỉ chữ người chơi đã thấy; `finished` là một cờ tính từ kế
+    hoạch ẩn, không kèm số chương của kế hoạch (G1)."""
+
+    story_id: str
+    title: str | None  # hướng truyện đã chọn lúc khởi tạo; None: truyện không qua /setup
+    length_level: str
+    length_label: str | None  # nhãn trong config/story_lengths.yaml; None: khoá không còn
+    chapter: int  # chương đã commit
+    finished: bool
+    last_excerpt: str | None  # câu cuối của cảnh cuối đã hiện; None ở chương 0
+    updated_at: str  # ISO 8601, UTC
+
+    @classmethod
+    def from_record(cls, rec: StorySummaryRecord,
+                    lengths: StoryLengthsConfig) -> "StorySummaryOut":
+        chapter = rec.committed_chapter or 0
+        level = lengths.levels.get(rec.length_level)
+        return cls(
+            story_id=rec.id, title=rec.title, length_level=rec.length_level,
+            length_label=None if level is None else level.label, chapter=chapter,
+            finished=rec.total_chapters is not None and chapter >= rec.total_chapters,
+            last_excerpt=None if rec.last_scene is None else last_sentence(rec.last_scene),
+            updated_at=rec.updated_at.astimezone(UTC).isoformat(),
+        )
+
+
+class StoryListOut(_Out):
+    stories: list[StorySummaryOut]
+
+
+class InputLimitsOut(_Out):
+    custom_action_max_chars: int | None
+    character_name_max_chars: int | None
+    personality_max_chars: int | None
+    backstory_max_chars: int | None
+    narrator_question_max_chars: int | None
+
+
+class CostCapsOut(_Out):
+    per_scene: float | None
+    per_chapter: float | None
+    per_story: float | None
+
+
+class StoryLengthOut(_Out):
+    key: str
+    label: str
+    chapters_min: int
+    chapters_max: int
+
+
+class WriterTierOut(_Out):
+    label: str
+
+
+class DarknessLevelOut(_Out):
+    key: str
+    label: str
+
+
+class PublicConfigOut(_Out):
+    """Các số giao diện cần, lấy từ config/ (null = chưa đặt). Không model id, giá, trần nội bộ của
+    mức u tối hay ngưỡng của người canh, kiểm văn (G1, D-66, D-67)."""
+
+    input: InputLimitsOut
+    narrator_questions_per_chapter: int | None
+    rewrite_per_scene: int
+    cost_usd: CostCapsOut
+    story_lengths: list[StoryLengthOut]  # theo thứ tự trong config
+    writer_tier: WriterTierOut
+    darkness_levels: list[DarknessLevelOut]  # theo thứ tự trong config/moderation.yaml
+    default_darkness_level: str
+
+    @classmethod
+    def from_config(cls, config: AppConfig, *, writer_label: str) -> "PublicConfigOut":
+        lim = config.limits
+        mod = config.moderation
+        return cls(
+            input=InputLimitsOut(
+                custom_action_max_chars=lim.input.custom_action_max_chars,
+                character_name_max_chars=lim.input.character_name_max_chars,
+                personality_max_chars=lim.input.personality_max_chars,
+                backstory_max_chars=lim.input.backstory_max_chars,
+                narrator_question_max_chars=lim.input.narrator_question_max_chars,
+            ),
+            narrator_questions_per_chapter=lim.rate_limit.narrator_questions_per_chapter,
+            rewrite_per_scene=lim.retries.rewrite_per_scene,
+            cost_usd=CostCapsOut(per_scene=lim.cost_usd.per_scene,
+                                 per_chapter=lim.cost_usd.per_chapter,
+                                 per_story=lim.cost_usd.per_story),
+            story_lengths=[
+                StoryLengthOut(key=k, label=v.label, chapters_min=v.chapters.min,
+                               chapters_max=v.chapters.max)
+                for k, v in config.story_lengths.levels.items()
+            ],
+            writer_tier=WriterTierOut(label=writer_label),
+            darkness_levels=[DarknessLevelOut(key=k, label=v.label)
+                             for k, v in mod.darkness_levels.items()],
+            default_darkness_level=mod.default_darkness_level,
+        )
+
+
+class StoryCostOut(_Out):
+    story_id: str
+    spent_usd: float
+
+
+class PlayerCostsOut(_Out):
+    """Số người chơi đã trả bằng key của mình, từ nhật ký chi phí. Không có gì của key (G7)."""
+
+    total_usd: float
+    this_month_usd: float  # tháng dương lịch theo UTC (D-66)
+    stories: list[StoryCostOut]  # truyện tiêu gần nhất trước
+
+    @classmethod
+    def from_costs(cls, costs: OwnerCosts) -> "PlayerCostsOut":
+        return cls(total_usd=costs.total_usd, this_month_usd=costs.this_month_usd,
+                   stories=[StoryCostOut(story_id=sid, spent_usd=usd)
+                            for sid, usd in costs.stories])

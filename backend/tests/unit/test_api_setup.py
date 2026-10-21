@@ -73,6 +73,16 @@ def test_character_choice_body_is_checked(client, body, fields):
     ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "many"}, {"pov"}),
     ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short",
       "naming": {"names": "latin", "places": "hu_cau"}}, {"naming.names"}),
+    # Mức u tối là khoá trong config/moderation.yaml `darkness_levels` (D-67).
+    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "rat-toi"},
+     {"darkness_level"}),
+    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": 2},
+     {"darkness_level"}),
+    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "x" * 40},
+     {"darkness_level"}),
+    # Chữ tự do "mức độ u tối" không còn (D-67): gửi lên là sai dạng, không âm thầm bỏ qua.
+    ({"tags": {"genre": "kiếm hiệp", "darkness": "vừa"}, "length_level": "short"},
+     {"tags.darkness"}),
 ])
 def test_start_body_is_checked(client, body, fields):
     assert_request_invalid(client.post("/setup", json=body), fields)
@@ -87,15 +97,16 @@ def test_setup_routes_not_mounted_when_dev_flag_off():
 
 
 def test_story_brief_has_only_what_the_player_chose():
-    choices = StoryChoices(tags=StoryTags(genre="kiếm hiệp", era="cổ đại", voice=None,
-                                          darkness="vừa"),
-                           length_level="short", naming=Naming(names="han_viet", places="hu_cau"))
+    choices = StoryChoices(tags=StoryTags(genre="kiếm hiệp", era="cổ đại", voice=None),
+                           length_level="short", naming=Naming(names="han_viet", places="hu_cau"),
+                           darkness_level="dark")
     brief = story_brief(
         choices, SettingOption(title="Bến Lạc Hà", intro="Trấn nhỏ ven sông."),
         PlotOption(title="Thanh kiếm của cha", summary="Lần theo cái chết của cha."),
         CharacterOption(name="Lục Thanh Vân", personality="Ít nói.", backstory="Con thợ rèn."),
+        moderation=CFG.moderation,
     )
-    for part in ("kiếm hiệp", "cổ đại", "vừa", "Hán Việt", "hư cấu", "Bến Lạc Hà",
+    for part in ("kiếm hiệp", "cổ đại", CFG.moderation.darkness_levels["dark"].label, "Hán Việt", "hư cấu", "Bến Lạc Hà",
                  "Trấn nhỏ ven sông.", "Thanh kiếm của cha", "Lần theo cái chết của cha.",
                  "Lục Thanh Vân", "Ít nói.", "Con thợ rèn."):
         assert part in brief, part
