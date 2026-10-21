@@ -28,11 +28,16 @@ from tests.api_fixtures import (
     live_server,
     own_connections,
 )
+from tests.moderation_fixtures import moderation_reply
 from tests.pipeline_fixtures import (
     EXTRACT_1,
+    EXTRACT_2,
     PLAN,
     SAMPLE,
+    SCENE_1,
     SCENE_1_LEAK,
+    SCENE_2,
+    SUMMARY,
     TRUTH_AT_4,
     ScriptedLLM,
     _refs,
@@ -54,6 +59,7 @@ from writory.db import (
     create_story_with_plan,
     current_chapter,
     delete_player_key,
+    get_story,
     job_lock,
     load_action,
     load_choices,
@@ -116,10 +122,11 @@ async def _ok() -> bool:
 def story(pg, driver, new_db_story_id):
     """Truyện mẫu tới chương 3 của người chơi dev, có kế hoạch, thiết lập; key dev được dọn sau."""
 
-    def make(*, action: str | None = "Ở nhà chờ tin.", plan: StoryPlan = PLAN) -> str:
+    def make(*, action: str | None = "Ở nhà chờ tin.", plan: StoryPlan = PLAN,
+             darkness_level: str | None = None) -> str:
         sid = new_db_story_id()
         create_story_with_plan(pg, sid, owner_id=DEV_OWNER_ID, length_level="short",
-                               brief=BRIEF, plan=plan)
+                               brief=BRIEF, plan=plan, darkness_level=darkness_level)
         for ch in SAMPLE.chapters[:4]:
             commit_chapter(pg, driver, sid, ch.number, [ch.text] if ch.text else [], ch.package)
         if action is not None:
@@ -948,3 +955,41 @@ def test_uvicorn_sends_ping_while_the_model_is_slow(pg, driver, story, tmp_path,
     assert kinds(sse("\n".join(lines))) == ["scene_ready", "scene_ready", "chapter_committed",
                                             "choices_ready"]
     assert current_chapter(pg, sid) == 4
+
+
+# --- mức u tối lưu theo truyện (G9, D-67) --------------------------------------------------------
+
+VIOLENT = moderation_reply(("violence", "strong"))
+
+
+@pytest.mark.parametrize(("level", "rewritten"), [(None, False), ("dark", False),
+                                                  ("light", True)])
+def test_the_story_darkness_level_reaches_chapter_moderation(pg, driver, story, tmp_path, level,
+                                                             rewritten):
+    """Mức lưu theo truyện là trần của kiểm duyệt đầu ra (D-58): bạo lực mức strong qua được ở
+    mức mặc định và mức đậm, nhưng vượt trần ở mức nhẹ, nên cảnh bị viết lại một lần."""
+    sid = story(darkness_level=level)
+    assert get_story(pg, sid).darkness_level == level
+    script = [outline_reply(), SCENE_1, EXTRACT_1]
+    if rewritten:
+        script += [SCENE_1, EXTRACT_1]
+    script += [outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    llm = ScriptedLLM(script, moderation=[VIOLENT])
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        events = sse(write_next(client, sid).text)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert len(calls_of(llm, "writer")) == (3 if rewritten else 2)
+
+
+@pytest.mark.parametrize(("level", "shown"), [(None, True), ("light", False)])
+def test_regenerated_choices_are_moderated_at_the_story_darkness_level(pg, driver, story,
+                                                                      tmp_path, level, shown):
+    sid = story(action=None, darkness_level=level)
+    llm = ScriptedLLM([choices_after_chapter_3], moderation=[VIOLENT])
+    with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
+        resp = client.post(f"/stories/{sid}/choices")
+    if shown:
+        assert resp.status_code == 200 and len(resp.json()["choices"]) == 3
+    else:
+        assert resp.json()["code"] == "CHOICES_LEAK_BLOCKED"
+        assert load_choices(pg, sid, 3) == []

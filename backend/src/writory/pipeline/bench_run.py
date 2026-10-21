@@ -161,6 +161,8 @@ class RunScenario(_Strict):
     naming: Naming
     pov: PovMode = "protagonist"
     writer_tier: str | None = None
+    # Khoá trong config/moderation.yaml `darkness_levels`; None = mức mặc định (D-67).
+    darkness_level: str | None = None
     seed: int
     scene_count: PositiveInt
     player_retries: NonNegativeInt
@@ -169,7 +171,7 @@ class RunScenario(_Strict):
 
     def story_choices(self) -> StoryChoices:
         return StoryChoices(tags=self.tags, length_level=self.length_level, pov=self.pov,
-                            naming=self.naming)
+                            naming=self.naming, darkness_level=self.darkness_level)
 
 
 def _sha256(raw: bytes) -> str:
@@ -238,6 +240,10 @@ def run_problems(config: AppConfig, scenario: RunScenario) -> list[str]:
     if not allowed.min <= scenario.scene_count <= allowed.max:
         problems.append(f"scene_count={scenario.scene_count} ngoài khoảng "
                         f"{allowed.min}–{allowed.max} (story_lengths.scenes_per_chapter)")
+    level = scenario.darkness_level
+    if level is not None and level not in config.moderation.darkness_levels:
+        problems.append(f"đề chọn darkness_level {level!r}, config/moderation.yaml chỉ có "
+                        f"{sorted(config.moderation.darkness_levels)}")
     for role, info in models_in_use(config, scenario).items():
         if info["model"] is not None and info["model"] not in scenario.prices:
             problems.append(f"đề không có giá (prices) cho model {info['model']} của vai {role}: "
@@ -376,7 +382,7 @@ class BudgetedClient(LLMClient):
 class RunStore(ChapterStore, Protocol):
     story_id: str
 
-    def create_story(self, length_level: str) -> None: ...
+    def create_story(self, length_level: str, darkness_level: str | None = None) -> None: ...
 
     def delete_story(self) -> None: ...
 
@@ -388,10 +394,11 @@ class GraphRunStore(GraphStore):
         super().__init__(conn, driver, story_id)
         self.story_id = story_id
 
-    def create_story(self, length_level: str) -> None:
+    def create_story(self, length_level: str, darkness_level: str | None = None) -> None:
         from writory.db import create_story
 
-        create_story(self._conn, self.story_id, length_level=length_level)
+        create_story(self._conn, self.story_id, length_level=length_level,
+                     darkness_level=darkness_level)
 
     def delete_story(self) -> None:
         from writory.db import delete_story_record
@@ -468,6 +475,8 @@ class StoryRun:
     ) -> None:
         self.scenario, self.scenario_sha, self.config = scenario, scenario_sha, config
         self.store, self.options, self._print = store, options, log
+        # Mức u tối của truyện (D-67): khoá của đề, không khai thì mức mặc định, như đường chơi.
+        self.darkness_level = scenario.darkness_level or config.moderation.default_darkness_level
         self.llm = llm
         self.style_guide = style_guide if style_guide is not None else load_style_guide()
         self.seed = options.seed if options.seed is not None else scenario.seed
@@ -587,14 +596,16 @@ class StoryRun:
         self.plan = built.plan
         self.setup_record["build"] = {"done": True, "chapters_planned": built.plan.total_chapters}
         try:
-            self.store.create_story(choices.length_level)
+            # Lưu khoá mức u tối như đường chơi (D-67): mức này là trần kiểm duyệt mọi chương.
+            self.store.create_story(choices.length_level, self.darkness_level)
             self.store.commit(0, [], built.package)
         except WritoryError as e:
             self._fail("setup:commit", 1, e)
             self._stop("error", "setup:commit", e.code, e.detail)
             return False
         self.packages[0] = built.package
-        self.brief = story_brief(choices, setting, plot, protagonist)
+        self.brief = story_brief(choices, setting, plot, protagonist,
+                                 moderation=self.config.moderation)
         self._event({"type": "chapter_committed", "chapter": 0})
         self._print(f"[khởi tạo] xong; kế hoạch {built.plan.total_chapters} chương, "
                     f"đã tiêu {self.budgeted.spent_usd:.4f} USD")
@@ -661,6 +672,7 @@ class StoryRun:
             request = ChapterRequest(
                 present_ids=present, scene_count=self.scenario.scene_count, story_brief=self.brief,
                 player_action=action, writer_tier=self.scenario.writer_tier, choice=choice,
+                darkness_level=self.darkness_level,
             )
             run = ChapterRun(request, llm=self.budgeted, store=self.store, config=self.config,
                              plan=self.plan, tracker=self.tracker, style_guide=self.style_guide)

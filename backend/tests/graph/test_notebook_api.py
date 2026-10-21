@@ -88,7 +88,9 @@ def test_narrator_quota_is_counted_in_postgres(pg, driver, new_db_story_id):
         answers = [client.post(f"/stories/{sid}/narrator", json={"question": "Lan là ai?"})
                    for _ in range(limit)]
         last = client.post(f"/stories/{sid}/narrator", json={"question": "Thêm?"})
-    assert [(a.status_code, a.json()) for a in answers] == [(200, {"answer": NOT_KNOWN})] * limit
+    assert [(a.status_code, a.json()) for a in answers] == [
+        (200, {"answer": NOT_KNOWN, "remaining": limit - n, "source_chapters": []})
+        for n in range(1, limit + 1)]
     assert (last.status_code, last.json()["code"]) == (429, "NARRATOR_LIMIT_REACHED")
     assert len(fake.calls) == limit
 

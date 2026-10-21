@@ -32,9 +32,11 @@ from writory.llm.fake import FakeLLM, render_context
 from writory.pipeline.narrator import (
     NOT_KNOWN,
     BlockReason,
+    NarratorAnswer,
     NarratorOutput,
     ask_narrator,
     ask_narrator_reply,
+    source_chapters,
 )
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.leak import check_leaks, strip_diacritics
@@ -120,6 +122,9 @@ class MemoryQuota:
         self.taken[(story_id, chapter)] += 1
         return True
 
+    async def asked(self, story_id: str, chapter: int) -> int:
+        return self.taken[(story_id, chapter)]
+
 
 def metered(fake: FakeLLM, cap: float = 1.0) -> MeteredClient:
     return MeteredClient(fake, CostTracker(CostLimits(per_scene=cap, per_chapter=cap,
@@ -130,8 +135,8 @@ def reply(known: bool, answer: str | None, ids: list[str]) -> str:
     return json.dumps({"known": known, "answer": answer, "entry_ids": ids}, ensure_ascii=False)
 
 
-async def ask(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN,
-              brief: str = "") -> str:
+async def ask_full(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN,
+                   brief: str = "") -> NarratorAnswer:
     if isinstance(llm, FakeLLM):
         llm = metered(llm)
     return await ask_narrator(
@@ -139,6 +144,11 @@ async def ask(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=
         truth_names=state(chapter).named_nodes(), plan=plan, story_brief=brief,
         quota=quota if quota is not None else MemoryQuota(),
     )
+
+
+async def ask(question: str, chapter: int, llm, **kw) -> str:
+    """Chữ người chơi nhận."""
+    return (await ask_full(question, chapter, llm, **kw)).answer
 
 
 async def ask_reply(question: str, chapter: int, llm, *, quota=None, config=CFG, plan=PLAN,
@@ -687,3 +697,47 @@ async def test_narrator_blocks_unrevealed_secret_after_its_window_opened(reveal_
     raw = reply(True, "Lan là gián điệp, người của Hội Hắc Kỳ.", [ref(v, "lan")])
     detailed = await ask_reply("Lan là ai?", 4, FakeLLM.scripted([raw]), plan=plan)
     assert (detailed.answer, detailed.blocked) == (NOT_KNOWN, BlockReason.LEAK)
+
+
+# --- nguồn của câu trả lời (D-65, D-66) ----------------------------------------------------------
+
+
+@pytest.mark.parametrize("name", _OUTPUT_NAMES)
+async def test_cited_refs_exist_only_when_the_model_answer_is_shown(name):
+    """Mã các mục câu trả lời dẫn chỉ ra ngoài khi chữ của model đã qua mọi phép kiểm. Bị thay bằng
+    "Bạn chưa biết điều này." thì không có nguồn: mã model dẫn có thể trỏ tới điều bị chặn."""
+    raw, reason = _scripted_outputs(view(4))[name]
+    result = await ask_full("Lão Gù sao rồi?", 4, FakeLLM.scripted([raw]))
+    if reason is None:
+        assert result.refs == tuple(NarratorOutput.model_validate_json(raw).entry_ids)
+    else:
+        assert (result.answer, result.refs) == (NOT_KNOWN, ())
+
+
+async def test_cited_refs_are_deduplicated_in_model_order():
+    v = view(3)
+    gu, mieu = ref(v, "e_gu_death"), ref(v, "mieu_ba")
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [mieu, gu, mieu])])
+    result = await ask_full("Lão Gù chết ở đâu?", 3, fake)
+    assert result.refs == (mieu, gu)
+
+
+async def test_empty_notebook_answer_has_no_refs():
+    result = await ask_full("Tôi là ai?", 0, FakeLLM.scripted([]))
+    assert result == NarratorAnswer(NOT_KNOWN, ())
+
+
+def test_source_chapters_come_from_the_player_view_sorted_and_unique():
+    v = view(5)
+    spy, gu, lie = ref(v, "f_lan_spy"), ref(v, "e_gu_death"), ref(v, "l_sword_father")
+    entry_chapter = {r: e.since_chapter for r, e in public_entries(v)}
+    lie_chapter = {r: x.chapter for r, x in public_lies(v)}
+    expected = sorted({entry_chapter[spy], entry_chapter[gu], lie_chapter[lie]})
+    assert source_chapters(v, [spy, gu, lie, spy]) == expected
+    assert source_chapters(v, []) == []
+
+
+def test_source_chapters_ignore_refs_outside_the_notebook():
+    """Mã lạ (không có trong sổ tay đầy đủ) không thêm chương nào: không đoán, không lỗi."""
+    v = view(5)
+    assert source_chapters(v, ["m999", "ly_that"]) == []

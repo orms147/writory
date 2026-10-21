@@ -12,6 +12,8 @@ bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau
   phiên), và phần người chơi sửa của nhân vật chính được kiểm duyệt trước khi lưu. Bị chặn thì
   không lưu và không gọi model nào khác.
 - Gọi model bằng key người chơi (`deps.PlayerLLM`), ghi nhật ký theo phiên rồi gắn vào truyện (G8).
+- Mức u tối (D-67): một khoá của `moderation.darkness_levels`, chọn lúc tạo phiên (bỏ trống thì mức
+  mặc định, ghi hẳn khoá vào phiên); lưu theo truyện lúc chốt, làm trần kiểm duyệt mỗi chương.
 Chỉ mount khi bật cờ dev (D-41).
 """
 
@@ -91,10 +93,15 @@ def start_setup(body: SetupStartIn, conn: deps.PgConn, owner: deps.Owner,
     if body.length_level not in config.story_lengths.levels:
         raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["length_level"],
                            detail=f"mức độ dài {body.length_level!r} không có trong config")
+    darkness = body.darkness_level or config.moderation.default_darkness_level
+    if darkness not in config.moderation.darkness_levels:
+        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["darkness_level"],
+                           detail=f"mức u tối {darkness!r} không có trong config")
     tags = StoryTags(**body.tags.model_dump())
     naming = (Naming(**body.naming.model_dump()) if body.naming is not None
               else default_naming(tags.genre))
-    choices = StoryChoices(tags=tags, length_level=body.length_level, naming=naming)
+    choices = StoryChoices(tags=tags, length_level=body.length_level, naming=naming,
+                           darkness_level=darkness)
     rec = create_setup(conn, _new_id("setup"), owner_id=owner,
                        choices=choices.model_dump(mode="json"))
     return SetupOut.from_record(rec)
@@ -250,9 +257,10 @@ async def finalize(session_id: str, conn: deps.PgConn, driver: deps.Neo4jDriver,
                             commit_id=f"{story_id}-ch0"),
         max_retries=config.limits.retries.llm_transient, retry_on=RETRY_TRANSIENT,
     )
+    darkness = choices.darkness_level or config.moderation.default_darkness_level
     start_story(conn, driver, story_id, owner_id=owner, length_level=choices.length_level,
-                brief=story_brief(choices, setting, plot, pc),
-                plan=built.plan, initial=built.package)
+                brief=story_brief(choices, setting, plot, pc, moderation=config.moderation),
+                plan=built.plan, initial=built.package, darkness_level=darkness)
     try:
         rec = finish_setup(conn, rec.id, story_id)
     except BaseException:

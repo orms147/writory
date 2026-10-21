@@ -1,8 +1,9 @@
 """App FastAPI (D-29). Chạy dev: docs/runbook.md.
 
 Tạo app bằng factory `create_app`, không tạo lúc import, để import không cần biến môi trường.
-Router chưa có đăng nhập (`DEV_ROUTERS`: truyện, khởi tạo, key người chơi) chỉ mount khi
-`enable_dev_routes` bật (D-41).
+Router chưa có đăng nhập (`DEV_ROUTERS`: truyện, khởi tạo, key và chi phí người chơi, cấu hình
+công khai cho giao diện) chỉ mount khi `enable_dev_routes` bật (D-41, D-66). Không bật CORS: giao
+diện dev gọi API qua proxy của Vite, cùng origin (D-66, docs/runbook.md).
 """
 
 import asyncio
@@ -19,6 +20,7 @@ from neo4j import GraphDatabase
 from writory.api.errors import install_error_handlers
 from writory.api.keys import router as keys_router
 from writory.api.play import router as play_router
+from writory.api.public_config import router as public_config_router
 from writory.api.setup import router as setup_router
 from writory.api.stories import router as stories_router
 from writory.config import AppConfig, Settings, load_config
@@ -29,7 +31,7 @@ from writory.safety.redact import install_log_redaction, redact
 log = logging.getLogger(__name__)
 
 # Router chưa có đăng nhập (D-41): chỉ mount khi bật ENABLE_DEV_ROUTES.
-DEV_ROUTERS = (stories_router, play_router, setup_router, keys_router)
+DEV_ROUTERS = (stories_router, play_router, setup_router, keys_router, public_config_router)
 
 # Logger của uvicorn có handler riêng và không truyền record lên root, nên phải gắn riêng (G7).
 UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")

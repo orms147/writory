@@ -515,7 +515,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:**
   - Cảnh: sau dò lộ, cùng lượt soát, một lời gọi `moderate` trên đúng chữ sẽ hiện. Mỗi loại vi phạm là một lỗi mức chặn của lượt soát (nguồn `moderation`), đi cùng luồng D-36/D-50: viết lại một lần kèm lời nhắn nêu loại và trần (không trích lại chữ); còn vi phạm thì không hiện cảnh; có bản sạch trước đó thì hiện bản đó. Cảnh bị chặn dùng chung `SCENE_LEAK_BLOCKED` (câu trung tính, không nói lý do).
   - Bộ lựa chọn: `make_choices` nhận cổng `moderate` và kiểm mọi chữ người chơi thấy (chữ lựa chọn, nội dung lời nói dối, cảm xúc). Vi phạm thì không hiện bộ nào (`CHOICES_LEAK_BLOCKED`), không tự viết lại; người chơi bấm thử lại. Cả pipeline lẫn `POST /stories/{id}/choices` truyền cổng.
-  - Mức u tối: `ChapterRequest.darkness_level` (khoá trong `moderation.darkness_levels`, None = `default_darkness_level`). Đường chơi chưa lưu mức theo truyện nên dùng mặc định.
+  - Mức u tối: `ChapterRequest.darkness_level` (khoá trong `moderation.darkness_levels`, None = `default_darkness_level`). Đường chơi chưa lưu mức theo truyện nên dùng mặc định. **Đã thay một phần (D-67):** người chơi chọn sẵn mức lúc khởi tạo, mức lưu theo truyện và đi vào kiểm duyệt mỗi chương.
   - Chi phí: thêm một lời gọi mỗi lượt soát cảnh và mỗi bộ lựa chọn. Cách rẻ hơn (gộp báo loại vào lời gọi của bộ trích) chưa làm: Claude chọn giữ lời gọi riêng (chủ dự án uỷ quyền, 21/10/2026), vì gộp phải đổi prompt trích đã đo ở bài C; xem lại khi có số chi phí thật.
 - **Hệ quả:** lời gọi `moderate` tính vào trần cảnh/chương/truyện (G8), vào nhật ký chi phí với vai `moderate`, và vào bộ đếm lời gọi mỗi phút (D-56), vì nó tốn tiền key người chơi: mỗi đầu vào của người chơi tốn thêm một lượt đếm (ô tự viết: kiểm duyệt rồi phân loại là hai lượt), mỗi lượt soát cảnh và mỗi bộ lựa chọn thêm một lượt. **Chủ dự án cần quyết:** mức u tối là lựa chọn có sẵn ở bước khởi tạo (cần đổi design §4.1 và thêm cột lưu theo truyện), hay model đọc tag chữ tự do.
 - **Người quyết:** Claude (nhánh moderation-g9), điều phối duyệt · 20/10/2026
@@ -590,6 +590,29 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bàn giao thiết kế được commit làm đầu vào cho frontend, trừ ảnh chụp màn và file zip (giữ trên máy, `.gitignore`). Khi frontend xong, chuyển quy tắc còn dùng vào `docs/design.md` rồi xoá thư mục.
 - **Hệ quả:** cần thêm trường cho `NarratorAnswerOut`. Các điểm còn lại của README mục 8 (endpoint danh sách truyện, chi phí đã dùng, giới hạn công khai, câu lỗi trần chi phí) làm cùng phần backend cho giao diện.
 - **Người quyết:** Chủ dự án · 21/10/2026
+
+## D-66 · Endpoint cho giao diện: tủ truyện, cấu hình công khai, chi phí theo tháng UTC, nguồn của người kể
+- **Bối cảnh:** README bàn giao thiết kế mục 8 (điểm 2, 5, 6) và D-65: giao diện cần danh sách truyện, số giới hạn để không tự đặt số, chi phí đã dùng, số câu hỏi người kể còn lại và nguồn.
+- **Quyết định:** mọi route sau `ENABLE_DEV_ROUTES` (D-41), theo `owner_id` (D-44); schema là danh sách trắng (`api/schemas.py`).
+  - `GET /stories`: truyện của người đang dùng, `stories.updated_at` giảm dần. `title` là tên hướng truyện đã chọn ở phiên khởi tạo (không có thì tên bối cảnh; truyện không qua `/setup` thì null). `last_excerpt` là câu cuối, nguyên văn, của dòng chữ cuối trong cảnh cuối của chương đã commit (bỏ dấu thoại "- "), null ở chương 0. `finished` tính từ kế hoạch, không trả số chương của kế hoạch (`db/library.py`).
+  - `GET /config/public`: số lấy từ `config/`, null là chưa đặt; không model id, giá, trần nội bộ. Nhãn mức viết là mức đường chơi dùng (`writer_tier(config, None)`).
+  - `GET /player/costs`: cộng `llm_costs` theo `owner_id`, kể cả phiên khởi tạo bỏ dở. Tháng là tháng dương lịch theo **UTC** (`db.utc_month`), giờ lấy từ `deps.get_clock`. Theo truyện: truyện tiêu gần nhất trước. Dòng thiếu `cost_usd` không cộng được (D-10); dòng ước tính (D-64) cộng như số thật tới khi tra lại.
+  - Người kể (D-65): `remaining` là trần trừ số lượt đã giữ ở `narrator_questions`, ở chương của câu hỏi. `source_chapters` lấy từ `entry_ids` chỉ khi câu trả lời là chữ của model đã qua mọi phép kiểm: `since_chapter` của mục, chương được nói của lời nói dối (`pipeline/narrator.source_chapters`). Thêm `GET /stories/{id}/narrator` trả `{remaining}`.
+  - Câu lỗi `COST_LIMIT_SCENE`, `COST_LIMIT_CHAPTER` bỏ "chọn mức model rẻ hơn" (một mức viết, D-33): nói phần đã hiện và đã lưu vẫn còn, rồi bấm thử lại.
+  - Không bật CORS: frontend dev gọi API qua proxy của Vite, cùng origin (`docs/runbook.md`).
+- **Hệ quả:** tủ truyện chưa có tên nhân vật chính và thể loại như ảnh mẫu (ngoài hợp đồng). Chọn lựa chọn không đổi `updated_at`, nên không đẩy truyện lên đầu. Câu trích chưa có trần độ dài. Chưa có ước tính chi phí chương tới.
+- **Người quyết:** hợp đồng endpoint, tháng theo UTC: điều phối yêu cầu; tên truyện, câu trích, thứ tự, không CORS: Claude (nhánh ui-backend), chờ điều phối duyệt · 21/10/2026
+
+## D-67 · Mức u tối chọn sẵn lúc khởi tạo, lưu theo truyện (thay một phần D-58)
+- **Bối cảnh:** D-58 để mức u tối là chữ tự do (`tags.darkness`), nên đường chơi luôn kiểm duyệt ở mức mặc định.
+- **Quyết định:**
+  - `POST /setup` nhận `darkness_level`, khoá trong `moderation.darkness_levels`; bỏ trống thì `default_darkness_level`, ghi hẳn khoá vào phiên; khoá lạ thì `REQUEST_INVALID` kèm `fields`. API bỏ `tags.darkness` (gửi lên là `REQUEST_INVALID`); `StoryTags.darkness` chỉ còn để đọc phiên và đề cũ. `SetupOut` có `darkness_level`.
+  - Lưu theo truyện: cột `stories.darkness_level` (migration 0008; NULL là mức mặc định, cho truyện cũ). `ChapterRequest.darkness_level` và cổng kiểm duyệt của `POST /stories/{id}/choices` lấy từ cột này.
+  - Đề: `safety.moderate.darkness_brief` (nhãn và trần từng loại, cùng nguồn với `decide`) vào khối dữ liệu `darkness_level` ở mọi bước khởi tạo, và vào `story_brief` cho đề dàn ý và đề viết mỗi chương.
+  - `bench_run`: đề khai được `darkness_level` (null là mặc định), khoá lạ báo trước lời gọi đầu; lưu theo truyện và vào `ChapterRequest` như đường chơi. Bài E dựng lại thiết lập của lần chạy trước D-67 không có dòng mức u tối.
+  - `GET /config/public` có `darkness_levels` (`key`, `label`, theo thứ tự config) và `default_darkness_level`; không có trần.
+- **Hệ quả:** truyện tạo trước D-67 chạy ở mức mặc định, và thiết lập đã lưu của chúng không có dòng mức u tối. Đề khởi tạo dài thêm, chưa đo lại. Chữ mức u tối của bài E lấy từ config hiện hành, vì lần chạy không lưu chữ thiết lập.
+- **Người quyết:** chọn sẵn mức thay chữ tự do: Chủ dự án duyệt 21/10/2026; cách làm: Claude (nhánh ui-backend), chờ điều phối duyệt · 21/10/2026
 
 ## D-70 · Thang mức độ kiểm duyệt: tả lướt là `mild`; ám chỉ cảnh tình dục cũng tính
 - **Bối cảnh:** bài đo G9 lần 1 (`evals/results/2026-10-21-g9-luna-1/`) có 2 câu chặn nhầm cảnh đánh nhau bình thường ở mức Vừa. Nguyên nhân: thang mức độ trong config lấy "máu loang trên áo" làm ví dụ `strong`, lệch với bộ câu. Có thêm 1 câu bỏ sót: ám chỉ qua đêm ở mức Nhẹ.

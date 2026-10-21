@@ -67,7 +67,7 @@ def test_narrator_reads_plan_and_key_from_postgres_and_logs_cost(pg, driver, new
     dev_key(app.state.key_cipher)
     with TestClient(app) as client:
         resp = client.post(f"/stories/{sid}/narrator", json={"question": "Lão Gù chết ở đâu?"})
-    assert resp.json() == {"answer": "Lão Gù chết sau miếu Bà."}
+    assert resp.json()["answer"] == "Lão Gù chết sau miếu Bà."
     assert factory.keys == [FAKE_KEY]
     rows = pg.execute("SELECT owner_id, chapter, role, model FROM llm_costs WHERE story_id = %s "
                       "ORDER BY id", (sid,)).fetchall()

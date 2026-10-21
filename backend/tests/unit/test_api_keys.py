@@ -214,7 +214,7 @@ def test_narrator_uses_stored_player_key_and_records_cost():
     store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
     with TestClient(app) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
-    assert resp.json() == {"answer": "Lão Gù chết sau miếu Bà."}
+    assert resp.json()["answer"] == "Lão Gù chết sau miếu Bà."
     assert factory.keys == [FAKE_KEY]  # key giải mã chỉ đi tới client model
     [(moderated, *where), (answered, *_)] = ledger.rows
     assert (moderated.role, moderated.model, moderated.cost_usd) == (

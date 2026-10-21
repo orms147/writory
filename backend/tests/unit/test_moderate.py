@@ -15,6 +15,7 @@ from writory.safety.moderate import (
     ModerationOutput,
     Source,
     Verdict,
+    darkness_brief,
     decide,
     ensure_input_allowed,
     moderate,
@@ -252,3 +253,32 @@ async def test_rewrite_feedback_names_the_limit_without_quoting_the_text():
     assert MOD.categories[Category.GORE].description in feedback
     assert "CHỮ-TRÍCH-ZZZ" not in feedback and "Đoạn văn" not in feedback
     assert "viết lại" in feedback.lower()
+
+
+# --- mức u tối trong đề (D-67) --------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("key", list(MOD.darkness_levels))
+def test_darkness_brief_states_the_label_and_every_ceiling(key):
+    """Đề khởi tạo và đề mỗi chương nói mức người chơi chọn: nhãn, và trần miêu tả của từng loại
+    bị giới hạn, cùng nguồn với `decide` (config/moderation.yaml)."""
+    text = darkness_brief(MOD, key)
+    level = MOD.darkness_levels[key]
+    assert level.label in text.splitlines()[0]
+    for category, limit in level.ceilings.items():
+        [line] = [x for x in text.splitlines()
+                  if MOD.categories[category].description.rstrip(".") in x]
+        if limit is Intensity.NONE:
+            assert "không miêu tả" in line
+        else:
+            assert f"tối đa mức {limit.name.lower()}" in line
+            assert MOD.intensity_scale[limit] in line
+
+
+def test_darkness_brief_of_no_level_is_the_default_level():
+    assert darkness_brief(MOD, None) == darkness_brief(MOD, MOD.default_darkness_level)
+
+
+def test_darkness_brief_of_an_unknown_level_is_an_error():
+    with pytest.raises(ValueError, match="không có"):
+        darkness_brief(MOD, "không-có")

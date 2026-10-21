@@ -12,6 +12,7 @@ import asyncio
 import time
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
+from datetime import datetime
 from typing import Annotated, Protocol
 
 import psycopg
@@ -22,6 +23,7 @@ from pydantic import BaseModel, SecretStr
 from writory.config import AppConfig, CostLimits, LimitNotSetError, RateLimits
 from writory.db import (
     CostEntry,
+    OwnerCosts,
     StoryRecord,
     committed_player_view,
     connect,
@@ -30,6 +32,8 @@ from writory.db import (
     load_player_key,
     load_story_brief,
     load_story_plan,
+    narrator_questions_asked,
+    owner_costs,
     pending_cost_estimates,
     record_cost,
     save_player_key,
@@ -50,7 +54,7 @@ from writory.llm.openrouter import OpenRouterClient
 from writory.llm.ratelimit import CallQuota, RateLimitedClient
 from writory.pipeline.choices import ChoicesOutput
 from writory.pipeline.extract import ExtractOutput
-from writory.pipeline.narrator import NarratorOutput, NarratorQuota
+from writory.pipeline.narrator import NarratorCounter, NarratorOutput
 from writory.pipeline.scene import SceneOutline
 from writory.pipeline.setup import BuildOutput, CharactersOutput, PlotsOutput, SettingsOutput
 from writory.pipeline.story_plan import StoryPlan
@@ -206,6 +210,7 @@ class CostLedger(Protocol):
     def pending_estimates(self, *, story_id: str | None = None, setup_id: str | None = None,
                           limit: int) -> list[PendingEstimate]: ...
     def settle_estimate(self, row_id: int, cost: GenerationCost) -> None: ...
+    def owner_costs(self, now: datetime) -> OwnerCosts: ...
 
 
 class PostgresCostLedger:
@@ -233,6 +238,10 @@ class PostgresCostLedger:
         settle_cost_estimate(self._conn, row_id, cost_usd=cost.cost_usd,
                              prompt_tokens=cost.prompt_tokens,
                              completion_tokens=cost.completion_tokens)
+
+    def owner_costs(self, now: datetime) -> OwnerCosts:
+        """Số người này đã trả (`/player/costs`, D-66); tháng theo UTC của `now`."""
+        return owner_costs(self._conn, self._owner, now=now)
 
 
 def get_cost_ledger(conn: PgConn, owner: Owner) -> CostLedger:
@@ -408,7 +417,8 @@ def get_narrator_llm(story: OwnedStory, llm: PlayerLLMs) -> MeteredClient:
 
 
 class PostgresNarratorQuota:
-    """Bộ đếm câu hỏi người kể trong Postgres (`db.take_narrator_question`)."""
+    """Bộ đếm câu hỏi người kể trong Postgres (`db.take_narrator_question`); đọc lại số lượt đã
+    giữ để báo số câu còn lại (`db.narrator_questions_asked`, D-66)."""
 
     def __init__(self, conn: psycopg.Connection) -> None:
         self._conn = conn
@@ -417,6 +427,9 @@ class PostgresNarratorQuota:
         return await asyncio.to_thread(take_narrator_question, self._conn, story_id, chapter,
                                        limit)
 
+    async def asked(self, story_id: str, chapter: int) -> int:
+        return await asyncio.to_thread(narrator_questions_asked, self._conn, story_id, chapter)
 
-def get_narrator_quota(conn: PgConn) -> NarratorQuota:
+
+def get_narrator_quota(conn: PgConn) -> NarratorCounter:
     return PostgresNarratorQuota(conn)

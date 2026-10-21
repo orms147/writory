@@ -19,11 +19,14 @@
 
 `ask_narrator` là đường của người chơi. `ask_narrator_reply` chạy đúng các bước đó, và trả thêm
 câu thô của model cùng lý do code thay bằng `NOT_KNOWN`, cho bài đo E (D-53). `ask_narrator` chỉ
-lấy `answer` của nó, nên hai đường không thể lệch nhau.
+lấy phần người chơi được thấy của nó (`player_answer`), nên hai đường không thể lệch nhau.
+
+Nguồn của câu trả lời (D-65, D-66): mã các mục model dẫn chỉ ra ngoài khi chữ của model đã qua mọi
+phép kiểm; `source_chapters` đổi mã thành số chương, tính từ `PlayerView`.
 """
 
 import logging
-from collections.abc import Awaitable, Callable, Mapping
+from collections.abc import Awaitable, Callable, Iterable, Mapping
 from dataclasses import dataclass
 from enum import StrEnum
 from typing import Protocol
@@ -32,7 +35,7 @@ from pydantic import BaseModel, ConfigDict
 
 from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import PlayerView
+from writory.graph import PlayerView, public_entries, public_lies
 from writory.graph.story import require_story_id
 from writory.llm.base import require_model
 from writory.llm.cost import MeteredClient
@@ -88,6 +91,31 @@ class NarratorReply:
     total: int = 0
 
 
+@dataclass(frozen=True)
+class NarratorAnswer:
+    """Phần người chơi được nhận. `refs`: mã công khai các mục câu trả lời dẫn, theo thứ tự model
+    dẫn, không trùng; chỉ có khi `answer` là chữ của model đã qua mọi phép kiểm. `NOT_KNOWN` thì
+    rỗng, vì mã model dẫn khi bị chặn có thể trỏ tới chính điều bị chặn."""
+
+    answer: str
+    refs: tuple[str, ...] = ()
+
+
+def player_answer(reply: NarratorReply) -> NarratorAnswer:
+    if reply.blocked is not None or reply.output is None:
+        return NarratorAnswer(reply.answer)
+    return NarratorAnswer(reply.answer, tuple(dict.fromkeys(reply.output.entry_ids)))
+
+
+def source_chapters(view: PlayerView, refs: Iterable[str]) -> list[int]:
+    """Chương người chơi biết các mục đã dẫn: `since_chapter` của mục, chương được nói của lời nói
+    dối. Chỉ từ `PlayerView`, cùng mã công khai với sổ tay (G1); mã lạ bị bỏ qua. Tăng dần, không
+    trùng."""
+    chapter_of = {r: e.since_chapter for r, e in public_entries(view)}
+    chapter_of |= {r: lie.chapter for r, lie in public_lies(view)}
+    return sorted({chapter_of[r] for r in refs if r in chapter_of})
+
+
 # Cổng kiểm duyệt chữ người chơi (G9, D-57): ném WritoryError nếu chữ bị chặn. Đường của người chơi
 # phải truyền; bài đo E (đo người kể, không đo kiểm duyệt) không truyền.
 InputGate = Callable[[str], Awaitable[None]]
@@ -97,6 +125,19 @@ class NarratorQuota(Protocol):
     """Bộ đếm câu hỏi theo truyện và chương. Trả False khi đã dùng đủ `limit` lượt."""
 
     async def take(self, story_id: str, chapter: int, limit: int) -> bool: ...
+
+
+class NarratorCounter(NarratorQuota, Protocol):
+    """Bộ đếm đọc lại được số lượt đã giữ, để API báo số câu còn lại (D-65, D-66)."""
+
+    async def asked(self, story_id: str, chapter: int) -> int: ...
+
+
+async def remaining_questions(counter: NarratorCounter, story_id: str, chapter: int,
+                              config: AppConfig) -> int:
+    """Số câu hỏi còn lại ở chương `chapter`; trần chưa đặt thì CONFIG_LIMIT_NOT_SET."""
+    limit = _require(config.limits.rate_limit, "narrator_questions_per_chapter")
+    return max(0, limit - await counter.asked(story_id, chapter))
 
 
 SYSTEM_PROMPT = """Bạn là người kể chuyện của một truyện tương tác tiếng Việt. Người chơi hỏi bạn \
@@ -156,8 +197,9 @@ async def ask_narrator(
     story_brief: str,
     quota: NarratorQuota,
     moderate: InputGate | None = None,
-) -> str:
-    """Câu trả lời hiện cho người chơi: chữ của model đã qua các phép kiểm, hoặc `NOT_KNOWN`.
+) -> NarratorAnswer:
+    """Câu trả lời hiện cho người chơi: chữ của model đã qua các phép kiểm, hoặc `NOT_KNOWN`, kèm
+    mã các mục đã dẫn (`NarratorAnswer`).
 
     `view`: player_view ở chương đã commit (`db.committed_player_view`). `truth_names`, `plan` và
     `story_brief` (thiết lập truyện người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ (G2), không bao
@@ -166,7 +208,7 @@ async def ask_narrator(
     reply = await ask_narrator_reply(question, view, llm=llm, config=config,
                                      truth_names=truth_names, plan=plan, story_brief=story_brief,
                                      quota=quota, moderate=moderate)
-    return reply.answer
+    return player_answer(reply)
 
 
 async def ask_narrator_reply(

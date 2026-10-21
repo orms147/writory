@@ -24,7 +24,7 @@ from typing import Any
 
 from pydantic import BaseModel, ConfigDict, PositiveInt, ValidationError
 
-from writory.config import REPO_ROOT, ConfigError
+from writory.config import REPO_ROOT, ConfigError, load_config
 from writory.graph import ChangePackage, PlayerEntry, PlayerView
 from writory.graph.sample import read_sample
 from writory.pipeline.setup import (
@@ -114,14 +114,19 @@ def load_run_story(run_dir: Path | str) -> Story:
         raise ConfigError("truth_dump.json: `packages` phải có gói chương 0")
     try:
         content = meta["scenario"]["content"]
-        choices = StoryChoices.model_validate({k: content[k] for k in
-                                               ("tags", "length_level", "pov", "naming")})
+        # Lần chạy sau D-67 ghi `darkness_level` vào đề (kể cả null = mặc định), và thiết lập của
+        # nó có dòng mức u tối; lần chạy trước đó không có dòng này.
+        keys = ("tags", "length_level", "pov", "naming", "darkness_level")
+        choices = StoryChoices.model_validate({k: content[k] for k in keys if k in content})
+        with_level = "darkness_level" in content
     except (KeyError, TypeError, ValidationError) as e:
         raise ConfigError(f"meta.json: thiếu hoặc sai `scenario.content` ({type(e).__name__})"
                           ) from None
+    # Chữ mức u tối lấy từ config/moderation.yaml hiện hành (lần chạy không lưu chữ thiết lập).
     brief = story_brief(choices, _option(setup, "settings", SettingOption),
                         _option(setup, "plots", PlotOption),
-                        _option(setup, "characters", CharacterOption))
+                        _option(setup, "characters", CharacterOption),
+                        moderation=load_config().moderation if with_level else None)
     return Story("run", packages, plan, brief,
                  {f"run/{name}": _sha256(raw) for name, raw in files.items()})
 
