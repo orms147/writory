@@ -475,6 +475,9 @@ INVALID_BUILDS = {
     # `protects` (D-61): id phải là nút có tên có thật trong gói.
     "protects_unknown_id": {"secrets": lambda s: [s[0] | {"protects": ["khong_co"]}, s[1]]},
     "protects_a_fact": {"secrets": lambda s: [s[0] | {"protects": ["f_ha_lao_giet_cha"]}, s[1]]},
+    # Nhân vật chính do code dựng từ lựa chọn của người chơi, không có biệt danh nào để giữ kín.
+    "protects_the_protagonist": {"secrets": lambda s: [s[0] | {"protects": [PROTAGONIST_ID]},
+                                                       s[1]]},
     "protects_duplicate_id": {"secrets": lambda s: [s[0] | {"protects": ["to_nguyet_hoa"] * 2},
                                                     s[1]]},
     "two_protagonists": {"characters": lambda c: c + [c[0] | {"id": PROTAGONIST_ID}]},
