@@ -79,7 +79,7 @@ Lưu ý: 300.000 ký tự tiếng Việt ước khoảng 100.000 token (chưa đ
 
 Người chơi đọc các lựa chọn ở bước 4–6, nên chúng không được chứa bí mật hay cú lật nào.
 
-Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1) và đồ thị ban đầu (thế giới trước trang đầu, gọi là chương 0). Người chơi không thấy bản kế hoạch, và ở chương 0 người chơi chưa biết gì: sổ tay rỗng cho tới khi đọc chương 1. Luật của đồ thị ban đầu: `docs/graph-schema.md`, mục Chương 0 (D-38).
+Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1) và đồ thị ban đầu (thế giới trước trang đầu, gọi là chương 0). Người chơi không thấy bản kế hoạch, và ở chương 0 người chơi chưa đọc trang nào: sổ tay chỉ có nhân vật chính họ vừa chọn, mọi điều khác hiện dần từ chương 1 (D-74). Luật của đồ thị ban đầu: `docs/graph-schema.md`, mục Chương 0 (D-38).
 
 ### 4.2 Chơi
 - Mỗi chương gồm 2–3 **cảnh**. Một cảnh chỉ hiện ra sau khi người canh đã kiểm xong; chữ chạy dần trên màn hình. Trong lúc người chơi đọc cảnh trước, cảnh sau được viết và kiểm. Người chơi không bao giờ đọc một bản chưa kiểm. [Chốt]

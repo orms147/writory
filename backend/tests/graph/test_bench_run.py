@@ -62,9 +62,11 @@ def test_dry_run_cli_writes_a_real_story(tmp_path, services_env, pg, driver):
         assert current_chapter(pg, sid) == 2
         assert [(r.number, r.status) for r in chapter_records(pg, sid)] == [
             (0, "committed"), (1, "committed"), (2, "committed")]
-        # Đồ thị thật: người chơi biết đúng nhân vật được hé lộ, bằng tên đã thấy trên trang.
+        # Đồ thị thật: người chơi biết nhân vật chính (đã chọn lúc khởi tạo, D-74) và đúng nhân vật
+        # được hé lộ trên trang, bằng tên đã thấy.
         view = player_view(driver, sid, 2)
-        assert [e.text for e in view.entries] == [bench_run.DRY_RUN_NPC_NAME]
+        assert [e.text for e in view.entries] == ["Cố Trường Phong", bench_run.DRY_RUN_NPC_NAME]
+        assert [e.is_protagonist for e in view.entries] == [True, False]
         out = tmp_path / "out"
         for name in ("setup.json", "events.jsonl", "calls.jsonl", "report.json", "summary.md",
                      "truth_dump.json", "chapters/ch01.md", "chapters/ch02.md"):

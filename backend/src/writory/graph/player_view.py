@@ -42,6 +42,8 @@ class PlayerEntry:
     # Mọi câu trích đã hé lộ mục này, theo thứ tự chương. Đều là chữ đã có trên trang; bộ dò lộ
     # (G2, D-26) dùng để biết người chơi đã thấy gì. Giao diện chỉ cần `quote` (câu đầu tiên).
     quotes: tuple[str, ...] = ()
+    # Mục này là nhân vật chính, tức chính người chơi (D-74). Người kể cần biết để nối "tôi" với nó.
+    is_protagonist: bool = False
 
 
 @dataclass(frozen=True)
@@ -117,7 +119,8 @@ def build_player_view(
         else:
             text, aliases = recs[0].props.get(_TEXT_FIELD[kind], ""), ()
         quotes = tuple(dict.fromkeys(r.quote for r in recs if r.quote))
-        shown[nid] = (kind, text, aliases, recs[0].since, recs[0].quote, quotes)
+        me = recs[0].props.get("is_protagonist") is True
+        shown[nid] = (kind, text, aliases, recs[0].since, recs[0].quote, quotes, me)
 
     about: dict[str, set[str]] = {}
     for x, y in about_edges:
@@ -134,8 +137,9 @@ def build_player_view(
             quote=quote,
             about=tuple(sorted(about.get(nid, ()))),
             quotes=quotes,
+            is_protagonist=me,
         )
-        for nid, (kind, text, aliases, since, quote, quotes) in sorted(
+        for nid, (kind, text, aliases, since, quote, quotes, me) in sorted(
             shown.items(), key=lambda kv: (kv[1][3], kv[0])
         )
     )

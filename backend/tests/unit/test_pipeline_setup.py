@@ -15,7 +15,12 @@ import yaml
 
 from writory.config import REPO_ROOT, IntRange, load_config
 from writory.errors import ErrorCode, WritoryError
-from writory.graph.package import ID_PATTERN, ChangePackage, chapter_rule_problems
+from writory.graph.package import (
+    ID_PATTERN,
+    ChangePackage,
+    chapter_rule_problems,
+    quote_in_text,
+)
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import role_extra
 from writory.llm.fake import FakeLLM
@@ -436,7 +441,7 @@ async def test_build_story_returns_plan_and_valid_chapter_0_package():
     assert {s.fact_id for s in plan.secrets} <= {i for i, n in nodes.items() if n.label == "Fact"}
     assert set(plan.thread_ids) <= {i for i, n in nodes.items() if n.label == "Thread"}
     assert all(e.source in nodes and e.target in nodes for e in pkg.edges)
-    assert all(e.type != "REVEALED_TO_PLAYER" for e in pkg.edges)
+    assert [e.source for e in pkg.edges if e.type == "REVEALED_TO_PLAYER"] == [PROTAGONIST_ID]
     assert all(nodes[i].props["planted_chapter"] == 0 for i in plan.thread_ids)
 
     knows = [e for e in pkg.edges if e.type == "KNOWS"]
@@ -455,12 +460,46 @@ async def test_build_story_returns_plan_and_valid_chapter_0_package():
     assert not any(n.props.get("user_authored") for i, n in nodes.items() if i != PROTAGONIST_ID)
 
 
-async def test_player_view_at_chapter_0_is_empty():
-    """Người chơi chưa đọc trang nào: player_view ở chương 0 rỗng (G1, D-16)."""
+async def test_player_view_at_chapter_0_has_only_the_protagonist():
+    """Người chơi chưa đọc trang nào, nhưng đã chọn và có thể đã sửa nhân vật chính lúc khởi tạo,
+    nên chỉ có mục đó (G1, D-74). Câu trích là chữ trong thiết lập truyện người chơi đã đọc (G3)."""
     result = await build_story(CHOICES, SETTING, PLOT, PC, llm=FakeLLM.scripted([_build()]),
                                config=CFG, commit_id="c0")
     view = player_view_of(OverlayState(EmptyState(), [result.package]), 0)
-    assert view.entries == () and view.lies == ()
+    [entry] = view.entries
+    assert (entry.id, entry.kind, entry.text, entry.since_chapter) == (
+        PROTAGONIST_ID, "Character", PC.name, 0)
+    assert entry.is_protagonist and entry.aliases == () and view.lies == ()
+    brief = story_brief(CHOICES, SETTING, PLOT, PC)
+    assert entry.quote and quote_in_text(entry.quote, brief) and PC.name in entry.quote
+
+
+async def test_protagonist_reveal_uses_the_name_exactly_as_the_brief_shows_it():
+    """Tên người chơi sửa có khoảng trắng thừa: thiết lập truyện cắt hai đầu, câu trích và tên hiện
+    cũng phải theo đúng chữ đó, không thì câu trích không có thật trong chữ đã thấy."""
+    padded = PC.model_copy(update={"name": f"  {PC.name}  "})
+    result = await build_story(CHOICES, SETTING, PLOT, padded, llm=FakeLLM.scripted([_build()]),
+                               config=CFG, commit_id="c0")
+    [entry] = player_view_of(OverlayState(EmptyState(), [result.package]), 0).entries
+    assert entry.text == PC.name
+    assert quote_in_text(entry.quote, story_brief(CHOICES, SETTING, PLOT, padded))
+
+
+async def test_only_the_protagonist_is_revealed_at_chapter_0():
+    result = await build_story(CHOICES, SETTING, PLOT, PC, llm=FakeLLM.scripted([_build()]),
+                               config=CFG, commit_id="c0")
+    reveals = [e for e in result.package.edges if e.type == "REVEALED_TO_PLAYER"]
+    assert [(e.source, e.valid_from_chapter) for e in reveals] == [(PROTAGONIST_ID, 0)]
+    assert [n.id for n in result.package.nodes if n.label == "Chapter"] == ["ch0"]
+    assert not [e for e in result.package.edges
+                if e.type == "KNOWS" and e.source == PROTAGONIST_ID]
+
+
+async def test_protagonist_name_stays_player_text_in_the_graph():
+    result = await build_story(CHOICES, SETTING, PLOT, PC, llm=FakeLLM.scripted([_build()]),
+                               config=CFG, commit_id="c0")
+    node = next(n for n in result.package.nodes if n.id == PROTAGONIST_ID)
+    assert node.props["user_authored"] is True  # G4: đọc lại từ đồ thị vẫn là chữ người chơi
 
 
 INVALID_BUILDS = {
@@ -854,13 +893,63 @@ def _with(pkg: ChangePackage, *, nodes=(), edges=()) -> ChangePackage:
 
 
 def test_initial_problems_flags_revealed_to_player():
+    """Chỉ nhân vật chính được hé lộ ở chương 0 (D-74); nút khác hay Chapter khác ch0 là lỗi."""
     setup = _valid_setup()
     pkg = _with(setup.package, nodes=[{"id": "ch1", "label": "Chapter", "number": 1}],
                 edges=[{"type": "REVEALED_TO_PLAYER", "from": "lac_ha", "to": "ch1",
                         "valid_from_chapter": 0, "quote": "trấn Lạc Hà", "known_as": "Lạc Hà"}])
     problems = initial_problems(setup.plan, pkg, level=SHORT_LEVEL)
-    assert any("REVEALED_TO_PLAYER" in p for p in problems)
+    assert any("REVEALED_TO_PLAYER" in p and "lac_ha" in p for p in problems)
     assert any("Chapter" in p for p in problems)
+
+
+def test_initial_problems_accepts_the_built_package_with_the_protagonist_reveal():
+    setup = _valid_setup()
+    assert any(e.type == "REVEALED_TO_PLAYER" for e in setup.package.edges)
+    assert initial_problems(setup.plan, setup.package, level=SHORT_LEVEL) == []
+
+
+def _without_protagonist_reveal(pkg: ChangePackage) -> dict:
+    data = pkg.model_dump(mode="json", by_alias=True)
+    data["edges"] = [e for e in data["edges"] if e["type"] != "REVEALED_TO_PLAYER"]
+    return data
+
+
+def test_initial_problems_requires_the_protagonist_to_be_in_the_notebook():
+    setup = _valid_setup()
+    pkg = ChangePackage.model_validate(_without_protagonist_reveal(setup.package))
+    assert any("nhân vật chính" in p for p in initial_problems(setup.plan, pkg, level=SHORT_LEVEL))
+
+
+def test_initial_problems_flags_a_protagonist_reveal_with_another_name():
+    setup = _valid_setup()
+    data = setup.package.model_dump(mode="json", by_alias=True)
+    for e in data["edges"]:
+        if e["type"] == "REVEALED_TO_PLAYER":
+            e["props"]["known_as"] = "Tên khác"
+            e["props"]["quote"] = "Tên khác"
+    pkg = ChangePackage.model_validate(data)
+    assert any("known_as" in p for p in initial_problems(setup.plan, pkg, level=SHORT_LEVEL))
+
+
+def test_initial_problems_flags_revealing_another_node_even_to_ch0():
+    """Đích hợp lệ (ch0) không đủ: chương 0 chỉ hé lộ nhân vật chính."""
+    setup = _valid_setup()
+    pkg = _with(setup.package, edges=[{
+        "type": "REVEALED_TO_PLAYER", "from": "lac_ha", "to": "ch0", "valid_from_chapter": 0,
+        "quote": "trấn Lạc Hà", "known_as": "Lạc Hà"}])
+    problems = initial_problems(setup.plan, pkg, level=SHORT_LEVEL)
+    assert any("chỉ hé lộ nhân vật chính" in p and "lac_ha" in p for p in problems)
+
+
+def test_initial_problems_flags_two_reveals_of_the_protagonist():
+    setup = _valid_setup()
+    data = setup.package.model_dump(mode="json", by_alias=True)
+    reveal = next(e for e in data["edges"] if e["type"] == "REVEALED_TO_PLAYER")
+    data["edges"].append({**reveal, "id": "again", "valid_from_chapter": 0})
+    pkg = ChangePackage.model_validate(data)
+    assert any("REVEALED_TO_PLAYER" in p for p in initial_problems(setup.plan, pkg,
+                                                                   level=SHORT_LEVEL))
 
 
 def test_initial_problems_flags_two_protagonists():

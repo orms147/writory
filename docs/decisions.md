@@ -305,7 +305,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Bối cảnh:** design §4.1 cần 3 bối cảnh / 3 hướng / 3 nhân vật rồi bản kế hoạch và đồ thị ban đầu. Chương 0 là thế giới lúc khởi tạo (D-21). `KNOWS` của nhân vật chính là điều người chơi biết (D-16), mà ở chương 0 chưa có trang nào để trích câu (G3).
 - **Quyết định:** `writory.pipeline.setup`:
   - `propose_settings`, `propose_plots`, `propose_characters`: đúng 3 lựa chọn, không trường rỗng. Prompt cấm viết bí mật vào lựa chọn, vì người chơi đọc chúng (G1). Đầu vào gom trong `StoryChoices` (tag, độ dài, góc nhìn, quy ước tên).
-  - `build_story` trả `StoryPlan` + gói chương 0, kiểm bằng `initial_problems` (luật: graph-schema.md, mục Chương 0). Nhân vật chính do code dựng từ chữ người chơi, id `protagonist`, `user_authored: true`. Nhân vật chính không `KNOWS` gì, không có `REVEALED_TO_PLAYER`; `KNOWS` khác có `how: "tự biết"`. Mạch của kế hoạch là nút `Thread` có `planted_chapter: 0`.
+  - `build_story` trả `StoryPlan` + gói chương 0, kiểm bằng `initial_problems` (luật: graph-schema.md, mục Chương 0). Nhân vật chính do code dựng từ chữ người chơi, id `protagonist`, `user_authored: true`. Nhân vật chính không `KNOWS` gì, chỉ có một `REVEALED_TO_PLAYER` của chính nó tới `ch0` (D-74); `KNOWS` khác có `how: "tự biết"`. Mạch của kế hoạch là nút `Thread` có `planted_chapter: 0`.
   - Tag, bối cảnh và hướng đã chọn, nhân vật chính đã sửa đều bọc `UserAuthored`, vì trình duyệt gửi lại chúng (G4).
   - `Naming` chuyển từ bài đo D sang đây, dùng chung một chỗ. `default_naming` theo bảng design §4.1. Thể loại ngoài bảng dùng tên Việt, địa danh hư cấu.
 - **Hệ quả:** chưa kiểm bằng code tên có đúng kiểu Hán Việt hay Việt; điều này chỉ nằm trong prompt. Chưa kiểm độ dài chữ người chơi sửa (`limits.input.*` đang null, chưa có khoá cho tính cách). Chưa lưu `StoryPlan` vào Postgres. `writer_context` chưa đọc `personality`/`backstory`.
@@ -652,6 +652,15 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `bench_g9` thêm `--cases` (mặc định bộ cũ), `--repeat N` (báo `unstable` và `stable_rate`) và `--budget` (trần chi phí của lần chạy; chạm trần thì dừng và ghi `stopped_by_budget`). `result.json` ghi tên file, hash, version và số câu của bộ câu.
 - **Hệ quả:** chạy lặp chỉ lộ sự không ổn định của model (suy luận thấp, lấy mẫu); nó không chứng minh một câu ổn định là đúng. Con số trên bộ giữ riêng là ước lượng độ chính xác trung thực hơn, nhưng bộ chỉ vài chục câu nên khoảng tin cậy rộng. Lần chạy thật do điều phối làm.
 - **Người quyết:** Claude (nhánh g9-holdout), điều phối giao việc, chờ duyệt · 21/10/2026
+
+## D-74 · Nhân vật chính có mục trong sổ tay từ chương 0 (thay một phần D-38)
+- **Bối cảnh:** bài E trên `tu-tien-1` (`evals/results/2026-10-21-narrator-tu-tien-1/`): "Tôi tên là gì?" luôn nhận "Bạn chưa biết điều này.". Đọc lại dữ liệu thấy hai nguyên nhân. (1) D-38 giữ `player_view` chương 0 rỗng và D-62 bỏ qua nhân vật chính khi tự hé lộ, nên tên chỉ vào sổ tay khi bộ trích tình cờ hé lộ (ở `tu-tien-1` có, từ chương 1). (2) Dù có mục, sổ tay không nói mục đó là người chơi nên model không nối "tôi" với nó.
+- **Quyết định:**
+  - Gói chương 0 có nút `ch0` và đúng một `REVEALED_TO_PLAYER` từ `protagonist`: `known_as` là tên người chơi đã chọn, `quote` là dòng "Nhân vật chính: <tên>" của `story_brief` (chữ đã thấy, D-52), nên G3 vẫn đúng. `initial_problems` chỉ cho đúng cạnh này; `KNOWS` của nhân vật chính và mọi hé lộ khác ở chương 0 vẫn là lỗi.
+  - `PlayerEntry.is_protagonist` (từ `is_protagonist` của nút). Sổ tay cho model ghi mục đó là "Nhân vật chính (chính là người chơi, "tôi")", prompt người kể thêm một luật, và truy hồi (D-59) luôn kèm nó. API sổ tay (`NotebookEntryOut`) chưa thêm trường này.
+  - G1, G4: chỉ tên và câu trích đã hiện; tên là chữ người chơi nên nằm trong khối dữ liệu của sổ tay.
+- **Hệ quả:** sổ tay chương 0 có một mục, nên hỏi người kể ở chương 0 gọi model thay vì trả ngay. Truyện tạo trước D-74 không có mục này ở chương 0. Prompt người kể đổi, nên kết quả bài E trước đó không so trực tiếp được. Chưa đo lại với model thật.
+- **Người quyết:** Claude (nhánh protagonist-notebook), điều phối giao việc, chờ duyệt · 21/10/2026
 
 ## D-75 · Test graph chạy trên database Postgres riêng; thể loại ghép lấy phần đầu có trong bảng quy ước tên
 - **Bối cảnh:** trước khi chủ dự án chạy app trên máy (21/10/2026). Test graph và app dùng chung database `writory`, nên test xoá và ghi đè key của người chơi dev, kéo theo key người chơi dán vào app bị mất. Các session chạy test song song cũng làm nhau đỏ (`PLAYER_KEY_UNREADABLE`). Giao diện gửi thể loại "Kỳ ảo · tu tiên", không khớp bảng `DEFAULT_NAMING` (D-32), nên rơi về tên Việt.
