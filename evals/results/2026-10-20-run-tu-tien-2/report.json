@@ -1,0 +1,73 @@
+{
+ "status": "error",
+ "stop": {
+  "kind": "error",
+  "where": "setup:build",
+  "code": "STORY_SETUP_INVALID"
+ },
+ "chapters_planned": null,
+ "chapters_target": null,
+ "chapters_clamped": false,
+ "chapters_committed": 0,
+ "story_finished": false,
+ "plan_vs_result": null,
+ "cost": {
+  "total_usd": 0.005282,
+  "estimated_unbilled_usd": 0.0,
+  "by_role": {
+   "setup": 0.005282
+  },
+  "by_chapter": {
+   "0": {
+    "setup": 0.005282,
+    "total": 0.005282
+   }
+  },
+  "max_chapter_attempt_usd": 0.0,
+  "max_scene_usd": 0.0,
+  "scenes": [],
+  "limits": {
+   "per_scene": 0.02,
+   "per_chapter": 0.08,
+   "per_story": 1.0
+  }
+ },
+ "calls": {
+  "total": 5,
+  "by_role": {
+   "setup": 5
+  },
+  "by_status": {
+   "ok": 5
+  }
+ },
+ "tokens": {
+  "setup": {
+   "prompt": 8946,
+   "completion": 9127
+  }
+ },
+ "issues": {
+  "found": {},
+  "blocking_found": {},
+  "left_when_shown": {}
+ },
+ "rewrites": 0,
+ "fallbacks": 0,
+ "scenes_blocked": 0,
+ "summaries": {
+  "made": 0,
+  "failed": 0,
+  "chapters_missing_previous": 0
+ },
+ "rejected_edges": {
+  "total": 0,
+  "by_reason": {}
+ },
+ "player_retries_used": {
+  "setup": 1,
+  "chapter": 0,
+  "choices": 0
+ },
+ "chapters": []
+}

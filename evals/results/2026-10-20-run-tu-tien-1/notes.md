@@ -23,3 +23,6 @@ Người đọc: Claude (điều phối), 20/10/2026. Số liệu lấy từ `su
 
 ## Trần chi phí (D-47) so với số đo
 Cảnh đắt nhất 0,0055 USD (trần 0,02). Lượt chương đắt nhất 0,0099 USD (trần 0,08). Cả truyện 0,0512 USD (trần 1,00). Trần đủ rộng, nhưng mới có một lần chạy, chưa đủ để siết.
+
+## Bổ sung (21/10/2026, từ bài E trên truyện này)
+- **Bộ trích gán nhầm danh tính** ở chương 5: cạnh hé lộ mang `known_as: "Vạn Tinh Bách"` được ghi lên nút `doan_khac` (kẻ phản bội) thay vì nút `van_tinh_bach`. Hệ quả: sổ tay hiện "Vạn Tinh Bách" cho nút của kẻ phản bội. Chưa gây lộ, nhưng khi bí mật lộ thì sẽ ghi sai người. Sửa: từ chối `known_as` trùng tên lớp truth của một nút khác (D-61).
