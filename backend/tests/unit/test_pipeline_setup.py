@@ -470,7 +470,7 @@ async def test_player_view_at_chapter_0_has_only_the_protagonist():
     assert (entry.id, entry.kind, entry.text, entry.since_chapter) == (
         PROTAGONIST_ID, "Character", PC.name, 0)
     assert entry.is_protagonist and entry.aliases == () and view.lies == ()
-    brief = story_brief(CHOICES, SETTING, PLOT, PC)
+    brief = story_brief(CHOICES, SETTING, PLOT, PC, moderation=None)
     assert entry.quote and quote_in_text(entry.quote, brief) and PC.name in entry.quote
 
 
@@ -482,7 +482,7 @@ async def test_protagonist_reveal_uses_the_name_exactly_as_the_brief_shows_it():
                                config=CFG, commit_id="c0")
     [entry] = player_view_of(OverlayState(EmptyState(), [result.package]), 0).entries
     assert entry.text == PC.name
-    assert quote_in_text(entry.quote, story_brief(CHOICES, SETTING, PLOT, padded))
+    assert quote_in_text(entry.quote, story_brief(CHOICES, SETTING, PLOT, padded, moderation=None))
 
 
 async def test_only_the_protagonist_is_revealed_at_chapter_0():
