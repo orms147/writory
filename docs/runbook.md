@@ -3,7 +3,7 @@
 ## Yêu cầu
 - Docker (có Compose)
 - Python ≥ 3.12 và [uv](https://docs.astral.sh/uv/)
-- Node 20+ (từ tuần 4, cho frontend)
+- Node 20.19+ và npm (cho frontend, mục Frontend)
 
 ## Chạy máy local
 ```bash
@@ -71,6 +71,22 @@ Frontend (Vite, `http://localhost:5173`) gọi API qua proxy của Vite, nên tr
 4. Proxy của Vite chuyển các đường của API tới `http://127.0.0.1:8000`: `/stories`, `/setup`, `/player`, `/config`, `/health` (hoặc một tiền tố chung, ví dụ `/api`, kèm rewrite bỏ tiền tố). Đường của trang (`/truyen/...`, `/moi`, `/khoa`) không trùng đường của API.
 5. Viết chương là SSE trên `POST` (D-46): đọc stream bằng `fetch`, không dùng `EventSource`. Chưa kiểm SSE đi qua proxy của Vite có bị đệm hay không.
 
+## Frontend
+React + TypeScript + Tailwind, dựng bằng Vite, trong `frontend/` (D-68). Cần Node 20.19+ và npm (lockfile `package-lock.json`).
+```bash
+cd frontend
+npm ci                 # cài đúng theo lockfile
+npm run dev:mock       # chạy với máy chủ giả trong trình duyệt, không cần backend, không gọi model
+npm run dev            # chạy với backend thật qua proxy (bên dưới)
+npm run lint           # ESLint
+npm run typecheck      # tsc strict
+npm test               # Vitest + Testing Library, không mạng
+npm run build          # bản build vào frontend/dist/
+```
+- **Proxy:** `npm run dev` chuyển `/api/*` tới `http://localhost:8000/*` (bỏ tiền tố `/api`, vì app FastAPI không có tiền tố). Đổi đích bằng `WRITORY_API_URL`; đổi tiền tố phía trình duyệt bằng `VITE_API_BASE`. Backend phải chạy với `ENABLE_DEV_ROUTES=true` (mục trên). Luồng SSE `POST /stories/{id}/chapters/next` đi qua proxy này.
+- **Mock (D-69):** `npm run dev:mock` (hoặc `VITE_MOCK=1 npm run dev`) thay `fetch` bằng máy chủ giả `frontend/src/mock/`: truyện bịa, mọi endpoint giao diện dùng, luồng SSE có `: ping` và sự kiện bị cắt đôi. Trạng thái nằm trong bộ nhớ, tải lại trang là về đầu. Thêm `?mock=rong` vào URL để mở tủ trống chưa có khoá; `?loi=<MÃ>` để giả một lỗi, ví dụ `/truyen/s-chuong?loi=COST_LIMIT_CHAPTER`, `?loi=SCENE_LEAK_BLOCKED`, `?loi=ACTION_UNCLEAR`. Bản build thường không chứa lớp mock.
+- Chưa có đăng nhập: màn `/dang-nhap` chỉ là giao diện, không gửi gì đi (D-44).
+
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.
 
@@ -78,12 +94,14 @@ GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi
 |---|---|
 | `fast` | `uv sync --locked`, `uv run ruff check .`, `uv run pytest -m "not graph"` trong `backend/` |
 | `graph` | dựng service container `neo4j:5.26-community` và `postgres:16`, chờ cổng 7474 của Neo4j (Postgres chờ bằng health check), rồi `uv run pytest -m graph` |
+| `frontend` | Node 20, `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` trong `frontend/` |
 
 - Marker `graph` đánh dấu mọi test cần dịch vụ Docker: Neo4j, và Postgres cho luồng ghi chương. Test nhanh (`-m "not graph"`) không cần Docker.
 - Job `graph` đặt `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` và `POSTGRES_DSN` qua biến môi trường của job; mật khẩu chỉ dùng cho container CI. Test đọc kết nối từ các biến này, mặc định theo `.env.example` khi chạy local.
 - Không có test nào mang marker `graph` chạy (pytest trả mã 5) thì job `graph` đỏ.
 - `uv sync --locked` báo lỗi nếu `uv.lock` lệch `pyproject.toml`: chạy `uv lock` ở máy rồi commit lại.
-- Chạy giống CI ở máy: các lệnh `ruff`/`pytest` ở mục trên.
+- Chạy giống CI ở máy: các lệnh `ruff`/`pytest` ở mục trên, và các lệnh `npm` ở mục Frontend.
+- `npm ci` báo lỗi nếu `package-lock.json` lệch `package.json`: chạy `npm install` ở máy rồi commit lại lockfile.
 
 ## Migration Postgres
 SQL thuần trong `backend/src/writory/db/migrations/`, chạy theo thứ tự tên file, mỗi file một lần (D-20). Muốn đổi schema thì thêm file mới, không sửa file đã chạy.

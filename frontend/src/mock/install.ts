@@ -1,0 +1,13 @@
+import { setFetch } from '../api/client';
+import { createMockServer } from './server';
+
+/** Bật lớp mock trong trình duyệt (`npm run dev:mock`). Kịch bản đọc từ URL:
+ *  `?mock=rong` lúc mở trang (tủ trống, chưa có khoá); `?loi=<MÃ>` ở mỗi lời gọi (lỗi giả lập). */
+export function installMock() {
+  const params = new URLSearchParams(window.location.search);
+  const server = createMockServer({
+    scenario: params.get('mock'),
+    fault: () => new URLSearchParams(window.location.search).get('loi'),
+  });
+  setFetch(server.fetch);
+}

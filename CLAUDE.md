@@ -53,7 +53,7 @@ backend/
     unit/          test nhanh, không mạng
     graph/         cần Neo4j Docker (marker `graph`)
     fixtures/      câu trả lời LLM ghi sẵn
-frontend/          (tạo ở tuần 4) React + TS + Tailwind
+frontend/          React + TS + Tailwind, Vite (D-68): src/api (client, SSE), src/screens, src/mock (máy chủ giả, D-69)
 data/sample-story/ truyện mẫu 5 chương viết tay + đồ thị dựng tay (tuần 1)
 evals/
   scenarios/       câu hỏi + đáp án khai TRƯỚC khi chạy
@@ -96,6 +96,7 @@ Mỗi lỗi tìm được thêm thành **test hồi quy** trước khi sửa. B�
 - **Bộ đo** (`docs/eval.md`): lệnh riêng, có gọi model, có trần chi phí, không chạy trong CI mặc định.
 - **Không viết test phụ thuộc thời gian chạy hoặc tốc độ máy** (sleep, timeout sát). Dùng đồng hồ giả.
 - Lint: `uv run ruff check .`
+- **Frontend** (mỗi commit chạm `frontend/`): `cd frontend && npm test`, `npm run lint`, `npm run typecheck`, `npm run build`. Không mạng: API thay bằng máy chủ giả `src/mock/`. Giao diện chỉ cần test nhẹ (§4), nhưng mỗi luật hiển thị (không lộ bí mật, số từ config, key chỉ `last4`) có test.
 
 ## 7. Lệnh thường dùng
 ```bash
@@ -103,6 +104,10 @@ docker compose up -d                 # Neo4j :7474/:7687, Postgres :5432
 cd backend && uv sync                # cài phụ thuộc
 uv run pytest -m "not graph"         # test nhanh
 uv add <gói>                         # thêm phụ thuộc (không sửa tay pyproject)
+cd frontend && npm ci                # cài phụ thuộc frontend theo package-lock.json
+npm run dev:mock                     # giao diện với máy chủ giả, không cần backend
+npm run dev                          # giao diện với backend :8000 qua proxy /api
+npm install -D <gói>                 # thêm phụ thuộc frontend; commit cả package-lock.json
 ```
 
 ## 8. Thuật ngữ (dùng đúng tên này trong code và tài liệu)
@@ -128,10 +133,11 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 
 - Bản đang làm: **Bản 1, tuần 2**. Mốc "chạy liền 10 chương từ dòng lệnh" (design §12) chưa đạt: lệnh `pipeline/bench_run.py` (D-42) đã chạy thật một truyện ngắn 6/6 chương (`evals/results/2026-10-20-run-tu-tien-1/`); hai lần chạy sau dừng sớm ở khởi tạo và ở luật tên của bộ dò lộ, đã sửa nhưng chưa chạy lại (D-54, D-61, D-62); trần còn là số tạm (D-47).
 - Đã có trên `main`: lớp nền (`config.py`, `errors.py`, `llm/`), `safety/` (bọc chữ G4, mã hoá key G7, lọc log, phân loại hành động G5, dò lộ bí mật G2: chỉ cấm tên bí mật, `scope` bắt buộc, D-61; tự hé lộ tên trang vừa nêu `reveal.py`, D-62; kiểm duyệt nội dung G9 `safety/moderate.py` với danh mục `config/moderation.yaml` chủ dự án đã duyệt, D-57, D-58), lõi đồ thị (`graph/`: `player_view` một định nghĩa thuần, ngữ cảnh model viết `context.py`; truyện mẫu `data/sample-story/`), người canh bằng code (`guard/`), kiểm văn (`quality/`, chuẩn hoá dấu gạch D-31), ghi chương phía Postgres (`db/`), khung FastAPI (`api/`), bài đo B, C và D (`evals/results/`). Pipeline: khởi tạo truyện và chương 0 `pipeline/setup.py` (D-38, D-39; chuẩn hoá id, một lượt sửa: D-54), bản kế hoạch `story_plan.py` (mốc, khoảng gỡ mạch, nhịp theo độ dài; D-49), mục tiêu chương `pacing.py` (D-49), bộ trích `extract.py` (D-34), đường đi một chương `chapter.py` (dàn ý → viết → soát → ghi → tóm tắt → lựa chọn; chương cuối phát `story_finished`; D-36, D-37, D-49, D-50), tóm tắt chương `summary.py` (D-49), hỏi người kể `narrator.py` (D-40; truy hồi sổ tay khi truyện dài `notebook.py`, D-59). Lựa chọn ghi tác động vào gói chương sau (`Lie`, `FEELS`; D-55). Khoá chống chạy đôi và bộ đếm lời gọi mỗi phút (D-46, D-56). Bài đo E: người kể không lộ (D-53, D-60). API chỉ bật bằng `ENABLE_DEV_ROUTES` (D-41): sổ tay, người kể; key người chơi `/player/key` và khởi tạo `/setup` (D-45); viết chương qua SSE, lựa chọn, hành động tự viết, đọc lại truyện (`api/play.py`, D-46). Postgres lưu kế hoạch ẩn, key đã mã hoá, phiên khởi tạo, nhật ký chi phí theo vai (migration 0003, D-44), tóm tắt chương (migration 0004, D-49), bộ đếm lời gọi (migration 0005, D-56).
-- CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
+- CI: `.github/workflows/ci.yml` (job `fast`, `graph` và `frontend`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
-- Quyết định đang hiệu lực: D-1 đến D-62, D-65 (`docs/decisions.md`). Đang ở nhánh chưa merge: D-63, D-64 (SSE thật, chi phí lời gọi bị huỷ), D-66, D-67 (endpoint cho giao diện), D-68, D-69 (frontend).
+- Quyết định đang hiệu lực: D-1 đến D-71 (`docs/decisions.md`).
 - Model theo vai, mức suy luận và danh sách mức model viết: `config/models.yaml` (lý do: D-33, D-35, D-43, D-47).
 - Trần chi phí, ngưỡng kiểm văn và người canh, giới hạn người chơi: số tạm (D-47), chỉnh lại sau lần chạy thật đầu.
-- Chưa có: đăng nhập (G10; mọi người là người chơi dev `dev`, D-44); frontend (tuần 4, đang dựng theo `frontend/design-handoff/`, D-65).
+- Frontend (`frontend/`, D-68, D-69): các màn bản 1 theo bàn giao thiết kế (`frontend/design-handoff/`, D-65), chạy được với máy chủ giả. Endpoint giao diện `/stories`, `/config/public`, `/player/costs`, người kể có `remaining` và nguồn (D-66), mức u tối chọn sẵn (D-67). Chưa chạy thử với backend thật.
+- Chưa có: đăng nhập (G10; mọi người là người chơi dev `dev`, D-44; màn `/dang-nhap` chỉ là giao diện).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).
