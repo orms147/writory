@@ -7,8 +7,10 @@ cảnh model viết, tên lớp truth hay id nút: mỗi mục được gọi b�
 đổi mã về id khi dựng dữ liệu có cấu trúc.
 
 G2: mọi chữ có thể tới người chơi (chữ lựa chọn, nội dung lời nói dối sẽ vào sổ tay, cảm xúc của
-lựa chọn nội tâm) qua `check_leaks`. Trúng một chỗ thì không hiện bộ lựa chọn nào
-(`CHOICES_LEAK_BLOCKED`); chương đã ghi xong từ trước, gọi lại hàm này để tạo bộ mới.
+lựa chọn nội tâm) qua `check_leaks` với `scope="player_path"` (D-61): mọi bí mật chưa có trong
+player_view đều bị dò, bất kể khoảng lộ, vì chỉ cảnh mới được hé lộ. Trúng một chỗ thì không hiện
+bộ lựa chọn nào (`CHOICES_LEAK_BLOCKED`); chương đã ghi xong từ trước, gọi lại hàm này để tạo bộ
+mới. Mọi nơi tạo lựa chọn (chương, tạo lại ở `bench_run` và `api/play.py`) đi qua hàm này.
 
 G4: toàn bộ view và văn bản cảnh nằm trong khối dữ liệu, vì view không mang cờ `user_authored`.
 
@@ -243,7 +245,7 @@ def _ensure_no_leak(choices: list[Choice], *, view: PlayerView,
         for text in (c.text, c.lie.content if c.lie else None, c.feeling)
         if text
         for h in check_leaks(text, view=view, truth_names=truth_names, plan=plan,
-                             story_brief=story_brief)
+                             story_brief=story_brief, scope="player_path")
     ]
     if hits:
         # Log và lỗi chỉ ghi loại và vị trí, không ghi chữ bị lộ (D-26).

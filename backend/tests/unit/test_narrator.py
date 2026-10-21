@@ -284,7 +284,7 @@ def test_sample_has_the_secrets_these_tests_guard():
               "Gã lái đò mặt sẹo là Lý Thất."]
     for text in hidden:
         assert check_leaks(text, view=v4, truth_names=state(4).named_nodes(), plan=PLAN,
-                           story_brief=BRIEF), text
+                           story_brief=BRIEF, scope="player_path"), text
 
 
 @pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
@@ -300,10 +300,11 @@ async def test_context_has_no_unrevealed_secret(chapter):
 
 @pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
 async def test_context_passes_the_leak_detector(chapter):
-    """Mọi tên lớp truth chưa thấy và mọi bí mật chưa tới khoảng lộ: không có trong context."""
+    """Tên bí mật và mọi bí mật chưa có trong player_view (D-61, phạm vi của người kể): không có
+    trong context."""
     ctx = await _context(chapter)
     assert check_leaks(ctx, view=view(chapter), truth_names=state(chapter).named_nodes(),
-                       plan=PLAN, story_brief="") == []
+                       plan=PLAN, story_brief="", scope="player_path") == []
 
 
 @pytest.mark.parametrize("chapter", [1, 2, 3, 4, 5])
@@ -526,15 +527,16 @@ def _scripted_outputs(v: PlayerView) -> dict[str, tuple[str, BlockReason | None]
     }
 
 
-_OUTPUT_NAMES = list(_scripted_outputs(view(3)))
+# Chương 4: người chơi biết "gã lái đò mặt sẹo" mà chưa biết tên thật (tên bí mật loại a, D-61).
+_OUTPUT_NAMES = list(_scripted_outputs(view(4)))
 
 
 @pytest.mark.parametrize("name", _OUTPUT_NAMES)
 async def test_reply_answer_is_exactly_what_ask_narrator_returns(name):
     """Bài đo E đọc câu thô qua `ask_narrator_reply`; người chơi vẫn nhận đúng chữ như trước."""
-    raw, reason = _scripted_outputs(view(3))[name]
-    plain = await ask("Lão Gù sao rồi?", 3, FakeLLM.scripted([raw]))
-    detailed = await ask_reply("Lão Gù sao rồi?", 3, FakeLLM.scripted([raw]))
+    raw, reason = _scripted_outputs(view(4))[name]
+    plain = await ask("Lão Gù sao rồi?", 4, FakeLLM.scripted([raw]))
+    detailed = await ask_reply("Lão Gù sao rồi?", 4, FakeLLM.scripted([raw]))
     assert detailed.answer == plain
     assert detailed.blocked is reason
     assert (detailed.answer == NOT_KNOWN) is (reason is not None)
@@ -666,3 +668,20 @@ async def test_gate_is_optional_for_the_bench_path():
         "Lão Gù chết ở đâu?", v, llm=metered(fake), config=CFG,
         truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=MemoryQuota())
     assert out.blocked is None
+
+
+# --- phạm vi của người kể: mọi bí mật chưa có trong player_view (D-61) ---------------------------
+
+
+@pytest.mark.parametrize("reveal_from", [3, 4])
+async def test_narrator_blocks_unrevealed_secret_after_its_window_opened(reveal_from):
+    """Hồi quy lỗ của tu-tien-1 (D-60): bí mật đã tới khoảng lộ mà cảnh chưa hé lộ. Trước D-61 bộ
+    dò chỉ áp `leak_terms` khi chương < `reveal_from_chapter`, nên người kể nói ra được."""
+    plan = StoryPlan.model_validate({**PLAN.model_dump(), "secrets": [
+        {**s.model_dump(), "reveal_from_chapter": reveal_from}
+        if s.fact_id == "f_lan_spy" else s.model_dump() for s in PLAN.secrets]})
+    v = view(4)
+    assert "f_lan_spy" not in {e.id for e in v.entries}
+    raw = reply(True, "Lan là gián điệp, người của Hội Hắc Kỳ.", [ref(v, "lan")])
+    detailed = await ask_reply("Lan là ai?", 4, FakeLLM.scripted([raw]), plan=plan)
+    assert (detailed.answer, detailed.blocked) == (NOT_KNOWN, BlockReason.LEAK)

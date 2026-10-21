@@ -202,8 +202,8 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Bối cảnh:** G2 cần chặn chữ để lộ bí mật trước khi hiện. Đo trên truyện mẫu: nếu cấm mọi tên và biệt danh lớp truth chưa có trong `known_as`, văn sạch của cả 5 chương đều bị báo. Có hai loại báo nhầm: tên thật được nói ngay trong câu trích hé lộ ("Tên thật của lão là Hồ Sĩ Bằng"), và biệt danh là danh từ chung ("thanh kiếm", "quán trà đầu bến").
 - **Quyết định:**
   - "Người chơi đã thấy gì" lấy duy nhất từ `PlayerView` (D-16): chữ hiện, biệt danh, mọi câu trích (`quotes`), lời nói dối của nhân vật chính. Định nghĩa nằm trong hàm thuần `graph.build_player_view`, dùng chung cho Neo4j và GraphState.
-  - Tên chỉ bị cấm khi có từ viết hoa (tên riêng) mà người chơi chưa thấy trong `PlayerView`.
-  - Bí mật của `story_plan` chưa tới khoảng lộ và chưa được hé lộ (kể cả lộ sớm do lựa chọn): nhóm `leak_terms` trúng khi mọi cụm cùng nằm trong một câu. Bí mật không có `leak_terms` thì ghi cảnh báo.
+  - Tên chỉ bị cấm khi có từ viết hoa (tên riêng) mà người chơi chưa thấy trong `PlayerView`. **Đã thay một phần (D-61):** chỉ tên bí mật (tên thật bị giấu sau biệt danh, tên trong `Secret.protects`) bị cấm; tên khác trang nêu thì code tự hé lộ (D-62).
+  - Bí mật của `story_plan` chưa tới khoảng lộ và chưa được hé lộ (kể cả lộ sớm do lựa chọn): nhóm `leak_terms` trúng khi mọi cụm cùng nằm trong một câu. Bí mật không có `leak_terms` thì ghi cảnh báo. **Đã thay một phần (D-61):** chỉ văn cảnh (`scope="scene"`) xét khoảng lộ; người kể và lựa chọn dò mọi bí mật chưa có trong `player_view`.
   - So sau NFC và bỏ dấu, trọn từ. Cụm một từ phân biệt hoa thường; cụm nhiều từ thì không.
   - Trúng thì báo `SCENE_LEAK_BLOCKED`, câu báo trung tính (design §6.6). Log chỉ ghi loại và vị trí, không ghi chữ bị lộ.
   - Sửa `told_to` của lời nói dối trong `player_view` theo đúng D-17: tên người chơi biết, hoặc "(người chưa rõ tên)", không bao giờ là `name`.
@@ -412,7 +412,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 ## D-48 · Tên người chơi tự viết không phải bí mật đối với người chơi (bổ sung D-26)
 - **Bối cảnh:** bộ dò lộ (D-26) cấm tên lớp truth mà `player_view` chưa có. Ở chương 0 người chơi chưa biết gì (D-38), nên cảnh chương 1 nêu tên nhân vật chính sẽ bị chặn nếu bộ trích quên hé lộ nhân vật chính, dù tên đó do người chơi chọn hoặc tự viết (lệnh chạy cả truyện, D-42, chỉ ra).
 - **Quyết định:**
-  - Bộ dò lộ không coi `name` của nút mang `user_authored: true` là tên bị cấm. `aliases` của nút đó vẫn bị dò, vì model có thể gán bí danh bí mật.
+  - Bộ dò lộ không coi `name` của nút mang `user_authored: true` là tên bị cấm. `aliases` của nút đó vẫn bị dò, vì model có thể gán bí danh bí mật. **Đã thay một phần (D-61):** biệt danh đó chỉ bị cấm khi là tên bí mật (nút nằm trong `Secret.protects`, hoặc tên bị giấu sau biệt danh).
   - Quy tắc nằm một chỗ: `safety.leak.leak_names(state)`, đọc `GraphState.named_nodes()` và `nodes()`, nên đúng cho cả Neo4j lẫn `OverlayState`. Mọi nơi gọi bộ dò lộ lấy `truth_names` từ đó: soát cảnh và tạo lựa chọn (`pipeline/chapter.py`), tạo lại lựa chọn (`pipeline/bench_run.py`), hỏi người kể (`api/deps.get_truth_names`).
   - Tên đó không được tính là chữ người chơi đã thấy: tên lớp truth khác trùng một phần chữ vẫn bị cấm như cũ. **Đã thay một phần (D-52):** thiết lập truyện có tên nhân vật chính và được tính là chữ đã thấy.
 - **Hệ quả:** nhân vật chính không cần hé lộ trên trang để được gọi tên. `named_nodes` vẫn trả đủ tên lớp truth cho chỗ khác dùng. Nếu bản 3 cho người chơi viết thêm nút (nhập nhân vật bằng đoạn văn), tên các nút đó cũng được miễn theo quy tắc này.
@@ -457,7 +457,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:**
   - Đo lại: thiết lập thật của lần chạy không có ba tên trên (chỉ có "tín vật", "linh mạch" viết thường; tên tính theo từ viết hoa), nên sửa này không bỏ được ba lượt viết lại đó. Nguyên nhân thật: bộ trích không hé lộ thực thể ở lần đầu cảnh nêu tên (`test_leak.py::test_run1_names_absent_from_its_setup_text_still_leak`).
   - Từ trong tên nhân vật chính và chữ người chơi tự gõ (quá khứ, tính cách) giờ là chữ đã thấy: tên hay biệt danh chỉ gồm các từ đó không còn bị cấm theo tên.
-  - Tên ghép từ từ thường ("Động Linh Mạch" trùng "chấn động linh mạch") chưa sửa: mọi cách gọn tìm được đều bỏ bắt một kiểu viết tên thật (chữ thường có dấu). Hướng đề xuất ở `docs/security.md`, mục Chưa giải quyết.
+  - Tên ghép từ từ thường ("Động Linh Mạch" trùng "chấn động linh mạch") chưa sửa: mọi cách gọn tìm được đều bỏ bắt một kiểu viết tên thật (chữ thường có dấu). Hướng đề xuất ở `docs/security.md`, mục Chưa giải quyết. **Đã thay một phần (D-61):** tên không bí mật không còn bị cấm, nên báo nhầm này chỉ còn với tên bí mật.
 - **Người quyết:** Claude (nhánh run1-fixes), điều phối duyệt (PR #23) · 20/10/2026
 
 ## D-53 · Bài E: hỏi người kể không lộ; câu thô tách khỏi câu cuối, bộ chấm chặt hơn lớp chặn
@@ -536,8 +536,28 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `bench_e` nhận truyện do `bench_run` viết: `plan-*.yaml` có `run_dir`, kế hoạch, gói và `story_brief` lấy từ thư mục đó (`pipeline/bench_e_story.py`). Đề cho `run-tu-tien-1` đã soạn trước khi chạy.
   - Bộ chấm: tên đã nằm trong chữ sổ tay không bị coi là lộ (như bộ dò lộ lúc chạy), vì truyện do model viết hay nhắc tên một nút chưa hé lộ ngay trong chữ của mục khác. Bí mật thêm của bộ chấm được có khoảng lộ sau chương cuối.
   - Model giả: `oracle` chỉ trả lời điều nó thấy; `leaker` lấy chữ từ `leak_terms` của kế hoạch khi truyện do pipeline viết.
-- **Hệ quả:** bộ dò lộ lúc chạy (`safety/leak.py`) chỉ áp `leak_terms` khi chương < `reveal_from_chapter`. Ở tu-tien-1 hai bí mật có khoảng lộ 3-6 và 4-6 mà chưa hề hé lộ, nên từ chương 3-4 người kể có thể nói ra chúng mà không bị chặn theo cụm từ (chỉ còn quy tắc tên riêng). Đường người kể và lựa chọn chỉ dùng chữ của `player_view` nên có thể chặn mọi bí mật chưa hé lộ; cần chủ dự án quyết có đổi không. Chưa chạy thật.
+- **Hệ quả:** bộ dò lộ lúc chạy (`safety/leak.py`) chỉ áp `leak_terms` khi chương < `reveal_from_chapter`. Ở tu-tien-1 hai bí mật có khoảng lộ 3-6 và 4-6 mà chưa hề hé lộ, nên từ chương 3-4 người kể có thể nói ra chúng mà không bị chặn theo cụm từ (chỉ còn quy tắc tên riêng). Đường người kể và lựa chọn chỉ dùng chữ của `player_view` nên có thể chặn mọi bí mật chưa hé lộ; cần chủ dự án quyết có đổi không. Chưa chạy thật. **Đã thay một phần (D-61):** chủ dự án chọn đổi; người kể và lựa chọn dò mọi bí mật chưa có trong `player_view`.
 - **Người quyết:** Claude (nhánh narrator-retrieval), chờ điều phối duyệt · 20/10/2026
+
+## D-61 · Bộ dò lộ chỉ cấm tên bí mật; `scope` bắt buộc (thay một phần D-26, D-48, D-52)
+- **Bối cảnh:** lần chạy tu-tien-3 (`evals/results/2026-10-20-run-tu-tien-3/`) dừng ở chương 1: cảnh bị chặn cả hai lần bấm thử lại chỉ vì tên giới thiệu bình thường ("Đoàn Khương", "kho kiếm cụ"...), vì D-26 cấm mọi tên lớp truth chưa có trong `player_view` mà bộ trích hay quên hé lộ ở lần đầu. D-60 ghi lỗ ngược lại: người kể nói được bí mật đã tới khoảng lộ mà chưa hé lộ.
+- **Quyết định:**
+  - Chỉ hai loại tên bị cấm, vẫn chỉ khi có từ viết hoa người chơi chưa thấy (D-26, D-52): (a) tên thật bị giấu sau biệt danh: nút đã có trong `player_view` mà tên lớp truth không chứa trọn tên đã hé lộ và không chung từ viết hoa nào với nó ("Lý Thất" sau "gã lái đò mặt sẹo" bị cấm; "Đoàn Khương" sau "Đoàn sư huynh" thì không); (b) tên và biệt danh của nút trong `Secret.protects` của bí mật còn hiệu lực. `name` của nút `user_authored` vẫn không bao giờ bị cấm (D-48). `leak_terms` giữ nguyên.
+  - `Secret.protects`: id nút có tên mà bí mật giấu danh tính, mặc định rỗng nên kế hoạch cũ vẫn đọc được. Đề `build_story` (`setup-5`) yêu cầu điền cho bí mật về danh tính; `initial_problems` kiểm id là nút có tên trong gói; id qua `normalize_ids` như mọi chỗ nhắc tới.
+  - `check_leaks`, `ensure_no_leak` nhận `scope` bắt buộc, không mặc định: `scene` (văn cảnh) xét khoảng lộ như cũ; `player_path` (người kể, chữ lựa chọn, lời nói dối, cảm xúc) dò mọi bí mật chưa có trong `player_view`, bất kể khoảng lộ. `make_choices` và `ask_narrator_reply` gọi với `player_path`, nên mọi nơi tạo lựa chọn hay hỏi người kể (chương, `bench_run`, `api/play.py`, `api/stories.py`, `bench_e`) đi qua đúng phạm vi.
+  - Bộ chấm bài E dùng `player_path` và giữ luật tên cũ (mọi tên riêng lớp truth chưa thấy), để vẫn chặt hơn lớp chạy thật (D-53).
+- **Hệ quả:** tên không bí mật được nêu trên trang; code tự hé lộ nó (D-62). Tên bí mật ghép từ từ thường vẫn trúng cả chữ thường ("động linh mạch"). Chưa đo với model thật: model khởi tạo có điền `protects` đúng không, cảnh có hay bị chặn vì tên được bảo vệ không.
+- **Người quyết:** Chủ dự án duyệt hướng (21/10/2026); cách làm: Claude · 21/10/2026
+
+## D-62 · Tự hé lộ tên trang vừa nêu; từ chối `known_as` trùng tên nút khác
+- **Bối cảnh:** D-61 cho trang nêu tên không bí mật, nhưng sổ tay và bộ dò chỉ biết điều có trong `player_view`, mà bộ trích hay quên hé lộ thực thể ở lần đầu (D-52, tu-tien-3). Lần chạy tu-tien-1 chương 5 (`truth_dump.json`): bộ trích gắn `known_as: "Vạn Tinh Bách"` lên nút `doan_khac`, nên sổ tay hiện kẻ phản bội dưới tên người khác.
+- **Quyết định:**
+  - Sau bước trích của mỗi cảnh (`pipeline/chapter.py`), `safety.reveal.auto_reveals` thêm `REVEALED_TO_PLAYER` cho nút có tên mà tên hay biệt danh có trong chữ cảnh, chưa có trong `player_view` (kể cả hé lộ bộ trích vừa ghi), không phải nhân vật chính, không bị bảo vệ (D-61): `quote` là câu nguyên văn chứa tên (G3), `known_as` đúng chuỗi trên trang (D-17), `valid_from_chapter` là chương đang viết (D-21). Cạnh qua người canh như cạnh của bộ trích.
+  - So khớp nghiêm: giữ dấu, trọn từ, phân biệt hoa thường trừ chữ cái đầu của tên nhiều từ, tên phải có từ viết hoa ("Động Linh Mạch" không khớp "chấn động linh mạch", "Lan" không khớp "hoa lan"). Bỏ lần khớp nằm trong tên dài hơn của nút khác, và chuỗi khớp cũng là tên của nút khác. Mỗi nút một cạnh, ưu tiên `name`.
+  - Bộ dò lộ của chính cảnh đó không tính các hé lộ tự động này, để câu trích không biến tên khác trong cùng câu thành "đã thấy".
+  - `extract.to_package` từ chối cạnh có `known_as` trùng tên hay biệt danh lớp truth của một nút khác (`known_as_conflicts`, cùng cách chuẩn hoá của bộ dò lộ), lý do "known_as là tên của nút khác"; tự hé lộ cũng không dùng chuỗi đó.
+- **Hệ quả:** sổ tay có thêm mục cho nơi chốn, phe, đồ vật trang chỉ nhắc qua. Nút chỉ được nêu bằng biệt danh viết thường thì vẫn chờ bộ trích. Tên nằm trong tên dài hơn ("Lão Gù" trong "lò rèn của Lão Gù") không hé lộ nút ngắn. Biệt danh chung của hai nút không bao giờ được hé lộ. Log chỉ ghi số nút tự hé lộ. Chưa đo trên truyện thật.
+- **Người quyết:** Chủ dự án duyệt hướng (21/10/2026); cách làm: Claude · 21/10/2026
 
 ## D-65 · Giao diện bản 1: theo bàn giao thiết kế; sắc thái theo máy chủ, bỏ ô thời đại, người kể có số câu còn lại và nguồn
 - **Bối cảnh:** bàn giao thiết kế (`frontend/design-handoff/`, README mục 8) có các chỗ chưa khớp với code và design.

@@ -9,7 +9,8 @@ Nhờ vậy đo được cả "model tự giữ được bao nhiêu" lẫn "lớ
 
 Chấm bằng code (`Scorer`), chặt hơn lớp chạy thật: tên lớp truth đầy đủ (`named_nodes`, không
 phải `leak_names`) của mọi nút có tên trong truyện mẫu (cả 5 chương), `leak_terms` của kế hoạch
-cộng nhóm và bí mật chỉ dành cho bộ chấm (plan.yaml), và tên thật của nút chưa hé lộ. Lộ ở câu cuối
+cộng nhóm và bí mật chỉ dành cho bộ chấm (plan.yaml), và tên thật của nút chưa hé lộ. Lớp chạy thật
+chỉ cấm tên bí mật (D-61); bộ chấm vẫn cấm mọi tên riêng lớp truth người chơi chưa thấy. Lộ ở câu cuối
 phải bằng 0; khác 0 thì lệnh trả mã 4. Thiết lập truyện (`story_brief`, D-52) khai trong plan.yaml;
 lớp chạy thật và bộ chấm nhận cùng giá trị.
 
@@ -343,6 +344,15 @@ def contains(text: str, term: str, *, ignore_case: bool = True) -> bool:
     return re.search(pattern, _flat(text), re.IGNORECASE if ignore_case else 0) is not None
 
 
+_WORDS = re.compile(r"[^\W\d_]+")
+
+
+def _proper_words(text: str) -> set[str]:
+    """Từ viết hoa (tên riêng), đã bỏ dấu."""
+    return {strip_diacritics(w) for w in _WORDS.findall(unicodedata.normalize("NFC", text))
+            if w[0].isupper()}
+
+
 # --- bộ chấm ------------------------------------------------------------------------------------
 
 
@@ -368,14 +378,23 @@ class Scorer:
         if not text.strip():
             return []
         found: dict[tuple[str, str], None] = {}
+        # Cùng phạm vi với người kể (D-61): mọi bí mật chưa có trong player_view.
         for hit in check_leaks(text, view=state.view, truth_names=self.names, plan=self.plan,
-                               story_brief=self.story_brief):
+                               story_brief=self.story_brief, scope="player_path"):
             found[(hit.kind.value, hit.term)] = None
         shown = {e.id for e in state.view.entries}
         # Chữ người chơi đã đọc: thiết lập truyện và mọi chữ trong sổ tay (như bộ dò lộ lúc chạy,
         # D-26). Truyện do model viết hay nhắc tên một nút chưa hé lộ ngay trong chữ của mục khác.
         read = " ".join([self.story_brief, *(_entry_text(e) for e in state.view.entries),
                          *(_lie_text(lie) for lie in state.view.lies)])
+        # Luật tên cũ của bộ dò lộ (D-26, trước D-61): mọi tên, biệt danh lớp truth có từ viết hoa
+        # người chơi chưa thấy. Bộ chấm giữ luật này để vẫn chặt hơn lớp chạy thật.
+        known = _proper_words(read)
+        for _, forms in sorted(self.names.items()):
+            for form in forms:
+                if _proper_words(form) - known and contains(
+                        text, form, ignore_case=len(form.split()) > 1):
+                    found[("name", form)] = None
         for nid, name in sorted(self.real_names.items()):
             single = len(name.split()) == 1
             if (nid not in shown and contains(text, name, ignore_case=not single)

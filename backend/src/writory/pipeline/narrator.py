@@ -10,7 +10,9 @@
   cũng nằm trong khối dữ liệu; vai system chỉ có chữ của hệ thống.
 - Đầu ra JSON theo `NarratorOutput`; code kiểm mã mục. Không biết, không dựa vào mục nào, hay
   dựa vào mã không có trong sổ tay → đúng câu `NOT_KNOWN`.
-- G2: câu trả lời qua `check_leaks`; trúng thì cũng trả `NOT_KNOWN`, log chỉ ghi loại và vị trí.
+- G2: câu trả lời qua `check_leaks` với `scope="player_path"` (D-61): mọi bí mật chưa có trong
+  player_view đều bị dò, bất kể khoảng lộ. Trúng thì cũng trả `NOT_KNOWN`, log chỉ ghi loại và vị
+  trí.
 - G8: lời gọi phải qua `MeteredClient`; số câu hỏi mỗi chương có trần, giữ lượt trước khi gọi.
 - G9, D-57: cổng `moderate` (kiểm duyệt đầu vào) chạy sau các kiểm tra độ dài và sau lối tắt sổ
   tay trống, trước khi giữ lượt và trước model người kể: câu bị chặn không mất lượt.
@@ -249,7 +251,7 @@ def _checked_answer(
                     view.chapter, len(unknown))
         return NOT_KNOWN, BlockReason.UNKNOWN_REF
     hits = check_leaks(answer, view=view, truth_names=truth_names, plan=plan,
-                       story_brief=story_brief)
+                       story_brief=story_brief, scope="player_path")
     if hits:
         where = ", ".join(f"{h.kind.value}@{h.start}-{h.end}" for h in hits)
         log.warning("người kể: chương %d, chặn câu trả lời (G2): %d chỗ trúng (%s)",

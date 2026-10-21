@@ -17,6 +17,7 @@ from writory.pipeline.choices import (
     build_choice_messages,
     make_choices,
 )
+from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import OPEN_TAG_START
 
 RETRIES = load_config().limits.retries
@@ -89,11 +90,18 @@ def _refs_by_text():
     return {text[eid]: ref for ref, eid in refs.items()}
 
 
-async def _make(llm, *, brief: str = ""):
+async def _make(llm, *, brief: str = "", plan: StoryPlan = PLAN):
     return await make_choices(
         llm, "m", view=VIEW, protagonist_id="minh", last_scene_text=SCENE,
-        truth_names=STATE.named_nodes(), plan=PLAN, retries=RETRIES, story_brief=brief,
+        truth_names=STATE.named_nodes(), plan=plan, retries=RETRIES, story_brief=brief,
     )
+
+
+def _plan(fact_id: str, **change) -> StoryPlan:
+    """PLAN với một bí mật đổi vài trường (khoảng lộ, `protects`)."""
+    return StoryPlan.model_validate({**PLAN.model_dump(), "secrets": [
+        {**s.model_dump(), **change} if s.fact_id == fact_id else s.model_dump()
+        for s in PLAN.secrets]})
 
 
 async def test_refs_resolve_to_entity_ids():
@@ -136,14 +144,32 @@ async def test_leak_in_lie_content_blocks_all_choices():
 
 
 async def test_name_from_setup_text_is_not_a_leak_in_choices():
-    """D-52: tên người chơi đã đọc lúc khởi tạo (thiết lập truyện) là chữ đã thấy; tên lớp truth
-    khác vẫn bị dò như cũ."""
+    """D-52: tên người chơi đã đọc lúc khởi tạo (thiết lập truyện) là chữ đã thấy, kể cả tên được
+    kế hoạch bảo vệ (D-61); tên bị bảo vệ mà người chơi chưa thấy vẫn bị dò."""
     named = _reply(_refs_by_text(), **{"0": {"text": "Xuống bến tìm Lý Thất."}})
+    plan = _plan("f_lan_killed_gu", protects=["ly_that"])
     with pytest.raises(WritoryError) as exc:
-        await _make(ScriptedLLM([named]))
+        await _make(ScriptedLLM([named]), plan=plan)
     assert exc.value.code is ErrorCode.CHOICES_LEAK_BLOCKED
-    choices = await _make(ScriptedLLM([named]), brief="Bối cảnh: bến Sương, lái đò Lý Thất.")
+    choices = await _make(ScriptedLLM([named]), plan=plan,
+                          brief="Bối cảnh: bến Sương, lái đò Lý Thất.")
     assert choices[0].text == "Xuống bến tìm Lý Thất."
+
+
+async def test_unprotected_truth_name_is_not_a_leak_in_choices():
+    """D-61: chỉ tên bí mật bị cấm. Lý Thất chưa hé lộ ở chương 3 nhưng không được bảo vệ."""
+    named = _reply(_refs_by_text(), **{"0": {"text": "Xuống bến tìm Lý Thất."}})
+    choices = await _make(ScriptedLLM([named]))
+    assert choices[0].text == "Xuống bến tìm Lý Thất."
+
+
+async def test_choices_block_every_secret_not_in_player_view_regardless_of_window():
+    """D-61, `player_path`: bí mật đã tới khoảng lộ (từ chương 3) mà cảnh chưa hé lộ vẫn bị dò
+    trên chữ lựa chọn; trước đây chỉ dò khi chương < `reveal_from_chapter`."""
+    leak = _reply(_refs_by_text(), **{"0": {"text": "Hỏi thẳng Lan có phải gián điệp không."}})
+    with pytest.raises(WritoryError) as exc:
+        await _make(ScriptedLLM([leak]), plan=_plan("f_lan_spy", reveal_from_chapter=3))
+    assert exc.value.code is ErrorCode.CHOICES_LEAK_BLOCKED
 
 
 def test_prompt_asks_to_vary_dialogue_tone_when_the_scene_fits():

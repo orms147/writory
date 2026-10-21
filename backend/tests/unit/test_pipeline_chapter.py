@@ -349,9 +349,17 @@ def _choices_naming_protagonist(messages) -> str:
     ]}, ensure_ascii=False)
 
 
+def _protecting(plan: StoryPlan, *node_ids: str) -> StoryPlan:
+    """Kế hoạch khởi tạo, bí mật đầu tiên (khoảng lộ 3–4) bảo vệ tên các nút `node_ids` (D-61)."""
+    data = plan.model_dump()
+    data["secrets"][0]["protects"] = list(node_ids)
+    return StoryPlan.model_validate(data)
+
+
 async def run_new_story(script, tmp_path, *, aliases: tuple[str, ...] = (),
-                        brief: str = "Kiếm hiệp, Hán Việt."):
+                        brief: str = "Kiếm hiệp, Hán Việt.", protects: tuple[str, ...] = ()):
     package, plan = setup_chapter_0(protagonist_aliases=aliases)
+    plan = _protecting(plan, *protects) if protects else plan
     store = OverlayStore("new-story")
     store.commit(0, [], package)
     config = make_config(tmp_path)
@@ -380,19 +388,46 @@ async def test_protagonist_name_is_not_a_leak_even_if_never_revealed(tmp_path):
     assert SETUP_PC_NAME in of_type(events, "choices_ready")[0].choices[0].text
 
 
-@pytest.mark.parametrize(("opening", "aliases"), [
-    ("Tô Nguyệt Hoa đứng ngoài cổng.", ()),  # tên lớp truth của nút không user_authored
-    ("Vân Nhi đẩy cửa lò rèn.", ("Vân Nhi",)),  # biệt danh model gán cho nhân vật chính
+@pytest.mark.parametrize(("opening", "aliases", "protects"), [
+    ("Tô Nguyệt Hoa đứng ngoài cổng.", (), ("to_nguyet_hoa",)),  # nút không user_authored
+    ("Vân Nhi đẩy cửa lò rèn.", ("Vân Nhi",), ("protagonist",)),  # biệt danh của nhân vật chính
 ])
-async def test_unrevealed_names_still_block_beside_the_protagonist_name(tmp_path, opening, aliases):
-    """D-48 chỉ miễn `name` của nút user_authored: tên chưa hé lộ khác, kể cả biệt danh của nhân
-    vật chính, vẫn chặn cảnh (G2)."""
+async def test_protected_names_still_block_beside_the_protagonist_name(
+        tmp_path, opening, aliases, protects):
+    """D-48 chỉ miễn `name` của nút user_authored: tên được kế hoạch bảo vệ (D-61), kể cả biệt
+    danh của nhân vật chính, vẫn chặn cảnh (G2)."""
     text = f"{opening} {SETUP_PC_NAME} không quay lại.\n\n{SCENE_1}"
     script = [outline_reply(present=("protagonist",)), text, extract_reply(), text, extract_reply()]
-    events, outcome, store = await run_new_story(script, tmp_path, aliases=aliases)
+    events, outcome, store = await run_new_story(script, tmp_path, aliases=aliases,
+                                                 protects=protects)
     assert kinds(events) == ["scene_blocked"]
     assert store.committed == 0 and not outcome.committed
     assert {i.kind for r in outcome.reviews for i in r.issues if i.source == "leak"} == {"name"}
+
+
+_TO = "Tô Nguyệt Hoa đứng ngoài cổng, áo lam ướt sương"
+
+
+async def test_unprotected_name_on_the_page_is_shown_and_auto_revealed(tmp_path):
+    """D-61, D-62: tên lớp truth không được bảo vệ, bộ trích quên hé lộ. Cảnh vẫn hiện; code thêm
+    cạnh hé lộ với câu trích nguyên văn (G3), `known_as` đúng chữ trên trang (D-17), ở chương đang
+    viết (D-21). Lựa chọn sau đó được nêu tên đó (đã có trong player_view)."""
+    text = f"{_TO}. {SCENE_PC}"
+    outline = outline_reply(present=("protagonist", "ha_ba_tung"))
+    script = [outline, text, EXTRACT_REVEAL_HA, outline, SCENE_PC, extract_reply(),
+              SUMMARY, _choices_naming_visitor]
+    events, outcome, store = await run_new_story(script, tmp_path)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert all(i.source != "leak" for r in outcome.reviews for i in r.issues)
+    package = store.packages[-1]  # gói chương 1 vừa ghi
+    [auto] = [e for e in package.edges if e.source == "to_nguyet_hoa"]
+    assert (auto.type, auto.target, auto.valid_from_chapter) == ("REVEALED_TO_PLAYER", "ch1", 1)
+    assert auto.props == {"quote": _TO, "known_as": "Tô Nguyệt Hoa"}
+    # Bộ trích đã hé lộ Hà lão; nhân vật chính không bao giờ được tự hé lộ.
+    assert {e.source for e in package.edges if e.type == "REVEALED_TO_PLAYER"} == {
+        "ha_ba_tung", "to_nguyet_hoa"}
+    assert "Tô Nguyệt Hoa" in {e.text for e in store.player_view(1).entries}
+    assert "Tô Nguyệt Hoa" in of_type(events, "choices_ready")[0].choices[0].text
 
 
 def _choices_naming_visitor(messages) -> str:
@@ -413,18 +448,20 @@ def _choices_naming_visitor(messages) -> str:
 ])
 async def test_name_the_player_read_at_setup_is_not_a_leak(tmp_path, brief, shown):
     """Hồi quy tu-tien-1 (notes.md mục 4, D-52): tên có trong thiết lập truyện người chơi đã đọc lúc
-    khởi tạo là chữ đã thấy, ở bộ dò lộ của cả cảnh lẫn lựa chọn, dù trang chưa hé lộ nút đó.
-    Thiết lập không có tên đó thì cảnh vẫn bị chặn như trước (G2)."""
+    khởi tạo là chữ đã thấy, ở bộ dò lộ của cả cảnh lẫn lựa chọn, dù trang chưa hé lộ nút đó, kể
+    cả tên được kế hoạch bảo vệ (D-61). Thiết lập không có tên đó thì cảnh vẫn bị chặn (G2). Nút
+    được bảo vệ thì không tự hé lộ (D-62)."""
     text = f"Tô Nguyệt Hoa đứng ngoài cổng. {SCENE_PC}"
     outline = outline_reply(present=("protagonist", "ha_ba_tung"))
+    protects = ("to_nguyet_hoa",)
     if not shown:
         script = [outline, text, EXTRACT_REVEAL_HA, text, EXTRACT_REVEAL_HA]
-        events, _, store = await run_new_story(script, tmp_path, brief=brief)
+        events, _, store = await run_new_story(script, tmp_path, brief=brief, protects=protects)
         assert kinds(events) == ["scene_blocked"] and store.committed == 0
         return
     script = [outline, text, EXTRACT_REVEAL_HA, outline, text, extract_reply(),
               SUMMARY, _choices_naming_visitor]
-    events, outcome, store = await run_new_story(script, tmp_path, brief=brief)
+    events, outcome, store = await run_new_story(script, tmp_path, brief=brief, protects=protects)
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     assert all(i.source != "leak" for r in outcome.reviews for i in r.issues)
     assert "to_nguyet_hoa" not in {e.id for e in store.player_view(1).entries}  # chưa hé lộ

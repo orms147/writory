@@ -59,6 +59,19 @@ def test_leak_terms_optional_and_validated():
             }]))
 
 
+def test_protects_optional_and_validated():
+    """D-61: id các nút có tên mà bí mật bảo vệ. Kế hoạch cũ không có trường này."""
+    def secret(protects):
+        return plan(secrets=[{"fact_id": "f", "reveal_from_chapter": 1, "reveal_to_chapter": 2,
+                              "protects": protects}])
+
+    assert StoryPlan.model_validate(secret(["ly_that"])).secret("f").protects == ["ly_that"]
+    assert StoryPlan.model_validate(plan()).secret("f_lan_spy").protects == []
+    for bad in (["ly_that", "ly_that"], ["Lý Thất"], [""]):
+        with pytest.raises(ValidationError):
+            StoryPlan.model_validate(secret(bad))
+
+
 # --- khoảng gỡ mạch và mốc (D-49) ------------------------------------------------------------
 
 

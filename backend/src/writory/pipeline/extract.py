@@ -6,7 +6,9 @@ chưa tạo nút mới, nên danh mục phải có sẵn mọi nút của chươ
 
 Model trả JSON theo `ExtractOutput`: mọi trường bắt buộc, giá trị trống là null, để dùng được với
 JSON schema strict. Code đổi sang `ChangePackage`, kiểm từng cạnh một: cạnh sai quy tắc bị bỏ và
-đếm lại (`ExtractResult.rejected`), không làm hỏng cả gói.
+đếm lại (`ExtractResult.rejected`), không làm hỏng cả gói. Một trong các quy tắc: `known_as` trùng
+tên hay biệt danh lớp truth của một nút khác thì bỏ cạnh, vì người chơi sẽ biết nút này dưới tên
+của nút kia (D-62, `safety.reveal.known_as_conflicts`).
 """
 
 from collections.abc import Mapping
@@ -17,7 +19,9 @@ from pydantic import BaseModel, ConfigDict, ValidationError
 
 from writory.graph.commit import needs_known_as
 from writory.graph.package import KNOWS_HOW, ChangePackage, CloseSpec, EdgeSpec, quote_in_text
+from writory.graph.schema import NAMED_LABELS
 from writory.llm.base import ChatResult, LLMClient
+from writory.safety.reveal import known_as_conflicts
 from writory.safety.wrap import (
     DATA_NOTICE,
     UserAuthored,
@@ -161,6 +165,8 @@ def to_package(
 ) -> tuple[ChangePackage, list[tuple[str, str]]]:
     """Đổi đầu ra của model thành `ChangePackage`; cạnh sai quy tắc bị bỏ, kèm lý do."""
     known = {e.id: e for e in entities}
+    # Tên lớp truth của mọi nút có tên, kể cả tên người chơi viết: để bắt `known_as` của nút khác.
+    names = {e.id: (e.text, *e.aliases) for e in entities if e.label in NAMED_LABELS}
     open_by_id = {o.id: o for o in open_edges}
     rejected: list[tuple[str, str]] = []
     edges: list[EdgeSpec] = []
@@ -187,6 +193,11 @@ def to_package(
                           _node(known, x.target, protagonist_id)):
             if not x.known_as:
                 rejected.append((desc, "hé lộ nút có tên mà thiếu known_as (D-17)"))
+                continue
+            node = x.source if x.type == "REVEALED_TO_PLAYER" else x.target
+            others = known_as_conflicts(x.known_as, node, names)
+            if others:
+                rejected.append((desc, f"known_as là tên của nút khác: {others} (D-62)"))
                 continue
             props["known_as"] = x.known_as
         try:

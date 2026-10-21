@@ -1,0 +1,197 @@
+{
+ "_source": "evals/results/2026-10-20-run-tu-tien-3/: kế hoạch và gói chương 0 của truth_dump.json, bỏ personality/backstory; story_brief dựng bằng bench_e_story.load_run_story từ setup.json và meta.json.",
+ "story_brief": "thể loại: tu tiên\nthời đại: loạn thế, các đại tông môn tranh đoạt linh mạch\ngiọng văn: căng thẳng, nhiều mưu tính và đối đáp sắc\nmức độ u tối: vừa phải, có phản bội và chết chóc, không tả máu me\nGóc nhìn: chỉ nhân vật chính. Người chơi chỉ biết những gì nhân vật chính thấy, nghe, suy ra.\nQuy ước tên và địa danh: tên nhân vật kiểu Hán Việt; địa danh hư cấu, không dùng địa danh có thật.\nBối cảnh: Đêm Trên Đài Vấn Kiếm\nTrên đỉnh Hàn Tê, các đệ tử từ nhiều tông môn tụ họp để phân định quyền khai thác linh mạch bằng một cuộc luận kiếm. Nhân vật chính chỉ là kẻ giữ kiếm cụ, nhưng ngay trước giờ mở đài, vị chấp sự phụ trách cuộc đấu bị phát hiện đã chết trong phòng khóa kín. Một mảnh phù lệnh bị nhét vào tay nhân vật khiến lời buộc tội nhanh chóng lan khắp sơn môn. Giữa những nụ cười hòa nhã và những câu hỏi gài bẫy, nhân vật phải tìm cách chứng minh mình vô can.\nHướng cốt truyện: Đêm Chưa Tàn\nBị giữ lại trên đỉnh Hàn Tê cho đến khi sự việc sáng tỏ, nhân vật chính phải sống qua một đêm giữa những đệ tử đang nghi kỵ lẫn nhau. Người ấy muốn tìm đường thoát khỏi vòng vây và ngăn lời buộc tội biến thành một cuộc thanh trừng. Nhưng tin đồn lan nhanh hơn sự thật, còn mỗi lần đổi chỗ hay đổi người canh gác đều khiến nguy cơ bại lộ tăng lên. Hướng truyện có nhịp gấp, tập trung vào sinh tồn, lựa chọn khó khăn và những mối quan hệ mong manh.\nNhân vật chính: Phó Minh Nghi\nTính cách: Lanh lợi, giỏi ứng đối và luôn giữ vẻ hòa nhã ngay cả khi bị chất vấn. Nàng sẵn sàng mặc cả để sống sót, nhưng rất nhạy bén với những lời hứa có thể trở thành cái bẫy.\nQuá khứ: Phó Minh Nghi là con gái của một tu sĩ tán tu, được nhận vào Bích Tiêu Môn rồi phái đến Hàn Tê làm người giữ kiếm cụ trong cuộc luận kiếm. Nàng mang theo một bản ghi chép về những lần bàn giao pháp khí, thứ có thể giúp làm rõ ai đã ra vào khu vực trước khi chấp sự qua đời. Sau khi phù lệnh xuất hiện trong tay nàng, vài đệ tử lập tức muốn giữ nàng lại để thẩm vấn, còn những người khác kín đáo đề nghị đổi bản ghi lấy một con đường xuống núi.",
+ "plan": {
+  "acts": [
+   {
+    "name": "Đêm bị vây",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "name": "Dấu vết trong sương",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "name": "Lời khai trước bình minh",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "name": "Mở đài",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "tinh_lan_giet_luong",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Diệp Tĩnh Lan",
+      "giết Lương Khắc"
+     ],
+     [
+      "Tĩnh Lan",
+      "ra tay với chấp sự"
+     ]
+    ]
+   },
+   {
+    "fact_id": "thoa_thuan_chia_mach",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Diệp Tĩnh Lan",
+      "thỏa thuận chia phần linh mạch"
+     ],
+     [
+      "Huyền Sương Cốc",
+      "chia phần linh mạch ngoài cuộc luận kiếm"
+     ]
+    ]
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "minh_oan",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "loi_khai_van_hoai",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 3
+   },
+   {
+    "thread_id": "duong_xuong_nui",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "tranh_gianh_linh_mach",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Phó Minh Nghi nhận ra phù lệnh có thể là vật chứng bị cài đặt và quyết định tìm cách đối chiếu nó với sổ bàn giao.",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Một dấu vết trong sổ bàn giao khiến lời buộc tội nhắm vào Phó Minh Nghi bắt đầu lung lay.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Văn Hoài đưa ra lời khai đầu tiên về người đã xuất hiện gần phòng chấp sự, nhưng lời khai khiến anh gặp nguy hiểm.",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Phó Minh Nghi đối chất với Diệp Tĩnh Lan trước đại diện các tông môn và buộc nàng lộ mâu thuẫn trong lời giải thích về căn phòng khóa kín.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Trước khi trời sáng, các tông môn phải chọn giữa mở lại cuộc luận kiếm theo điều kiện mới hoặc chấm dứt tranh chấp linh mạch mà không thanh trừng Phó Minh Nghi.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "package": {
+  "commit_id": "run-20261020-tu-tien-3-ccda416a-ch0",
+  "nodes": [
+   {"id": "protagonist", "label": "Character", "props": {"name": "Phó Minh Nghi", "is_protagonist": true, "user_authored": true}},
+   {"id": "luong_khac", "label": "Character", "props": {"name": "Lương Khắc", "aliases": ["chấp sự Lương"]}},
+   {"id": "diep_tinh_lan", "label": "Character", "props": {"name": "Diệp Tĩnh Lan", "aliases": ["Tĩnh Lan"]}},
+   {"id": "doan_khuong", "label": "Character", "props": {"name": "Đoàn Khương", "aliases": ["Đoàn sư huynh"]}},
+   {"id": "van_hoai", "label": "Character", "props": {"name": "Văn Hoài"}},
+   {"id": "dinh_han_te", "label": "Location", "props": {"name": "Đỉnh Hàn Tê", "description": "Đỉnh núi quanh năm phủ sương lạnh, nơi các tông môn tụ họp để phân định quyền khai thác linh mạch."}},
+   {"id": "phong_chap_su", "label": "Location", "props": {"name": "Phòng chấp sự", "description": "Căn phòng nhỏ cạnh đài luận kiếm, cửa khóa từ bên trong khi thi thể Lương Khắc được phát hiện."}},
+   {"id": "kho_kiem_cu", "label": "Location", "props": {"name": "Kho kiếm cụ", "description": "Kho chứa binh khí và pháp khí dự phòng, nơi Phó Minh Nghi làm việc trước khi bị gọi đi thẩm vấn."}},
+   {"id": "hien_don_suong", "label": "Location", "props": {"name": "Hiên Đón Sương", "description": "Dãy hiên hẹp nối khu nghỉ của các tông môn với sân luận kiếm, đủ khuất để người ta trao đổi lời riêng."}},
+   {"id": "san_van_kiem", "label": "Location", "props": {"name": "Sân Vấn Kiếm", "description": "Khoảng sân lát đá trước đài, nơi các đệ tử tụ tập chờ cuộc luận kiếm bắt đầu."}},
+   {"id": "bich_tieu_mon", "label": "Faction", "props": {"name": "Bích Tiêu Môn", "description": "Tông môn của Phó Minh Nghi, nổi tiếng giữ lễ nhưng đang bị sức ép phải bảo vệ quyền lợi tại linh mạch."}},
+   {"id": "huyen_suong_coc", "label": "Faction", "props": {"name": "Huyền Sương Cốc", "description": "Tông môn nhiều thế lực, chủ trương giữ quyền giám sát cuộc luận kiếm và không dễ nhượng bộ về linh mạch."}},
+   {"id": "liet_duong_kiem_tong", "label": "Faction", "props": {"name": "Liệt Dương Kiếm Tông", "description": "Tông môn trọng võ, đem đến cuộc luận kiếm đông đệ tử và muốn dùng kết quả tranh tài để củng cố quyền khai thác."}},
+   {"id": "phu_lenh", "label": "Item", "props": {"name": "Phù lệnh Vấn Kiếm", "aliases": ["mảnh phù lệnh"], "description": "Mảnh lệnh bằng ngọc mỏng mang dấu của ban tổ chức, vừa bị nhét vào tay Phó Minh Nghi."}},
+   {"id": "so_ban_giao", "label": "Item", "props": {"name": "Sổ bàn giao pháp khí", "aliases": ["bản ghi chép"], "description": "Cuốn sổ ghi giờ và người nhận pháp khí, có thể đối chiếu với những lần ra vào khu vực chấp sự."}},
+   {"id": "chot_khoa", "label": "Item", "props": {"name": "Chốt khóa đồng", "description": "Chốt khóa cũ của phòng chấp sự, có một vết mòn bất thường ở mặt trong."}},
+   {"id": "luong_khac_da_chet", "label": "Fact", "props": {"text": "Lương Khắc được phát hiện đã chết trong phòng chấp sự trước giờ mở đài."}},
+   {"id": "cua_phong_khoa", "label": "Fact", "props": {"text": "Cửa phòng chấp sự được phát hiện khóa từ bên trong."}},
+   {"id": "phu_lenh_trong_tay", "label": "Fact", "props": {"text": "Phù lệnh Vấn Kiếm được tìm thấy trong tay Phó Minh Nghi sau khi thi thể Lương Khắc bị phát hiện."}},
+   {"id": "so_ghi_ban_giao", "label": "Fact", "props": {"text": "Sổ bàn giao pháp khí ghi lại giờ nhận và trả các pháp khí được đưa khỏi kho kiếm cụ."}},
+   {"id": "tinh_lan_giet_luong", "label": "Fact", "props": {"text": "Diệp Tĩnh Lan đã giết Lương Khắc để ngăn ông giao cho các tông môn bản thỏa thuận bí mật chia phần linh mạch ngoài cuộc luận kiếm."}},
+   {"id": "dau_vet_chot_khoa", "label": "Fact", "props": {"text": "Diệp Tĩnh Lan dùng chốt khóa đồng để khiến căn phòng trông như bị khóa từ bên trong."}},
+   {"id": "thoa_thuan_chia_mach", "label": "Fact", "props": {"text": "Diệp Tĩnh Lan đã bí mật dàn xếp một thỏa thuận chia phần linh mạch cho Huyền Sương Cốc trước cuộc luận kiếm."}},
+   {"id": "minh_oan", "label": "Thread", "props": {"description": "Phó Minh Nghi phải tìm bằng chứng đủ sức gỡ cáo buộc giết Lương Khắc trước khi các tông môn quyết định trừng phạt nàng.", "planted_chapter": 0, "due_from_chapter": 2, "due_to_chapter": 5}},
+   {"id": "loi_khai_van_hoai", "label": "Thread", "props": {"description": "Phó Minh Nghi phải khiến Văn Hoài chọn giữa im lặng an toàn và việc công khai điều anh đã thấy quanh khu vực chấp sự.", "planted_chapter": 0, "due_from_chapter": 2, "due_to_chapter": 3}},
+   {"id": "duong_xuong_nui", "label": "Thread", "props": {"description": "Phó Minh Nghi phải tìm cách thoát khỏi vòng canh giữ hoặc thuyết phục các bên cho nàng rời đỉnh Hàn Tê.", "planted_chapter": 0, "due_from_chapter": 3, "due_to_chapter": 6}},
+   {"id": "tranh_gianh_linh_mach", "label": "Thread", "props": {"description": "Các tông môn phải quyết định liệu cuộc luận kiếm có thể tiếp tục mà không biến nghi kỵ thành cuộc thanh trừng.", "planted_chapter": 0, "due_from_chapter": 1, "due_to_chapter": 6}}
+  ],
+  "edges": [
+   {"type": "LOCATED_AT", "from": "protagonist", "to": "kho_kiem_cu", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:protagonist>kho_kiem_cu@0", "props": {}},
+   {"type": "LOCATED_AT", "from": "diep_tinh_lan", "to": "hien_don_suong", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:diep_tinh_lan>hien_don_suong@0", "props": {}},
+   {"type": "LOCATED_AT", "from": "doan_khuong", "to": "san_van_kiem", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:doan_khuong>san_van_kiem@0", "props": {}},
+   {"type": "LOCATED_AT", "from": "van_hoai", "to": "kho_kiem_cu", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:van_hoai>kho_kiem_cu@0", "props": {}},
+   {"type": "LOCATED_AT", "from": "phu_lenh", "to": "kho_kiem_cu", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:phu_lenh>kho_kiem_cu@0", "props": {}},
+   {"type": "LOCATED_AT", "from": "so_ban_giao", "to": "kho_kiem_cu", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:so_ban_giao>kho_kiem_cu@0", "props": {}},
+   {"type": "LOCATED_AT", "from": "chot_khoa", "to": "phong_chap_su", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "LOCATED_AT:chot_khoa>phong_chap_su@0", "props": {}},
+   {"type": "HOLDS", "from": "protagonist", "to": "phu_lenh", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "HOLDS:protagonist>phu_lenh@0", "props": {}},
+   {"type": "HOLDS", "from": "protagonist", "to": "so_ban_giao", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "HOLDS:protagonist>so_ban_giao@0", "props": {}},
+   {"type": "MEMBER_OF", "from": "protagonist", "to": "bich_tieu_mon", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "MEMBER_OF:protagonist>bich_tieu_mon@0", "props": {}},
+   {"type": "MEMBER_OF", "from": "diep_tinh_lan", "to": "huyen_suong_coc", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "MEMBER_OF:diep_tinh_lan>huyen_suong_coc@0", "props": {}},
+   {"type": "MEMBER_OF", "from": "doan_khuong", "to": "liet_duong_kiem_tong", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "MEMBER_OF:doan_khuong>liet_duong_kiem_tong@0", "props": {}},
+   {"type": "MEMBER_OF", "from": "van_hoai", "to": "bich_tieu_mon", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "MEMBER_OF:van_hoai>bich_tieu_mon@0", "props": {}},
+   {"type": "RELATES_TO", "from": "protagonist", "to": "van_hoai", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "RELATES_TO:protagonist>van_hoai@0", "props": {"kind": "đồng môn", "score": 35}},
+   {"type": "RELATES_TO", "from": "van_hoai", "to": "protagonist", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "RELATES_TO:van_hoai>protagonist@0", "props": {"kind": "đồng môn", "score": 35}},
+   {"type": "RELATES_TO", "from": "protagonist", "to": "doan_khuong", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "RELATES_TO:protagonist>doan_khuong@0", "props": {"kind": "nghi kỵ", "score": -35}},
+   {"type": "RELATES_TO", "from": "doan_khuong", "to": "protagonist", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "RELATES_TO:doan_khuong>protagonist@0", "props": {"kind": "nghi kỵ", "score": -35}},
+   {"type": "RELATES_TO", "from": "protagonist", "to": "diep_tinh_lan", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "RELATES_TO:protagonist>diep_tinh_lan@0", "props": {"kind": "xã giao", "score": 5}},
+   {"type": "RELATES_TO", "from": "diep_tinh_lan", "to": "protagonist", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "RELATES_TO:diep_tinh_lan>protagonist@0", "props": {"kind": "xã giao", "score": 5}},
+   {"type": "ABOUT", "from": "luong_khac_da_chet", "to": "luong_khac", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:luong_khac_da_chet>luong_khac@0", "props": {}},
+   {"type": "ABOUT", "from": "luong_khac_da_chet", "to": "phong_chap_su", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:luong_khac_da_chet>phong_chap_su@0", "props": {}},
+   {"type": "KNOWS", "from": "diep_tinh_lan", "to": "luong_khac_da_chet", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:diep_tinh_lan>luong_khac_da_chet@0", "props": {"how": "tự biết"}},
+   {"type": "KNOWS", "from": "doan_khuong", "to": "luong_khac_da_chet", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:doan_khuong>luong_khac_da_chet@0", "props": {"how": "tự biết"}},
+   {"type": "KNOWS", "from": "van_hoai", "to": "luong_khac_da_chet", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:van_hoai>luong_khac_da_chet@0", "props": {"how": "tự biết"}},
+   {"type": "ABOUT", "from": "cua_phong_khoa", "to": "phong_chap_su", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:cua_phong_khoa>phong_chap_su@0", "props": {}},
+   {"type": "ABOUT", "from": "cua_phong_khoa", "to": "chot_khoa", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:cua_phong_khoa>chot_khoa@0", "props": {}},
+   {"type": "KNOWS", "from": "diep_tinh_lan", "to": "cua_phong_khoa", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:diep_tinh_lan>cua_phong_khoa@0", "props": {"how": "tự biết"}},
+   {"type": "KNOWS", "from": "doan_khuong", "to": "cua_phong_khoa", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:doan_khuong>cua_phong_khoa@0", "props": {"how": "tự biết"}},
+   {"type": "ABOUT", "from": "phu_lenh_trong_tay", "to": "phu_lenh", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:phu_lenh_trong_tay>phu_lenh@0", "props": {}},
+   {"type": "ABOUT", "from": "phu_lenh_trong_tay", "to": "luong_khac", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:phu_lenh_trong_tay>luong_khac@0", "props": {}},
+   {"type": "ABOUT", "from": "phu_lenh_trong_tay", "to": "protagonist", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:phu_lenh_trong_tay>protagonist@0", "props": {}},
+   {"type": "KNOWS", "from": "diep_tinh_lan", "to": "phu_lenh_trong_tay", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:diep_tinh_lan>phu_lenh_trong_tay@0", "props": {"how": "tự biết"}},
+   {"type": "KNOWS", "from": "doan_khuong", "to": "phu_lenh_trong_tay", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:doan_khuong>phu_lenh_trong_tay@0", "props": {"how": "tự biết"}},
+   {"type": "KNOWS", "from": "van_hoai", "to": "phu_lenh_trong_tay", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:van_hoai>phu_lenh_trong_tay@0", "props": {"how": "tự biết"}},
+   {"type": "ABOUT", "from": "so_ghi_ban_giao", "to": "so_ban_giao", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:so_ghi_ban_giao>so_ban_giao@0", "props": {}},
+   {"type": "ABOUT", "from": "so_ghi_ban_giao", "to": "kho_kiem_cu", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:so_ghi_ban_giao>kho_kiem_cu@0", "props": {}},
+   {"type": "KNOWS", "from": "van_hoai", "to": "so_ghi_ban_giao", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:van_hoai>so_ghi_ban_giao@0", "props": {"how": "tự biết"}},
+   {"type": "ABOUT", "from": "tinh_lan_giet_luong", "to": "diep_tinh_lan", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:tinh_lan_giet_luong>diep_tinh_lan@0", "props": {}},
+   {"type": "ABOUT", "from": "tinh_lan_giet_luong", "to": "luong_khac", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:tinh_lan_giet_luong>luong_khac@0", "props": {}},
+   {"type": "ABOUT", "from": "tinh_lan_giet_luong", "to": "huyen_suong_coc", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:tinh_lan_giet_luong>huyen_suong_coc@0", "props": {}},
+   {"type": "KNOWS", "from": "diep_tinh_lan", "to": "tinh_lan_giet_luong", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:diep_tinh_lan>tinh_lan_giet_luong@0", "props": {"how": "tự biết"}},
+   {"type": "ABOUT", "from": "dau_vet_chot_khoa", "to": "diep_tinh_lan", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:dau_vet_chot_khoa>diep_tinh_lan@0", "props": {}},
+   {"type": "ABOUT", "from": "dau_vet_chot_khoa", "to": "chot_khoa", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:dau_vet_chot_khoa>chot_khoa@0", "props": {}},
+   {"type": "ABOUT", "from": "dau_vet_chot_khoa", "to": "phong_chap_su", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:dau_vet_chot_khoa>phong_chap_su@0", "props": {}},
+   {"type": "KNOWS", "from": "diep_tinh_lan", "to": "dau_vet_chot_khoa", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:diep_tinh_lan>dau_vet_chot_khoa@0", "props": {"how": "tự biết"}},
+   {"type": "ABOUT", "from": "thoa_thuan_chia_mach", "to": "diep_tinh_lan", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:thoa_thuan_chia_mach>diep_tinh_lan@0", "props": {}},
+   {"type": "ABOUT", "from": "thoa_thuan_chia_mach", "to": "huyen_suong_coc", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "ABOUT:thoa_thuan_chia_mach>huyen_suong_coc@0", "props": {}},
+   {"type": "KNOWS", "from": "diep_tinh_lan", "to": "thoa_thuan_chia_mach", "valid_from_chapter": 0, "valid_to_chapter": null, "id": "KNOWS:diep_tinh_lan>thoa_thuan_chia_mach@0", "props": {"how": "tự biết"}}
+  ],
+  "close": []
+ }
+}

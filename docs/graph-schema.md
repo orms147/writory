@@ -48,7 +48,7 @@ Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu 
 | `RESOLVED_IN` | Thread → Chapter | | mạch được gỡ |
 | `REVEALED_TO_PLAYER` | bất kỳ → Chapter | `quote` (bắt buộc, G3), `known_as`, `by_choice` | hé lộ trên trang ở chương đó. `by_choice`: id lựa chọn dẫn tới lần lộ (D-22) |
 
-**`known_as` (D-17).** Cạnh `REVEALED_TO_PLAYER` từ một nút có tên (Character/Location/Item/Faction), và cạnh `KNOWS` từ nhân vật chính tới một nút có tên, **bắt buộc** có `known_as`: tên người chơi biết lúc đó, phải nằm trong `quote` (cùng cách chuẩn hoá với `quote_in_text`). Một nút có thể được hé lộ nhiều lần với tên khác nhau, ví dụ biệt danh trước, tên thật sau. Thiếu `known_as` thì `apply_package` báo `InvalidPackageError`.
+**`known_as` (D-17).** Cạnh `REVEALED_TO_PLAYER` từ một nút có tên (Character/Location/Item/Faction), và cạnh `KNOWS` từ nhân vật chính tới một nút có tên, **bắt buộc** có `known_as`: tên người chơi biết lúc đó, phải nằm trong `quote` (cùng cách chuẩn hoá với `quote_in_text`). Một nút có thể được hé lộ nhiều lần với tên khác nhau, ví dụ biệt danh trước, tên thật sau. Thiếu `known_as` thì `apply_package` báo `InvalidPackageError`. `known_as` trùng tên hay biệt danh lớp truth của một nút khác (bỏ dấu, không phân biệt hoa thường) thì bộ trích bỏ cạnh, vì người chơi sẽ biết nút này dưới tên nút kia (`safety.reveal.known_as_conflicts`, D-62).
 
 Lời nói dối "đã bị phát hiện ở chương N" khi có nhân vật khác người nói `KNOWS` nút `Lie` từ chương ≤ N.
 
@@ -85,7 +85,7 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 - **Nhân vật chính:** đúng một, id `protagonist` (`PROTAGONIST_ID`), do code dựng từ chữ người chơi (tên, tính cách, quá khứ), mang `user_authored: true` (G4). Model chỉ nhắc tới nó qua id.
 - **Cạnh:** `RELATES_TO` (bắt buộc `kind`, `score` −100…100), `LOCATED_AT` (mỗi thứ một nơi), `HOLDS` (mỗi đồ vật một người giữ), `MEMBER_OF`, `ABOUT`, `KNOWS`. Hai đầu đúng nhãn như bảng Cạnh, và đều là nút trong gói.
 - **`KNOWS` ở chương 0** luôn có `how: "tự biết"`. **Nhân vật chính không `KNOWS` gì**, và **không có `REVEALED_TO_PLAYER`**: người chơi chưa đọc trang nào, nên `player_view` ở chương 0 rỗng (code kiểm lại bằng `player_view_of`). Điều nhân vật chính biết từ quá khứ được ghi khi trang kể tới, kèm câu trích (G3).
-- **Bí mật** trong `story_plan` trỏ tới `Fact` có trong gói; khoảng lộ nằm trong số chương của kế hoạch; mỗi bí mật có `leak_terms`, mỗi nhóm có ít nhất `LEAK_GROUP_MIN_PHRASES` cụm (D-26).
+- **Bí mật** trong `story_plan` trỏ tới `Fact` có trong gói; khoảng lộ nằm trong số chương của kế hoạch; mỗi bí mật có `leak_terms`, mỗi nhóm có ít nhất `LEAK_GROUP_MIN_PHRASES` cụm (D-26). `protects`: id các nút có tên (Character/Location/Item/Faction có trong gói) mà bí mật giấu danh tính; tên và biệt danh lớp truth của chúng bị bộ dò lộ cấm khi bí mật còn hiệu lực; bí mật khác để rỗng, kế hoạch cũ không có trường này (D-61).
 - **Mạch** của kế hoạch là nút `Thread` có `planted_chapter: 0`, khoảng gỡ nằm trong số chương; `must_resolve_threads` trỏ tới các nút đó, kèm khoảng phải gỡ bằng đúng khoảng dự kiến gỡ của nút (D-49). Kế hoạch cũ chỉ có id; khi đó khoảng lấy trên nút.
 - **Hồi** phủ liền từ chương 1; chương cuối nằm trong khoảng `chapters` của mức độ dài (`config/story_lengths.yaml`).
 - **Mốc và nhịp** (D-49): số mốc trong khoảng `milestones` của mức độ dài, mỗi hồi có mốc, mốc kết ở chương cuối; mỗi chương, trừ chương cuối, không quá `max_due_per_chapter` việc đến hạn (chương kết gỡ nhiều mạch cùng lúc, D-54). Luật luôn đúng nằm trong validator của `StoryPlan`, luật theo mức độ dài trong `initial_problems`.
@@ -93,7 +93,8 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 ## Chương 1 trở đi (pipeline, D-36)
 Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:
 - **Nút:** chỉ nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Chưa có nút mới nào khác, vì bộ trích chỉ tham chiếu id có sẵn (D-34).
-- **Cạnh:** của bộ trích, từng cảnh một, đã qua người canh. Cạnh người canh báo sai không vào gói. Gộp các cảnh theo trạng thái cuối chương: cùng id thì lấy cảnh sau; cạnh cảnh trước mở mà cảnh sau đóng thì không vào gói.
+- **Cạnh:** của bộ trích, từng cảnh một, cộng cạnh tự hé lộ, đã qua người canh. Cạnh người canh báo sai không vào gói. Gộp các cảnh theo trạng thái cuối chương: cùng id thì lấy cảnh sau; cạnh cảnh trước mở mà cảnh sau đóng thì không vào gói.
+- **Tự hé lộ (D-62):** sau bước trích, code thêm `REVEALED_TO_PLAYER` (tới `ch<N>`, `valid_from_chapter: N`) cho nút có tên mà tên hay biệt danh lớp truth có nguyên văn trong chữ cảnh, chưa có trong `player_view` (kể cả hé lộ bộ trích vừa ghi), không phải nhân vật chính, không nằm trong `protects` của bí mật còn hiệu lực. `quote` là câu chứa tên, `known_as` là chuỗi khớp trên trang. So khớp nghiêm (giữ dấu, trọn từ, chỉ chữ cái đầu tên nhiều từ được lệch hoa thường, tên phải có từ viết hoa); bỏ lần khớp nằm trong tên dài hơn của nút khác và chuỗi cũng là tên của nút khác (`safety/reveal.py`).
 
 ## Tác động của lựa chọn (D-55)
 Người chơi chọn ở cuối chương N; tác động nằm trong gói của chương N+1 (mọi cạnh mở ở N+1, D-21), do `writory.pipeline.choices.choice_effects` dựng:

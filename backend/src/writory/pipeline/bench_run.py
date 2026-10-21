@@ -427,6 +427,7 @@ _REJECT_REASONS = (
     "id không có trong danh mục", "câu trích không có nguyên văn trong chương (G3)",
     "nhân vật chính biết mà không có câu trích (G3)", "hé lộ nút có tên mà thiếu known_as (D-17)",
     "trùng cạnh trong cùng gói", "không phải cạnh đang hiệu lực",
+    "known_as là tên của nút khác",  # D-62
 )
 
 
@@ -1155,7 +1156,9 @@ def _plan_lines(report: dict[str, Any]) -> list[str]:
 DRY_RUN_COST_USD = 0.0001
 DRY_RUN_NPC = "mac_van_ha"
 DRY_RUN_NPC_NAME = "Mạc Vân Hà"
-DRY_RUN_HIDDEN_NAME = "Hạ Trần"  # nhân vật có thật trong đồ thị, chưa từng hé lộ
+# Nhân vật có thật trong đồ thị, chưa từng hé lộ; bí mật của kế hoạch bảo vệ tên này (`protects`,
+# D-61), nên cảnh hay lựa chọn nêu tên trước khi bí mật lộ thì bị chặn.
+DRY_RUN_HIDDEN_NAME = "Hạ Trần"
 DRY_RUN_SECRET_TEXT = "Hạ Trần là nội gián của Huyết Ảnh Các trong tông môn"
 _DRY_QUOTE = (f"Đó là {DRY_RUN_NPC_NAME}, người duy nhất trong tông môn chịu chỉ cho tôi vài thế "
               "kiếm cơ bản.")
@@ -1303,7 +1306,8 @@ def dry_run_world(total: int) -> dict[str, Any]:
         "secrets": [{"fact_id": "f_ha_tran_noi_gian", "reveal_from_chapter": last,
                      "reveal_to_chapter": last,
                      "leak_terms": [[DRY_RUN_HIDDEN_NAME, "nội gián"],
-                                    ["Hạ trưởng lão", "Huyết Ảnh Các"]]}],
+                                    ["Hạ trưởng lão", "Huyết Ảnh Các"]],
+                     "protects": ["ha_tran"]}],
     }
 
 
