@@ -412,6 +412,31 @@ async def test_second_concurrent_finalize_is_refused(pg, driver, created):
     assert len(fake.calls) == 1  # một lời gọi build_story duy nhất
 
 
+async def test_second_concurrent_option_generation_is_refused(pg, driver, created):
+    """G8, D-56: hai yêu cầu tạo lựa chọn khởi tạo cùng phiên cùng lúc thì một chạy, một nhận 409
+    STORY_BUSY và không gọi model; chỉ một lời gọi tạo lựa chọn, và bộ lưu được là của lời gọi đó."""
+    sid = f"setup-{uuid.uuid4().hex[:16]}"
+    created[0].append(sid)
+    create_setup(pg, sid, owner_id=DEV_OWNER_ID, choices={
+        "tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "protagonist",
+        "naming": {"names": "han_viet", "places": "hu_cau"}})
+    fake = GatedFakeLLM([options("settings")])
+    app = make_app(pg, driver, fake, own_conns=True)
+    path = f"/setup/{sid}/settings"
+    first = asyncio.create_task(asgi_request(app, "POST", path))
+    await asyncio.wait_for(fake.entered.wait(), timeout=30)
+
+    status, body = await asyncio.wait_for(asgi_request(app, "POST", path), timeout=30)
+    assert status == 409
+    assert json.loads(body) == WritoryError(ErrorCode.STORY_BUSY).player_payload()
+
+    fake.gate.set()
+    status, body = await asyncio.wait_for(first, timeout=30)
+    assert status == 200, body
+    assert len(json.loads(body)["settings"]) == 3
+    assert len(fake.calls) == 1
+
+
 def test_graph_failure_at_chapter_0_leaves_no_story(pg, driver, created, monkeypatch):
     import writory.db.plans as plans_mod
 
