@@ -66,7 +66,7 @@ Lưu ý: 300.000 ký tự tiếng Việt ước khoảng 100.000 token (chưa đ
 ## 4. Người dùng trải qua gì
 
 ### 4.1 Khởi tạo (~2 phút)
-1. Chọn tag: thể loại (ví dụ tu tiên, trinh thám, đô thị, hậu tận thế), thời đại, giọng văn, mức độ u tối.
+1. Chọn tag: một thể loại chính (ví dụ tu tiên, trinh thám, đô thị, hậu tận thế; thể loại đã gồm thời đại), tag phụ tuỳ chọn, giọng văn, mức độ u tối (D-65).
    - Quy ước tên và địa danh (D-32): tên nhân vật **kiểu Hán Việt** hay **kiểu Việt**, địa danh **thật** hay **hư cấu**. Người chơi tự chọn; mặc định theo thể loại: cổ trang và kỳ ảo (tu tiên, kiếm hiệp, huyền huyễn) dùng tên Hán Việt và địa danh hư cấu; hiện đại và tương lai giả tưởng (hậu tận thế, khoa huyễn) dùng tên Việt và địa danh hư cấu; hiện thực (đô thị, trinh thám, lịch sử, học đường) dùng tên Việt và được dùng địa danh thật. Quy ước này đi vào prompt của mọi bước sinh nội dung, kể cả bước tạo bối cảnh.
 2. Chọn độ dài (§3).
 3. Chọn góc nhìn [Chốt]:
@@ -84,7 +84,7 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 ### 4.2 Chơi
 - Mỗi chương gồm 2–3 **cảnh**. Một cảnh chỉ hiện ra sau khi người canh đã kiểm xong; chữ chạy dần trên màn hình. Trong lúc người chơi đọc cảnh trước, cảnh sau được viết và kiểm. Người chơi không bao giờ đọc một bản chưa kiểm. [Chốt]
 - Cuối chương: 3 lựa chọn, mỗi lựa chọn có nhãn kiểu **[Hành động] / [Lời thoại] / [Nội tâm]**, cộng một ô "tự viết hành động của tôi".
-- Lựa chọn lời thoại có ba sắc thái: **nói thật / nói dối / im lặng**.
+- Lựa chọn lời thoại có ba sắc thái: **nói thật / nói dối / im lặng**. Mỗi lựa chọn lời thoại do hệ thống tạo sẵn với một sắc thái cố định (câu nói dối đã qua bộ dò lộ); người chơi chọn lựa chọn, không tự đổi sắc thái (D-65).
 - Thanh bên: **Sổ tay** (những gì người chơi đã biết) và nút **Hỏi người kể chuyện**.
 
 ### 4.3 Kết thúc
@@ -190,6 +190,7 @@ Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ �
 ### 6.6 Hỏi người kể chuyện
 - Câu hỏi về thế giới, không mất lượt.
 - Chỉ trả lời từ **lớp người chơi biết** (§7). Câu chưa được hé lộ → "Bạn chưa biết điều này." Không gợi ý, không úp mở về sự tồn tại của bí mật.
+- Câu trả lời kèm số câu hỏi còn lại của chương và nguồn: các chương mà người chơi đã biết những mục sổ tay câu trả lời dựa vào (D-65).
 - Số câu hỏi mỗi chương có trần (`config/limits.yaml`, G8). Hết lượt thì báo bằng câu trung tính; sang chương sau thì có lượt mới.
 
 ## 7. Đồ thị thế giới

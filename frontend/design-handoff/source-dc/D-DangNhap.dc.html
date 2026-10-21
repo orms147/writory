@@ -1,0 +1,110 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đăng nhập — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; display: flex; flex-wrap: wrap">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <div style="flex: 999 1 560px; min-height: 420px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 48px clamp(24px, 5vw, 72px)">
+    <img class="wt-drift" src="/_blob/3e0bfc2f582f0aee5884e77aaa1abbe0" alt="" style="position: absolute; top: 0; left: -4%; width: 108%; height: 100%; object-fit: cover; z-index: 0">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,17,16,.55) 0%, rgba(18,17,16,0) 30%, rgba(18,17,16,0) 60%, #121110 100%); z-index: 0"></div>
+    <a href="D-DangNhap.dc.html" style="position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #ECE6DA; width: fit-content">
+      <svg width="36" height="36" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="#B8432B"/><path d="M16 27 V17 M16 17 C16 12 10.5 12 9.5 6.5 M16 17 V5.5 M16 17 C16 13 21.5 13.5 22.5 8.5" fill="none" stroke="#FFF3EA" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1">Wri<span style="font-style: italic; color: #E0674B">Tory</span></span>
+    </a>
+    <div class="wt-rise" style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 20px; max-width: 640px">
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(44px, 5.4vw, 76px); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance">Bạn sống từng lựa chọn.<br><span style="font-style: italic; color: #E0674B">Ngòi bút</span> viết thành tiểu thuyết.</h1>
+      <p style="margin: 0; font-size: 17px; color: #D9D1C3; max-width: 520px">Truyện tương tác tiếng Việt, từ mười đến một trăm trang. Thế giới nhớ những gì bạn đã làm — và cả những lời bạn đã nói dối.</p>
+    </div>
+  </div>
+
+  <div style="flex: 1 1 420px; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 48px clamp(24px, 4vw, 64px); background: #161513; border-left: 1px solid #2A2724; position: relative; z-index: 1">
+    <div class="wt-rise wt-d2" style="width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 28px">
+      <div role="tablist" aria-label="Đăng nhập hoặc đăng ký" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: #1E1C1A; border: 1px solid #2E2B27">
+        <button role="tab" aria-selected="{{loginSel}}" onClick="{{toLogin}}" style="height: 44px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; background: {{loginBg}}; color: {{loginFg}}">Đăng nhập</button>
+        <button role="tab" aria-selected="{{signupSel}}" onClick="{{toSignup}}" style="height: 44px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; background: {{signupBg}}; color: {{signupFg}}">Tạo tài khoản</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 38px; line-height: 1.1">{{heading}}</h2>
+        <p style="margin: 0; color: #B5AC9E">{{sub}}</p>
+      </div>
+
+      <form style="display: flex; flex-direction: column; gap: 18px">
+        <sc-if value="{{isSignup}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 8px">
+            <label for="dn-ten" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Tên hiển thị</label>
+            <input id="dn-ten" class="wt-input" type="text" placeholder="Tên bạn muốn được gọi" style="height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 16px">
+          </div>
+        </sc-if>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="dn-email" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Email</label>
+          <input id="dn-email" class="wt-input" type="email" value="bach@thuvien.vn" style="height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 16px">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <label for="dn-mk" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Mật khẩu</label>
+          </div>
+          <input id="dn-mk" class="wt-input" type="password" value="matkhau12" style="height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 16px">
+          <sc-if value="{{isSignup}}" hint-placeholder-val="{{ false }}"><span style="font-size: 13px; color: #9A9286">Ít nhất 8 ký tự.</span></sc-if>
+        </div>
+        <a href="D-ThuVien.dc.html" class="wt-btn wt-btn-primary" style="height: 54px; border-radius: 12px; background: #B8432B; color: #FFF6EE; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; margin-top: 6px">{{cta}} <span class="wt-arrow">→</span></a>
+      </form>
+
+      <p style="margin: 0; font-size: 13px; color: #9A9286; border-top: 1px solid #2A2724; padding-top: 20px">WriTory dùng khoá OpenRouter của chính bạn để viết truyện — bạn kết nối khoá sau khi vào, và tự trả phí gọi model theo từng chương.</p>
+    </div>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  state = { mode: 'login' };
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = t && t.closest && t.closest('[data-paper]') ? '1' : '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    const login = this.state.mode === 'login';
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave,
+      isLogin: login, isSignup: !login,
+      loginSel: login ? 'true' : 'false', signupSel: login ? 'false' : 'true',
+      loginBg: login ? '#ECE6DA' : 'transparent', loginFg: login ? '#121110' : '#B5AC9E',
+      signupBg: login ? 'transparent' : '#ECE6DA', signupFg: login ? '#B5AC9E' : '#121110',
+      toLogin: () => this.setState({ mode: 'login' }), toSignup: () => this.setState({ mode: 'signup' }),
+      heading: login ? 'Mừng bạn quay lại' : 'Bắt đầu một đời mới',
+      sub: login ? 'Truyện của bạn vẫn đang chờ ở trang bạn bỏ dở.' : 'Một email và một mật khẩu là đủ.',
+      cta: login ? 'Vào thư viện' : 'Tạo tài khoản'
+    };
+  }
+}
+</script>
+</body>
+</html>

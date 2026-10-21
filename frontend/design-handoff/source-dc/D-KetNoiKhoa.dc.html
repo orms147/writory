@@ -1,0 +1,176 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Khoá &amp; chi phí — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <header style="max-width: 1240px; margin: 0 auto; padding: 22px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: #9A9286">
+    <a href="D-ThuVien.dc.html" style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; color: #ECE6DA; text-decoration: none">Wri<span style="font-style: italic; color: #E0674B">Tory</span></a>
+    <nav aria-label="Chính" style="display: flex; gap: 28px; align-items: center">
+      <a class="wt-link" href="D-ThuVien.dc.html" style="color: #9A9286">Tủ truyện</a>
+      <a class="wt-link" href="D-KetNoiKhoa.dc.html" aria-current="page" style="color: #ECE6DA">Khoá &amp; chi phí</a>
+      <a class="wt-link" href="#tk" style="color: #9A9286">Bách</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 32px 24px 80px; display: flex; flex-direction: column; gap: 40px">
+    <div style="display: flex; flex-direction: column; gap: 8px; max-width: 680px">
+      <h1 class="wt-rise" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(64px, 8vw, 112px); line-height: .9; letter-spacing: -.02em">Khoá &amp; <span style="font-style: italic; color: #E0674B">chi phí</span></h1>
+      <p style="margin: 0; color: #B5AC9E; font-size: 16px">Bạn trả phí gọi model qua tài khoản OpenRouter của mình. WriTory giữ khoá ở dạng mã hoá và không bao giờ hiện lại đầy đủ.</p>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; gap: 24px; align-items: flex-start">
+      <section aria-labelledby="khoa-h" style="flex: 1 1 400px; border-top: 1px solid #2E2B27; padding-top: 22px; display: flex; flex-direction: column; gap: 20px">
+        <div style="display: flex; justify-content: space-between; align-items: center; gap: 12px">
+          <h2 id="khoa-h" style="margin: 0; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #9A9286; font-weight: 600">Khoá OpenRouter</h2>
+          <span style="display: inline-flex; align-items: center; gap: 8px; font-size: 13px; font-weight: 600; color: {{pillFg}}"><span style="width: 7px; height: 7px; border-radius: 50%; background: {{pillDot}}"></span>{{pillText}}</span>
+        </div>
+
+        <sc-if value="{{showKey}}" hint-placeholder-val="{{ true }}">
+          <div style="display: flex; flex-direction: column; gap: 18px">
+            <div style="display: flex; align-items: baseline; gap: 16px; flex-wrap: wrap">
+              <span style="font-family: ui-monospace, 'SFMono-Regular', Menlo, monospace; font-size: 26px; letter-spacing: .1em">•••• 7f3a</span>
+              <span style="font-size: 13px; color: #9A9286">chỉ hiện 4 ký tự cuối · lưu 14/10/2026</span>
+            </div>
+            <div style="display: flex; flex-wrap: wrap; gap: 10px">
+              <button onClick="{{startChange}}" class="wt-btn wt-btn-ghost" style="height: 46px; padding: 0 18px; border: 1px solid #4A453E; border-radius: 12px; background: transparent; font-weight: 500">Đổi khoá</button>
+              <button onClick="{{askRemove}}" class="wt-btn wt-btn-ghost" style="height: 46px; padding: 0 18px; border: 1px solid #4A453E; border-radius: 12px; background: transparent; font-weight: 500; color: #F0A08C">Ngắt khoá</button>
+            </div>
+            <sc-if value="{{confirmRemove}}" hint-placeholder-val="{{ false }}">
+              <div role="alertdialog" aria-labelledby="ngat-h" style="border: 1px solid #4A453E; border-radius: 14px; padding: 16px 18px; background: #1A1917; display: flex; flex-direction: column; gap: 12px">
+                <span id="ngat-h" style="font-weight: 600">Ngắt khoá kết thúc bằng 7f3a?</span>
+                <span style="font-size: 14px; color: #B5AC9E">WriTory sẽ xoá khoá đã mã hoá. Các truyện vẫn còn nguyên, nhưng sẽ không viết tiếp được cho đến khi bạn dán khoá mới.</span>
+                <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                  <button onClick="{{remove}}" class="wt-btn wt-btn-primary" style="height: 44px; padding: 0 18px; border: none; border-radius: 11px; background: #B8432B; color: #FFF6EE; font-weight: 600">Ngắt khoá</button>
+                  <button onClick="{{cancelRemove}}" class="wt-btn wt-btn-ghost" style="height: 44px; padding: 0 16px; border: 1px solid #4A453E; border-radius: 11px; background: transparent">Giữ lại</button>
+                </div>
+              </div>
+            </sc-if>
+          </div>
+        </sc-if>
+
+        <sc-if value="{{showForm}}" hint-placeholder-val="{{ false }}">
+          <div style="display: flex; flex-direction: column; gap: 16px">
+            <div style="display: flex; flex-direction: column; gap: 8px">
+              <label for="khoa-tay" style="font-size: 14px; font-weight: 500; color: #D9D1C3">{{formLabel}}</label>
+              <div style="display: flex; gap: 10px; flex-wrap: wrap">
+                <input id="khoa-tay" class="wt-input" type="password" autocomplete="off" placeholder="sk-or-v1-…" style="flex: 1 1 240px; min-width: 0; height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 15px">
+                <button onClick="{{save}}" class="wt-btn wt-btn-primary" style="height: 52px; padding: 0 22px; border: none; border-radius: 12px; background: #B8432B; color: #FFF6EE; font-weight: 600">Lưu khoá</button>
+              </div>
+              <span style="font-size: 13px; color: #9A9286">Tạo khoá trong trang Keys của OpenRouter rồi dán vào đây. Khoá được mã hoá trước khi lưu.</span>
+            </div>
+            <sc-if value="{{changing}}" hint-placeholder-val="{{ false }}">
+              <button onClick="{{cancelChange}}" style="align-self: flex-start; height: 40px; border: none; background: transparent; color: #B5AC9E; font-size: 14px; padding: 0">← Giữ khoá cũ</button>
+            </sc-if>
+            <div aria-disabled="true" style="display: flex; align-items: center; justify-content: space-between; gap: 12px; padding: 14px 16px; border: 1px dashed #3A3631; border-radius: 12px; color: #9A9286">
+              <span style="font-size: 14px">Kết nối với OpenRouter bằng tài khoản</span>
+              <span style="height: 24px; padding: 0 10px; border-radius: 999px; background: #24221F; font-size: 12px; font-weight: 600; color: #D9D1C3; display: inline-flex; align-items: center">sắp có</span>
+            </div>
+          </div>
+        </sc-if>
+      </section>
+
+      <section aria-labelledby="cp-h" style="flex: 1 1 460px; border-top: 1px solid #2E2B27; padding-top: 22px; display: flex; flex-direction: column; gap: 22px">
+        <h2 id="cp-h" style="margin: 0; font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #9A9286; font-weight: 600">Bút &amp; chi phí</h2>
+
+        <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 16px; flex-wrap: wrap">
+          <div style="display: flex; flex-direction: column; gap: 2px">
+            <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1.1">Bút Tiêu chuẩn</span>
+            <span style="font-size: 13px; color: #9A9286">Bản 1 dùng một bút cho mọi truyện.</span>
+          </div>
+          <span style="font-size: 12px; letter-spacing: .1em; text-transform: uppercase; color: #9A9286">chỉ đọc</span>
+        </div>
+
+        <dl style="margin: 0; display: grid; grid-template-columns: minmax(0, 1fr) auto; border-top: 1px solid #26231F">
+          <dt style="padding: 14px 0; border-bottom: 1px solid #26231F; color: #B5AC9E">Ước tính chương tiếp theo</dt>
+          <dd style="margin: 0; padding: 14px 0; border-bottom: 1px solid #26231F; color: #9A9286; font-style: italic">chưa có ước tính</dd>
+          <dt style="padding: 14px 0; border-bottom: 1px solid #26231F; color: #B5AC9E">Trần mỗi cảnh</dt>
+          <dd style="margin: 0; padding: 14px 0; border-bottom: 1px solid #26231F; color: #9A9286; font-family: ui-monospace, Menlo, monospace; font-size: 13px">[từ hệ thống]</dd>
+          <dt style="padding: 14px 0; border-bottom: 1px solid #26231F; color: #B5AC9E">Trần mỗi chương</dt>
+          <dd style="margin: 0; padding: 14px 0; border-bottom: 1px solid #26231F; color: #9A9286; font-family: ui-monospace, Menlo, monospace; font-size: 13px">[từ hệ thống]</dd>
+          <dt style="padding: 14px 0; border-bottom: 1px solid #26231F; color: #B5AC9E">Trần mỗi truyện</dt>
+          <dd style="margin: 0; padding: 14px 0; border-bottom: 1px solid #26231F; color: #9A9286; font-family: ui-monospace, Menlo, monospace; font-size: 13px">[từ hệ thống]</dd>
+        </dl>
+        <p style="margin: -6px 0 0; font-size: 13px; color: #9A9286">Chạm trần nào thì WriTory dừng viết ở đó và báo cho bạn. Trần do hệ thống đặt, không đổi được ở đây.</p>
+
+        <div style="display: flex; flex-direction: column; gap: 0">
+          <span style="font-size: 12px; letter-spacing: .16em; text-transform: uppercase; color: #9A9286; font-weight: 600; padding-bottom: 8px">Đã dùng theo truyện</span>
+          <sc-for list="{{spent}}" as="r" hint-placeholder-count="4">
+            <div class="wt-row" style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #26231F">
+              <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 20px">{{r.title}}</span>
+              <span style="font-variant-numeric: tabular-nums; color: #D9D1C3">{{r.usd}}</span>
+            </div>
+          </sc-for>
+          <div style="display: flex; justify-content: space-between; gap: 12px; padding: 12px 0; border-top: 1px solid #4A453E; font-weight: 600">
+            <span>Tháng này</span><span style="font-variant-numeric: tabular-nums">$0,91</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <div style="display: flex; justify-content: flex-end">
+      <a href="D-KhoiTao-Khuon.dc.html" class="wt-btn wt-btn-primary" style="height: 52px; padding: 0 24px; border-radius: 12px; background: #B8432B; color: #FFF6EE; text-decoration: none; font-weight: 600; display: inline-flex; align-items: center; gap: 10px">Bắt đầu truyện mới <span class="wt-arrow">→</span></a>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"connected":{"editor":"boolean","default":true},"$preview":{"width":1440,"height":1100}}'>
+class Component extends DCLogic {
+  state = { conn: null, changing: false, confirm: false };
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    const connected = this.state.conn === null ? !!(this.props.connected ?? true) : this.state.conn;
+    const changing = connected && this.state.changing;
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave,
+      showKey: connected && !changing, showForm: !connected || changing, changing,
+      confirmRemove: connected && !changing && this.state.confirm,
+      formLabel: changing ? 'Dán khoá mới (thay khoá kết thúc bằng 7f3a)' : 'Dán khoá API của OpenRouter (bắt đầu bằng sk-or-)',
+      pillText: connected ? 'Đã có khoá' : 'Chưa có khoá', pillFg: connected ? '#9CCFB9' : '#F0A08C', pillDot: connected ? '#6FB59A' : '#E0674B',
+      startChange: () => this.setState({ changing: true, confirm: false }), cancelChange: () => this.setState({ changing: false }),
+      askRemove: () => this.setState({ confirm: true }), cancelRemove: () => this.setState({ confirm: false }),
+      remove: () => this.setState({ conn: false, confirm: false, changing: false }),
+      save: () => this.setState({ conn: true, changing: false }),
+      spent: [
+        { title: 'Ngọc Bội Rạn', usd: '$0,09' },
+        { title: 'Bến Đò Vong Xuyên', usd: '$0,58' },
+        { title: 'Hoàng Thành Mưa Bụi', usd: '$0,02' },
+        { title: 'Án Mạng Phố Hàng Bạc', usd: '$0,22' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

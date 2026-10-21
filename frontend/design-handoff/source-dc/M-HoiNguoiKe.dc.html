@@ -1,0 +1,96 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hỏi người kể (điện thoại) — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #171614; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.55; display: flex; flex-direction: column">
+  <header style="padding: 44px 8px 10px; border-bottom: 1px solid #2E2B27; display: flex; align-items: center; gap: 4px">
+    <a href="M-Doc.dc.html" aria-label="Quay lại trang đọc" style="width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: #D9D1C3"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a>
+    <div style="display: flex; flex-direction: column; line-height: 1.25">
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px">Hỏi người kể</h1>
+      <span style="font-size: 12px; color: {{leftColor}}">{{leftText}}</span>
+    </div>
+  </header>
+
+  <div role="log" aria-live="polite" style="flex: 1 1 auto; overflow: hidden; padding: 16px 16px; display: flex; flex-direction: column; justify-content: flex-end; gap: 12px">
+    <sc-for list="{{msgs}}" as="m" hint-placeholder-count="4">
+      <sc-if value="{{m.mine}}" hint-placeholder-val="{{ false }}">
+        <div style="align-self: flex-end; max-width: 80%; padding: 10px 14px; border-radius: 16px 16px 4px 16px; background: #2A2724; font-size: 15px">{{m.text}}</div>
+      </sc-if>
+      <sc-if value="{{m.narr}}" hint-placeholder-val="{{ true }}">
+        <div class="wt-rise" style="align-self: flex-start; max-width: 88%; padding: 12px 14px; border-radius: 4px 16px 16px 16px; background: #F3ECDD; color: #1F1B16; display: flex; flex-direction: column; gap: 6px">
+          <span style="font-family: 'Literata', serif; font-size: 15.5px; line-height: 1.55">{{m.text}}</span>
+          <sc-if value="{{m.hasSrc}}" hint-placeholder-val="{{ true }}"><span style="font-size: 11px; color: #6B5F4E">{{m.src}}</span></sc-if>
+        </div>
+      </sc-if>
+      <sc-if value="{{m.pending}}" hint-placeholder-val="{{ false }}">
+        <div role="status" aria-label="Người kể đang lật lại trang" style="align-self: flex-start; padding: 12px 16px; border-radius: 4px 16px 16px 16px; background: #24221F; color: #E0674B; display: flex; gap: 4px"><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span></div>
+      </sc-if>
+    </sc-for>
+  </div>
+
+  <div style="padding: 12px 14px 28px; border-top: 1px solid #2E2B27; display: flex; flex-direction: column; gap: 10px">
+    <sc-if value="{{canAsk}}" hint-placeholder-val="{{ false }}">
+      <form onSubmit="{{send}}" style="display: flex; gap: 8px; align-items: flex-end">
+        <label for="m-hoi" style="position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0)">Câu hỏi cho người kể</label>
+        <textarea id="m-hoi" class="wt-input" rows="2" maxlength="300" value="{{draft}}" onChange="{{onDraft}}" placeholder="Hỏi về điều bạn đã thấy…" style="flex: 1 1 auto; min-width: 0; min-height: 56px; padding: 12px 14px; border-radius: 14px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 16px; resize: none"></textarea>
+        <button type="submit" aria-label="Gửi câu hỏi" style="width: 50px; height: 50px; flex: 0 0 50px; border: none; border-radius: 14px; background: #B8432B; color: #FFF6EE; display: grid; place-items: center"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 12h14M13 6l6 6-6 6"/></svg></button>
+      </form>
+    </sc-if>
+    <sc-if value="{{noneLeft}}" hint-placeholder-val="{{ true }}">
+      <div role="status" style="border: 1px solid #3A3631; border-radius: 16px; padding: 16px; display: flex; flex-direction: column; gap: 8px; background: #1A1917">
+        <span style="font-weight: 600">Bạn đã hỏi hết lượt của chương 2.</span>
+        <span style="font-size: 14px; color: #B5AC9E">Lượt hỏi mới mở khi chương 3 bắt đầu. Những câu đã hỏi vẫn còn ở đây.</span>
+        <a href="M-Doc.dc.html" style="margin-top: 4px; height: 48px; border-radius: 12px; border: 1px solid #4A453E; color: #ECE6DA; text-decoration: none; display: flex; align-items: center; justify-content: center; font-weight: 500">Quay lại trang đọc</a>
+      </div>
+    </sc-if>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"hetLuot":{"editor":"boolean","default":true},"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = {
+    msgs: [
+      { who: 'me', text: 'Ai đã giết Vân Phong?' },
+      { who: 'narr', text: 'Bạn chưa biết điều này.' },
+      { who: 'me', text: 'Ai giữ chìa khoá Tàng Kinh Các?' },
+      { who: 'narr', text: 'Chấp sự Hồ. Chùm chìa khoá đồng treo ở thắt lưng ông.', src: 'Từ chương 2' }
+    ],
+    left: null, draft: ''
+  };
+  timer = null;
+  componentWillUnmount() { if (this.timer) clearTimeout(this.timer); }
+  left() { return this.state.left === null ? ((this.props.hetLuot ?? true) ? 0 : 1) : this.state.left; }
+  send = (e) => {
+    if (e && e.preventDefault) e.preventDefault();
+    const left = this.left(); const q = (this.state.draft || '').trim();
+    if (left <= 0 || !q) return;
+    this.setState({ msgs: [...this.state.msgs, { who: 'me', text: q }, { who: 'pending' }], draft: '', left: left - 1 });
+    this.timer = setTimeout(() => { const m = this.state.msgs.filter((x) => x.who !== 'pending'); this.setState({ msgs: [...m, { who: 'narr', text: 'Bạn chưa biết điều này.' }] }); }, 1300);
+  };
+  renderVals() {
+    const left = this.left();
+    const msgs = this.state.msgs.slice(-6).map((m) => ({ text: m.text || '', src: m.src || '', hasSrc: !!m.src, mine: m.who === 'me', narr: m.who === 'narr', pending: m.who === 'pending' }));
+    return {
+      msgs, canAsk: left > 0, noneLeft: left <= 0, draft: this.state.draft, send: this.send,
+      onDraft: (e) => this.setState({ draft: e.target.value.slice(0, 300) }),
+      leftText: left > 0 ? 'Còn ' + left + ' câu hỏi trong chương này' : 'Đã hết lượt hỏi trong chương này',
+      leftColor: left > 0 ? '#9A9286' : '#F0A08C'
+    };
+  }
+}
+</script>
+</body>
+</html>
