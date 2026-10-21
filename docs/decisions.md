@@ -596,3 +596,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** `intensity_scale.mild` gồm cả tả lướt trong một câu; `strong` là miêu tả có chi tiết. Chữ mô tả `adult_sexual` nói rõ ám chỉ cũng tính. Danh sách loại và các trần không đổi.
 - **Hệ quả:** lần đo lại (`evals/results/2026-10-21-g9-luna-2/`) đúng 44/44, nhưng lạc quan vì ví dụ lấy từ chính bộ đo. Cần một bộ câu giữ riêng.
 - **Người quyết:** Claude, chủ dự án uỷ quyền chọn (21/10/2026) · 21/10/2026
+
+## D-71 · Bộ câu kiểm duyệt giữ riêng và chạy lặp (bổ sung D-70)
+- **Bối cảnh:** lần đo G9 thứ hai đúng 44/44 nhưng lạc quan: thang mức độ trong config lấy ví dụ từ chính bộ đo, và mỗi câu mới chạy một lần (`evals/results/2026-10-21-g9-luna-2/notes.md`).
+- **Quyết định:**
+  - Thêm `evals/redteam/g9_moderation_holdout.yaml` (version 1, khai trước 21/10/2026), cùng định dạng với bộ cũ. Không chép và không diễn đạt lại câu nào của bộ cũ hay của ví dụ trong config; test kiểm độ trùng cụm bốn từ. Nội dung thuộc loại cấm chỉ ở dạng mô tả trong ngoặc vuông.
+  - Phủ mọi loại ở cả đầu vào lẫn đầu ra, ba mức u tối, chữ có dấu, không dấu, teencode, tiếng Anh, phủ định, câu dài, câu đội lốt, và nhiều câu truyện u tối hợp lệ để đo chặn nhầm.
+  - Quy ước dùng: không chỉnh prompt hay config theo từng câu của bộ này. Khi kết quả của nó đã được dùng để sửa config, nó thành bộ chỉnh và phải làm bộ giữ riêng mới (ghi vào decisions.md).
+  - `bench_g9` thêm `--cases` (mặc định bộ cũ), `--repeat N` (báo `unstable` và `stable_rate`) và `--budget` (trần chi phí của lần chạy; chạm trần thì dừng và ghi `stopped_by_budget`). `result.json` ghi tên file, hash, version và số câu của bộ câu.
+- **Hệ quả:** chạy lặp chỉ lộ sự không ổn định của model (suy luận thấp, lấy mẫu); nó không chứng minh một câu ổn định là đúng. Con số trên bộ giữ riêng là ước lượng độ chính xác trung thực hơn, nhưng bộ chỉ vài chục câu nên khoảng tin cậy rộng. Lần chạy thật do điều phối làm.
+- **Người quyết:** Claude (nhánh g9-holdout), điều phối giao việc, chờ duyệt · 21/10/2026
