@@ -637,8 +637,12 @@ def compute_report(data: BenchData, store: Store, systems: Sequence[str],
         by_bin = {b: cell([r for r in mine if distance_bin(r["distance"]) == b],
                           sum(1 for q in qs.values() if distance_bin(q.distance) == b) * samples)
                   for b in DISTANCE_BINS}
+        by_kind = {kind: cell([r for r in mine if qs[r["id"]].inference is flag],
+                              sum(1 for q in qs.values() if q.inference is flag) * samples)
+                   for kind, flag in (("memory", False), ("inference", True))}
         out["systems"][system] = {
             "overall": cell(mine, expected_per_system), "by_group": by_group, "by_bin": by_bin,
+            "by_kind": by_kind,
             "cost_answer_usd": cost_answer, "cost_build_usd": cost_build,
             "cost_usd": cost_answer + cost_build,
             "cost_per_answer_usd": (cost_answer + cost_build) / len(mine) if mine else None,
@@ -710,6 +714,12 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
         lines.append(f"| {SYSTEM_LABELS[s]} | " + " | ".join(
             _pct(report["systems"][s]["by_group"][g]["k"], report["systems"][s]["by_group"][g]["n"])
             for g in GROUPS) + " |")
+    lines += ["", "## Câu nhớ và câu suy luận (`inference`, tách riêng)", "",
+              "| Hệ | Câu nhớ | Câu suy luận |", "|---|---|---|"]
+    for s in systems:
+        k = report["systems"][s]["by_kind"]
+        lines.append(f"| {SYSTEM_LABELS[s]} | {_pct(k['memory']['k'], k['memory']['n'])} | "
+                     f"{_pct(k['inference']['k'], k['inference']['n'])} |")
     lines += ["", "## Theo khoảng cách (chương hỏi trừ chương của sự thật)", "",
               "| Hệ | " + " | ".join(f"cách {b} chương" for b in DISTANCE_BINS) + " |",
               "|---|" + "---|" * len(DISTANCE_BINS)]

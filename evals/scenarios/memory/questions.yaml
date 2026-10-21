@@ -1,8 +1,11 @@
 # Bài đo A — bộ nhớ: câu hỏi về truyện mẫu 5 chương (data/sample-story/), khai TRƯỚC khi chạy.
 # docs/eval.md "Bài A"; D-72.
 #
-# TRẠNG THÁI: BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT. Đáp án gốc lấy từ data/sample-story/graph.yaml (dựng
-# tay, cũng chờ duyệt). Chưa duyệt thì không chạy thật. Đã chạy thật rồi thì không sửa đè: tăng `version`.
+# TRẠNG THÁI: CHỦ DỰ ÁN DUYỆT 21/10/2026 (kèm hai sửa: câu quan hệ hỏi theo chiều của Minh; knows-06 gắn
+# `inference`). Đáp án gốc lấy từ data/sample-story/graph.yaml (dựng tay). Đã chạy thật rồi thì không sửa
+# đè: tăng `version`.
+#   inference     true khi đáp án cần nối hai chi tiết trên trang mà truyện không nói thẳng (đồ thị dựng
+#                 tay đã nối sẵn). Báo điểm tách riêng, để không thổi phồng lợi thế của hệ đồ thị.
 #
 # Mỗi câu hỏi "sau khi đã đọc tới hết chương ask_chapter" (hệ trả lời chỉ thấy chương 1..ask_chapter).
 #   fact_chapter  chương CŨ NHẤT mà câu trả lời đúng dựa vào. Khoảng cách = ask_chapter - fact_chapter.
@@ -21,7 +24,7 @@
 # kiếm ở chương 4, "con mồi", ai giết Lão Gù): hệ đồ thị thấy được, các hệ khác không thể trả lời đúng.
 
 version: 1
-status: "BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT"
+status: "CHỦ DỰ ÁN DUYỆT 21/10/2026"
 story: sample-story
 
 questions:
@@ -263,6 +266,7 @@ questions:
     group: knows
     fact_chapter: 4
     ask_chapter: 5
+    inference: true  # truyện chỉ viết thư "ký tên Lý Thất"; người ký là gã lái đò do đồ thị nối
     question: "Gã lái đò mặt sẹo buộc thuyền trước quán trà (chương 4) là ai? Cho biết tên."
     answer: {type: entities, gold: [ly_that]}
     derive: {op: resolve_alias, alias: "gã lái đò mặt sẹo"}
@@ -274,7 +278,7 @@ questions:
     group: relation
     fact_chapter: 1
     ask_chapter: 1
-    question: "Cuối chương 1, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Cuối chương 1, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "người quen", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
     evidence: [{chapter: 1, quote: "Lúc Minh đứng dậy, cô bảo mai anh lại ghé"}]
@@ -283,7 +287,7 @@ questions:
     group: relation
     fact_chapter: 2
     ask_chapter: 2
-    question: "Cuối chương 2, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Cuối chương 2, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "bạn", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
     evidence: [{chapter: 2, quote: "lần đầu tiên thấy mình kể lại cho cô nghe chuyện cha mẹ mất sớm"}]
@@ -292,7 +296,7 @@ questions:
     group: relation
     fact_chapter: 3
     ask_chapter: 3
-    question: "Cuối chương 3, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Cuối chương 3, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "yêu", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
     evidence: [{chapter: 3, quote: "Anh Minh, em thương anh thật đấy."}]
@@ -301,16 +305,16 @@ questions:
     group: relation
     fact_chapter: 3
     ask_chapter: 4
-    question: "Cuối chương 4, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Cuối chương 4, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "yêu", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
-    evidence: [{chapter: 4, quote: "Em không giận."}]
+    evidence: [{chapter: 3, quote: "Anh Minh, em thương anh thật đấy."}]
 
   - id: rel-05
     group: relation
     fact_chapter: 5
     ask_chapter: 5
-    question: "Cuối chương 5, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Cuối chương 5, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "thù", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
     evidence: [{chapter: 5, quote: "Phạm Thị Lan là người anh phải đề phòng nhất trên đời."}]
@@ -320,7 +324,7 @@ questions:
     fact_chapter: 3
     ask_chapter: 5
     as_of: 3
-    question: "Vào cuối chương 3, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Vào cuối chương 3, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "yêu", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
     evidence: [{chapter: 3, quote: "Anh Minh, em thương anh thật đấy."}]
@@ -330,7 +334,7 @@ questions:
     fact_chapter: 2
     ask_chapter: 5
     as_of: 2
-    question: "Vào cuối chương 2, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    question: "Vào cuối chương 2, Minh coi Lan là gì? Chọn một: người quen, bạn, yêu, thù."
     answer: {type: choice, gold: "bạn", options: ["người quen", "bạn", "yêu", "thù"]}
     derive: {op: relation_kind, from: minh, to: lan}
     evidence: [{chapter: 2, quote: "lần đầu tiên thấy mình kể lại cho cô nghe chuyện cha mẹ mất sớm"}]

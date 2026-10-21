@@ -159,7 +159,8 @@ def test_summaries_are_only_built_for_the_rolling_system(tmp_path):
 def test_summary_md_has_one_row_per_system_and_marks_the_draft(tmp_path):
     _, store, _ = run(tmp_path)
     text = (store.root / "summary.md").read_text(encoding="utf-8")
-    assert "BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT" in text and "Chạy khô (model giả): True" in text
+    assert "CHỦ DỰ ÁN DUYỆT 21/10/2026" in text and "Chạy khô (model giả): True" in text
+    assert "Câu nhớ và câu suy luận" in text
     for label in bench_a.SYSTEM_LABELS.values():
         assert label in text
     assert "Theo nhóm câu hỏi" in text and "Theo khoảng cách" in text

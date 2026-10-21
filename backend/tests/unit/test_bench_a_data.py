@@ -48,10 +48,18 @@ def test_every_group_has_questions_at_several_distances():
     assert {distance_bin(q.distance) for q in QUESTIONS} == set(DISTANCE_BINS)
 
 
-def test_question_set_is_marked_draft_pending_owner_approval():
-    assert "CHỜ CHỦ DỰ ÁN DUYỆT" in DATA.questions.status
+def test_question_set_is_marked_approved_by_the_owner():
+    assert "CHỦ DỰ ÁN DUYỆT" in DATA.questions.status and "CHỜ" not in DATA.questions.status
     header = (DATA_DIR / "questions.yaml").read_text(encoding="utf-8").splitlines()[:6]
-    assert any("BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT" in line for line in header)
+    assert any("CHỦ DỰ ÁN DUYỆT 21/10/2026" in line for line in header)
+
+
+def test_relation_questions_ask_from_minhs_side_and_knows_06_is_inference():
+    """Chủ dự án duyệt 21/10/2026: câu quan hệ hỏi theo chiều của Minh (Lan coi Minh là "con mồi" ở
+    lớp sự thật, ngoài bốn lựa chọn); knows-06 cần nối thư ký tên với gã lái đò nên tách riêng."""
+    rel = [q for q in QUESTIONS if q.derive.get("op") == "relation_kind"]
+    assert rel and all("Minh coi Lan là gì?" in q.question for q in rel)
+    assert {q.id for q in QUESTIONS if q.inference} == {"knows-06"}
 
 
 def test_all_answer_types_are_used():
