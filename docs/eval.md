@@ -140,12 +140,12 @@ uv run python -m writory.quality.bench_d exclude --out <thư mục kết quả> 
 - **Kết quả** `evals/results/<ngày>-narrator-<nhãn>/`:
   - `results.jsonl`: mỗi lượt một dòng (câu thô, câu cuối, lý do, chuỗi trúng, chi phí từng lời gọi);
   - `judge.jsonl`, `errors.jsonl`, `summary.md`;
-  - `meta.json`: commit, sha256 của đề, file red-team, nguồn truyện (graph.yaml hoặc các file của thư mục chạy truyện) và config, tên file đề nếu khác mặc định, tham số sổ tay đệm, model và mức suy luận, trần, từng lần chạy.
+  - `meta.json`: commit, sha256 của đề, file red-team, nguồn truyện (graph.yaml hoặc các file của thư mục chạy truyện) và config, tên file đề nếu khác mặc định, tham số sổ tay đệm, model và mức suy luận, phiên bản đề người kể (`narrator_prompt`, `pipeline/narrator.PROMPT_VERSION`, D-77), trần, từng lần chạy.
 
   Chạy lại vào cùng thư mục thì chạy tiếp các lượt chưa có; đề hay config đã khác thì từ chối. Kết quả dry-run (`*-dryrun/`) không commit. Bí mật của truyện mẫu vốn đã công khai trong repo (`graph.yaml`), nên kết quả ghi nguyên chữ câu trả lời.
 - **Key:** chỉ đọc `OPENROUTER_API_KEY`, và `ANTHROPIC_API_KEY` khi có `--judge` (biến môi trường hoặc `--env-file`). **Trần:** chạy thật bắt buộc `--budget` (USD), thêm `--budget-anthropic` khi có `--judge`. Trần tính cả các lần chạy trước trong cùng thư mục; trước mỗi lời gọi, code giữ chỗ chi phí tối đa của lời gọi đó.
 - **Mã thoát:** 0 xong; 1 lỗi đề hoặc config; 2 dừng vì chạm trần; 3 dừng vì lỗi không chạy tiếp được (key sai, hết credit, yêu cầu bị từ chối, giám khảo trả lời bằng model khác); 4 có lộ ở câu cuối.
-- Kết quả: bản 1 trên truyện mẫu ở `evals/results/2026-10-20-narrator-luna-1/`. Bản 2 và truyện do pipeline viết: chưa chạy thật.
+- Kết quả: bản 1 trên truyện mẫu ở `evals/results/2026-10-20-narrator-luna-1/`; bản 2 ở `evals/results/2026-10-21-narrator-v2/`; truyện do pipeline viết ở `evals/results/2026-10-21-narrator-tu-tien-1/`. Cả ba chạy với đề người kể trước `narrator-2` (D-77), nên không so trực tiếp với lần chạy sau; đề `narrator-2` chưa chạy thật.
 
 Lệnh (chạy trong `backend/`):
 ```bash

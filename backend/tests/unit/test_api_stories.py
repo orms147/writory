@@ -26,7 +26,8 @@ from writory.pipeline.narrator import NOT_KNOWN
 from .test_narrator import CFG, PLAN, MemoryQuota, metered, ref, reply, state, view
 
 NOTEBOOK_KEYS = {"chapter", "entries", "lies"}
-ENTRY_KEYS = {"ref", "kind", "text", "aliases", "since_chapter", "quote", "about"}
+ENTRY_KEYS = {"ref", "kind", "text", "aliases", "since_chapter", "quote", "about",
+              "is_protagonist"}
 LIE_KEYS = {"content", "chapter", "told_to"}
 
 
@@ -100,6 +101,21 @@ def test_notebook_has_only_whitelisted_fields(chapter):
     v = view(chapter)
     assert len(body["entries"]) == len(v.entries)
     assert len(body["lies"]) == len(v.lies)
+
+
+@pytest.mark.parametrize("chapter", [0, 1, 4, 5])
+def test_notebook_marks_only_the_protagonist_entry(chapter):
+    """D-74, D-76: mục nhân vật chính (chính là người chơi) mang `is_protagonist`, để giao diện
+    đánh dấu "Bạn". Cờ lấy từ `PlayerEntry`, không phải lớp truth: người chơi đã chọn nhân vật này."""
+    with TestClient(build(chapter)) as client:
+        body = client.get("/stories/s1/notebook").json()
+    v = view(chapter)
+    flagged = [e["ref"] for e in body["entries"] if e["is_protagonist"] is True]
+    assert flagged == [r for r, e in public_entries(v) if e.is_protagonist]
+    assert all(e["is_protagonist"] is False for e in body["entries"] if e["ref"] not in flagged)
+    if chapter:
+        [me] = [e for e in body["entries"] if e["is_protagonist"]]
+        assert me["text"] == "Trần Minh"
 
 
 @pytest.mark.parametrize("chapter", [1, 4, 5])

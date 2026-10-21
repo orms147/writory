@@ -8,6 +8,7 @@ import { useResource } from '../../lib/useResource';
 
 // Sổ tay (D-/M-SoTay): chỉ `player_view` máy chủ trả (G1). Tab chỉ hiện khi có mục; Faction là
 // "Phe phái"; Fact và Event chung "Sự thật" (D-65). Không vai trò, thái độ, "đang ở", sơ đồ, ghim.
+// Mục nhân vật chính có nhãn "Bạn" (D-76).
 
 export type NotebookTabId = 'people' | 'places' | 'items' | 'factions' | 'facts' | 'known_lies' | 'lies';
 
@@ -44,7 +45,13 @@ function EntryCard({ e }: { e: NotebookEntry }) {
   return (
     <li className="border-b border-ink-750 py-5">
       <div className="flex items-baseline justify-between gap-4">
-        <h3 className="font-display text-[24px] font-semibold leading-tight md:text-[26px]">{e.text}</h3>
+        <h3 className="flex flex-wrap items-baseline gap-x-3 gap-y-1 font-display text-[24px] font-semibold leading-tight md:text-[26px]">
+          {e.text}
+          {/* Nhân vật chính là chính người chơi (D-74, D-76). */}
+          {e.is_protagonist && (
+            <span className="rounded-full bg-ink-800 px-2 py-0.5 font-ui text-[12px] font-medium text-ink-100">Bạn</span>
+          )}
+        </h3>
         <span className="flex-none text-[12px] text-ink-400">
           <span className="max-md:hidden">biết từ chương {e.since_chapter}</span>
           <span className="md:hidden">từ ch. {e.since_chapter}</span>

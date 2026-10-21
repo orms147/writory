@@ -31,6 +31,8 @@ from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM, render_context
 from writory.pipeline.narrator import (
     NOT_KNOWN,
+    PROMPT_VERSION,
+    SYSTEM_PROMPT,
     BlockReason,
     NarratorAnswer,
     NarratorOutput,
@@ -200,6 +202,65 @@ async def test_role_reasoning_is_passed_when_set():
     fake = FakeLLM.scripted([reply(True, "Ở miếu Bà.", [ref(v, "mieu_ba")])])
     await ask("Ở đâu?", 3, fake, config=with_limits(reasoning__narrator="low"))
     assert fake.extras == [{"reasoning": {"effort": "low"}}]
+
+
+# --- người kể bớt dè dặt (D-77) ----------------------------------------------------------------
+# Bài E v2 và tu-tien-1 (evals/results/2026-10-21-narrator-*/notes.md): model trả known = false cho
+# câu đã mở khoá mà câu hỏi gọi khác chữ sổ tay ("Cai Khải" so với "Trần Văn Khải") hay chỉ có
+# câu trả lời một phần ("Thanh Sương đâu rồi?" khi sổ tay chỉ ghi nó biến mất). Đề cũ cấm "suy ra",
+# nên model không dám nối. Đề mới cho nối và tóm tắt; lớp chặn bằng code (G1, G2, mã mục) giữ
+# nguyên: các test G1, G2 bên dưới và kẻ lộ của bài E chạy trên chính đề này.
+
+
+def test_prompt_lets_the_narrator_answer_about_the_same_thing_under_other_words():
+    assert PROMPT_VERSION == "narrator-2"
+    for phrase in ("khác chữ", "cùng một thứ", "chức danh kèm tên", "tóm tắt", "câu trên trang",
+                   "mới nhất", "known = true, kể cả khi"):
+        assert phrase in SYSTEM_PROMPT, phrase
+    assert "không suy ra điều sổ tay không nói" not in SYSTEM_PROMPT  # luật cũ, quá chặt
+
+
+def test_prompt_still_forbids_guessing_new_conclusions_and_hinting():
+    for phrase in ("đoán", "suy ra kết luận mới", "úp mở", "bàn về phần sổ tay không có",
+                   "Không tự coi hai mục khác nhau là cùng một", "known = false"):
+        assert phrase in SYSTEM_PROMPT, phrase
+
+
+async def test_new_prompt_reaches_the_model_as_system_text_and_the_question_stays_data():
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    await ask("Cai Khải là người thế nào?", 4, fake)
+    [messages] = fake.calls
+    [system] = [m.content for m in messages if m.role == "system"]
+    assert system.startswith(SYSTEM_PROMPT)
+    assert "Cai Khải" not in system  # câu hỏi chỉ ở vai user, trong khối dữ liệu (G4)
+
+
+@pytest.mark.parametrize(("chapter", "question", "truth_id", "answer"), [
+    (4, "Cai Khải là người thế nào?", "khai",
+     "Trần Văn Khải là viên cai bạn gặp khi ông đang đi tuần."),
+    (4, "Thanh Sương đâu rồi?", "e_sword_missing",
+     "Sáng ra, gầm giường trống trơn: Thanh Sương đã biến mất."),
+    (5, "Thanh Sương bây giờ ở đâu?", "e_minh_finds_sword",
+     "Minh tìm thấy Thanh Sương trong rương ở quán trà và mang nó về."),
+], ids=["chuc-danh-kem-ten", "tra-loi-mot-phan", "dieu-moi-nhat"])
+async def test_answer_about_an_entry_named_with_other_words_passes_the_unchanged_checks(
+    chapter, question, truth_id, answer
+):
+    """Code không nới: câu trả lời dẫn đúng mục có trong sổ tay và không lộ thì tới tay người chơi
+    kèm nguồn, như mọi câu trả lời khác."""
+    v = view(chapter)
+    fake = FakeLLM.scripted([reply(True, answer, [ref(v, truth_id)])])
+    out = await ask_full(question, chapter, fake)
+    assert out == NarratorAnswer(answer, (ref(v, truth_id),))
+
+
+async def test_linking_a_nickname_to_a_hidden_name_is_still_blocked():
+    """Đề cho nối cùng một thứ, nhưng nối biệt danh với tên thật chưa hé lộ vẫn bị bộ dò lộ chặn
+    (G2), dù model dẫn đúng mục."""
+    v = view(4)
+    fake = FakeLLM.scripted([reply(True, "Gã lái đò mặt sẹo chính là Lý Thất.",
+                                   [ref(v, "ly_that")])])
+    assert await ask("Gã lái đò mặt sẹo là ai?", 4, fake) == NOT_KNOWN
 
 
 # --- "Bạn chưa biết điều này." (design §6.6) ------------------------------------------------
