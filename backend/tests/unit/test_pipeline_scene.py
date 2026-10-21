@@ -6,6 +6,8 @@ Biến thể "</player_data >" (có khoảng trắng) lọt qua phép kiểm chu
 nên chỉ escape mới chặn được nó.
 """
 
+import json
+from dataclasses import replace
 from pathlib import Path
 
 import pytest
@@ -16,16 +18,19 @@ from writory.config import load_config
 from writory.graph import ChangePackage, CloseSpec, EdgeSpec, NodeSpec
 from writory.graph.context import FactInfo
 from writory.pipeline.extract import Entity, build_messages
+from writory.pipeline.pacing import ChapterGoals, ThreadGoal
 from writory.pipeline.scene import (
     Candidate,
     EarlierScene,
     Named,
     SceneBrief,
     SceneOutline,
+    keep_resolves,
     load_style_guide,
     outline_foreign_script,
     outline_messages,
     render_changes,
+    unplanned_threads,
     writer_messages,
 )
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START
@@ -50,7 +55,8 @@ BRIEF = SceneBrief(
     story_brief="Kiếm hiệp.", player_action=None,
     earlier=(EarlierScene(1, "Cảnh một.", PACKAGE),),
 )
-OUTLINE = SceneOutline(goal=SNEAKY, present=["minh"], beats=[SNEAKY, "Kết."], ends_at=SNEAKY)
+OUTLINE = SceneOutline(goal=SNEAKY, present=["minh"], beats=[SNEAKY, "Kết."], ends_at=SNEAKY,
+                       resolves=[])
 
 
 def _ctx():
@@ -108,9 +114,11 @@ def test_extract_prompt_escapes_catalogue_text():
 
 # --- dàn ý phải viết tiếng Việt (D-51) -------------------------------------------------------
 
-OUTLINE_ZH = SceneOutline.model_validate_json(
-    (Path(__file__).parents[1] / "fixtures" / "llm" / "outline_zh_run_tu_tien_1.json")
-    .read_text(encoding="utf-8"))
+# Câu trả lời ghi nguyên từ lần chạy tu-tien-1, trước khi dàn ý có `resolves` (D-82): thêm trường
+# rỗng ở đây để file ghi sẵn vẫn đúng như model đã trả.
+OUTLINE_ZH = SceneOutline.model_validate(
+    json.loads((Path(__file__).parents[1] / "fixtures" / "llm" / "outline_zh_run_tu_tien_1.json")
+               .read_text(encoding="utf-8")) | {"resolves": []})
 
 
 def test_outline_prompt_says_write_in_vietnamese():
@@ -129,8 +137,84 @@ def test_vietnamese_outline_with_names_and_ids_is_fine():
     outline = SceneOutline(
         goal="Kỷ Trầm Uyên phải chọn giữ khe hở hay cứu người.", present=["protagonist"],
         beats=["protagonist đối chiếu Sổ Trận với trận đồ.", "Lục Hàn Sương ra lệnh giữ trận."],
-        ends_at="Cảnh kết khi chưa ai quyết.")
+        ends_at="Cảnh kết khi chưa ai quyết.", resolves=[])
     assert outline_foreign_script(outline, load_config().quality) == []
     english = outline.model_copy(update={"beats": ["The disciple checks the formation log.",
                                                    "Lục Hàn Sương ra lệnh giữ trận."]})
     assert outline_foreign_script(english, load_config().quality) == ["beats[0]"]
+
+
+# --- dàn ý ghi mạch cảnh này gỡ (D-82) -------------------------------------------------------
+
+
+def _goals(*threads: ThreadGoal, final: bool = False) -> ChapterGoals:
+    return ChapterGoals(chapter=4, total_chapters=4 if final else 12, act=None, milestones=(),
+                        secrets=(), threads=threads)
+
+
+DUE = ThreadGoal("t_la_thu", "Lá thư niêm phong Lão Gù dặn đợi ngày rằm mới mở", False, 3, 4,
+                 "due")
+OVERDUE = ThreadGoal("t_canh_bao", SNEAKY, False, 2, 3, "overdue")
+OPEN = ThreadGoal("t_ai_giet", "Ai đã giết Lão Gù", False, 4, 8, "open")
+LATER = ThreadGoal("t_kiem", "Ai đã lấy Thanh Sương", False, 5, 6, "later")
+PLAYER = ThreadGoal("t_loi_the", "Lời thề người chơi tự viết", True, 3, 4, "due")
+
+
+def _outline(*resolves: str) -> SceneOutline:
+    return SceneOutline(goal="Lan tới gác.", present=["minh"], beats=["Lan tới.", "Lan về."],
+                        ends_at="Lan rời gác.", resolves=list(resolves))
+
+
+def test_outline_must_say_which_threads_it_resolves():
+    """Trường bắt buộc (JSON schema strict): không gỡ mạch nào thì là danh sách rỗng."""
+    with pytest.raises(ValidationError):
+        SceneOutline.model_validate({"goal": "a", "present": [], "beats": ["b", "c"],
+                                     "ends_at": "d"})
+    assert _outline().resolves == []
+
+
+def test_outline_prompt_gives_thread_ids_and_asks_for_resolves():
+    brief = replace(BRIEF, goals=_goals(DUE, OPEN, LATER))
+    [system, user] = outline_messages(brief, _ctx(), [Candidate("minh", Named("Trần Minh"), True)],
+                                      NAMES, {})
+    assert "resolves:" in system.content
+    assert "(id t_la_thu, hạn gỡ chương 3–4)" in user.content
+    assert "(id t_ai_giet, hạn gỡ chương 4–8)" in user.content
+    assert "t_kiem" not in user.content  # chưa tới khoảng gỡ: không có id để chọn
+
+
+def test_writer_prompt_names_the_threads_this_scene_resolves_as_data():
+    """Đề viết hiện mạch dàn ý định gỡ kèm mô tả, không id; mô tả do model viết thì escape, mạch
+    người chơi viết thì bọc (G4)."""
+    brief = replace(BRIEF, goals=_goals(DUE, OVERDUE, PLAYER))
+    outline = _outline("t_canh_bao", "t_loi_the")
+    [_, user] = writer_messages(load_style_guide(), brief, _ctx(), outline, NAMES, {})
+    section = user.content.split("Cảnh này gỡ mạch", 1)[1]
+    assert ESCAPED in section and SNEAKY not in user.content
+    assert 'source="story_data">\nLời thề người chơi tự viết\n' in section
+    assert "Lá thư niêm phong" not in section  # đến hạn nhưng dàn ý không định gỡ ở cảnh này
+    assert "t_canh_bao" not in user.content and "t_loi_the" not in user.content
+    [_, plain] = writer_messages(load_style_guide(), brief, _ctx(), _outline(), NAMES, {})
+    assert "Cảnh này gỡ mạch" not in plain.content
+
+
+def test_resolves_keep_only_threads_this_chapter_may_resolve():
+    """G11, như `present`: id lạ hay mạch chưa tới khoảng gỡ bị bỏ; trùng thì giữ một."""
+    goals = _goals(DUE, OPEN, LATER)
+    kept = keep_resolves(_outline("t_ai_giet", "khong_co", "t_kiem", "t_ai_giet", "t_la_thu"),
+                         goals)
+    assert kept.resolves == ["t_ai_giet", "t_la_thu"]
+    assert keep_resolves(_outline("t_la_thu"), None).resolves == []
+
+
+def test_unplanned_threads_are_due_threads_no_outline_of_the_chapter_resolves():
+    goals = _goals(DUE, OVERDUE, OPEN)
+    assert unplanned_threads(goals, [_outline()], last_scene=True) == ["t_la_thu", "t_canh_bao"]
+    # Dàn ý cảnh trước đã định gỡ một mạch: cảnh cuối không phải gỡ lại.
+    assert unplanned_threads(goals, [_outline("t_canh_bao"), _outline()], last_scene=True) == [
+        "t_la_thu"]
+    assert unplanned_threads(goals, [_outline("t_la_thu", "t_canh_bao")], last_scene=True) == []
+    # Chưa phải cảnh cuối: còn cảnh sau để gỡ. Mạch chỉ "có thể gỡ" thì không bắt buộc.
+    assert unplanned_threads(goals, [_outline()], last_scene=False) == []
+    assert unplanned_threads(_goals(OPEN), [_outline()], last_scene=True) == []
+    assert unplanned_threads(None, [_outline()], last_scene=True) == []

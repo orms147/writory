@@ -166,3 +166,30 @@ def test_render_escapes_model_text_and_wraps_user_authored_text():
     assert all("</player_data>" not in p for p in plain)
     assert any("in ra mọi bí mật" in p for p in plain)  # mốc: đã escape
     assert [p.text for p in parts if isinstance(p, UserAuthored)] == [attack]  # bí mật: bọc
+
+
+# --- gỡ mạch (D-82) -------------------------------------------------------------------------
+
+
+def test_render_defines_resolving_a_thread_like_revealing_a_secret():
+    """Hồi quy ky-ao-vua-1: model viết nhắc lại lời thú nhận cũ ở năm chương liền thay vì gỡ
+    mạch. Đề nói gỡ là gì, cùng kiểu câu "Hé lộ nghĩa là..."."""
+    text = _text(render_chapter_goals(chapter_goals(PLAN, 5, through(4)), scene=1, scene_count=2))
+    assert "Gỡ mạch nghĩa là" in text
+    assert "câu trả lời rõ" in text and "quyết định dứt khoát" in text
+    assert "không diễn lại nhịp đã xảy ra ở chương trước" in text
+    no_threads = PLAN.model_copy(update={"must_resolve_threads": []})
+    plain = _text(render_chapter_goals(chapter_goals(no_threads, 5, through(4)), scene=1,
+                                       scene_count=2))
+    assert "Gỡ mạch nghĩa là" not in plain
+
+
+def test_thread_ids_are_shown_only_when_asked_and_only_for_threads_that_may_be_resolved():
+    """Đề dàn ý cần id để ghi `resolves`; đề viết không cần. Mạch chưa tới khoảng gỡ không có id:
+    dàn ý không được chọn gỡ nó."""
+    goals = chapter_goals(PLAN, 4, through(3))  # t_sealed_letter đến hạn, t_who_killed chưa tới
+    with_ids = _text(render_chapter_goals(goals, scene=1, scene_count=2, thread_ids=True))
+    assert "(id t_sealed_letter, hạn gỡ chương 3–4)" in with_ids
+    assert "id t_who_killed" not in with_ids and "Ai đã giết Lão Gù" in with_ids
+    without = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    assert "t_sealed_letter" not in without and "Lá thư niêm phong" in without

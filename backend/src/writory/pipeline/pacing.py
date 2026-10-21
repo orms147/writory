@@ -7,7 +7,8 @@ RESOLVED_IN cho mạch), cùng định nghĩa người canh dùng để báo tr�
 phủ các cảnh trước của chương, nên một bí mật vừa lộ ở cảnh 1 không còn bị giục ở cảnh 2.
 
 G1: kết quả có chữ lớp truth (bí mật, mạch, mốc). Chỉ vào đề dàn ý và đề viết, hai vai được thấy
-truth (D-28). Không bao giờ vào đề tạo lựa chọn, người kể hay sự kiện cho người chơi.
+truth (D-28); riêng mạch phải gỡ và hạn gỡ cũng vào đề bộ trích, vai vốn thấy mọi nút (D-82).
+Không bao giờ vào đề tạo lựa chọn, người kể hay sự kiện cho người chơi.
 G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đi qua `escape_text`; chữ của nút
 `user_authored` bọc `UserAuthored`.
 """
@@ -156,10 +157,17 @@ def _data(text: str, user_authored: bool) -> str | UserAuthored:
     return UserAuthored(text, "story_data") if user_authored else escape_text(text)
 
 
-def render_chapter_goals(goals: ChapterGoals, *, scene: int,
-                         scene_count: int) -> list[str | UserAuthored]:
+def resolvable(goals: ChapterGoals) -> tuple[ThreadGoal, ...]:
+    """Mạch phải gỡ mà chương này được gỡ: đã tới khoảng gỡ (`open`, `due`, `overdue`). Dàn ý chỉ
+    được ghi các mạch này vào `resolves` (D-82)."""
+    return tuple(t for t in goals.threads if t.status != "later")
+
+
+def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
+                         thread_ids: bool = False) -> list[str | UserAuthored]:
     """Mục "Mục tiêu của chương" cho đề dàn ý và đề viết. Trả các phần để nối vào `user_message`;
-    không bao giờ đưa vào đề của vai phục vụ người chơi (G1)."""
+    không bao giờ đưa vào đề của vai phục vụ người chơi (G1). `thread_ids`: ghi id của mạch được
+    gỡ ở chương này, để dàn ý chép vào `resolves` (D-82); đề viết không cần."""
     parts: list[str | UserAuthored] = []
     buf: list[str] = []
 
@@ -209,8 +217,14 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int,
     if goals.threads:
         line("### Mạch phải gỡ trước khi kết truyện")
         for t in goals.threads:
-            line(f"- {_THREAD_TEXT[t.status]} (hạn gỡ {_window(t.from_chapter, t.to_chapter)}): ",
-                 _data(t.description, t.user_authored))
+            # Id giữ nguyên để dàn ý chép lại; ID_PATTERN không cho `<`, `&`.
+            ident = f"id {t.thread_id}, " if thread_ids and t.status != "later" else ""
+            line(f"- {_THREAD_TEXT[t.status]} ({ident}hạn gỡ "
+                 f"{_window(t.from_chapter, t.to_chapter)}): ", _data(t.description, t.user_authored))
+        line("Gỡ mạch nghĩa là trên trang có câu trả lời rõ cho câu hỏi chính của mạch, hoặc nhân "
+             "vật đưa ra quyết định dứt khoát mà mạch đòi, nói thẳng ra. Gỡ phải là một bước mới: "
+             "không diễn lại nhịp đã xảy ra ở chương trước (lời thú nhận, phát hiện cũ), không chỉ "
+             "nhắc lại điều người đọc đã biết.")
     last_scene = scene >= scene_count
     if goals.final:
         line("### Chương cuối")

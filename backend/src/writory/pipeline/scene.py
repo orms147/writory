@@ -10,6 +10,7 @@ chữ người chơi) chỉ vào vai user, bọc bằng `UserAuthored`. Mọi ch
 `escape_text`, nên không mở hay đóng được khối dữ liệu.
 
 Mục tiêu của chương theo bản kế hoạch (`pipeline.pacing`, D-49) vào cả đề dàn ý lẫn đề viết.
+Dàn ý ghi mạch cảnh này gỡ (`resolves`, D-82); đề viết hiện mô tả của các mạch đó.
 """
 
 import re
@@ -24,7 +25,7 @@ from writory.config import REPO_ROOT, QualityConfig
 from writory.graph import ChangePackage
 from writory.graph.context import WriterContext, render_writer_context
 from writory.llm.base import Message
-from writory.pipeline.pacing import ChapterGoals, render_chapter_goals
+from writory.pipeline.pacing import ChapterGoals, render_chapter_goals, resolvable
 from writory.quality import check_foreign_script
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -36,8 +37,9 @@ from writory.safety.wrap import (
 
 # outline-3, writer-3: thêm mục tiêu của chương theo bản kế hoạch (D-49).
 # outline-4, writer-4: thêm tóm tắt hai chương gần nhất (D-49).
-OUTLINE_PROMPT_VERSION = "outline-4"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-4"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-5, writer-5: định nghĩa "gỡ mạch"; dàn ý ghi `resolves`, đề viết hiện mạch cảnh gỡ (D-82).
+OUTLINE_PROMPT_VERSION = "outline-5"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-5"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -59,6 +61,7 @@ class SceneOutline(BaseModel):
     present: list[str]  # id nhân vật có mặt; pipeline lọc theo danh sách được đưa (G11)
     beats: list[str]
     ends_at: str
+    resolves: list[str]  # id mạch cảnh này gỡ; pipeline lọc theo mục tiêu của chương (G11, D-82)
 
     @model_validator(mode="after")
     def _filled(self) -> Self:
@@ -76,6 +79,25 @@ def outline_foreign_script(outline: SceneOutline, quality: QualityConfig) -> lis
     fields = [("goal", outline.goal), *((f"beats[{i}]", b) for i, b in enumerate(outline.beats)),
               ("ends_at", outline.ends_at)]
     return [name for name, text in fields if check_foreign_script(text, quality)]
+
+
+def keep_resolves(outline: SceneOutline, goals: ChapterGoals | None) -> SceneOutline:
+    """Chỉ giữ id mạch mà mục tiêu của chương cho gỡ ở chương này (`pacing.resolvable`), bỏ trùng,
+    như `present` (G11). Không có mục tiêu thì không mạch nào."""
+    allowed = {t.thread_id for t in resolvable(goals)} if goals is not None else set()
+    kept = list(dict.fromkeys(r for r in outline.resolves if r in allowed))
+    return outline if kept == outline.resolves else outline.model_copy(update={"resolves": kept})
+
+
+def unplanned_threads(goals: ChapterGoals | None, outlines: Sequence[SceneOutline], *,
+                      last_scene: bool) -> list[str]:
+    """Cảnh cuối của chương: id mạch ĐẾN HẠN hay QUÁ HẠN chưa gỡ mà không dàn ý nào của chương
+    (cảnh trước và cảnh này) ghi trong `resolves` (D-82). Cảnh chưa phải cuối thì còn cảnh sau."""
+    if goals is None or not last_scene:
+        return []
+    planned = {r for o in outlines for r in o.resolves}
+    return [t.thread_id for t in goals.threads
+            if t.status in ("due", "overdue") and t.thread_id not in planned]
 
 
 @dataclass(frozen=True)
@@ -233,12 +255,12 @@ def _earlier(out: _Lines, brief: SceneBrief, names: Mapping[str, Named],
             out.line(*line)
 
 
-def _goals(out: _Lines, brief: SceneBrief) -> None:
+def _goals(out: _Lines, brief: SceneBrief, *, thread_ids: bool = False) -> None:
     """Mục tiêu của chương (D-49). `render_chapter_goals` đã escape chữ của model và bọc chữ
     người chơi, nên các phần đi thẳng vào `line`, không escape lần nữa."""
     if brief.goals is not None:
         out.line(*render_chapter_goals(brief.goals, scene=brief.scene,
-                                       scene_count=brief.scene_count))
+                                       scene_count=brief.scene_count, thread_ids=thread_ids))
 
 
 OUTLINE_SYSTEM_PROMPT = """Bạn lập dàn ý cho MỘT cảnh của một truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính; truyện kể theo góc nhìn nhân vật chính. Bạn được biết sự thật của thế giới, kể cả bí mật, để dàn ý nhất quán; dàn ý không được làm lộ bí mật trước khoảng lộ.
@@ -254,7 +276,8 @@ Quy tắc:
 - goal: mục tiêu của cảnh, một câu.
 - present: id các nhân vật có mặt, chỉ lấy từ danh sách "Nhân vật có thể có mặt"; luôn có nhân vật chính.
 - beats: 3 đến 6 nhịp theo thứ tự, mỗi nhịp một câu: chuyện gì xảy ra, ai nói gì.
-- ends_at: cảnh kết ở đâu, một câu."""
+- ends_at: cảnh kết ở đâu, một câu.
+- resolves: id các mạch cảnh này gỡ trên trang, chỉ lấy id ghi trong mục "Mạch phải gỡ trước khi kết truyện". Mạch ĐẾN HẠN hay QUÁ HẠN mà các cảnh trước chưa gỡ thì cảnh cuối của chương phải gỡ, và phải có nhịp gỡ nó trong beats. Không gỡ mạch nào thì để []."""
 
 
 def outline_messages(
@@ -270,7 +293,7 @@ def outline_messages(
         # Id giữ nguyên để model chép lại vào `present`; ID_PATTERN không cho `<`, `&`.
         out.line(f"- {c.id} | ", _name(c.name), mark)
     _earlier(out, brief, names, edge_ends)
-    _goals(out, brief)
+    _goals(out, brief, thread_ids=True)
     return [system_message(OUTLINE_SYSTEM_PROMPT, DATA_NOTICE), user_message(*out.done())]
 
 
@@ -289,6 +312,13 @@ def writer_messages(
     for i, beat in enumerate(outline.beats, 1):
         out.line(f"{i}. {escape_text(beat)}")
     out.line(f"Kết cảnh: {escape_text(outline.ends_at)}")
+    by_id = {t.thread_id: t for t in brief.goals.threads} if brief.goals is not None else {}
+    resolved = [by_id[r] for r in outline.resolves if r in by_id]
+    if resolved:
+        out.line("Cảnh này gỡ mạch (trên trang phải có câu trả lời rõ hoặc quyết định dứt khoát, "
+                 "là một bước mới chứ không lặp lại nhịp cũ):")
+        for t in resolved:
+            out.line("- ", _name(Named(t.description, t.user_authored)))
     if rewrite is not None:
         out.line("## Bản viết trước bị trả lại", UserAuthored(rewrite.draft, "draft"))
         out.line("Lỗi cần sửa:")
