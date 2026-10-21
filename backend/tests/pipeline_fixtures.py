@@ -95,7 +95,10 @@ TRUTH_AT_4 = (
 _TRIAL = {
     "limits": {"cost_usd": {"per_scene": 1.0, "per_chapter": 2.0, "per_story": 10.0},
                "context": {"writer_max_neighbors": 10}},
-    "models": {"roles": {"outline": "test/outline", "choices": "test/choices"}},
+    "models": {"roles": {"outline": "test/outline", "choices": "test/choices"},
+               # giá để ước tính chi phí tối đa của lời gọi bằng key người chơi (D-64)
+               "prices": {"test/outline": {"in": 0.10, "out": 0.50},
+                          "test/choices": {"in": 0.10, "out": 0.50}}},
     "quality": {"repetition": {"ngram_words": 6, "max_repeats": 2},
                 "foreign_script": {"latin_run_min_words": 3},
                 # Văn cảnh thử lấy từ truyện mẫu, kể ngôi thứ ba (D-51: ngôi theo config).

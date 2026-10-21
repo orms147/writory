@@ -6,16 +6,21 @@ import asyncio
 import json
 import logging
 import os
+import socket
+import threading
 from collections.abc import Iterator
 from contextlib import contextmanager
+from dataclasses import replace
 
 import psycopg
+import uvicorn
 from cryptography.fernet import Fernet
 from pydantic import SecretStr
 
 from writory.config import Settings
 from writory.db import CostEntry
-from writory.llm.base import LLMClient
+from writory.llm.base import GenerationCost, LLMClient
+from writory.llm.ledger import PendingEstimate
 
 FAKE_KEY = "sk-or-v1-" + "5eed1e55" * 8  # dạng key OpenRouter, không phải key thật
 MASTER_KEY = Fernet.generate_key().decode()
@@ -63,6 +68,20 @@ class MemoryCostLedger:
 
     def setup_spent(self, setup_id: str) -> float:
         return self._setup_spent + sum(e.cost_usd or 0 for e, _, s, _ in self.rows if s == setup_id)
+
+    def pending_estimates(self, *, story_id: str | None = None, setup_id: str | None = None,
+                          limit: int) -> list[PendingEstimate]:
+        """Id dòng là vị trí trong `rows` (D-64)."""
+        return [PendingEstimate(i, e.generation_id) for i, (e, s, u, _) in enumerate(self.rows)
+                if e.estimated and e.generation_id is not None
+                and (s, u) == (story_id, setup_id)][:limit]
+
+    def settle_estimate(self, row_id: int, cost: GenerationCost) -> None:
+        entry, *where = self.rows[row_id]
+        if entry.estimated:
+            self.rows[row_id] = (replace(entry, cost_usd=cost.cost_usd, estimated=False,
+                                         prompt_tokens=cost.prompt_tokens,
+                                         completion_tokens=cost.completion_tokens), *where)
 
 
 class KeyedFactory:
@@ -112,6 +131,69 @@ def own_connections() -> Iterator[psycopg.Connection]:
         yield conn
     finally:
         conn.close()
+
+
+class CountedConnections:
+    """Như `own_connections`, và đếm số kết nối đã đóng. Kết nối đóng sau mọi dependency khác của
+    yêu cầu (kể cả nhả khoá của truyện), nên số đếm = số yêu cầu đã chạy xong hẳn phía máy chủ:
+    test chờ điều kiện này thay vì sleep."""
+
+    def __init__(self) -> None:
+        self._cond = threading.Condition()
+        self.closed = 0
+
+    def connection(self) -> Iterator[psycopg.Connection]:
+        try:
+            yield from own_connections()
+        finally:
+            with self._cond:
+                self.closed += 1
+                self._cond.notify_all()
+
+    def wait_closed(self, count: int, *, timeout: float) -> bool:
+        with self._cond:
+            return self._cond.wait_for(lambda: self.closed >= count, timeout=timeout)
+
+
+class _ReadyServer(uvicorn.Server):
+    def __init__(self, config: uvicorn.Config) -> None:
+        super().__init__(config)
+        self.ready = threading.Event()
+
+    async def startup(self, sockets=None) -> None:
+        try:
+            await super().startup(sockets=sockets)
+        finally:
+            self.ready.set()
+
+
+@contextmanager
+def live_server(app, *, timeout: float) -> Iterator[str]:
+    """Chạy `app` bằng uvicorn thật trong một thread, trên cổng do hệ điều hành chọn; trả URL gốc.
+    Chờ uvicorn khởi động xong bằng sự kiện, không sleep. `log_config=None`: không đổi cấu hình
+    logging của tiến trình test."""
+    sock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)
+    sock.bind(("127.0.0.1", 0))
+    host, port = sock.getsockname()
+    server = _ReadyServer(uvicorn.Config(app, log_config=None, lifespan="on",
+                                         timeout_graceful_shutdown=5))
+
+    def run() -> None:
+        try:
+            server.run(sockets=[sock])
+        finally:
+            server.ready.set()  # khởi động hỏng thì người chờ không treo
+
+    thread = threading.Thread(target=run, name="uvicorn-test", daemon=True)
+    thread.start()
+    try:
+        if not server.ready.wait(timeout) or not server.started:
+            raise RuntimeError("uvicorn không khởi động được")
+        yield f"http://{host}:{port}"
+    finally:
+        server.should_exit = True
+        thread.join(timeout)
+        sock.close()
 
 
 async def asgi_request(app, method: str, path: str, body: dict | None = None,

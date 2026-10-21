@@ -17,6 +17,7 @@ không tạo lựa chọn mà phát `story_finished` (D-50); chương sau đó b
 - Nhật ký lỗi còn lại sau lượt viết lại chỉ ghi loại lỗi (không ghi chữ: có thể chứa bí mật).
 """
 
+import asyncio
 import logging
 import traceback
 import unicodedata
@@ -801,6 +802,8 @@ _GRAPH = _build()
 
 # --- chạy ------------------------------------------------------------------------------------
 
+_END = object()  # dấu hết sự kiện, từ `_pump` tới `events()`
+
 
 class ChapterRun:
     """Một lần viết chương. `events()` phát sự kiện cho người chơi; sau đó `outcome` có kết quả
@@ -820,16 +823,85 @@ class ChapterRun:
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,
                            f"{guide}\n\n{narration_instruction(config.quality)}")
         self.outcome = ChapterOutcome()
+        self._task: asyncio.Task[None] | None = None
+        self._cancel_sent = False
 
     async def events(self) -> AsyncIterator[ChapterEvent]:
-        final: Mapping[str, Any] = {}
+        """Sự kiện của chương, theo thứ tự. Chỉ gọi một lần.
+
+        Đồ thị chạy trong task riêng (`_pump`), không trong task của người đọc. Người đọc bị huỷ
+        hay bỏ dở thì task đó nhận đúng một lần huỷ kiểu asyncio, nên LangGraph dọn được: huỷ node
+        đang chạy, kể cả lời gọi model đang chờ. FastAPI huỷ stream SSE bằng cancel scope của anyio
+        (huỷ lặp lại ở mọi lần chờ); huỷ kiểu đó thẳng vào LangGraph làm task dọn dẹp của nó bị huỷ
+        trước khi chạy và node chạy tiếp mồ côi (D-63). Nơi cần biết chắc đường đi đã dừng hẳn (ví
+        dụ trước khi nhả khoá của truyện) gọi `aclose()`."""
+        if self._task is not None:
+            raise RuntimeError("ChapterRun.events() chỉ chạy một lần")
+        queue: asyncio.Queue[Any] = asyncio.Queue(maxsize=1)  # đồ thị không chạy trước người đọc
+        task = self._task = asyncio.create_task(self._pump(queue), name="chapter-run")
         try:
-            async for chunk in _GRAPH.astream({"accepted": []}, context=self._deps,
-                                              stream_mode=["custom", "values"], version="v2"):
-                if chunk["type"] == "custom":
-                    yield chunk["data"]
-                elif chunk["type"] == "values":
-                    final = chunk["data"]
+            while True:
+                if task.done():
+                    while not queue.empty():
+                        event = queue.get_nowait()
+                        if event is _END:
+                            return
+                        yield event
+                    task.result()  # task dừng mà không có dấu kết thúc: nêu lỗi của nó
+                    return
+                getter = asyncio.ensure_future(queue.get())
+                try:
+                    await asyncio.wait((getter, task), return_when=asyncio.FIRST_COMPLETED)
+                finally:
+                    if not getter.done():
+                        getter.cancel()  # Queue.get bị huỷ không làm mất phần tử
+                if getter.done() and not getter.cancelled():
+                    event = getter.result()
+                    if event is _END:
+                        return
+                    yield event
+        finally:
+            self._cancel()  # đã xong thì không làm gì
+
+    async def aclose(self) -> None:
+        """Huỷ đường đi nếu còn chạy và chờ nó dừng hẳn: LangGraph đã huỷ xong node đang chạy, mọi
+        `finally` của lời gọi bị huỷ (kể cả nhật ký chi phí) đã chạy. Gọi lại, hay gọi khi đã xong:
+        không làm gì."""
+        task = self._task
+        if task is None or task.done():
+            return
+        self._cancel()
+        await asyncio.wait((task,))
+
+    def _cancel(self) -> None:
+        """Huỷ đúng một lần: lần huỷ thứ hai rơi vào lúc LangGraph đang dọn sẽ cắt ngang việc dọn."""
+        task = self._task
+        if task is not None and not task.done() and not self._cancel_sent:
+            self._cancel_sent = True
+            task.cancel()
+
+    async def _pump(self, queue: asyncio.Queue[Any]) -> None:
+        run = self._run()
+        try:
+            async for event in run:
+                await queue.put(event)
+            await queue.put(_END)
+        finally:
+            await run.aclose()  # `async for` không tự đóng generator khi bị huỷ giữa chừng
+
+    async def _run(self) -> AsyncIterator[ChapterEvent]:
+        final: Mapping[str, Any] = {}
+        stream = _GRAPH.astream({"accepted": []}, context=self._deps,
+                                stream_mode=["custom", "values"], version="v2")
+        try:
+            try:
+                async for chunk in stream:
+                    if chunk["type"] == "custom":
+                        yield chunk["data"]
+                    elif chunk["type"] == "values":
+                        final = chunk["data"]
+            finally:
+                await stream.aclose()  # bị đóng ở `yield`: LangGraph huỷ node đang chạy ngay đây
         except WritoryError as e:
             log.warning("viết chương dừng: %s", e)  # str() đã redact chi tiết
             self.outcome.error = e.code

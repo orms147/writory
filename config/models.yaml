@@ -33,3 +33,11 @@ writer_tiers:
     model: "openai/gpt-6-luna"
     eval_result: "evals/results/2026-10-20-quality-r2/"
     reasoning: none   # như bài D đã đo (D-43, chủ dự án duyệt 20/10/2026); null = mặc định của model
+
+# Giá (USD / 1 triệu token), chỉ để ước tính chi phí tối đa của lời gọi không có usage: bị huỷ,
+# đứt giữa chừng, thiếu usage.cost (D-64). Mọi model ở roles và writer_tiers phải có giá ở đây,
+# không thì lời gọi bằng key người chơi bị từ chối trước khi gửi. Chi phí thật lấy từ usage.cost
+# hoặc tra lại theo id generation. Nguồn: evals/scenarios/quality/models.yaml
+# (openrouter.ai/api/v1/models, 20/10/2026).
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}

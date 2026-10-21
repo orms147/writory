@@ -4,12 +4,14 @@ Nền: truyện mẫu đã commit tới chương 3; viết chương 4 thành 2 c
 một cảnh: dàn ý → viết → trích [→ viết lại → trích]; hết chương: tạo lựa chọn.
 """
 
+import asyncio
 import html
 import json
 import logging
 import re
 from pathlib import Path
 
+import anyio
 import pytest
 
 from tests.moderation_fixtures import ALLOW, moderation_reply
@@ -61,6 +63,7 @@ from writory.pipeline.chapter import (
 from writory.pipeline.choices import Choice, LieEffect, choice_effects
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import narration_instruction, normalize_dashes
+from writory.safety.moderate import ModerationOutput
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START
 
 STYLE = "HƯỚNG DẪN VĂN PHONG THỬ: viết văn tiếng Việt tự nhiên."
@@ -499,6 +502,63 @@ async def test_bad_outline_json_retries_once_then_errors(tmp_path):
     assert len(llm.calls) == 1 + load_config().limits.retries.extract_schema_retry
     assert not store.commits and not outcome.committed
     assert outcome.error == ErrorCode.RETRY_LIMIT_REACHED
+
+
+class HoldingLLM(ScriptedLLM):
+    """Lời gọi thứ `hold_at` (đếm từ 1) báo `held` rồi chờ mãi; bị huỷ thì ghi `cancelled`."""
+
+    def __init__(self, script, *, hold_at: int) -> None:
+        super().__init__(script)
+        self.hold_at = hold_at
+        self.held = asyncio.Event()
+        self.cancelled = False
+
+    async def chat(self, model, messages, *, response_schema=None, extra=None):
+        # Lời gọi kiểm duyệt (G9) có hàng đợi riêng, không đếm vào `hold_at`.
+        if response_schema is not ModerationOutput and len(self.calls) + 1 == self.hold_at:
+            self.held.set()
+            try:
+                await asyncio.Event().wait()
+            except asyncio.CancelledError:
+                self.cancelled = True
+                raise
+        return await super().chat(model, messages, response_schema=response_schema, extra=extra)
+
+
+async def test_reader_cancelled_by_anyio_does_not_orphan_the_model_call(tmp_path):
+    """Hồi quy D-63 (uvicorn thật, tests/graph/test_play_api.py): FastAPI huỷ stream SSE bằng cancel
+    scope của anyio khi người chơi ngắt kết nối. Huỷ kiểu đó lúc LangGraph đang chờ node làm node
+    mồ côi: task dọn dẹp của LangGraph (`AsyncPregelLoop.__aexit__`) bị huỷ trước khi chạy, nên lời
+    gọi model đang chờ chạy tiếp sau khi yêu cầu đã xong. Sau `aclose()`, lời gọi phải đã bị huỷ."""
+    config = make_config(tmp_path)
+    store = MemoryStore()
+    llm = HoldingLLM(full_script(), hold_at=4)  # 4: dàn ý cảnh 2
+    chapter_run = ChapterRun(request(), llm=llm, store=store, config=config, plan=PLAN,
+                             tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE)
+    seen = []
+
+    async def read() -> None:
+        async for event in chapter_run.events():
+            seen.append(event)
+
+    async with anyio.create_task_group() as tg:
+        tg.start_soon(read)
+        await asyncio.wait_for(llm.held.wait(), timeout=30)
+        tg.cancel_scope.cancel()
+    await asyncio.wait_for(chapter_run.aclose(), timeout=30)
+    assert llm.cancelled
+    assert "scene_ready" in kinds(seen) and not store.commits
+    await chapter_run.aclose()  # gọi lại: không làm gì
+
+
+async def test_aclose_after_a_full_run_is_a_no_op(tmp_path):
+    config = make_config(tmp_path)
+    chapter_run = ChapterRun(request(), llm=ScriptedLLM(full_script()), store=MemoryStore(),
+                             config=config, plan=PLAN,
+                             tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE)
+    events = [e async for e in chapter_run.events()]
+    await chapter_run.aclose()
+    assert kinds(events)[-1] == "choices_ready" and chapter_run.outcome.committed
 
 
 async def test_bad_outline_json_once_then_valid_continues(tmp_path):

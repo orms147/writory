@@ -22,8 +22,10 @@ from tests.api_fixtures import (
 from tests.moderation_fixtures import ALLOW
 from writory.api import create_app, deps
 from writory.api.errors import HTTP_STATUS
-from writory.db import StoryRecord
+from writory.db import CostEntry, StoryRecord
 from writory.errors import ErrorCode, WritoryError
+from writory.llm.base import GenerationCost
+from writory.llm.cost import CostEstimator
 from writory.llm.fake import FakeLLM
 from writory.pipeline.narrator import NarratorOutput
 from writory.safety.crypto import KeyCipher
@@ -259,3 +261,106 @@ def test_model_error_echoing_the_key_leaks_nothing():
     assert_no_key(resp.text)
     assert_no_key(logs.text)
     assert ledger.rows == []  # lời gọi lỗi không có usage để ghi
+
+
+
+# --- lời gọi không có usage: chi phí tối đa, tra lại theo id generation (G8, D-64) -------------
+
+
+def broken(detail: str = "ReadError") -> WritoryError:
+    """Mạng đứt sau khi gửi: lời gọi có thể đã bị tính tiền."""
+    return WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=detail)
+
+
+def test_every_player_call_is_sent_with_the_output_cap():
+    v = view(3)
+    fake = FakeLLM.scripted([ALLOW, reply(True, "Lão Gù chết sau miếu Bà.",
+                                          [ref(v, "e_gu_death")])], cost_usd=0.001)
+    app, store, _, _ = build(fake=fake)
+    store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
+    with TestClient(app) as client:
+        client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
+    cap = CFG.limits.llm_call.max_output_tokens
+    assert [e["max_tokens"] for e in fake.extras] == [cap, cap]
+
+
+@pytest.mark.parametrize("role", ["moderate", "narrator"])
+def test_broken_calls_are_logged_at_their_ceiling_and_count_toward_the_story_cap(role):
+    """Kiểm duyệt (G9) hay người kể: mỗi lần thử bị đứt mạng đều có thể đã bị tính tiền, nên mỗi
+    lần một dòng ước tính; trước D-64 các lần đó không có dòng nào và trần mỗi truyện bị hụt."""
+    tries = 1 + CFG.limits.retries.llm_transient
+    script = [broken()] * tries if role == "moderate" else [ALLOW, *[broken()] * tries]
+    fake = FakeLLM.scripted(script, cost_usd=0.001)
+    app, store, ledger, _ = build(fake=fake)
+    store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lan là ai?"})
+    assert resp.json()["code"] == "RETRY_LIMIT_REACHED"
+    estimated = [e for e, *_ in ledger.rows if e.estimated]
+    assert [e.role for e in estimated] == [role] * tries
+    assert all(e.cost_usd and e.cost_usd > 0 and e.generation_id is None for e in estimated)
+    assert ledger.story_spent("s1") == pytest.approx(
+        sum(e.cost_usd for e, *_ in ledger.rows))
+
+
+def test_http_error_before_generation_records_nothing():
+    fake = FakeLLM.scripted([WritoryError(ErrorCode.LLM_AUTH_FAILED, detail="HTTP 401")])
+    app, store, ledger, _ = build(fake=fake)
+    store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
+    with TestClient(app, raise_server_exceptions=False) as client:
+        client.post("/stories/s1/narrator", json={"question": "Lan là ai?"})
+    assert ledger.rows == []
+
+
+class LookupLLM(FakeLLM):
+    """Model giả tra được chi phí theo id generation, bằng client dựng từ key người chơi."""
+
+    def __init__(self, responses, *, costs: dict[str, GenerationCost | None]) -> None:
+        super().__init__(responses, cost_usd=0.001)
+        self.costs = costs
+        self.looked_up: list[str] = []
+
+    async def generation_cost(self, generation_id):
+        self.looked_up.append(generation_id)
+        return self.costs[generation_id]
+
+
+def test_estimates_with_a_generation_id_are_settled_before_the_next_call():
+    v = view(3)
+    actual = GenerationCost(cost_usd=0.0007, prompt_tokens=900, completion_tokens=300)
+    fake = LookupLLM([ALLOW, reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])],
+                     costs={"gen-done": actual, "gen-later": None})
+    ledger = MemoryCostLedger()
+    for gen_id in ("gen-done", "gen-later"):  # hai lời gọi bị huỷ ở yêu cầu trước
+        ledger.record(CostEntry("writer", "m", 0, 0, 0.0095, estimated=True,
+                                generation_id=gen_id), story_id="s1", chapter=3)
+    ledger.record(CostEntry("writer", "m", 0, 0, 0.0095, estimated=True), story_id="s1",
+                  chapter=3)  # không có id: giữ ước tính
+    app, store, _, factory = build(fake=fake, ledger=ledger)
+    store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
+    with TestClient(app) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
+    assert resp.status_code == 200
+    assert fake.looked_up == ["gen-done", "gen-later"] and factory.keys == [FAKE_KEY]
+    first, later, no_id = (e for e, *_ in ledger.rows[:3])
+    assert (first.estimated, first.cost_usd, first.prompt_tokens) == (False, 0.0007, 900)
+    assert (later.estimated, later.cost_usd) == (True, 0.0095)
+    assert (no_id.estimated, no_id.cost_usd) == (True, 0.0095)
+
+
+def test_price_missing_for_a_model_refuses_before_any_call():
+    fake = FakeLLM.scripted([ALLOW])
+    app, store, ledger, _ = build(fake=fake)
+    app.state.config = CFG.model_copy(update={"models": CFG.models.model_copy(
+        update={"prices": {}})})
+    store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lan là ai?"})
+    assert resp.json()["code"] == "CONFIG_LIMIT_NOT_SET"
+    assert fake.calls == [] and ledger.rows == []
+
+
+def test_estimator_matches_the_ceiling_logged():
+    """Số trong nhật ký đúng bằng chi phí tối đa của lời gọi đó (config thật)."""
+    est = CostEstimator.from_config(CFG)
+    assert est.max_output_tokens == CFG.limits.llm_call.max_output_tokens

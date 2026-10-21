@@ -11,6 +11,7 @@ key, nhật ký chi phí đều theo `owner_id`) đã có; tuần 5 chỉ cần 
 import asyncio
 import time
 from collections.abc import Callable, Iterator, Mapping
+from dataclasses import dataclass
 from typing import Annotated, Protocol
 
 import psycopg
@@ -29,8 +30,10 @@ from writory.db import (
     load_player_key,
     load_story_brief,
     load_story_plan,
+    pending_cost_estimates,
     record_cost,
     save_player_key,
+    settle_cost_estimate,
     setup_spent_usd,
     story_spent_usd,
     take_llm_call,
@@ -40,9 +43,9 @@ from writory.db import get_owned_story as db_get_owned_story
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerView
 from writory.guard.state import Neo4jState
-from writory.llm.base import LLMClient, Usage
-from writory.llm.cost import CostTracker, MeteredClient
-from writory.llm.ledger import RecordingClient
+from writory.llm.base import GenerationCost, LLMClient
+from writory.llm.cost import CostEstimator, CostTracker, MeteredClient
+from writory.llm.ledger import CallCost, PendingEstimate, RecordingClient, settle_estimates
 from writory.llm.openrouter import OpenRouterClient
 from writory.llm.ratelimit import CallQuota, RateLimitedClient
 from writory.pipeline.choices import ChoicesOutput
@@ -199,6 +202,10 @@ class CostLedger(Protocol):
                setup_id: str | None = None, chapter: int | None = None) -> None: ...
     def story_spent(self, story_id: str) -> float: ...
     def setup_spent(self, setup_id: str) -> float: ...
+    # Dòng ước tính có id generation, để tra lại chi phí thật (D-64).
+    def pending_estimates(self, *, story_id: str | None = None, setup_id: str | None = None,
+                          limit: int) -> list[PendingEstimate]: ...
+    def settle_estimate(self, row_id: int, cost: GenerationCost) -> None: ...
 
 
 class PostgresCostLedger:
@@ -216,6 +223,16 @@ class PostgresCostLedger:
 
     def setup_spent(self, setup_id: str) -> float:
         return setup_spent_usd(self._conn, setup_id)
+
+    def pending_estimates(self, *, story_id: str | None = None, setup_id: str | None = None,
+                          limit: int) -> list[PendingEstimate]:
+        return [PendingEstimate(row_id, gen_id) for row_id, gen_id in pending_cost_estimates(
+            self._conn, story_id=story_id, setup_id=setup_id, limit=limit)]
+
+    def settle_estimate(self, row_id: int, cost: GenerationCost) -> None:
+        settle_cost_estimate(self._conn, row_id, cost_usd=cost.cost_usd,
+                             prompt_tokens=cost.prompt_tokens,
+                             completion_tokens=cost.completion_tokens)
 
 
 def get_cost_ledger(conn: PgConn, owner: Owner) -> CostLedger:
@@ -292,20 +309,48 @@ def get_call_quota(conn: PgConn, owner: Owner, config: Config,
     return PostgresCallQuota(conn, owner, config.limits.rate_limit, clock)
 
 
+# Số dòng ước tính tra lại theo id mỗi nhóm lời gọi (D-64): đủ cho vài lời gọi bị huỷ của một
+# chương, không để một yêu cầu tốn hàng chục lượt tra.
+SETTLE_LOOKUPS_PER_OPEN = 5
+
+
+@dataclass(frozen=True)
+class _ScopedEstimates:
+    """Dòng ước tính của đúng một truyện hoặc một phiên khởi tạo (`ledger.EstimateBook`)."""
+
+    ledger: "CostLedger"
+    story_id: str | None
+    setup_id: str | None
+
+    def pending(self, limit: int) -> list[PendingEstimate]:
+        return self.ledger.pending_estimates(story_id=self.story_id, setup_id=self.setup_id,
+                                             limit=limit)
+
+    def settle(self, row_id: int, cost: GenerationCost) -> None:
+        self.ledger.settle_estimate(row_id, cost)
+
+
 class PlayerLLM:
     """Dựng client model cho một nhóm lời gọi, trả bằng key của người chơi; không bao giờ dùng key
     của chủ dự án. Key chỉ được đọc và giải mã khi thật sự cần gọi model, rồi chỉ đi vào client
     model (G7). Mọi lời gọi được ghi vào nhật ký chi phí, và trần mỗi truyện tính cả số đã tiêu.
-    Mọi lời gọi cũng xin một lượt tần suất của người chơi trước khi tới model (G8, D-56)."""
+    Mọi lời gọi cũng xin một lượt tần suất của người chơi trước khi tới model (G8, D-56).
+
+    D-64: mọi lời gọi gửi kèm `max_tokens` của `estimator`; lời gọi không có usage (bị huỷ, đứt,
+    thiếu usage.cost) ghi chi phí tối đa, đánh dấu ước tính. Trước lời gọi đầu của nhóm, các dòng
+    ước tính có id generation của cùng truyện (hay phiên) được tra lại bằng client của chính key
+    người chơi; lượt tra không phải lời gọi model nên không xin lượt tần suất."""
 
     def __init__(self, *, keys: KeyStore, cipher: KeyCipher, factory: LLMFactory,
-                 ledger: CostLedger, limits: CostLimits, quota: CallQuota) -> None:
+                 ledger: CostLedger, limits: CostLimits, quota: CallQuota,
+                 estimator: CostEstimator) -> None:
         self._keys = keys
         self._cipher = cipher
         self._factory = factory
         self._ledger = ledger
         self._limits = limits
         self._quota = quota
+        self._estimator = estimator
 
     def open(self, *, story_id: str | None = None, setup_id: str | None = None,
              chapter: int | None = None) -> tuple[LLMClient, CostTracker]:
@@ -316,19 +361,28 @@ class PlayerLLM:
         token = self._keys.load()
         if token is None:
             raise WritoryError(ErrorCode.PLAYER_KEY_MISSING, detail="người chơi chưa lưu key")
-        inner = RateLimitedClient(self._factory(self._cipher.decrypt(token)), self._quota)
+        raw = self._factory(self._cipher.decrypt(token))
+        inner = RateLimitedClient(raw, self._quota)
 
-        def sink(role: str, model: str, usage: Usage) -> None:
+        def sink(cost: CallCost) -> None:
             self._ledger.record(
-                CostEntry(role, model, usage.prompt_tokens, usage.completion_tokens,
-                          usage.cost_usd),
+                CostEntry(cost.role, cost.model, cost.prompt_tokens, cost.completion_tokens,
+                          cost.cost_usd, estimated=cost.estimated,
+                          generation_id=cost.generation_id),
                 story_id=story_id, setup_id=setup_id, chapter=chapter,
             )
+
+        book = _ScopedEstimates(self._ledger, story_id, setup_id)
+
+        async def settle() -> None:
+            await settle_estimates(book, raw.generation_cost, limit=SETTLE_LOOKUPS_PER_OPEN)
 
         spent = (self._ledger.story_spent(story_id) if story_id is not None
                  else self._ledger.setup_spent(setup_id))
         tracker = CostTracker(self._limits, story_spent_usd=spent)
-        return RecordingClient(inner, sink, role_of=role_of_schema), tracker
+        client = RecordingClient(inner, sink, role_of=role_of_schema, estimator=self._estimator,
+                                 settle=settle)
+        return client, tracker
 
     def metered(self, **kw) -> MeteredClient:
         llm, tracker = self.open(**kw)
@@ -341,7 +395,8 @@ def get_player_llm(
     quota: Annotated[CallQuota, Depends(get_call_quota)],
 ) -> PlayerLLM:
     return PlayerLLM(keys=keys, cipher=cipher, factory=factory, ledger=ledger,
-                     limits=config.limits.cost_usd, quota=quota)
+                     limits=config.limits.cost_usd, quota=quota,
+                     estimator=CostEstimator.from_config(config))
 
 
 PlayerLLMs = Annotated[PlayerLLM, Depends(get_player_llm)]

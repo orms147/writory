@@ -33,7 +33,14 @@ from writory.db.choices import (
     save_choices,
 )
 from writory.db.connection import connect
-from writory.db.costs import CostEntry, record_cost, setup_spent_usd, story_spent_usd
+from writory.db.costs import (
+    CostEntry,
+    pending_cost_estimates,
+    record_cost,
+    settle_cost_estimate,
+    setup_spent_usd,
+    story_spent_usd,
+)
 from writory.db.keys import delete_player_key, load_player_key, save_player_key
 from writory.db.locks import StoryBusyError, job_lock
 from writory.db.migrate import migrate
@@ -106,6 +113,7 @@ __all__ = [
     "load_story_brief",
     "load_story_plan",
     "migrate",
+    "pending_cost_estimates",
     "reconcile_pending",
     "record_cost",
     "save_action",
@@ -115,6 +123,7 @@ __all__ = [
     "save_setup_options",
     "save_story_plan",
     "set_story_brief",
+    "settle_cost_estimate",
     "setup_spent_usd",
     "start_story",
     "story_spent_usd",

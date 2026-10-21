@@ -120,6 +120,16 @@ class ContextLimits(_Section):
     summary_max_chars: PositiveInt | None = None  # độ dài tối đa của tóm tắt chương (D-49)
 
 
+class LLMCallLimits(_Section):
+    """Mọi lời gọi model trả bằng key người chơi (D-64): `max_output_tokens` được gửi làm
+    `max_tokens` (gồm token suy luận), nên cũng là chặn trên của chi phí ước tính khi lời gọi không
+    có usage (huỷ, đứt, thiếu usage.cost)."""
+
+    _path = "llm_call"
+    _file = "limits.yaml"
+    max_output_tokens: PositiveInt | None = None
+
+
 class LimitsConfig(_Strict):
     cost_usd: CostLimits
     retries: RetryLimits
@@ -127,6 +137,7 @@ class LimitsConfig(_Strict):
     input: InputLimits
     narrator_notebook: NarratorNotebookLimits
     context: ContextLimits
+    llm_call: LLMCallLimits = LLMCallLimits()
 
 
 # --- models.yaml -----------------------------------------------------------------------
@@ -172,10 +183,21 @@ class WriterTier(_Strict):
     reasoning: ReasoningEffort | None = None
 
 
+class ModelPrice(_Strict):
+    """USD / 1 triệu token. Chỉ để ước tính chi phí tối đa của lời gọi không có usage (D-64);
+    chi phí thật luôn lấy từ `usage.cost` hoặc tra lại theo id generation."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+    input: NonNegativeFloat = Field(alias="in")
+    output: NonNegativeFloat = Field(alias="out")
+
+
 class ModelsConfig(_Strict):
     roles: RoleModels
     role_reasoning: RoleReasoning = RoleReasoning()
     writer_tiers: list[WriterTier]
+    # Model nào không có giá thì lời gọi bằng key người chơi bị từ chối trước khi gửi (D-64).
+    prices: dict[str, ModelPrice] = Field(default_factory=dict)
 
 
 # --- story_lengths.yaml ----------------------------------------------------------------

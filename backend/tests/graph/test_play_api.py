@@ -4,12 +4,16 @@ Trên Postgres + Neo4j thật: truyện mẫu đã commit tới chương 3, có 
 truyện và key người chơi dev. Model là `ScriptedLLM` (đúng kịch bản của test pipeline) qua nhà máy
 client. G1: sự kiện và phản hồi không có id nút hay chữ bí mật. G4, G5: chữ tự viết qua phân loại,
 vào đề chỉ trong khối dữ liệu. G11: ngắt kết nối hay lỗi giữa chừng thì không ghi gì.
+Mục cuối chạy app bằng uvicorn thật, đọc SSE qua TCP bằng httpx (D-63).
 """
 
 import asyncio
 import json
+import threading
 from collections import deque
 
+import fastapi.routing
+import httpx
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
@@ -17,9 +21,11 @@ from pydantic import SecretStr
 from tests.api_fixtures import (
     FAKE_KEY,
     AllowAllQuota,
+    CountedConnections,
     KeyedFactory,
     asgi_request,
     dev_settings,
+    live_server,
     own_connections,
 )
 from tests.pipeline_fixtures import (
@@ -54,10 +60,14 @@ from writory.db import (
     save_action,
     save_choices,
     save_player_key,
+    story_spent_usd,
 )
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import story_snapshot
+from writory.llm.base import GenerationCost, current_trace
+from writory.llm.cost import CostEstimator
 from writory.pipeline.choices import Choice, LieEffect
+from writory.pipeline.scene import SceneOutline
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.moderate import ModerationOutput
 from writory.safety.wrap import CLOSE_TAG
@@ -382,9 +392,11 @@ async def test_disconnect_mid_chapter_cancels_and_writes_nothing(pg, driver, sto
     assert story_snapshot(driver, sid) == before
     assert load_choices(pg, sid, 4) == []
     # Chi phí của các lời gọi đã chạy vẫn được ghi (G8), dù chương không ghi.
-    roles = [r for (r,) in pg.execute("SELECT role FROM llm_costs WHERE story_id = %s "
-                                      "ORDER BY id", (sid,)).fetchall()]
-    assert roles == ["outline", "writer", "extract", "moderate"]
+    # Lời gọi 4 nếu đã bắt đầu thì bị huỷ và có dòng ước tính (D-64); huỷ ở đâu tuỳ lịch chạy.
+    rows = [(r, est) for r, est, _, _ in cost_rows(pg, sid)]
+    assert rows[:4] == [("outline", False), ("writer", False), ("extract", False),
+                        ("moderate", False)]
+    assert rows[4:] in ([], [("outline", True)])
 
     # Khoá của truyện đã nhả khi ngắt kết nối: viết lại được ngay, và lần này chạy trọn.
     llm.hang_at, llm._script = None, deque(full_script())
@@ -745,3 +757,194 @@ def test_chapter_stops_with_an_error_event_when_the_limit_is_hit_midway(
         again = sse(write_next(client, sid).text)
         assert dict(again)["error"]["code"] == "WRITORY_RATE_LIMITED"
     assert current_chapter(pg, sid) == 3
+
+
+# --- SSE qua uvicorn thật (D-46, D-63) ----------------------------------------------------------
+# App chạy bằng uvicorn trong một thread (cổng do hệ điều hành chọn); test đọc stream qua TCP bằng
+# httpx. Model giả chạy trong event loop của máy chủ, nên mọi lần chờ dùng threading.Event hay
+# Condition, trần rộng (chỉ chạm khi test đã hỏng), không sleep.
+
+WAIT_S = 30.0
+
+
+class LoopGate:
+    """Cổng mở được từ thread khác: lời gọi model giả (trong event loop của máy chủ) chờ ở đây."""
+
+    def __init__(self) -> None:
+        self._lock = threading.Lock()
+        self._open = False
+        self._waiters: list[tuple[asyncio.AbstractEventLoop, asyncio.Event]] = []
+
+    def open(self) -> None:
+        with self._lock:
+            self._open = True
+            waiters, self._waiters = self._waiters, []
+        for loop, event in waiters:
+            loop.call_soon_threadsafe(event.set)
+
+    async def wait(self) -> None:
+        event = asyncio.Event()
+        with self._lock:
+            if self._open:
+                return
+            self._waiters.append((asyncio.get_running_loop(), event))
+        await event.wait()
+
+
+HELD_GENERATION = "gen-1761000000-held"
+HELD_ACTUAL = GenerationCost(cost_usd=0.00123, prompt_tokens=1500, completion_tokens=700)
+
+
+class ServerSideLLM(ScriptedLLM):
+    """ScriptedLLM cho máy chủ chạy ở thread khác. Lời gọi thứ `hold_at` (đếm từ 1) báo như client
+    OpenRouter là đã gửi và có id generation (D-64), báo `held`, rồi chờ `gate`; bị huỷ trong lúc
+    chờ thì báo `cancelled`. Tra chi phí theo id: số thật của lời gọi đó."""
+
+    def __init__(self, script, *, hold_at: int | None = None, cost_usd: float = 0.001) -> None:
+        super().__init__(script, cost_usd=cost_usd)
+        self.hold_at = hold_at
+        self.gate = LoopGate()
+        self.held = threading.Event()
+        self.cancelled = threading.Event()
+        self.looked_up: list[str] = []
+
+    async def chat(self, model, messages, *, response_schema=None, extra=None):
+        # Lời gọi kiểm duyệt (G9) có hàng đợi riêng, không đếm vào `hold_at`.
+        if (self.hold_at is not None and response_schema is not ModerationOutput
+                and len(self.calls) + 1 == self.hold_at):
+            self.hold_at = None
+            trace = current_trace()
+            trace.sent, trace.generation_id = True, HELD_GENERATION
+            self.held_messages = list(messages)
+            self.held.set()
+            try:
+                await self.gate.wait()
+            except asyncio.CancelledError:
+                self.cancelled.set()
+                raise
+        return await super().chat(model, messages, response_schema=response_schema, extra=extra)
+
+    async def generation_cost(self, generation_id):
+        self.looked_up.append(generation_id)
+        return HELD_ACTUAL if generation_id == HELD_GENERATION else None
+
+
+def live_app(pg, driver, llm, tmp_path) -> tuple[object, CountedConnections]:
+    app = make_app(pg, driver, llm, tmp_path, own_conns=True)
+    conns = CountedConnections()
+    app.dependency_overrides[deps.get_pg_conn] = conns.connection
+    return app, conns
+
+
+def stream_lines(client: httpx.Client, path: str) -> tuple[httpx.Response, list[str]]:
+    with client.stream("POST", path) as resp:
+        return resp, list(resp.iter_lines())
+
+
+def test_uvicorn_streams_every_event_of_a_chapter(pg, driver, story, tmp_path):
+    sid = story()
+    llm = ServerSideLLM(full_script())
+    app, _ = live_app(pg, driver, llm, tmp_path)
+    with live_server(app, timeout=WAIT_S) as base, httpx.Client(base_url=base,
+                                                                timeout=WAIT_S) as client:
+        resp, lines = stream_lines(client, f"/stories/{sid}/chapters/next")
+    assert resp.status_code == 200
+    assert resp.headers["content-type"].startswith("text/event-stream")
+    assert resp.headers["cache-control"] == "no-cache"
+    assert resp.headers["x-accel-buffering"] == "no"
+    body = "\n".join(lines)
+    events = sse(body)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    stages = [(d["stage"], d["scene"]) for name, d in events if name == "stage"]
+    assert stages[0][0] == "context" and ("commit", None) in stages
+    assert current_chapter(pg, sid) == 4
+    [(_, ready)] = [e for e in events if e[0] == "choices_ready"]
+    assert [c["id"] for c in ready["choices"]] == [c["id"] for c in load_choices(pg, sid, 4)]
+    assert_no_truth(body)
+
+
+def cost_rows(pg, sid):
+    return pg.execute("SELECT role, estimated, generation_id, cost_usd FROM llm_costs "
+                      "WHERE story_id = %s ORDER BY id", (sid,)).fetchall()
+
+
+def test_uvicorn_disconnect_mid_chapter_cancels_writes_nothing_and_frees_the_lock(
+        pg, driver, story, tmp_path):
+    """Người chơi đóng kết nối khi máy chủ đang chờ model (lời gọi 4: dàn ý cảnh 2). uvicorn báo
+    `http.disconnect` ngay khi socket đóng, Starlette huỷ stream, FastAPI huỷ task chạy chương:
+    lời gọi đang chờ bị huỷ chứ không chạy tiếp tới lần gửi sự kiện sau (D-63). Hồi quy D-63:
+    trước khi sửa, lời gọi đó chạy tiếp mồ côi sau khi yêu cầu đã xong và khoá đã nhả.
+    Lời gọi bị huỷ có dòng chi phí tối đa, đánh dấu ước tính, ghi trước khi kết nối Postgres của
+    yêu cầu đóng; lần viết sau tra lại theo id generation và thay bằng số thật (D-64)."""
+    sid = story()
+    before = story_snapshot(driver, sid)
+    llm = ServerSideLLM(full_script(), hold_at=4)
+    app, conns = live_app(pg, driver, llm, tmp_path)
+    path = f"/stories/{sid}/chapters/next"
+    with live_server(app, timeout=WAIT_S) as base:
+        with httpx.Client(base_url=base, timeout=WAIT_S) as client, \
+                client.stream("POST", path) as resp:
+            assert resp.status_code == 200
+            # Giữ tham chiếu tới iterator: iterator của httpx bị thu dọn là đóng kết nối ngay.
+            lines = resp.iter_lines()
+            for line in lines:
+                if line == "event: scene_ready":
+                    break  # cảnh 1 tới tay người chơi trong khi chương còn đang viết
+            assert llm.held.wait(WAIT_S)  # máy chủ đang trong lời gọi 4
+            assert not llm.cancelled.is_set()
+        # Ra khỏi hai khối trên: httpx đóng kết nối giữa stream.
+        assert llm.cancelled.wait(WAIT_S)
+        assert conns.wait_closed(1, timeout=WAIT_S)  # yêu cầu đã chạy xong mọi dependency
+
+        assert len(llm.calls) == 3
+        assert current_chapter(pg, sid) == 3
+        assert [r.number for r in chapter_records(pg, sid)] == [0, 1, 2, 3]
+        assert story_snapshot(driver, sid) == before
+        assert load_choices(pg, sid, 4) == []
+        rows = cost_rows(pg, sid)
+        assert [(r, est) for r, est, _, _ in rows] == [
+            ("outline", False), ("writer", False), ("extract", False), ("moderate", False),
+            ("outline", True)]
+        ceiling = CostEstimator.from_config(app.state.config).max_cost(
+            app.state.config.models.roles.outline, llm.held_messages, SceneOutline)
+        *_, gen_id, cost = rows[-1]
+        assert gen_id == HELD_GENERATION and float(cost) == pytest.approx(ceiling)
+        assert story_spent_usd(pg, sid) == pytest.approx(sum(float(c) for *_, c in rows))
+
+        # Khoá của truyện đã nhả: gọi lại được ngay (không STORY_BUSY) và lần này chạy trọn.
+        llm._script = deque(full_script())
+        with httpx.Client(base_url=base, timeout=WAIT_S) as client:
+            resp, lines = stream_lines(client, path)
+    assert resp.status_code == 200
+    assert kinds(sse("\n".join(lines)))[-2:] == ["chapter_committed", "choices_ready"]
+    assert current_chapter(pg, sid) == 4
+    # Lời gọi đầu của lần viết sau tra lại dòng ước tính bằng client của chính key người chơi.
+    assert llm.looked_up == [HELD_GENERATION]
+    settled = cost_rows(pg, sid)[4]
+    assert settled[:3] == ("outline", False, HELD_GENERATION)
+    assert float(settled[3]) == pytest.approx(HELD_ACTUAL.cost_usd)
+
+
+def test_uvicorn_sends_ping_while_the_model_is_slow(pg, driver, story, tmp_path, monkeypatch):
+    """Chu kỳ ping của FastAPI là `_PING_INTERVAL` (15 giây), đọc lúc chạy trong `fastapi.routing`
+    (không phải `fastapi.sse`, nơi nó được khai): rút ngắn ở đó. Lời gọi model đầu chờ tới khi
+    người đọc thấy `: ping` sau khi lời gọi đã bắt đầu, nên không phụ thuộc tốc độ máy."""
+    monkeypatch.setattr(fastapi.routing, "_PING_INTERVAL", 0.05)
+    sid = story()
+    llm = ServerSideLLM(full_script(), hold_at=1)
+    app, _ = live_app(pg, driver, llm, tmp_path)
+    lines: list[str] = []
+    pinged_while_held = False
+    path = f"/stories/{sid}/chapters/next"
+    with live_server(app, timeout=WAIT_S) as base, \
+            httpx.Client(base_url=base, timeout=WAIT_S) as client, \
+            client.stream("POST", path) as resp:
+        for line in resp.iter_lines():
+            lines.append(line)
+            if line == ": ping" and llm.held.is_set() and not pinged_while_held:
+                pinged_while_held = True
+                llm.gate.open()
+    assert pinged_while_held
+    assert kinds(sse("\n".join(lines))) == ["scene_ready", "scene_ready", "chapter_committed",
+                                            "choices_ready"]
+    assert current_chapter(pg, sid) == 4

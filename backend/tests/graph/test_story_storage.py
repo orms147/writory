@@ -26,11 +26,13 @@ from writory.db import (
     load_player_key,
     load_story_brief,
     load_story_plan,
+    pending_cost_estimates,
     record_cost,
     save_action,
     save_choices,
     save_player_key,
     save_setup_options,
+    settle_cost_estimate,
     setup_spent_usd,
     story_spent_usd,
 )
@@ -294,6 +296,55 @@ def test_story_spent_sums_known_costs_of_that_story_only(pg, new_db_story_id, se
 def test_cost_row_needs_a_story_or_a_setup(pg):
     with pytest.raises(ValueError):
         record_cost(pg, owner_id="dev", entry=CostEntry("writer", "m", 0, 0, 0.1))
+
+
+def test_estimated_cost_counts_toward_the_story_cap_until_settled(pg, new_db_story_id):
+    """D-64: lời gọi bị huỷ ghi chi phí tối đa, đánh dấu ước tính; trần mỗi truyện cộng cả nó.
+    Tra lại theo id generation thì thay bằng số thật. Dòng ước tính không có id thì giữ mãi."""
+    sid = new_db_story_id()
+    create_story(pg, sid, length_level="short", owner_id="dev")
+    for entry in (CostEntry("writer", "m", 10, 20, 0.001),
+                  CostEntry("outline", "m", 0, 0, 0.0095, estimated=True,
+                            generation_id="gen-aaa"),
+                  CostEntry("writer", "m", 0, 0, 0.0095, estimated=True),
+                  CostEntry("extract", "m", 0, 0, 0.0095, estimated=True,
+                            generation_id="gen-bbb")):
+        record_cost(pg, owner_id="dev", story_id=sid, chapter=4, entry=entry)
+    assert story_spent_usd(pg, sid) == pytest.approx(0.001 + 3 * 0.0095)
+    pending = pending_cost_estimates(pg, story_id=sid, limit=10)
+    assert [g for _, g in pending] == ["gen-aaa", "gen-bbb"]
+    assert pending_cost_estimates(pg, story_id=sid, limit=1) == pending[:1]
+
+    settle_cost_estimate(pg, pending[0][0], cost_usd=0.0007, prompt_tokens=900,
+                         completion_tokens=300)
+    settle_cost_estimate(pg, pending[0][0], cost_usd=0.5, prompt_tokens=1,
+                         completion_tokens=1)  # đã thay rồi: không đổi nữa
+    assert story_spent_usd(pg, sid) == pytest.approx(0.001 + 0.0007 + 2 * 0.0095)
+    assert [g for _, g in pending_cost_estimates(pg, story_id=sid, limit=10)] == ["gen-bbb"]
+    rows = pg.execute("SELECT role, estimated, generation_id, prompt_tokens, completion_tokens "
+                      "FROM llm_costs WHERE story_id = %s ORDER BY id", (sid,)).fetchall()
+    assert rows == [("writer", False, None, 10, 20), ("outline", False, "gen-aaa", 900, 300),
+                    ("writer", True, None, 0, 0), ("extract", True, "gen-bbb", 0, 0)]
+
+
+def test_estimated_row_needs_a_cost(pg, new_db_story_id):
+    sid = new_db_story_id()
+    create_story(pg, sid, length_level="short", owner_id="dev")
+    with pytest.raises(psycopg.errors.CheckViolation):
+        record_cost(pg, owner_id="dev", story_id=sid, chapter=1,
+                    entry=CostEntry("writer", "m", 0, 0, None, estimated=True))
+
+
+def test_pending_estimates_of_a_setup_session(pg, setup_ids):
+    sid = setup_ids()
+    create_setup(pg, sid, owner_id="dev", choices=CHOICES)
+    record_cost(pg, owner_id="dev", setup_id=sid,
+                entry=CostEntry("setup", "m", 0, 0, 0.0095, estimated=True,
+                                generation_id="gen-setup"))
+    assert [g for _, g in pending_cost_estimates(pg, setup_id=sid, limit=5)] == ["gen-setup"]
+    assert setup_spent_usd(pg, sid) == pytest.approx(0.0095)
+    with pytest.raises(ValueError):
+        pending_cost_estimates(pg, limit=5)
 
 
 # --- lựa chọn và hành động ---------------------------------------------------------------------
