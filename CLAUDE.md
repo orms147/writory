@@ -96,6 +96,7 @@ Mỗi lỗi tìm được thêm thành **test hồi quy** trước khi sửa. B�
 - **Bộ đo** (`docs/eval.md`): lệnh riêng, có gọi model, có trần chi phí, không chạy trong CI mặc định.
 - **Không viết test phụ thuộc thời gian chạy hoặc tốc độ máy** (sleep, timeout sát). Dùng đồng hồ giả.
 - Lint: `uv run ruff check .`
+- **Frontend** (mỗi commit chạm `frontend/`): `cd frontend && npm test`, `npm run lint`, `npm run typecheck`, `npm run build`. Không mạng: API thay bằng máy chủ giả `src/mock/`. Giao diện chỉ cần test nhẹ (§4), nhưng mỗi luật hiển thị (không lộ bí mật, số từ config, key chỉ `last4`) có test.
 
 ## 7. Lệnh thường dùng
 ```bash
