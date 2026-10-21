@@ -661,13 +661,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Chấm bằng code: tập thực thể, có/không, chọn một, nhóm từ khoá; "Không biết" tính riêng; lượt lỗi hay thiếu tính chưa đúng; Wilson cho khoảng tin cậy. Không giám khảo LLM ở v1.
   - Khung kiểm: `FakeAnswerer` oracle chỉ đúng khi ngữ cảnh đủ chứng cứ; null; wrong.
 - **Hệ quả:** hệ đồ thị dùng đồ thị dựng tay nên đo **trần của phần đọc**; chất lượng bộ trích đo ở bài C, không ở đây. Hệ đồ thị thấy một ít lớp sự thật ngoài trang (người liên quan trong sự kiện, cạnh mở ở chương N chưa hé lộ); ghi nhận, vì trong sản phẩm người viết cũng thấy. Câu "quan hệ" chủ quan nhất (bạn hay yêu ở chương 2–3). Design §9 để `none` và `rag` cho bản 2: khung có sẵn, chạy cả năm hay chỉ ba do chủ dự án quyết (`--systems`). Chưa chạy thật; `bench_a plan` in chi phí ước tính.
-- **Người quyết:** Claude (nhánh bench-a-memory), chờ điều phối và chủ dự án duyệt · 21/10/2026
+- **Người quyết:** Claude (nhánh bench-a-memory), điều phối duyệt; đề và cách chấm: Chủ dự án duyệt 21/10/2026 (thêm: câu quan hệ theo chiều của Minh, `inference` báo riêng) · 21/10/2026
 
 ## D-73 · Hệ RAG của bài A dùng BM25, không dùng embedding
 - **Bối cảnh:** design §9 A ghi "RAG vector thường". Embedding qua OpenRouter cần chọn model và giá, thêm lời gọi và chi phí; truyện mẫu chỉ vài chục đoạn.
 - **Quyết định:** truy hồi bằng BM25 thuần Python (`bench_a_systems.Bm25Index`), không thêm phụ thuộc: đoạn văn gộp tới cỡ trong `run.yaml`; token là âm tiết (giữ dấu, bỏ vài từ chức năng) cộng cặp âm tiết liền nhau; lấy `top_k` đoạn của chương 1..N-1, sắp theo thứ tự truyện, cộng chương N nguyên văn. Tất định, không tốn tiền, không cần key.
 - **Hệ quả:** BM25 khớp từ chứ không khớp nghĩa, nên đây là bản RAG **yếu hơn** RAG vector thật; kết luận "đồ thị hơn RAG" chỉ đúng với RAG từ vựng. Chạy khô với oracle (`--dry-run`) cho biết miễn phí phần chứng cứ mà truy hồi tìm lại được, trước khi tốn tiền. Muốn đối thủ mạnh hơn thì thêm hệ thứ sáu dùng embedding (cần chủ dự án chọn model, giá, trần chi phí) thay vì sửa hệ này.
-- **Người quyết:** Claude (nhánh bench-a-memory), chờ điều phối và chủ dự án duyệt · 21/10/2026
+- **Người quyết:** Claude (nhánh bench-a-memory), điều phối duyệt; đề và cách chấm: Chủ dự án duyệt 21/10/2026 (thêm: câu quan hệ theo chiều của Minh, `inference` báo riêng) · 21/10/2026
 
 ## D-74 · Nhân vật chính có mục trong sổ tay từ chương 0 (thay một phần D-38)
 - **Bối cảnh:** bài E trên `tu-tien-1` (`evals/results/2026-10-21-narrator-tu-tien-1/`): "Tôi tên là gì?" luôn nhận "Bạn chưa biết điều này.". Đọc lại dữ liệu thấy hai nguyên nhân. (1) D-38 giữ `player_view` chương 0 rỗng và D-62 bỏ qua nhân vật chính khi tự hé lộ, nên tên chỉ vào sổ tay khi bộ trích tình cờ hé lộ (ở `tu-tien-1` có, từ chương 1). (2) Dù có mục, sổ tay không nói mục đó là người chơi nên model không nối "tôi" với nó.
