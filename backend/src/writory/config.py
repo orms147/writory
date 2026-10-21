@@ -5,11 +5,12 @@ hàm đó báo lỗi rõ ràng chứ không coi là vô hạn.
 """
 
 from pathlib import Path
-from typing import Literal, Self
+from typing import Annotated, Literal, Self
 
 import yaml
 from pydantic import (
     BaseModel,
+    BeforeValidator,
     ConfigDict,
     Field,
     NonNegativeFloat,
@@ -20,6 +21,8 @@ from pydantic import (
     model_validator,
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from writory.safety.categories import Category, Intensity, Level
 
 REPO_ROOT = Path(__file__).resolve().parents[3]
 REPO_CONFIG_DIR = REPO_ROOT / "config"
@@ -140,6 +143,7 @@ class RoleModels(_Section):
     classify: str | None
     setup: str | None
     summary: str | None = None  # tóm tắt chương vừa ghi (D-49)
+    moderate: str | None = None  # kiểm duyệt nội dung, G9 (D-57)
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
@@ -156,6 +160,7 @@ class RoleReasoning(_Strict):
     classify: ReasoningEffort | None = None
     setup: ReasoningEffort | None = None
     summary: ReasoningEffort | None = None
+    moderate: ReasoningEffort | None = None
 
 
 class WriterTier(_Strict):
@@ -263,6 +268,81 @@ class GuardConfig(_Strict):
     relationship: RelationshipGuard
 
 
+# --- moderation.yaml -------------------------------------------------------------------
+
+
+def _parse_intensity(value):
+    return Intensity.parse(value) if isinstance(value, str) else value
+
+
+IntensityName = Annotated[Intensity, BeforeValidator(_parse_intensity)]
+
+
+class CategoryRule(_Strict):
+    level: Level
+    description: str = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _filled(self) -> Self:
+        if not self.description.strip():
+            raise ValueError("description rỗng")
+        return self
+
+
+class DarknessLevel(_Strict):
+    label: str = Field(min_length=1)
+    ceilings: dict[Category, IntensityName]  # trần cho từng loại bị giới hạn theo mức u tối
+
+
+class ModerationConfig(_Strict):
+    """Danh mục kiểm duyệt (G9, D-57). Danh sách loại là cố định trong code (`safety.categories`);
+    config chọn mức xử lý, chữ mô tả (vào prompt) và trần mức u tối."""
+
+    draft: bool  # true = chờ chủ dự án duyệt
+    categories: dict[Category, CategoryRule]
+    intensity_scale: dict[IntensityName, str]  # chữ mô tả mild, strong, extreme (vào prompt)
+    darkness_cap: dict[Category, IntensityName]  # trần tuyệt đối, mọi mức u tối
+    darkness_levels: dict[str, DarknessLevel] = Field(min_length=1)
+    default_darkness_level: str  # dùng khi truyện chưa có mức u tối đọc được
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Self:
+        missing = sorted(c.value for c in set(Category) - set(self.categories))
+        if missing:
+            raise ValueError(f"categories thiếu loại: {missing}")
+        if self.categories[Category.SEXUAL_MINORS].level is not Level.HARD_BLOCK:
+            raise ValueError("categories.sexual_minors phải là hard_block (G9: config không hạ được)")
+        limited = {c for c, r in self.categories.items() if r.level is Level.DARKNESS_LIMITED}
+        if set(self.darkness_cap) != limited:
+            raise ValueError(
+                f"darkness_cap phải có đúng các loại darkness_limited: {sorted(c.value for c in limited)}"
+            )
+        wanted = {Intensity.MILD, Intensity.STRONG, Intensity.EXTREME}
+        if set(self.intensity_scale) != wanted:
+            raise ValueError("intensity_scale phải có đúng mild, strong, extreme")
+        for name, level in self.darkness_levels.items():
+            if set(level.ceilings) != limited:
+                raise ValueError(
+                    f"darkness_levels.{name}.ceilings phải có đúng các loại darkness_limited: "
+                    f"{sorted(c.value for c in limited)}"
+                )
+            for category, ceiling in level.ceilings.items():
+                if ceiling > self.darkness_cap[category]:
+                    raise ValueError(
+                        f"darkness_levels.{name}.ceilings.{category.value} vượt darkness_cap"
+                    )
+        if self.default_darkness_level not in self.darkness_levels:
+            raise ValueError("default_darkness_level không có trong darkness_levels")
+        return self
+
+    def ceiling(self, level: str | None) -> dict[Category, Intensity]:
+        """Trần theo từng loại cho một mức u tối; None là mức mặc định."""
+        name = self.default_darkness_level if level is None else level
+        if name not in self.darkness_levels:
+            raise ValueError(f"mức u tối {name!r} không có trong config/moderation.yaml")
+        return dict(self.darkness_levels[name].ceilings)
+
+
 # --- nạp -------------------------------------------------------------------------------
 
 
@@ -272,6 +352,7 @@ class AppConfig(_Strict):
     story_lengths: StoryLengthsConfig
     quality: QualityConfig
     guard: GuardConfig
+    moderation: ModerationConfig
 
 
 _FILES: dict[str, tuple[str, type[BaseModel]]] = {
@@ -280,6 +361,7 @@ _FILES: dict[str, tuple[str, type[BaseModel]]] = {
     "story_lengths": ("story_lengths.yaml", StoryLengthsConfig),
     "quality": ("quality.yaml", QualityConfig),
     "guard": ("guard.yaml", GuardConfig),
+    "moderation": ("moderation.yaml", ModerationConfig),
 }
 
 

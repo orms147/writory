@@ -47,6 +47,7 @@ class ErrorCode(StrEnum):
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
     STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
     CHOICES_LEAK_BLOCKED = "CHOICES_LEAK_BLOCKED"
+    INPUT_BLOCKED = "INPUT_BLOCKED"
     SETUP_NOT_FOUND = "SETUP_NOT_FOUND"
     SETUP_STEP_NOT_READY = "SETUP_STEP_NOT_READY"
     PLAYER_KEY_INVALID = "PLAYER_KEY_INVALID"
@@ -218,6 +219,12 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Bấm thử lại bước này. " + _REPORT,
     ),
     # Cùng lý do trung tính như SCENE_LEAK_BLOCKED (D-37). Chương đã ghi xong trước bước này.
+    # Kiểm duyệt đầu vào (G9, D-57). Một câu cho mọi loại: không nêu loại nội dung, không nhắc
+    # lại chữ.
+    ErrorCode.INPUT_BLOCKED: PlayerMessage(
+        "Nội dung bạn vừa nhập thuộc loại WriTory không hỗ trợ nên hệ thống không dùng nó.",
+        "Sửa lại nội dung rồi gửi lại.",
+    ),
     ErrorCode.CHOICES_LEAK_BLOCKED: PlayerMessage(
         "Các lựa chọn vừa tạo không qua được bước kiểm tra cuối nên hệ thống không hiện chúng. "
         "Chương bạn vừa đọc đã được lưu.",

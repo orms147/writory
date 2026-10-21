@@ -8,6 +8,9 @@ bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau
 - G1: phản hồi là `SetupOut` (danh sách trắng): không bản kế hoạch, bí mật hay id lớp truth.
 - G4: tag và phần sửa nhân vật là chữ người chơi; pipeline bọc chúng như dữ liệu.
 - G11: phiên chỉ đổi sau khi thao tác thành công. Chốt truyện tất cả hoặc không gì (`start_story`).
+- G9, D-57: tag tự gõ được kiểm duyệt ngay trước lần tạo bối cảnh đầu (lời gọi model đầu tiên của
+  phiên), và phần người chơi sửa của nhân vật chính được kiểm duyệt trước khi lưu. Bị chặn thì
+  không lưu và không gọi model nào khác.
 - Gọi model bằng key người chơi (`deps.PlayerLLM`), ghi nhật ký theo phiên rồi gắn vào truyện (G8).
 Chỉ mount khi bật cờ dev (D-41).
 """
@@ -49,6 +52,7 @@ from writory.pipeline.setup import (
     propose_settings,
     story_brief,
 )
+from writory.safety.moderate import ensure_input_allowed
 
 router = APIRouter(prefix="/setup", dependencies=[Depends(deps.dev_routes_only)])
 
@@ -57,6 +61,16 @@ _PREVIOUS: dict[SetupStep, SetupStep | None] = {
 # Trường sửa được của nhân vật chính → giới hạn trong config/limits.yaml `input`.
 _EDIT_LIMITS = {"name": "character_name_max_chars", "personality": "personality_max_chars",
                 "backstory": "backstory_max_chars"}
+
+
+def _tags_text(tags: StoryTags) -> str:
+    """Các tag người chơi đã chọn hoặc tự gõ, để kiểm duyệt."""
+    return "\n".join(t for t in (tags.genre, tags.era, tags.voice, tags.darkness) if t)
+
+
+def _edited_text(body: CharacterChoiceIn) -> str:
+    """Chỉ phần người chơi sửa (chữ gốc của lựa chọn do model tạo, không phải chữ người chơi)."""
+    return "\n".join(v for v in (body.name, body.personality, body.backstory) if v is not None)
 
 
 def _new_id(prefix: str) -> str:
@@ -112,6 +126,9 @@ async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: A
         raise SetupStepError(f"phiên {rec.id}: chưa tạo được lựa chọn bước {step}")
     choices = StoryChoices.model_validate(rec.choices)
     client = llm.metered(setup_id=rec.id)
+    if step == "settings":
+        # Lời gọi model đầu tiên của phiên: tag tự gõ qua kiểm duyệt trước (G9, D-57).
+        await ensure_input_allowed(_tags_text(choices.tags), llm=client, config=config)
 
     async def call():
         if step == "settings":
@@ -191,12 +208,16 @@ def _protagonist(option: dict, body: CharacterChoiceIn, limits: InputLimits) -> 
 
 
 @router.put("/{session_id}/characters", response_model=SetupOut)
-def choose_character(session_id: str, body: CharacterChoiceIn, conn: deps.PgConn,
-                     owner: deps.Owner, config: deps.Config) -> SetupOut:
+async def choose_character(session_id: str, body: CharacterChoiceIn, conn: deps.PgConn,
+                           owner: deps.Owner, config: deps.Config,
+                           llm: deps.PlayerLLMs) -> SetupOut:
     rec = get_setup(conn, session_id, owner_id=owner)
     if rec.characters is None or rec.story_id is not None or body.index >= len(rec.characters):
         raise SetupStepError(f"phiên {rec.id}: chưa chọn được nhân vật")
     pc = _protagonist(rec.characters[body.index], body, config.limits.input)
+    edited = _edited_text(body)
+    if edited.strip():  # không sửa gì thì không có chữ người chơi để kiểm, cũng không cần key
+        await ensure_input_allowed(edited, llm=llm.metered(setup_id=rec.id), config=config)
     return _choose("characters", session_id, body.index, conn, owner, protagonist=pc)
 
 

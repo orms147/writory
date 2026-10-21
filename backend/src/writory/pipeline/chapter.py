@@ -1,7 +1,8 @@
 """Đường đi một chương (design §6.2; D-1, D-6, D-8, D-36). Toàn bộ đồ thị LangGraph nằm ở đây.
 
 Mỗi cảnh: dựng ngữ cảnh và mục tiêu của chương (`pipeline.pacing`, D-49) → dàn ý → viết → soát
-(chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, người canh, dò lộ) → viết lại tối đa
+(chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, người canh, dò lộ, kiểm duyệt nội dung G9) →
+viết lại tối đa
 `limits.retries.rewrite_per_scene` lần → hiện. Bản viết lại có lỗi chặn mà bản trước không có thì
 hiện bản trước (D-50, bổ sung D-36). Hết cảnh cuối: gộp gói các cảnh → `store.commit` (D-6, tất cả
 hoặc không gì) → tóm tắt chương (`pipeline.summary`, D-49; lỗi không làm hỏng chương đã ghi) → tạo
@@ -22,7 +23,8 @@ import traceback
 import unicodedata
 import uuid
 from collections.abc import AsyncIterator, Mapping, Sequence
-from dataclasses import dataclass, field
+from dataclasses import dataclass, field, replace
+from functools import partial
 from typing import Any, Literal, TypedDict
 
 from langgraph.graph import END, START, StateGraph
@@ -74,6 +76,7 @@ from writory.quality import (
     normalize_dashes,
 )
 from writory.safety.leak import check_leaks, leak_names
+from writory.safety.moderate import Source, Verdict, moderate, rewrite_feedback
 from writory.safety.redact import redact
 
 log = logging.getLogger(__name__)
@@ -100,6 +103,8 @@ class ChapterRequest:
     story_brief: str
     player_action: str | None = None
     writer_tier: str | None = None  # id trong `models.writer_tiers`; None = mức đầu
+    # Mức u tối của truyện, khoá trong `moderation.darkness_levels`; None = mức mặc định (G9, D-57)
+    darkness_level: str | None = None
     commit_id: str | None = None  # None = tự sinh
     choice: Choice | None = None  # lựa chọn dẫn tới chương này; tác động của nó vào gói (D-55)
 
@@ -109,7 +114,7 @@ class ReviewIssue:
     """Một lỗi của bản viết. `feedback` đưa cho model viết lại (được thấy lớp truth): không bao giờ
     vào log hay tới người chơi."""
 
-    source: Literal["quality", "guard", "leak"]
+    source: Literal["quality", "guard", "leak", "moderation"]
     kind: str
     block: bool  # còn ở bản cuối thì không hiện cảnh (G2)
     feedback: str
@@ -279,7 +284,7 @@ def writer_tier(config: AppConfig, tier_id: str | None) -> WriterTier:
     raise ValueError(f"không có mức model viết {tier_id!r}")
 
 
-CHAPTER_ROLES = ("outline", "extract", "summary", "choices")
+CHAPTER_ROLES = ("outline", "extract", "summary", "choices", "moderate")
 
 
 def config_problems(config: AppConfig, tier_id: str | None = None) -> list[WritoryError]:
@@ -605,6 +610,19 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
                            "viết lại để không nói ra điều đó")
                for h in hits]
 
+    # 5. Kiểm duyệt nội dung trên đúng chữ sẽ hiện (G9, D-57). Mọi vi phạm đều ở mức chặn: vượt
+    # mức thì viết lại một lần, còn thì không hiện (bản sạch trước đó, nếu có, được hiện thay).
+    mod = await moderate(text, source=Source.SCENE, llm=d.llm, config=cfg,
+                         darkness_level=d.request.darkness_level)
+    if mod.verdict is not Verdict.ALLOW:
+        issues += [
+            ReviewIssue("moderation", category.value, True,
+                        rewrite_feedback(replace(mod, categories=(category,)),
+                                         config=cfg.moderation,
+                                         darkness_level=d.request.darkness_level))
+            for category in mod.categories
+        ]
+
     review = Review(text, package, tuple(issues), tuple(result.rejected))
     if result.rejected:
         log.info("chương %s cảnh %s lượt %s: bộ trích bỏ %s cạnh", chapter, scene, attempt,
@@ -708,6 +726,8 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
         last_scene_text=state["accepted"][-1].text,
         truth_names=leak_names(d.store.state()), plan=d.plan, story_brief=d.request.story_brief,
         retries=d.config.limits.retries, extra=role_extra(d.config.models, "choices"),
+        moderate=partial(moderate, source=Source.CHOICES, llm=d.llm, config=d.config,
+                         darkness_level=d.request.darkness_level),
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,
                                        choices=[c.for_player() for c in choices]))
@@ -774,6 +794,7 @@ class ChapterRun:
         if not allowed.min <= request.scene_count <= allowed.max:
             raise ValueError(f"scene_count={request.scene_count} ngoài khoảng "
                              f"{allowed.min}–{allowed.max} (story_lengths.yaml)")
+        config.moderation.ceiling(request.darkness_level)  # mức u tối lạ thì báo ngay (D-57)
         guide = style_guide if style_guide is not None else load_style_guide()
         # Câu ngôi kể lấy từ cùng config mà kiểm văn dùng để bắt lệch ngôi (D-51).
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,

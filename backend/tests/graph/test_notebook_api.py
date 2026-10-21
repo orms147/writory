@@ -7,6 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from tests.api_fixtures import MASTER_KEY
+from tests.moderation_fixtures import ModeratedLLM
 from tests.unit.test_narrator import CFG, PLAN, metered, reply
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
@@ -48,7 +49,7 @@ def _app(pg, driver, *, fake: FakeLLM | None = None):
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     app.dependency_overrides[deps.get_story_plan] = lambda: PLAN
     if fake is not None:
-        llm = metered(fake)
+        llm = metered(ModeratedLLM(fake))  # kiểm duyệt đầu vào (G9) mặc định cho qua
         app.dependency_overrides[deps.get_narrator_llm] = lambda: llm
     return app
 

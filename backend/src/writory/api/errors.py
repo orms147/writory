@@ -64,6 +64,7 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     # Khởi tạo truyện (D-39): kết quả của model không dùng được, giống LLM_BAD_RESPONSE.
     ErrorCode.STORY_SETUP_INVALID: 502,
     ErrorCode.CHOICES_LEAK_BLOCKED: 502,  # D-37: như SCENE_LEAK_BLOCKED
+    ErrorCode.INPUT_BLOCKED: 422,  # G9, D-57: chữ người chơi bị kiểm duyệt chặn
     # Phiên khởi tạo (D-44)
     ErrorCode.SETUP_NOT_FOUND: 404,
     ErrorCode.SETUP_STEP_NOT_READY: 409,

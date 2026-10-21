@@ -1,0 +1,73 @@
+# Kiểm duyệt nội dung (G9, docs/security.md; D-57).
+#
+# BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT: danh mục, mức xử lý, chữ mô tả và trần mức u tối bên dưới là đề xuất.
+# Danh sách loại là cố định trong code (`safety/categories.py`); file này chọn mức xử lý của từng loại,
+# chữ mô tả (đi vào prompt của bộ kiểm duyệt) và trần mức u tối.
+#
+# Mức xử lý:
+#   hard_block        chặn cứng ở đầu vào lẫn đầu ra, độc lập với mức u tối. `sexual_minors` bắt buộc
+#                     ở mức này: config không hạ được (kiểm lúc nạp).
+#   block             chặn. Đầu vào: trả lỗi. Đầu ra: viết lại một lần, còn vi phạm thì không hiện.
+#   darkness_limited  cho tới trần của mức u tối; chỉ kiểm ở đầu ra (cảnh, lựa chọn), vì hành động
+#                     người chơi viết là điều nhân vật làm trong truyện, còn mức miêu tả do model viết.
+draft: true
+
+categories:
+  sexual_minors:
+    level: hard_block
+    description: >-
+      Nội dung tình dục hay gợi dục liên quan tới người dưới 18 tuổi, hoặc nhân vật được mô tả như
+      trẻ em hay thiếu niên, kể cả khi viết bóng gió.
+  real_world_harm:
+    level: block
+    description: >-
+      Hướng dẫn cụ thể, làm theo được ngoài đời thật, để gây hại: chế tạo vũ khí, chất nổ hay ma tuý,
+      xâm nhập hệ thống, tự làm đau mình hay tự sát, lừa đảo. Không tính cảnh truyện có nhân vật làm
+      những việc đó mà không đưa công thức hay các bước dùng được.
+  incitement_real_group:
+    level: block
+    description: >-
+      Kích động bạo lực hoặc thù ghét nhắm vào một nhóm người có thật (theo dân tộc, tôn giáo, giới,
+      vùng miền, xu hướng tính dục, quốc tịch). Không tính xung đột giữa các phe do truyện bịa ra.
+  political_propaganda_real:
+    level: block
+    description: >-
+      Tuyên truyền chính trị, xuyên tạc hay bôi nhọ nhắm vào nhân vật hoặc tổ chức có thật (người
+      đương thời, đảng phái, chính quyền, cơ quan nhà nước có thật). Không tính chính trị của thế
+      giới bịa ra, và không tính nhân vật lịch sử đã khuất được kể theo lối tiểu thuyết lịch sử.
+  violence:
+    level: darkness_limited
+    description: Đánh nhau, giết chóc, chiến tranh trong truyện.
+  gore:
+    level: darkness_limited
+    description: Máu me, thương tích, xác chết, hành hạ cơ thể được miêu tả chi tiết.
+  adult_sexual:
+    level: darkness_limited
+    description: Cảnh tình dục giữa những người trưởng thành.
+
+# Thang mức độ miêu tả (cho các loại darkness_limited). Mức `none` là không có.
+intensity_scale:
+  mild: Nhắc tới hoặc ám chỉ, không miêu tả chi tiết ("hắn bị đánh ngã", "hai người ở lại với nhau").
+  strong: Miêu tả trực tiếp nhưng không kéo dài ("máu loang trên áo", "kiếm xuyên qua vai").
+  extreme: Miêu tả kéo dài, chi tiết, hoặc tàn bạo tự thân (tra tấn, xẻ thịt, cảnh tình dục cụ thể).
+
+# Trần tuyệt đối: không mức u tối nào vượt được.
+darkness_cap:
+  violence: strong
+  gore: strong
+  adult_sexual: mild
+
+# Mức u tối của truyện. Tag "mức u tối" hiện là chữ người chơi tự gõ (design §4.1); chưa có bước đổi
+# chữ đó thành một mức dưới đây, nên đường chơi dùng `default_darkness_level` (câu hỏi mở, D-57).
+darkness_levels:
+  light:
+    label: Nhẹ
+    ceilings: {violence: mild, gore: none, adult_sexual: none}
+  moderate:
+    label: Vừa
+    ceilings: {violence: strong, gore: mild, adult_sexual: mild}
+  dark:
+    label: Đậm
+    ceilings: {violence: strong, gore: strong, adult_sexual: mild}
+
+default_darkness_level: moderate

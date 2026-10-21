@@ -68,13 +68,19 @@ def _require(section, name: str):
         raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail=str(e)) from None
 
 
-async def classify_action(text: str, *, llm: LLMClient, config: AppConfig) -> Classification:
+def check_action_text(text: str, config: AppConfig) -> None:
+    """Chữ rỗng hoặc quá dài theo config thì báo lỗi riêng. Chạy trước mọi lời gọi model, kể cả
+    kiểm duyệt đầu vào (G9, D-57), để chữ quá dài không tốn một lời gọi nào."""
     max_chars = _require(config.limits.input, "custom_action_max_chars")
-    model = require_model(config.models.roles, "classify")
     if not text.strip():
         raise WritoryError(ErrorCode.ACTION_EMPTY)
     if len(text) > max_chars:
         raise WritoryError(ErrorCode.ACTION_TOO_LONG, detail=f"{len(text)} > {max_chars} ký tự")
+
+
+async def classify_action(text: str, *, llm: LLMClient, config: AppConfig) -> Classification:
+    check_action_text(text, config)
+    model = require_model(config.models.roles, "classify")
     messages = [
         system_message(SYSTEM_PROMPT, DATA_NOTICE),
         user_message("Phân loại đoạn chữ sau:", UserAuthored(text, "custom_action")),

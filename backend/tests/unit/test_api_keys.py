@@ -19,6 +19,7 @@ from tests.api_fixtures import (
     dev_settings,
     offline,
 )
+from tests.moderation_fixtures import ALLOW
 from writory.api import create_app, deps
 from writory.api.errors import HTTP_STATUS
 from writory.db import StoryRecord
@@ -26,6 +27,7 @@ from writory.errors import ErrorCode, WritoryError
 from writory.llm.fake import FakeLLM
 from writory.pipeline.narrator import NarratorOutput
 from writory.safety.crypto import KeyCipher
+from writory.safety.moderate import ModerationOutput
 
 from .test_narrator import CFG, PLAN, MemoryQuota, ref, reply, state, view
 
@@ -203,19 +205,22 @@ def test_key_routes_not_mounted_when_dev_flag_off():
 
 def test_narrator_uses_stored_player_key_and_records_cost():
     v = view(3)
-    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])],
-                            cost_usd=0.0012)
+    # Hai lời gọi, cùng key người chơi, cùng ghi nhật ký: kiểm duyệt đầu vào (G9, D-57), rồi người kể.
+    fake = FakeLLM.scripted(
+        [ALLOW, reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])], cost_usd=0.0012)
     app, store, ledger, factory = build(fake=fake)
     store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
     with TestClient(app) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
     assert resp.json() == {"answer": "Lão Gù chết sau miếu Bà."}
     assert factory.keys == [FAKE_KEY]  # key giải mã chỉ đi tới client model
-    [(entry, story_id, setup_id, chapter)] = ledger.rows
-    assert (entry.role, entry.model, entry.cost_usd) == (
+    [(moderated, *where), (answered, *_)] = ledger.rows
+    assert (moderated.role, moderated.model, moderated.cost_usd) == (
+        "moderate", CFG.models.roles.moderate, 0.0012)
+    assert (answered.role, answered.model, answered.cost_usd) == (
         "narrator", CFG.models.roles.narrator, 0.0012)
-    assert (story_id, setup_id, chapter) == ("s1", None, 3)
-    assert fake.schemas == [NarratorOutput]
+    assert tuple(where) == ("s1", None, 3)  # story_id, setup_id, chapter
+    assert fake.schemas == [ModerationOutput, NarratorOutput]
 
 
 def test_narrator_without_stored_key_fails_closed():

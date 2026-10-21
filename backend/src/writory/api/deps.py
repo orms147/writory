@@ -55,6 +55,7 @@ from writory.pipeline.summary import SummaryOutput
 from writory.safety.classify import Classification
 from writory.safety.crypto import KeyCipher
 from writory.safety.leak import leak_names
+from writory.safety.moderate import ModerationOutput
 
 # TODO(G10, tuần 5): bỏ khi có đăng nhập; mọi dòng `dev` đổi sang tài khoản thật (migration 0003).
 DEV_OWNER_ID = "dev"
@@ -233,6 +234,7 @@ ROLE_OF_SCHEMA: dict[type[BaseModel], str] = {
     CharactersOutput: "setup",
     BuildOutput: "setup",
     SummaryOutput: "summary",  # tóm tắt chương (D-49)
+    ModerationOutput: "moderate",  # kiểm duyệt nội dung (G9, D-57)
 }
 
 

@@ -28,6 +28,7 @@ import logging
 import traceback
 from collections.abc import AsyncIterator, Iterator
 from dataclasses import dataclass
+from functools import partial
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
@@ -71,8 +72,9 @@ from writory.pipeline.events import (
 )
 from writory.pipeline.store import GraphStore
 from writory.pipeline.story_plan import StoryPlan
-from writory.safety.classify import classify_action, ensure_in_story
+from writory.safety.classify import check_action_text, classify_action, ensure_in_story
 from writory.safety.leak import leak_names
+from writory.safety.moderate import Source, ensure_input_allowed, moderate
 from writory.safety.redact import redact
 
 log = logging.getLogger(__name__)
@@ -191,6 +193,8 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
             raise RuntimeError(f"truyện {story.id} không có thiết lập truyện")  # fail closed
         client, tracker = llm.open(story_id=story.id, chapter=chapter)
         tracker.ensure_budget()  # trần chưa đặt hoặc đã chạm: báo trước khi mở stream
+        # `darkness_level` để trống: tag mức u tối là chữ tự do, chưa có bước đổi thành một mức
+        # trong config/moderation.yaml nên dùng mức mặc định (D-58, câu hỏi mở).
         request = ChapterRequest(
             present_ids=(), scene_count=config.story_lengths.scenes_per_chapter.min,
             story_brief=brief, player_action=None if action is None else action.text,
@@ -270,14 +274,16 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
     scenes = chapter_scenes(conn, story.id, chapter)
     if not scenes:
         raise RuntimeError(f"truyện {story.id}: chương {chapter} không có văn")
+    client = llm.metered(story_id=story.id, chapter=chapter)
     choices = await make_choices(
-        llm.metered(story_id=story.id, chapter=chapter),
-        require_model(config.models.roles, "choices"),
+        client, require_model(config.models.roles, "choices"),
         view=player_view(driver, story.id, chapter), protagonist_id=protagonist_id(driver, story.id),
         last_scene_text=scenes[-1],
         truth_names=leak_names(Neo4jState(driver, story.id)),  # D-48: một quy tắc cho mọi nơi
         plan=plan, story_brief=brief,  # D-52: chữ khởi tạo người chơi đã đọc
         retries=config.limits.retries, extra=role_extra(config.models, "choices"),
+        # G9, D-57: kiểm duyệt như đường của pipeline. Mức u tối chưa lưu theo truyện: dùng mặc định.
+        moderate=partial(moderate, source=Source.CHOICES, llm=client, config=config),
     )
     saved = save_choices(conn, story.id, chapter, [choice_record(c) for c in choices])
     return ChoicesOut(chapter=chapter, choices=_for_player(saved))
@@ -309,10 +315,13 @@ def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn,
              dependencies=[Depends(deps.lock_story)])
 async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps.PgConn,
                         config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ActionOut:
-    """Ô tự viết: phân loại bằng model có đầu ra enum (G5) trước khi lưu. Bị chặn thì không lưu.
+    """Ô tự viết: kiểm độ dài, kiểm duyệt nội dung (G9, D-57), rồi phân loại ý định bằng model có
+    đầu ra enum (G5), trước khi lưu. Bị chặn ở bước nào thì không lưu và không tới bước sau.
     Truyện đã kết thì báo trước khi gọi model (G8)."""
     chapter = _not_finished(story, plan) + 1
+    check_action_text(body.text, config)
     client = llm.metered(story_id=story.id, chapter=chapter)
+    await ensure_input_allowed(body.text, llm=client, config=config)
     result = await with_retries(lambda: classify_action(body.text, llm=client, config=config),
                                 max_retries=config.limits.retries.llm_transient,
                                 retry_on=RETRY_TRANSIENT)

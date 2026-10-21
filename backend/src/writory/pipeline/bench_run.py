@@ -119,6 +119,7 @@ from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách
     load_keys,
 )
 from writory.safety.leak import leak_names
+from writory.safety.moderate import ModerationOutput
 from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
@@ -251,6 +252,7 @@ ROLE_BY_SCHEMA_NAME: dict[str, str] = {
     CharactersOutput.__name__: "setup", BuildOutput.__name__: "setup",
     SceneOutline.__name__: "outline", ExtractOutput.__name__: "extract",
     ChoicesOutput.__name__: "choices", SummaryOutput.__name__: "summary",
+    ModerationOutput.__name__: "moderate",
 }
 _SETUP_STEP_BY_SCHEMA = dict(zip(
     (SettingsOutput.__name__, PlotsOutput.__name__, CharactersOutput.__name__,
@@ -1100,7 +1102,7 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         t = report["tokens"].get(role, {"prompt": 0, "completion": 0})
         lines.append(f"| {role} | {report['calls']['by_role'].get(role, 0)} | {usd:.5f} "
                      f"| {t['prompt']} | {t['completion']} |")
-    roles = ("setup", "outline", "writer", "extract", "summary", "choices")
+    roles = ("setup", "outline", "writer", "extract", "summary", "choices", "moderate")
     lines += ["", "## Chi phí theo chương (USD, mọi lượt)", "",
               "| Chương | " + " | ".join(roles) + " | Tổng |",
               "|---|" + "---|" * (len(roles) + 1)]
@@ -1339,6 +1341,7 @@ class DryRunLLM(FakeLLM):
             ExtractOutput.__name__: lambda: self._extract(text),
             ChoicesOutput.__name__: lambda: self._choices(text),
             SummaryOutput.__name__: lambda: {"summary": DRY_RUN_SUMMARY},
+            ModerationOutput.__name__: lambda: {"findings": [], "reason": "chạy thử"},
         }
         return json.dumps(replies[schema_name](), ensure_ascii=False)
 

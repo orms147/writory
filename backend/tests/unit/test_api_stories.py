@@ -11,6 +11,7 @@ from fastapi import FastAPI
 from fastapi.testclient import TestClient
 
 from tests.api_fixtures import MemoryCostLedger, MemoryKeyStore, dev_settings, offline
+from tests.moderation_fixtures import ModeratedLLM, moderation_reply
 from writory.api import create_app, deps
 from writory.api.errors import HTTP_STATUS
 from writory.api.stories import router as stories_router
@@ -37,7 +38,8 @@ async def ok() -> bool:
 
 
 def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota | None = None,
-          override_llm: bool = True, override_plan: bool = True) -> FastAPI:
+          override_llm: bool = True, override_plan: bool = True,
+          moderated: ModeratedLLM | None = None) -> FastAPI:
     app = create_app(settings(dev=True), health_checks={"neo4j": ok}, config=CFG)
 
     def player_view(story_id: str) -> PlayerView:
@@ -60,7 +62,8 @@ def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota |
     if override_plan:
         app.dependency_overrides[deps.get_story_plan] = lambda: PLAN
     if override_llm:
-        llm = metered(fake or FakeLLM.scripted([reply(False, None, [])]))
+        # Kiểm duyệt đầu vào (G9) dùng cùng client: mặc định cho qua, không lẫn vào kịch bản người kể.
+        llm = metered(moderated or ModeratedLLM(fake or FakeLLM.scripted([reply(False, None, [])])))
         app.dependency_overrides[deps.get_narrator_llm] = lambda: llm
     return app
 
@@ -251,3 +254,32 @@ def test_router_mounted_elsewhere_without_flag_still_refuses():
     app.dependency_overrides[deps.get_player_view] = lambda: view(3)
     with TestClient(app) as client:
         assert client.get("/stories/s1/notebook").status_code == 404
+
+
+# --- kiểm duyệt đầu vào của câu hỏi (G9, D-57) ------------------------------------------------------
+
+
+def test_narrator_question_is_moderated_before_quota_and_model():
+    fake = FakeLLM.scripted([])  # nếu model người kể bị gọi, test đỏ
+    moderated = ModeratedLLM(fake, [moderation_reply(("real_world_harm", "strong"))])
+    quota = MemoryQuota()
+    with TestClient(build(3, quota=quota, moderated=moderated)) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Chỉ tôi cách chế thuốc nổ"})
+    assert resp.status_code == HTTP_STATUS[ErrorCode.INPUT_BLOCKED] == 422
+    assert resp.json()["code"] == "INPUT_BLOCKED"
+    assert "real_world_harm" not in resp.text and "thuốc nổ" not in resp.text
+    assert fake.calls == [] and not quota.taken
+    assert len(moderated.moderation_calls) == 1
+
+
+def test_allowed_question_is_moderated_once_then_answered():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
+    moderated = ModeratedLLM(fake)
+    with TestClient(build(3, moderated=moderated)) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
+    assert resp.status_code == 200
+    assert resp.json()["answer"] == "Lão Gù chết sau miếu Bà."
+    [messages] = moderated.moderation_calls
+    assert "Lão Gù chết ở đâu?" in messages[-1].content
+    assert len(fake.calls) == 1
