@@ -55,7 +55,9 @@ def test_view_exposes_only_whitelisted_fields(driver, sample_story_id):
     view = player_view(driver, sample_story_id, 5)
     fields = {f.name for f in dataclasses.fields(view.entries[0])}
     # `quotes`: mọi câu trích đã hiện trên trang, cho bộ dò lộ G2 (D-26). Không phải chữ của lớp truth.
-    assert fields == {"id", "kind", "text", "aliases", "since_chapter", "quote", "about", "quotes"}
+    # `is_protagonist`: mục này là chính người chơi (D-74); cờ do người chơi biết, không phải lớp truth.
+    assert fields == {"id", "kind", "text", "aliases", "since_chapter", "quote", "about", "quotes",
+                      "is_protagonist"}
     assert all(q.strip() for e in view.entries for q in e.quotes)
 
 

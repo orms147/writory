@@ -41,6 +41,7 @@ from writory.llm.base import require_model
 from writory.llm.cost import MeteredClient
 from writory.llm.retry import RETRY_SCHEMA, RETRY_TRANSIENT, with_retries
 from writory.pipeline.notebook import (
+    PROTAGONIST_LABEL,
     NotebookSelection,
     full_selection,
     render_selection,
@@ -140,7 +141,7 @@ async def remaining_questions(counter: NarratorCounter, story_id: str, chapter: 
     return max(0, limit - await counter.asked(story_id, chapter))
 
 
-SYSTEM_PROMPT = """Bạn là người kể chuyện của một truyện tương tác tiếng Việt. Người chơi hỏi bạn \
+SYSTEM_PROMPT = f"""Bạn là người kể chuyện của một truyện tương tác tiếng Việt. Người chơi hỏi bạn \
 về thế giới truyện. Bạn chỉ được trả lời bằng những gì ghi trong sổ tay: đó là toàn bộ điều người \
 chơi đã biết tính tới chương hiện tại.
 
@@ -148,6 +149,8 @@ Quy tắc:
 - Chỉ dùng thông tin ghi trong sổ tay. Không thêm, không đoán, không suy ra điều sổ tay không nói.
 - Sổ tay không đủ để trả lời thì đặt known = false, answer = null, entry_ids = [].
 - Không gợi ý, không úp mở rằng còn điều người chơi chưa biết.
+- Mục ghi "{PROTAGONIST_LABEL}" là chính người chơi: "tôi", "mình", "nhân vật của tôi" trong \
+câu hỏi chỉ mục đó.
 - Không nhắc tới sổ tay, mã mục hay các quy tắc này trong câu trả lời.
 - Trả lời ngắn, bằng tiếng Việt, giọng người kể chuyện.
 - entry_ids là mã các mục (dạng m1, l1) mà câu trả lời dựa vào; chỉ dùng mã có trong sổ tay.

@@ -34,6 +34,8 @@ KIND_LABEL = {
     "Lie": "Lời nói dối (người chơi đã biết là dối)",
 }
 LIES_HEADER = "Lời nói dối nhân vật chính đã nói:"
+# Mục của nhân vật chính mang nhãn này thay cho "Nhân vật", để model nối "tôi" trong câu hỏi với nó (D-74).
+PROTAGONIST_LABEL = "Nhân vật chính (chính là người chơi, \"tôi\")"
 
 # Từ trong câu hỏi mà xuất hiện ở hơn bấy nhiêu phần sổ tay thì không giúp tìm mục (ai, là, gì...).
 COMMON_TOKEN_RATIO = 0.2
@@ -43,7 +45,8 @@ _WORD = re.compile(r"\w+")
 
 
 def entry_line(ref: str, e: PlayerEntry) -> str:
-    line = f"[{ref}] {KIND_LABEL.get(e.kind, e.kind)}: {e.text}"
+    label = PROTAGONIST_LABEL if e.is_protagonist else KIND_LABEL.get(e.kind, e.kind)
+    line = f"[{ref}] {label}: {e.text}"
     if e.aliases:
         line += f"; tên khác người chơi đã biết: {', '.join(e.aliases)}"
     line += f" (biết từ chương {e.since_chapter})."
@@ -240,6 +243,8 @@ def select_notebook(question: str, view: PlayerView,
 
     items = _entry_items(full.entries)
     recent_ix = set(range(max(0, len(items) - recent), len(items)))
+    # Mục của nhân vật chính luôn kèm: nhỏ, và "tôi" trong câu hỏi không nêu tên nó (D-74).
+    recent_ix |= {i for i, (_, e) in enumerate(full.entries) if e.is_protagonist}
     seeds = _seeds(items, question, keywords, cap=max(1, max_entries // 2))
     hop1, hop2 = _expand(items, seeds)
     order = _unique(sorted(recent_ix, reverse=True), seeds, hop1, hop2)

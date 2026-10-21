@@ -386,7 +386,8 @@ async def test_protagonist_name_is_not_a_leak_even_if_never_revealed(tmp_path):
 
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     assert all(r.verdict == "accept" and r.issues == () for r in outcome.reviews)
-    assert [e.id for e in store.player_view(1).entries] == ["ha_ba_tung"]  # không hé lộ nhân vật chính
+    # Nhân vật chính đã hé lộ ở chương 0 (D-74); bộ trích không hé lộ thêm nó ở chương 1.
+    assert [e.id for e in store.player_view(1).entries] == ["protagonist", "ha_ba_tung"]
     assert SETUP_PC_NAME in of_type(events, "scene_ready")[0].text
     assert SETUP_PC_NAME in of_type(events, "choices_ready")[0].choices[0].text
 

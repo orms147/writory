@@ -39,7 +39,13 @@ from pydantic import BaseModel, ConfigDict, Field, ValidationError
 
 from writory.config import AppConfig, LengthLevel, ModerationConfig
 from writory.errors import ErrorCode, WritoryError
-from writory.graph.package import ID_MAX_LEN, ID_PATTERN, ChangePackage, chapter_rule_problems
+from writory.graph.package import (
+    ID_MAX_LEN,
+    ID_PATTERN,
+    ChangePackage,
+    EdgeSpec,
+    chapter_rule_problems,
+)
 from writory.graph.schema import NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
@@ -66,7 +72,12 @@ SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
 # Một cụm đứng riêng (tên phe, "gián điệp") trúng cả văn sạch (D-26), nên mỗi nhóm cần từ 2 cụm.
 LEAK_GROUP_MIN_PHRASES = 2
 INITIAL_CHAPTER = 0  # D-21: chương 0 là thế giới lúc khởi tạo
+INITIAL_CHAPTER_ID = f"ch{INITIAL_CHAPTER}"  # đích của hé lộ nhân vật chính ở chương 0 (D-74)
 PROTAGONIST_ID = "protagonist"
+# Dòng trong thiết lập truyện (`story_brief`) nêu tên nhân vật chính. Câu trích của hé lộ nhân vật
+# chính ở chương 0 là đúng dòng này, nên G3 giữ nguyên: câu trích có thật trong chữ người chơi đã
+# thấy (D-52 coi thiết lập truyện là chữ đã thấy).
+PROTAGONIST_BRIEF_PREFIX = "Nhân vật chính: "
 INITIAL_KNOWS_HOW = "tự biết"
 
 
@@ -640,7 +651,7 @@ def story_brief(
         f"Quy ước tên và địa danh: {NAMES_TEXT[naming.names]}; {PLACES_TEXT[naming.places]}.",
         f"Bối cảnh: {setting.title}\n{setting.intro}",
         f"Hướng cốt truyện: {plot.title}\n{plot.summary}",
-        f"Nhân vật chính: {pc.name}\nTính cách: {pc.personality}\nQuá khứ: {pc.backstory}",
+        f"{PROTAGONIST_BRIEF_PREFIX}{pc.name}\nTính cách: {pc.personality}\nQuá khứ: {pc.backstory}",
     ])
 
 
@@ -782,6 +793,12 @@ def _check_build(
     for f in output.facts:
         edges += [_edge("ABOUT", f.id, target) for target in f.about]
         edges += [_edge("KNOWS", who, f.id, how=INITIAL_KNOWS_HOW) for who in f.known_by]
+    # Người chơi đã chọn (và có thể đã sửa) nhân vật chính lúc khởi tạo, nên biết tên nó từ chương 0
+    # (D-74). Chỉ mục này: mọi điều khác về nhân vật chính vẫn theo luật cũ.
+    nodes.append({"id": INITIAL_CHAPTER_ID, "label": "Chapter",
+                  "props": {"number": INITIAL_CHAPTER}})
+    edges.append(_edge("REVEALED_TO_PLAYER", PROTAGONIST_ID, INITIAL_CHAPTER_ID,
+                       quote=f"{PROTAGONIST_BRIEF_PREFIX}{pc.name}", known_as=pc.name))
 
     package = _validated(ChangePackage, {"commit_id": commit_id, "nodes": nodes, "edges": edges},
                          "gói chương 0", "package", problems)
@@ -885,11 +902,11 @@ def _initial_problems(
     problems += [SetupProblem("edges", p) for p in _edge_problems(package, labels, protagonists)]
     problems += _plan_problems(plan, package, labels, level)
     if not problems:
-        # Lưới cuối, theo định nghĩa duy nhất của player_view (G1): người chơi chưa biết gì.
+        # Lưới cuối, theo định nghĩa duy nhất của player_view (G1): chỉ biết nhân vật chính.
         view = player_view_of(OverlayState(EmptyState(), [package]), INITIAL_CHAPTER)
-        if view.entries or view.lies:
+        if [e.id for e in view.entries] != [PROTAGONIST_ID] or view.lies:
             problems.append(SetupProblem("player_view", (
-                "player_view ở chương 0 phải rỗng, có: "
+                f"player_view ở chương 0 chỉ được có nhân vật chính {PROTAGONIST_ID}, có: "
                 f"{sorted({e.id for e in view.entries} | {x.id for x in view.lies})}")))
     return problems
 
@@ -898,6 +915,11 @@ def _node_problems(package: ChangePackage) -> list[str]:
     problems = []
     names: dict[tuple[str, str], list[str]] = {}
     for n in package.nodes:
+        if n.label == "Chapter":
+            if n.id != INITIAL_CHAPTER_ID or n.props.get("number") != INITIAL_CHAPTER:
+                problems.append(f"nút {n.id}: nhãn Chapter chỉ dùng cho {INITIAL_CHAPTER_ID} "
+                                f"(number {INITIAL_CHAPTER}) ở chương 0")
+            continue
         if n.label not in INITIAL_LABELS:
             problems.append(f"nút {n.id}: nhãn {n.label} không dùng ở chương 0")
             continue
@@ -917,10 +939,12 @@ def _edge_problems(
     problems = []
     holders: Counter[str] = Counter()
     places: Counter[str] = Counter()
+    names = {n.id: n.props.get("name") for n in package.nodes}
+    reveals: Counter[str] = Counter()
     for e in package.edges:
         if e.type == "REVEALED_TO_PLAYER":
-            problems.append(f"cạnh {e.id}: chương 0 không có REVEALED_TO_PLAYER, người chơi chưa "
-                            "đọc trang nào")
+            reveals[e.source] += 1
+            problems += _reveal_problems(e, labels, protagonists, names)
             continue
         if e.type not in _ENDPOINTS:
             problems.append(f"cạnh {e.id}: kiểu {e.type} không dùng ở chương 0")
@@ -952,6 +976,27 @@ def _edge_problems(
             places[e.source] += 1
     problems += [f"đồ vật {i} có {n} người giữ" for i, n in holders.items() if n > 1]
     problems += [f"{i} ở {n} nơi cùng lúc" for i, n in places.items() if n > 1]
+    for pid in protagonists:
+        if reveals[pid] != 1:
+            problems.append(f"nhân vật chính {pid} phải có đúng một REVEALED_TO_PLAYER ở chương 0 "
+                            f"(người chơi đã chọn tên nó), có {reveals[pid]}")
+    return problems
+
+
+def _reveal_problems(
+    e: EdgeSpec, labels: dict[str, str], protagonists: set[str], names: dict[str, object]
+) -> list[str]:
+    """Ở chương 0 chỉ nhân vật chính được hé lộ, tới `ch0`, bằng đúng tên người chơi đã chọn và câu
+    trích chứa tên đó (D-74). Người chơi chưa đọc trang nào, nên không nút nào khác."""
+    if e.source not in protagonists:
+        return [(f"cạnh {e.id}: chương 0 chỉ hé lộ nhân vật chính, không hé lộ {e.source} "
+                 "(REVEALED_TO_PLAYER); người chơi chưa đọc trang nào")]
+    problems = []
+    if e.target != INITIAL_CHAPTER_ID or labels.get(e.target) != "Chapter":
+        problems.append(f"cạnh {e.id}: REVEALED_TO_PLAYER ở chương 0 phải tới {INITIAL_CHAPTER_ID}")
+    # `known_as` nằm trong `quote` đã do `EdgeSpec` bảo đảm khi dựng gói (D-17).
+    if e.props.get("known_as") != names.get(e.source):
+        problems.append(f"cạnh {e.id}: known_as phải đúng tên nhân vật chính người chơi đã chọn")
     return problems
 
 

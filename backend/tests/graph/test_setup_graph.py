@@ -54,7 +54,8 @@ async def _setup(story_id: str):
     )
 
 
-async def test_chapter_0_package_applies_and_player_knows_nothing(driver, new_story_id):
+async def test_chapter_0_package_applies_and_player_knows_only_the_protagonist(
+        driver, new_story_id):
     sid = new_story_id()
     result = await _setup(sid)
     apply_package(driver, sid, result.package)
@@ -62,8 +63,12 @@ async def test_chapter_0_package_applies_and_player_knows_nothing(driver, new_st
     snap = story_snapshot(driver, sid)
     assert (snap.node_count, snap.edge_count) == (len(result.package.nodes),
                                                   len(result.package.edges))
+    # D-74: người chơi đã chọn nhân vật chính, nên sổ tay có đúng mục đó; Neo4j và OverlayState cùng
+    # một định nghĩa player_view.
     view = player_view(driver, sid, 0)
-    assert view.entries == () and view.lies == ()
+    assert [(e.id, e.text, e.is_protagonist) for e in view.entries] == [
+        (PROTAGONIST_ID, PC.name, True)]
+    assert view.lies == ()
     assert protagonist_id(driver, sid) == PROTAGONIST_ID
     holder = item_holder(driver, sid, "kiem_thiet_van", 0)
     assert holder is not None and holder.id == PROTAGONIST_ID

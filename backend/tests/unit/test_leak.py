@@ -374,7 +374,7 @@ def test_leak_names_spare_only_the_name_the_player_wrote():
 def test_player_written_name_is_not_a_leak_before_any_reveal():
     state, plan = setup_world()
     view = player_view_of(state, 1)
-    assert view.entries == ()  # chương 0 người chơi chưa biết gì (D-38)
+    assert [e.id for e in view.entries] == [PROTAGONIST_ID]  # chương 0: chỉ nhân vật chính (D-74)
     text = f"{_PC_NAME} đẩy cửa lò rèn bước ra sân."
     for scope in ("scene", "player_path"):
         assert check_leaks(text, view=view, truth_names=leak_names(state), plan=plan,
@@ -472,18 +472,26 @@ def test_setup_text_never_unlocks_secret_leak_terms():
 def test_protagonist_name_in_setup_text_counts_as_seen_but_new_words_do_not():
     """D-52 đổi một phần D-48: thiết lập truyện có tên nhân vật chính, nên từ của tên đó là chữ đã
     thấy. Biệt danh được bảo vệ chỉ gồm các từ ấy không còn bị cấm; biệt danh có từ mới vẫn bị cấm."""
-    state, plan = setup_world(protagonist_aliases=("Thanh Vân", "Vân Nhi"))
+    package, plan = setup_chapter_0(protagonist_aliases=("Thanh Vân", "Vân Nhi"))
     plan = with_protects(plan, f_nguyet_hoa_huyet_y=[PROTAGONIST_ID])
     brief = f"Nhân vật chính: {_PC_NAME}. Quá khứ: con một thợ rèn."
     text = "Có người gọi Thanh Vân, rồi gọi Vân Nhi."
 
-    def terms(b: str) -> set[str]:
+    def terms(pkg: ChangePackage, b: str) -> set[str]:
+        state = OverlayState(EmptyState(), [pkg])
         return {h.term for h in check_leaks(text, view=player_view_of(state, 1), plan=plan,
                                             truth_names=leak_names(state), story_brief=b,
                                             scope="scene")}
 
-    assert terms("") == {"Thanh Vân", "Vân Nhi"}
-    assert terms(brief) == {"Vân Nhi"}
+    # Gói chưa hé lộ nhân vật chính (như truyện chạy trước D-74): thiết lập truyện là chữ đã thấy.
+    data = package.model_dump(mode="json", by_alias=True)
+    data["edges"] = [e for e in data["edges"] if e["type"] != "REVEALED_TO_PLAYER"]
+    unrevealed = ChangePackage.model_validate(data)
+    assert terms(unrevealed, "") == {"Thanh Vân", "Vân Nhi"}
+    assert terms(unrevealed, brief) == {"Vân Nhi"}
+    # D-74: nhân vật chính hé lộ ở chương 0 nên tên đó nằm sẵn trong player_view, dù không có brief.
+    assert terms(package, "") == {"Vân Nhi"}
+    assert terms(package, brief) == {"Vân Nhi"}
 
 
 def test_setup_text_counts_only_the_names_it_contains():

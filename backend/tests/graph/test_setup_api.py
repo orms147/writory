@@ -208,10 +208,15 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
         assert part in brief
     assert story.darkness_level == "light"  # lưu theo truyện, cho kiểm duyệt mỗi chương (D-67)
     assert "Huyết Y Môn" not in brief  # thiết lập chỉ có điều người chơi đã chọn
-    # Người chơi chưa biết gì ở chương 0 (D-38); nhân vật chính do code dựng, mang user_authored.
-    assert notebook.json() == {"chapter": 0, "entries": [], "lies": []}
+    # Chương 0 (D-38, D-74): người chơi chưa đọc trang nào, nhưng đã chọn nhân vật chính, nên sổ tay
+    # có đúng mục đó, với câu trích là dòng trong thiết lập truyện. Nhân vật chính do code dựng,
+    # mang user_authored.
+    assert notebook.json() == {"chapter": 0, "lies": [], "entries": [{
+        "ref": "m1", "kind": "Character", "text": "Lục Thanh Vân", "aliases": [],
+        "since_chapter": 0, "quote": "Nhân vật chính: Lục Thanh Vân", "about": []}]}
     view = player_view(driver, story_id, 0)
-    assert view.entries == () and view.lies == ()
+    assert [(e.id, e.is_protagonist) for e in view.entries] == [(PROTAGONIST_ID, True)]
+    assert view.lies == ()
     pc = node_rows(driver, story_id, [PROTAGONIST_ID])[PROTAGONIST_ID]
     assert pc.props["user_authored"] is True and pc.props["name"] == "Lục Thanh Vân"
 
