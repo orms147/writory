@@ -94,12 +94,14 @@ GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi
 |---|---|
 | `fast` | `uv sync --locked`, `uv run ruff check .`, `uv run pytest -m "not graph"` trong `backend/` |
 | `graph` | dựng service container `neo4j:5.26-community` và `postgres:16`, chờ cổng 7474 của Neo4j (Postgres chờ bằng health check), rồi `uv run pytest -m graph` |
+| `frontend` | Node 20, `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` trong `frontend/` |
 
 - Marker `graph` đánh dấu mọi test cần dịch vụ Docker: Neo4j, và Postgres cho luồng ghi chương. Test nhanh (`-m "not graph"`) không cần Docker.
 - Job `graph` đặt `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` và `POSTGRES_DSN` qua biến môi trường của job; mật khẩu chỉ dùng cho container CI. Test đọc kết nối từ các biến này, mặc định theo `.env.example` khi chạy local.
 - Không có test nào mang marker `graph` chạy (pytest trả mã 5) thì job `graph` đỏ.
 - `uv sync --locked` báo lỗi nếu `uv.lock` lệch `pyproject.toml`: chạy `uv lock` ở máy rồi commit lại.
-- Chạy giống CI ở máy: các lệnh `ruff`/`pytest` ở mục trên.
+- Chạy giống CI ở máy: các lệnh `ruff`/`pytest` ở mục trên, và các lệnh `npm` ở mục Frontend.
+- `npm ci` báo lỗi nếu `package-lock.json` lệch `package.json`: chạy `npm install` ở máy rồi commit lại lockfile.
 
 ## Migration Postgres
 SQL thuần trong `backend/src/writory/db/migrations/`, chạy theo thứ tự tên file, mỗi file một lần (D-20). Muốn đổi schema thì thêm file mới, không sửa file đã chạy.

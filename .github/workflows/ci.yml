@@ -1,4 +1,4 @@
-# CI: lint + test nhanh + test đồ thị. Cách chạy và cách chạy lại: docs/runbook.md
+# CI: lint + test nhanh + test đồ thị + frontend. Cách chạy và cách chạy lại: docs/runbook.md
 name: ci
 
 on:
@@ -79,3 +79,22 @@ jobs:
           echo "Neo4j không lên sau 120 giây" >&2
           exit 1
       - run: uv run pytest -m graph
+
+  frontend:
+    name: frontend (lint, kiểu, test, build)
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: frontend
+    steps:
+      - uses: actions/checkout@v6
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 20
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run typecheck
+      - run: npm test
+      - run: npm run build
