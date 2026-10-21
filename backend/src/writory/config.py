@@ -298,7 +298,7 @@ class ModerationConfig(_Strict):
     """Danh mục kiểm duyệt (G9, D-57). Danh sách loại là cố định trong code (`safety.categories`);
     config chọn mức xử lý, chữ mô tả (vào prompt) và trần mức u tối."""
 
-    draft: bool  # true = chờ chủ dự án duyệt
+    draft: bool  # true = chờ chủ dự án duyệt; false = đã duyệt (D-57)
     categories: dict[Category, CategoryRule]
     intensity_scale: dict[IntensityName, str]  # chữ mô tả mild, strong, extreme (vào prompt)
     darkness_cap: dict[Category, IntensityName]  # trần tuyệt đối, mọi mức u tối

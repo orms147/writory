@@ -25,9 +25,9 @@ def edit(config_dir: Path, change) -> None:
     path.write_text(yaml.safe_dump(data, allow_unicode=True), encoding="utf-8")
 
 
-def test_repo_catalogue_is_marked_draft_and_covers_every_category():
+def test_repo_catalogue_is_approved_and_covers_every_category():
     cfg = load_config().moderation
-    assert cfg.draft is True  # chờ chủ dự án duyệt
+    assert cfg.draft is False  # chủ dự án duyệt 21/10/2026 (D-57)
     assert set(cfg.categories) == set(Category)
     assert all(rule.description.strip() for rule in cfg.categories.values())
 
