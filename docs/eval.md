@@ -10,6 +10,11 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   - Năm nhóm: đồ vật, sống/chết, ai biết gì, quan hệ hiện tại, lời nói dối. Mỗi câu khai chương hỏi (`ask_chapter`), chương của sự thật (`fact_chapter`, khoảng cách = hiệu), có thể hỏi về trạng thái ở chương cũ (`as_of`).
   - Chỉ hỏi điều **người đọc thấy được trên trang** tới chương hỏi (mỗi câu có `evidence`: câu trích nguyên văn). Điều chỉ có ở lớp sự thật, trang chưa nói, không hỏi.
   - Đáp án gốc tính lại từ đồ thị dựng tay bằng `derive`, test kiểm đáp án khai khớp đồ thị; lệch là lỗi đề.
+  - **Truyện do pipeline viết (D-83).** File đề riêng trong cùng thư mục, chọn bằng `--questions-file`; `run.yaml` dùng chung.
+    - File đề khai `story: run`, `run_dir` (thư mục kết quả của `pipeline.bench_run`, đọc thẳng, không chép bản sao, như bài E) và `run_sha256`: hash của `truth_dump.json` và từng `chapters/chNN.md`. Hash lệch, thiếu hay thừa thì đề không load.
+    - Văn chương: `chapters/chNN.md`, bỏ tiêu đề, ghi chú in nghiêng của lệnh chạy và mục lựa chọn cuối chương. Đồ thị: các gói chương 0..N trong `truth_dump.json`. Chạy thật trên Neo4j thì áp lần lượt các gói đó vào một `story_id` riêng.
+    - Đồ thị ở đây do bộ trích dựng nên không là đáp án. Đáp án gốc lấy từ trang (`evidence`). Mỗi câu khai `graph_agrees`: true thì `derive` bắt buộc và phải ra đúng đáp án; false thì đồ thị thiếu hoặc sai, có `derive` thì code kiểm nó ra khác đáp án, không có thì là đồ thị không có cạnh nào để tính. `derive` trỏ tới id không có là lỗi đề. `summary.md` thêm bảng tách điểm theo cờ này, để biết hệ đồ thị sai vì bộ trích hay vì đọc.
+    - Hiện có `questions-ky-ao-vua-1.yaml` cho `evals/results/2026-10-21-run-ky-ao-vua-1/` (Truyện vừa, 10 chương): chủ dự án đã duyệt (22/10/2026). Quy ước soạn ghi ở đầu file.
 - **Sáu hệ trả lời** (mỗi hệ dựng ngữ cảnh từ chương 1..N, không hệ nào thấy chương sau N; `src/writory/pipeline/bench_a_systems.py`):
 
   | Hệ (`--systems`) | Ngữ cảnh |
@@ -23,7 +28,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 
   Bản 1 theo design §9 chạy `graph`, `rolling`, `full` (`--systems graph,rolling,full`); `none` và `rag` đã có trong khung, chạy khi chủ dự án duyệt. Bỏ trống `--systems` thì chạy mọi hệ đang bật trong `run.yaml`; `graph_quotes` là hệ tuỳ chọn (`graph_quotes.enabled`, mặc định bật), tắt thì chọn nó bằng `--systems` là lỗi.
 - **Chấm:** bằng code (`bench_a_data.py`), không giám khảo LLM. Bốn dạng đáp án: tập thực thể (khớp tên và biệt danh, nhắc lại tên đã có trong câu hỏi không bị trừ), có/không, chọn một, nhóm từ khoá. Trả "Không biết" tính riêng (kiêng), không tính đúng. Độ đúng chia cho số lượt đã khai; lượt lỗi hay chưa chạy tính chưa đúng.
-- **Khung kiểm (không gọi model thật):** model giả `oracle` chỉ trả đúng khi ngữ cảnh nó nhận **đủ chứng cứ**, nên 100% ở `graph`, `graph_quotes` và `full`, thấp ở hệ khác (`graph_quotes` đủ khi phần đồ thị đủ khoá hoặc câu trích trên trang có trong ngữ cảnh); `null` ra 0% và toàn kiêng; `wrong` ra 0% không kiêng. Test: ngữ cảnh mỗi hệ không chứa chương sau N, hai hệ đồ thị cho cùng ngữ cảnh trên Neo4j và trên gói trong bộ nhớ, và không có Cypher riêng.
+- **Khung kiểm (không gọi model thật):** model giả `oracle` chỉ trả đúng khi ngữ cảnh nó nhận **đủ chứng cứ**. Hai hệ đồ thị đủ khi phần đồ thị đủ khoá và đồ thị cho đúng đáp án, hoặc khi câu trích trên trang có trong chữ của chúng (chữ có cả chương N; D-81, D-83); hệ khác đủ khi có câu trích. Trên truyện mẫu oracle ra 100% ở `graph`, `graph_quotes` và `full`, thấp ở hệ khác. Trên truyện do pipeline viết chỉ `full` chắc 100%; số của hai hệ đồ thị là trần của chúng khi đọc hoàn hảo trên đồ thị bộ trích đã dựng. `null` ra 0% và toàn kiêng; `wrong` ra 0% không kiêng. Test: ngữ cảnh mỗi hệ không chứa chương sau N, hai hệ đồ thị cho cùng ngữ cảnh trên Neo4j và trên gói trong bộ nhớ, và không có Cypher riêng.
 - **Chỉ số:** độ đúng chung, theo nhóm, theo khoảng cách, kèm `n` và khoảng tin cậy Wilson; số lần kiêng; ngữ cảnh trung bình; chi phí trả lời, chi phí dựng bộ nhớ (tóm tắt) và USD mỗi câu, tách theo hệ.
 - **Lệnh:**
   ```bash
@@ -35,10 +40,15 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   uv run python -m writory.pipeline.bench_a run --label lan-1 --budget 1.0   # chạy thật
   uv run python -m writory.pipeline.bench_a run --label lai-1 --systems graph_quotes --budget 0.3  # chỉ hệ lai
   uv run python -m writory.pipeline.bench_a summary --out ../evals/results/<thư mục>
-  uv run pytest tests/unit/test_bench_a_data.py tests/unit/test_bench_a_systems.py tests/unit/test_bench_a_run.py
+  # truyện do pipeline viết (D-83): thêm --questions-file vào plan, run, summary
+  uv run python -m writory.pipeline.bench_a plan --questions-file questions-ky-ao-vua-1.yaml
+  uv run python -m writory.pipeline.bench_a run --dry-run --label ky-ao-vua-1-khung --questions-file questions-ky-ao-vua-1.yaml
+  uv run python -m writory.pipeline.bench_a run --label ky-ao-vua-1 --questions-file questions-ky-ao-vua-1.yaml --budget <USD>
+  uv run pytest tests/unit/test_bench_a_data.py tests/unit/test_bench_a_systems.py tests/unit/test_bench_a_run.py \
+      tests/unit/test_bench_a_pipeline_story.py
   uv run pytest -m graph tests/graph/test_bench_a_graph_parity.py            # cần docker compose up -d
   ```
-  Chạy thật cần `OPENROUTER_API_KEY` trong `.env` và Neo4j đang chạy (`docker compose up -d`; kết nối theo `NEO4J_URI`/`NEO4J_USER`/`NEO4J_PASSWORD`): lệnh nạp truyện mẫu vào một `story_id` riêng rồi xoá khi xong. `--graph-backend memory` đọc đồ thị từ gói trong bộ nhớ, không cần Neo4j. Đổi `--fake`, đề hay cấu hình thì dùng nhãn mới (lệnh từ chối ghi tiếp lên kết quả khác đề). Cần chủ dự án duyệt trước lần chạy thật.
+  Chạy thật cần `OPENROUTER_API_KEY` trong `.env` và Neo4j đang chạy (`docker compose up -d`; kết nối theo `NEO4J_URI`/`NEO4J_USER`/`NEO4J_PASSWORD`): lệnh nạp truyện (truyện mẫu, hoặc các gói chương của lượt chạy pipeline) vào một `story_id` riêng rồi xoá khi xong. `--graph-backend memory` đọc đồ thị từ gói trong bộ nhớ, không cần Neo4j. Đổi `--fake`, đề hay cấu hình thì dùng nhãn mới (lệnh từ chối ghi tiếp lên kết quả khác đề). Cần chủ dự án duyệt trước lần chạy thật.
 - **Kết quả:** `evals/results/<ngày>-memory-<nhãn>/` (`summary.md`, `results.jsonl`, `summaries.jsonl`, `errors.jsonl`, `meta.json` với commit, hash đề và config, tên model). Tài liệu này không chép số.
 
 ## Bài B — Người canh

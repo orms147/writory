@@ -8,6 +8,8 @@
   model khởi tạo đã đặt, kể cả `leak_terms`; `story_brief` dựng lại bằng đúng hàm
   `pipeline.setup.story_brief` đã dùng lúc chạy. Đây chính là điều bài đo muốn đo: bộ dò lộ chạy
   với chuỗi cấm do model đặt, không phải chuỗi viết tay.
+- `run_packages`: gói từng chương trong `truth_dump.json`; bài A dùng chung để đọc truyện do
+  pipeline viết (D-83).
 - `pad_view`: thêm mục giả vào `PlayerView` để dựng sổ tay hàng trăm mục từ truyện vài chương.
   Mục đệm sinh bằng code từ một hạt giống khai trong đề (tất định), có tên và từ ngữ giống truyện
   ("lò rèn của ...", "thanh kiếm ...") để truy hồi phải phân biệt, và không chứa tên hay chuỗi cấm
@@ -94,6 +96,21 @@ def _option(setup: Mapping[str, Any], step: str, cls: type[BaseModel]) -> Any:
         raise ConfigError(f"setup.json: bước {step!r} thiếu hoặc sai ({type(e).__name__})") from None
 
 
+def run_packages(dump: Mapping[str, Any]) -> tuple[tuple[int, ChangePackage], ...]:
+    """Gói thay đổi từng chương (gồm chương 0) trong `truth_dump.json` đã đọc, sắp theo chương.
+    Dùng chung cho bài E và bài A (D-83). Thiếu hoặc sai dạng thì ConfigError."""
+    try:
+        packages = tuple(sorted(
+            ((int(n), ChangePackage.model_validate(p)) for n, p in dump["packages"].items()),
+            key=lambda item: item[0]))
+    except (KeyError, AttributeError, TypeError, ValueError, ValidationError) as e:
+        raise ConfigError(f"truth_dump.json thiếu hoặc sai `packages`: "
+                          f"{type(e).__name__}: {e}") from None
+    if not packages or packages[0][0] != 0:
+        raise ConfigError("truth_dump.json: `packages` phải có gói chương 0")
+    return packages
+
+
 def load_run_story(run_dir: Path | str) -> Story:
     """Đọc thư mục kết quả của `bench_run`. Thiếu file hoặc sai dạng thì ConfigError, nêu tên file."""
     run_dir = Path(run_dir)
@@ -101,17 +118,12 @@ def load_run_story(run_dir: Path | str) -> Story:
     dump = _json(Path("truth_dump.json"), files["truth_dump.json"])
     setup = _json(Path("setup.json"), files["setup.json"])
     meta = _json(Path("meta.json"), files["meta.json"])
+    packages = run_packages(dump)
     try:
-        raw_packages = dump["packages"]
-        packages = tuple(sorted(
-            ((int(n), ChangePackage.model_validate(p)) for n, p in raw_packages.items()),
-            key=lambda item: item[0]))
         plan = StoryPlan.model_validate(dump["plan"])
-    except (KeyError, AttributeError, TypeError, ValueError, ValidationError) as e:
-        raise ConfigError(f"truth_dump.json thiếu hoặc sai `packages`/`plan`: "
+    except (KeyError, TypeError, ValidationError) as e:
+        raise ConfigError(f"truth_dump.json thiếu hoặc sai `plan`: "
                           f"{type(e).__name__}: {e}") from None
-    if not packages or packages[0][0] != 0:
-        raise ConfigError("truth_dump.json: `packages` phải có gói chương 0")
     try:
         content = meta["scenario"]["content"]
         # Lần chạy sau D-67 ghi `darkness_level` vào đề (kể cả null = mặc định), và thiết lập của
