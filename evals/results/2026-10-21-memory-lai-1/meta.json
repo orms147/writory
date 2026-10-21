@@ -1,0 +1,67 @@
+{
+  "bench": "A",
+  "created": "2026-10-21T22:24:25+07:00",
+  "versions": {
+    "questions": 1,
+    "run": 2
+  },
+  "status": "CHỦ DỰ ÁN DUYỆT 21/10/2026",
+  "story": "sample-story",
+  "fingerprint": {
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions.yaml": "0af94b5abce668ae46c2f135bed5d73185ef4caa6ed6f4077034de5655ce51da",
+      "run.yaml": "859ada9d3400f7bbb329e4044384cbc967eb06e4f9602a4b011251e22b98f805",
+      "sample-story/graph.yaml": "e7a36786451a36250c9ffe9a88e43213b5cfa49f1ad11780e9eab249c319029f",
+      "sample-story/ch01.md": "9ea25672617c91a1de139f9f803fc398e1c4b096af35015cfbe7c3fb69e06d8b",
+      "sample-story/ch02.md": "3fbca3ddacf5116da2f180f6f50513f216e7d47994b5daaed2e1826e72771712",
+      "sample-story/ch03.md": "b43d0818e4898ddffcc93bc6eebec36c536d9ce4682268279ff23eea30bcae58",
+      "sample-story/ch04.md": "643d508d75620eb5fb1fee8ff6efd8dbdd48f78e85c7558407a1f9a8cb26e88c",
+      "sample-story/ch05.md": "e9407a78b9e778fc82918f876bc2bdc9f861c69cbaa06feb55f8dbf1933dd13a"
+    },
+    "config_sha256": {
+      "models.yaml": "3a1e3dcc3f1b477cbb2e70532b9587871568deb17cf8a4bde8f741b31b4de81d",
+      "limits.yaml": "b0bca581502f2a1d678251b8b1c72f8f8429f0f676cea4cd4ae051ac0895fed5"
+    },
+    "answerer": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summarizer": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low",
+      "prompt": "summary-1"
+    },
+    "answer_prompt": "a-answer-1",
+    "answer_prompt_sha256": "aaf69478cfd41c7b47a6db2d70f3a1f4df84bdea22c0d0d55291ce7556bea0be"
+  },
+  "runs": [
+    {
+      "started": "2026-10-21T22:24:25+07:00",
+      "commit": "123873e69c15b055d6b4d24171ad77f2864e08b8",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "lai-1",
+        "--systems",
+        "graph_quotes",
+        "--budget",
+        "0.3"
+      ],
+      "samples": 3,
+      "concurrency": 4,
+      "systems": [
+        "graph_quotes"
+      ],
+      "graph_backend": "neo4j",
+      "questions": "all",
+      "budget": 0.3,
+      "finished": "2026-10-21T22:25:37+07:00",
+      "wall_s": 72.7,
+      "stopped": null,
+      "spent_usd": 0.018299
+    }
+  ]
+}
