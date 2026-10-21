@@ -1,0 +1,3432 @@
+{
+ "story_id": "run-20261021-tu-tien-4-6f970059",
+ "plan": {
+  "acts": [
+   {
+    "name": "Mực chưa khô",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "name": "Ba bên giằng co",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "name": "Khế ước sinh tử",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "name": "Dòng nước phân xử",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "ke_trao_van_thu",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Phạm Đức Hành",
+      "tráo văn thư"
+     ],
+     [
+      "Phạm Đức Hành",
+      "kích động ba tông môn"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "lap_lai_khue_uoc",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "xac_dinh_ke_trao_van_thu",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "giu_mang_trong_thuy_phu",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "loi_the_cua_ba_phe",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Đường Tử Mặc nhận ra bản ghi có thể cứu mình khỏi bị quy tội nhưng cũng khiến cả ba tông môn cùng muốn khống chế chàng.",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Một dấu vết trong kho văn thư cho thấy việc tráo đổi có liên quan đến người nắm quyền tiếp cận hồ sơ thủy phủ.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Đường Tử Mặc đối chất kẻ tráo văn thư và buộc ba đại diện phải chọn giữa một khế ước ràng buộc với nguy cơ khai chiến.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Đường Tử Mặc hoàn tất hoặc từ chối khế ước cuối cùng, định đoạt mình có giữ được quyền tự quyết giữa ba tông môn hay không.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 6,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "ke_trao_van_thu",
+    "text": "Phạm Đức Hành đã tráo văn thư để kích động ba tông môn tranh chấp, vì hắn muốn giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": 4
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "lap_lai_khue_uoc",
+    "description": "Dựa vào bản ghi để lập điều khoản chia linh mạch mà cả ba tông môn buộc phải cân nhắc.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 6,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "xac_dinh_ke_trao_van_thu",
+    "description": "Tìm bằng chứng đủ sức xác định ai tráo văn thư và vì sao.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "resolved_chapter": 4
+   },
+   {
+    "thread_id": "giu_mang_trong_thuy_phu",
+    "description": "Thoát khỏi áp lực và hiểm nguy phát sinh từ việc các phe tranh nhau bản ghi duy nhất.",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "loi_the_cua_ba_phe",
+    "description": "Buộc các đại diện chọn cách xác nhận khế ước có thể hạn chế việc lật lọng.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 6,
+    "resolved_chapter": 5
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261021-tu-tien-4-6f970059-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Đường Tử Mặc",
+      "personality": "Khôn khéo, thích thử lòng người bằng những câu hỏi tưởng như bâng quơ. Chàng có thể nhượng bộ trong lời nói, nhưng luôn tính trước xem mỗi nhượng bộ sẽ buộc đối phương trả lại điều gì.",
+      "backstory": "Đường Tử Mặc lớn lên trong một gia đình tu sĩ chuyên làm chứng thư và khế ước, nơi một chữ sai có thể kéo theo nhiều năm kiện tụng. Sau khi gia tộc suy tàn, chàng nhận việc ghi chép ở thủy phủ Nguyệt Trầm để kiếm chỗ dựa giữa thời loạn. Biến cố trong buổi thương nghị khiến bản ghi của chàng trở thành vật mà cả ba tông môn đều muốn nắm giữ; chàng tìm cách viết lại khế ước sao cho không phe nào có thể dễ dàng lật lọng.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "van_tieu_lan",
+     "label": "Character",
+     "props": {
+      "name": "Vân Tiêu Lan",
+      "personality": "Điềm đạm, giỏi hỏi ngược và không để lộ điều mình thật sự muốn; coi trọng lời thề nhưng không tin lòng tốt vô điều kiện.",
+      "backstory": "Chấp sự của Thanh Hà Tông, được giao bảo hộ người ghi chép và thương lượng việc lập lại khế ước; nàng từng chứng kiến một thỏa thuận linh mạch bị sửa chữ sau khi ký."
+     }
+    },
+    {
+     "id": "han_khac",
+     "label": "Character",
+     "props": {
+      "name": "Hàn Khắc",
+      "personality": "Cứng rắn, nói năng ngắn gọn, xem nhượng bộ là dấu hiệu yếu thế nhưng biết cân nhắc hậu quả của chiến tranh.",
+      "backstory": "Đại diện Huyền Thiết Môn tại thủy phủ; ông được lệnh giành quyền khai thác phần linh mạch có linh khí dồi dào nhất."
+     }
+    },
+    {
+     "id": "luu_thanh_dao",
+     "label": "Character",
+     "props": {
+      "name": "Lưu Thanh Đào",
+      "personality": "Lanh lợi, khéo dùng lời mềm để thăm dò, sẵn sàng đổi lập trường nếu thấy lợi ích trước mắt đổi chiều.",
+      "backstory": "Đệ tử thân truyền của Bích Lạc Cung, được cử đến thay trưởng lão vừa ngã xuống và nắm nhiều chuyện nội bộ của cung."
+     }
+    },
+    {
+     "id": "pham_duc_hanh",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Đức Hành",
+      "personality": "Nghiêm cẩn, đa nghi và ít nói; tin rằng giữ kín tin tức đôi khi cứu được nhiều người hơn nói thật ngay lập tức.",
+      "backstory": "Người trông coi kho văn thư của thủy phủ, đã phục vụ nhiều đoàn thương nghị và biết rõ đường đi của các bản khế ước."
+     }
+    },
+    {
+     "id": "thuy_phu_nguyet_tram",
+     "label": "Location",
+     "props": {
+      "name": "Thủy phủ Nguyệt Trầm",
+      "description": "Thủy phủ chìm dưới hồ Kính Vũ, nơi ba tông môn đang thương nghị quyền khai thác linh mạch."
+     }
+    },
+    {
+     "id": "dien_thuong_nghi",
+     "label": "Location",
+     "props": {
+      "name": "Điện Thương Nghị",
+      "description": "Chính điện của thủy phủ, nơi trưởng lão ngã xuống và bản ghi cuộc họp trở thành tâm điểm tranh chấp."
+     }
+    },
+    {
+     "id": "kho_van_thu",
+     "label": "Location",
+     "props": {
+      "name": "Kho Văn Thư",
+      "description": "Gian phòng khóa kín lưu các văn thư cũ cùng bản đồ dòng chảy trong thủy phủ."
+     }
+    },
+    {
+     "id": "mach_nuoc_ngam",
+     "label": "Location",
+     "props": {
+      "name": "Mạch Nước Ngầm",
+      "description": "Đường nước sâu bên dưới thủy phủ, nơi nhánh linh mạch mới lộ chạy qua."
+     }
+    },
+    {
+     "id": "thanh_ha_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Hà Tông",
+      "description": "Một đại tông môn muốn bảo đảm quyền tiếp cận ổn định với nhánh linh mạch mới lộ."
+     }
+    },
+    {
+     "id": "huyen_thiet_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Thiết Môn",
+      "description": "Một đại tông môn chủ trương giành phần linh mạch dồi dào nhất bằng điều khoản phân chia cứng rắn."
+     }
+    },
+    {
+     "id": "bich_lac_cung",
+     "label": "Faction",
+     "props": {
+      "name": "Bích Lạc Cung",
+      "description": "Một đại tông môn đang tìm cách giữ phần quyền lợi của mình sau khi trưởng lão đại diện đột ngột ngã xuống."
+     }
+    },
+    {
+     "id": "ban_ghi_thuong_nghi",
+     "label": "Item",
+     "props": {
+      "name": "Bản Ghi Thương Nghị",
+      "description": "Cuốn sổ do Đường Tử Mặc ghi lại lời nói và trình tự biểu quyết trong buổi họp."
+     }
+    },
+    {
+     "id": "van_khue_uoc",
+     "label": "Item",
+     "props": {
+      "name": "Văn Khế Ước",
+      "description": "Bản khế ước chưa ký, còn để trống phần định lượng quyền khai thác linh mạch."
+     }
+    },
+    {
+     "id": "an_thuy_tinh",
+     "label": "Item",
+     "props": {
+      "name": "Ấn Thủy Tinh",
+      "description": "Con dấu dùng xác nhận văn thư chính thức của thủy phủ."
+     }
+    },
+    {
+     "id": "truong_lao_bich_lac_ngat",
+     "label": "Fact",
+     "props": {
+      "text": "Trưởng lão đại diện Bích Lạc Cung đã ngã xuống ngay sau khi tố có người tráo đổi văn thư phân chia."
+     }
+    },
+    {
+     "id": "ban_ghi_la_ban_duy_nhat",
+     "label": "Fact",
+     "props": {
+      "text": "Bản ghi của Đường Tử Mặc là bản ghi duy nhất của toàn bộ buổi thương nghị."
+     }
+    },
+    {
+     "id": "nhanh_linh_mach_moi_lo",
+     "label": "Fact",
+     "props": {
+      "text": "Nhánh linh mạch mới lộ chạy qua Mạch Nước Ngầm bên dưới thủy phủ."
+     }
+    },
+    {
+     "id": "ba_tong_mon_tranh_quyen",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Hà Tông, Huyền Thiết Môn và Bích Lạc Cung đều đòi quyền khai thác nhánh linh mạch mới lộ."
+     }
+    },
+    {
+     "id": "van_thu_bi_danh_trao",
+     "label": "Fact",
+     "props": {
+      "text": "Một văn thư phân chia đã bị tráo trước khi trưởng lão Bích Lạc Cung ngã xuống."
+     }
+    },
+    {
+     "id": "ke_trao_van_thu",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm Đức Hành đã tráo văn thư để kích động ba tông môn tranh chấp, vì hắn muốn giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm."
+     }
+    },
+    {
+     "id": "khue_uoc_chua_duoc_ky",
+     "label": "Fact",
+     "props": {
+      "text": "Các bên chưa ký Văn Khế Ước phân chia linh mạch."
+     }
+    },
+    {
+     "id": "lap_lai_khue_uoc",
+     "label": "Thread",
+     "props": {
+      "description": "Dựa vào bản ghi để lập điều khoản chia linh mạch mà cả ba tông môn buộc phải cân nhắc.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "xac_dinh_ke_trao_van_thu",
+     "label": "Thread",
+     "props": {
+      "description": "Tìm bằng chứng đủ sức xác định ai tráo văn thư và vì sao.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "giu_mang_trong_thuy_phu",
+     "label": "Thread",
+     "props": {
+      "description": "Thoát khỏi áp lực và hiểm nguy phát sinh từ việc các phe tranh nhau bản ghi duy nhất.",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "loi_the_cua_ba_phe",
+     "label": "Thread",
+     "props": {
+      "description": "Buộc các đại diện chọn cách xác nhận khế ước có thể hạn chế việc lật lọng.",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "van_tieu_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>van_tieu_lan@0",
+     "props": {
+      "kind": "đồng minh tạm thời",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "van_tieu_lan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:van_tieu_lan>protagonist@0",
+     "props": {
+      "kind": "người được bảo hộ",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "han_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>han_khac@0",
+     "props": {
+      "kind": "đối thủ thương lượng",
+      "score": -15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "han_khac",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:han_khac>protagonist@0",
+     "props": {
+      "kind": "người bị nghi ngờ",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luu_thanh_dao",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luu_thanh_dao>protagonist@0",
+     "props": {
+      "kind": "người cần giữ bản ghi",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "luu_thanh_dao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>luu_thanh_dao@0",
+     "props": {
+      "kind": "người bị nghi ngờ",
+      "score": -10
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "van_tieu_lan",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:van_tieu_lan>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "han_khac",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:han_khac>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_thanh_dao",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_thanh_dao>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_duc_hanh",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_duc_hanh>kho_van_thu@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ban_ghi_thuong_nghi",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ban_ghi_thuong_nghi>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "van_khue_uoc",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:van_khue_uoc>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "an_thuy_tinh",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:an_thuy_tinh>kho_van_thu@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "ban_ghi_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>ban_ghi_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "van_tieu_lan",
+     "to": "van_khue_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:van_tieu_lan>van_khue_uoc@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "pham_duc_hanh",
+     "to": "an_thuy_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:pham_duc_hanh>an_thuy_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "van_tieu_lan",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:van_tieu_lan>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "han_khac",
+     "to": "huyen_thiet_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:han_khac>huyen_thiet_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luu_thanh_dao",
+     "to": "bich_lac_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luu_thanh_dao>bich_lac_cung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "truong_lao_bich_lac_ngat",
+     "to": "bich_lac_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:truong_lao_bich_lac_ngat>bich_lac_cung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "truong_lao_bich_lac_ngat",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:truong_lao_bich_lac_ngat>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "truong_lao_bich_lac_ngat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>truong_lao_bich_lac_ngat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "truong_lao_bich_lac_ngat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>truong_lao_bich_lac_ngat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "truong_lao_bich_lac_ngat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>truong_lao_bich_lac_ngat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ban_ghi_la_ban_duy_nhat",
+     "to": "ban_ghi_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ban_ghi_la_ban_duy_nhat>ban_ghi_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ban_ghi_la_ban_duy_nhat",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ban_ghi_la_ban_duy_nhat>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "ban_ghi_la_ban_duy_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>ban_ghi_la_ban_duy_nhat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "ban_ghi_la_ban_duy_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>ban_ghi_la_ban_duy_nhat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "ban_ghi_la_ban_duy_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>ban_ghi_la_ban_duy_nhat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "nhanh_linh_mach_moi_lo",
+     "to": "mach_nuoc_ngam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:nhanh_linh_mach_moi_lo>mach_nuoc_ngam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "nhanh_linh_mach_moi_lo",
+     "to": "thuy_phu_nguyet_tram",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:nhanh_linh_mach_moi_lo>thuy_phu_nguyet_tram@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "nhanh_linh_mach_moi_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>nhanh_linh_mach_moi_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "nhanh_linh_mach_moi_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>nhanh_linh_mach_moi_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "nhanh_linh_mach_moi_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>nhanh_linh_mach_moi_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_duc_hanh",
+     "to": "nhanh_linh_mach_moi_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_duc_hanh>nhanh_linh_mach_moi_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ba_tong_mon_tranh_quyen",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ba_tong_mon_tranh_quyen>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ba_tong_mon_tranh_quyen",
+     "to": "huyen_thiet_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ba_tong_mon_tranh_quyen>huyen_thiet_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ba_tong_mon_tranh_quyen",
+     "to": "bich_lac_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ba_tong_mon_tranh_quyen>bich_lac_cung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ba_tong_mon_tranh_quyen",
+     "to": "mach_nuoc_ngam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ba_tong_mon_tranh_quyen>mach_nuoc_ngam@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "ba_tong_mon_tranh_quyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>ba_tong_mon_tranh_quyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "ba_tong_mon_tranh_quyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>ba_tong_mon_tranh_quyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "ba_tong_mon_tranh_quyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>ba_tong_mon_tranh_quyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "van_thu_bi_danh_trao",
+     "to": "van_khue_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:van_thu_bi_danh_trao>van_khue_uoc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "van_thu_bi_danh_trao",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:van_thu_bi_danh_trao>dien_thuong_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "van_thu_bi_danh_trao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>van_thu_bi_danh_trao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "van_thu_bi_danh_trao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>van_thu_bi_danh_trao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "van_thu_bi_danh_trao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>van_thu_bi_danh_trao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_duc_hanh",
+     "to": "van_thu_bi_danh_trao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_duc_hanh>van_thu_bi_danh_trao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ke_trao_van_thu",
+     "to": "pham_duc_hanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ke_trao_van_thu>pham_duc_hanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ke_trao_van_thu",
+     "to": "van_khue_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ke_trao_van_thu>van_khue_uoc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ke_trao_van_thu",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ke_trao_van_thu>kho_van_thu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ke_trao_van_thu",
+     "to": "mach_nuoc_ngam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ke_trao_van_thu>mach_nuoc_ngam@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_duc_hanh",
+     "to": "ke_trao_van_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_duc_hanh>ke_trao_van_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "khue_uoc_chua_duoc_ky",
+     "to": "van_khue_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:khue_uoc_chua_duoc_ky>van_khue_uoc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "khue_uoc_chua_duoc_ky",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:khue_uoc_chua_duoc_ky>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "khue_uoc_chua_duoc_ky",
+     "to": "huyen_thiet_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:khue_uoc_chua_duoc_ky>huyen_thiet_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "khue_uoc_chua_duoc_ky",
+     "to": "bich_lac_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:khue_uoc_chua_duoc_ky>bich_lac_cung@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "khue_uoc_chua_duoc_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>khue_uoc_chua_duoc_ky@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "khue_uoc_chua_duoc_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>khue_uoc_chua_duoc_ky@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "khue_uoc_chua_duoc_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>khue_uoc_chua_duoc_ky@0",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-80c3aae8912a",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch1@1",
+     "props": {
+      "quote": "Đường Tử Mặc, giao bản ghi đây.",
+      "known_as": "Đường Tử Mặc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "han_khac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:han_khac>ch1@1",
+     "props": {
+      "quote": "Hàn Khắc đứng chắn lối ra, ánh mắt ghim vào cuốn sổ trong tay tôi.",
+      "known_as": "Hàn Khắc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luu_thanh_dao",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luu_thanh_dao>ch1@1",
+     "props": {
+      "quote": "Lưu Thanh Đào không nhìn ông ta; nàng nhìn tôi, rồi nhìn tờ giấy trên án.",
+      "known_as": "Lưu Thanh Đào"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_tieu_lan",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_tieu_lan>ch1@1",
+     "props": {
+      "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào.",
+      "known_as": "Vân Tiêu Lan"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ban_ghi_thuong_nghi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ban_ghi_thuong_nghi>ch1@1",
+     "props": {
+      "quote": "Tôi ghì Bản Ghi Thương Nghị sát vào ngực.",
+      "known_as": "Bản Ghi Thương Nghị"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_khue_uoc",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_khue_uoc>ch1@1",
+     "props": {
+      "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào.",
+      "known_as": "Văn Khế Ước"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dien_thuong_nghi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dien_thuong_nghi>ch1@1",
+     "props": {
+      "quote": "Tôi đứng giữa Điện Thương Nghị, một tay giữ bản ghi duy nhất, còn ba tông môn lần lượt đưa giá cho thứ họ muốn lấy.",
+      "known_as": "Điện Thương Nghị"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bich_lac_cung",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bich_lac_cung>ch1@1",
+     "props": {
+      "quote": "Trưởng lão Bích Lạc Cung vẫn nằm sau bình phong, nơi người ta đã kéo tấm rèm xuống.",
+      "known_as": "Bích Lạc Cung"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "huyen_thiet_mon",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:huyen_thiet_mon>ch1@1",
+     "props": {
+      "quote": "Lòng bàn tay ông ta trống không, nhưng hai hộ vệ Huyền Thiết Môn sau lưng đã dồn lên nửa bước.",
+      "known_as": "Huyền Thiết Môn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thanh_ha_tong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thanh_ha_tong>ch1@1",
+     "props": {
+      "quote": "Thanh Hà Tông có thể bảo hộ ngươi.",
+      "known_as": "Thanh Hà Tông"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ban_ghi_la_ban_duy_nhat",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ban_ghi_la_ban_duy_nhat>ch1@1",
+     "props": {
+      "quote": "Tôi là người duy nhất ghi lại từng lời trong buổi thương nghị."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "khue_uoc_chua_duoc_ky",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:khue_uoc_chua_duoc_ky>ch1@1",
+     "props": {
+      "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_thu_bi_danh_trao",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_thu_bi_danh_trao>ch1@1",
+     "props": {
+      "quote": "Tiếng xì xào quanh văn thư bị tráo chưa dứt."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "ban_ghi_la_ban_duy_nhat",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>ban_ghi_la_ban_duy_nhat@1",
+     "props": {
+      "how": "tự biết",
+      "quote": "Tôi là người duy nhất ghi lại từng lời trong buổi thương nghị."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "khue_uoc_chua_duoc_ky",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>khue_uoc_chua_duoc_ky@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "van_thu_bi_danh_trao",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>van_thu_bi_danh_trao@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Tiếng xì xào quanh văn thư bị tráo chưa dứt."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:protagonist>ban_ghi_thuong_nghi@0",
+     "valid_to_chapter": 1
+    },
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:van_tieu_lan>van_khue_uoc@0",
+     "valid_to_chapter": 1
+    }
+   ]
+  },
+  "2": {
+   "commit_id": "ch2-8b33cbde2b16",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "mach_nuoc_ngam",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:mach_nuoc_ngam>ch2@2",
+     "props": {
+      "quote": "Vậy ai sẽ ngăn người đó xuống Mạch Nước Ngầm trước?",
+      "known_as": "Mạch Nước Ngầm"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "kho_van_thu",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:kho_van_thu>ch2@2",
+     "props": {
+      "quote": "Muốn thu hẹp thời điểm bị tráo, phải đối chiếu hồ sơ ra vào kho văn thư.",
+      "known_as": "kho văn thư"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "han_khac",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:han_khac>kho_van_thu@2",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_thanh_dao",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_thanh_dao>kho_van_thu@2",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>kho_van_thu@2",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "van_tieu_lan",
+     "to": "kho_van_thu",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:van_tieu_lan>kho_van_thu@2",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:han_khac>dien_thuong_nghi@0",
+     "valid_to_chapter": 2
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:luu_thanh_dao>dien_thuong_nghi@0",
+     "valid_to_chapter": 2
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>dien_thuong_nghi@0",
+     "valid_to_chapter": 2
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:van_tieu_lan>dien_thuong_nghi@0",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-51ad88b246eb",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>dien_thuong_nghi@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "han_khac",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:han_khac>dien_thuong_nghi@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_thanh_dao",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_thanh_dao>dien_thuong_nghi@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "van_tieu_lan",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:van_tieu_lan>dien_thuong_nghi@3",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>kho_van_thu@2",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:han_khac>kho_van_thu@2",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:luu_thanh_dao>kho_van_thu@2",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:van_tieu_lan>kho_van_thu@2",
+     "valid_to_chapter": 3
+    }
+   ]
+  },
+  "4": {
+   "commit_id": "ch4-6fa3633fab7b",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "an_thuy_tinh",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:an_thuy_tinh>dien_thuong_nghi@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_duc_hanh",
+     "to": "dien_thuong_nghi",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_duc_hanh>dien_thuong_nghi@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "ke_trao_van_thu",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>ke_trao_van_thu@4",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Còn tìm gì nữa? Ta tráo văn thư. Ta muốn ba tông môn tranh chấp để giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_khac",
+     "to": "ke_trao_van_thu",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_khac>ke_trao_van_thu@4",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_thanh_dao",
+     "to": "ke_trao_van_thu",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_thanh_dao>ke_trao_van_thu@4",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "van_tieu_lan",
+     "to": "ke_trao_van_thu",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:van_tieu_lan>ke_trao_van_thu@4",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "xac_dinh_ke_trao_van_thu",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:xac_dinh_ke_trao_van_thu>ch4@4",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "pham_duc_hanh",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:pham_duc_hanh>ch4@4",
+     "props": {
+      "quote": "Phạm Đức Hành đứng ở ngưỡng cửa.",
+      "known_as": "Phạm Đức Hành"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "an_thuy_tinh",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:an_thuy_tinh>ch4@4",
+     "props": {
+      "quote": "Áo bào ông ta còn dính bụi giấy, bàn tay giữ chặt chiếc ấn Thủy Tinh.",
+      "known_as": "ấn Thủy Tinh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ke_trao_van_thu",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ke_trao_van_thu>ch4@4",
+     "props": {
+      "quote": "Còn tìm gì nữa? Ta tráo văn thư. Ta muốn ba tông môn tranh chấp để giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:pham_duc_hanh>an_thuy_tinh@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:pham_duc_hanh>kho_van_thu@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:an_thuy_tinh>kho_van_thu@0",
+     "valid_to_chapter": 4
+    }
+   ]
+  },
+  "5": {
+   "commit_id": "ch5-52146d035119",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "ban_ghi_thuong_nghi",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>ban_ghi_thuong_nghi@5",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "lap_lai_khue_uoc",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:lap_lai_khue_uoc>ch5@5",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "loi_the_cua_ba_phe",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:loi_the_cua_ba_phe>ch5@5",
+     "props": {}
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-241b4c107d07",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "mach_nuoc_ngam",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>mach_nuoc_ngam@6",
+     "props": {
+      "feeling": "cảnh giác"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "loi_the_cua_ba_phe",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:loi_the_cua_ba_phe>ch6@6",
+     "props": {}
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 6,
+  "nodes": {
+   "an_thuy_tinh": {
+    "label": "Item",
+    "props": {
+     "name": "Ấn Thủy Tinh",
+     "description": "Con dấu dùng xác nhận văn thư chính thức của thủy phủ."
+    }
+   },
+   "ba_tong_mon_tranh_quyen": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Hà Tông, Huyền Thiết Môn và Bích Lạc Cung đều đòi quyền khai thác nhánh linh mạch mới lộ."
+    }
+   },
+   "ban_ghi_la_ban_duy_nhat": {
+    "label": "Fact",
+    "props": {
+     "text": "Bản ghi của Đường Tử Mặc là bản ghi duy nhất của toàn bộ buổi thương nghị."
+    }
+   },
+   "ban_ghi_thuong_nghi": {
+    "label": "Item",
+    "props": {
+     "name": "Bản Ghi Thương Nghị",
+     "description": "Cuốn sổ do Đường Tử Mặc ghi lại lời nói và trình tự biểu quyết trong buổi họp."
+    }
+   },
+   "bich_lac_cung": {
+    "label": "Faction",
+    "props": {
+     "name": "Bích Lạc Cung",
+     "description": "Một đại tông môn đang tìm cách giữ phần quyền lợi của mình sau khi trưởng lão đại diện đột ngột ngã xuống."
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "dien_thuong_nghi": {
+    "label": "Location",
+    "props": {
+     "name": "Điện Thương Nghị",
+     "description": "Chính điện của thủy phủ, nơi trưởng lão ngã xuống và bản ghi cuộc họp trở thành tâm điểm tranh chấp."
+    }
+   },
+   "giu_mang_trong_thuy_phu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Thoát khỏi áp lực và hiểm nguy phát sinh từ việc các phe tranh nhau bản ghi duy nhất.",
+     "due_from_chapter": 1,
+     "due_to_chapter": 6
+    }
+   },
+   "han_khac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đại diện Huyền Thiết Môn tại thủy phủ; ông được lệnh giành quyền khai thác phần linh mạch có linh khí dồi dào nhất.",
+     "personality": "Cứng rắn, nói năng ngắn gọn, xem nhượng bộ là dấu hiệu yếu thế nhưng biết cân nhắc hậu quả của chiến tranh.",
+     "name": "Hàn Khắc"
+    }
+   },
+   "huyen_thiet_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Huyền Thiết Môn",
+     "description": "Một đại tông môn chủ trương giành phần linh mạch dồi dào nhất bằng điều khoản phân chia cứng rắn."
+    }
+   },
+   "ke_trao_van_thu": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm Đức Hành đã tráo văn thư để kích động ba tông môn tranh chấp, vì hắn muốn giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm."
+    }
+   },
+   "kho_van_thu": {
+    "label": "Location",
+    "props": {
+     "name": "Kho Văn Thư",
+     "description": "Gian phòng khóa kín lưu các văn thư cũ cùng bản đồ dòng chảy trong thủy phủ."
+    }
+   },
+   "khue_uoc_chua_duoc_ky": {
+    "label": "Fact",
+    "props": {
+     "text": "Các bên chưa ký Văn Khế Ước phân chia linh mạch."
+    }
+   },
+   "lap_lai_khue_uoc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Dựa vào bản ghi để lập điều khoản chia linh mạch mà cả ba tông môn buộc phải cân nhắc.",
+     "due_from_chapter": 2,
+     "due_to_chapter": 6
+    }
+   },
+   "loi_the_cua_ba_phe": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Buộc các đại diện chọn cách xác nhận khế ước có thể hạn chế việc lật lọng.",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "luu_thanh_dao": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đệ tử thân truyền của Bích Lạc Cung, được cử đến thay trưởng lão vừa ngã xuống và nắm nhiều chuyện nội bộ của cung.",
+     "personality": "Lanh lợi, khéo dùng lời mềm để thăm dò, sẵn sàng đổi lập trường nếu thấy lợi ích trước mắt đổi chiều.",
+     "name": "Lưu Thanh Đào"
+    }
+   },
+   "mach_nuoc_ngam": {
+    "label": "Location",
+    "props": {
+     "name": "Mạch Nước Ngầm",
+     "description": "Đường nước sâu bên dưới thủy phủ, nơi nhánh linh mạch mới lộ chạy qua."
+    }
+   },
+   "nhanh_linh_mach_moi_lo": {
+    "label": "Fact",
+    "props": {
+     "text": "Nhánh linh mạch mới lộ chạy qua Mạch Nước Ngầm bên dưới thủy phủ."
+    }
+   },
+   "pham_duc_hanh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Người trông coi kho văn thư của thủy phủ, đã phục vụ nhiều đoàn thương nghị và biết rõ đường đi của các bản khế ước.",
+     "personality": "Nghiêm cẩn, đa nghi và ít nói; tin rằng giữ kín tin tức đôi khi cứu được nhiều người hơn nói thật ngay lập tức.",
+     "name": "Phạm Đức Hành"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Đường Tử Mặc lớn lên trong một gia đình tu sĩ chuyên làm chứng thư và khế ước, nơi một chữ sai có thể kéo theo nhiều năm kiện tụng. Sau khi gia tộc suy tàn, chàng nhận việc ghi chép ở thủy phủ Nguyệt Trầm để kiếm chỗ dựa giữa thời loạn. Biến cố trong buổi thương nghị khiến bản ghi của chàng trở thành vật mà cả ba tông môn đều muốn nắm giữ; chàng tìm cách viết lại khế ước sao cho không phe nào có thể dễ dàng lật lọng.",
+     "personality": "Khôn khéo, thích thử lòng người bằng những câu hỏi tưởng như bâng quơ. Chàng có thể nhượng bộ trong lời nói, nhưng luôn tính trước xem mỗi nhượng bộ sẽ buộc đối phương trả lại điều gì.",
+     "name": "Đường Tử Mặc",
+     "is_protagonist": true
+    }
+   },
+   "thanh_ha_tong": {
+    "label": "Faction",
+    "props": {
+     "name": "Thanh Hà Tông",
+     "description": "Một đại tông môn muốn bảo đảm quyền tiếp cận ổn định với nhánh linh mạch mới lộ."
+    }
+   },
+   "thuy_phu_nguyet_tram": {
+    "label": "Location",
+    "props": {
+     "name": "Thủy phủ Nguyệt Trầm",
+     "description": "Thủy phủ chìm dưới hồ Kính Vũ, nơi ba tông môn đang thương nghị quyền khai thác linh mạch."
+    }
+   },
+   "truong_lao_bich_lac_ngat": {
+    "label": "Fact",
+    "props": {
+     "text": "Trưởng lão đại diện Bích Lạc Cung đã ngã xuống ngay sau khi tố có người tráo đổi văn thư phân chia."
+    }
+   },
+   "van_khue_uoc": {
+    "label": "Item",
+    "props": {
+     "name": "Văn Khế Ước",
+     "description": "Bản khế ước chưa ký, còn để trống phần định lượng quyền khai thác linh mạch."
+    }
+   },
+   "van_thu_bi_danh_trao": {
+    "label": "Fact",
+    "props": {
+     "text": "Một văn thư phân chia đã bị tráo trước khi trưởng lão Bích Lạc Cung ngã xuống."
+    }
+   },
+   "van_tieu_lan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Chấp sự của Thanh Hà Tông, được giao bảo hộ người ghi chép và thương lượng việc lập lại khế ước; nàng từng chứng kiến một thỏa thuận linh mạch bị sửa chữ sau khi ký.",
+     "personality": "Điềm đạm, giỏi hỏi ngược và không để lộ điều mình thật sự muốn; coi trọng lời thề nhưng không tin lòng tốt vô điều kiện.",
+     "name": "Vân Tiêu Lan"
+    }
+   },
+   "xac_dinh_ke_trao_van_thu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tìm bằng chứng đủ sức xác định ai tráo văn thư và vì sao.",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:han_khac>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "han_khac",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "người bị nghi ngờ"
+    }
+   },
+   {
+    "id": "RELATES_TO:luu_thanh_dao>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "luu_thanh_dao",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "người cần giữ bản ghi"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>han_khac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "han_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -15,
+     "kind": "đối thủ thương lượng"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>luu_thanh_dao@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "luu_thanh_dao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -10,
+     "kind": "người bị nghi ngờ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>van_tieu_lan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "van_tieu_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng minh tạm thời"
+    }
+   },
+   {
+    "id": "RELATES_TO:van_tieu_lan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "van_tieu_lan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người được bảo hộ"
+    }
+   },
+   {
+    "id": "LOCATED_AT:an_thuy_tinh>dien_thuong_nghi@4",
+    "type": "LOCATED_AT",
+    "source": "an_thuy_tinh",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ban_ghi_thuong_nghi>dien_thuong_nghi@0",
+    "type": "LOCATED_AT",
+    "source": "ban_ghi_thuong_nghi",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:han_khac>dien_thuong_nghi@3",
+    "type": "LOCATED_AT",
+    "source": "han_khac",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luu_thanh_dao>dien_thuong_nghi@3",
+    "type": "LOCATED_AT",
+    "source": "luu_thanh_dao",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_duc_hanh>dien_thuong_nghi@4",
+    "type": "LOCATED_AT",
+    "source": "pham_duc_hanh",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>dien_thuong_nghi@3",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:van_khue_uoc>dien_thuong_nghi@0",
+    "type": "LOCATED_AT",
+    "source": "van_khue_uoc",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:van_tieu_lan>dien_thuong_nghi@3",
+    "type": "LOCATED_AT",
+    "source": "van_tieu_lan",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>ban_ghi_thuong_nghi@5",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "ban_ghi_thuong_nghi",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:han_khac>huyen_thiet_mon@0",
+    "type": "MEMBER_OF",
+    "source": "han_khac",
+    "target": "huyen_thiet_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luu_thanh_dao>bich_lac_cung@0",
+    "type": "MEMBER_OF",
+    "source": "luu_thanh_dao",
+    "target": "bich_lac_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:van_tieu_lan>thanh_ha_tong@0",
+    "type": "MEMBER_OF",
+    "source": "van_tieu_lan",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:han_khac>ba_tong_mon_tranh_quyen@0",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "ba_tong_mon_tranh_quyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_khac>ban_ghi_la_ban_duy_nhat@0",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "ban_ghi_la_ban_duy_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_khac>ke_trao_van_thu@4",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "ke_trao_van_thu",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:han_khac>khue_uoc_chua_duoc_ky@0",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "khue_uoc_chua_duoc_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_khac>nhanh_linh_mach_moi_lo@0",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "nhanh_linh_mach_moi_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_khac>truong_lao_bich_lac_ngat@0",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "truong_lao_bich_lac_ngat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_khac>van_thu_bi_danh_trao@0",
+    "type": "KNOWS",
+    "source": "han_khac",
+    "target": "van_thu_bi_danh_trao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>ba_tong_mon_tranh_quyen@0",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "ba_tong_mon_tranh_quyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>ban_ghi_la_ban_duy_nhat@0",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "ban_ghi_la_ban_duy_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>ke_trao_van_thu@4",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "ke_trao_van_thu",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>khue_uoc_chua_duoc_ky@0",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "khue_uoc_chua_duoc_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>nhanh_linh_mach_moi_lo@0",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "nhanh_linh_mach_moi_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>truong_lao_bich_lac_ngat@0",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "truong_lao_bich_lac_ngat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_thanh_dao>van_thu_bi_danh_trao@0",
+    "type": "KNOWS",
+    "source": "luu_thanh_dao",
+    "target": "van_thu_bi_danh_trao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_duc_hanh>ke_trao_van_thu@0",
+    "type": "KNOWS",
+    "source": "pham_duc_hanh",
+    "target": "ke_trao_van_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_duc_hanh>nhanh_linh_mach_moi_lo@0",
+    "type": "KNOWS",
+    "source": "pham_duc_hanh",
+    "target": "nhanh_linh_mach_moi_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_duc_hanh>van_thu_bi_danh_trao@0",
+    "type": "KNOWS",
+    "source": "pham_duc_hanh",
+    "target": "van_thu_bi_danh_trao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>ban_ghi_la_ban_duy_nhat@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "ban_ghi_la_ban_duy_nhat",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Tôi là người duy nhất ghi lại từng lời trong buổi thương nghị."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>ke_trao_van_thu@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "ke_trao_van_thu",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Còn tìm gì nữa? Ta tráo văn thư. Ta muốn ba tông môn tranh chấp để giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>khue_uoc_chua_duoc_ky@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "khue_uoc_chua_duoc_ky",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>van_thu_bi_danh_trao@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "van_thu_bi_danh_trao",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Tiếng xì xào quanh văn thư bị tráo chưa dứt."
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>ba_tong_mon_tranh_quyen@0",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "ba_tong_mon_tranh_quyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>ban_ghi_la_ban_duy_nhat@0",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "ban_ghi_la_ban_duy_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>ke_trao_van_thu@4",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "ke_trao_van_thu",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>khue_uoc_chua_duoc_ky@0",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "khue_uoc_chua_duoc_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>nhanh_linh_mach_moi_lo@0",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "nhanh_linh_mach_moi_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>truong_lao_bich_lac_ngat@0",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "truong_lao_bich_lac_ngat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:van_tieu_lan>van_thu_bi_danh_trao@0",
+    "type": "KNOWS",
+    "source": "van_tieu_lan",
+    "target": "van_thu_bi_danh_trao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>mach_nuoc_ngam@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "mach_nuoc_ngam",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "cảnh giác"
+    }
+   },
+   {
+    "id": "ABOUT:ba_tong_mon_tranh_quyen>bich_lac_cung@0",
+    "type": "ABOUT",
+    "source": "ba_tong_mon_tranh_quyen",
+    "target": "bich_lac_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ba_tong_mon_tranh_quyen>huyen_thiet_mon@0",
+    "type": "ABOUT",
+    "source": "ba_tong_mon_tranh_quyen",
+    "target": "huyen_thiet_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ba_tong_mon_tranh_quyen>mach_nuoc_ngam@0",
+    "type": "ABOUT",
+    "source": "ba_tong_mon_tranh_quyen",
+    "target": "mach_nuoc_ngam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ba_tong_mon_tranh_quyen>thanh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "ba_tong_mon_tranh_quyen",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ban_ghi_la_ban_duy_nhat>ban_ghi_thuong_nghi@0",
+    "type": "ABOUT",
+    "source": "ban_ghi_la_ban_duy_nhat",
+    "target": "ban_ghi_thuong_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ban_ghi_la_ban_duy_nhat>protagonist@0",
+    "type": "ABOUT",
+    "source": "ban_ghi_la_ban_duy_nhat",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ke_trao_van_thu>kho_van_thu@0",
+    "type": "ABOUT",
+    "source": "ke_trao_van_thu",
+    "target": "kho_van_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ke_trao_van_thu>mach_nuoc_ngam@0",
+    "type": "ABOUT",
+    "source": "ke_trao_van_thu",
+    "target": "mach_nuoc_ngam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ke_trao_van_thu>pham_duc_hanh@0",
+    "type": "ABOUT",
+    "source": "ke_trao_van_thu",
+    "target": "pham_duc_hanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ke_trao_van_thu>van_khue_uoc@0",
+    "type": "ABOUT",
+    "source": "ke_trao_van_thu",
+    "target": "van_khue_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:khue_uoc_chua_duoc_ky>bich_lac_cung@0",
+    "type": "ABOUT",
+    "source": "khue_uoc_chua_duoc_ky",
+    "target": "bich_lac_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:khue_uoc_chua_duoc_ky>huyen_thiet_mon@0",
+    "type": "ABOUT",
+    "source": "khue_uoc_chua_duoc_ky",
+    "target": "huyen_thiet_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:khue_uoc_chua_duoc_ky>thanh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "khue_uoc_chua_duoc_ky",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:khue_uoc_chua_duoc_ky>van_khue_uoc@0",
+    "type": "ABOUT",
+    "source": "khue_uoc_chua_duoc_ky",
+    "target": "van_khue_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:nhanh_linh_mach_moi_lo>mach_nuoc_ngam@0",
+    "type": "ABOUT",
+    "source": "nhanh_linh_mach_moi_lo",
+    "target": "mach_nuoc_ngam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:nhanh_linh_mach_moi_lo>thuy_phu_nguyet_tram@0",
+    "type": "ABOUT",
+    "source": "nhanh_linh_mach_moi_lo",
+    "target": "thuy_phu_nguyet_tram",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:truong_lao_bich_lac_ngat>bich_lac_cung@0",
+    "type": "ABOUT",
+    "source": "truong_lao_bich_lac_ngat",
+    "target": "bich_lac_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:truong_lao_bich_lac_ngat>dien_thuong_nghi@0",
+    "type": "ABOUT",
+    "source": "truong_lao_bich_lac_ngat",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:van_thu_bi_danh_trao>dien_thuong_nghi@0",
+    "type": "ABOUT",
+    "source": "van_thu_bi_danh_trao",
+    "target": "dien_thuong_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:van_thu_bi_danh_trao>van_khue_uoc@0",
+    "type": "ABOUT",
+    "source": "van_thu_bi_danh_trao",
+    "target": "van_khue_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:lap_lai_khue_uoc>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "lap_lai_khue_uoc",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:loi_the_cua_ba_phe>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "loi_the_cua_ba_phe",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:loi_the_cua_ba_phe>ch6@6",
+    "type": "RESOLVED_IN",
+    "source": "loi_the_cua_ba_phe",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:xac_dinh_ke_trao_van_thu>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "xac_dinh_ke_trao_van_thu",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:an_thuy_tinh>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "an_thuy_tinh",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Áo bào ông ta còn dính bụi giấy, bàn tay giữ chặt chiếc ấn Thủy Tinh.",
+     "known_as": "ấn Thủy Tinh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ban_ghi_la_ban_duy_nhat>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ban_ghi_la_ban_duy_nhat",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi là người duy nhất ghi lại từng lời trong buổi thương nghị."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ban_ghi_thuong_nghi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ban_ghi_thuong_nghi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi ghì Bản Ghi Thương Nghị sát vào ngực.",
+     "known_as": "Bản Ghi Thương Nghị"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bich_lac_cung>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bich_lac_cung",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trưởng lão Bích Lạc Cung vẫn nằm sau bình phong, nơi người ta đã kéo tấm rèm xuống.",
+     "known_as": "Bích Lạc Cung"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dien_thuong_nghi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dien_thuong_nghi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đứng giữa Điện Thương Nghị, một tay giữ bản ghi duy nhất, còn ba tông môn lần lượt đưa giá cho thứ họ muốn lấy.",
+     "known_as": "Điện Thương Nghị"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:han_khac>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "han_khac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hàn Khắc đứng chắn lối ra, ánh mắt ghim vào cuốn sổ trong tay tôi.",
+     "known_as": "Hàn Khắc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:huyen_thiet_mon>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "huyen_thiet_mon",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lòng bàn tay ông ta trống không, nhưng hai hộ vệ Huyền Thiết Môn sau lưng đã dồn lên nửa bước.",
+     "known_as": "Huyền Thiết Môn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ke_trao_van_thu>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ke_trao_van_thu",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Còn tìm gì nữa? Ta tráo văn thư. Ta muốn ba tông môn tranh chấp để giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:kho_van_thu>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "kho_van_thu",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Muốn thu hẹp thời điểm bị tráo, phải đối chiếu hồ sơ ra vào kho văn thư.",
+     "known_as": "kho văn thư"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:khue_uoc_chua_duoc_ky>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "khue_uoc_chua_duoc_ky",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luu_thanh_dao>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luu_thanh_dao",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lưu Thanh Đào không nhìn ông ta; nàng nhìn tôi, rồi nhìn tờ giấy trên án.",
+     "known_as": "Lưu Thanh Đào"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:mach_nuoc_ngam>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "mach_nuoc_ngam",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vậy ai sẽ ngăn người đó xuống Mạch Nước Ngầm trước?",
+     "known_as": "Mạch Nước Ngầm"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:pham_duc_hanh>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "pham_duc_hanh",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Phạm Đức Hành đứng ở ngưỡng cửa.",
+     "known_as": "Phạm Đức Hành"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đường Tử Mặc, giao bản ghi đây.",
+     "known_as": "Đường Tử Mặc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thanh_ha_tong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thanh_ha_tong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thanh Hà Tông có thể bảo hộ ngươi.",
+     "known_as": "Thanh Hà Tông"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_khue_uoc>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_khue_uoc",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào.",
+     "known_as": "Văn Khế Ước"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_thu_bi_danh_trao>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_thu_bi_danh_trao",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tiếng xì xào quanh văn thư bị tráo chưa dứt."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_tieu_lan>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_tieu_lan",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trên án, Văn Khế Ước nằm trong tay Vân Tiêu Lan, chưa có chữ ký nào.",
+     "known_as": "Vân Tiêu Lan"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-80c3aae8912a",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Trong Điện Thương Nghị, Đường Tử Mặc giữ bản ghi duy nhất về buổi thương nghị, giữa lúc văn thư bị tráo và Trưởng lão Bích Lạc Cung nằm sau bình phong. Hàn Khắc, Lưu Thanh Đào và Vân Tiêu Lan đều tìm cách nắm giữ bản ghi; Đường Tử Mặc từ chối giao riêng cho bất kỳ bên nào, rồi đề nghị cùng đọc và bàn cách bảo toàn nó. Sau đó, Vân Tiêu Lan đề xuất dùng bản ghi để soạn điều khoản tạm thời. Đường Tử Mặc đồng ý soạn trước mặt cả ba bên, với điều kiện bản ghi vẫn trên án và không phe nào được cầm riêng. Ba người chấp thuận nhưng giữ vị trí gần cuốn sổ; Đường Tử Mặc mở bản ghi, đặt bút xuống dòng đầu tiên, còn Hàn Khắc yêu cầu giải thích nếu có chữ nào bất lợi cho Huyền Thiết Môn. Cửa điện vẫn đóng, hộ vệ của Hàn Khắc chặn lối ra, điều khoản chưa được viết.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đường Tử Mặc phải giữ bản ghi duy nhất đủ lâu để tránh bị quy tội, đồng thời nhận ra nó khiến cả ba tông môn muốn khống chế mình.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Trong Điện Thương Nghị, Đường Tử Mặc giữ chặt Bản Ghi Thương Nghị khi những lời buộc tội quanh văn thư bị tráo vẫn chưa lắng xuống; chàng hiểu chỉ mình có thể xác nhận diễn biến cuộc họp, nhưng chưa thể chứng minh ai đã động tay vào văn thư.",
+       "Hàn Khắc yêu cầu chàng giao bản ghi để đối chiếu, nói rằng giữ nó một mình chỉ khiến mọi người càng nghi ngờ; Đường Tử Mặc hỏi bâng quơ liệu đối chiếu xong thì ai sẽ được quyền giữ bản gốc.",
+       "Lưu Thanh Đào đề nghị bảo hộ chàng nếu bản ghi được giao cho người của mình, còn Vân Tiêu Lan nhắc rằng một lời khai không có vật chứng sẽ chẳng ngăn được bên nào phủ nhận; lời họ khiến Đường Tử Mặc nhận ra không ai muốn để chàng tự quyết định số phận bản ghi.",
+       "Chàng nhượng lời, đề nghị đọc nguyên văn những gì đã ghi ngay tại điện nhưng không trao bản gốc; chàng lập luận rằng nếu bản ghi bị sửa hoặc biến mất, cả ba bên sẽ mất cơ hội phân định trách nhiệm, còn chàng sẽ trở thành kẻ dễ bị đổ tội nhất.",
+       "Khi cả ba người cùng đòi chàng phải giao bản ghi cho phe mình, Đường Tử Mặc hiểu nó vừa là tấm chắn duy nhất giúp chàng tránh bị quy tội, vừa là sợi dây khiến mọi tông môn muốn nắm lấy chàng; chàng khước từ việc giao nộp ngay và buộc họ phải thương lượng cách bảo toàn bản ghi trước mặt nhau."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị, khi Đường Tử Mặc vẫn giữ bản ghi nhưng đã trở thành tâm điểm của cuộc mặc cả giữa ba tông môn."
+     },
+     {
+      "scene": 2,
+      "goal": "Đường Tử Mặc dùng bản ghi để tránh bị một phe tùy tiện quy tội, nhưng nhận ra nó cũng biến chàng thành mục tiêu mà cả ba tông môn muốn khống chế.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Giữ tay trên Bản Ghi Thương Nghị, tôi đề nghị đọc những đoạn liên quan đến văn thư bị tráo trước mặt cả ba bên, nhưng không giao bản gốc cho ai; Hàn Khắc đáp rằng lời đọc không đủ để xác nhận bản ghi chưa bị sửa.",
+       "Tôi hỏi nếu bản ghi biến mất sau khi một phe nhận giữ, ai sẽ chịu trách nhiệm; Lưu Thanh Đào nói Thanh Hà Tông có thể bảo hộ tôi, nhưng nàng không hứa sẽ để bản ghi ngoài tầm kiểm soát của mình.",
+       "Vân Tiêu Lan nhắc rằng Văn Khế Ước vẫn chưa ký, rồi đề nghị tôi dùng bản ghi làm căn cứ soạn điều khoản tạm thời; Hàn Khắc phản đối, còn Lưu Thanh Đào lập tức hỏi ai sẽ kiểm tra từng chữ.",
+       "Tôi nhận ra bản ghi có thể chứng minh mình đã ghi lại buổi thương nghị, nhưng cũng khiến mỗi bên đều có lý do giữ lấy tôi; tôi nhượng bộ bằng cách đồng ý soạn điều khoản trước mặt họ, đổi lại bản ghi vẫn nằm trên án và không phe nào được cầm riêng.",
+       "Ba người chấp thuận ngồi lại, song mỗi người đều giữ vị trí có thể ngăn tôi rời đi; khi tôi mở bản ghi để bắt đầu, Hàn Khắc nói nếu một chữ trong đó bất lợi cho Huyền Thiết Môn, chàng sẽ phải giải thích trước cả ba bên."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị, nơi Đường Tử Mặc bắt đầu soạn điều khoản dưới sự giám sát của ba tông môn, không còn bị ép giao bản ghi nhưng cũng chưa thể tự do rời đi."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-56ff7a9c296c",
+      "kind": "action",
+      "tone": null,
+      "text": "Bắt đầu soạn điều khoản tạm thời, chỉ dựa trên những gì bản ghi ghi lại.",
+      "listeners": [],
+      "about": [
+       "ban_ghi_la_ban_duy_nhat",
+       "khue_uoc_chua_duoc_ky",
+       "ban_ghi_thuong_nghi",
+       "van_khue_uoc"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-3ef4474a1e46",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Ta sẽ giải thích từng chữ trước mặt cả ba bên, nhưng không nhận trách nhiệm thay cho điều bản ghi ghi lại.”",
+      "listeners": [
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "about": [
+       "ban_ghi_thuong_nghi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-92c66764dcd2",
+      "kind": "inner",
+      "tone": null,
+      "text": "Giữ vững ý định không để bất kỳ phe nào cầm riêng bản ghi.",
+      "listeners": [],
+      "about": [
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "ban_ghi_thuong_nghi"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-8b33cbde2b16",
+    "player_action": "[Lời thoại, nói thật] “Ta sẽ giải thích từng chữ trước mặt cả ba bên, nhưng không nhận trách nhiệm thay cho điều bản ghi ghi lại.”",
+    "error_detail": null,
+    "summary": "Người kể thương lượng với Hàn Khắc, Lưu Thanh Đào và Vân Tiêu Lan về văn thư bị tráo cùng quyền khai thác linh mạch. Người kể tách điều khoản miễn trách nhiệm của Huyền Thiết Môn khỏi quyền khai thác chưa phân định, đề nghị hoãn khai thác và yêu cầu ba bên cùng kiểm tra hồ sơ, không ai được giữ riêng bản ghi. Cả ba đến kho văn thư, đối chiếu sổ ra vào và phát hiện mục tiếp cận hồ sơ thủy phủ đúng khoảng thời gian văn thư bị tráo; tên đã bị cạo sửa, chưa đủ căn cứ xác định ai làm hay vì mục đích gì. Hàn Khắc tạm chấp nhận câu chữ hoãn khai thác nhưng chưa ký, Lưu Thanh Đào cũng chưa xác nhận. Cuối chương, cả ba còn ở kho quanh tập hồ sơ có dấu sửa; điều khoản hoãn khai thác vẫn chưa được ký hay đóng dấu, bản ghi vẫn ở lại trong điện.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đường Tử Mặc dùng bản ghi để buộc ba bên cân nhắc một điều khoản tạm thời, đồng thời lần theo dấu vết về việc văn thư bị tráo mà chưa thể xác định thủ phạm.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Đường Tử Mặc đáp lời Hàn Khắc rằng chàng sẽ giải thích từng chữ nhưng không nhận trách nhiệm thay cho nội dung đã ghi; chàng đề nghị mọi điều khoản tạm thời phải được đối chiếu với bản ghi ngay trước mặt cả ba bên.",
+       "Hàn Khắc đòi ghi rõ Huyền Thiết Môn không chịu thiệt vì bất kỳ sai sót nào trong văn thư cũ, còn Lưu Thanh Đào chất vấn liệu câu ấy có biến phần linh mạch chưa phân định thành quyền mặc nhiên của Huyền Thiết Môn hay không.",
+       "Vân Tiêu Lan đề nghị tạm hoãn mọi quyền khai thác cho đến khi ba bên xác nhận được căn cứ phân chia; Đường Tử Mặc nhượng bộ ghi điều khoản hoãn, nhưng hỏi mỗi bên sẽ phải trả giá gì nếu đơn phương phá bỏ nó.",
+       "Khi đối chiếu lời tố cáo trong bản ghi với những gì các bên còn nhớ, Đường Tử Mặc nhận ra thời điểm văn thư bị tráo chỉ có thể thu hẹp bằng hồ sơ ra vào kho văn thư; chàng nêu điều đó mà không quy kết cho ai.",
+       "Ba đại diện miễn cưỡng đồng ý cùng kiểm tra hồ sơ, nhưng Hàn Khắc yêu cầu bản ghi đi cùng và Lưu Thanh Đào phản đối để tránh một bên nắm nó trên đường; Đường Tử Mặc đề xuất để sổ mở trên án, có người của cả ba bên đi kèm."
+      ],
+      "ends_at": "Cảnh kết tại cửa Điện Thương Nghị, khi cả ba bên đã chấp nhận cùng đến kho văn thư kiểm tra hồ sơ nhưng chưa thống nhất được điều khoản tạm thời hay cách bảo vệ bản ghi."
+     },
+     {
+      "scene": 2,
+      "goal": "Đối chiếu hồ sơ kho văn thư để tìm dấu vết việc tráo đổi, đồng thời buộc ba bên cân nhắc một điều khoản tạm hoãn khai thác có căn cứ từ bản ghi.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Đường Tử Mặc cùng Hàn Khắc, Lưu Thanh Đào và Vân Tiêu Lan đến Kho Văn Thư; chàng nhắc lại rằng bản ghi vẫn để trên án và không phe nào được cầm riêng, còn Hàn Khắc cảnh cáo rằng việc kiểm tra không đồng nghĩa Huyền Thiết Môn nhận lỗi.",
+       "Trong lúc đối chiếu hồ sơ ra vào, Đường Tử Mặc tìm thấy một chỗ ghi nhận việc tiếp cận hồ sơ thủy phủ vào khoảng thời gian văn thư bị tráo; dấu mục bị sửa khiến chàng chỉ có thể kết luận người thao tác có quyền tiếp cận, chưa thể xác định danh tính hay động cơ.",
+       "Lưu Thanh Đào đòi ghi tên người chịu trách nhiệm về hồ sơ, Hàn Khắc phản đối vì cho rằng một dấu mục chưa đủ kết tội, còn Vân Tiêu Lan nhắc rằng không ai được vin vào nghi ngờ để xuống Mạch Nước Ngầm trước khi ba bên thống nhất.",
+       "Đường Tử Mặc dùng giờ ghi trong bản ghi đối chiếu với hồ sơ, rồi đề nghị ghi điều khoản tạm thời: chưa bên nào khai thác nhánh linh mạch cho đến khi căn cứ phân chia được xác nhận; Hàn Khắc chỉ chấp nhận nếu câu chữ không mặc nhiên buộc Huyền Thiết Môn chịu trách nhiệm về văn thư cũ.",
+       "Ba đại diện đều chưa ký, nhưng phải cân nhắc điều khoản vì nó gắn thời hạn hoãn khai thác với việc xác minh hồ sơ; họ thống nhất giữ bản ghi nguyên vẹn và đưa dấu mục đáng ngờ ra trước mặt cả ba bên để tiếp tục đối chiếu."
+      ],
+      "ends_at": "Cảnh kết tại Kho Văn Thư, khi ba bên đứng trước hồ sơ có dấu mục bị sửa và điều khoản tạm hoãn khai thác vẫn chưa được ký."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-239edcc8348e",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Đề nghị cả ba cùng đối chiếu dấu mục này với bản ghi trước khi xác nhận câu chữ.",
+      "listeners": [
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "about": [
+       "ban_ghi_thuong_nghi",
+       "kho_van_thu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-76c4cc8a5395",
+      "kind": "action",
+      "tone": null,
+      "text": "Giữ trang sổ mở nguyên trạng, chưa ghi tên người chịu trách nhiệm hay điều khoản nào.",
+      "listeners": [],
+      "about": [
+       "kho_van_thu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-c29473e443d9",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình không để sự nghi ngờ biến thành kết tội khi tên trên sổ đã bị sửa mất.",
+      "listeners": [],
+      "about": [
+       "han_khac",
+       "kho_van_thu"
+      ],
+      "lie": null,
+      "feeling": "cẩn trọng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-51ad88b246eb",
+    "player_action": "[Lời thoại, nói thật] Đề nghị cả ba cùng đối chiếu dấu mục này với bản ghi trước khi xác nhận câu chữ.",
+    "error_detail": null,
+    "summary": "Tôi cùng Hàn Khắc, Lưu Thanh Đào và Vân Tiêu Lan đối chiếu hồ sơ với bản ghi tại Kho Văn Thư. Hai tài liệu xác nhận có người tiếp cận hồ sơ đúng lúc văn thư bị tráo, nhưng tên trong sổ đã bị cạo nên chưa thể xác định người hay tông môn chịu trách nhiệm. Tôi đề nghị ba bên cùng kiểm tra hồ sơ về văn thư phân chia và danh sách người được quyền tiếp cận, đồng thời tạm hoãn khai thác nhánh linh mạch, không bên nào tự sửa bản ghi hay tự kết luận. Về Điện Thương Nghị, tôi soạn dự thảo, làm rõ phạm vi kiểm tra và việc tạm hoãn không xác lập trách nhiệm hay làm mất quyền khai thác đang thương lượng. Bích Lạc Cung và Thanh Hà Tông đồng ý dùng làm dự thảo; Huyền Thiết Môn chưa ký, cảnh báo sẽ không chờ mãi.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đối chiếu dấu mục hồ sơ với bản ghi để xác định điều gì có thể chứng minh mà chưa biến nghi vấn thành kết tội.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Đường Tử Mặc nhắc lại đề nghị cùng đối chiếu dấu mục với bản ghi; chàng giữ tập hồ sơ trên bàn, không để ai cầm riêng, rồi hỏi Hàn Khắc muốn kiểm tra dấu hay câu chữ trước.",
+       "Hàn Khắc chỉ ra phần ghi về thời điểm tiếp cận hồ sơ, còn Lưu Thanh Đào đối chiếu với bản ghi duy nhất của buổi thương nghị; cả hai xác nhận có một lượt tiếp cận đúng khoảng văn thư bị tráo, nhưng tên bên cạnh mục ấy đã bị cạo sửa.",
+       "Vân Tiêu Lan nhận xét rằng vết sửa không đủ để quy trách nhiệm cho một tông môn, song chứng minh hồ sơ đã bị động đến bởi người có quyền tiếp cận kho; Hàn Khắc gằn rằng quyền ấy không đồng nghĩa với tội trạng.",
+       "Đường Tử Mặc hỏi ai được phép mở hồ sơ và ai kiểm tra dấu mục, như thể chỉ muốn làm cho câu chữ chính xác; câu trả lời khiến ba người nhận ra bản ghi có thể ràng buộc họ cùng điều tra, nhưng không thể tự nó phán định kẻ tráo văn thư.",
+       "Chàng đề nghị ghi vào điều khoản tạm thời rằng không bên nào được khai thác linh mạch trước khi ba bên cùng kiểm tra quyền tiếp cận hồ sơ; Lưu Thanh Đào chịu cân nhắc, Vân Tiêu Lan đồng ý đưa câu chữ ấy vào thương lượng, còn Hàn Khắc yêu cầu không được dùng nó để miễn trách nhiệm cho Huyền Thiết Môn."
+      ],
+      "ends_at": "Cảnh kết tại Kho Văn Thư, khi ba đại diện thống nhất mang kết quả đối chiếu trở lại Điện Thương Nghị để cân nhắc điều khoản, còn mục ghi tên bị cạo sửa vẫn là manh mối chưa thể giải."
+     },
+     {
+      "scene": 2,
+      "goal": "Đưa kết quả đối chiếu vào một điều khoản tạm thời mà cả ba bên phải cân nhắc, đồng thời xác lập rằng việc tráo văn thư chỉ có thể do người được quyền tiếp cận hồ sơ thực hiện.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Trở lại Điện Thương Nghị, tôi đặt tập hồ sơ và bản ghi ở giữa bàn, rồi đề nghị ghi rõ rằng chúng chỉ xác nhận có lượt tiếp cận hồ sơ trong khoảng thời gian văn thư bị tráo, không đủ để chỉ mặt một người hay một tông môn.",
+       "Hàn Khắc nhấn mạnh người có quyền vào kho không đồng nghĩa với kẻ tráo văn thư; Lưu Thanh Đào đáp rằng tên trong sổ đã bị cạo, nên muốn xác minh thì phải đối chiếu những người được phép mở hồ sơ với việc ghi nhận ra vào, chứ không thể dựa vào suy đoán.",
+       "Tôi đề xuất điều khoản tạm thời: ba bên cùng kiểm tra phạm vi hồ sơ liên quan và danh sách người được quyền tiếp cận; trong lúc kiểm tra, không bên nào khai thác nhánh linh mạch, còn bản ghi vẫn được giữ chung và không ai được sửa hoặc mang đi riêng.",
+       "Vân Tiêu Lan chấp nhận đưa điều khoản ấy vào bản dự thảo nếu giới hạn việc kiểm tra đúng hồ sơ liên quan; Hàn Khắc đòi ghi rõ rằng việc tạm hoãn không phải lời nhận tội hay sự từ bỏ quyền khai thác, còn Lưu Thanh Đào yêu cầu không bên nào được tự xác nhận kết quả.",
+       "Tôi thêm các điều kiện ấy thành câu chữ đối ứng, nhưng khi đề nghị ba người xác nhận cùng lúc, họ chỉ đồng ý coi đó là dự thảo để tiếp tục thương lượng; không ai ký, và Hàn Khắc cảnh báo rằng nếu việc kiểm tra kéo dài, người của ông sẽ không chờ mãi."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị, nơi bản dự thảo nằm giữa ba đại diện chưa chịu xác nhận, còn việc kiểm tra quyền tiếp cận hồ sơ trở thành điều kiện để giữ linh mạch khỏi bị khai thác trước."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"hồ sơ liên quan\" xuất hiện 3 lần (tối đa 2); đoạn: «hồ sơ liên quan»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-02e89925e7de",
+      "kind": "action",
+      "tone": null,
+      "text": "Ghi riêng danh sách hồ sơ và người phụ trách cần thống nhất trước khi bàn thời hạn kiểm tra.",
+      "listeners": [],
+      "about": [
+       "kho_van_thu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-7fdd72dcdc75",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hàn trưởng lão, xin nói rõ điều kiện nào Huyền Thiết Môn cần để tiếp tục thương lượng.",
+      "listeners": [
+       "han_khac"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-b346a308d526",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình không biến dấu vết về việc tráo văn thư thành lời buộc tội khi chưa đủ căn cứ.",
+      "listeners": [],
+      "about": [
+       "van_thu_bi_danh_trao"
+      ],
+      "lie": null,
+      "feeling": "thận trọng"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-6fa3633fab7b",
+    "player_action": "[Lời thoại, nói thật] Hàn trưởng lão, xin nói rõ điều kiện nào Huyền Thiết Môn cần để tiếp tục thương lượng.",
+    "error_detail": null,
+    "summary": "Trong cuộc thương lượng, Hàn Khắc yêu cầu hoãn khai thác chỉ có hiệu lực khi cả ba bên xác nhận, không làm mất quyền của Huyền Thiết Môn với phần linh mạch chưa phân định. Tôi đề nghị bảo toàn hồ sơ, cấm tự ý sửa, hủy hay mang đi; Lưu Thanh Đào và Vân Tiêu Lan đồng ý đưa điều khoản vào dự thảo. Ba bên thống nhất đối chiếu công khai, ghi rõ ý kiến phản đối và lập lời thề không sửa hồ sơ hay khai thác trái thỏa thuận, nhưng Hàn Khắc cảnh báo lời thề có thể khiến kẻ phá ước mất mạng. Phạm Đức Hành bất ngờ thú nhận đã tráo văn thư để gây tranh chấp, giữ quyền kiểm soát kho văn thư và lối xuống Mạch Nước Ngầm. Tôi yêu cầu ghi nhận lời thú nhận trước khi dùng làm căn cứ; ba đại diện chấp nhận ghi nhận các điều khoản nhưng chưa ký.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đường Tử Mặc buộc Hàn Khắc nói rõ điều kiện để Huyền Thiết Môn tiếp tục thương lượng, đồng thời giữ cho dự thảo không biến thành cái cớ để một phe độc chiếm linh mạch.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "beats": [
+       "Đường Tử Mặc hỏi Hàn Khắc cần điều kiện gì để tiếp tục thương lượng; Hàn đáp rằng Huyền Thiết Môn sẽ không ký một điều khoản hoãn khai thác nếu việc ấy khiến họ mất quyền đối với phần linh mạch chưa phân định.",
+       "Hàn Khắc đòi bản khế ước mới phải ghi rõ việc hoãn khai thác chỉ có hiệu lực khi cả ba bên cùng xác nhận, đồng thời không được dùng bản ghi duy nhất để quy trách nhiệm cho riêng Huyền Thiết Môn.",
+       "Đường Tử Mặc nhượng lời rằng có thể ghi rõ giới hạn ấy, rồi hỏi Hàn sẽ chấp nhận điều gì đổi lại để ngăn bất kỳ bên nào tự ý sửa hoặc mang bản ghi đi; Hàn đáp rằng mọi lần đối chiếu phải có mặt đủ ba đại diện.",
+       "Lưu Thanh Đào cảnh báo rằng quyền cùng chứng kiến không đủ ngăn lật lọng nếu không có cách xác nhận chung; Vân Tiêu Lan đề nghị mỗi bên giữ một bản đối chiếu giống hệt nhau, nhưng Hàn Khắc gạt đi vì chưa thể tin vào văn thư đã bị tráo.",
+       "Đường Tử Mặc chỉ ra rằng sổ ra vào có một mục bị cạo sửa đúng khoảng thời gian văn thư biến mất, nên khế ước phải ràng buộc cả việc bảo toàn hồ sơ; Hàn không nhận lỗi, nhưng lần đầu đồng ý để điều khoản ấy được đưa vào bản dự thảo."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị khi ba đại diện chấp thuận xem xét một điều khoản bảo toàn hồ sơ, nhưng Hàn Khắc vẫn chưa ký và yêu cầu Đường Tử Mặc nêu cách xác nhận khiến cả ba bên không thể đơn phương lật lại."
+     },
+     {
+      "scene": 2,
+      "goal": "Buộc ba đại diện chọn cơ chế ràng buộc khế ước, đồng thời xác định kẻ tráo văn thư và cái giá của việc tiếp tục thương lượng.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "pham_duc_hanh"
+      ],
+      "beats": [
+       "Tôi đáp câu hỏi của Hàn Khắc bằng đề nghị ghi rõ phần linh mạch chưa phân định vẫn thuộc quyền thương lượng của cả ba bên, nhưng trong thời gian hoãn khai thác không ai được tự ý xuống Mạch Nước Ngầm; Hàn Khắc đòi thêm điều khoản bảo toàn quyền ấy, còn Lưu Thanh Đào yêu cầu bản ghi và hồ sơ phải được đối chiếu công khai.",
+       "Tôi đề xuất ba đại diện cùng xác nhận từng điều khoản trước mặt nhau, ghi rõ mọi ý kiến phản đối ngay trong khế ước, rồi cùng lập lời thề không sửa bản ghi hay hồ sơ và không khai thác trái thỏa thuận; Vân Tiêu Lan chấp nhận, Lưu Thanh Đào đồng ý nếu quyền lợi của Thanh Hà Tông được ghi ngang hàng, còn Hàn Khắc cảnh báo lời thề sẽ khiến kẻ phá ước phải trả giá bằng tu vi và sinh mạng.",
+       "Phạm Đức Hành xuất hiện tại điện, nghe nhắc đến việc bảo toàn hồ sơ thì phản đối rằng không thể để người ngoài kiểm soát lối xuống Mạch Nước Ngầm; tôi hỏi vì sao ông ta quan tâm đến lối ấy hơn việc tìm người đã tráo văn thư, và ông ta bật lại rằng chính mình đã tráo văn thư để kích động ba tông môn tranh chấp, nhằm giữ quyền kiểm soát kho văn thư và đường vào Mạch Nước Ngầm.",
+       "Hàn Khắc lập tức đòi bắt Phạm Đức Hành, nhưng tôi nhắc rằng lời thú nhận chưa thể thay thế việc ghi nhận và xác nhận trước mặt cả ba bên; Lưu Thanh Đào buộc Phạm lặp lại lời vừa nói, còn Vân Tiêu Lan tuyên bố Bích Lạc Cung sẽ lấy lời ấy làm căn cứ ngăn ông ta tiếp cận hồ sơ.",
+       "Tôi sửa dự thảo thành khế ước tạm thời: ba bên cùng giữ quyền thương lượng, không ai được khai thác hay sửa hồ sơ trước khi cùng xác nhận, và người phá lời thề phải chịu trách nhiệm trước cả ba; Hàn Khắc, Lưu Thanh Đào và Vân Tiêu Lan chấp nhận ghi nhận điều khoản nhưng chưa ký, khiến Phạm Đức Hành bị giữ lại trong điện để đối chất."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị, trước dự thảo khế ước chưa ký, khi ba đại diện đã chấp nhận ràng buộc tạm thời còn Phạm Đức Hành bị giữ lại để đối chất."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-386d0436c8d5",
+      "kind": "action",
+      "tone": null,
+      "text": "Ghi nguyên lời thú nhận của Phạm Đức Hành vào Bản Ghi Thương Nghị.",
+      "listeners": [],
+      "about": [
+       "ban_ghi_thuong_nghi",
+       "pham_duc_hanh",
+       "ke_trao_van_thu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-78ed16f93203",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Phạm quản sự, hãy nhắc lại lời thú nhận để cả ba bên xác nhận.”",
+      "listeners": [
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "pham_duc_hanh"
+      ],
+      "about": [
+       "ke_trao_van_thu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-1510a3618ac2",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tôi quyết giữ Bản Ghi Thương Nghị trong tầm tay, không để ai mang đi kiểm tra riêng.",
+      "listeners": [],
+      "about": [
+       "ban_ghi_thuong_nghi"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-52146d035119",
+    "player_action": "[Hành động] Ghi nguyên lời thú nhận của Phạm Đức Hành vào Bản Ghi Thương Nghị.",
+    "error_detail": null,
+    "summary": "Tôi ghi lại nguyên văn lời thú nhận của Phạm Đức Hành rằng hắn tráo văn thư để gây tranh chấp giữa ba tông môn, nhằm giữ quyền kiểm soát Kho Văn Thư và lối xuống Mạch Nước Ngầm; hắn xác nhận lời ghi đúng nhưng vẫn giữ chìa khóa, không chịu mở cửa. Tôi dùng bản ghi làm căn cứ đề nghị khế ước tạm thời, rồi cùng các đại diện thống nhất giữ nguyên hồ sơ, cấm tự khai thác, kiểm tra xong trước ngày trăng khuyết kế tiếp, ghi nhận vi phạm và bảo lưu các ý kiến, quyền đang thương lượng. Hàn Khắc, Lưu Thanh Đào và Vân Tiêu Lan lần lượt ký, mỗi người đọc lời thề của mình. Cuối chương, khế ước và Bản Ghi Thương Nghị vẫn trước mặt tôi; phần phân chia, quyền khai thác và việc bàn giao lối xuống Mạch Nước Ngầm còn bỏ ngỏ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ghi nhận lời thú nhận của Phạm Đức Hành nguyên văn rồi buộc ba đại diện đối diện với lựa chọn giữa khế ước ràng buộc và nguy cơ khai chiến.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "pham_duc_hanh"
+      ],
+      "beats": [
+       "Đường Tử Mặc ghi nguyên lời thú nhận của Phạm Đức Hành vào Bản Ghi Thương Nghị, đọc lại từng câu để xác nhận không thêm suy đoán hay bỏ sót lời nào.",
+       "Phạm Đức Hành xác nhận lời ghi, nhưng nhấn mạnh mình vẫn nắm quyền kiểm soát Kho Văn Thư và lối xuống Mạch Nước Ngầm; Hàn Khắc lập tức hỏi liệu lời thú nhận có đủ để ngăn hắn tiếp tục cản trở việc kiểm tra hay không.",
+       "Đường Tử Mặc viện bản ghi làm căn cứ, đề nghị ba bên chấp nhận một khế ước tạm thời: bảo toàn hồ sơ, không tự ý khai thác và chỉ phân chia linh mạch sau khi đối chiếu công khai; chàng hỏi mỗi bên sẵn lòng ràng buộc đến đâu.",
+       "Lưu Thanh Đào muốn ghi rõ việc tạm hoãn không làm mất quyền khai thác đang thương lượng, còn Vân Tiêu Lan đồng ý với điều kiện mọi ý kiến phản đối cũng được ghi vào khế ước; Hàn Khắc bác bỏ mọi điều khoản có thể trì hoãn vô hạn.",
+       "Hàn Khắc đặt điều kiện phải có thời hạn kiểm tra và hậu quả cụ thể nếu một bên phá ước, rồi tuyên bố Huyền Thiết Môn sẽ tự hành động nếu hai bên kia không chấp nhận; lời đáp của ba đại diện biến việc ký kết thành lựa chọn tức thời giữa khế ước và khai chiến."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị, khi ba đại diện chưa ký nhưng đã bị đặt trước lựa chọn phải chấp nhận một khế ước có ràng buộc thực chất hoặc đối mặt với nguy cơ các tông môn tự khai chiến."
+     },
+     {
+      "scene": 2,
+      "goal": "Buộc ba đại diện chọn một khế ước tạm thời có điều khoản kiểm chứng được, đồng thời giữ Bản Ghi Thương Nghị khỏi trở thành con tin của riêng một phe.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "pham_duc_hanh"
+      ],
+      "beats": [
+       "Tôi đọc lại lời thú nhận đã ghi và đề nghị đưa nó vào căn cứ đối chiếu, nhưng nhấn mạnh rằng lời ấy chưa tự mở được Kho Văn Thư hay xác định phần linh mạch thuộc về ai.",
+       "Hàn Khắc đòi ghi thời hạn kiểm tra cùng hậu quả chung nếu một bên tự khai thác hoặc sửa hồ sơ; Lưu Thanh Đào chỉ chấp thuận khi việc tạm hoãn không xóa quyền đang thương lượng, còn Vân Tiêu Lan yêu cầu mọi phản đối phải được ghi nguyên vẹn.",
+       "Tôi sửa dự thảo thành khế ước tạm thời: bảo toàn hồ sơ, cấm tự ý khai thác và sửa đổi, ấn định hạn đối chiếu, ghi rõ quyền chưa bị từ bỏ, cùng cơ chế ghi nhận vi phạm và ý kiến phản đối của từng bên.",
+       "Phạm Đức Hành cảnh báo rằng chữ ký không trao chìa khóa hay quyền kiểm soát lối xuống Mạch Nước Ngầm; tôi đáp rằng điều đó sẽ được ghi thành giới hạn của khế ước, không phải lý do để trì hoãn việc xác nhận.",
+       "Sau khi cân nhắc nguy cơ Huyền Thiết Môn tự hành động, ba đại diện đồng ý ký xác nhận khế ước tạm thời và ràng buộc mình bằng lời thề không phá các điều khoản; tôi giữ Bản Ghi Thương Nghị, ghi lại từng chữ ký, lời thề và mọi điều khoản còn để ngỏ về phân chia cuối cùng."
+      ],
+      "ends_at": "Cảnh kết tại Điện Thương Nghị, khi khế ước tạm thời đã được ba đại diện xác nhận nhưng quyền phân chia linh mạch vẫn chưa được định đoạt."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-415ee2343274",
+      "kind": "action",
+      "tone": null,
+      "text": "Đối chiếu Bản Ghi Thương Nghị với ba chữ ký trên khế ước tạm thời.",
+      "listeners": [],
+      "about": [
+       "ban_ghi_thuong_nghi",
+       "van_khue_uoc"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-dd67a16bb544",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Xin ba vị xác nhận tôi đã ghi đúng chữ ký, lời thề và các ý kiến phản đối.",
+      "listeners": [
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan"
+      ],
+      "about": [
+       "ban_ghi_thuong_nghi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-41aad611cfaa",
+      "kind": "inner",
+      "tone": null,
+      "text": "Giữ cảnh giác với lối xuống Mạch Nước Ngầm vẫn chưa được bàn giao.",
+      "listeners": [],
+      "about": [
+       "mach_nuoc_ngam"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-241b4c107d07",
+    "player_action": "[Nội tâm] Giữ cảnh giác với lối xuống Mạch Nước Ngầm vẫn chưa được bàn giao.",
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Giữ bản ghi và buộc ba bên xác định cách kiểm soát lối xuống Mạch Nước Ngầm trước khi viết điều khoản phân chia cuối cùng.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "pham_duc_hanh"
+      ],
+      "beats": [
+       "Sau khi ba đại diện ký khế ước tạm thời, tôi vẫn đặt Bản Ghi Thương Nghị sát bên mình và kín đáo để ý khoảng trống trong điều khoản bàn giao lối xuống Mạch Nước Ngầm.",
+       "Tôi hỏi Phạm Đức Hành liệu hắn định giữ quyền kiểm soát lối xuống đến bao giờ; hắn đáp rằng chưa có điều khoản nào buộc hắn giao quyền, khiến Hàn Khắc lập tức đòi ghi rõ thời hạn và người được tiếp cận.",
+       "Lưu Thanh Đào đề nghị việc xuống Mạch Nước Ngầm phải có đại diện cả ba tông môn cùng chứng kiến, còn Vân Tiêu Lan nhắc rằng không thể để việc kiểm tra biến thành cớ cho bất kỳ bên nào tự khai thác.",
+       "Tôi hỏi từng người họ sẵn lòng ghi nhận điều gì nếu lối xuống vẫn chưa được bàn giao; những câu trả lời vòng vo cho thấy ai cũng muốn giữ quyền ngăn đối thủ tiếp cận, nhưng không ai chịu nhận mình đang tìm cách chiếm phần hơn.",
+       "Khi Hàn Khắc yêu cầu tôi viết ngay điều khoản bàn giao, tôi không đặt bút mà đề nghị trước hết phải đối chiếu bản ghi với khế ước tạm thời, để mọi sửa đổi đều có căn cứ và không thể bị lặng lẽ biến thành một thỏa thuận khác."
+      ],
+      "ends_at": "Cảnh kết trong Điện Thương Nghị, khi Bản Ghi Thương Nghị và khế ước tạm thời được đặt cạnh nhau để bắt đầu đối chiếu."
+     },
+     {
+      "scene": 2,
+      "goal": "Đối chiếu bản ghi với khế ước, chốt quyền tiếp cận Mạch Nước Ngầm và giải quyết dứt điểm việc ba tông môn tranh đoạt bản ghi duy nhất.",
+      "present": [
+       "protagonist",
+       "han_khac",
+       "luu_thanh_dao",
+       "van_tieu_lan",
+       "pham_duc_hanh"
+      ],
+      "beats": [
+       "Tôi đối chiếu từng điều khoản đã ký với Bản Ghi Thương Nghị, đọc rõ rằng việc bàn giao lối xuống vẫn chưa được thống nhất; Phạm Đức Hành đòi giữ chìa khóa, còn Hàn Khắc nhấn mạnh không được để hắn tự ý mở cửa.",
+       "Tôi đề nghị ghi thêm điều khoản: Phạm Đức Hành chỉ giữ cửa tạm thời, mỗi lần mở phải có đại diện ba tông môn cùng chứng kiến, ghi tên người vào và vật mang theo; việc kiểm tra không trao quyền khai thác, mọi thay đổi đều phải được cả ba bên xác nhận.",
+       "Lưu Thanh Đào đòi lưu nguyên văn mọi ý kiến phản đối, Vân Tiêu Lan yêu cầu cấm dùng việc kiểm tra làm cớ chiếm linh mạch, còn Hàn Khắc chỉ chấp thuận khi quyền của Huyền Thiết Môn với phần chưa phân định được bảo lưu; tôi ghi các điều kiện ấy tách bạch, không để chúng biến thành quyền khai thác mặc nhiên.",
+       "Phạm Đức Hành phản đối việc mất quyền tự quyết ở lối xuống, nhưng khi tôi chỉ ra lời thú nhận tráo văn thư đã được ghi nhận và khế ước cấm tự ý sửa hồ sơ hay khai thác, hắn không thể xóa bản ghi hoặc buộc tôi sửa lời; ba đại diện xác nhận điều khoản cuối và ký, còn tôi ghi rõ phần phân chia linh mạch vẫn chưa được quyết định.",
+       "Tôi trao một bản khế ước đã đối chiếu cho mỗi đại diện, giữ Bản Ghi Thương Nghị cùng bản gốc tại bàn trước sự chứng kiến của cả ba bên; họ không còn cớ giành riêng hay sửa nó mà không bị lời thề và hồ sơ ghi nhận, còn tôi khép sổ, từ chối làm người bảo chứng riêng cho bất kỳ phe nào."
+      ],
+      "ends_at": "Cảnh khép lại tại Điện Thương Nghị, khi khế ước tạm thời về việc giữ hồ sơ và tiếp cận Mạch Nước Ngầm đã được xác nhận, còn Đường Tử Mặc giữ quyền tự quyết mà không trở thành người của phe nào."
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"khế ước tạm thời\" xuất hiện 3 lần (tối đa 2); đoạn: «khế ước tạm thời»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"ý kiến phản đối\" xuất hiện 3 lần (tối đa 2); đoạn: «ý kiến phản đối»"
+       },
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch giu_mang_trong_thuy_phu (hạn gỡ chương 1–6) đến hết chương 6 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Thoát khỏi áp lực và hiểm nguy phát sinh từ việc các phe tranh nhau bản ghi duy nhất.»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch giu_mang_trong_thuy_phu (hạn gỡ chương 1–6) đến hết chương 6 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Thoát khỏi áp lực và hiểm nguy phát sinh từ việc các phe tranh nhau bản ghi duy nhất.»"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": []
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "setup:build",
+   "attempt": 1,
+   "code": "STORY_SETUP_INVALID",
+   "detail": "sai quy tắc sau 1 lượt sửa: pacing ×1",
+   "problems": [
+    "chương 5 có 4 việc đến hạn, tối đa 3 (trừ chương cuối)"
+   ]
+  }
+ ],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "plan": 1
+   },
+   "problems": [
+    "bản kế hoạch: (gốc): Value error, hồi thứ [1] không có mốc nào kết thúc trong hồi"
+   ]
+  },
+  {
+   "attempt": 2,
+   "kinds": {
+    "edges": 5
+   },
+   "problems": [
+    "cạnh KNOWS:protagonist>truong_lao_bich_lac_ngat@0: nhân vật chính chưa biết gì ở chương 0 (KNOWS của nhân vật chính là điều người chơi biết, D-16)",
+    "cạnh KNOWS:protagonist>ban_ghi_la_ban_duy_nhat@0: nhân vật chính chưa biết gì ở chương 0 (KNOWS của nhân vật chính là điều người chơi biết, D-16)",
+    "cạnh KNOWS:protagonist>nhanh_linh_mach_moi_lo@0: nhân vật chính chưa biết gì ở chương 0 (KNOWS của nhân vật chính là điều người chơi biết, D-16)",
+    "cạnh KNOWS:protagonist>ba_tong_mon_tranh_quyen@0: nhân vật chính chưa biết gì ở chương 0 (KNOWS của nhân vật chính là điều người chơi biết, D-16)",
+    "cạnh KNOWS:protagonist>khue_uoc_chua_duoc_ky@0: nhân vật chính chưa biết gì ở chương 0 (KNOWS của nhân vật chính là điều người chơi biết, D-16)"
+   ]
+  }
+ ]
+}
