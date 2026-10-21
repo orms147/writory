@@ -170,6 +170,16 @@ def test_default_naming_normalizes_case_spacing_and_unicode_form():
     assert default_naming(unicodedata.normalize("NFD", "đô thị")) == Naming(names="viet", places="that")
 
 
+@pytest.mark.parametrize(("genre", "names"), [
+    ("Kỳ ảo · tu tiên", "han_viet"),   # nhãn ghép của giao diện (frontend GENRES)
+    ("tu tiên / kiếm hiệp", "han_viet"),
+    ("Đô thị, trinh thám", "viet"),
+])
+def test_compound_genre_label_uses_the_first_part_found_in_the_table(genre, names):
+    """Hồi quy 21/10/2026: giao diện gửi "Kỳ ảo · tu tiên", không khớp bảng nên rơi về tên Việt."""
+    assert default_naming(genre).names == names
+
+
 def test_unknown_genre_defaults_to_viet_names_and_fictional_places():
     """Thể loại ngoài bảng: tên Việt, địa danh hư cấu, để không tự ý dùng địa danh thật (D-38)."""
     assert default_naming("lãng mạn") == Naming(names="viet", places="hu_cau")
