@@ -688,7 +688,9 @@ def test_calls_over_the_per_minute_limit_get_429_without_reaching_the_model(
     sid = story(action=None)
     clock = FakeClock()
     llm = ScriptedLLM([classify_reply()] * 3)
-    with TestClient(limited_app(pg, driver, llm, tmp_path, clock, per_minute=2)) as client:
+    # Mỗi ô tự viết tốn hai lượt: kiểm duyệt (G9) rồi phân loại (G5); kiểm duyệt cũng tốn tiền
+    # key người chơi nên tính vào cùng bộ đếm (D-58). Trần 4 = đúng hai ô tự viết.
+    with TestClient(limited_app(pg, driver, llm, tmp_path, clock, per_minute=4)) as client:
         first, second, third = act(client, sid), act(client, sid), act(client, sid)
         clock.now += 59
         still = act(client, sid)
@@ -698,10 +700,12 @@ def test_calls_over_the_per_minute_limit_get_429_without_reaching_the_model(
     assert third.status_code == 429 == still.status_code == HTTP_STATUS[ErrorCode.WRITORY_RATE_LIMITED]
     assert third.json() == WritoryError(ErrorCode.WRITORY_RATE_LIMITED).player_payload()
     assert later.status_code == 200
-    assert len(llm.calls) == 3  # hai lời gọi trước + một sau khi sang phút mới
+    # Hai ô trước + một sau khi sang phút mới; lượt bị từ chối dừng ngay ở kiểm duyệt.
+    assert len(llm.moderation.moderation_calls) == 3 and len(llm.calls) == 3
     # Lượt bị từ chối không tốn tiền và không có dòng nhật ký chi phí.
-    (rows,) = pg.execute("SELECT count(*) FROM llm_costs WHERE story_id = %s", (sid,)).fetchone()
-    assert rows == 3
+    roles = [r for (r,) in pg.execute("SELECT role FROM llm_costs WHERE story_id = %s ORDER BY id",
+                                      (sid,)).fetchall()]
+    assert roles == ["moderate", "classify"] * 3
 
 
 def test_limit_not_set_fails_closed_before_any_model_call(pg, driver, story, tmp_path,
@@ -730,12 +734,14 @@ def test_chapter_stops_with_an_error_event_when_the_limit_is_hit_midway(
         err = dict(events)["error"]
         assert err["code"] == "WRITORY_RATE_LIMITED"
         assert current_chapter(pg, sid) == 3 and story_snapshot(driver, sid) == before
-        used = len(llm.calls)
-        assert used == 4  # đúng 4 lời gọi tới model, lời thứ 5 bị chặn trước khi gọi
+        # Đúng 4 lời gọi tới model: dàn ý, viết, trích và kiểm duyệt cảnh 1 (G9, D-58; kiểm duyệt
+        # có hàng đợi riêng nên không nằm trong `calls`). Lời thứ 5, dàn ý cảnh 2, bị chặn trước
+        # khi gọi.
+        assert len(llm.calls) == 3 and len(llm.moderation.moderation_calls) == 1
         clock.now += 60
         llm._script.clear()
         llm._script.extend(full_script())
-        # Chương cần 8 lời gọi, trần 4 mỗi phút: vẫn dừng, nhưng không hỏng gì ở lần chạy lại.
+        # Chương cần 11 lời gọi, trần 4 mỗi phút: vẫn dừng, nhưng không hỏng gì ở lần chạy lại.
         again = sse(write_next(client, sid).text)
         assert dict(again)["error"]["code"] == "WRITORY_RATE_LIMITED"
     assert current_chapter(pg, sid) == 3

@@ -497,7 +497,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Khoá `story` (cùng khoá viết chương) cho `POST /stories/{id}/choices` và `/action`. Khoá `narrator` riêng cho hỏi người kể, vì hỏi người kể không mất lượt truyện (design §6.6): được hỏi khi chương đang viết, chỉ không được hỏi hai câu cùng lúc. Khoá `setup` cho ba bước tạo lựa chọn khởi tạo, chung với chốt. Lần hai: `STORY_BUSY`, không gọi model.
   - Bộ đếm: bảng `llm_call_windows` (migration 0005), `db.take_llm_call`, cửa sổ cố định một phút theo `owner_id`, một câu lệnh kiểm và tăng cùng lúc. Giới hạn `rate_limit.llm_calls_per_minute_per_user`; null → `CONFIG_LIMIT_NOT_SET`.
   - `llm.ratelimit.RateLimitedClient` bọc client thật trong `PlayerLLM.open`, nên mọi lời gọi của API, kể cả lần thử lại, xin một lượt trước khi tới model. Hết lượt: `WRITORY_RATE_LIMITED` (429), không thử lại, không tốn tiền, không có dòng nhật ký chi phí. Giờ qua `deps.get_clock` để test dùng đồng hồ giả.
-- **Hệ quả:** cửa sổ cố định cho phép tới 2 × giới hạn quanh ranh giới phút. Một chương cần từ 8 lời gọi (thêm 3 mỗi lần viết lại cảnh); hết lượt giữa chương thì chương dừng như mọi lỗi trước bước ghi (G11) và phải viết lại từ đầu, các lời gọi đã chạy vẫn tốn tiền. Lượt đã giữ không trả lại khi lời gọi lỗi. Câu hỏi người kể bị từ chối vì bận không tốn lượt hỏi của chương.
+- **Hệ quả:** cửa sổ cố định cho phép tới 2 × giới hạn quanh ranh giới phút. Một chương (trừ chương cuối) cần từ 11 lời gọi, gồm kiểm duyệt (D-58), thêm 3 mỗi lần viết lại cảnh; hết lượt giữa chương thì chương dừng như mọi lỗi trước bước ghi (G11) và phải viết lại từ đầu, các lời gọi đã chạy vẫn tốn tiền. Lượt đã giữ không trả lại khi lời gọi lỗi. Câu hỏi người kể bị từ chối vì bận không tốn lượt hỏi của chương.
 - **Người quyết:** Claude (nhánh choice-effects), chờ điều phối duyệt · 20/10/2026
 
 ## D-57 · Kiểm duyệt nội dung (G9): danh mục trong config, model báo loại, code quyết định
@@ -508,7 +508,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Đầu vào (ô tự viết, câu hỏi người kể, phần người chơi sửa của nhân vật chính, tag): chỉ kiểm `hard_block` và `block`, vì hành động người chơi viết là điều nhân vật làm, còn mức miêu tả do model viết. Bị chặn thì `INPUT_BLOCKED` (một câu trung tính, không nêu loại), không lưu, không gọi model nào khác, không mất lượt hỏi người kể. Chạy sau kiểm độ dài.
   - Đầu ra: xem D-58.
 - **Hệ quả:** thêm một lời gọi cho mỗi đầu vào của người chơi. Nhãn `forbidden_content` của G5 (D-27) giữ nguyên; kiểm duyệt chạy trước nên G5 thành lớp thứ hai cho ô tự viết. Độ chính xác của model chưa đo (`writory.safety.bench_g9`). Nghị định 147/2024/NĐ-CP vẫn là câu hỏi mở (security.md), không kết luận ở đây.
-- **Người quyết:** Claude (nhánh moderation-g9), chờ điều phối duyệt; danh mục chờ Chủ dự án duyệt · 20/10/2026
+- **Người quyết:** Claude (nhánh moderation-g9), điều phối duyệt; danh mục chờ Chủ dự án duyệt · 20/10/2026
 
 ## D-58 · Kiểm duyệt đầu ra: gắn vào lượt soát cảnh và bộ lựa chọn; mức u tối chưa đọc được từ tag
 - **Bối cảnh:** D-36 cho viết lại cảnh một lần; D-37 không tự viết lại bộ lựa chọn bị dò lộ chặn. Tag "mức u tối" là chữ người chơi tự gõ (design §4.1), chưa có bước đổi nó thành một mức trong config.
@@ -517,8 +517,8 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bộ lựa chọn: `make_choices` nhận cổng `moderate` và kiểm mọi chữ người chơi thấy (chữ lựa chọn, nội dung lời nói dối, cảm xúc). Vi phạm thì không hiện bộ nào (`CHOICES_LEAK_BLOCKED`), không tự viết lại; người chơi bấm thử lại. Cả pipeline lẫn `POST /stories/{id}/choices` truyền cổng.
   - Mức u tối: `ChapterRequest.darkness_level` (khoá trong `moderation.darkness_levels`, None = `default_darkness_level`). Đường chơi chưa lưu mức theo truyện nên dùng mặc định.
   - Chi phí: thêm một lời gọi mỗi lượt soát cảnh và mỗi bộ lựa chọn. Cách rẻ hơn, chưa làm: gộp báo loại vào lời gọi của bộ trích (nó đã đọc đúng chữ cảnh); đánh đổi là đổi một prompt đã đo ở bài C.
-- **Hệ quả:** lời gọi `moderate` tính vào trần cảnh/chương/truyện (G8) và vào nhật ký chi phí với vai `moderate`. **Chủ dự án cần quyết:** mức u tối là lựa chọn có sẵn ở bước khởi tạo (cần đổi design §4.1 và thêm cột lưu theo truyện), hay model đọc tag chữ tự do.
-- **Người quyết:** Claude (nhánh moderation-g9), chờ điều phối duyệt · 20/10/2026
+- **Hệ quả:** lời gọi `moderate` tính vào trần cảnh/chương/truyện (G8), vào nhật ký chi phí với vai `moderate`, và vào bộ đếm lời gọi mỗi phút (D-56), vì nó tốn tiền key người chơi: mỗi đầu vào của người chơi tốn thêm một lượt đếm (ô tự viết: kiểm duyệt rồi phân loại là hai lượt), mỗi lượt soát cảnh và mỗi bộ lựa chọn thêm một lượt. **Chủ dự án cần quyết:** mức u tối là lựa chọn có sẵn ở bước khởi tạo (cần đổi design §4.1 và thêm cột lưu theo truyện), hay model đọc tag chữ tự do.
+- **Người quyết:** Claude (nhánh moderation-g9), điều phối duyệt · 20/10/2026
 
 ## D-59 · Hỏi người kể: sổ tay lớn thì chỉ gửi phần liên quan tới câu hỏi
 - **Bối cảnh:** `ask_narrator` đưa cả sổ tay vào context. Truyện tới 60 chương (`config/story_lengths.yaml`) có sổ tay hàng trăm mục: tốn token và loãng. Bài E lần 1 (`evals/results/2026-10-20-narrator-luna-1/`) chỉ có sổ tay vài chục mục.

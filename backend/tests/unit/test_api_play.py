@@ -132,6 +132,8 @@ def _action_client(monkeypatch, llm):
                         lambda conn, story_id, chapter, **kw: saved.append(kw["text"]))
     app = create_app(dev_settings(), health_checks={"neo4j": ok}, config=CFG)
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
+    # Kết nối None: khoá chống chạy đôi (D-56) thay bằng bản không làm gì; khoá thật ở test graph.
+    offline(app)
     app.dependency_overrides[deps.get_owned_story] = (
         lambda story_id: StoryRecord(story_id, "dev", "short", 3))
     app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(
