@@ -652,3 +652,11 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `bench_g9` thêm `--cases` (mặc định bộ cũ), `--repeat N` (báo `unstable` và `stable_rate`) và `--budget` (trần chi phí của lần chạy; chạm trần thì dừng và ghi `stopped_by_budget`). `result.json` ghi tên file, hash, version và số câu của bộ câu.
 - **Hệ quả:** chạy lặp chỉ lộ sự không ổn định của model (suy luận thấp, lấy mẫu); nó không chứng minh một câu ổn định là đúng. Con số trên bộ giữ riêng là ước lượng độ chính xác trung thực hơn, nhưng bộ chỉ vài chục câu nên khoảng tin cậy rộng. Lần chạy thật do điều phối làm.
 - **Người quyết:** Claude (nhánh g9-holdout), điều phối giao việc, chờ duyệt · 21/10/2026
+
+## D-75 · Test graph chạy trên database Postgres riêng; thể loại ghép lấy phần đầu có trong bảng quy ước tên
+- **Bối cảnh:** trước khi chủ dự án chạy app trên máy (21/10/2026). Test graph và app dùng chung database `writory`, nên test xoá và ghi đè key của người chơi dev, kéo theo key người chơi dán vào app bị mất. Các session chạy test song song cũng làm nhau đỏ (`PLAYER_KEY_UNREADABLE`). Giao diện gửi thể loại "Kỳ ảo · tu tiên", không khớp bảng `DEFAULT_NAMING` (D-32), nên rơi về tên Việt.
+- **Quyết định:**
+  - `tests/graph/conftest.py`: fixture phiên `isolated_postgres` đặt `POSTGRES_DSN` sang `<tên>_test` (hoặc `POSTGRES_TEST_DSN`), tự tạo database nếu chưa có. Mọi test graph, dependency của app và tiến trình con đọc biến này.
+  - `setup.default_naming`: nhãn ghép (`·`, `/`, `,`, `|`) lấy phần đầu tiên có trong bảng.
+- **Hệ quả:** Neo4j Community chỉ có một database, nên test vẫn tách theo `story_id`. Các phiên test chạy song song vẫn dùng chung `<tên>_test` với nhau.
+- **Người quyết:** Claude · 21/10/2026

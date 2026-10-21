@@ -12,7 +12,7 @@ docker compose up -d          # Neo4j (http://localhost:7474) + Postgres
 cd backend
 uv sync
 uv run pytest -m "not graph"  # test nhanh: không mạng, không gọi model thật
-uv run pytest -m graph        # test cần Neo4j + Postgres ở trên; mỗi test dùng story_id riêng và chỉ dọn story_id đó
+uv run pytest -m graph        # test cần Neo4j + Postgres ở trên; Postgres dùng database riêng <tên>_test (tự tạo, hoặc POSTGRES_TEST_DSN), không đụng dữ liệu app (D-75); Neo4j: mỗi test một story_id riêng
 ```
 
 Chạy cả một truyện từ dòng lệnh (`writory.pipeline.bench_run`; lệnh, đề và kết quả: `docs/eval.md`, mục "Chạy cả truyện"). Lệnh đọc `NEO4J_*`, `POSTGRES_DSN` và, khi chạy thật, `OPENROUTER_API_KEY` từ biến môi trường hoặc `.env`; tự chạy migration và tạo ràng buộc Neo4j. Mỗi lần chạy dùng một story_id mới `run-<ngày>-<nhãn>-<mã>`, ghi trong `meta.json`. Truyện của lần chạy thật được giữ lại trong Neo4j + Postgres; xem bằng sổ tay (`ENABLE_DEV_ROUTES`, bên dưới) hoặc xoá bằng `delete_story_record` và `graph.delete_story`.

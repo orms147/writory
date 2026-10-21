@@ -122,8 +122,16 @@ DEFAULT_NAMING: dict[str, Naming] = {
 FALLBACK_NAMING = _VIET_FICTIONAL
 
 
+_GENRE_PARTS = re.compile(r"\s*[·/,|]\s*")
+
+
 def default_naming(genre: str) -> Naming:
-    return DEFAULT_NAMING.get(_key(genre), FALLBACK_NAMING)
+    """Nhãn ghép ("Kỳ ảo · tu tiên") lấy phần đầu tiên có trong bảng (D-75)."""
+    for part in (genre, *_GENRE_PARTS.split(genre)):
+        naming = DEFAULT_NAMING.get(_key(part))
+        if naming is not None:
+            return naming
+    return FALLBACK_NAMING
 
 
 # --- lựa chọn của người chơi -------------------------------------------------------------------
