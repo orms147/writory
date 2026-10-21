@@ -1,14 +1,14 @@
-"""Bài đo A: bộ nhớ, hỏi đáp trên truyện cố định, năm hệ trả lời cạnh tranh (design §9 A;
-docs/eval.md "Bài A"; D-72, D-73).
+"""Bài đo A: bộ nhớ, hỏi đáp trên truyện cố định, sáu hệ trả lời cạnh tranh (design §9 A;
+docs/eval.md "Bài A"; D-72, D-73, D-81).
 
 Cùng một bộ câu hỏi khai trước (evals/scenarios/memory/questions.yaml) trên truyện mẫu 5 chương.
-Mỗi câu hỏi "sau khi đã đọc tới hết chương N"; năm hệ khác nhau ở bộ nhớ đưa cho CÙNG một model trả
-lời (vai `narrator` của config/models.yaml): đồ thị WriTory, không bộ nhớ, tóm tắt từng chương,
-RAG BM25, nhét cả truyện (`pipeline.bench_a_systems`). Chấm bằng code (`pipeline.bench_a_data`),
-không giám khảo LLM. Chi phí ghi theo từng hệ, gồm cả chi phí dựng bộ nhớ (tóm tắt của hệ
-"tóm tắt").
+Mỗi câu hỏi "sau khi đã đọc tới hết chương N"; các hệ khác nhau ở bộ nhớ đưa cho CÙNG một model trả
+lời (vai `narrator` của config/models.yaml): đồ thị WriTory, đồ thị + câu trích, không bộ nhớ, tóm
+tắt từng chương, RAG BM25, nhét cả truyện (`pipeline.bench_a_systems`). Chấm bằng code
+(`pipeline.bench_a_data`), không giám khảo LLM. Chi phí ghi theo từng hệ, gồm cả chi phí dựng bộ
+nhớ (tóm tắt của hệ "tóm tắt"). Hệ tuỳ chọn (`graph_quotes`) bật/tắt trong run.yaml.
 
-Hệ đồ thị đọc đồ thị CHỈ qua `GraphState` của lớp graph/ (G10): chạy thật qua `Neo4jState` (nạp
+Hai hệ đồ thị đọc đồ thị CHỈ qua `GraphState` của lớp graph/ (G10): chạy thật qua `Neo4jState` (nạp
 truyện mẫu vào Neo4j, `story_id` riêng), chạy khô qua `OverlayState` (cùng nghĩa "ở chương N";
 test so hai nền: tests/graph/test_bench_a_graph_parity.py).
 
@@ -30,7 +30,7 @@ import sys
 import time
 from collections import Counter
 from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from datetime import date
 from pathlib import Path
 from typing import Any, Literal
@@ -59,6 +59,7 @@ from writory.pipeline.bench_a_data import (
     GROUPS,
     BenchData,
     Question,
+    RunFile,
     context_supports,
     distance_bin,
     load_data,
@@ -73,6 +74,7 @@ from writory.pipeline.bench_a_systems import (
     Context,
     build_graph_context,
     context_full,
+    context_graph_quotes,
     context_none,
     context_rag,
     context_rolling,
@@ -93,7 +95,7 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
 STORY_ID = "bench-a-sample"
-SystemName = Literal["graph", "none", "rolling", "rag", "full"]
+SystemName = Literal["graph", "graph_quotes", "none", "rolling", "rag", "full"]
 
 ANSWER_PROMPT_VERSION = "a-answer-1"  # đổi chữ prompt thì tăng số: kết quả cũ không còn so được
 EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ABORT = 0, 1, 2, 3
@@ -250,6 +252,11 @@ class ContextBuilder:
         elif system == "graph":
             ctx = build_graph_context(self._graph_state(n), q.question, n, story=story,
                                       recent=run.graph.recent_chapter)
+        elif system == "graph_quotes":
+            ctx = context_graph_quotes(self._graph_state(n), q.question, n, story=story,
+                                       top_k=run.graph_quotes.top_k,
+                                       chunk_chars=run.rag.chunk_chars,
+                                       recent=run.graph.recent_chapter)
         else:
             raise ValueError(f"hệ không biết: {system}")
         self._cache[key] = ctx
@@ -300,7 +307,7 @@ class RunOptions:
     out: Path
     dry_run: bool = False
     fake: Literal["oracle", "null", "wrong"] = "oracle"
-    systems: Sequence[str] = SYSTEMS
+    systems: Sequence[str] = ()  # rỗng: các hệ đang bật trong run.yaml (`RunFile.systems`)
     budget: float | None = None
     samples: int | None = None  # None: theo run.yaml
     concurrency: int = 4
@@ -314,7 +321,7 @@ def check_options(opts: RunOptions) -> None:
     if opts.concurrency < 1 or (opts.samples is not None and opts.samples < 1):
         raise ConfigError("--concurrency, --samples phải >= 1")
     unknown = sorted(set(opts.systems) - set(SYSTEMS))
-    if unknown or not opts.systems:
+    if unknown:
         raise ConfigError(f"--systems chọn trong {', '.join(SYSTEMS)}; không biết: {unknown}")
     bad = sorted(set(opts.groups) - set(GROUPS))
     if bad:
@@ -323,6 +330,22 @@ def check_options(opts: RunOptions) -> None:
         return
     if opts.budget is None or opts.budget <= 0:
         raise ConfigError("lượt chạy thật cần --budget (USD, > 0)")
+
+
+def resolve_systems(run: RunFile, requested: Sequence[str]) -> list[str]:
+    """Hệ sẽ chạy: `requested`, hoặc các hệ đang bật trong run.yaml khi bỏ trống. Chọn một hệ tuỳ
+    chọn đang tắt là lỗi: run.yaml là tham số khai trước, không bật ngầm (D-81)."""
+    unknown = sorted(set(requested) - set(SYSTEMS))
+    if unknown:
+        raise ConfigError(f"--systems chọn trong {', '.join(SYSTEMS)}; không biết: {unknown}")
+    if not requested:
+        return list(run.systems)
+    off = [s for s in requested if s not in run.systems]
+    if off:
+        flags = ", ".join(f"{s}.enabled" for s in off)
+        raise ConfigError(f"hệ {', '.join(off)} đang tắt trong run.yaml ({flags}); bật ở đó "
+                          "(tăng `version`) hoặc bỏ khỏi --systems")
+    return list(requested)
 
 
 def select_questions(data: BenchData, opts: RunOptions) -> list[Question]:
@@ -548,6 +571,7 @@ async def run_bench(
 ) -> int:
     """Chạy (hoặc chạy tiếp) bài A vào `opts.out`. Chạy thật: nơi gọi đưa client thật."""
     check_options(opts)
+    opts = replace(opts, systems=resolve_systems(data.run, opts.systems))
     problems = run_problems(config, data, opts.systems)
     if problems:
         raise ConfigError("config chưa đủ để chạy bài A:\n- " + "\n- ".join(problems))
@@ -741,9 +765,11 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
 
 
 def plan_text(data: BenchData, config: AppConfig, *, samples: int,
-              systems: Sequence[str] = SYSTEMS) -> str:
+              systems: Sequence[str] = ()) -> str:
     """Ước chi phí từng hệ từ ngữ cảnh thật (nền bộ nhớ) và giá trong run.yaml. Ước tính thô: token
-    vào = ký tự / EST_CHARS_PER_TOKEN, token ra = hằng số chưa đo. Chi phí thật lấy từ usage."""
+    vào = ký tự / EST_CHARS_PER_TOKEN, token ra = hằng số chưa đo. Chi phí thật lấy từ usage.
+    `systems` rỗng: các hệ đang bật trong run.yaml."""
+    systems = resolve_systems(data.run, systems)
     model = require_model(config.models.roles, "narrator")
     price = data.run.prices[model]
     cap = config.limits.context.summary_max_chars or 1000
@@ -804,7 +830,7 @@ def resolve_out(args: argparse.Namespace) -> Path:
 def _options(args: argparse.Namespace) -> RunOptions:
     return RunOptions(
         out=resolve_out(args), dry_run=args.dry_run, fake=args.fake,
-        systems=_split(args.systems) or list(SYSTEMS), budget=args.budget, samples=args.samples,
+        systems=_split(args.systems), budget=args.budget, samples=args.samples,
         concurrency=args.concurrency, question_ids=_split(args.questions),
         groups=_split(args.groups), graph_backend=args.graph_backend)
 
@@ -845,17 +871,17 @@ def _cmd_summary(args: argparse.Namespace) -> int:
 def _cmd_plan(args: argparse.Namespace) -> int:
     data = _load(args)
     config = load_app_config(Path(args.config_dir))
-    problems = run_problems(config, data, _split(args.systems) or SYSTEMS)
+    systems = resolve_systems(data.run, _split(args.systems))
+    problems = run_problems(config, data, systems)
     if problems:
         raise ConfigError("config chưa đủ để chạy bài A:\n- " + "\n- ".join(problems))
-    print(plan_text(data, config, samples=args.samples or data.run.samples,
-                    systems=_split(args.systems) or SYSTEMS))
+    print(plan_text(data, config, samples=args.samples or data.run.samples, systems=systems))
     return EXIT_OK
 
 
 def _parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="python -m writory.pipeline.bench_a",
-                                description="Bài đo A: bộ nhớ, năm hệ trả lời (docs/eval.md).")
+                                description="Bài đo A: bộ nhớ, sáu hệ trả lời (docs/eval.md).")
     sub = p.add_subparsers(dest="command", required=True)
     run = sub.add_parser("run", help="hỏi mọi câu của đề trên các hệ, chấm, ghi kết quả")
     run.add_argument("--label", help="tạo evals/results/<ngày>-memory-<nhãn>/")
@@ -867,7 +893,8 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--budget", type=float, help="trần OpenRouter, USD; bắt buộc khi chạy thật")
     run.add_argument("--samples", type=int, help="số lần hỏi mỗi câu (mặc định: run.yaml)")
     run.add_argument("--concurrency", type=int, default=4)
-    run.add_argument("--systems", help=f"chỉ các hệ này, cách nhau dấu phẩy ({', '.join(SYSTEMS)})")
+    run.add_argument("--systems", help=f"chỉ các hệ này, cách nhau dấu phẩy ({', '.join(SYSTEMS)}); "
+                                       "mặc định: các hệ đang bật trong run.yaml")
     run.add_argument("--questions", help="chỉ các id này, cách nhau dấu phẩy")
     run.add_argument("--groups", help=f"chỉ các nhóm này ({', '.join(GROUPS)})")
     run.add_argument("--graph-backend", choices=("memory", "neo4j"),

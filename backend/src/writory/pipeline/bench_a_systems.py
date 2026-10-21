@@ -1,15 +1,17 @@
-"""Bài đo A: năm "hệ trả lời" (đối thủ) của bài đo bộ nhớ (design §9 A; D-72, D-73).
+"""Bài đo A: sáu "hệ trả lời" (đối thủ) của bài đo bộ nhớ (design §9 A; D-72, D-73, D-81).
 
 Mỗi hệ nhận cùng bộ chương đã viết sẵn và dựng NGỮ CẢNH cho một câu hỏi hỏi sau khi đã đọc tới hết
 chương N. Cùng một model trả lời nhận ngữ cảnh đó, nên khác biệt giữa các hệ chỉ nằm ở bộ nhớ:
 
-  graph    đồ thị WriTory: nối thực thể trong câu hỏi với đồ thị, lấy lân cận và lịch sử tới hết
-           chương N, chỉ qua `GraphState` (lớp graph/, G10). Cộng chương N nếu `recent`.
-  none     không bộ nhớ: chỉ chương N.
-  rolling  tóm tắt từng chương 1..N-1 nối lại (vai `summary`, đúng thứ pipeline lưu, D-49) cộng
-           chương N.
-  rag      BM25 trên các đoạn của chương 1..N-1 (D-73) cộng chương N.
-  full     nhét cả truyện: chương 1..N.
+  graph         đồ thị WriTory: nối thực thể trong câu hỏi với đồ thị, lấy lân cận và lịch sử tới
+                hết chương N, chỉ qua `GraphState` (lớp graph/, G10). Cộng chương N nếu `recent`.
+  graph_quotes  đồ thị + câu trích (D-81): đúng phần đồ thị của `graph`, cộng vài đoạn chữ trên
+                trang tìm theo câu hỏi (BM25 như `rag`, ít đoạn hơn), cộng chương N nếu `recent`.
+  none          không bộ nhớ: chỉ chương N.
+  rolling       tóm tắt từng chương 1..N-1 nối lại (vai `summary`, đúng thứ pipeline lưu, D-49)
+                cộng chương N.
+  rag           BM25 trên các đoạn của chương 1..N-1 (D-73) cộng chương N.
+  full          nhét cả truyện: chương 1..N.
 
 "Chương N" là chương người viết vừa viết xong; mọi hệ (trừ `full`, vốn có tất cả) đều thấy nó, vì
 bộ nhớ cần đo là bộ nhớ về các chương CŨ HƠN. Không hệ nào thấy chương sau N.
@@ -25,9 +27,12 @@ from dataclasses import dataclass, field
 
 from writory.guard.state import EdgeRow, GraphState
 
-SYSTEMS = ("graph", "none", "rolling", "rag", "full")
+SYSTEMS = ("graph", "graph_quotes", "none", "rolling", "rag", "full")
+# Hệ bật/tắt bằng run.yaml (`<tên>.enabled`); tắt thì không chạy khi bỏ trống --systems (D-81).
+OPTIONAL_SYSTEMS = ("graph_quotes",)
 SYSTEM_LABELS = {
     "graph": "Đồ thị WriTory",
+    "graph_quotes": "Đồ thị + câu trích trên trang (BM25)",
     "none": "Không bộ nhớ (chỉ chương N)",
     "rolling": "Tóm tắt cuộn + chương N",
     "rag": "RAG BM25 + chương N",
@@ -188,19 +193,28 @@ class Bm25Index:
         return [c for _, c in scored[:k]]
 
 
+def retrieve(story: Mapping[int, str], chapters: Sequence[int], question: str, *, top_k: int,
+             chunk_chars: int) -> tuple[list[Chunk], int]:
+    """(`top_k` đoạn BM25 của các chương `chapters`, sắp theo thứ tự truyện; số đoạn trong kho)."""
+    pool = [c for ch in sorted(chapters) for c in chunk_chapter(ch, story[ch], chunk_chars=chunk_chars)]
+    hits = sorted(Bm25Index(pool).top(question, top_k), key=lambda c: (c.chapter, c.index))
+    return hits, len(pool)
+
+
+def passages_block(heading: str, hits: Sequence[Chunk]) -> str:
+    return f"{heading}\n" + "\n\n".join(f"(chương {c.chapter})\n{c.text}" for c in hits)
+
+
 def context_rag(story: Mapping[int, str], chapter: int, question: str, *, top_k: int,
                 chunk_chars: int) -> Context:
-    old = [c for ch in sorted(story) if ch < chapter
-           for c in chunk_chapter(ch, story[ch], chunk_chars=chunk_chars)]
-    hits = sorted(Bm25Index(old).top(question, top_k), key=lambda c: (c.chapter, c.index))
+    hits, pool = retrieve(story, [c for c in story if c < chapter], question, top_k=top_k,
+                          chunk_chars=chunk_chars)
     parts = []
     if hits:
-        parts.append("[Các đoạn liên quan trong chương trước]\n" + "\n\n".join(
-            f"(chương {c.chapter})\n{c.text}" for c in hits))
+        parts.append(passages_block("[Các đoạn liên quan trong chương trước]", hits))
     parts.append(chapter_block(story, chapter))
     return Context("rag", chapter, "\n\n".join(parts),
-                   detail={"retrieved": [(c.chapter, c.index) for c in hits],
-                           "pool": len(old)})
+                   detail={"retrieved": [(c.chapter, c.index) for c in hits], "pool": pool})
 
 
 # --- đồ thị (đối thủ 0) -----------------------------------------------------------------------------
@@ -336,6 +350,30 @@ def build_graph_context(
         parts.append(chapter_block(story, chapter))
     return Context("graph", chapter, "\n\n".join(parts), frozenset(keys),
                    {"linked": linked, "graph_chars": len(graph_text)})
+
+
+QUOTES_HEADING = "[Đoạn trên trang tìm theo câu hỏi]"
+
+
+def context_graph_quotes(
+    state: GraphState, question: str, chapter: int, *, story: Mapping[int, str], top_k: int,
+    chunk_chars: int, recent: bool = True,
+) -> Context:
+    """Hệ lai (D-81): phần đồ thị của `build_graph_context` (cùng chữ, cùng khoá `facts`), cộng
+    `top_k` đoạn chữ trên trang tìm bằng BM25 theo câu hỏi (cùng cách cắt đoạn và chấm điểm như
+    hệ `rag`), cộng chương N nếu `recent`. Có chương N thì chỉ tìm trong chương 1..N-1 để không lặp;
+    không có thì tìm cả chương N. Không bao giờ đọc chương sau N."""
+    graph = build_graph_context(state, question, chapter, story=story, recent=False)
+    searched = [c for c in story if c < chapter or (c == chapter and not recent)]
+    hits, pool = retrieve(story, searched, question, top_k=top_k, chunk_chars=chunk_chars)
+    parts = [graph.text]
+    if hits:
+        parts.append(passages_block(QUOTES_HEADING, hits))
+    if recent:
+        parts.append(chapter_block(story, chapter))
+    return Context("graph_quotes", chapter, "\n\n".join(parts), graph.facts,
+                   {**graph.detail, "retrieved": [(c.chapter, c.index) for c in hits],
+                    "pool": pool})
 
 
 def _roster_block(r: GraphReader) -> tuple[str, set[str]]:

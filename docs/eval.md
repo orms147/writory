@@ -5,32 +5,35 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 **Nguyên tắc:** khai trước câu hỏi, đáp án và cách chấm (commit vào `evals/scenarios/`) **trước khi** chạy. Không sửa câu hỏi sau khi đã thấy kết quả. Đồ thị không thắng thì ghi là không thắng.
 
 ## Bài A — Bộ nhớ
-- **Hỏi gì:** sau khi đã đọc tới hết chương N của một truyện cố định, hệ nhớ truyện tốt cỡ nào? Cùng bộ câu hỏi, cùng một model trả lời, chỉ khác bộ nhớ đưa cho nó. Cách làm: D-72, D-73.
-- **Dữ liệu (khai trước):** `evals/scenarios/memory/questions.yaml` trên truyện mẫu 5 chương `data/sample-story/` (chỉ đọc); tham số chạy, giá giữ chỗ ngân sách, cỡ đoạn RAG: `evals/scenarios/memory/run.yaml`. Chủ dự án duyệt 21/10/2026, kèm hai sửa: câu quan hệ hỏi theo chiều của Minh; câu cần nối hai chi tiết trên trang gắn `inference: true` và báo điểm tách riêng (bảng "Câu nhớ và câu suy luận" trong `summary.md`). Đã chạy thật rồi thì không sửa đè, tăng `version`.
+- **Hỏi gì:** sau khi đã đọc tới hết chương N của một truyện cố định, hệ nhớ truyện tốt cỡ nào? Cùng bộ câu hỏi, cùng một model trả lời, chỉ khác bộ nhớ đưa cho nó. Cách làm: D-72, D-73, D-81.
+- **Dữ liệu (khai trước):** `evals/scenarios/memory/questions.yaml` trên truyện mẫu 5 chương `data/sample-story/` (chỉ đọc); tham số chạy, giá giữ chỗ ngân sách, cỡ đoạn RAG, số đoạn và cờ bật của hệ `graph_quotes`: `evals/scenarios/memory/run.yaml`. Chủ dự án duyệt 21/10/2026, kèm hai sửa: câu quan hệ hỏi theo chiều của Minh; câu cần nối hai chi tiết trên trang gắn `inference: true` và báo điểm tách riêng (bảng "Câu nhớ và câu suy luận" trong `summary.md`). Đã chạy thật rồi thì không sửa đè, tăng `version`.
   - Năm nhóm: đồ vật, sống/chết, ai biết gì, quan hệ hiện tại, lời nói dối. Mỗi câu khai chương hỏi (`ask_chapter`), chương của sự thật (`fact_chapter`, khoảng cách = hiệu), có thể hỏi về trạng thái ở chương cũ (`as_of`).
   - Chỉ hỏi điều **người đọc thấy được trên trang** tới chương hỏi (mỗi câu có `evidence`: câu trích nguyên văn). Điều chỉ có ở lớp sự thật, trang chưa nói, không hỏi.
   - Đáp án gốc tính lại từ đồ thị dựng tay bằng `derive`, test kiểm đáp án khai khớp đồ thị; lệch là lỗi đề.
-- **Năm hệ trả lời** (mỗi hệ dựng ngữ cảnh từ chương 1..N, không hệ nào thấy chương sau N; `src/writory/pipeline/bench_a_systems.py`):
+- **Sáu hệ trả lời** (mỗi hệ dựng ngữ cảnh từ chương 1..N, không hệ nào thấy chương sau N; `src/writory/pipeline/bench_a_systems.py`):
 
   | Hệ (`--systems`) | Ngữ cảnh |
   |---|---|
   | `graph` đồ thị WriTory | nhân vật/đồ vật/nơi chốn nêu trong câu hỏi, cạnh và cửa sổ hiệu lực tới hết chương N, lời nói dối và sự kiện dẫn tới, danh sách nhân vật còn sống/đã chết; đọc chỉ qua `GraphState` của lớp `graph/` (G10); thêm chương N |
+  | `graph_quotes` đồ thị + câu trích (D-81) | đúng phần đồ thị của `graph`, cộng `graph_quotes.top_k` đoạn BM25 của chương 1..N-1 (cùng cách cắt đoạn và chấm điểm như `rag`, ít đoạn hơn), cộng chương N |
   | `none` không bộ nhớ | chỉ chương N |
   | `rolling` tóm tắt | tóm tắt từng chương 1..N-1 (vai `summary`, đúng thứ pipeline lưu, D-49) nối lại, cộng chương N |
   | `rag` RAG | BM25 trên đoạn của chương 1..N-1 (D-73), cộng chương N |
   | `full` nhét cả truyện | chương 1..N nguyên văn |
 
-  Bản 1 theo design §9 chạy `graph`, `rolling`, `full` (`--systems graph,rolling,full`); `none` và `rag` đã có trong khung, chạy khi chủ dự án duyệt.
+  Bản 1 theo design §9 chạy `graph`, `rolling`, `full` (`--systems graph,rolling,full`); `none` và `rag` đã có trong khung, chạy khi chủ dự án duyệt. Bỏ trống `--systems` thì chạy mọi hệ đang bật trong `run.yaml`; `graph_quotes` là hệ tuỳ chọn (`graph_quotes.enabled`, mặc định bật), tắt thì chọn nó bằng `--systems` là lỗi.
 - **Chấm:** bằng code (`bench_a_data.py`), không giám khảo LLM. Bốn dạng đáp án: tập thực thể (khớp tên và biệt danh, nhắc lại tên đã có trong câu hỏi không bị trừ), có/không, chọn một, nhóm từ khoá. Trả "Không biết" tính riêng (kiêng), không tính đúng. Độ đúng chia cho số lượt đã khai; lượt lỗi hay chưa chạy tính chưa đúng.
-- **Khung kiểm (không gọi model thật):** model giả `oracle` chỉ trả đúng khi ngữ cảnh nó nhận **đủ chứng cứ**, nên 100% ở `graph` và `full`, thấp ở hệ khác; `null` ra 0% và toàn kiêng; `wrong` ra 0% không kiêng. Test: ngữ cảnh mỗi hệ không chứa chương sau N, hệ đồ thị cho cùng ngữ cảnh trên Neo4j và trên gói trong bộ nhớ, và hệ đồ thị không có Cypher riêng.
+- **Khung kiểm (không gọi model thật):** model giả `oracle` chỉ trả đúng khi ngữ cảnh nó nhận **đủ chứng cứ**, nên 100% ở `graph`, `graph_quotes` và `full`, thấp ở hệ khác (`graph_quotes` đủ khi phần đồ thị đủ khoá hoặc câu trích trên trang có trong ngữ cảnh); `null` ra 0% và toàn kiêng; `wrong` ra 0% không kiêng. Test: ngữ cảnh mỗi hệ không chứa chương sau N, hai hệ đồ thị cho cùng ngữ cảnh trên Neo4j và trên gói trong bộ nhớ, và không có Cypher riêng.
 - **Chỉ số:** độ đúng chung, theo nhóm, theo khoảng cách, kèm `n` và khoảng tin cậy Wilson; số lần kiêng; ngữ cảnh trung bình; chi phí trả lời, chi phí dựng bộ nhớ (tóm tắt) và USD mỗi câu, tách theo hệ.
 - **Lệnh:**
   ```bash
   cd backend
   uv run python -m writory.pipeline.bench_a plan                       # ước chi phí, không gọi model
+  uv run python -m writory.pipeline.bench_a plan --systems graph_quotes # ước chi phí của một hệ
   uv run python -m writory.pipeline.bench_a run --dry-run --label khung      # khung kiểm: oracle
   uv run python -m writory.pipeline.bench_a run --dry-run --fake null --label khung-null
   uv run python -m writory.pipeline.bench_a run --label lan-1 --budget 1.0   # chạy thật
+  uv run python -m writory.pipeline.bench_a run --label lai-1 --systems graph_quotes --budget 0.3  # chỉ hệ lai
   uv run python -m writory.pipeline.bench_a summary --out ../evals/results/<thư mục>
   uv run pytest tests/unit/test_bench_a_data.py tests/unit/test_bench_a_systems.py tests/unit/test_bench_a_run.py
   uv run pytest -m graph tests/graph/test_bench_a_graph_parity.py            # cần docker compose up -d

@@ -1,6 +1,8 @@
-"""Bài đo A: khung chạy với model giả (D-72). Oracle = 100% ở hệ đồ thị, null = 0%, mỗi hệ dựng đúng
-ngữ cảnh, chi phí ghi theo hệ, chạy tiếp được, trần ngân sách chặn trước lời gọi. Không mạng."""
+"""Bài đo A: khung chạy với model giả (D-72, D-81). Oracle = 100% ở hai hệ đồ thị, null = 0%, mỗi hệ
+dựng đúng ngữ cảnh, chi phí ghi theo hệ, chạy tiếp được, trần ngân sách chặn trước lời gọi. Không
+mạng."""
 
+import dataclasses
 import json
 from collections import defaultdict
 from pathlib import Path
@@ -23,6 +25,7 @@ from writory.pipeline.bench_a import (
     compute_report,
     main,
     plan_text,
+    resolve_systems,
     run_bench,
     select_questions,
     wilson,
@@ -62,11 +65,11 @@ def accuracy(store: Store) -> dict[str, float]:
 # --- khung kiểm: oracle, null, wrong ------------------------------------------------------------
 
 
-def test_oracle_is_perfect_on_the_graph_system_and_on_full_story(tmp_path):
+def test_oracle_is_perfect_on_the_graph_systems_and_on_full_story(tmp_path):
     code, store, _ = run(tmp_path, fake="oracle")
     acc = accuracy(store)
     assert code == 0
-    assert acc["graph"] == 1.0 and acc["full"] == 1.0
+    assert acc["graph"] == 1.0 and acc["graph_quotes"] == 1.0 and acc["full"] == 1.0
     # các hệ còn lại là trần của chúng nếu model đọc hoàn hảo: none không biết chương cũ
     assert acc["none"] < 0.7 and acc["rolling"] < 0.7 and 0.5 < acc["rag"] < 1.0
 
@@ -107,7 +110,10 @@ def test_runner_sends_each_system_its_own_context(tmp_path):
              and "Câu hỏi:" in m.content]
     by_marker = {
         "full": [m for m in asked if "[Chương 1]" in m.content and "[Chương 4]" in m.content],
-        "graph": [m for m in asked if "Đồ thị trí nhớ của truyện" in m.content],
+        "graph": [m for m in asked if "Đồ thị trí nhớ của truyện" in m.content
+                  and "[Đoạn trên trang" not in m.content],
+        "graph_quotes": [m for m in asked if "Đồ thị trí nhớ của truyện" in m.content
+                         and "[Đoạn trên trang tìm theo câu hỏi]" in m.content],
         "rolling": [m for m in asked if "Tóm tắt giả của chương 4" in m.content],
         "rag": [m for m in asked if "[Các đoạn liên quan" in m.content],
     }
@@ -313,6 +319,49 @@ def test_plan_prices_every_system_without_calling_a_model():
     assert "ƯỚC TÍNH THÔ" in text and "Tổng ước tính" in text
 
 
+def test_plan_prices_only_the_hybrid_system_when_asked():
+    text = plan_text(DATA, CONFIG, samples=3, systems=["graph_quotes"])
+    assert bench_a.SYSTEM_LABELS["graph_quotes"] in text
+    assert bench_a.SYSTEM_LABELS["graph"] + " |" not in text and "Tổng ước tính" in text
+
+
+# --- hệ tuỳ chọn trong run.yaml (D-81) -------------------------------------------------------------------
+
+
+def with_hybrid(enabled: bool):
+    run = DATA.run.model_copy(update={"graph_quotes": DATA.run.graph_quotes.model_copy(
+        update={"enabled": enabled})})
+    return dataclasses.replace(DATA, run=run)
+
+
+def test_hybrid_system_is_on_by_default_and_listed_after_graph():
+    assert DATA.run.graph_quotes.enabled is True
+    assert resolve_systems(DATA.run, []) == list(SYSTEMS)
+    assert SYSTEMS.index("graph_quotes") == SYSTEMS.index("graph") + 1
+
+
+def test_switched_off_hybrid_is_left_out_by_default_and_refused_when_named(tmp_path):
+    off = with_hybrid(False)
+    assert resolve_systems(off.run, []) == [s for s in SYSTEMS if s != "graph_quotes"]
+    assert resolve_systems(off.run, ["graph", "none"]) == ["graph", "none"]
+    with pytest.raises(ConfigError, match="graph_quotes.enabled"):
+        resolve_systems(off.run, ["graph_quotes"])
+    import asyncio
+
+    opts = RunOptions(out=tmp_path / "o", dry_run=True, samples=1, question_ids=["item-01"])
+    assert asyncio.run(run_bench(off, opts, config=CONFIG, log=lambda _: None)) == 0
+    store = Store(opts.out)
+    assert "graph_quotes" not in {r["system"] for r in store.rows(RESULTS)}
+    assert "graph_quotes" not in store.read_meta()["runs"][-1]["systems"]
+    with pytest.raises(ConfigError, match="graph_quotes.enabled"):
+        plan_text(off, CONFIG, samples=1, systems=["graph_quotes"])
+
+
+def test_meta_records_the_resolved_systems_of_a_default_run(tmp_path):
+    _, store, _ = run(tmp_path, question_ids=["item-01"])
+    assert store.read_meta()["runs"][-1]["systems"] == list(SYSTEMS)
+
+
 # --- dòng lệnh -----------------------------------------------------------------------------------------------
 
 
@@ -326,6 +375,13 @@ def test_cli_dry_run_summary_and_plan(tmp_path, capsys):
     assert "Độ chính xác chung" in capsys.readouterr().out
     assert main(["plan", "--samples", "1", "--systems", "graph"]) == 0
     assert "Đồ thị WriTory" in capsys.readouterr().out
+    assert main(["plan", "--samples", "1", "--systems", "graph_quotes"]) == 0
+    assert bench_a.SYSTEM_LABELS["graph_quotes"] in capsys.readouterr().out
+    hybrid = tmp_path / "cli-hybrid"
+    assert main(["run", "--dry-run", "--out", str(hybrid), "--samples", "1", "--systems",
+                 "graph_quotes", "--groups", "relation"]) == 0
+    rows = Store(hybrid).rows(RESULTS)
+    assert rows and {r["system"] for r in rows} == {"graph_quotes"} and all(r["correct"] for r in rows)
 
 
 def test_cli_rejects_missing_label_bad_label_and_unknown_system(tmp_path, capsys):
