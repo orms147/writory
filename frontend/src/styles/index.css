@@ -1,0 +1,99 @@
+@import './fonts.css';
+@import './tokens.css';
+@import './effects.css';
+
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  html,
+  body {
+    background: var(--ink-950);
+    color: var(--ink-50);
+    font-family: var(--font-ui);
+  }
+  body {
+    margin: 0;
+    font-size: 15px;
+    line-height: 1.6;
+  }
+  a {
+    color: inherit;
+    text-decoration: none;
+  }
+}
+
+/* Chữ chạy dần ở trang đọc: từng cụm chữ mờ → nét (README bàn giao mục 5). Luật giảm chuyển động
+   trong effects.css đã tắt lớp này; React còn hiện đủ chữ ngay (InkText). */
+@keyframes wt-ink-word {
+  from {
+    opacity: 0;
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    filter: blur(0);
+  }
+}
+.wt-ink-word {
+  animation: wt-ink-word 0.7s ease-out both;
+}
+
+/* Khung xương nhạt khi chờ lựa chọn khởi tạo: không vòng quay (mục 5). */
+@keyframes wt-skeleton {
+  0%,
+  100% {
+    opacity: 0.45;
+  }
+  50% {
+    opacity: 0.8;
+  }
+}
+.wt-skeleton {
+  background: var(--ink-800);
+  border-radius: 6px;
+  animation: wt-skeleton 1.8s ease-in-out infinite;
+}
+
+/* Thẻ ở trạng thái chọn, cho phần tử có aria-checked (thay data-selected của bàn giao). */
+.wt-card[aria-checked='true'] {
+  border-color: var(--cinnabar-400) !important;
+}
+.wt-card[aria-checked='true'] .wt-seal {
+  opacity: 1;
+  transform: scale(1) rotate(-10deg);
+}
+
+.wt-reading p + p {
+  text-indent: 1.4em;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .wt-skeleton {
+    animation: none !important;
+  }
+}
+
+/* Chữ hoa đầu chương trên trang giấy (D-Doc). flow-root: chữ hoa không tràn sang đoạn sau. */
+.wt-dropcap {
+  display: flow-root;
+}
+.wt-dropcap::first-letter {
+  float: left;
+  font-family: var(--font-display);
+  font-weight: 600;
+  font-size: 4.1em;
+  line-height: 0.8;
+  margin: 0.12em 0.14em 0 0;
+  color: var(--cinnabar-600);
+}
+
+/* Nút tắt: không vệt mực, không nhấc. */
+.wt-btn:disabled::before {
+  display: none;
+}
+.wt-btn:disabled {
+  box-shadow: none !important;
+  transform: none !important;
+}
