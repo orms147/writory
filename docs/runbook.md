@@ -46,10 +46,10 @@ curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: a
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
 curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện
 ```
-Một truyện chỉ viết một chương một lúc, một phiên chỉ chốt một lần một lúc: lần gọi thứ hai trả 409 `STORY_BUSY` (D-46). Khoá giữ trên kết nối Postgres của yêu cầu, nên tự nhả khi yêu cầu kết thúc hay tiến trình chết.
+Một truyện chỉ viết một chương một lúc, một phiên chỉ chốt một lần một lúc: lần gọi thứ hai trả 409 `STORY_BUSY` (D-46). Khoá giữ trên kết nối Postgres của yêu cầu, nên tự nhả khi yêu cầu kết thúc hay tiến trình chết. Người chơi ngắt kết nối giữa stream thì chương không ghi, lời gọi model đang chờ bị huỷ, và khoá chỉ nhả sau khi đường đi đã dừng hẳn (D-63): gọi lại ngay trong khoảng đó có thể nhận `STORY_BUSY`, thử lại sau.
 Danh sách route và schema: `http://127.0.0.1:8000/docs` (OpenAPI của FastAPI).
 
-Lời gọi model trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`, và có trần trong `config/limits.yaml`. Truyện phải có `story_plan` trong Postgres: truyện tạo qua `/setup` có; truyện mẫu nạp tay thì không, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).
+Lời gọi model trả bằng key người chơi đã lưu qua `/player/key`, không bao giờ bằng `OPENROUTER_API_KEY`, và có trần trong `config/limits.yaml`. Mọi lời gọi gửi kèm `max_tokens` (`limits.llm_call`); model nào được dùng ở `roles` hay `writer_tiers` phải có giá ở `config/models.yaml` `prices`, không thì lời gọi bị từ chối trước khi gửi (`CONFIG_LIMIT_NOT_SET`). Lời gọi bị huỷ hay đứt được ghi chi phí tối đa, đánh dấu ước tính, và tra lại theo id generation ở lần gọi sau của cùng truyện (D-64). Truyện phải có `story_plan` trong Postgres: truyện tạo qua `/setup` có; truyện mẫu nạp tay thì không, nên hỏi người kể trên nó báo lỗi (fail closed, D-44).
 
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.

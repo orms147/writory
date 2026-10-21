@@ -7,6 +7,17 @@ Theo docs openrouter.ai (tra ngày 19/10/2026; chưa đối chiếu với lời 
 - Stream: SSE, dòng bắt đầu bằng ":" là comment, usage nằm ở chunk cuối trước `data: [DONE]`.
   Lỗi giữa chừng tới dưới dạng chunk có trường `error`, HTTP vẫn 200.
 - Lỗi: {"error": {"code", "message", "metadata"}}; có thể tới cả khi HTTP 200.
+
+Id generation và tra chi phí theo id (tra ngày 21/10/2026, D-64; chưa đối chiếu với lời gọi thật):
+- Header `X-Generation-Id` có ở mọi endpoint (api-reference/streaming); `id` của thân phản hồi là
+  id generation (use-cases/usage-accounting). Status và header được gửi ngay khi nhà cung cấp nhận
+  yêu cầu, kể cả lời gọi không stream (api-reference/errors). Vì vậy `chat` đọc header trước rồi
+  mới đọc thân: lời gọi bị huỷ hay đứt khi đang chờ thân vẫn biết id (`CallTrace`).
+- GET {base}/generation?id=<id> (api-reference/get-a-generation): `data.total_cost` (USD),
+  `data.tokens_prompt`, `data.tokens_completion`; 404 khi không có. Docs không nói generation có
+  sau bao lâu, nên 404 được coi là "chưa có, tra lại sau".
+- Lời gọi không stream bị huỷ vẫn bị tính tiền đủ; stream bị huỷ chỉ dừng tính tiền với nhà cung
+  cấp hỗ trợ (api-reference/streaming).
 """
 
 import json
@@ -19,12 +30,15 @@ from pydantic import BaseModel, SecretStr
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import (
     ChatResult,
+    GenerationCost,
     LLMClient,
     Message,
     StreamDone,
     StreamEvent,
     TextDelta,
     Usage,
+    current_trace,
+    valid_generation_id,
 )
 
 DEFAULT_BASE_URL = "https://openrouter.ai/api/v1"
@@ -79,6 +93,31 @@ def _bad_response(detail: str) -> WritoryError:
     return WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail=detail)
 
 
+# Lỗi httpx xảy ra trước khi yêu cầu rời máy: chắc chắn chưa tới nhà cung cấp, không tốn tiền.
+_NOT_SENT = (httpx.ConnectError, httpx.ConnectTimeout, httpx.PoolTimeout,
+             httpx.UnsupportedProtocol)
+
+
+def _note_sent(sent: bool) -> None:
+    if (trace := current_trace()) is not None:
+        trace.sent = sent
+
+
+def _note_generation_id(value: object) -> str | None:
+    """Báo id generation (nếu đúng dạng) cho nơi ghi chi phí; giữ id đầu tiên."""
+    gen_id = valid_generation_id(value)
+    trace = current_trace()
+    if gen_id is not None and trace is not None and trace.generation_id is None:
+        trace.generation_id = gen_id
+    return gen_id
+
+
+def _unavailable(e: httpx.HTTPError) -> WritoryError:
+    if isinstance(e, _NOT_SENT):
+        _note_sent(False)
+    return WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__)
+
+
 class OpenRouterClient(LLMClient):
     def __init__(
         self,
@@ -89,7 +128,9 @@ class OpenRouterClient(LLMClient):
     ) -> None:
         self._key = api_key
         self._http = http or httpx.AsyncClient(timeout=DEFAULT_TIMEOUT)
-        self._url = base_url.rstrip("/") + "/chat/completions"
+        base = base_url.rstrip("/")
+        self._url = base + "/chat/completions"
+        self._generation_url = base + "/generation"
 
     def _headers(self) -> dict[str, str]:
         return {
@@ -139,14 +180,21 @@ class OpenRouterClient(LLMClient):
         body = self._body(
             model, messages, stream=False, response_schema=response_schema, extra=extra
         )
+        _note_sent(True)
         try:
-            resp = await self._http.post(self._url, json=body, headers=self._headers())
+            # Header trước thân: id generation có ngay khi nhà cung cấp nhận yêu cầu (D-64).
+            async with self._http.stream(
+                "POST", self._url, json=body, headers=self._headers()
+            ) as resp:
+                header_id = _note_generation_id(resp.headers.get("x-generation-id"))
+                raw = await resp.aread()
         except httpx.HTTPError as e:
-            raise WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__) from None
+            raise _unavailable(e) from None
         try:
-            data = resp.json()
+            data = json.loads(raw)
         except ValueError:
             data = None
+        body_id = _note_generation_id(data.get("id")) if isinstance(data, dict) else None
         if error := _error_from(resp.status_code, data):
             raise error
         if data is None:
@@ -165,15 +213,19 @@ class OpenRouterClient(LLMClient):
             usage=_usage(data.get("usage")),
             model=served if isinstance(served, str) else None,
             finish_reason=finish if isinstance(finish, str) else None,
+            generation_id=header_id or body_id,
         )
 
     async def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
         body = self._body(model, messages, stream=True)
         usage: Usage | None = None
+        gen_id: str | None = None
+        _note_sent(True)
         try:
             async with self._http.stream(
                 "POST", self._url, json=body, headers=self._headers()
             ) as resp:
+                gen_id = _note_generation_id(resp.headers.get("x-generation-id"))
                 if resp.status_code != 200:
                     raw = await resp.aread()
                     try:
@@ -193,6 +245,8 @@ class OpenRouterClient(LLMClient):
                         chunk = json.loads(payload)
                     except ValueError:
                         raise _bad_response("chunk SSE không phải JSON") from None
+                    if gen_id is None and isinstance(chunk, dict):
+                        gen_id = _note_generation_id(chunk.get("id"))
                     if error := _error_from(200, chunk):
                         raise error
                     if chunk.get("usage"):
@@ -202,5 +256,35 @@ class OpenRouterClient(LLMClient):
                         if content:
                             yield TextDelta(content)
         except httpx.HTTPError as e:
+            raise _unavailable(e) from None
+        yield StreamDone(usage or Usage(cost_usd=None), generation_id=gen_id)
+
+    async def generation_cost(self, generation_id: str) -> GenerationCost | None:
+        """Chi phí thật của một generation (GET /generation, D-64). None: chưa có hoặc không có
+        (404). Lỗi khác ra mã như lời gọi chat; không lỗi nào mang key (G7)."""
+        if valid_generation_id(generation_id) is None:
+            raise ValueError("id generation sai dạng")
+        try:
+            resp = await self._http.get(self._generation_url, params={"id": generation_id},
+                                        headers=self._headers())
+        except httpx.HTTPError as e:
             raise WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__) from None
-        yield StreamDone(usage or Usage(cost_usd=None))
+        if resp.status_code == 404:
+            return None
+        try:
+            data = resp.json()
+        except ValueError:
+            data = None
+        if error := _error_from(resp.status_code, data):
+            raise error
+        info = data.get("data") if isinstance(data, dict) else None
+        cost = info.get("total_cost") if isinstance(info, dict) else None
+        if isinstance(cost, bool) or not isinstance(cost, int | float) or cost < 0:
+            raise _bad_response("generation: thiếu data.total_cost hợp lệ")
+        prompt, completion = info.get("tokens_prompt"), info.get("tokens_completion")
+        return GenerationCost(
+            cost_usd=float(cost),
+            prompt_tokens=prompt if isinstance(prompt, int) and prompt >= 0 else 0,
+            completion_tokens=completion if isinstance(completion, int) and completion >= 0
+            else 0,
+        )

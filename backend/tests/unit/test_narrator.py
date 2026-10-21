@@ -15,7 +15,7 @@ from collections import Counter
 import pytest
 import yaml
 
-from writory.config import REPO_ROOT, AppConfig, CostLimits, load_config
+from writory.config import REPO_ROOT, AppConfig, CostLimits, ModelPrice, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import (
     KnownRecord,
@@ -70,6 +70,8 @@ CFG = REPO.model_copy(update={
     }),
     "models": REPO.models.model_copy(update={
         "roles": REPO.models.roles.model_copy(update={"narrator": "test/narrator"}),
+        # Lời gọi bằng key người chơi cần giá của model để ước tính chi phí tối đa (D-64).
+        "prices": REPO.models.prices | {"test/narrator": ModelPrice(input=0.10, output=0.50)},
     }),
 })
 

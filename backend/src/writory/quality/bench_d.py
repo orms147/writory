@@ -56,6 +56,7 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 from writory.config import REPO_ROOT, ConfigError, QualityConfig, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient, Message
+from writory.llm.cost import EST_CHARS_PER_TOKEN  # một chỗ cho ước tính token (D-64)
 from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import OpenRouterClient
 from writory.pipeline.setup import NAMES_TEXT, PLACES_TEXT, Naming  # quy ước tên D-32, một chỗ
@@ -100,8 +101,6 @@ HTTP_TIMEOUT_S = 600.0
 RETRY_ON = frozenset({ErrorCode.LLM_RATE_LIMITED, ErrorCode.LLM_UNAVAILABLE})
 FATAL = frozenset({ErrorCode.LLM_AUTH_FAILED, ErrorCode.LLM_INSUFFICIENT_CREDITS})
 
-# Ước tính thô, chỉ để giữ chỗ ngân sách và in kế hoạch; chi phí thật lấy từ usage.
-EST_CHARS_PER_TOKEN = 2.0
 TYPICAL_JUDGE_OUTPUT_TOKENS = 4000  # giả định, chưa đo
 
 # Kiểm giám khảo trên bài tồi đã biết (eval-audit): các tiêu chí này phải <= ngưỡng.

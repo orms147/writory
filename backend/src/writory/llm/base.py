@@ -1,7 +1,11 @@
-"""Interface tối giản cho mọi client LLM: chat, chat theo schema JSON, stream."""
+"""Interface tối giản cho mọi client LLM: chat, chat theo schema JSON, stream, tra chi phí theo id
+generation. Kèm `CallTrace`: điều client thật biết về một lời gọi khi nó chưa xong (D-64)."""
 
+import re
 from abc import ABC, abstractmethod
-from collections.abc import AsyncIterator, Mapping
+from collections.abc import AsyncIterator, Iterator, Mapping
+from contextlib import contextmanager
+from contextvars import ContextVar
 from dataclasses import dataclass
 from typing import Any, Literal
 
@@ -50,6 +54,57 @@ class ChatResult(BaseModel):
     # Model thật sự trả lời (theo phản hồi) và lý do dừng ("length" = chạm max_tokens).
     model: str | None = None
     finish_reason: str | None = None
+    # Id generation của OpenRouter (`gen-...`), để tra lại chi phí sau (D-64). None: không biết.
+    generation_id: str | None = None
+
+
+class GenerationCost(BaseModel):
+    """Chi phí thật của một generation, tra lại theo id sau khi lời gọi đã xong (D-64)."""
+
+    cost_usd: float
+    prompt_tokens: int = 0
+    completion_tokens: int = 0
+
+
+# Id generation hợp lệ theo docs OpenRouter (GET /generation): "gen-" rồi chữ, số, gạch ngang;
+# tối đa 128 ký tự. Id lạ từ header hay thân phản hồi bị bỏ qua, không đưa vào URL hay nhật ký.
+_GENERATION_ID = re.compile(r"gen-[A-Za-z0-9-]{1,124}")
+
+
+def valid_generation_id(value: object) -> str | None:
+    return value if isinstance(value, str) and _GENERATION_ID.fullmatch(value) else None
+
+
+@dataclass
+class CallTrace:
+    """Điều client thật báo về một lời gọi đang chạy, để nơi ghi chi phí còn biết khi lời gọi lỗi
+    hay bị huỷ (lúc đó không có `usage`; D-64).
+
+    `sent`: None = client không báo (model giả, client khác), coi như có thể đã gửi; False = chắc
+    chắn chưa tới nhà cung cấp (lỗi kết nối, chưa bắt đầu); True = yêu cầu đã đi.
+    `generation_id`: id generation, biết ngay khi có header phản hồi."""
+
+    sent: bool | None = None
+    generation_id: str | None = None
+
+
+_CALL_TRACE: ContextVar[CallTrace | None] = ContextVar("writory_llm_call_trace", default=None)
+
+
+@contextmanager
+def trace_call() -> Iterator[CallTrace]:
+    """Mở một `CallTrace` cho lời gọi chạy trong khối này (cùng task asyncio)."""
+    trace = CallTrace()
+    token = _CALL_TRACE.set(trace)
+    try:
+        yield trace
+    finally:
+        _CALL_TRACE.reset(token)
+
+
+def current_trace() -> CallTrace | None:
+    """`CallTrace` của lời gọi đang chạy; None khi không ai mở (client thật vẫn chạy bình thường)."""
+    return _CALL_TRACE.get()
 
 
 @dataclass(frozen=True)
@@ -60,6 +115,7 @@ class TextDelta:
 @dataclass(frozen=True)
 class StreamDone:
     usage: Usage
+    generation_id: str | None = None
 
 
 type StreamEvent = TextDelta | StreamDone
@@ -80,6 +136,11 @@ class LLMClient(ABC):
     @abstractmethod
     def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
         """Trả các TextDelta, rồi đúng một StreamDone ở cuối."""
+
+    async def generation_cost(self, generation_id: str) -> GenerationCost | None:
+        """Chi phí thật của một generation đã xong. None: chưa có (thử lại sau) hoặc client này
+        không tra được. Mặc định: không tra được."""
+        return None
 
     async def chat_json[T: BaseModel](
         self, model: str, messages: list[Message], schema: type[T],

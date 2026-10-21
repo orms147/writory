@@ -1,9 +1,17 @@
+import asyncio
+
 import pytest
 
-from writory.config import CostLimits
+from writory.config import AppConfig, CostLimits, ModelPrice, load_config
 from writory.errors import ErrorCode, WritoryError
-from writory.llm.base import Message, StreamDone
-from writory.llm.cost import CostTracker, MeteredClient
+from writory.llm.base import CallTrace, Message, StreamDone
+from writory.llm.cost import (
+    EST_CHARS_PER_TOKEN,
+    CostEstimator,
+    CostTracker,
+    MeteredClient,
+    maybe_billed,
+)
 from writory.llm.fake import FakeLLM
 
 MSGS = [Message(role="user", content="viết cảnh")]
@@ -133,3 +141,82 @@ async def test_metered_unknown_cost_from_model_fails_closed():
     with pytest.raises(WritoryError) as exc:
         await client.chat("m", MSGS)
     assert code_of(exc) is ErrorCode.LLM_COST_UNKNOWN
+
+
+# --- chi phí tối đa của lời gọi không có usage (D-64) ---------------------------------------
+
+LUNA = ModelPrice(input=0.10, output=0.50)
+
+
+def estimator(max_output=1000) -> CostEstimator:
+    return CostEstimator({"m/luna": LUNA}, max_output_tokens=max_output)
+
+
+def test_max_cost_is_estimated_input_plus_the_full_output_cap():
+    msgs = [Message(role="system", content="a" * 300), Message(role="user", content="b" * 100)]
+    tokens_in = 400 / EST_CHARS_PER_TOKEN
+    assert estimator().max_cost("m/luna", msgs, None) == pytest.approx(
+        (tokens_in * 0.10 + 1000 * 0.50) / 1e6)
+
+
+def test_max_cost_counts_the_json_schema_sent_with_the_call():
+    from writory.safety.classify import Classification
+
+    plain = estimator().max_cost("m/luna", MSGS, None)
+    assert estimator().max_cost("m/luna", MSGS, Classification) > plain
+
+
+def test_model_without_price_fails_closed():
+    with pytest.raises(WritoryError) as exc:
+        estimator().max_cost("m/khac", MSGS, None)
+    assert code_of(exc) is ErrorCode.CONFIG_LIMIT_NOT_SET
+    assert "m/khac" in str(exc.value)
+
+
+@pytest.mark.parametrize(("given", "sent"), [(None, 1000), (400, 400), (5000, 1000)])
+def test_bound_sends_max_tokens_no_higher_than_the_cap(given, sent):
+    extra = {"reasoning": {"effort": "low"}} | ({} if given is None else {"max_tokens": given})
+    bounded = estimator().bound(extra)
+    assert bounded["max_tokens"] == sent and bounded["reasoning"] == {"effort": "low"}
+    assert estimator().bound(None) == {"max_tokens": 1000}
+
+
+def test_from_config_needs_the_output_cap(tmp_path):
+    config = load_config()
+    assert CostEstimator.from_config(config).bound(None)["max_tokens"] == (
+        config.limits.llm_call.max_output_tokens)
+    unset = AppConfig.model_validate(config.model_dump(by_alias=True) | {
+        "limits": config.limits.model_dump(by_alias=True) | {"llm_call": {
+            "max_output_tokens": None}}})
+    with pytest.raises(WritoryError) as exc:
+        CostEstimator.from_config(unset)
+    assert code_of(exc) is ErrorCode.CONFIG_LIMIT_NOT_SET
+
+
+def test_every_repo_model_has_a_price():
+    config = load_config()
+    used = {m for m in config.models.roles.model_dump().values() if m is not None}
+    used |= {t.model for t in config.models.writer_tiers}
+    assert used <= set(config.models.prices)
+
+
+def trace(sent=None, gen=None) -> CallTrace:
+    return CallTrace(sent=sent, generation_id=gen)
+
+
+@pytest.mark.parametrize(("exc", "t", "billed"), [
+    (asyncio.CancelledError(), trace(), True),  # client không báo: có thể đã gửi
+    (asyncio.CancelledError(), trace(sent=True), True),
+    (asyncio.CancelledError(), trace(sent=False), False),  # chưa gửi (ví dụ đang chờ lượt)
+    (WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="ReadError"), trace(sent=True), True),
+    (WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="ConnectError"), trace(sent=False), False),
+    (WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="HTTP 503, error.code=503: x"),
+     trace(sent=True), False),  # nhà cung cấp từ chối trước khi sinh
+    (WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="HTTP 200, error.code=server_error: x"),
+     trace(sent=True, gen="gen-1"), True),  # đã có generation: tra lại sẽ ra số thật
+    (WritoryError(ErrorCode.WRITORY_RATE_LIMITED), trace(), False),  # bộ đếm chặn trước khi gọi
+    (WritoryError(ErrorCode.LLM_AUTH_FAILED, detail="HTTP 401"), trace(sent=True), False),
+    (ValueError("extra"), trace(), False),
+])
+def test_maybe_billed(exc, t, billed):
+    assert maybe_billed(exc, t) is billed

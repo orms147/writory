@@ -12,10 +12,11 @@
 - G1: sự kiện là schema người chơi của `pipeline.events`; lựa chọn có cấu trúc (id nút, lời nói
   dối) chỉ lưu ở `chapter_choices`. `choices_ready` chỉ phát sau khi bộ lựa chọn đã lưu, để id mờ
   người chơi bấm luôn có ở máy chủ.
-- G11, D-6: pipeline không ghi gì trước bước ghi chương. Người chơi ngắt kết nối thì FastAPI huỷ
-  task đang chạy chương: trước bước ghi thì không có gì được ghi; bước ghi (`commit_chapter`)
-  chạy đồng bộ nên không bị cắt giữa chừng. Chương đã ghi mà chưa kịp có lựa chọn: tạo lại bằng
-  `POST /stories/{id}/choices`.
+- G11, D-6: pipeline không ghi gì trước bước ghi chương. Người chơi ngắt kết nối thì uvicorn báo
+  ngay, FastAPI huỷ stream, `ChapterRun` huỷ node đang chạy (kể cả lời gọi model đang chờ) và
+  `get_running_chapter` chờ nó dừng hẳn rồi mới nhả khoá (D-63): trước bước ghi thì không có gì
+  được ghi; bước ghi (`commit_chapter`) chạy đồng bộ nên không bị cắt giữa chừng. Chương đã ghi
+  mà chưa kịp có lựa chọn: tạo lại bằng `POST /stories/{id}/choices`.
 - G8: một truyện chỉ một lần viết chương cùng lúc (`db.job_lock` trong `get_chapter_job`); lần
   thứ hai báo STORY_BUSY, không gọi model.
 - G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động.
@@ -205,9 +206,22 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
         yield ChapterJob(story.id, chapter, run)
 
 
+async def get_running_chapter(
+    job: Annotated[ChapterJob, Depends(get_chapter_job)],
+) -> AsyncIterator[ChapterJob]:
+    """Stream dừng (xong, lỗi, hay người chơi ngắt kết nối) thì chờ đường đi dừng hẳn, trước khi
+    `get_chapter_job` nhả khoá và kết nối Postgres đóng: node LangGraph đang chạy đã bị huỷ, nhật
+    ký chi phí của lời gọi bị huỷ đã ghi, không còn lời gọi model chạy mồ côi khi truyện đã nhận
+    việc mới (D-63)."""
+    try:
+        yield job
+    finally:
+        await job.run.aclose()
+
+
 @router.post("/{story_id}/chapters/next", response_class=EventSourceResponse)
 async def write_next_chapter(
-    job: Annotated[ChapterJob, Depends(get_chapter_job)], conn: deps.PgConn,
+    job: Annotated[ChapterJob, Depends(get_running_chapter)], conn: deps.PgConn,
 ) -> AsyncIterator[ServerSentEvent]:
     held: ChoicesReady | None = None
     async for event in job.run.events():
