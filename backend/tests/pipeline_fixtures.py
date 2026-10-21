@@ -14,7 +14,7 @@ from typing import Any
 
 import yaml
 
-from tests.moderation_fixtures import ModerationScript
+from tests.moderation_fixtures import MODERATION_SCHEMAS, ModerationScript
 from writory.config import REPO_CONFIG_DIR, AppConfig, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage, PlayerView, read_sample
@@ -38,7 +38,6 @@ from writory.pipeline import summary as summary_mod
 from writory.pipeline.extract import Entity
 from writory.pipeline.store import entities_from_rows
 from writory.pipeline.story_plan import StoryPlan
-from writory.safety.moderate import ModerationOutput
 
 SAMPLE = read_sample()
 COMMITTED_THROUGH = 3
@@ -146,8 +145,8 @@ class ScriptedLLM(FakeLLM):
         self.moderation = ModerationScript(moderation, cost_usd=moderation_cost)
 
     async def chat(self, model, messages, *, response_schema=None, extra=None):
-        if response_schema is ModerationOutput:
-            return self.moderation.answer(model, messages, extra)
+        if response_schema in MODERATION_SCHEMAS:
+            return self.moderation.answer(model, messages, extra, response_schema)
         self.models.append(model)
         return await super().chat(model, messages, response_schema=response_schema, extra=extra)
 

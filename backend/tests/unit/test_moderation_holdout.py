@@ -10,9 +10,8 @@ from pathlib import Path
 import pytest
 import yaml
 
-from tests.moderation_fixtures import moderation_reply
+from tests.moderation_fixtures import CaseModerator
 from writory.config import REPO_ROOT, load_config
-from writory.llm.fake import FakeLLM
 from writory.safety.bench_g9 import CASES_PATH, load_cases, score
 from writory.safety.categories import Category
 from writory.safety.moderate import Finding, Source, Verdict, decide, moderate
@@ -28,10 +27,6 @@ OUTPUT = {Source.SCENE.value, Source.CHOICES.value}
 
 def findings_of(case):
     return [(f["category"], f["intensity"]) for f in case["expected"]["findings"]]
-
-
-def scripted(case) -> str:
-    return moderation_reply(*findings_of(case))
 
 
 # --- khai trước, định dạng -----------------------------------------------------------------------
@@ -189,29 +184,32 @@ def test_the_overlap_check_itself_catches_a_copy():
 
 @pytest.mark.parametrize("case", CASES, ids=IDS)
 async def test_case_reaches_its_expected_verdict(case):
-    llm = FakeLLM.scripted([scripted(case)])
+    llm = CaseModerator([case])
     result = await moderate(case["text"], source=Source(case["source"]), llm=llm, config=CFG,
                             darkness_level=case.get("darkness_level"))
     assert result.verdict.value == case["expected"]["verdict"]
+    assert llm.calls  # đầu vào: tới `input_votes` lời gọi; cảnh, bộ lựa chọn: một (D-79)
     # G4: chữ của câu chỉ nằm trong khối dữ liệu của vai user, kể cả câu đội lốt ra lệnh.
-    [messages] = llm.calls
-    system = " ".join(m.content for m in messages if m.role == "system")
-    assert case["text"] not in system and "<player_data" not in system
-    [content] = [m.content for m in messages if m.role == "user"]
-    assert content.count("<player_data") == 1 and content.rstrip().endswith(CLOSE_TAG)
-    assert case["text"] in html.unescape(content)
+    for messages in llm.calls:
+        system = " ".join(m.content for m in messages if m.role == "system")
+        assert case["text"] not in system and "<player_data" not in system
+        [content] = [m.content for m in messages if m.role == "user"]
+        assert content.count("<player_data") == 1 and content.rstrip().endswith(CLOSE_TAG)
+        data = html.unescape(content.split("<player_data", 1)[1])
+        if case["source"] == Source.CHOICES.value:  # mỗi dòng một số thứ tự (D-79)
+            assert all(line.strip() in data for line in case["text"].splitlines())
+        else:
+            assert case["text"] in data
 
 
 async def test_bench_scores_an_oracle_model_perfectly_on_the_holdout():
-    llm = FakeLLM.scripted([scripted(c) for c in CASES])
-    result = await score(CASES, llm=llm, config=CFG)
+    result = await score(CASES, llm=CaseModerator(CASES), config=CFG)
     assert (result.correct, result.total, result.errors) == (len(CASES), len(CASES), 0)
     assert result.missed == [] and result.false_blocks == [] and result.wrong_kind == []
 
 
 async def test_bench_scores_a_blind_model_as_missing_every_blocked_case():
-    result = await score(CASES, llm=FakeLLM.scripted([moderation_reply() for _ in CASES]),
-                         config=CFG)
+    result = await score(CASES, llm=CaseModerator(constant=[]), config=CFG)
     assert result.missed == [c["id"] for c in CASES if c["expected"]["verdict"] != "allow"]
     assert result.false_blocks == []
 

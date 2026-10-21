@@ -13,7 +13,10 @@ Chạy:
   thể vượt trần đúng bằng chi phí của chính nó.
 
 Cần: `models.roles.moderate`, trần chi phí (như trên) và OPENROUTER_API_KEY (key của chủ dự án
-dành cho bộ đo). Trần chưa đặt thì từ chối chạy, không gọi model. Mỗi câu mỗi lượt một lời gọi.
+dành cho bộ đo). Trần chưa đặt thì từ chối chạy, không gọi model. Mỗi câu đi qua đúng
+`safety.moderate.moderate` như sản phẩm (D-79): câu đầu vào tới `moderation.input_votes` lời gọi
+mỗi lượt (dừng ở lần báo chặn), câu cảnh và bộ lựa chọn một lời gọi. `result.json` ghi `prompt` và
+`input_votes`.
 
 Chỉ số chính, theo thứ tự quan trọng:
 - `missed`: câu mong đợi bị chặn (hard_blocked, blocked, over_darkness) mà ra `allow`.
@@ -39,7 +42,7 @@ import yaml
 from writory.config import REPO_ROOT, AppConfig, CostLimits, Settings, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient
-from writory.safety.moderate import Source, Verdict, moderate
+from writory.safety.moderate import PROMPT_VERSION, Source, Verdict, moderate
 
 CASES_PATH = REPO_ROOT / "evals" / "redteam" / "g9_moderation.yaml"
 _BUDGET_CODES = frozenset(
@@ -161,6 +164,9 @@ async def run_bench(
             "budget_usd": budget,
             "model": config.models.roles.moderate,
             "reasoning": config.models.role_reasoning.moderate,
+            # Cách gọi (D-79): đầu vào kiểm `input_votes` lần, bộ lựa chọn chấm từng dòng.
+            "prompt": PROMPT_VERSION,
+            "input_votes": config.moderation.input_votes,
             "catalogue_draft": config.moderation.draft,
             "cost_usd": tracker.story_usd,
         }

@@ -189,7 +189,7 @@ Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ �
 
 ### 6.6 Hỏi người kể chuyện
 - Câu hỏi về thế giới, không mất lượt.
-- Chỉ trả lời từ **lớp người chơi biết** (§7). Câu chưa được hé lộ → "Bạn chưa biết điều này." Không gợi ý, không úp mở về sự tồn tại của bí mật.
+- Chỉ trả lời từ **lớp người chơi biết** (§7). Câu chưa được hé lộ → "Bạn chưa biết điều này." Không gợi ý, không úp mở về sự tồn tại của bí mật: sổ tay không trả lời thẳng được câu hỏi (có phải không, ai làm, nội dung gì, vì sao) thì cũng là câu đó, không kể mục lân cận thay vào. Câu trả lời nói về việc thiếu thông tin ("chưa có nội dung được ghi lại") bị code đổi thành câu đó (D-78).
 - Người chơi gọi một người, nơi hay vật bằng chữ khác sổ tay thì người kể vẫn nhận ra. Câu hỏi chỉ biết được một phần thì người kể nói phần đã biết, không đoán phần còn lại (D-77).
 - Câu trả lời kèm số câu hỏi còn lại của chương và nguồn: các chương mà người chơi đã biết những mục sổ tay câu trả lời dựa vào (D-65).
 - Số câu hỏi mỗi chương có trần (`config/limits.yaml`, G8). Hết lượt thì báo bằng câu trung tính; sang chương sau thì có lượt mới.
@@ -329,6 +329,6 @@ Tuần 1 làm tay có chủ ý: thiết kế đồ thị sai thì mọi thứ sa
 
 ## 14. Còn mở
 - Ai là người dùng thật đầu tiên ngoài chủ dự án, và đưa cho họ bằng cách nào.
-- Model kiểm duyệt nội dung cho tiếng Việt: đang dùng tạm một model (`config/models.yaml`, vai `moderate`). Lần đo đầu còn lạc quan (`evals/results/2026-10-21-g9-luna-2/notes.md`); cần bộ câu giữ riêng.
+- Model kiểm duyệt nội dung cho tiếng Việt: đang dùng tạm một model (`config/models.yaml`, vai `moderate`). Bộ câu giữ riêng v1 đã chạy (`evals/results/2026-10-21-g9-holdout-1/notes.md`) và đã được dùng để đổi cách gọi (D-79), nên thành bộ chỉnh; cần bộ giữ riêng v2 để đo lại.
 - Nghị định 147/2024/NĐ-CP (xác thực tài khoản bằng số điện thoại cho mạng xã hội) có áp dụng cho một trang truyện tương tác nhỏ không. Chưa kiểm; cần hỏi trước khi mở công khai cho người lạ.
 - Luồng OAuth của OpenRouter có dùng được không.

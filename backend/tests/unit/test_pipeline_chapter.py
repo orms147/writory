@@ -52,6 +52,7 @@ from writory.graph import ChangePackage, EdgeSpec
 from writory.graph.package import CloseSpec
 from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker
+from writory.pipeline import choices as choices_mod
 from writory.pipeline.chapter import (
     ChapterRequest,
     ChapterRun,
@@ -63,7 +64,7 @@ from writory.pipeline.chapter import (
 from writory.pipeline.choices import Choice, LieEffect, choice_effects
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import narration_instruction, normalize_dashes
-from writory.safety.moderate import ModerationOutput
+from writory.safety.moderate import LINES_HEADER_RE, ChoicesModerationOutput, ModerationOutput
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START
 
 STYLE = "HƯỚNG DẪN VĂN PHONG THỬ: viết văn tiếng Việt tự nhiên."
@@ -516,7 +517,8 @@ class HoldingLLM(ScriptedLLM):
 
     async def chat(self, model, messages, *, response_schema=None, extra=None):
         # Lời gọi kiểm duyệt (G9) có hàng đợi riêng, không đếm vào `hold_at`.
-        if response_schema is not ModerationOutput and len(self.calls) + 1 == self.hold_at:
+        if (response_schema not in (ModerationOutput, ChoicesModerationOutput)
+                and len(self.calls) + 1 == self.hold_at):
             self.held.set()
             try:
                 await asyncio.Event().wait()
@@ -1255,6 +1257,25 @@ async def test_choices_are_moderated_with_every_player_facing_string(tmp_path):
     for part in ("Xuống bến hỏi chuyện gã lái đò mặt sẹo.", "Nói với Lan rằng kiếm đã gửi",
                  "Thanh Sương đang ở chỗ cai Khải", "nghi ngờ"):  # chữ, lời nói dối, cảm xúc
         assert part in content, part
+
+
+async def test_choices_are_moderated_in_one_call_one_numbered_line_per_string(tmp_path):
+    """D-79: mỗi chuỗi người chơi thấy (chữ, lời nói dối, cảm xúc) là một dòng đánh số, chấm riêng
+    trong cùng một lời gọi."""
+    events, outcome, llm, _ = await run(full_script(), tmp_path)
+    assert kinds(events) == SHOWN_CHAPTER
+    assert llm.moderation.moderation_schemas == [ModerationOutput, ModerationOutput,
+                                                 ChoicesModerationOutput]
+    content = html.unescape(llm.moderation.moderation_calls[2][-1].content)
+    expected = sum(1 + (c.lie is not None) + bool(c.feeling) for c in outcome.choices)
+    assert LINES_HEADER_RE.search(content).group(1) == str(expected)
+    assert re.findall(r"^\[(\d+)\] ", content, re.MULTILINE) == [str(i) for i in range(1, expected + 1)]
+
+
+def test_a_choice_string_with_a_line_break_stays_one_moderated_line():
+    choice = Choice(id="c1", kind="inner", tone=None, text="Thầm nghĩ\nvề Lan.",
+                                listeners=(), about=("lan",), lie=None, feeling="nghi\nngờ")
+    assert choices_mod._player_facing_text([choice]) == "Thầm nghĩ về Lan.\nnghi ngờ"
 
 
 async def test_flagged_choices_are_not_shown_but_the_chapter_stays_written(tmp_path):

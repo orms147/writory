@@ -326,6 +326,9 @@ class ModerationConfig(_Strict):
     darkness_cap: dict[Category, IntensityName]  # trần tuyệt đối, mọi mức u tối
     darkness_levels: dict[str, DarknessLevel] = Field(min_length=1)
     default_darkness_level: str  # dùng khi truyện chưa có mức u tối đọc được
+    # Số lần kiểm độc lập mỗi đầu vào của người chơi; một lần báo chặn là chặn (D-79). Trần 5 để
+    # lỗi gõ không nhân chi phí trên key người chơi.
+    input_votes: int = Field(ge=1, le=5, strict=True)
 
     @model_validator(mode="after")
     def _consistent(self) -> Self:

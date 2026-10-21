@@ -85,3 +85,15 @@ def test_bad_catalogue_reports_file_and_field(config_dir, change, expect):
         load_config(config_dir)
     assert "moderation.yaml" in str(exc.value)
     assert expect in str(exc.value)
+
+
+def test_input_votes_is_required_and_bounded(config_dir):
+    """Số lần kiểm mỗi đầu vào (D-79): bắt buộc, ít nhất 1, có trần để lỗi gõ không nhân chi phí."""
+    assert load_config().moderation.input_votes >= 1
+    for bad in (0, -1, 6, "hai"):
+        edit(config_dir, lambda d, v=bad: d.update(input_votes=v))
+        with pytest.raises(ConfigError, match="input_votes"):
+            load_config(config_dir)
+    edit(config_dir, lambda d: d.pop("input_votes"))
+    with pytest.raises(ConfigError, match="input_votes"):
+        load_config(config_dir)

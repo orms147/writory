@@ -71,3 +71,8 @@ darkness_levels:
     ceilings: {violence: strong, gore: strong, adult_sexual: mild}
 
 default_darkness_level: moderate
+
+# Cách gọi ở đầu vào (D-79): kiểm mỗi chữ người chơi gõ bằng ngần ấy lời gọi độc lập; chặn nếu MỘT lần
+# báo loại chặn cứng hay loại chặn. Lần nào báo chặn thì dừng, không gọi tiếp. Lỗi một lần gọi thì
+# fail closed. Số tạm (D-47): mỗi lần thêm một lời gọi rẻ cho mỗi đầu vào. Từ 1 tới 5.
+input_votes: 2

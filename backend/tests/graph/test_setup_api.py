@@ -62,6 +62,7 @@ TRUTH = ("f_nguyet_hoa_huyet_y", "f_ha_lao_giet_cha", "Huyết Y Môn", "Hà Bá
          "secrets", "Chuôi kiếm Thiết Vân giấu bản đồ")
 START = {"tags": {"genre": "kiếm hiệp", "era": "cổ đại", "voice": "trầm"},
          "length_level": "short", "darkness_level": "light"}
+VOTES = load_config().moderation.input_votes  # mỗi đầu vào được kiểm ngần ấy lần (D-79)
 
 
 def options(kind: str, tag: str = "") -> str:
@@ -231,11 +232,11 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
     blocks = re.findall(rf'<player_data source="protagonist_backstory">\n(.*?)\n'
                         rf'{re.escape(CLOSE_TAG)}', user, flags=re.DOTALL)
     assert blocks == [ATTACK]
-    # G8: 4 lời gọi khởi tạo và 2 lời gọi kiểm duyệt (tag, phần sửa nhân vật; G9, D-57) ghi vào
-    # nhật ký, gắn vào truyện vừa tạo.
+    # G8: 4 lời gọi khởi tạo và lời gọi kiểm duyệt (tag, phần sửa nhân vật, mỗi đầu vào
+    # `input_votes` lần; G9, D-57, D-79) ghi vào nhật ký, gắn vào truyện vừa tạo.
     rows = pg.execute("SELECT role, story_id FROM llm_costs WHERE setup_session_id = %s",
                       (sid,)).fetchall()
-    assert sorted(rows) == sorted([("setup", story_id)] * 4 + [("moderate", story_id)] * 2)
+    assert sorted(rows) == sorted([("setup", story_id)] * 4 + [("moderate", story_id)] * 2 * VOTES)
 
 
 def test_finalize_twice_returns_the_same_story(pg, driver, created):
@@ -523,22 +524,25 @@ def test_blocked_tags_stop_generation_and_save_nothing(pg, driver, created):
     assert fake.calls == [] and body["settings"] is None
 
 
-def test_clean_tags_are_moderated_once_when_options_are_generated(pg, driver, created):
+def test_clean_tags_are_moderated_when_options_are_generated_and_not_again(pg, driver, created):
     fake = FakeLLM.scripted([options("settings")])
     app = make_app(pg, driver, fake)
     with TestClient(app, raise_server_exceptions=False) as client:
         sid = start(client, created)["session_id"]
         assert client.post(f"/setup/{sid}/settings").status_code == 200
         assert client.post(f"/setup/{sid}/settings").status_code == 200  # trả lại bộ đã có
-    [messages] = app.state.moderated.moderation_calls
-    for tag in ("kiếm hiệp", "cổ đại", "trầm", "vừa"):
-        assert tag in messages[-1].content
+    calls = app.state.moderated.moderation_calls
+    assert len(calls) == VOTES  # kiểm `input_votes` lần (D-79), một lần cho cả bộ tag
+    for messages in calls:
+        for tag in ("kiếm hiệp", "cổ đại", "trầm", "vừa"):
+            assert tag in messages[-1].content
     assert len(fake.calls) == 1  # bộ đã có thì không gọi model lần nữa, cũng không kiểm duyệt lại
 
 
 def test_blocked_character_edit_is_refused_and_changes_nothing(pg, driver, created):
     fake = FakeLLM.scripted([options("settings"), options("plots"), options("characters")])
-    block = [moderation_reply(), moderation_reply(("real_world_harm", "strong"))]
+    # Tag sạch qua `input_votes` lần kiểm, rồi phần sửa nhân vật bị chặn ở lần kiểm đầu (D-79).
+    block = [moderation_reply()] * VOTES + [moderation_reply(("real_world_harm", "strong"))]
     app = make_app(pg, driver, fake, moderation=block)
     with TestClient(app, raise_server_exceptions=False) as client:
         sid = to_characters(client, created)
@@ -561,10 +565,11 @@ def test_only_the_edited_fields_are_moderated(pg, driver, created):
         no_edit = client.put(f"/setup/{sid}/characters", json={"index": 0})
     assert resp.status_code == 200 and no_edit.status_code == 200
     calls = app.state.moderated.moderation_calls[before:]
-    assert len(calls) == 1  # lần chọn không sửa gì thì không tốn lời gọi nào
-    content = calls[0][-1].content
-    assert "Lục Vân Phi" in content and "Mồ côi từ nhỏ." in content
-    assert "Ít nói, cố chấp." not in content  # tính cách gốc của lựa chọn không bị gửi
+    assert len(calls) == VOTES  # lần chọn không sửa gì thì không tốn lời gọi nào
+    for call in calls:
+        content = call[-1].content
+        assert "Lục Vân Phi" in content and "Mồ côi từ nhỏ." in content
+        assert "Ít nói, cố chấp." not in content  # tính cách gốc của lựa chọn không bị gửi
 
 
 def test_story_without_a_chosen_darkness_level_stores_the_default(pg, driver, created):

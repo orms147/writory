@@ -1235,6 +1235,13 @@ def _pad_section(report: Mapping[str, Any]) -> list[str]:
     return lines
 
 
+# Lý do code thay câu của model bằng NOT_KNOWN (model tự giữ và sổ tay trống không tính), đọc từ
+# `BlockReason` để lý do mới (ví dụ `meta_hedge`, D-78) tự có trong summary.
+_CODE_REASONS = ", ".join(
+    f"`{r.value}`" for r in BlockReason
+    if r not in (BlockReason.MODEL_NOT_KNOWN, BlockReason.EMPTY_NOTEBOOK))
+
+
 def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None = None) -> str:
     report = report or compute_report(data, store)
     meta = store.read_meta() or {}
@@ -1275,7 +1282,7 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
         ("- Đạt: loại a = trả lời, dẫn đúng mục và đủ `expect_terms`; loại b–f = đúng "
          f"\"{NOT_KNOWN}\". Khoảng trong ngoặc: tin cậy 95% (Wilson), tính trên lượt."),
         ("- Model tự giữ: model trả known = false. Code chặn: model trả lời nhưng code thay bằng "
-         "NOT_KNOWN, theo lý do (`no_entries`, `empty_answer`, `unknown_ref`, `leak`)."),
+         f"NOT_KNOWN, theo lý do ({_CODE_REASONS})."),
         "", "## Theo loại", "",
         "| Loại | n | Đạt | Model tự giữ | Code chặn | Lộ câu thô | Lộ câu cuối |",
         "|---|---|---|---|---|---|---|",
