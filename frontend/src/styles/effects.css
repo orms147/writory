@@ -8,7 +8,9 @@
   .wt a, .wt button, .wt label, .wt select, .wt summary, .wt [data-press] { cursor: url(cursor-ink-pointer.svg) 3 3, pointer; }
   .wt input[type="text"], .wt input[type="email"], .wt input[type="password"], .wt textarea { cursor: text; }
 }
-.wt button { font: inherit; color: inherit; }
+/* :where() giữ độ ưu tiên bằng 0, để class Tailwind (màu chữ, cỡ chữ, độ đậm) trên nút thắng.
+   Viết `.wt button` thì luật này đè mọi `text-*`, `font-*` của nút (lỗi chữ mất màu 21/10/2026). */
+:where(.wt) button { font: inherit; color: inherit; }
 .wt :focus-visible { outline: 2px solid #E0674B; outline-offset: 3px; }
 .wt ::selection { background: rgba(212, 85, 58, .32); }
 .wt *::-webkit-scrollbar { width: 8px; height: 8px; }
