@@ -168,3 +168,46 @@ def test_protagonist_knows_without_quote_is_rejected():
                                chapter_text=text, entities=entities, open_edges=open_edges)
     assert pkg.edges == []
     assert "câu trích" in rejected[0][1]
+
+
+# --- known_as gán nhầm nút (D-62) -------------------------------------------------------------
+
+_RUN1_QUOTE = ("Vạn Tinh Bách đã trao nó cho tôi giữa màn sương, không nói gì ngoài lời dặn "
+               "giữ lấy.")
+_RUN1_ENTITIES = [
+    Entity("protagonist", "Character", "Kỷ Trầm Uyên", user_authored=True),
+    Entity("van_tinh_bach", "Character", "Vạn Tinh Bách", ("Vạn sư huynh",)),
+    Entity("doan_khac", "Character", "Đoàn Khắc"),
+    Entity("ch5", "Chapter", "Chương 5"),
+]
+
+
+@pytest.mark.parametrize(("node", "kept"), [("doan_khac", False), ("van_tinh_bach", True)])
+def test_known_as_that_names_another_node_is_rejected(node, kept):
+    """Hồi quy tu-tien-1 chương 5 (truth_dump.json): bộ trích gắn known_as "Vạn Tinh Bách" lên
+    nút kẻ phản bội `doan_khac`. Sổ tay hiện nút đó dưới tên người khác, còn tên thật của nó thành
+    tên bị giấu. Code từ chối cạnh, nêu lý do; cùng cạnh trên đúng nút thì nhận."""
+    out = ExtractOutput(edges=[_edge(type="REVEALED_TO_PLAYER", source=node, target="ch5",
+                                     quote=_RUN1_QUOTE, known_as="Vạn Tinh Bách")], close=[])
+    pkg, rejected = to_package(out, chapter=5, commit_id="c", protagonist_id="protagonist",
+                               chapter_text=f"Tôi nhìn miếng tín vật. {_RUN1_QUOTE}",
+                               entities=_RUN1_ENTITIES, open_edges=[])
+    if kept:
+        assert [e.props["known_as"] for e in pkg.edges] == ["Vạn Tinh Bách"] and rejected == []
+    else:
+        assert pkg.edges == []
+        [(desc, reason)] = rejected
+        assert desc == "REVEALED_TO_PLAYER doan_khac→ch5"
+        assert reason.startswith("known_as là tên của nút khác") and "van_tinh_bach" in reason
+
+
+def test_known_as_conflict_ignores_case_and_diacritics_and_covers_protagonist_knows():
+    """Cùng cách chuẩn hoá của bộ dò lộ. KNOWS của nhân vật chính tới nút có tên cũng mang
+    known_as (D-17): kiểm trên nút đích."""
+    text = "Người kia xưng là van tinh bach rồi bỏ đi."
+    out = ExtractOutput(edges=[_edge(type="KNOWS", source="protagonist", target="doan_khac",
+                                     how="chứng kiến", quote=text, known_as="van tinh bach")],
+                        close=[])
+    pkg, rejected = to_package(out, chapter=5, commit_id="c", protagonist_id="protagonist",
+                               chapter_text=text, entities=_RUN1_ENTITIES, open_edges=[])
+    assert pkg.edges == [] and "known_as là tên của nút khác" in rejected[0][1]

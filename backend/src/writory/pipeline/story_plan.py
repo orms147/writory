@@ -11,6 +11,7 @@ là danh sách id và không có `milestones`; vẫn đọc được. Mạch kh�
 khoảng dự kiến gỡ trên nút `Thread` (`guard.plan`).
 """
 
+import re
 from collections import Counter
 from typing import Any, Literal, Self
 
@@ -44,16 +45,26 @@ class Secret(_Strict):
 
     `leak_terms`: các nhóm cụm từ cho bộ dò lộ (G2, D-26). Một nhóm "trúng" khi mọi cụm trong
     nhóm cùng nằm trong một câu, ví dụ [["Lan", "gián điệp"], ["Lan", "người của Hội Hắc Kỳ"]].
+
+    `protects`: id các nút có tên mà bí mật này giấu danh tính (D-61). Tên và biệt danh lớp truth của
+    chúng bị cấm cùng điều kiện với `leak_terms`: bí mật chưa lộ. Kế hoạch cũ không có trường này
+    (mặc định rỗng).
     """
 
     fact_id: str = Field(pattern=ID_PATTERN)
     reveal_from_chapter: PositiveInt
     reveal_to_chapter: PositiveInt
     leak_terms: list[list[str]] = []
+    protects: list[str] = []
 
     @model_validator(mode="after")
     def _range(self) -> Self:
         _ordered(self.reveal_from_chapter, self.reveal_to_chapter, f"bí mật {self.fact_id}")
+        if len(set(self.protects)) != len(self.protects):
+            raise ValueError(f"bí mật {self.fact_id}: protects có id trùng")
+        for node_id in self.protects:
+            if not re.fullmatch(ID_PATTERN, node_id):
+                raise ValueError(f"bí mật {self.fact_id}: protects có id sai dạng: {node_id!r}")
         for group in self.leak_terms:
             phrases = [p.strip() for p in group]
             if not phrases or not all(phrases) or len(set(phrases)) != len(phrases):

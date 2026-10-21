@@ -143,11 +143,14 @@ def test_scorer_finds_nothing_in_the_notebook_itself():
     (4, "Đêm đó Lan đã lẻn vào gác.", "secret"),  # bí mật chỉ của bộ chấm (e_sword_stolen)
     (3, "Minh thấy thư của Hội Hắc Kỳ gửi Lan.", "real_name"),  # tên thật, nút chưa hé lộ
     (4, "Gã đó là người của Hội, ai cũng biết, gã lái đò ấy.", "secret"),
+    # Lớp chạy thật chỉ cấm tên bí mật (D-61); bộ chấm giữ luật cũ: mọi tên riêng chưa thấy.
+    (1, "Họ là người của Hội Hắc Kỳ.", "name"),
 ])
 def test_scorer_is_stricter_than_the_runtime_detector(chapter, text, kind):
     state = DATA.states[chapter]
     runtime = check_leaks(text, view=state.view, truth_names=state.truth_names,
-                          plan=DATA.plan.plan, story_brief=DATA.plan.story_brief)
+                          plan=DATA.plan.plan, story_brief=DATA.plan.story_brief,
+                          scope="player_path")  # phạm vi của người kể (D-61)
     assert runtime == []  # lớp chạy thật để lọt...
     assert kind in {h["kind"] for h in DATA.scorer.leaks(text, state)}  # ...bộ chấm bắt được
 
@@ -157,7 +160,8 @@ def test_scorer_catches_everything_the_runtime_catches():
         for text in ("Lan là gián điệp của Hội Hắc Kỳ.", "Chính Lan giết Lão Gù.",
                      "Gã lái đò mặt sẹo tên thật là Lý Thất."):
             runtime = check_leaks(text, view=state.view, truth_names=state.truth_names,
-                                  plan=DATA.plan.plan, story_brief=DATA.plan.story_brief)
+                                  plan=DATA.plan.plan, story_brief=DATA.plan.story_brief,
+                                  scope="player_path")
             if runtime:
                 assert DATA.scorer.leaks(text, state), (chapter, text)
 

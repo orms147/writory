@@ -140,7 +140,7 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 Tạo lúc khởi tạo, cập nhật khi lựa chọn làm lệch hướng:
 - Các hồi (mở đầu, phát triển, cao trào, kết) quy ra số chương theo mức độ dài: các hồi phủ liền từ chương 1, tổng số chương nằm trong khoảng của mức đã chọn (§3).
 - Các **mốc** chính của cốt truyện (bước ngoặt, cao trào, kết), mỗi mốc có khoảng chương và một câu mục tiêu. Mỗi hồi có ít nhất một mốc; mốc kết nằm ở chương cuối. Số mốc theo mức độ dài (`config/story_lengths.yaml`).
-- Vài bí mật lớn (số lượng cho phép: `SECRETS_MIN`, `SECRETS_MAX` trong `backend/src/writory/pipeline/setup.py`), mỗi cái là một sự thật có trong đồ thị ban đầu, kèm **khoảng chương dự kiến lộ** (ví dụ "Lan là gián điệp: lộ trong chương 12–16") và các cụm từ để bộ dò lộ nhận ra khi bí mật bị nói ra sớm (D-26).
+- Vài bí mật lớn (số lượng cho phép: `SECRETS_MIN`, `SECRETS_MAX` trong `backend/src/writory/pipeline/setup.py`), mỗi cái là một sự thật có trong đồ thị ban đầu, kèm **khoảng chương dự kiến lộ** (ví dụ "Lan là gián điệp: lộ trong chương 12–16") và các cụm từ để bộ dò lộ nhận ra khi bí mật bị nói ra sớm (D-26). Bí mật về danh tính kèm các nút có tên phải giữ kín tên tới khi lộ (D-61).
 - Các mạch chính và phụ; mạch phải gỡ trước khi kết mang **khoảng chương phải gỡ**.
 - **Nhịp** định trước từ đầu, dày hay thưa theo độ dài truyện: mỗi chương có tối đa một số việc đến hạn (bí mật, mạch phải gỡ, mốc), số trong `config/story_lengths.yaml`, để hạn không dồn vào một chương. Chương cuối không tính, vì chương kết gỡ nhiều mạch cùng lúc (D-54). Mọi khoảng nằm trong số chương của truyện. Kiểm bằng code lúc khởi tạo (D-49).
 
@@ -238,7 +238,7 @@ Không làm hai đồ thị riêng. Cùng một đồ thị; mỗi sự thật c
 Chạy sau mỗi chương, trên kết quả trích thay đổi và văn bản chương:
 1. **Mâu thuẫn:** người đã chết xuất hiện/hành động; đồ vật ở hai nơi; nhân vật biết điều họ chưa biết (đối chiếu `KNOWS`); quan hệ đổi đột ngột không có sự kiện giải thích; vi phạm `Rule` (bản 3).
 2. **Lộ sớm:** chương hé lộ cho người chơi một `Fact` mà bản kế hoạch chưa tới khoảng lộ, và không có lựa chọn/cảnh nào của người chơi dẫn tới việc đó.
-3. **Lộ qua giao diện:** sổ tay, câu trả lời của người kể, văn bản lựa chọn không được chứa điều thuộc lớp sự thật mà người chơi chưa biết. Kiểm bằng code (lọc theo `REVEALED_TO_PLAYER`/`KNOWS` của nhân vật chính), không chỉ nhờ LLM.
+3. **Lộ qua giao diện:** sổ tay, câu trả lời của người kể, văn bản lựa chọn không được chứa điều thuộc lớp sự thật mà người chơi chưa biết. Kiểm bằng code (lọc theo `REVEALED_TO_PLAYER`/`KNOWS` của nhân vật chính), không chỉ nhờ LLM. Chỉ cảnh mới được hé lộ: trên người kể và lựa chọn, bộ dò lộ chặn mọi bí mật chưa có trong lớp người chơi biết, kể cả khi đã tới khoảng lộ (D-61).
 4. **Trễ hạn:** hết chương mà bí mật đã tới chương cuối của khoảng lộ vẫn chưa lộ, hoặc mạch phải gỡ đã tới hạn vẫn chưa gỡ (ở chương cuối thì mọi bí mật và mạch phải gỡ đều đến hạn). Chỉ kiểm ở cảnh cuối chương, mức viết lại: model không lộ kịp thì truyện vẫn đi tiếp, không chặn người chơi (D-49).
 
 Kiểm tra gồm phần quy tắc bằng code (truy vấn đồ thị) và phần LLM (đọc văn bản tìm điểm nghi). Phần nào kiểm được bằng code thì phải kiểm bằng code. Phần code kiểm gói thay đổi của từng cảnh trước khi ghi (D-23).

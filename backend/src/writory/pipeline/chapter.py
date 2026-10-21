@@ -1,14 +1,13 @@
 """Đường đi một chương (design §6.2; D-1, D-6, D-8, D-36). Toàn bộ đồ thị LangGraph nằm ở đây.
 
 Mỗi cảnh: dựng ngữ cảnh và mục tiêu của chương (`pipeline.pacing`, D-49) → dàn ý → viết → soát
-(chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, người canh, dò lộ, kiểm duyệt nội dung G9) →
-viết lại tối đa
-`limits.retries.rewrite_per_scene` lần → hiện. Bản viết lại có lỗi chặn mà bản trước không có thì
-hiện bản trước (D-50, bổ sung D-36). Hết cảnh cuối: gộp gói các cảnh → `store.commit` (D-6, tất cả
-hoặc không gì) → tóm tắt chương (`pipeline.summary`, D-49; lỗi không làm hỏng chương đã ghi) → tạo
-lựa chọn từ player_view (G1). Đề của chương N nhận tóm tắt chương N-1, N-2. Chương cuối của bản
-kế hoạch thì không tóm tắt, không tạo lựa chọn mà phát `story_finished` (D-50); chương sau đó bị
-từ chối (`STORY_COMPLETE`).
+(chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, tự hé lộ tên trang vừa nêu, người canh, dò lộ,
+kiểm duyệt nội dung G9) → viết lại tối đa `limits.retries.rewrite_per_scene` lần → hiện. Bản
+viết lại có lỗi chặn mà bản trước không có thì hiện bản trước (D-50, bổ sung D-36). Hết cảnh
+cuối: gộp gói các cảnh → `store.commit` (D-6, tất cả hoặc không gì) → tóm tắt chương
+(`pipeline.summary`, D-49; lỗi không làm hỏng chương đã ghi) → tạo lựa chọn từ player_view (G1).
+Đề của chương N nhận tóm tắt chương N-1, N-2. Chương cuối của bản kế hoạch thì không tóm tắt,
+không tạo lựa chọn mà phát `story_finished` (D-50); chương sau đó bị từ chối (`STORY_COMPLETE`).
 
 - Người chơi chỉ nhận sự kiện (`pipeline.events`): chữ cảnh đã qua mọi phép kiểm (D-1), lựa chọn đã
   qua dò lộ (G2), câu lỗi G12. Cảnh chưa kiểm không bao giờ được phát ra.
@@ -75,9 +74,10 @@ from writory.quality import (
     narration_instruction,
     normalize_dashes,
 )
-from writory.safety.leak import check_leaks, leak_names
+from writory.safety.leak import check_leaks, leak_names, protected_ids
 from writory.safety.moderate import Source, Verdict, moderate, rewrite_feedback
 from writory.safety.redact import redact
+from writory.safety.reveal import auto_reveals
 
 log = logging.getLogger(__name__)
 
@@ -591,26 +591,46 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
     )
 
-    # 3. Người canh bằng code trên nền đã commit + gói các cảnh trước (D-23).
+    # 3. Tự hé lộ (D-62): nút có tên mà trang nêu, chưa có trong player_view (kể cả hé lộ bộ trích
+    # vừa ghi), không phải nhân vật chính hay tên đang được kế hoạch bảo vệ (D-61).
     base = d.store.state()
     earlier = _earlier_packages(state)
-    guard = check_scene_package(chapter=chapter, current=result.package, earlier=earlier,
+    extracted = OverlayState(base, [*earlier, result.package])
+    seen = player_view_of(extracted, chapter)
+    auto = auto_reveals(
+        text, chapter=chapter, chapter_id=state["header"].nodes[0].id,
+        names=extracted.named_nodes(), view=seen,
+        skip={state["protagonist"], *protected_ids(d.plan, seen, "scene")},
+    )
+    scene_package = (result.package.model_copy(update={"edges": [*result.package.edges, *auto]})
+                     if auto else result.package)
+    if auto:
+        log.info("chương %s cảnh %s lượt %s: tự hé lộ %s nút", chapter, scene, attempt, len(auto))
+
+    # 4. Người canh bằng code trên nền đã commit + gói các cảnh trước (D-23).
+    guard = check_scene_package(chapter=chapter, current=scene_package, earlier=earlier,
                                 committed=base, plan=d.plan, config=cfg.guard,
                                 last_scene=scene == d.request.scene_count)
     issues += [ReviewIssue("guard", g.kind.value, g.severity is Severity.BLOCK, g.detail)
                for g in guard]
-    package = _prune(result.package, {i for g in guard for i in g.ids})
+    package = _prune(scene_package, {i for g in guard for i in g.ids})
 
-    # 4. Dò lộ trên chữ cảnh, với player_view gồm cả các hé lộ của chính cảnh này (G2, D-26).
-    overlay = OverlayState(base, [*earlier, package])
+    # 5. Dò lộ trên chữ cảnh (G2, D-26, D-61), với player_view gồm cả các hé lộ bộ trích ghi cho
+    # chính cảnh này. Hé lộ tự động của cảnh này không tính: câu trích của nó là câu của chính chữ
+    # đang dò, tính vào thì mọi tên khác trong câu đó thành "đã thấy".
+    auto_ids = {e.id for e in auto}
+    checked = package.model_copy(update={"edges": [e for e in package.edges
+                                                   if e.id not in auto_ids]})
+    overlay = OverlayState(base, [*earlier, checked])
     hits = check_leaks(text, view=player_view_of(overlay, chapter), plan=d.plan,
-                       truth_names=leak_names(overlay), story_brief=d.request.story_brief)
+                       truth_names=leak_names(overlay), story_brief=d.request.story_brief,
+                       scope="scene")
     issues += [ReviewIssue("leak", h.kind.value, True,
                            f"lộ bí mật: đoạn «{h.excerpt}» nói ra điều người đọc chưa được biết; "
                            "viết lại để không nói ra điều đó")
                for h in hits]
 
-    # 5. Kiểm duyệt nội dung trên đúng chữ sẽ hiện (G9, D-57). Mọi vi phạm đều ở mức chặn: vượt
+    # 6. Kiểm duyệt nội dung trên đúng chữ sẽ hiện (G9, D-57). Mọi vi phạm đều ở mức chặn: vượt
     # mức thì viết lại một lần, còn thì không hiện (bản sạch trước đó, nếu có, được hiện thay).
     mod = await moderate(text, source=Source.SCENE, llm=d.llm, config=cfg,
                          darkness_level=d.request.darkness_level)

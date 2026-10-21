@@ -1,16 +1,31 @@
-"""Dò lộ bí mật trên mọi chữ sắp hiện cho người chơi (G2, D-26). Bằng code, không gọi model.
+"""Dò lộ bí mật trên mọi chữ sắp hiện cho người chơi (G2, D-26, D-61). Bằng code, không gọi model.
 
 "Người chơi đã thấy gì" (`_seen_text`, một chỗ duy nhất) gồm `PlayerView` (G1, D-16: chữ hiện, biệt
 danh, mọi câu trích, nội dung lời nói dối của nhân vật chính) và thiết lập truyện người chơi đã đọc
 lúc khởi tạo (`story_brief`: bối cảnh, hướng truyện, nhân vật chính đã chọn; D-52). Bộ dò không đọc
 cạnh đồ thị.
 
-Chuỗi cấm ở chương N, tạo từ player_view, thiết lập truyện, tên lớp truth và story_plan:
-1. Tên (lớp truth, `leak_names`) của nút có tên, khi tên đó có ít nhất một từ viết hoa (tên riêng)
-   mà người chơi chưa thấy (player_view hay thiết lập truyện). Biệt danh toàn chữ thường ("thanh
-   kiếm") là danh từ chung, không bao giờ cấm. `name` của nút `user_authored` không bao giờ cấm (D-48).
-2. Mỗi bí mật của story_plan chưa tới khoảng lộ và chưa được hé lộ: các nhóm `leak_terms`.
-   Một nhóm trúng khi mọi cụm trong nhóm cùng nằm trong một câu.
+Chuỗi cấm, tạo từ player_view, thiết lập truyện, tên lớp truth và story_plan (D-61):
+1. Tên bí mật, chỉ hai loại, và chỉ khi tên đó có ít nhất một từ viết hoa (tên riêng) mà người chơi
+   chưa thấy (player_view hay thiết lập truyện):
+   a. tên thật bị giấu sau biệt danh: nút đã có trong player_view (người chơi biết nó qua
+      `known_as`, ví dụ "gã lái đò mặt sẹo") mà tên hay biệt danh lớp truth ("Lý Thất") không
+      phải tên đã hé lộ. Không coi là bị giấu: tên chứa trọn một tên đã hé lộ ("Diệp Tĩnh Lan" khi
+      đã biết "Tĩnh Lan"), hoặc chung một từ viết hoa với tên đã hé lộ ("Đoàn Khương" khi đã biết
+      "Đoàn sư huynh");
+   b. tên được kế hoạch bảo vệ: tên và biệt danh của các nút trong `Secret.protects` của bí mật
+      còn hiệu lực (xem `scope`).
+   Mọi tên khác của lớp truth không bị cấm: trang nêu nó thì code tự hé lộ (`safety/reveal.py`,
+   D-62). `name` của nút `user_authored` không bao giờ cấm (D-48).
+2. Mỗi bí mật của story_plan còn hiệu lực: các nhóm `leak_terms`. Một nhóm trúng khi mọi cụm trong
+   nhóm cùng nằm trong một câu.
+
+`scope` (bắt buộc, không có mặc định) nói bí mật nào còn hiệu lực:
+- `scene`: văn cảnh do model viết. Bí mật chưa tới khoảng lộ và chưa hé lộ, vì cảnh được phép hé lộ
+  trong khoảng.
+- `player_path`: mọi chữ khác tới người chơi, sinh ra từ player_view (người kể, chữ lựa chọn, lời
+  nói dối và cảm xúc của lựa chọn). Mọi bí mật chưa có trong player_view, bất kể khoảng lộ: chỉ
+  cảnh mới có quyền hé lộ.
 
 So khớp trên chữ đã chuẩn hoá NFC và bỏ dấu tiếng Việt, trọn từ. Cụm nhiều từ so không phân biệt
 hoa thường; cụm một từ ("Lan", "Gù") so có phân biệt hoa thường, để "hoa lan" không trúng "Lan".
@@ -23,11 +38,11 @@ import unicodedata
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from enum import StrEnum
-from typing import Protocol
+from typing import Literal, Protocol, get_args
 
 from writory.errors import ErrorCode, WritoryError
-from writory.graph import NodeRow, PlayerView
-from writory.pipeline.story_plan import StoryPlan
+from writory.graph import NodeRow, PlayerEntry, PlayerView
+from writory.pipeline.story_plan import Secret, StoryPlan
 
 log = logging.getLogger(__name__)
 
@@ -56,6 +71,11 @@ def leak_names(state: NamedState) -> dict[str, tuple[str, ...]]:
         if kept:
             out[node_id] = kept
     return out
+
+
+# Chữ nào đang được dò (bắt buộc, không có mặc định): `scene` cho văn cảnh, `player_path` cho chữ
+# sinh ra từ player_view (người kể, lựa chọn). Xem đầu file.
+Scope = Literal["scene", "player_path"]
 
 _EXCERPT_MAX_CHARS = 120
 _SENTENCE = re.compile(r"[^.!?…\n]+")
@@ -106,10 +126,55 @@ def _seen_text(view: PlayerView, story_brief: str) -> list[str]:
     return [*seen, *(lie.content for lie in view.lies), story_brief]
 
 
-def _forbidden_names(truth_names: Mapping[str, tuple[str, ...]], seen: list[str]) -> list[str]:
+def name_key(text: str) -> str:
+    """Khoá so sánh tên: bỏ dấu, không phân biệt hoa thường, gộp khoảng trắng."""
+    return " ".join(strip_diacritics(text).casefold().split())
+
+
+def _contains_words(whole: str, part: str) -> bool:
+    """`part` là một dãy từ liền nhau trong `whole` (cả hai đã qua `name_key`)."""
+    w, p = whole.split(), part.split()
+    return bool(p) and any(w[i:i + len(p)] == p for i in range(len(w) - len(p) + 1))
+
+
+def active_secrets(plan: StoryPlan, view: PlayerView, scope: Scope) -> list[Secret]:
+    """Bí mật còn hiệu lực với chữ này: chưa có trong player_view, và (với `scene`) chưa tới khoảng
+    lộ. Với `player_path` thì không xét khoảng lộ: chỉ cảnh mới được hé lộ."""
+    revealed = {e.id for e in view.entries}
+    return [
+        s for s in plan.secrets
+        if s.fact_id not in revealed
+        and (scope == "player_path" or view.chapter < s.reveal_from_chapter)
+    ]
+
+
+def protected_ids(plan: StoryPlan, view: PlayerView, scope: Scope) -> set[str]:
+    """Id các nút mà tên đang được kế hoạch bảo vệ (`Secret.protects` của bí mật còn hiệu lực)."""
+    return {n for s in active_secrets(plan, view, scope) for n in s.protects}
+
+
+def _hidden_names(names: Sequence[str], entry: PlayerEntry) -> list[str]:
+    """(a) Tên lớp truth của một nút đã có trong player_view mà người chơi chưa được biết: không
+    chứa trọn một tên đã hé lộ, không chung từ viết hoa nào với tên đã hé lộ."""
+    shown = (entry.text, *entry.aliases)
+    keys = [name_key(t) for t in shown]
+    tokens = set().union(*(_proper_tokens(t) for t in shown))
+    return [n for n in names
+            if not any(_contains_words(name_key(n), k) for k in keys)
+            and not _proper_tokens(n) & tokens]
+
+
+def _forbidden_names(
+    truth_names: Mapping[str, tuple[str, ...]], view: PlayerView, plan: StoryPlan,
+    seen: list[str], scope: Scope,
+) -> list[str]:
+    entries = {e.id: e for e in view.entries}
+    candidates = [n for node_id, names in truth_names.items() if node_id in entries
+                  for n in _hidden_names(names, entries[node_id])]  # (a)
+    candidates += [n for node_id in protected_ids(plan, view, scope)
+                   for n in truth_names.get(node_id, ())]  # (b)
     known = set().union(*(_proper_tokens(t) for t in seen))
-    terms = {name for names in truth_names.values() for name in names if _proper_tokens(name) - known}
-    return sorted(terms)
+    return sorted({n for n in candidates if _proper_tokens(n) - known})
 
 
 def _excerpt(text: str, start: int, end: int) -> str:
@@ -124,26 +189,25 @@ def check_leaks(
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
     story_brief: str,
+    scope: Scope,
 ) -> list[LeakHit]:
-    """`view`: player_view ở chương của chữ này. `truth_names`: `leak_names(state)` (D-48).
+    """`scope`: `scene` cho văn cảnh, `player_path` cho chữ sinh ra từ player_view (xem đầu file).
+    `view`: player_view ở chương của chữ này. `truth_names`: `leak_names(state)` (D-48).
     `story_brief`: thiết lập truyện người chơi đã đọc lúc khởi tạo (`setup.story_brief`, lưu ở
     `stories.brief`; D-52). Bắt buộc truyền, để không nơi gọi nào quên; truyện không có thì "",
     bộ dò chỉ chặt hơn. Không bao giờ vào prompt."""
+    if scope not in get_args(Scope):
+        raise ValueError(f"scope phải là một trong {get_args(Scope)}, nhận {scope!r}")
     text = unicodedata.normalize("NFC", text)
     flat = strip_diacritics(text)
-    chapter = view.chapter
-    revealed = {e.id for e in view.entries}
     hits: list[LeakHit] = []
 
-    for term in _forbidden_names(truth_names, _seen_text(view, story_brief)):
+    for term in _forbidden_names(truth_names, view, plan, _seen_text(view, story_brief), scope):
         for m in _pattern(term).finditer(flat):
             hits.append(LeakHit(LeakKind.NAME, term, m.start(), m.end(),
                                 _excerpt(text, m.start(), m.end())))
 
-    secrets = [
-        s for s in plan.secrets
-        if chapter < s.reveal_from_chapter and s.fact_id not in revealed
-    ]
+    secrets = active_secrets(plan, view, scope)
     for secret in secrets:
         if not secret.leak_terms:
             log.warning("bí mật %s không có leak_terms: bộ dò lộ không kiểm được", secret.fact_id)
@@ -166,11 +230,12 @@ def ensure_no_leak(
     truth_names: Mapping[str, tuple[str, ...]],
     plan: StoryPlan,
     story_brief: str,
+    scope: Scope,
 ) -> None:
     """Chặn chữ có lộ bí mật (mức BLOCK, design §6.2). Lỗi không chứa chữ bị lộ, kể cả trong
     `detail` dành cho log (G12: log không chứa bí mật truyện)."""
     hits = check_leaks(text, view=view, truth_names=truth_names, plan=plan,
-                       story_brief=story_brief)
+                       story_brief=story_brief, scope=scope)
     if hits:
         where = ", ".join(f"{h.kind.value}@{h.start}-{h.end}" for h in hits)
         raise WritoryError(

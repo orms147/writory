@@ -56,8 +56,9 @@ from writory.safety.wrap import (
 log = logging.getLogger(__name__)
 
 # Đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49). setup-4: luật id có dạng và
-# ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54).
-PROMPT_VERSION = "setup-4"
+# ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54). setup-5: `protects` của bí mật về
+# danh tính (D-61).
+PROMPT_VERSION = "setup-5"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -251,6 +252,7 @@ class OutSecret(_Out):
     reveal_from_chapter: int
     reveal_to_chapter: int
     leak_terms: list[list[str]]
+    protects: list[str]  # id nút có tên mà bí mật giấu danh tính (D-61); bí mật khác: []
 
 
 class OutMilestone(_Out):
@@ -346,8 +348,8 @@ def normalize_id(raw: str) -> str:
 
 def _map_ids(data: dict[str, Any], fn: Callable[[str], str]) -> None:
     """Áp `fn` tại chỗ lên mọi id của đầu ra model (dạng dict): chỗ khai (`_ID_SECTIONS`) và chỗ
-    nhắc tới (`about`, `known_by`, from/to của cạnh, `fact_id` của bí mật). Id mạch của kế hoạch
-    lấy từ chỗ khai của mạch."""
+    nhắc tới (`about`, `known_by`, from/to của cạnh, `fact_id` và `protects` của bí mật). Id mạch
+    của kế hoạch lấy từ chỗ khai của mạch."""
     for section in _ID_SECTIONS:
         for x in data[section]:
             x["id"] = fn(x["id"])
@@ -358,6 +360,7 @@ def _map_ids(data: dict[str, Any], fn: Callable[[str], str]) -> None:
         e["source"], e["target"] = fn(e["source"]), fn(e["target"])
     for s in data["secrets"]:
         s["fact_id"] = fn(s["fact_id"])
+        s["protects"] = [fn(i) for i in s["protects"]]
 
 
 def normalize_ids(output: BuildOutput) -> tuple[BuildOutput, list[SetupProblem]]:
@@ -466,7 +469,10 @@ biết. `fact_id`: id fact chứa bí mật. `reveal_from_chapter`, `reveal_to_c
 dự kiến lộ cho người chơi, trong số chương của truyện. `leak_terms`: các nhóm cụm từ; khi mọi cụm \
 của một nhóm cùng nằm trong một câu thì coi như bí mật đã lộ. Mỗi nhóm có ít nhất \
 {LEAK_GROUP_MIN_PHRASES} cụm, viết đúng chữ truyện sẽ dùng, ví dụ [["Lan", "gián điệp"], \
-["Lan", "người của Hội Kiếm"]].
+["Lan", "người của Hội Kiếm"]]. `protects`: chỉ với bí mật về danh tính (ai thật ra là ai, tên \
+thật của kẻ giấu mặt, nhân vật đội lốt người khác), id các nhân vật, nơi chốn, phe phái hay đồ \
+vật mà tên phải giữ kín cho tới khi bí mật lộ; tới lúc đó truyện chỉ gọi chúng bằng biệt danh \
+viết thường. Bí mật khác thì để danh sách rỗng. Không ghi `{PROTAGONIST_ID}`.
 
 Ở bước này chưa có gì được hé lộ cho người chơi: người chơi chưa đọc trang nào."""
 
@@ -963,6 +969,13 @@ def _plan_problems(
         elif any(len(group) < LEAK_GROUP_MIN_PHRASES for group in s.leak_terms):
             add("secrets", f"bí mật {s.fact_id}: mỗi nhóm leak_terms cần ít nhất "
                            f"{LEAK_GROUP_MIN_PHRASES} cụm")
+        for node_id in s.protects:  # D-61: id phải là nút có tên có thật trong gói
+            if node_id == PROTAGONIST_ID:
+                add("secrets", f"bí mật {s.fact_id}: protects không được có {PROTAGONIST_ID} "
+                               "(tên do người chơi chọn, D-48)")
+            elif labels.get(node_id) not in NAMED_LABELS:
+                add("secrets", f"bí mật {s.fact_id}: protects có {node_id}, không phải nút có tên "
+                               "trong gói (Character, Location, Faction, Item)")
     threads = {n.id: n.props for n in package.nodes if n.label == "Thread"}
     for t in plan.thread_ids:
         if t not in threads:

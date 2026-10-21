@@ -89,14 +89,28 @@ def test_secrets_are_not_in_the_notebook_of_any_chapter():
 # --- bộ chấm chặt hơn bộ dò lộ lúc chạy --------------------------------------------------------
 
 
-def test_scorer_keeps_traitor_secrets_secret_after_their_planned_window():
-    """Bộ dò lộ lúc chạy chỉ áp `leak_terms` trước `reveal_from_chapter` (leak.py), nên hai bí mật
-    của kế hoạch (khoảng lộ 3-6, 4-6) hết được bảo vệ từ chương 3-4 dù chưa hé lộ. Bộ chấm giữ
-    chúng tới hết truyện."""
+def _runtime(text: str, state, scope: str):
+    return be.check_leaks(text, view=state.view, truth_names=state.truth_names,
+                          plan=DATA.story_plan, story_brief=DATA.story_brief, scope=scope)
+
+
+def test_traitor_secrets_stay_secret_on_the_narrator_path_after_their_planned_window():
+    """D-60 ghi lỗ: hai bí mật của kế hoạch (khoảng lộ 3-6, 4-6) chưa hề hé lộ, mà bộ dò lộ chỉ áp
+    `leak_terms` trước `reveal_from_chapter`, nên từ chương 3-4 người kể nói ra được. Từ D-61 người
+    kể dò mọi bí mật chưa có trong player_view (`player_path`); văn cảnh (`scene`) vẫn theo khoảng
+    lộ, vì cảnh được phép hé lộ trong khoảng."""
+    for chapter in (4, 5, 6):  # f_doan_khac_muon_mac_ca: khoảng lộ 4-6
+        state = DATA.states[chapter]
+        own = "Đoàn Khắc muốn thương lượng với Bạch Lộc Cốc."  # nhóm leak_terms model đã đặt
+        assert "secret" in {h.kind.value for h in _runtime(own, state, "player_path")}, chapter
+        assert "secret" not in {h.kind.value for h in _runtime(own, state, "scene")}, chapter
+
+
+def test_scorer_keeps_traitor_secrets_secret_beyond_the_plan_terms():
+    """Bộ chấm vẫn chặt hơn lớp chạy thật: nhóm chỉ của bộ chấm bắt cách nói không có trong
+    `leak_terms` của kế hoạch (tên sai "Vạn Tinh Bách" mà bộ trích gắn cho nút ở chương 5)."""
     state, text = DATA.states[6], "Vạn Tinh Bách đã thương lượng với Bạch Lộc Cốc về đường lui."
-    runtime = be.check_leaks(text, view=state.view, truth_names=state.truth_names,
-                             plan=DATA.story_plan, story_brief=DATA.story_brief)
-    assert runtime == []  # lọt lớp chặn lúc chạy
+    assert _runtime(text, state, "player_path") == []  # lọt lớp chặn lúc chạy
     assert DATA.scorer.leaks(text, state)  # bộ chấm bắt
 
 

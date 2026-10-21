@@ -20,9 +20,11 @@ from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import role_extra
 from writory.llm.fake import FakeLLM
 from writory.pipeline.setup import (
+    BUILD_TASK,
     ID_EXAMPLES,
     NAMES_TEXT,
     PLACES_TEXT,
+    PROMPT_VERSION,
     PROTAGONIST_ID,
     SAFE_ID_PATTERN,
     BuildOutput,
@@ -30,6 +32,7 @@ from writory.pipeline.setup import (
     CharactersOutput,
     InitialEdgeType,
     Naming,
+    OutSecret,
     PlotOption,
     PlotsOutput,
     SettingOption,
@@ -50,6 +53,7 @@ from writory.pipeline.setup import (
     story_brief,
     to_story_setup,
 )
+from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import CLOSE_TAG, OPEN_TAG_START, escape_text
 
 FIXTURE = json.loads(
@@ -461,13 +465,21 @@ INVALID_BUILDS = {
                                  "known_by": []}],
         "secrets": lambda s: s + [
             {"fact_id": "f_chuoi_kiem_ban_do", "reveal_from_chapter": 4, "reveal_to_chapter": 5,
-             "leak_terms": [["chuôi kiếm", "bản đồ"]]},
+             "leak_terms": [["chuôi kiếm", "bản đồ"]], "protects": []},
             {"fact_id": "f_them", "reveal_from_chapter": 2, "reveal_to_chapter": 3,
-             "leak_terms": [["Lạc Hà", "kinh đô"]]},
+             "leak_terms": [["Lạc Hà", "kinh đô"]], "protects": []},
         ]},
     "secret_without_leak_terms": {"secrets": lambda s: [s[0] | {"leak_terms": []}, s[1]]},
     "leak_group_with_one_phrase": {"secrets": lambda s: [s[0] | {"leak_terms": [["Nguyệt Hoa"]]},
                                                          s[1]]},
+    # `protects` (D-61): id phải là nút có tên có thật trong gói.
+    "protects_unknown_id": {"secrets": lambda s: [s[0] | {"protects": ["khong_co"]}, s[1]]},
+    "protects_a_fact": {"secrets": lambda s: [s[0] | {"protects": ["f_ha_lao_giet_cha"]}, s[1]]},
+    # Nhân vật chính do code dựng từ lựa chọn của người chơi, không có biệt danh nào để giữ kín.
+    "protects_the_protagonist": {"secrets": lambda s: [s[0] | {"protects": [PROTAGONIST_ID]},
+                                                       s[1]]},
+    "protects_duplicate_id": {"secrets": lambda s: [s[0] | {"protects": ["to_nguyet_hoa"] * 2},
+                                                    s[1]]},
     "two_protagonists": {"characters": lambda c: c + [c[0] | {"id": PROTAGONIST_ID}]},
     "too_many_chapters_for_level": {"acts": lambda a: a[:-1] + [a[-1] | {"to_chapter": 10}]},
     "acts_not_starting_at_1": {"acts": lambda a: a[1:]},  # hồi đầu bắt đầu ở chương 2
@@ -883,3 +895,38 @@ def test_story_brief_carries_every_player_choice_and_naming():
                  PC.backstory):
         assert part in brief
     assert f"Nhân vật chính: {PC.name}\n" in brief
+
+
+# --- tên được kế hoạch bảo vệ (D-61) ------------------------------------------------------------
+
+
+async def test_protects_reaches_the_plan_and_its_ids_are_normalized():
+    """`protects` của đầu ra model vào bản kế hoạch; id viết có dấu được chuẩn hoá cùng một ánh xạ
+    với chỗ khai (D-54)."""
+    build = _build(secrets=lambda s: [s[0] | {"protects": ["Tô Nguyệt Hoa"]}, s[1]],
+                   characters=lambda c: [c[0] | {"id": "Tô Nguyệt Hoa"}] + c[1:],
+                   edges=lambda e: [x | {k: "Tô Nguyệt Hoa" for k in ("source", "target")
+                                         if x[k] == "to_nguyet_hoa"} for x in e],
+                   facts=lambda f: [x | {"about": ["Tô Nguyệt Hoa" if i == "to_nguyet_hoa" else i
+                                                   for i in x["about"]],
+                                         "known_by": ["Tô Nguyệt Hoa" if i == "to_nguyet_hoa"
+                                                      else i for i in x["known_by"]]}
+                                    for x in f])
+    result = await build_story(CHOICES, SETTING, PLOT, PC, llm=FakeLLM.scripted([build]),
+                               config=CFG, commit_id="c0")
+    assert result.plan.secret("f_nguyet_hoa_huyet_y").protects == ["to_nguyet_hoa"]
+    assert result.plan.secret("f_ha_lao_giet_cha").protects == []
+
+
+def test_prompt_asks_for_protects_on_identity_secrets():
+    assert "`protects`" in BUILD_TASK and "danh tính" in BUILD_TASK
+    assert PROMPT_VERSION == "setup-5"
+    assert "protects" in OutSecret.model_json_schema()["required"]  # JSON schema strict
+
+
+def test_old_plan_without_protects_still_loads():
+    """Kế hoạch đã lưu trước D-61 (Postgres `story_plans`, truth_dump cũ) không có `protects`."""
+    plan = _valid_setup().plan.model_dump()
+    for secret in plan["secrets"]:
+        del secret["protects"]
+    assert all(s.protects == [] for s in StoryPlan.model_validate(plan).secrets)
