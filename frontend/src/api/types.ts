@@ -109,7 +109,8 @@ export type SetupStage = 'settings' | 'plots' | 'characters' | 'finalize' | 'don
 export interface SetupOut {
   session_id: string;
   step: SetupStage;
-  tags: { genre: string; era: string | null; voice: string | null; darkness: string | null };
+  tags: { genre: string; era: string | null; voice: string | null };
+  darkness_level: string | null;
   length_level: string;
   naming: { names: string; places: string };
   settings: SettingOption[] | null;

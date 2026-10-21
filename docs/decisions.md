@@ -614,6 +614,29 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** truyện tạo trước D-67 chạy ở mức mặc định, và thiết lập đã lưu của chúng không có dòng mức u tối. Đề khởi tạo dài thêm, chưa đo lại. Chữ mức u tối của bài E lấy từ config hiện hành, vì lần chạy không lưu chữ thiết lập.
 - **Người quyết:** chọn sẵn mức thay chữ tự do: Chủ dự án duyệt 21/10/2026; cách làm: Claude (nhánh ui-backend), chờ điều phối duyệt · 21/10/2026
 
+## D-68 · Frontend bản 1: Vite + React + TS strict + Tailwind; số và chữ từ máy chủ; luật hiển thị có test
+- **Bối cảnh:** design §11 chọn React/TS/Tailwind; bàn giao thiết kế (D-65) cho màn, token, luật hiển thị. Một số trường trong ảnh chưa có ở API.
+- **Quyết định:**
+  - `frontend/`: Vite 7, React 19, react-router 7, TypeScript strict, Tailwind 3 (dùng theme v3 của bàn giao). Token, hiệu ứng, SVG chép vào `src/styles/` làm nguồn của app; thư mục bàn giao chỉ là đầu vào (D-65).
+  - Font tự host từ @fontsource, chỉ subset latin + vietnamese, chỉ woff2 (`src/styles/fonts.css`).
+  - Route theo README bàn giao mục 3, thêm `/truyen/:id/chuong/:n` để đọc lại. Proxy `/api` → `:8000`, bỏ tiền tố (app FastAPI không có tiền tố).
+  - Giới hạn, trần, nhãn độ dài, mức u tối chỉ lấy từ `GET /config/public`; ước tính chưa có thì ghi "chưa có ước tính". Lỗi hiện nguyên văn `message`, bố cục theo `code` (`src/lib/errorGroups.ts`).
+  - Khuôn truyện không chọn sẵn thể loại, độ dài; mức u tối chọn sẵn mặc định của máy chủ; quy ước tên mặc định gửi `naming: null`.
+  - Test nhẹ bằng Vitest + Testing Library; mỗi luật quan trọng một test (`src/test/rules.test.tsx`).
+- **Hệ quả:** lệch ảnh vì API chưa có trường: không tên nhân vật chính và bối cảnh ở thanh trên, không tên chương, không "thân phận", tính cách là ô chữ thay vì nhãn, không "~N trang", không tag phụ, không "Ba bối cảnh khác", không "ngã rẽ đã chọn" ở màn kết, không ngày lưu khoá. Nút `Lie` đã hé lộ để ở tab riêng "Lời nói dối đã biết". Câu hỏi mở cho chủ dự án: thể loại "Kỳ ảo · tu tiên" gửi nguyên chữ nên không khớp `DEFAULT_NAMING` của máy chủ (rơi về mặc định ngoài bảng); chỗ hiện nút `Lie`.
+- **Người quyết:** Claude (nhánh frontend-v1), chờ điều phối duyệt · 21/10/2026
+
+## D-69 · Đọc SSE bằng fetch; lần viết sống ngoài React; lớp mock là máy chủ giả trả Response thật
+- **Bối cảnh:** `POST /stories/{id}/chapters/next` là SSE qua POST (D-46), EventSource không gửi được. Lời gọi model trừ tiền key người chơi; StrictMode chạy effect hai lần; máy chủ huỷ lần viết khi mất kết nối.
+- **Quyết định:**
+  - Đọc bằng `fetch` + ReadableStream + TextDecoder luồng (`src/api/sse.ts`): tách theo chuẩn text/event-stream, bỏ chú thích `: ping`, ghép chuỗi bị cắt giữa dòng, giữa CRLF, giữa ký tự UTF-8. Lỗi trước luồng là JSON có status, thành ApiError.
+  - Lần viết nằm trong store ngoài React (`src/state/chapterRun.ts`): mỗi truyện một lần viết; rời trang đọc sang trang khác trong app thì luồng vẫn chạy, đóng thẻ thì dừng. Chỉ tự viết ngay sau thao tác của người chơi (chốt khởi tạo, chọn hướng); mở lại chương chưa viết thì có nút "Viết chương N". Lời gọi khởi tạo trùng nhau được gộp (`src/lib/inflight.ts`).
+  - Thử lại: chương chưa ghi thì viết lại từ đầu; đã ghi thì lấy lại trạng thái (lựa chọn tạo lại bằng `POST /choices`); mất mạng thì hỏi lại máy chủ trước và giữ chữ đã hiện.
+  - Chữ chạy dần là hoạt cảnh phía client trên trọn chữ cảnh; chạm vào trang hoặc giảm chuyển động thì hiện đủ ngay.
+  - Mock: máy chủ giả trong trình duyệt thay `fetch` (`src/mock/`), không dùng MSW; trả `Response` thật nên đi qua đúng client và bộ đọc SSE; test dùng chính nó. Truyện bịa; `?mock=rong`, `?loi=<MÃ>`.
+- **Hệ quả:** thêm hay đổi endpoint thì sửa mock cùng commit. Lỗi phía trình duyệt (mất mạng, phản hồi sai dạng) có mã `CLIENT_*` và câu của giao diện, không giả làm mã máy chủ.
+- **Người quyết:** Claude (nhánh frontend-v1), chờ điều phối duyệt · 21/10/2026
+
 ## D-70 · Thang mức độ kiểm duyệt: tả lướt là `mild`; ám chỉ cảnh tình dục cũng tính
 - **Bối cảnh:** bài đo G9 lần 1 (`evals/results/2026-10-21-g9-luna-1/`) có 2 câu chặn nhầm cảnh đánh nhau bình thường ở mức Vừa. Nguyên nhân: thang mức độ trong config lấy "máu loang trên áo" làm ví dụ `strong`, lệch với bộ câu. Có thêm 1 câu bỏ sót: ám chỉ qua đêm ở mức Nhẹ.
 - **Quyết định:** `intensity_scale.mild` gồm cả tả lướt trong một câu; `strong` là miêu tả có chi tiết. Chữ mô tả `adult_sexual` nói rõ ám chỉ cũng tính. Danh sách loại và các trần không đổi.
