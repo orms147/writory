@@ -329,6 +329,6 @@ Tuần 1 làm tay có chủ ý: thiết kế đồ thị sai thì mọi thứ sa
 
 ## 14. Còn mở
 - Ai là người dùng thật đầu tiên ngoài chủ dự án, và đưa cho họ bằng cách nào.
-- Model kiểm duyệt nội dung cho tiếng Việt: đang dùng tạm một model (`config/models.yaml`, vai `moderate`). Bộ câu giữ riêng v1 đã chạy (`evals/results/2026-10-21-g9-holdout-1/notes.md`) và đã được dùng để đổi cách gọi (D-79), nên thành bộ chỉnh; cần bộ giữ riêng v2 để đo lại.
+- Model kiểm duyệt nội dung cho tiếng Việt: đang dùng tạm một model (`config/models.yaml`, vai `moderate`). Bộ câu giữ riêng v1 đã chạy (`evals/results/2026-10-21-g9-holdout-1/notes.md`) và đã được dùng để đổi cách gọi (D-79), nên thành bộ chỉnh; đã soạn bộ giữ riêng v2 (`evals/redteam/g9_moderation_holdout_v2.yaml`, D-80) để đo lại, chưa chạy thật. Việc bắt chữ tấn công thật (loại nặng) chưa có cách đo nội bộ: cần bộ red-team công khai có giấy phép (docs/eval.md, G9).
 - Nghị định 147/2024/NĐ-CP (xác thực tài khoản bằng số điện thoại cho mạng xã hội) có áp dụng cho một trang truyện tương tác nhỏ không. Chưa kiểm; cần hỏi trước khi mở công khai cho người lạ.
 - Luồng OAuth của OpenRouter có dùng được không.
