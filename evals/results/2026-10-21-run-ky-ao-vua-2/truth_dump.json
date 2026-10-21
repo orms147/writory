@@ -1,0 +1,4838 @@
+{
+ "story_id": "run-20261021-ky-ao-vua-2-f8a61160",
+ "plan": {
+  "acts": [
+   {
+    "name": "Khóa kín trên đài",
+    "from_chapter": 1,
+    "to_chapter": 3
+   },
+   {
+    "name": "Những lời cam kết",
+    "from_chapter": 4,
+    "to_chapter": 6
+   },
+   {
+    "name": "Luật dưới lớp tro",
+    "from_chapter": 7,
+    "to_chapter": 9
+   },
+   {
+    "name": "Ấn lệnh cuối cùng",
+    "from_chapter": 10,
+    "to_chapter": 12
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "bach_kinh_luan_sap_dat",
+    "reveal_from_chapter": 7,
+    "reveal_to_chapter": 9,
+    "leak_terms": [
+     [
+      "Bạch Kinh Luân",
+      "sắp đặt việc lấy mảnh thần khí"
+     ],
+     [
+      "Bạch Kinh Luân",
+      "ép hội nghị trao quyền kiểm soát"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "an_lenh_duoc_cat_giau",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 6,
+    "leak_terms": [
+     [
+      "Thiệu Kiếm Hoài",
+      "cất giấu Ấn Lệnh Thiên Luật"
+     ],
+     [
+      "Ấn Lệnh Thiên Luật",
+      "Hành Lang Phong Luân"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_nguoi_giu_an",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "thoat_khoi_dai_nghi",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 10
+   },
+   {
+    "thread_id": "quyen_quan_giu_than_khi",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 12
+   },
+   {
+    "thread_id": "loi_khai_cua_min_vi",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 12
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Lời buộc tội đầu tiên khiến các trưởng môn đòi Lục Minh Vi xác nhận chuyến đi qua vùng tranh chấp, biến lời khai của nàng thành đòn bẩy chính trị.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Lục Minh Vi tìm ra dấu vết cho thấy người giữ ấn có thể chưa rời khỏi Cửu Tiêu Đài.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Một thỏa thuận tạm thời được lập để các phe cùng tìm lối mở cửa thay vì lập tức bắt giữ lẫn nhau.",
+    "from_chapter": 5,
+    "to_chapter": 6
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Lục Minh Vi phát hiện mảnh thần khí bị lấy đi có liên quan đến một kế hoạch ép buộc hội nghị.",
+    "from_chapter": 7,
+    "to_chapter": 8
+   },
+   {
+    "kind": "climax",
+    "goal": "Khi các trưởng môn đối mặt nhau ở lối thoát, Lục Minh Vi phải chọn lời khai và cam kết để ngăn cuộc thanh trừng bùng nổ.",
+    "from_chapter": 9,
+    "to_chapter": 11
+   },
+   {
+    "kind": "ending",
+    "goal": "Một thỏa ước mới được xác lập hoặc bị bác bỏ, các cánh cửa mở ra, và lựa chọn của Lục Minh Vi quyết định liệu các tiên môn có rời Cửu Tiêu Đài mà không khơi lại chiến tranh hay không.",
+    "from_chapter": 12,
+    "to_chapter": 12
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 10,
+  "total_chapters": 12,
+  "secrets": [
+   {
+    "fact_id": "bach_kinh_luan_sap_dat",
+    "text": "Bạch Kinh Luân đã sắp đặt việc lấy mảnh thần khí khỏi hộp để ép hội nghị trao quyền kiểm soát cho liên minh của hắn.",
+    "user_authored": false,
+    "from_chapter": 7,
+    "to_chapter": 9,
+    "revealed_chapter": 7
+   },
+   {
+    "fact_id": "an_lenh_duoc_cat_giau",
+    "text": "Thiệu Kiếm Hoài đã cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân trước khi mất tích.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "revealed_chapter": 4
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_nguoi_giu_an",
+    "description": "Tìm Thiệu Kiếm Hoài và xác định vì sao ông biến mất trước khi hội nghị bị khóa.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 6,
+    "resolved_chapter": 4
+   },
+   {
+    "thread_id": "thoat_khoi_dai_nghi",
+    "description": "Tìm cách đưa những người trong Đại Nghị Sảnh rời khỏi nơi bị khóa mà không châm ngòi thanh trừng.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 10,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "quyen_quan_giu_than_khi",
+    "description": "Ngăn các phe giành quyền kiểm soát mảnh thần khí bằng vũ lực và tìm ra một phương thức quản giữ được chấp nhận.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 12,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "loi_khai_cua_min_vi",
+    "description": "Quyết định lời khai và lập trường của Lục Minh Vi sẽ đặt nền móng cho luật mới đến đâu.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 12,
+    "resolved_chapter": 1
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261021-ky-ao-vua-2-f8a61160-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Lục Minh Vi",
+      "personality": "Gan dạ, thẳng thắn và không ngại đối đáp với người có địa vị cao hơn. Nàng nhạy bén trước nỗi sợ của người khác, nhưng đôi khi hành động quá nhanh khi thấy kẻ yếu bị dồn ép.",
+      "backstory": "Lục Minh Vi là môn sinh của một tiên môn nhỏ chuyên hộ tống người và vật qua các đảo bay. Sau đại chiến, nàng chứng kiến nhiều đoàn người mất chỗ nương thân vì tranh chấp giữa các môn phái, nên mong những luật lệ mới sẽ ngăn chiến sự tái diễn. Nàng có mặt tại Cửu Tiêu Đài để làm chứng về những chuyến đi qua vùng tranh chấp, rồi bị giữ lại khi cửa đài khóa kín và cuộc nghị sự chực biến thành thanh trừng.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "han_tinh_chau",
+     "label": "Character",
+     "props": {
+      "name": "Hàn Tinh Châu",
+      "aliases": [
+       "Trưởng môn Hàn"
+      ],
+      "personality": "Lạnh lùng, giỏi cân nhắc lợi hại và không bao giờ đưa ra lời hứa mà chưa tính đường rút.",
+      "backstory": "Là trưởng môn Băng Tâm Môn, hắn đã giữ được môn phái khỏi tan rã sau đại chiến bằng cách nhẫn nhịn trước các thế lực lớn."
+     }
+    },
+    {
+     "id": "duong_anh_lac",
+     "label": "Character",
+     "props": {
+      "name": "Dương Anh Lạc",
+      "aliases": [
+       "Chấp luật Dương"
+      ],
+      "personality": "Cứng rắn, trọng trật tự và tin rằng một luật lệ nghiêm khắc vẫn tốt hơn một cuộc chiến không hồi kết.",
+      "backstory": "Nàng là chấp luật của Thanh Tiêu Môn, từng chứng kiến một đoàn người bị bỏ mặc giữa vùng tranh chấp vì các phe không thống nhất được quyền hộ tống."
+     }
+    },
+    {
+     "id": "bach_kinh_luan",
+     "label": "Character",
+     "props": {
+      "name": "Bạch Kinh Luân",
+      "aliases": [
+       "Trưởng môn Bạch"
+      ],
+      "personality": "Ôn hòa trong lời nói, sắc bén trong thương lượng và luôn tìm cách biến nhượng bộ của người khác thành lợi thế cho mình.",
+      "backstory": "Hắn đứng đầu Vân Tê Môn, một tiên môn từng mất nhiều đệ tử khi bảo vệ đường bay trong những năm cuối đại chiến."
+     }
+    },
+    {
+     "id": "thieu_kiem_hoai",
+     "label": "Character",
+     "props": {
+      "name": "Thiệu Kiếm Hoài",
+      "aliases": [
+       "Người giữ ấn"
+      ],
+      "personality": "Kiệm lời, cẩn trọng và có thói quen ghi lại cả những điều người khác cho là không đáng kể.",
+      "backstory": "Ông được các môn phái chọn làm người giữ ấn cho hội nghị vì từng đứng ngoài tranh chấp quyền lực và có danh tiếng liêm chính."
+     }
+    },
+    {
+     "id": "lao_thanh_nguyen",
+     "label": "Character",
+     "props": {
+      "name": "Lão Thành Nguyên",
+      "aliases": [
+       "Nguyên lão"
+      ],
+      "personality": "Điềm đạm, kín đáo và tin rằng những người từng thắng trong chiến tranh không nên là người duy nhất viết luật cho hòa bình.",
+      "backstory": "Ông là trưởng lão của một môn phái nhỏ đã giải tán, hiện làm thư lại ghi biên bản cho các cuộc nghị sự liên môn."
+     }
+    },
+    {
+     "id": "cuu_tieu_dai",
+     "label": "Location",
+     "props": {
+      "name": "Cửu Tiêu Đài",
+      "aliases": [
+       "Đài Thiên Luật"
+      ],
+      "description": "Đảo bay trung lập nơi các tiên môn tập trung dựng lại luật lệ sau đại chiến."
+     }
+    },
+    {
+     "id": "dai_nghi_su",
+     "label": "Location",
+     "props": {
+      "name": "Đại Nghị Sảnh",
+      "aliases": [
+       "chính điện"
+      ],
+      "description": "Chính điện trên Cửu Tiêu Đài, có cửa đá khép kín và các lối thoát được kiểm soát từ bên trong."
+     }
+    },
+    {
+     "id": "hanh_lang_phong_luan",
+     "label": "Location",
+     "props": {
+      "name": "Hành Lang Phong Luân",
+      "description": "Lối đi hẹp chạy quanh chân đài, nối đại điện với các gian lưu trữ và bệ điều khiển cửa."
+     }
+    },
+    {
+     "id": "ben_may_lac",
+     "label": "Location",
+     "props": {
+      "name": "Bến Mây Lạc",
+      "description": "Bến neo ở rìa đảo, nơi các thuyền bay chờ lệnh rời Cửu Tiêu Đài."
+     }
+    },
+    {
+     "id": "bang_luan_kiem",
+     "label": "Faction",
+     "props": {
+      "name": "Bang Luận Kiếm",
+      "description": "Liên minh các tiên môn muốn giao quyền định đoạt thần khí cho một hội đồng do những môn phái lớn chi phối."
+     }
+    },
+    {
+     "id": "minh_ho_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Minh Hộ Tống",
+      "description": "Liên minh các môn phái nhỏ và những đoàn hộ tống muốn luật mới bảo vệ dân chúng qua vùng tranh chấp."
+     }
+    },
+    {
+     "id": "thanh_tieu_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Tiêu Môn",
+      "description": "Tiên môn nắm quyền chấp luật tại Cửu Tiêu Đài và ủng hộ một bộ quy tắc chung có chế tài rõ ràng."
+     }
+    },
+    {
+     "id": "bang_tam_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Băng Tâm Môn",
+      "description": "Tiên môn giữ thái độ dè dặt, muốn các môn phái lớn không thể tự ý điều động lực lượng nhân danh luật chung."
+     }
+    },
+    {
+     "id": "van_te_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Vân Tê Môn",
+      "description": "Tiên môn có thế lực trên các tuyến đường bay, muốn quyền kiểm soát mảnh thần khí được chia theo đóng góp."
+     }
+    },
+    {
+     "id": "hop_phong_an",
+     "label": "Item",
+     "props": {
+      "name": "Hộp Phong Ấn",
+      "aliases": [
+       "chiếc hộp niêm phong"
+      ],
+      "description": "Chiếc hộp dùng để niêm phong mảnh thần khí được đưa ra trước hội nghị."
+     }
+    },
+    {
+     "id": "an_lenh_thien_luat",
+     "label": "Item",
+     "props": {
+      "name": "Ấn Lệnh Thiên Luật",
+      "aliases": [
+       "ấn lệnh"
+      ],
+      "description": "Ấn lệnh có thể mở các cửa khóa của Cửu Tiêu Đài và xác nhận biên bản nghị sự."
+     }
+    },
+    {
+     "id": "manh_than_khi",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh Thiên Khuyết",
+      "aliases": [
+       "mảnh thần khí"
+      ],
+      "description": "Mảnh vỡ cổ xưa có sức mạnh không ổn định, được các tiên môn tranh quyền quản giữ."
+     }
+    },
+    {
+     "id": "cuu_tieu_trung_lap",
+     "label": "Fact",
+     "props": {
+      "text": "Cửu Tiêu Đài được các tiên môn công nhận là nơi nghị sự trung lập sau đại chiến."
+     }
+    },
+    {
+     "id": "hop_trong_rong",
+     "label": "Fact",
+     "props": {
+      "text": "Hộp Phong Ấn được phát hiện trống ngay trước khi lời buộc tội đầu tiên được đưa ra."
+     }
+    },
+    {
+     "id": "thieu_kiem_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Thiệu Kiếm Hoài mất tích trước khi cửa Đại Nghị Sảnh bị khóa."
+     }
+    },
+    {
+     "id": "cua_dai_bi_khoa",
+     "label": "Fact",
+     "props": {
+      "text": "Cửa Đại Nghị Sảnh đã bị khóa từ phía trong khi cuộc tranh luận bắt đầu."
+     }
+    },
+    {
+     "id": "phe_tranh_quyen",
+     "label": "Fact",
+     "props": {
+      "text": "Bang Luận Kiếm muốn trao quyền quản giữ thần khí cho một hội đồng do các tiên môn lớn chi phối."
+     }
+    },
+    {
+     "id": "phe_bao_ve_duong",
+     "label": "Fact",
+     "props": {
+      "text": "Minh Hộ Tống muốn luật mới bảo đảm các đoàn người được đi qua vùng tranh chấp."
+     }
+    },
+    {
+     "id": "duong_anh_tung_cuu",
+     "label": "Fact",
+     "props": {
+      "text": "Dương Anh Lạc từng tự ý mở một hành lang sơ tán để đưa người dân khỏi vùng tranh chấp."
+     }
+    },
+    {
+     "id": "an_lenh_gay_khoa",
+     "label": "Fact",
+     "props": {
+      "text": "Ấn Lệnh Thiên Luật đang được dùng để giữ cơ chế khóa cửa của Cửu Tiêu Đài hoạt động."
+     }
+    },
+    {
+     "id": "an_lenh_duoc_cat_giau",
+     "label": "Fact",
+     "props": {
+      "text": "Thiệu Kiếm Hoài đã cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân trước khi mất tích."
+     }
+    },
+    {
+     "id": "bach_kinh_luan_sap_dat",
+     "label": "Fact",
+     "props": {
+      "text": "Bạch Kinh Luân đã sắp đặt việc lấy mảnh thần khí khỏi hộp để ép hội nghị trao quyền kiểm soát cho liên minh của hắn."
+     }
+    },
+    {
+     "id": "tim_nguoi_giu_an",
+     "label": "Thread",
+     "props": {
+      "description": "Tìm Thiệu Kiếm Hoài và xác định vì sao ông biến mất trước khi hội nghị bị khóa.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "thoat_khoi_dai_nghi",
+     "label": "Thread",
+     "props": {
+      "description": "Tìm cách đưa những người trong Đại Nghị Sảnh rời khỏi nơi bị khóa mà không châm ngòi thanh trừng.",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 10
+     }
+    },
+    {
+     "id": "quyen_quan_giu_than_khi",
+     "label": "Thread",
+     "props": {
+      "description": "Ngăn các phe giành quyền kiểm soát mảnh thần khí bằng vũ lực và tìm ra một phương thức quản giữ được chấp nhận.",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "loi_khai_cua_min_vi",
+     "label": "Thread",
+     "props": {
+      "description": "Quyết định lời khai và lập trường của Lục Minh Vi sẽ đặt nền móng cho luật mới đến đâu.",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "hanh_lang_so_tan",
+     "label": "Thread",
+     "props": {
+      "description": "Khám phá cái giá và hệ quả của lần Dương Anh Lạc tự ý mở đường sơ tán trong quá khứ.",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 8
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "han_tinh_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>han_tinh_chau@0",
+     "props": {
+      "kind": "nghi kỵ",
+      "score": -10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "han_tinh_chau",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:han_tinh_chau>protagonist@0",
+     "props": {
+      "kind": "thận trọng",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "duong_anh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>duong_anh_lac@0",
+     "props": {
+      "kind": "đồng cảm",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "duong_anh_lac",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:duong_anh_lac>protagonist@0",
+     "props": {
+      "kind": "đề phòng",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "bach_kinh_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>bach_kinh_luan@0",
+     "props": {
+      "kind": "nghi kỵ",
+      "score": -15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "bach_kinh_luan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:bach_kinh_luan>protagonist@0",
+     "props": {
+      "kind": "lợi dụng",
+      "score": -5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "lao_thanh_nguyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>lao_thanh_nguyen@0",
+     "props": {
+      "kind": "tin cậy",
+      "score": 15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "lao_thanh_nguyen",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:lao_thanh_nguyen>protagonist@0",
+     "props": {
+      "kind": "bảo hộ",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "han_tinh_chau",
+     "to": "duong_anh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:han_tinh_chau>duong_anh_lac@0",
+     "props": {
+      "kind": "đối địch",
+      "score": -25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "duong_anh_lac",
+     "to": "han_tinh_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:duong_anh_lac>han_tinh_chau@0",
+     "props": {
+      "kind": "đối địch",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "bach_kinh_luan",
+     "to": "han_tinh_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:bach_kinh_luan>han_tinh_chau@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -30
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "han_tinh_chau",
+     "to": "bach_kinh_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:han_tinh_chau>bach_kinh_luan@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -25
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "han_tinh_chau",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:han_tinh_chau>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "duong_anh_lac",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:duong_anh_lac>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bach_kinh_luan",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bach_kinh_luan>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_thanh_nguyen",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_thanh_nguyen>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "thieu_kiem_hoai",
+     "to": "hanh_lang_phong_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:thieu_kiem_hoai>hanh_lang_phong_luan@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "hop_phong_an",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:hop_phong_an>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "an_lenh_thien_luat",
+     "to": "hanh_lang_phong_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:an_lenh_thien_luat>hanh_lang_phong_luan@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "manh_than_khi",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:manh_than_khi>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "han_tinh_chau",
+     "to": "bang_tam_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:han_tinh_chau>bang_tam_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "duong_anh_lac",
+     "to": "thanh_tieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:duong_anh_lac>thanh_tieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "bach_kinh_luan",
+     "to": "van_te_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:bach_kinh_luan>van_te_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "cuu_tieu_trung_lap",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:cuu_tieu_trung_lap>cuu_tieu_dai@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "cuu_tieu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>cuu_tieu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "cuu_tieu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>cuu_tieu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "cuu_tieu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>cuu_tieu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "thieu_kiem_hoai",
+     "to": "cuu_tieu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:thieu_kiem_hoai>cuu_tieu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "cuu_tieu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>cuu_tieu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "hop_trong_rong",
+     "to": "hop_phong_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hop_trong_rong>hop_phong_an@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "hop_trong_rong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>hop_trong_rong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "hop_trong_rong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>hop_trong_rong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "hop_trong_rong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>hop_trong_rong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "hop_trong_rong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>hop_trong_rong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "thieu_kiem_mat_tich",
+     "to": "thieu_kiem_hoai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thieu_kiem_mat_tich>thieu_kiem_hoai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thieu_kiem_mat_tich",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thieu_kiem_mat_tich>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "thieu_kiem_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>thieu_kiem_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "thieu_kiem_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>thieu_kiem_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "thieu_kiem_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>thieu_kiem_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "thieu_kiem_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>thieu_kiem_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "cua_dai_bi_khoa",
+     "to": "dai_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:cua_dai_bi_khoa>dai_nghi_su@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "cua_dai_bi_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>cua_dai_bi_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "cua_dai_bi_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>cua_dai_bi_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "cua_dai_bi_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>cua_dai_bi_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "cua_dai_bi_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>cua_dai_bi_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "phe_tranh_quyen",
+     "to": "bang_luan_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phe_tranh_quyen>bang_luan_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "phe_tranh_quyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>phe_tranh_quyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "phe_tranh_quyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>phe_tranh_quyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "phe_tranh_quyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>phe_tranh_quyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "phe_bao_ve_duong",
+     "to": "minh_ho_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phe_bao_ve_duong>minh_ho_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "phe_bao_ve_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>phe_bao_ve_duong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "phe_bao_ve_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>phe_bao_ve_duong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "duong_anh_tung_cuu",
+     "to": "duong_anh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:duong_anh_tung_cuu>duong_anh_lac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "duong_anh_tung_cuu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>duong_anh_tung_cuu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "duong_anh_tung_cuu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>duong_anh_tung_cuu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "an_lenh_gay_khoa",
+     "to": "an_lenh_thien_luat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:an_lenh_gay_khoa>an_lenh_thien_luat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "an_lenh_gay_khoa",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:an_lenh_gay_khoa>cuu_tieu_dai@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "thieu_kiem_hoai",
+     "to": "an_lenh_gay_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:thieu_kiem_hoai>an_lenh_gay_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "an_lenh_gay_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>an_lenh_gay_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "an_lenh_duoc_cat_giau",
+     "to": "thieu_kiem_hoai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:an_lenh_duoc_cat_giau>thieu_kiem_hoai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "an_lenh_duoc_cat_giau",
+     "to": "an_lenh_thien_luat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:an_lenh_duoc_cat_giau>an_lenh_thien_luat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "an_lenh_duoc_cat_giau",
+     "to": "hanh_lang_phong_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:an_lenh_duoc_cat_giau>hanh_lang_phong_luan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "thieu_kiem_hoai",
+     "to": "an_lenh_duoc_cat_giau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:thieu_kiem_hoai>an_lenh_duoc_cat_giau@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "bach_kinh_luan_sap_dat",
+     "to": "bach_kinh_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bach_kinh_luan_sap_dat>bach_kinh_luan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "bach_kinh_luan_sap_dat",
+     "to": "manh_than_khi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bach_kinh_luan_sap_dat>manh_than_khi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "bach_kinh_luan_sap_dat",
+     "to": "bang_luan_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bach_kinh_luan_sap_dat>bang_luan_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "bach_kinh_luan_sap_dat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>bach_kinh_luan_sap_dat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Lục Minh Vi",
+      "known_as": "Lục Minh Vi"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-ee87a32d1f81",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "loi_khai_cua_min_vi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:loi_khai_cua_min_vi>ch1@1",
+     "props": {
+      "quote": "Tôi sẽ kể đúng những gì mình biết. Nhưng tôi không xác nhận lời buộc tội thay cho bất kỳ môn phái nào."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bach_kinh_luan",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bach_kinh_luan>ch1@1",
+     "props": {
+      "quote": "Tiếng buộc tội vừa dứt, Bạch Kinh Luân đã quay sang tôi.",
+      "known_as": "Bạch Kinh Luân"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "minh_ho_tong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:minh_ho_tong>ch1@1",
+     "props": {
+      "quote": "Lục Minh Vi, chuyến hộ tống của Minh Hộ Tống từng đi qua vùng tranh chấp, phải không?",
+      "known_as": "Minh Hộ Tống"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hop_phong_an",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hop_phong_an>ch1@1",
+     "props": {
+      "quote": "Sau lưng ông, Hộp Phong Ấn vẫn mở nắp.",
+      "known_as": "Hộp Phong Ấn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hop_trong_rong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hop_trong_rong>ch1@1",
+     "props": {
+      "quote": "Lòng hộp trống trơn, ánh đèn trên cao rọi vào lớp đá đen lạnh ngắt."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "han_tinh_chau",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:han_tinh_chau>ch1@1",
+     "props": {
+      "quote": "Hàn Tinh Châu cắt ngang, mắt không rời khỏi tôi.",
+      "known_as": "Hàn Tinh Châu"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "duong_anh_lac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:duong_anh_lac>ch1@1",
+     "props": {
+      "quote": "Dương Anh Lạc đứng lên.",
+      "known_as": "Dương Anh Lạc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dai_nghi_su",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dai_nghi_su>ch1@1",
+     "props": {
+      "quote": "Cửa Đại Nghị Sảnh đã khóa.",
+      "known_as": "Đại Nghị Sảnh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cua_dai_bi_khoa",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cua_dai_bi_khoa>ch1@1",
+     "props": {
+      "quote": "Cửa Đại Nghị Sảnh đã khóa."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thieu_kiem_hoai",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thieu_kiem_hoai>ch1@1",
+     "props": {
+      "quote": "Thiệu Kiếm Hoài vẫn mất tích.",
+      "known_as": "Thiệu Kiếm Hoài"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thieu_kiem_mat_tich",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thieu_kiem_mat_tich>ch1@1",
+     "props": {
+      "quote": "Cửa Đại Nghị Sảnh đã khóa. Thiệu Kiếm Hoài vẫn mất tích."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lao_thanh_nguyen",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lao_thanh_nguyen>ch1@1",
+     "props": {
+      "quote": "Lão Thành Nguyên đưa tay về phía tôi, lòng bàn tay mở.",
+      "known_as": "Lão Thành Nguyên"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "manh_than_khi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:manh_than_khi>ch1@1",
+     "props": {
+      "quote": "Đừng suy đoán ai đã lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn.",
+      "known_as": "Mảnh Thiên Khuyết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "hop_trong_rong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>hop_trong_rong@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Lòng hộp đen ngòm nằm ngay dưới ánh đèn"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "cua_dai_bi_khoa",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>cua_dai_bi_khoa@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Cửa Đại Nghị Sảnh vẫn khóa kín."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "thieu_kiem_mat_tich",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>thieu_kiem_mat_tich@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Chỗ ngồi của Thiệu Kiếm Hoài vẫn bỏ trống."
+     }
+    }
+   ],
+   "close": []
+  },
+  "2": {
+   "commit_id": "ch2-a344c6f68e28",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "phe_tranh_quyen",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>phe_tranh_quyen@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Hội nghị phải giao quyền giữ mảnh thần khí cho liên minh các tiên môn lớn."
+     }
+    }
+   ],
+   "close": []
+  },
+  "3": {
+   "commit_id": "ch3-2da6e0aaeb56",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cuu_tieu_dai",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cuu_tieu_dai>ch3@3",
+     "props": {
+      "quote": "Đừng lấy cửa khóa làm cớ trao cả Đài Thiên Luật cho một phe.",
+      "known_as": "Đài Thiên Luật"
+     }
+    }
+   ],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-7a6d047de324",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>cuu_tieu_dai@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_thanh_nguyen",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_thanh_nguyen>cuu_tieu_dai@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bach_kinh_luan",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bach_kinh_luan>cuu_tieu_dai@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "han_tinh_chau",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:han_tinh_chau>cuu_tieu_dai@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "duong_anh_lac",
+     "to": "cuu_tieu_dai",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:duong_anh_lac>cuu_tieu_dai@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "an_lenh_duoc_cat_giau",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>an_lenh_duoc_cat_giau@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "thieu_kiem_hoai",
+      "quote": "Trước khi mất tích, ta cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "an_lenh_duoc_cat_giau",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>an_lenh_duoc_cat_giau@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "thieu_kiem_hoai"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_kinh_luan",
+     "to": "an_lenh_duoc_cat_giau",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_kinh_luan>an_lenh_duoc_cat_giau@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "thieu_kiem_hoai"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "an_lenh_duoc_cat_giau",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>an_lenh_duoc_cat_giau@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "thieu_kiem_hoai"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "an_lenh_duoc_cat_giau",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>an_lenh_duoc_cat_giau@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "thieu_kiem_hoai"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "tim_nguoi_giu_an",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:tim_nguoi_giu_an>ch4@4",
+     "props": {
+      "quote": "Ở cuối gian, có người ngồi tựa lưng vào vách, đầu cúi thấp."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hanh_lang_phong_luan",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hanh_lang_phong_luan>ch4@4",
+     "props": {
+      "quote": "- Hành Lang Phong Luân.",
+      "known_as": "Hành Lang Phong Luân"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "an_lenh_thien_luat",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:an_lenh_thien_luat>ch4@4",
+     "props": {
+      "quote": "Trước khi mất tích, ta cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân.",
+      "known_as": "Ấn Lệnh Thiên Luật"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "an_lenh_duoc_cat_giau",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:an_lenh_duoc_cat_giau>ch4@4",
+     "props": {
+      "quote": "Trước khi mất tích, ta cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>dai_nghi_su@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:lao_thanh_nguyen>dai_nghi_su@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:bach_kinh_luan>dai_nghi_su@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:han_tinh_chau>dai_nghi_su@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:duong_anh_lac>dai_nghi_su@0",
+     "valid_to_chapter": 4
+    }
+   ]
+  },
+  "5": {
+   "commit_id": "ch5-62b16617f079",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "an_lenh_gay_khoa",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:an_lenh_gay_khoa>ch5@5",
+     "props": {
+      "quote": "Ấn lệnh đang gắn với cơ chế khóa cửa."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bang_luan_kiem",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bang_luan_kiem>ch5@5",
+     "props": {
+      "quote": "Hàn Tinh Châu im lặng thêm một nhịp rồi mới đáp:\n\n- Ta cũng chấp nhận. Nhưng người của Bang Luận Kiếm không được chạm vào ấn lệnh trước khi có mặt các bên.",
+      "known_as": "Bang Luận Kiếm"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "an_lenh_gay_khoa",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>an_lenh_gay_khoa@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Cơ chế khóa cửa đang dựa vào nó."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "thoat_khoi_dai_nghi",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:thoat_khoi_dai_nghi>ch5@5",
+     "props": {
+      "quote": "Khi tất cả đã ra ngoài, tôi quay lại đặt tờ biên bản lên bệ đá."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "quyen_quan_giu_than_khi",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:quyen_quan_giu_than_khi>ch5@5",
+     "props": {
+      "quote": "Tôi đề nghị thỏa thuận tạm thời: ấn lệnh tiếp tục ở nguyên chỗ, dưới sự giám sát chung. Không môn phái nào được độc chiếm, cũng không ai được dùng vũ lực tranh giành. Việc quản giữ lâu dài để hội nghị bàn sau khi cửa mở.\n\nHàn Tinh Châu đáp ngay:\n\n- Ta chấp thuận.\n\nBạch Kinh Luân nhìn tờ biên bản, rồi mới gật đầu.\n\n- Ta cũng chấp thuận, với điều kiện mọi thao tác đều được ghi nhận."
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-4d4c85d02cc3",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "bach_kinh_luan",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>bach_kinh_luan@6",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "duong_anh_lac",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>duong_anh_lac@6",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "han_tinh_chau",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>han_tinh_chau@6",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "bang_luan_kiem",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>bang_luan_kiem@6",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "phe_bao_ve_duong",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>phe_bao_ve_duong@6",
+     "props": {
+      "how": "suy ra",
+      "quote": "Tôi biết chị muốn nói tới những đoàn người đi qua vùng tranh chấp."
+     }
+    }
+   ],
+   "close": []
+  },
+  "7": {
+   "commit_id": "ch7-0fa6a48227e3",
+   "nodes": [
+    {
+     "id": "ch7",
+     "label": "Chapter",
+     "props": {
+      "number": 7
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "phe_bao_ve_duong",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>phe_bao_ve_duong@7",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "phe_tranh_quyen",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>phe_tranh_quyen@7",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "bach_kinh_luan_sap_dat",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>bach_kinh_luan_sap_dat@7",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Đúng. Chính ta đã sắp đặt việc lấy mảnh ấy khỏi hộp, để buộc các bên phải trao quyền kiểm soát cho liên minh của ta."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_anh_lac",
+     "to": "bach_kinh_luan_sap_dat",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_anh_lac>bach_kinh_luan_sap_dat@7",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "han_tinh_chau",
+     "to": "bach_kinh_luan_sap_dat",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "KNOWS:han_tinh_chau>bach_kinh_luan_sap_dat@7",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nguyen",
+     "to": "bach_kinh_luan_sap_dat",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nguyen>bach_kinh_luan_sap_dat@7",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "hanh_lang_so_tan",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:hanh_lang_so_tan>ch7@7",
+     "props": {
+      "quote": "Người dân thoát được khỏi vùng tranh chấp. Đổi lại, các môn phái mất lòng tin vào ta."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "duong_anh_tung_cuu",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:duong_anh_tung_cuu>ch7@7",
+     "props": {
+      "quote": "Chấp luật Dương, lần nàng tự ý mở hành lang sơ tán, cái giá là gì?"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phe_bao_ve_duong",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phe_bao_ve_duong>ch7@7",
+     "props": {
+      "quote": "Không có bảo đảm cho người qua đường, chỉ là đổi tên kẻ nắm quyền."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phe_tranh_quyen",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phe_tranh_quyen>ch7@7",
+     "props": {
+      "quote": "Đề nghị lập hội đồng do các môn phái lớn chi phối cũng chẳng giải quyết được gì."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "duong_anh_tung_cuu",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>duong_anh_tung_cuu@7",
+     "props": {
+      "how": "được kể",
+      "told_by": "duong_anh_lac",
+      "quote": "Ta chịu trách nhiệm vì đã tự ý mở hành lang sơ tán. Nhưng những người được cứu không thể bị coi là sai lầm."
+     }
+    }
+   ],
+   "close": []
+  },
+  "8": {
+   "commit_id": "ch8-3a67dcbd343e",
+   "nodes": [
+    {
+     "id": "ch8",
+     "label": "Chapter",
+     "props": {
+      "number": 8
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bang_tam_mon",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bang_tam_mon>ch8@8",
+     "props": {
+      "quote": "Nhưng không ký thay Băng Tâm Môn",
+      "known_as": "Băng Tâm Môn"
+     }
+    }
+   ],
+   "close": []
+  },
+  "9": {
+   "commit_id": "ch9-3aa0a85b043f",
+   "nodes": [
+    {
+     "id": "ch9",
+     "label": "Chapter",
+     "props": {
+      "number": 9
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  },
+  "10": {
+   "commit_id": "ch10-a17230530034",
+   "nodes": [
+    {
+     "id": "ch10",
+     "label": "Chapter",
+     "props": {
+      "number": 10
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 10,
+  "nodes": {
+   "an_lenh_duoc_cat_giau": {
+    "label": "Fact",
+    "props": {
+     "text": "Thiệu Kiếm Hoài đã cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân trước khi mất tích."
+    }
+   },
+   "an_lenh_gay_khoa": {
+    "label": "Fact",
+    "props": {
+     "text": "Ấn Lệnh Thiên Luật đang được dùng để giữ cơ chế khóa cửa của Cửu Tiêu Đài hoạt động."
+    }
+   },
+   "an_lenh_thien_luat": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "ấn lệnh"
+     ],
+     "name": "Ấn Lệnh Thiên Luật",
+     "description": "Ấn lệnh có thể mở các cửa khóa của Cửu Tiêu Đài và xác nhận biên bản nghị sự."
+    }
+   },
+   "bach_kinh_luan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Hắn đứng đầu Vân Tê Môn, một tiên môn từng mất nhiều đệ tử khi bảo vệ đường bay trong những năm cuối đại chiến.",
+     "aliases": [
+      "Trưởng môn Bạch"
+     ],
+     "personality": "Ôn hòa trong lời nói, sắc bén trong thương lượng và luôn tìm cách biến nhượng bộ của người khác thành lợi thế cho mình.",
+     "name": "Bạch Kinh Luân"
+    }
+   },
+   "bach_kinh_luan_sap_dat": {
+    "label": "Fact",
+    "props": {
+     "text": "Bạch Kinh Luân đã sắp đặt việc lấy mảnh thần khí khỏi hộp để ép hội nghị trao quyền kiểm soát cho liên minh của hắn."
+    }
+   },
+   "bang_luan_kiem": {
+    "label": "Faction",
+    "props": {
+     "name": "Bang Luận Kiếm",
+     "description": "Liên minh các tiên môn muốn giao quyền định đoạt thần khí cho một hội đồng do những môn phái lớn chi phối."
+    }
+   },
+   "bang_tam_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Băng Tâm Môn",
+     "description": "Tiên môn giữ thái độ dè dặt, muốn các môn phái lớn không thể tự ý điều động lực lượng nhân danh luật chung."
+    }
+   },
+   "ben_may_lac": {
+    "label": "Location",
+    "props": {
+     "name": "Bến Mây Lạc",
+     "description": "Bến neo ở rìa đảo, nơi các thuyền bay chờ lệnh rời Cửu Tiêu Đài."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch10": {
+    "label": "Chapter",
+    "props": {
+     "number": 10
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "ch7": {
+    "label": "Chapter",
+    "props": {
+     "number": 7
+    }
+   },
+   "ch8": {
+    "label": "Chapter",
+    "props": {
+     "number": 8
+    }
+   },
+   "ch9": {
+    "label": "Chapter",
+    "props": {
+     "number": 9
+    }
+   },
+   "cua_dai_bi_khoa": {
+    "label": "Fact",
+    "props": {
+     "text": "Cửa Đại Nghị Sảnh đã bị khóa từ phía trong khi cuộc tranh luận bắt đầu."
+    }
+   },
+   "cuu_tieu_dai": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Đài Thiên Luật"
+     ],
+     "name": "Cửu Tiêu Đài",
+     "description": "Đảo bay trung lập nơi các tiên môn tập trung dựng lại luật lệ sau đại chiến."
+    }
+   },
+   "cuu_tieu_trung_lap": {
+    "label": "Fact",
+    "props": {
+     "text": "Cửu Tiêu Đài được các tiên môn công nhận là nơi nghị sự trung lập sau đại chiến."
+    }
+   },
+   "dai_nghi_su": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "chính điện"
+     ],
+     "name": "Đại Nghị Sảnh",
+     "description": "Chính điện trên Cửu Tiêu Đài, có cửa đá khép kín và các lối thoát được kiểm soát từ bên trong."
+    }
+   },
+   "duong_anh_lac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Nàng là chấp luật của Thanh Tiêu Môn, từng chứng kiến một đoàn người bị bỏ mặc giữa vùng tranh chấp vì các phe không thống nhất được quyền hộ tống.",
+     "aliases": [
+      "Chấp luật Dương"
+     ],
+     "personality": "Cứng rắn, trọng trật tự và tin rằng một luật lệ nghiêm khắc vẫn tốt hơn một cuộc chiến không hồi kết.",
+     "name": "Dương Anh Lạc"
+    }
+   },
+   "duong_anh_tung_cuu": {
+    "label": "Fact",
+    "props": {
+     "text": "Dương Anh Lạc từng tự ý mở một hành lang sơ tán để đưa người dân khỏi vùng tranh chấp."
+    }
+   },
+   "han_tinh_chau": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là trưởng môn Băng Tâm Môn, hắn đã giữ được môn phái khỏi tan rã sau đại chiến bằng cách nhẫn nhịn trước các thế lực lớn.",
+     "aliases": [
+      "Trưởng môn Hàn"
+     ],
+     "personality": "Lạnh lùng, giỏi cân nhắc lợi hại và không bao giờ đưa ra lời hứa mà chưa tính đường rút.",
+     "name": "Hàn Tinh Châu"
+    }
+   },
+   "hanh_lang_phong_luan": {
+    "label": "Location",
+    "props": {
+     "name": "Hành Lang Phong Luân",
+     "description": "Lối đi hẹp chạy quanh chân đài, nối đại điện với các gian lưu trữ và bệ điều khiển cửa."
+    }
+   },
+   "hanh_lang_so_tan": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Khám phá cái giá và hệ quả của lần Dương Anh Lạc tự ý mở đường sơ tán trong quá khứ.",
+     "due_from_chapter": 4,
+     "due_to_chapter": 8
+    }
+   },
+   "hop_phong_an": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc hộp niêm phong"
+     ],
+     "name": "Hộp Phong Ấn",
+     "description": "Chiếc hộp dùng để niêm phong mảnh thần khí được đưa ra trước hội nghị."
+    }
+   },
+   "hop_trong_rong": {
+    "label": "Fact",
+    "props": {
+     "text": "Hộp Phong Ấn được phát hiện trống ngay trước khi lời buộc tội đầu tiên được đưa ra."
+    }
+   },
+   "lao_thanh_nguyen": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông là trưởng lão của một môn phái nhỏ đã giải tán, hiện làm thư lại ghi biên bản cho các cuộc nghị sự liên môn.",
+     "aliases": [
+      "Nguyên lão"
+     ],
+     "personality": "Điềm đạm, kín đáo và tin rằng những người từng thắng trong chiến tranh không nên là người duy nhất viết luật cho hòa bình.",
+     "name": "Lão Thành Nguyên"
+    }
+   },
+   "loi_khai_cua_min_vi": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Quyết định lời khai và lập trường của Lục Minh Vi sẽ đặt nền móng cho luật mới đến đâu.",
+     "due_from_chapter": 5,
+     "due_to_chapter": 12
+    }
+   },
+   "manh_than_khi": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "mảnh thần khí"
+     ],
+     "name": "Mảnh Thiên Khuyết",
+     "description": "Mảnh vỡ cổ xưa có sức mạnh không ổn định, được các tiên môn tranh quyền quản giữ."
+    }
+   },
+   "minh_ho_tong": {
+    "label": "Faction",
+    "props": {
+     "name": "Minh Hộ Tống",
+     "description": "Liên minh các môn phái nhỏ và những đoàn hộ tống muốn luật mới bảo vệ dân chúng qua vùng tranh chấp."
+    }
+   },
+   "phe_bao_ve_duong": {
+    "label": "Fact",
+    "props": {
+     "text": "Minh Hộ Tống muốn luật mới bảo đảm các đoàn người được đi qua vùng tranh chấp."
+    }
+   },
+   "phe_tranh_quyen": {
+    "label": "Fact",
+    "props": {
+     "text": "Bang Luận Kiếm muốn trao quyền quản giữ thần khí cho một hội đồng do các tiên môn lớn chi phối."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Lục Minh Vi là môn sinh của một tiên môn nhỏ chuyên hộ tống người và vật qua các đảo bay. Sau đại chiến, nàng chứng kiến nhiều đoàn người mất chỗ nương thân vì tranh chấp giữa các môn phái, nên mong những luật lệ mới sẽ ngăn chiến sự tái diễn. Nàng có mặt tại Cửu Tiêu Đài để làm chứng về những chuyến đi qua vùng tranh chấp, rồi bị giữ lại khi cửa đài khóa kín và cuộc nghị sự chực biến thành thanh trừng.",
+     "personality": "Gan dạ, thẳng thắn và không ngại đối đáp với người có địa vị cao hơn. Nàng nhạy bén trước nỗi sợ của người khác, nhưng đôi khi hành động quá nhanh khi thấy kẻ yếu bị dồn ép.",
+     "name": "Lục Minh Vi",
+     "is_protagonist": true
+    }
+   },
+   "quyen_quan_giu_than_khi": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ngăn các phe giành quyền kiểm soát mảnh thần khí bằng vũ lực và tìm ra một phương thức quản giữ được chấp nhận.",
+     "due_from_chapter": 4,
+     "due_to_chapter": 12
+    }
+   },
+   "thanh_tieu_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Thanh Tiêu Môn",
+     "description": "Tiên môn nắm quyền chấp luật tại Cửu Tiêu Đài và ủng hộ một bộ quy tắc chung có chế tài rõ ràng."
+    }
+   },
+   "thieu_kiem_hoai": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông được các môn phái chọn làm người giữ ấn cho hội nghị vì từng đứng ngoài tranh chấp quyền lực và có danh tiếng liêm chính.",
+     "aliases": [
+      "Người giữ ấn"
+     ],
+     "personality": "Kiệm lời, cẩn trọng và có thói quen ghi lại cả những điều người khác cho là không đáng kể.",
+     "name": "Thiệu Kiếm Hoài"
+    }
+   },
+   "thieu_kiem_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Thiệu Kiếm Hoài mất tích trước khi cửa Đại Nghị Sảnh bị khóa."
+    }
+   },
+   "thoat_khoi_dai_nghi": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tìm cách đưa những người trong Đại Nghị Sảnh rời khỏi nơi bị khóa mà không châm ngòi thanh trừng.",
+     "due_from_chapter": 3,
+     "due_to_chapter": 10
+    }
+   },
+   "tim_nguoi_giu_an": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tìm Thiệu Kiếm Hoài và xác định vì sao ông biến mất trước khi hội nghị bị khóa.",
+     "due_from_chapter": 2,
+     "due_to_chapter": 6
+    }
+   },
+   "van_te_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Vân Tê Môn",
+     "description": "Tiên môn có thế lực trên các tuyến đường bay, muốn quyền kiểm soát mảnh thần khí được chia theo đóng góp."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:bach_kinh_luan>han_tinh_chau@0",
+    "type": "RELATES_TO",
+    "source": "bach_kinh_luan",
+    "target": "han_tinh_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -30,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:bach_kinh_luan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "bach_kinh_luan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -5,
+     "kind": "lợi dụng"
+    }
+   },
+   {
+    "id": "RELATES_TO:duong_anh_lac>han_tinh_chau@0",
+    "type": "RELATES_TO",
+    "source": "duong_anh_lac",
+    "target": "han_tinh_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "đối địch"
+    }
+   },
+   {
+    "id": "RELATES_TO:duong_anh_lac>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "duong_anh_lac",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "đề phòng"
+    }
+   },
+   {
+    "id": "RELATES_TO:han_tinh_chau>bach_kinh_luan@0",
+    "type": "RELATES_TO",
+    "source": "han_tinh_chau",
+    "target": "bach_kinh_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -25,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:han_tinh_chau>duong_anh_lac@0",
+    "type": "RELATES_TO",
+    "source": "han_tinh_chau",
+    "target": "duong_anh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -25,
+     "kind": "đối địch"
+    }
+   },
+   {
+    "id": "RELATES_TO:han_tinh_chau>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "han_tinh_chau",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "thận trọng"
+    }
+   },
+   {
+    "id": "RELATES_TO:lao_thanh_nguyen>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "lao_thanh_nguyen",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "bảo hộ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>bach_kinh_luan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "bach_kinh_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -15,
+     "kind": "nghi kỵ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>duong_anh_lac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "duong_anh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng cảm"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>han_tinh_chau@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "han_tinh_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -10,
+     "kind": "nghi kỵ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>lao_thanh_nguyen@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "lao_thanh_nguyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 15,
+     "kind": "tin cậy"
+    }
+   },
+   {
+    "id": "LOCATED_AT:an_lenh_thien_luat>hanh_lang_phong_luan@0",
+    "type": "LOCATED_AT",
+    "source": "an_lenh_thien_luat",
+    "target": "hanh_lang_phong_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:bach_kinh_luan>cuu_tieu_dai@4",
+    "type": "LOCATED_AT",
+    "source": "bach_kinh_luan",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:duong_anh_lac>cuu_tieu_dai@4",
+    "type": "LOCATED_AT",
+    "source": "duong_anh_lac",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:han_tinh_chau>cuu_tieu_dai@4",
+    "type": "LOCATED_AT",
+    "source": "han_tinh_chau",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:hop_phong_an>dai_nghi_su@0",
+    "type": "LOCATED_AT",
+    "source": "hop_phong_an",
+    "target": "dai_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lao_thanh_nguyen>cuu_tieu_dai@4",
+    "type": "LOCATED_AT",
+    "source": "lao_thanh_nguyen",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:manh_than_khi>dai_nghi_su@0",
+    "type": "LOCATED_AT",
+    "source": "manh_than_khi",
+    "target": "dai_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>cuu_tieu_dai@4",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:thieu_kiem_hoai>hanh_lang_phong_luan@0",
+    "type": "LOCATED_AT",
+    "source": "thieu_kiem_hoai",
+    "target": "hanh_lang_phong_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:bach_kinh_luan>van_te_mon@0",
+    "type": "MEMBER_OF",
+    "source": "bach_kinh_luan",
+    "target": "van_te_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:duong_anh_lac>thanh_tieu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "duong_anh_lac",
+    "target": "thanh_tieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:han_tinh_chau>bang_tam_mon@0",
+    "type": "MEMBER_OF",
+    "source": "han_tinh_chau",
+    "target": "bang_tam_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>an_lenh_duoc_cat_giau@4",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "an_lenh_duoc_cat_giau",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "told_by": "thieu_kiem_hoai"
+    }
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>bach_kinh_luan_sap_dat@0",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "bach_kinh_luan_sap_dat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>cua_dai_bi_khoa@0",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "cua_dai_bi_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>cuu_tieu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "cuu_tieu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>hop_trong_rong@0",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "hop_trong_rong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>phe_tranh_quyen@0",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "phe_tranh_quyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_kinh_luan>thieu_kiem_mat_tich@0",
+    "type": "KNOWS",
+    "source": "bach_kinh_luan",
+    "target": "thieu_kiem_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>an_lenh_duoc_cat_giau@4",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "an_lenh_duoc_cat_giau",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "told_by": "thieu_kiem_hoai"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>bach_kinh_luan_sap_dat@7",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "bach_kinh_luan_sap_dat",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>cua_dai_bi_khoa@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "cua_dai_bi_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>cuu_tieu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "cuu_tieu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>duong_anh_tung_cuu@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "duong_anh_tung_cuu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>hop_trong_rong@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "hop_trong_rong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>phe_bao_ve_duong@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "phe_bao_ve_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>phe_tranh_quyen@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "phe_tranh_quyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_anh_lac>thieu_kiem_mat_tich@0",
+    "type": "KNOWS",
+    "source": "duong_anh_lac",
+    "target": "thieu_kiem_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>an_lenh_duoc_cat_giau@4",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "an_lenh_duoc_cat_giau",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "told_by": "thieu_kiem_hoai"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>bach_kinh_luan_sap_dat@7",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "bach_kinh_luan_sap_dat",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>cua_dai_bi_khoa@0",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "cua_dai_bi_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>cuu_tieu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "cuu_tieu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>hop_trong_rong@0",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "hop_trong_rong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>phe_tranh_quyen@0",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "phe_tranh_quyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:han_tinh_chau>thieu_kiem_mat_tich@0",
+    "type": "KNOWS",
+    "source": "han_tinh_chau",
+    "target": "thieu_kiem_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>an_lenh_duoc_cat_giau@4",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "an_lenh_duoc_cat_giau",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "told_by": "thieu_kiem_hoai"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>an_lenh_gay_khoa@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "an_lenh_gay_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>bach_kinh_luan_sap_dat@7",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "bach_kinh_luan_sap_dat",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>cua_dai_bi_khoa@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "cua_dai_bi_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>cuu_tieu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "cuu_tieu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>duong_anh_tung_cuu@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "duong_anh_tung_cuu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>hop_trong_rong@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "hop_trong_rong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>phe_bao_ve_duong@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "phe_bao_ve_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nguyen>thieu_kiem_mat_tich@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nguyen",
+    "target": "thieu_kiem_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>an_lenh_duoc_cat_giau@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "an_lenh_duoc_cat_giau",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Trước khi mất tích, ta cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân.",
+     "told_by": "thieu_kiem_hoai"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>an_lenh_gay_khoa@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "an_lenh_gay_khoa",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Cơ chế khóa cửa đang dựa vào nó."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>bach_kinh_luan_sap_dat@7",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "bach_kinh_luan_sap_dat",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Đúng. Chính ta đã sắp đặt việc lấy mảnh ấy khỏi hộp, để buộc các bên phải trao quyền kiểm soát cho liên minh của ta."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>cua_dai_bi_khoa@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "cua_dai_bi_khoa",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Cửa Đại Nghị Sảnh vẫn khóa kín."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>duong_anh_tung_cuu@7",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "duong_anh_tung_cuu",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Ta chịu trách nhiệm vì đã tự ý mở hành lang sơ tán. Nhưng những người được cứu không thể bị coi là sai lầm.",
+     "told_by": "duong_anh_lac"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>hop_trong_rong@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "hop_trong_rong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Lòng hộp đen ngòm nằm ngay dưới ánh đèn"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>phe_bao_ve_duong@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "phe_bao_ve_duong",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "suy ra",
+     "quote": "Tôi biết chị muốn nói tới những đoàn người đi qua vùng tranh chấp."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>phe_tranh_quyen@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "phe_tranh_quyen",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Hội nghị phải giao quyền giữ mảnh thần khí cho liên minh các tiên môn lớn."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>thieu_kiem_mat_tich@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "thieu_kiem_mat_tich",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Chỗ ngồi của Thiệu Kiếm Hoài vẫn bỏ trống."
+    }
+   },
+   {
+    "id": "KNOWS:thieu_kiem_hoai>an_lenh_duoc_cat_giau@0",
+    "type": "KNOWS",
+    "source": "thieu_kiem_hoai",
+    "target": "an_lenh_duoc_cat_giau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:thieu_kiem_hoai>an_lenh_gay_khoa@0",
+    "type": "KNOWS",
+    "source": "thieu_kiem_hoai",
+    "target": "an_lenh_gay_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:thieu_kiem_hoai>cuu_tieu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "thieu_kiem_hoai",
+    "target": "cuu_tieu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>bach_kinh_luan@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "bach_kinh_luan",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>bang_luan_kiem@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "bang_luan_kiem",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>duong_anh_lac@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "duong_anh_lac",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>han_tinh_chau@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "han_tinh_chau",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>phe_bao_ve_duong@7",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "phe_bao_ve_duong",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>phe_tranh_quyen@7",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "phe_tranh_quyen",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "ABOUT:an_lenh_duoc_cat_giau>an_lenh_thien_luat@0",
+    "type": "ABOUT",
+    "source": "an_lenh_duoc_cat_giau",
+    "target": "an_lenh_thien_luat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:an_lenh_duoc_cat_giau>hanh_lang_phong_luan@0",
+    "type": "ABOUT",
+    "source": "an_lenh_duoc_cat_giau",
+    "target": "hanh_lang_phong_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:an_lenh_duoc_cat_giau>thieu_kiem_hoai@0",
+    "type": "ABOUT",
+    "source": "an_lenh_duoc_cat_giau",
+    "target": "thieu_kiem_hoai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:an_lenh_gay_khoa>an_lenh_thien_luat@0",
+    "type": "ABOUT",
+    "source": "an_lenh_gay_khoa",
+    "target": "an_lenh_thien_luat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:an_lenh_gay_khoa>cuu_tieu_dai@0",
+    "type": "ABOUT",
+    "source": "an_lenh_gay_khoa",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bach_kinh_luan_sap_dat>bach_kinh_luan@0",
+    "type": "ABOUT",
+    "source": "bach_kinh_luan_sap_dat",
+    "target": "bach_kinh_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bach_kinh_luan_sap_dat>bang_luan_kiem@0",
+    "type": "ABOUT",
+    "source": "bach_kinh_luan_sap_dat",
+    "target": "bang_luan_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bach_kinh_luan_sap_dat>manh_than_khi@0",
+    "type": "ABOUT",
+    "source": "bach_kinh_luan_sap_dat",
+    "target": "manh_than_khi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:cua_dai_bi_khoa>dai_nghi_su@0",
+    "type": "ABOUT",
+    "source": "cua_dai_bi_khoa",
+    "target": "dai_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:cuu_tieu_trung_lap>cuu_tieu_dai@0",
+    "type": "ABOUT",
+    "source": "cuu_tieu_trung_lap",
+    "target": "cuu_tieu_dai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:duong_anh_tung_cuu>duong_anh_lac@0",
+    "type": "ABOUT",
+    "source": "duong_anh_tung_cuu",
+    "target": "duong_anh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hop_trong_rong>hop_phong_an@0",
+    "type": "ABOUT",
+    "source": "hop_trong_rong",
+    "target": "hop_phong_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phe_bao_ve_duong>minh_ho_tong@0",
+    "type": "ABOUT",
+    "source": "phe_bao_ve_duong",
+    "target": "minh_ho_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phe_tranh_quyen>bang_luan_kiem@0",
+    "type": "ABOUT",
+    "source": "phe_tranh_quyen",
+    "target": "bang_luan_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thieu_kiem_mat_tich>dai_nghi_su@0",
+    "type": "ABOUT",
+    "source": "thieu_kiem_mat_tich",
+    "target": "dai_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thieu_kiem_mat_tich>thieu_kiem_hoai@0",
+    "type": "ABOUT",
+    "source": "thieu_kiem_mat_tich",
+    "target": "thieu_kiem_hoai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:hanh_lang_so_tan>ch7@7",
+    "type": "RESOLVED_IN",
+    "source": "hanh_lang_so_tan",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Người dân thoát được khỏi vùng tranh chấp. Đổi lại, các môn phái mất lòng tin vào ta."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:loi_khai_cua_min_vi>ch1@1",
+    "type": "RESOLVED_IN",
+    "source": "loi_khai_cua_min_vi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi sẽ kể đúng những gì mình biết. Nhưng tôi không xác nhận lời buộc tội thay cho bất kỳ môn phái nào."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:quyen_quan_giu_than_khi>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "quyen_quan_giu_than_khi",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đề nghị thỏa thuận tạm thời: ấn lệnh tiếp tục ở nguyên chỗ, dưới sự giám sát chung. Không môn phái nào được độc chiếm, cũng không ai được dùng vũ lực tranh giành. Việc quản giữ lâu dài để hội nghị bàn sau khi cửa mở.\n\nHàn Tinh Châu đáp ngay:\n\n- Ta chấp thuận.\n\nBạch Kinh Luân nhìn tờ biên bản, rồi mới gật đầu.\n\n- Ta cũng chấp thuận, với điều kiện mọi thao tác đều được ghi nhận."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:thoat_khoi_dai_nghi>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "thoat_khoi_dai_nghi",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Khi tất cả đã ra ngoài, tôi quay lại đặt tờ biên bản lên bệ đá."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:tim_nguoi_giu_an>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "tim_nguoi_giu_an",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ở cuối gian, có người ngồi tựa lưng vào vách, đầu cúi thấp."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:an_lenh_duoc_cat_giau>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "an_lenh_duoc_cat_giau",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước khi mất tích, ta cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:an_lenh_gay_khoa>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "an_lenh_gay_khoa",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ấn lệnh đang gắn với cơ chế khóa cửa."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:an_lenh_thien_luat>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "an_lenh_thien_luat",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước khi mất tích, ta cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân.",
+     "known_as": "Ấn Lệnh Thiên Luật"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bach_kinh_luan>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bach_kinh_luan",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tiếng buộc tội vừa dứt, Bạch Kinh Luân đã quay sang tôi.",
+     "known_as": "Bạch Kinh Luân"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bang_luan_kiem>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bang_luan_kiem",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hàn Tinh Châu im lặng thêm một nhịp rồi mới đáp:\n\n- Ta cũng chấp nhận. Nhưng người của Bang Luận Kiếm không được chạm vào ấn lệnh trước khi có mặt các bên.",
+     "known_as": "Bang Luận Kiếm"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bang_tam_mon>ch8@8",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bang_tam_mon",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhưng không ký thay Băng Tâm Môn",
+     "known_as": "Băng Tâm Môn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cua_dai_bi_khoa>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cua_dai_bi_khoa",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cửa Đại Nghị Sảnh đã khóa."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cuu_tieu_dai>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cuu_tieu_dai",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đừng lấy cửa khóa làm cớ trao cả Đài Thiên Luật cho một phe.",
+     "known_as": "Đài Thiên Luật"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dai_nghi_su>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dai_nghi_su",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cửa Đại Nghị Sảnh đã khóa.",
+     "known_as": "Đại Nghị Sảnh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:duong_anh_lac>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "duong_anh_lac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Dương Anh Lạc đứng lên.",
+     "known_as": "Dương Anh Lạc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:duong_anh_tung_cuu>ch7@7",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "duong_anh_tung_cuu",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chấp luật Dương, lần nàng tự ý mở hành lang sơ tán, cái giá là gì?"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:han_tinh_chau>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "han_tinh_chau",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hàn Tinh Châu cắt ngang, mắt không rời khỏi tôi.",
+     "known_as": "Hàn Tinh Châu"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hanh_lang_phong_luan>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hanh_lang_phong_luan",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Hành Lang Phong Luân.",
+     "known_as": "Hành Lang Phong Luân"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hop_phong_an>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hop_phong_an",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Sau lưng ông, Hộp Phong Ấn vẫn mở nắp.",
+     "known_as": "Hộp Phong Ấn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hop_trong_rong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hop_trong_rong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lòng hộp trống trơn, ánh đèn trên cao rọi vào lớp đá đen lạnh ngắt."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lao_thanh_nguyen>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lao_thanh_nguyen",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lão Thành Nguyên đưa tay về phía tôi, lòng bàn tay mở.",
+     "known_as": "Lão Thành Nguyên"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:manh_than_khi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "manh_than_khi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đừng suy đoán ai đã lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn.",
+     "known_as": "Mảnh Thiên Khuyết"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:minh_ho_tong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "minh_ho_tong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Minh Vi, chuyến hộ tống của Minh Hộ Tống từng đi qua vùng tranh chấp, phải không?",
+     "known_as": "Minh Hộ Tống"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phe_bao_ve_duong>ch7@7",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phe_bao_ve_duong",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Không có bảo đảm cho người qua đường, chỉ là đổi tên kẻ nắm quyền."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phe_tranh_quyen>ch7@7",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phe_tranh_quyen",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đề nghị lập hội đồng do các môn phái lớn chi phối cũng chẳng giải quyết được gì."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Lục Minh Vi",
+     "known_as": "Lục Minh Vi"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thieu_kiem_hoai>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thieu_kiem_hoai",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thiệu Kiếm Hoài vẫn mất tích.",
+     "known_as": "Thiệu Kiếm Hoài"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thieu_kiem_mat_tich>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thieu_kiem_mat_tich",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cửa Đại Nghị Sảnh đã khóa. Thiệu Kiếm Hoài vẫn mất tích."
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-ee87a32d1f81",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Trong Đại Nghị Sảnh, khi Hộp Phong Ấn trống rỗng và Thiệu Kiếm Hoài mất tích, Bạch Kinh Luân cùng Hàn Tinh Châu gây sức ép buộc Lục Minh Vi khai về chuyến hộ tống qua vùng tranh chấp. Minh Vi quyết định chỉ thuật lại điều mình tận mắt thấy, không kết luận chuyến đi có vi phạm ranh giới hay môn phái nào phải chịu trách nhiệm. Cô khai đoàn từng đưa người qua vùng tranh chấp, gặp các cột mốc và toán tuần tra, nhưng không chứng kiến ai lấy Mảnh Thiên Khuyết. Dương Anh Lạc ngăn việc dùng lời khai chưa đủ làm cớ buộc tội; Lão Thành Nguyên đề nghị ghi lời khai thành chứng từ và cấm động vào chiếc hộp hay buộc tội môn phái khi chưa có thêm chứng cứ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi phải ngăn các trưởng môn biến lời khai của nàng về chuyến đi qua vùng tranh chấp thành cớ để thanh trừng một phe khác.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tiếng buộc tội vừa dứt, Bạch Kinh Luân lập tức quay sang Lục Minh Vi, đòi nàng xác nhận chuyến hộ tống của Minh Hộ Tống từng đi qua vùng tranh chấp; ông nói lời khai của người ngoài các đại môn phái có thể phân định ai đã phá luật trước.",
+       "Hàn Tinh Châu cắt ngang, lạnh lùng hỏi vì sao một môn sinh cấp thấp lại được xem là chứng nhân đáng tin, rồi cảnh báo rằng một lời khai mập mờ chỉ càng khiến các phe có cớ động thủ; những người quanh bàn nghị sự bắt đầu nhìn Minh Vi như thể nàng đã chọn phe.",
+       "Dương Anh Lạc nhắc rằng cửa Đại Nghị Sảnh đã khóa và người giữ ấn, Thiệu Kiếm Hoài, vẫn mất tích, nên không ai có thể tự ý rời đi hay lấy lời buộc tội thay cho chứng cứ; lời nhắc khiến vài trưởng môn thôi tiến lên, nhưng không khí trong sảnh vẫn căng như dây cung.",
+       "Lão Thành Nguyên yêu cầu Minh Vi chỉ nói điều nàng tận mắt chứng kiến, không suy đoán ai đã lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn; Bạch Kinh Luân lập tức đáp rằng im lặng cũng là một lựa chọn, còn Hàn Tinh Châu đòi nàng nói rõ chuyến đi ấy có đưa người hay vật qua vùng tranh chấp hay không.",
+       "Minh Vi nhận ra họ không chỉ cần sự thật về chuyến đi mà còn muốn mượn lời nàng để giành ưu thế trong hội nghị; nàng khẳng định sẽ kể đúng những gì mình biết, nhưng không xác nhận lời buộc tội thay cho bất kỳ môn phái nào, khiến các trưởng môn đồng loạt đòi nàng bắt đầu lời khai ngay trước toàn sảnh."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh, khi Lục Minh Vi bị đặt trước yêu cầu khai rõ chuyến đi qua vùng tranh chấp.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Lục Minh Vi khai đúng những gì nàng tận mắt chứng kiến, ngăn lời khai bị biến thành cớ kết tội một môn phái và buộc các trưởng môn tạm thời kiềm chế.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tôi nói chuyến đi của Minh Hộ Tống từng đưa người qua vùng tranh chấp, nhưng tôi không chứng kiến ai lấy Mảnh Thiên Khuyết hay có thể quy trách nhiệm cho môn phái nào.",
+       "Bạch Kinh Luân lập tức đòi tôi xác nhận hành trình ấy có vi phạm ranh giới do các tiên môn đặt ra hay không; tôi đáp rằng mình chỉ có thể thuật lại điều đã thấy, không thể nhận thay thẩm quyền kết luận.",
+       "Hàn Tinh Châu cho rằng lời khai như vậy chẳng đủ để phân định đúng sai, còn Dương Anh Lạc cảnh báo không ai được dùng sự mơ hồ làm cớ bắt người; những bàn tay đang gần chuôi kiếm dần rời ra.",
+       "Lão Thành Nguyên đề nghị ghi lời khai của tôi thành chứng từ trước mặt mọi người, đồng thời yêu cầu các trưởng môn không tự ý động đến chiếc hộp hay buộc tội ai cho đến khi có thêm chứng cứ.",
+       "Bạch Kinh Luân chấp nhận ghi lời khai nhưng đòi tôi chịu trách nhiệm về từng câu; tôi đồng ý, nhấn mạnh rằng lời chứng không phải bản án, và các trưởng môn buộc phải tạm hoãn việc quy tội ngay trong đại sảnh."
+      ],
+      "ends_at": "Cảnh kết tại Đại Nghị Sảnh, khi lời khai của tôi được chấp nhận ghi nhận nhưng cửa vẫn khóa và vụ mất tích của Thiệu Kiếm Hoài chưa có lời giải.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"qua vùng tranh chấp\" xuất hiện 4 lần (tối đa 2); đoạn: «qua vùng tranh chấp»"
+       },
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"qua vùng tranh chấp\" xuất hiện 4 lần (tối đa 2); đoạn: «qua vùng tranh chấp»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"qua vùng tranh chấp\" xuất hiện 3 lần (tối đa 2); đoạn: «qua vùng tranh chấp»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-cbfa89cdb8bf",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị người chép đọc lại chứng từ trước khi tôi xác nhận.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-6fb089183fe1",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với Bạch Kinh Luân rằng tôi chỉ chịu trách nhiệm về những gì mình tận mắt chứng kiến.",
+      "listeners": [
+       "bach_kinh_luan"
+      ],
+      "about": [
+       "protagonist"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-d0bd8675e651",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm quyết tâm tìm hiểu chuyện Thiệu Kiếm Hoài mất tích.",
+      "listeners": [],
+      "about": [
+       "thieu_kiem_hoai"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-a344c6f68e28",
+    "player_action": "[Hành động] Đề nghị người chép đọc lại chứng từ trước khi tôi xác nhận.",
+    "error_detail": null,
+    "summary": "Trong phiên nghị sự, người kể yêu cầu sửa chứng từ để chỉ ghi điều mình tận mắt thấy: có cột mốc và toán tuần tra, nhưng không rõ ranh giới hay môn phái; người kể không thấy ai lấy Mảnh Thiên Khuyết. Người kể xác nhận và ký bản ghi đã sửa, đồng thời bác việc dùng lời khai làm bằng chứng kết tội đoàn hộ tống hay trao quyền giữ thần khí cho liên minh tiên môn. Bạch Kinh Luân muốn giao quyền kiểm soát cho các tiên môn lớn; Hàn Tinh Châu phản đối, Dương Anh Lạc bảo vệ tính trung lập, còn Lão Thành Nguyên yêu cầu giữ nguyên lời khai và không dùng nó để biểu quyết. Lời phản đối được ghi bên lề. Cuối chương, hai phe rời bàn, tranh luận chuyển sang quyền ra lệnh khi cửa đài vẫn khóa kín.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi kiểm tra chính xác lời khai của mình trước khi xác nhận, đồng thời ngăn các trưởng môn biến chứng từ thành căn cứ buộc tội.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Lục Minh Vi đề nghị đọc lại chứng từ trước khi xác nhận, nói rõ rằng nàng chỉ chịu trách nhiệm cho điều mình tận mắt chứng kiến; Lão Thành Nguyên nhận lời đọc bản ghi ngay trong đại sảnh.",
+       "Khi Lão Thành Nguyên đọc đến đoạn đoàn hộ tống đi qua vùng tranh chấp, Minh Vi ngắt lời để sửa những chỗ có thể bị hiểu thành nàng đã xác định ranh giới hoặc nhận diện môn phái của toán tuần tra.",
+       "Bạch Kinh Luân lập tức vin vào việc đoàn người đã đi qua vùng tranh chấp, đòi xem lời khai là căn cứ để trao quyền kiểm soát Mảnh Thiên Khuyết cho một hội đồng tiên môn lớn; Hàn Tinh Châu phản bác rằng bản khai không chứng minh ai lấy mảnh thần khí.",
+       "Dương Anh Lạc xác nhận chỉ những câu Minh Vi đã tận mắt thấy mới được ghi thành chứng từ, còn lời suy đoán phải bỏ đi; nàng cảnh báo rằng ép một nhân chứng xác nhận điều chưa nói sẽ khiến phiên nghị sự mất tính trung lập.",
+       "Minh Vi đồng ý xác nhận bản ghi sau khi các câu suy diễn bị gạch bỏ, nhưng không nhận trách nhiệm cho kết luận của bất kỳ phe nào; Bạch Kinh Luân đáp rằng sự dè dặt ấy vẫn đủ khiến các môn phái phải quyết định ai có quyền giữ mảnh thần khí."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh khi bản chứng từ đã được sửa nhưng cuộc tranh cãi về quyền kiểm soát Mảnh Thiên Khuyết chuyển sang đối đầu công khai giữa Bạch Kinh Luân và Hàn Tinh Châu.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Xác nhận bản chứng từ đúng với lời khai của Lục Minh Vi, đồng thời ngăn các trưởng môn biến nó thành căn cứ buộc tội hay trao quyền kiểm soát mảnh thần khí.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Theo đề nghị của tôi, người chép đọc lại toàn bộ bản chứng từ đã sửa; tôi đối chiếu từng câu với điều mình tận mắt thấy rồi xác nhận rằng nó không kết luận đoàn hộ tống đã vượt ranh giới hay chỉ ra môn phái nào.",
+       "Bạch Kinh Luân lập tức vin vào việc đoàn từng đi qua vùng tranh chấp, nói rằng lời khai vẫn đủ chứng minh luật hiện hành thất bại và đòi hội nghị trao quyền giữ mảnh thần khí cho liên minh các tiên môn lớn.",
+       "Tôi đáp rằng một chuyến đi có cột mốc và toán tuần tra không thể thay cho bằng chứng về vi phạm; Dương Anh Lạc tiếp lời, yêu cầu mọi người phân biệt chứng từ của nhân chứng với suy luận của người muốn nắm quyền.",
+       "Hàn Tinh Châu đòi ghi rõ sự phản đối của mình vào biên bản, còn Lão Thành Nguyên quyết định giữ nguyên bản khai đã xác nhận, không cho dùng nó làm căn cứ kết tội hay biểu quyết trao quyền kiểm soát; Bạch Kinh Luân phản đối nhưng không thể ép tôi nhận thêm điều gì.",
+       "Người chép ghi lời phản đối bên cạnh chứng từ, và tôi nhìn thấy hai phe rời khỏi bàn nghị sự mà không ai chịu nhượng bộ; cuộc tranh luận chuyển từ lời khai của tôi sang câu hỏi ai có quyền ra lệnh trong lúc cửa đài vẫn khóa."
+      ],
+      "ends_at": "Cảnh kết tại Đại Nghị Sảnh, trước bản chứng từ đã được xác nhận và ghi kèm lời phản đối, trong khi cửa đài vẫn khóa kín.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"cột mốc và toán\" xuất hiện 3 lần (tối đa 2); đoạn: «cột mốc và toán tuần tra»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"đi qua vùng tranh\" xuất hiện 3 lần (tối đa 2); đoạn: «đi qua vùng tranh chấp»"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-5711a8241e3f",
+      "kind": "action",
+      "tone": null,
+      "text": "Rời bàn nghị sự, tiến đến cánh cửa đang khóa để tự xem then cửa.",
+      "listeners": [],
+      "about": [
+       "dai_nghi_su"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-76d798c4fba8",
+      "kind": "dialogue",
+      "tone": "silence",
+      "text": "Không đáp lại Bạch Kinh Luân, để lời khai đã xác nhận tự đứng nguyên trên giấy.",
+      "listeners": [
+       "bach_kinh_luan"
+      ],
+      "about": [
+       "protagonist"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5d417ff967b8",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải tìm cách làm rõ ai có quyền ra lệnh khi Đại Nghị Sảnh vẫn bị khóa.",
+      "listeners": [],
+      "about": [
+       "cua_dai_bi_khoa"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm thận trọng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-2da6e0aaeb56",
+    "player_action": "[Lời thoại, im lặng] Không đáp lại Bạch Kinh Luân, để lời khai đã xác nhận tự đứng nguyên trên giấy.",
+    "error_detail": null,
+    "summary": "Sau khi ký lời khai, nhân vật “tôi” không đáp Bạch Kinh Luân và bác bỏ việc dùng dấu vết để kết tội hay tranh quyền. Lão Thành Nguyên cảm nhận một nhịp đáp yếu từ sâu trong đài; cả nhóm thống nhất kiểm tra lối bên trong, có người làm chứng, không ai đi một mình. Lão mở cửa trong, để lộ hành lang tối; “tôi” phát hiện bụi bị xáo động nhưng không xác định được nguyên nhân. Một tiếng ngân mỏng vang lên, có thể liên quan đến cơ chế của đài, song Lão Thành Nguyên không dám chắc. “Tôi” đồng ý đi tiếp chỉ để tìm dấu vết của Thiệu Kiếm Hoài và kiểm tra lối đi, không kết luận ông còn ở đó hay đoán ai đưa ông đi. Cuối chương, cả nhóm dừng trước khúc ngoặt tối, chờ Lão Thành Nguyên chọn hướng; cửa trong vẫn mở, cửa Đại Nghị Sảnh vẫn khóa.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi giữ nguyên lời khai của mình, đồng thời tìm một hướng hành động giúp mọi người tránh biến phiên nghị sự thành cuộc thanh trừng.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Lục Minh Vi không đáp Bạch Kinh Luân; nàng nhìn chữ ký trên chứng từ và để sự im lặng chặn lời buộc tội mới, khiến Bạch chuyển sang đòi quyền ra lệnh trong lúc cửa còn khóa.",
+       "Hàn Tinh Châu phản đối việc giao quyền cho một phe, còn Dương Anh Lạc yêu cầu mọi người đứng cách chiếc hộp trống và không ai được tự ý bắt giữ người khác; Bạch đáp rằng chờ đợi cũng là một lựa chọn có hậu quả.",
+       "Lục Minh Vi hỏi Lão Thành Nguyên liệu còn cách nào kiểm tra cửa mà không phá khóa; ông nói cơ chế vẫn giữ nguyên, nhưng thoáng trước ông cảm nhận được một nhịp đáp yếu từ sâu bên trong Cửu Tiêu Đài, không giống tiếng cửa mở.",
+       "Nàng đề nghị mọi người tạm dừng tranh quyền và cùng kiểm tra các lối bên trong, chỉ để xác định tình trạng của đài, không ai được dùng kết quả để kết tội hay giành hộp; Dương Anh Lạc ủng hộ, còn Bạch và Hàn miễn cưỡng chấp thuận với điều kiện có người làm chứng.",
+       "Khi cả nhóm tiến đến cửa trong, Lục Minh Vi nhận ra tiếng đáp yếu kia đã tắt, nhưng nó đủ để làm lung lay giả định rằng Thiệu Kiếm Hoài đã rời khỏi Cửu Tiêu Đài; nàng quyết định tiếp tục tìm dấu vết thay vì quay lại bàn tranh luận."
+      ],
+      "ends_at": "Cảnh kết ở ngưỡng cửa dẫn sâu hơn vào Cửu Tiêu Đài, khi các trưởng môn tạm ngừng đối đầu để cùng kiểm tra nhưng chưa ai từ bỏ ý định giành quyền quyết định.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Kiểm tra lối bên trong để xác định nguồn nhịp đáp yếu và tìm dấu vết của Thiệu Kiếm Hoài mà không để cuộc nghị sự biến thành thanh trừng.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Lão Thành Nguyên đẩy cửa trong; cánh cửa mở vào hành lang tối, còn cửa Đại Nghị Sảnh phía sau vẫn khóa, khiến cả nhóm hiểu rằng lối này chưa đưa họ ra ngoài đài.",
+       "Lục Minh Vi nhận ra vài vết bụi bị xáo động trên nền đá, nhưng không thể xác định chúng thuộc về ai; nàng nói chỉ có thể xem đó là dấu vết cần kiểm tra, không phải chứng cứ buộc tội.",
+       "Một nhịp đáp mơ hồ vang lên từ sâu trong hành lang rồi tắt; Lão Thành Nguyên thừa nhận nó có thể liên quan đến cơ chế của đài, còn Bạch Kinh Luân và Hàn Tinh Châu tranh nhau đòi quyền dẫn đường.",
+       "Dương Anh Lạc chặn cuộc tranh cãi, đề nghị họ đi thành một nhóm và ghi nhận mọi dấu vết trước khi quay lại; Lục Minh Vi đồng ý tiếp tục tìm Thiệu Kiếm Hoài, nhưng không kết luận ông còn ở trong đài hay vì sao biến mất.",
+       "Khi nhóm tiến sâu thêm một đoạn, tiếng đáp không lặp lại; họ quyết định chưa tách nhau và chưa buộc tội ai, song vẫn chưa tìm được lối mở cửa hay cách đưa mọi người ra khỏi Đại Nghị Sảnh."
+      ],
+      "ends_at": "Cảnh kết trong hành lang tối bên trong Đại Nghị Sảnh, nơi cả nhóm thống nhất tiếp tục tìm kiếm cùng nhau trong lúc các cánh cửa vẫn khóa kín.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-7667e0e59abe",
+      "kind": "action",
+      "tone": null,
+      "text": "Theo sát Lão Thành Nguyên, cùng cả nhóm tiến qua khúc ngoặt.",
+      "listeners": [],
+      "about": [
+       "lao_thanh_nguyen"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8702bad22d07",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Lão Thành Nguyên xem ông muốn cả nhóm kiểm tra điều gì trước khi đi tiếp.",
+      "listeners": [
+       "lao_thanh_nguyen"
+      ],
+      "about": [
+       "lao_thanh_nguyen"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-10f691850ce6",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo cho Thiệu Kiếm Hoài, nhưng không để nỗi lo biến thành kết luận.",
+      "listeners": [],
+      "about": [
+       "thieu_kiem_hoai"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-7a6d047de324",
+    "player_action": "[Lời thoại, nói thật] Hỏi Lão Thành Nguyên xem ông muốn cả nhóm kiểm tra điều gì trước khi đi tiếp.",
+    "error_detail": null,
+    "summary": "Cả nhóm lần theo dấu bụi và tiếng ngân trong Cửu Tiêu Đài, giữ nguyên đội hình và ghi nhận đúng những gì tận mắt thấy. Tiếng ngân được Lão Thành Nguyên xác định có thể do cơ chế hoặc gió, chưa rõ là dấu hiệu cửa mở hay đóng. Vệt bụi dẫn đến phiến đá kín trong Hành Lang Phong Luân; Lão Thành Nguyên mở lối, cả nhóm tìm thấy Thiệu Kiếm Hoài còn sống. Ông tiết lộ đã giấu Ấn Lệnh Thiên Luật tại đây để không phe nào chiếm quyền điều khiển cơ chế, nhưng bị mắc kẹt sau khi lối kín khép lại. Bạch Kinh Luân muốn đưa ấn lệnh về hội nghị, Hàn Tinh Châu phản đối; nhân vật kể yêu cầu ghi nguyên văn lời khai và không ai tự ý mang ấn lệnh đi. Lão Thành Nguyên và nhân vật kể dìu Thiệu Kiếm Hoài trở về.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi cùng nhóm kiểm tra dấu vết trong hành lang để tìm manh mối về Thiệu Kiếm Hoài mà không biến cuộc tìm kiếm thành cớ buộc tội phe nào.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Lục Minh Vi hỏi Lão Thành Nguyên muốn cả nhóm kiểm tra điều gì trước; ông đáp rằng cần lần theo bụi bị xáo động và xác định nguồn tiếng ngân, không ai được tách khỏi người làm chứng.",
+       "Lão Thành Nguyên dẫn nhóm men theo vệt bụi đến khúc ngoặt; Lục Minh Vi nhận thấy dấu chân mờ hướng sâu vào đài nhưng không đủ rõ để nhận diện người đi qua hay thời điểm.",
+       "Bạch Kinh Luân đòi kiểm tra ngay mọi lối rẽ, còn Hàn Tinh Châu phản bác rằng không ai được tự ý đi trước; Dương Anh Lạc đề nghị giữ đội hình và ghi nhận từng dấu hiệu để tránh biến suy đoán thành lời buộc tội.",
+       "Một tiếng ngân yếu đáp lại từ phía trước, rồi tắt; Lão Thành Nguyên nói âm thanh cho thấy cơ chế bên trong đài còn hoạt động, nhưng không chứng minh Thiệu Kiếm Hoài đang ở đó.",
+       "Lục Minh Vi nhận ra bụi ở chân tường bị xáo động liên tục về phía sâu hơn, trái với đoạn hành lang vừa đi qua; nàng đề nghị cả nhóm tiếp tục kiểm tra cùng nhau trước khi bất kỳ ai quay lại Đại Nghị Sảnh để kết tội người khác."
+      ],
+      "ends_at": "Cảnh kết tại khúc ngoặt tối trong hành lang, khi cả nhóm thống nhất tiến thêm một đoạn theo dấu bụi nhưng chưa biết Thiệu Kiếm Hoài ở đâu.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Lục Minh Vi lần theo dấu vết để xác định Thiệu Kiếm Hoài có thể vẫn ở Cửu Tiêu Đài và vì sao ông biến mất, trước khi các phe biến sự việc thành cớ thanh trừng.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen",
+       "thieu_kiem_hoai"
+      ],
+      "beats": [
+       "Men theo vệt bụi, cả nhóm tới Hành Lang Phong Luân; tiếng ngân vọng lại, và Lão Thành Nguyên nhận ra đây là lối dẫn tới cơ chế giữ cửa của đài nhưng không đoán chắc nó báo hiệu điều gì.",
+       "Lục Minh Vi nhận thấy vệt bụi bị ngắt ở một phiến tường, còn Lão Thành Nguyên tìm được cách mở lối kín; phía trong, họ thấy Thiệu Kiếm Hoài còn sống, kiệt sức nhưng tỉnh táo, chứng tỏ ông có thể vẫn ở trong Cửu Tiêu Đài thay vì đã rời đi.",
+       "Thiệu Kiếm Hoài nói thẳng rằng trước khi mất tích, ông đã cất giấu Ấn Lệnh Thiên Luật trong Hành Lang Phong Luân để không phe nào chiếm được quyền điều khiển cơ chế của đài; ông bị mắc kẹt sau khi lối kín khép lại, nên không thể trở về Đại Nghị Sảnh.",
+       "Bạch Kinh Luân đòi đưa ấn lệnh về cho hội nghị, Hàn Tinh Châu phản đối; Lục Minh Vi nhắc rằng lời khai của nàng không thể làm chứng cứ kết tội, còn Dương Anh Lạc đề nghị ghi nguyên văn lời Thiệu Kiếm Hoài và không ai được tự ý mang ấn lệnh đi.",
+       "Lão Thành Nguyên xác nhận mọi người có thể quay về cùng nhau, nhưng cửa Đại Nghị Sảnh vẫn khóa; cả nhóm thống nhất đưa Thiệu Kiếm Hoài trở lại dưới sự chứng kiến của tất cả, để việc bàn cách mở cửa và quản giữ mảnh thần khí chưa bị biến thành hành động bắt giữ hay chiếm đoạt."
+      ],
+      "ends_at": "Cảnh kết ở cửa kín nối Hành Lang Phong Luân với lối trở về Đại Nghị Sảnh, khi Thiệu Kiếm Hoài đã được tìm thấy nhưng các phe vẫn chưa thống nhất cách mở cửa hay quản giữ mảnh thần khí.",
+      "resolves": [
+       "tim_nguoi_giu_an"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-be88ddc95ec3",
+      "kind": "action",
+      "tone": null,
+      "text": "Cùng dìu Thiệu Kiếm Hoài tới cửa đá, giữ nguyên thứ tự và chờ mọi người thống nhất trước khi mở lối.",
+      "listeners": [],
+      "about": [
+       "thieu_kiem_hoai",
+       "hanh_lang_phong_luan"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-ada96bd958cf",
+      "kind": "dialogue",
+      "tone": "silence",
+      "text": "Im lặng trước yêu cầu của Bạch Kinh Luân, chờ ông ấy nói rõ ai sẽ giữ ấn lệnh.",
+      "listeners": [
+       "bach_kinh_luan"
+      ],
+      "about": [
+       "an_lenh_thien_luat"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-1e88035574a5",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm cảnh giác trước khả năng ấn lệnh rơi vào tay riêng của một phe.",
+      "listeners": [],
+      "about": [
+       "an_lenh_thien_luat",
+       "phe_tranh_quyen"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-62b16617f079",
+    "player_action": "[Lời thoại, im lặng] Im lặng trước yêu cầu của Bạch Kinh Luân, chờ ông ấy nói rõ ai sẽ giữ ấn lệnh.",
+    "error_detail": null,
+    "summary": "Trước cửa Đại Nghị Sảnh, Bạch Kinh Luân đề nghị giao Ấn Lệnh Thiên Luật cho nhóm đại diện các môn phái, nhưng Thiệu Kiếm Hoài nhất quyết giữ ấn lệnh nguyên chỗ vì nó gắn với cơ chế khóa cửa. Tôi đề nghị lập biên bản, giám sát chung mọi thao tác và tạm hoãn việc quyết định ai quản giữ lâu dài; các bên đồng ý không bắt giữ ai trên đường trở về, không môn phái nào được độc chiếm hay dùng vũ lực tranh giành. Lão Thành Nguyên hướng dẫn Thiệu Kiếm Hoài điều chỉnh rãnh đá, khiến khóa dịch chuyển và cửa mở. Mọi người lần lượt ra ngoài, rồi ký biên bản; ấn lệnh vẫn được giám sát chung, còn việc quản giữ lâu dài để hội nghị bàn sau. Cả nhóm vẫn đứng trước ngưỡng Đại Nghị Sảnh, chưa ai rời đi.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Buộc các trưởng môn trả lời ai sẽ giữ Ấn Lệnh Thiên Luật, đồng thời đặt nền cho một thỏa thuận tạm thời thay vì để tranh chấp biến thành bắt giữ lẫn nhau.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen",
+       "thieu_kiem_hoai"
+      ],
+      "beats": [
+       "Trở lại trước cửa Đại Nghị Sảnh đang khóa, ta vẫn im lặng trước Bạch Kinh Luân; ông hiểu sự im lặng ấy là đòi hỏi một câu trả lời cụ thể, không phải sự thuận theo.",
+       "Bạch Kinh Luân đề nghị giao Ấn Lệnh Thiên Luật cho một nhóm đại diện các môn phái lớn trông coi; Hàn Tinh Châu lập tức bác bỏ, nói đó chỉ là cách đổi tên cho quyền độc chiếm.",
+       "Dương Anh Lạc nhắc rằng ấn lệnh đang gắn với cơ chế khóa cửa, nên tự ý chuyển nó có thể khiến lối ra càng khó kiểm soát; Lão Thành Nguyên xác nhận ông không thể bảo đảm hậu quả nếu có người động vào khi chưa hiểu rõ cơ chế.",
+       "Thiệu Kiếm Hoài, còn yếu nhưng tỉnh táo, nói ông không trao ấn lệnh cho riêng môn phái nào; ta đề nghị giữ nguyên hiện trạng, lập biên bản trước mặt tất cả và chỉ để những người có mặt cùng giám sát mọi thao tác liên quan đến ấn lệnh.",
+       "Sau những lời chất vấn, Bạch Kinh Luân và Hàn Tinh Châu miễn cưỡng chấp nhận nguyên tắc giám sát chung trong lúc tìm cách mở cửa; Dương Anh Lạc đề nghị mọi người cùng trở lại Đại Nghị Sảnh để ghi nhận cam kết và bàn lối ra, còn ta đồng ý với điều kiện không ai bị bắt giữ trên đường đi."
+      ],
+      "ends_at": "Cảnh kết khi cả nhóm thống nhất trở về Đại Nghị Sảnh dưới sự giám sát chung, còn cánh cửa khóa vẫn chưa mở.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Lục Minh Vi giúp các phe biến cam kết giám sát thành một lối ra an toàn và một thỏa thuận tạm thời về quyền quản giữ Ấn Lệnh Thiên Luật.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen",
+       "thieu_kiem_hoai"
+      ],
+      "beats": [
+       "Trước cửa Đại Nghị Sảnh, Lục Minh Vi nhắc lại điều kiện đã thống nhất: không ai bị bắt trên đường trở về, và yêu cầu Bạch Kinh Luân, Hàn Tinh Châu cùng Dương Anh Lạc xác nhận trước mặt Thiệu Kiếm Hoài và Lão Thành Nguyên.",
+       "Bạch Kinh Luân đòi ghi rõ ai chịu trách nhiệm nếu thao tác với cửa thất bại; Lục Minh Vi đáp rằng biên bản sẽ ghi từng người chấp thuận bước nào, còn Hàn Tinh Châu buộc mọi bên cùng chịu quy tắc, không riêng Bang Luận Kiếm.",
+       "Thiệu Kiếm Hoài xác nhận Ấn Lệnh Thiên Luật phải ở nguyên vị trí để cơ chế khóa cửa không bị xáo trộn; Lão Thành Nguyên đồng ý hướng dẫn ông điều chỉnh cơ chế, còn Dương Anh Lạc giám sát và yêu cầu các trưởng môn không tự ý can thiệp.",
+       "Lục Minh Vi đề nghị lập thỏa thuận tạm thời: ấn lệnh tiếp tục nằm dưới sự giám sát chung, không môn phái nào được độc chiếm hay dùng vũ lực tranh giành, và mọi quyết định lâu dài về việc quản giữ sẽ để hội nghị bàn sau khi cửa mở; Bạch Kinh Luân và Hàn Tinh Châu lần lượt chấp thuận.",
+       "Trước sự chứng kiến của cả nhóm, Thiệu Kiếm Hoài làm theo chỉ dẫn thận trọng của Lão Thành Nguyên; cơ chế trong cửa chuyển động, khóa nhả ra, và Dương Anh Lạc dẫn mọi người rời Đại Nghị Sảnh mà không ai bị bắt giữ."
+      ],
+      "ends_at": "Cảnh kết tại ngưỡng Đại Nghị Sảnh vừa mở, khi cả nhóm đã ra ngoài và cam kết tạm thời được ghi nhận trước khi họ tách nhau.",
+      "resolves": [
+       "thoat_khoi_dai_nghi",
+       "quyen_quan_giu_than_khi"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"không ai được tự\" xuất hiện 3 lần (tối đa 2); đoạn: «Không ai được tự ý động vào»"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được duong_anh_lac kể về an_lenh_gay_khoa, nhưng duong_anh_lac không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được duong_anh_lac kể về an_lenh_gay_khoa, nhưng duong_anh_lac không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-897d81934c4f",
+      "kind": "action",
+      "tone": null,
+      "text": "Kiểm tra biên bản lần cuối, bảo đảm mọi chữ ký và điều khoản đều được ghi rõ.",
+      "listeners": [],
+      "about": [
+       "an_lenh_thien_luat",
+       "an_lenh_gay_khoa"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8658e6fd6fb0",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nhắc mọi người cùng rời ngưỡng cửa, không ai tự ý chạm vào ấn lệnh trước khi hội nghị bàn tiếp.",
+      "listeners": [
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen",
+       "thieu_kiem_hoai"
+      ],
+      "about": [
+       "an_lenh_thien_luat",
+       "an_lenh_gay_khoa"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-951891f4e7a1",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo rằng thỏa thuận mong manh này sẽ khó giữ vững khi bàn đến quyền quản giữ lâu dài.",
+      "listeners": [],
+      "about": [
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "bang_luan_kiem"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-4d4c85d02cc3",
+    "player_action": "[Nội tâm] Thầm lo rằng thỏa thuận mong manh này sẽ khó giữ vững khi bàn đến quyền quản giữ lâu dài.",
+    "error_detail": null,
+    "summary": "Tại Đại Nghị Sảnh, các bên tranh luận về việc quản giữ Ấn Lệnh Thiên Luật và cách giám sát. Tôi đề nghị giữ nguyên cam kết đã ký: không bắt giữ ai khi rời đài, không dùng vũ lực tranh ấn lệnh, mọi thay đổi liên quan đến ấn lệnh và cơ chế khóa cửa phải có người các bên chứng kiến; chưa trao quyền quyết định cho riêng ai, chuyện đổi cách giám sát để nghị sự sau bàn tiếp. Dương Anh Lạc yêu cầu ghi rõ cam kết, đồng thời đề xuất đưa việc bảo vệ các đoàn người qua vùng tranh chấp vào nghị sự kế tiếp. Lão Thành Nguyên cho biết rút hoặc đổi vị trí ấn lệnh có thể khiến cửa đài biến động. Bạch Kinh Luân và Hàn Tinh Châu xác nhận cam kết, không ai phản đối việc ghi thêm.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi tìm cách biến biên bản mong manh trước Đại Nghị Sảnh thành những cam kết đủ sức ngăn các phe quay sang bắt giữ lẫn nhau.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Trước ngưỡng Đại Nghị Sảnh, Lục Minh Vi nhìn lại những chữ ký trên biên bản và thầm lo rằng lời hứa sẽ tan ngay khi việc quản giữ lâu dài được đưa ra bàn.",
+       "Bạch Kinh Luân đề nghị nhóm đại diện các môn phái nhận quyền giám sát Ấn Lệnh Thiên Luật; Hàn Tinh Châu lập tức bác bỏ, cho rằng một hội đồng do môn phái lớn chi phối chỉ là độc quyền được đổi tên.",
+       "Lục Minh Vi nhắc cả hai rằng cửa vừa mở nhờ phối hợp, không phải nhờ phe nào thắng, rồi đề nghị giữ nguyên thỏa thuận: không bắt giữ ai, không dùng vũ lực tranh ấn lệnh, mọi thao tác liên quan đến cơ chế phải có người các bên cùng chứng kiến.",
+       "Dương Anh Lạc ủng hộ lời đề nghị nhưng cảnh báo một cam kết không thể chỉ bảo vệ người trong hội nghị; Lục Minh Vi đáp rằng luật mới phải bảo đảm cả những đoàn người qua vùng tranh chấp không bị biến thành vật mặc cả.",
+       "Lão Thành Nguyên xác nhận ấn lệnh vẫn gắn với cơ chế khóa cửa, khiến các trưởng môn tạm gác quyền quản giữ lâu dài và chấp thuận tiếp tục giám sát chung trước khi rời ngưỡng sảnh."
+      ],
+      "ends_at": "Cảnh kết trước ngưỡng Đại Nghị Sảnh, khi các bên tạm giữ được thỏa thuận nhưng chưa quyết định ai sẽ quản giữ Ấn Lệnh Thiên Luật lâu dài.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Lục Minh Vi biến lời cam kết mong manh thành một nguyên tắc chung có thể kiểm chứng, để các phe rời ngưỡng Đại Nghị Sảnh mà không khơi lại cuộc thanh trừng.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tôi nhìn những người vẫn đứng quanh tờ biên bản và nói thẳng nỗi lo của mình: lời ký sẽ vô nghĩa nếu mỗi bên rời khỏi đây với một cách hiểu khác nhau về việc giám sát chung.",
+       "Dương Anh Lạc đề nghị ghi rõ rằng không ai được tự ý đưa Ấn Lệnh Thiên Luật đi hay điều chỉnh cơ chế khóa cửa; Lão Thành Nguyên xác nhận mọi thay đổi đều phải có mặt các bên chứng kiến.",
+       "Bạch Kinh Luân muốn hội đồng đại diện các môn phái lớn làm đầu mối giám sát, nhưng Hàn Tinh Châu phản bác rằng quyền ấy sẽ lại dồn vào tay một phe; tôi đề nghị giữ nguyên cách giám sát chung đã ký, chưa trao quyền quyết định cho riêng ai.",
+       "Sau một hồi đối đáp lạnh lẽo, Bạch Kinh Luân và Hàn Tinh Châu cùng xác nhận không bắt giữ ai trên đường rời đài và không dùng vũ lực tranh ấn lệnh; Dương Anh Lạc yêu cầu ghi nhận rõ cam kết ấy bên cạnh biên bản.",
+       "Tôi nghe Dương Anh Lạc nhắc rằng luật mới phải bảo vệ cả những đoàn người đi qua vùng tranh chấp; không ai phủ nhận, nhưng cũng chẳng ai dám hứa thay cho toàn bộ các tiên môn, nên nàng chỉ yêu cầu điều đó được đưa vào nghị sự kế tiếp."
+      ],
+      "ends_at": "Cảnh kết tại ngưỡng Đại Nghị Sảnh, khi các bên tạm chia đường rời đi trong khuôn khổ cam kết vừa được xác nhận, còn việc quản giữ lâu dài Ấn Lệnh Thiên Luật vẫn để ngỏ.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-3fd3136795eb",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Xin ghi rõ rằng luật mới phải bảo vệ các đoàn người qua vùng tranh chấp.”",
+      "listeners": [
+       "duong_anh_lac"
+      ],
+      "about": [
+       "phe_bao_ve_duong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5a60934b1245",
+      "kind": "action",
+      "tone": null,
+      "text": "Đi theo Lão Thành Nguyên về phía hành lang dẫn tới Phong Luân.",
+      "listeners": [],
+      "about": [
+       "lao_thanh_nguyen",
+       "hanh_lang_phong_luan"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-3171dae23b32",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tôi lo những đoàn người qua vùng tranh chấp vẫn có thể bị cuốn vào cuộc giằng co giữa các tiên môn.",
+      "listeners": [],
+      "about": [
+       "phe_bao_ve_duong",
+       "phe_tranh_quyen"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "7": [
+   {
+    "attempt": 1,
+    "commit_id": "ch7-0fa6a48227e3",
+    "player_action": "[Nội tâm] Tôi lo những đoàn người qua vùng tranh chấp vẫn có thể bị cuốn vào cuộc giằng co giữa các tiên môn.",
+    "error_detail": null,
+    "summary": "Trong nghị sự, nhân vật chính phản đối luật chỉ chia quyền giữ thần khí mà không bảo vệ người qua vùng tranh chấp. Dương Anh Lạc nhận trách nhiệm vì tự ý mở hành lang sơ tán, cứu được dân nhưng khiến các môn phái mất lòng tin và có nơi đóng đường với Minh Hộ Tống. Bạch Kinh Luân thú nhận đã sắp đặt việc lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn để ép các bên trao quyền kiểm soát cho liên minh, nhưng không nói rõ quyền hạn của liên minh. Nhân vật chính yêu cầu làm rõ; Dương Anh Lạc ghi lời thú nhận và đề nghị bảo vệ người qua đường. Hàn Tinh Châu đề nghị tạm cấm môn phái tự ý chặn các đoàn người, còn Lão Thành Nguyên cảnh báo không được động đến Ấn Lệnh Thiên Luật hay cơ chế khóa cửa. Bạch Kinh Luân không cam kết thay mặt liên minh; Hàn Tinh Châu không ký.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi buộc các trưởng môn bàn đến sự an toàn của những đoàn người qua vùng tranh chấp, đồng thời nhận ra vụ mất mảnh thần khí đang bị dùng để ép hội nghị trao quyền kiểm soát.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Vẫn trong Đại Nghị Sảnh, tôi nhắc lại nỗi lo rằng các đoàn người sẽ tiếp tục bị kẹt giữa những phe phái nếu luật mới chỉ phân chia quyền giữ thần khí; Dương Anh Lạc đồng tình, còn Bạch Kinh Luân hỏi liệu tôi muốn lấy việc hộ tống làm cớ trì hoãn nghị sự đến bao giờ.",
+       "Tôi hỏi thẳng Dương Anh Lạc cái giá của lần nàng tự ý mở hành lang sơ tán; nàng thừa nhận việc đó cứu được người nhưng khiến các môn phái mất lòng tin, và nàng chấp nhận để hành động ấy bị ghi vào biên bản thay vì giả vờ mình không sai.",
+       "Hàn Tinh Châu bác đề nghị trao quyền cho một hội đồng do các môn phái lớn chi phối, cho rằng một cơ chế không có bảo đảm cho người qua đường chỉ đổi tên kẻ nắm quyền; Lão Thành Nguyên nhắc rằng mọi thay đổi liên quan đến Ấn Lệnh Thiên Luật vẫn có thể làm cơ chế cửa đài biến động.",
+       "Khi Bạch Kinh Luân viện chiếc hộp trống để đòi hội nghị lập tức giao quyền kiểm soát cho liên minh của hắn, tôi chỉ ra rằng sự vội vã ấy biến mảnh thần khí mất tích thành đòn bẩy; hắn lạnh lùng đáp rằng chính hắn đã sắp đặt việc lấy mảnh ấy khỏi hộp để buộc các bên phải trao quyền.",
+       "Tôi không thể chứng minh lời hắn bằng vật chứng, nhưng buộc hắn nói rõ đề nghị trước mặt mọi người; Dương Anh Lạc yêu cầu ghi nguyên văn lời thừa nhận cùng điều kiện bảo vệ các đoàn người vào biên bản, còn Hàn Tinh Châu tuyên bố sẽ không ký một thỏa thuận trao quyền dưới sức ép."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh, khi lời thừa nhận của Bạch Kinh Luân khiến các trưởng môn công khai đứng thành hai phía quanh đề nghị trao quyền.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Lục Minh Vi giúp biến lời thú nhận và cái giá của lần Dương Anh Lạc tự ý mở đường sơ tán thành điều khoản cụ thể, để các đoàn người không bị bỏ quên trong cuộc tranh quyền.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tôi nhìn nét mực ghi lời thú nhận trên biên bản rồi nhắc rằng người qua đường đã phải trả giá cho những lần các môn phái đóng lối, chứ không thể tiếp tục bị dùng làm cái cớ trong cuộc tranh quyền.",
+       "Dương Anh Lạc nói nàng chịu trách nhiệm vì đã tự ý mở hành lang sơ tán, nhưng những người được cứu không thể bị coi là sai lầm; nàng đề nghị ghi cả việc các môn phái mất lòng tin và có nơi đóng đường với Minh Hộ Tống sau đó.",
+       "Bạch Kinh Luân đòi tách chuyện bảo vệ đoàn người khỏi quyền quản giữ thần khí; tôi đáp rằng nếu luật mới không quy định ai được đi qua và ai giám sát, thì đó chỉ là lời hứa để các trưởng môn tùy lúc rút lại.",
+       "Hàn Tinh Châu đề nghị ghi vào biên bản rằng trước kỳ nghị sự tiếp theo, không môn phái nào được tự ý chặn các đoàn người qua vùng tranh chấp; mọi bất đồng về lối đi phải được các bên chứng kiến, còn Lão Thành Nguyên nhắc không được động đến Ấn Lệnh Thiên Luật hay cơ chế khóa cửa.",
+       "Bạch Kinh Luân chấp nhận để đề nghị được ghi nhận nhưng không cam kết thay mặt liên minh; Dương Anh Lạc ghi rõ sự bất đồng ấy, còn tôi nhận ra lời thú nhận đã làm thay đổi thế nghị sự nhưng chưa buộc được các phe giữ lời."
+      ],
+      "ends_at": "Cảnh kết tại Đại Nghị Sảnh, khi biên bản ghi lời thú nhận của Bạch Kinh Luân, cái giá của hành lang sơ tán và một đề nghị tạm thời bảo vệ các đoàn người, nhưng chưa có cam kết chung.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-f32518ece09b",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị ghi rõ cách các bên cùng chứng kiến khi có bất đồng về lối đi.",
+      "listeners": [],
+      "about": [
+       "phe_bao_ve_duong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-acfd2a492437",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Bạch Kinh Luân liệu ông có thể ghi rõ phần nào ông không cam kết.",
+      "listeners": [
+       "bach_kinh_luan"
+      ],
+      "about": [
+       "bach_kinh_luan_sap_dat"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8229baa55235",
+      "kind": "inner",
+      "tone": null,
+      "text": "Cảnh giác trước việc lời đề nghị vẫn chưa thành cam kết chung.",
+      "listeners": [],
+      "about": [
+       "bach_kinh_luan",
+       "bang_luan_kiem"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "8": [
+   {
+    "attempt": 1,
+    "commit_id": "ch8-3a67dcbd343e",
+    "player_action": "[Hành động] Đề nghị ghi rõ cách các bên cùng chứng kiến khi có bất đồng về lối đi.",
+    "error_detail": null,
+    "summary": "Trong Đại Nghị Sảnh, người kể đề nghị ghi nguyên tắc tạm thời về lối đi: không bên nào tự ý chặn hoặc mở đường, các bên cùng cử người chứng kiến, và không được vin vào việc điều tra Mảnh Thiên Khuyết để giữ người qua đường. Dương Anh Lạc ghi rõ Bạch Kinh Luân không thể cam kết thay liên minh hay môn phái; các ô ký vẫn để trống. Người kể yêu cầu xác nhận lời Bạch Kinh Luân về việc lấy Mảnh Thiên Khuyết nhằm ép hội nghị trao quyền kiểm soát cho liên minh. Bạch Kinh Luân xác nhận đã sắp đặt việc lấy mảnh thần khí để buộc mọi người thương lượng, nhưng không nhận trách nhiệm thay liên minh. Lão Thành Nguyên nhắc không ai được động đến Ấn Lệnh Thiên Luật hay cơ chế khóa cửa.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi biến đề nghị cùng chứng kiến bất đồng về lối đi thành một điều khoản tạm thời, buộc các trưởng môn phải bộc lộ họ sẵn sàng nhượng bộ đến đâu.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Sau lời thú nhận ở nghị sự trước, ta nhắc lại cam kết không dùng vũ lực tranh ấn lệnh và đề nghị ghi rõ rằng khi có bất đồng về lối đi, mỗi bên cử người chứng kiến trước khi đường bị chặn hoặc mở.",
+       "Dương Anh Lạc đồng ý, nhưng yêu cầu điều khoản phải bảo vệ cả đoàn người qua vùng tranh chấp; nàng nói một lối đi được mở rồi lại đóng theo ý một môn phái thì chỉ là lời hứa rỗng.",
+       "Hàn Tinh Châu phản đối việc để một bên tự quyết người chứng kiến, đòi mỗi phía cùng chọn người và không ai được lấy danh nghĩa điều tra mảnh thần khí để giữ người qua đường.",
+       "Bạch Kinh Luân chất vấn liệu điều khoản ấy có trói tay các môn phái khi cần ứng phó; ta đáp rằng chính việc không ai được tự ý chặn đường sẽ ngăn một lời buộc tội biến thành cớ thanh trừng, còn hắn vẫn chưa thể cam kết thay liên minh.",
+       "Lão Thành Nguyên cảnh báo mọi thay đổi liên quan đến ấn lệnh và cơ chế khóa cửa phải có người các bên chứng kiến; ông xác nhận điều khoản về lối đi có thể được ghi riêng mà không động đến hai thứ ấy.",
+       "Dương Anh Lạc ghi nhận đề nghị thành nguyên tắc tạm thời để các bên mang ra đối chiếu, còn những cái gật đầu dè chừng quanh bàn cho ta thấy cuộc tranh luận đã chuyển từ quyền giữ thần khí sang quyền quyết định ai được đi qua."
+      ],
+      "ends_at": "Cảnh khép lại trong Đại Nghị Sảnh, khi nguyên tắc cùng chứng kiến bất đồng về lối đi đã được ghi nhận nhưng chưa thành cam kết chung có chữ ký.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Buộc các trưởng môn xác nhận rằng việc lấy Mảnh Thiên Khuyết được dùng làm đòn ép hội nghị, rồi thống nhất một bước đi không chạm vào Ấn Lệnh hay cơ chế khóa cửa.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tôi yêu cầu Dương Anh Lạc đọc lại lời Bạch Kinh Luân đã thú nhận, rồi hỏi thẳng liệu việc lấy Mảnh Thiên Khuyết có nhằm ép hội nghị trao quyền kiểm soát cho liên minh của hắn hay không.",
+       "Bạch Kinh Luân xác nhận hắn đã sắp đặt việc lấy mảnh thần khí để buộc các bên phải thương lượng, nhưng nhấn mạnh hắn không thể cam kết thay liên minh; tôi đáp rằng ép buộc bằng một chiếc hộp trống không phải là thương lượng.",
+       "Dương Anh Lạc ghi rõ lời xác nhận ấy bên cạnh nguyên tắc tạm thời về lối đi, còn Hàn Tinh Châu yêu cầu biên bản phân biệt lời Bạch Kinh Luân nói với bất kỳ cam kết nào của các môn phái.",
+       "Lão Thành Nguyên cảnh báo không ai được tự ý động đến Ấn Lệnh Thiên Luật hoặc cơ chế khóa cửa; tôi đề nghị các bên cùng đến cửa sảnh, mỗi phía cử người chứng kiến trước khi bàn cách rời đi.",
+       "Hàn Tinh Châu chấp thuận cùng chứng kiến nhưng không ký thay môn phái; Bạch Kinh Luân cũng không nhận trách nhiệm thay liên minh, và Dương Anh Lạc khép lại biên bản với những chỗ ký vẫn còn bỏ trống."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh, khi tôi cùng các trưởng môn đứng trước cửa đã khóa và chuẩn bị thương lượng lối rời đi dưới sự chứng kiến của các bên.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-edc5cbc072ae",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị từng bên lần lượt cử người chứng kiến, rồi để Dương Anh Lạc ghi nhận tên họ trước khi bàn cách rời đi.",
+      "listeners": [],
+      "about": [
+       "duong_anh_lac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-1026c3c0568b",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Trưởng môn Bạch, xin xác nhận rõ: ngài chỉ nhận trách nhiệm về việc mình sắp đặt, không đại diện cho liên minh.",
+      "listeners": [
+       "bach_kinh_luan"
+      ],
+      "about": [
+       "bach_kinh_luan_sap_dat"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f90be9a42afe",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm cảnh giác, không để lời thú nhận của Bạch Kinh Luân bị xem thành cam kết của cả liên minh.",
+      "listeners": [],
+      "about": [
+       "bach_kinh_luan",
+       "bach_kinh_luan_sap_dat"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "9": [
+   {
+    "attempt": 1,
+    "commit_id": "ch9-3aa0a85b043f",
+    "player_action": "[Lời thoại, nói thật] Trưởng môn Bạch, xin xác nhận rõ: ngài chỉ nhận trách nhiệm về việc mình sắp đặt, không đại diện cho liên minh.",
+    "error_detail": null,
+    "summary": "Trong phiên nghị sự, Bạch Kinh Luân xác nhận tự sắp đặt việc lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn để ép các bên thương lượng, nhưng không đại diện cho liên minh hay môn phái nào. Người kể ngăn việc quy tội tập thể và yêu cầu ghi riêng lời xác nhận của Bạch, để phần trách nhiệm của liên minh chờ họ trả lời. Trước câu hỏi về bảo đảm lối đi qua vùng tranh chấp, Dương Anh Lạc đề xuất cam kết tạm thời không tự ý chặn hoặc mở lối, có người chứng kiến và không giam giữ người qua đường để điều tra. Bạch chỉ nhận trách nhiệm cá nhân; Hàn Tinh Châu hứa trong quyền hạn của mình sẽ không tự ý chặn các đoàn người, không cam kết thay Băng Tâm Môn. Lão Thành Nguyên ngăn mọi người đến gần cơ chế khóa cửa.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Buộc Bạch Kinh Luân xác nhận giới hạn trách nhiệm của mình, đồng thời ngăn lời thú nhận bị biến thành cớ thanh trừng tập thể.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Lục Minh Vi nhắc lại thẳng thắn yêu cầu: Bạch Kinh Luân chỉ nhận trách nhiệm về việc chính mình sắp đặt, không đại diện cho liên minh; Bạch đáp rằng đúng như vậy, hắn không thể thay liên minh hay bất kỳ môn phái nào cam kết.",
+       "Dương Anh Lạc ghi lời xác nhận vào biên bản, rồi hỏi Bạch liệu hắn có rút lại việc dùng Mảnh Thiên Khuyết làm sức ép thương lượng hay không; Bạch nói hắn nhận trách nhiệm về cách làm ấy nhưng không thể nói thay những người đã hưởng lợi.",
+       "Hàn Tinh Châu lạnh lùng phản bác rằng lời nhận tội cá nhân không thể thay cho trách nhiệm của liên minh, còn Lão Thành Nguyên cảnh báo không ai được vin vào lời khai để động đến Ấn Lệnh Thiên Luật hay cơ chế khóa cửa.",
+       "Lục Minh Vi chỉ ra rằng nếu quy tội cho tất cả những người có liên quan khi chưa có lời cam kết của họ, phiên nghị sự sẽ lập tức biến thành thanh trừng; nàng đề nghị ghi rõ điều đã được xác nhận và để trống phần trách nhiệm của liên minh.",
+       "Dương Anh Lạc đọc lại dòng biên bản vừa ghi; Bạch không phủ nhận, Hàn không ký vào đề nghị nào, và cuộc đối chất chuyển từ lời thú nhận sang câu hỏi ai sẽ đứng ra bảo đảm các bên không tự ý chặn đường người qua vùng tranh chấp."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh, khi các trưởng môn dồn sự chú ý vào việc phải đưa ra cam kết cụ thể trước khi cuộc nghị sự có thể tiến thêm.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Buộc các trưởng môn biến lời khai vừa được xác nhận thành cam kết giới hạn, để ngăn cuộc nghị sự trượt thành thanh trừng và mở ra một thế cục mới tại lối thoát.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tôi nhìn những ô cam kết còn trắng và nói rằng lời khai của Bạch Kinh Luân chỉ xác nhận trách nhiệm cá nhân; không ai được lấy nó làm cớ buộc tội cả liên minh hay giữ người qua đường.",
+       "Dương Anh Lạc đề nghị ghi một cam kết tạm thời: không môn phái nào tự ý chặn hoặc mở lối đi, mỗi bên cử người chứng kiến, và việc điều tra Mảnh Thiên Khuyết không được dùng để giam giữ người qua đường.",
+       "Bạch Kinh Luân nhắc lại rằng hắn không thể ký thay liên minh; tôi đáp rằng biên bản sẽ ghi đúng giới hạn ấy, còn hắn có thể chịu trách nhiệm về lời mình nói.",
+       "Hàn Tinh Châu vẫn không ký thay Băng Tâm Môn, nhưng tuyên bố sẽ không tự ý chặn các đoàn người trong phạm vi quyền hạn của mình; Dương Anh Lạc ghi rõ đây là lời hứa cá nhân, chưa phải cam kết của môn phái.",
+       "Lão Thành Nguyên ngăn mọi người tiến đến cơ chế khóa cửa; tôi đề nghị đưa biên bản tới gần cánh cửa để từng người xác nhận lời mình trước khi quyết định bước tiếp, và các trưởng môn rời bàn, đứng thành một hàng đối diện lối thoát."
+      ],
+      "ends_at": "Cảnh kết tại cánh cửa khóa của Đại Nghị Sảnh, nơi các trưởng môn đứng trước biên bản có cam kết giới hạn nhưng chưa ai có thể ký thay môn phái mình.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"nhận trách nhiệm về\" xuất hiện 3 lần (tối đa 2); đoạn: «nhận trách nhiệm về»"
+       },
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"trách nhiệm của liên\" xuất hiện 3 lần (tối đa 2); đoạn: «Trách nhiệm của liên minh»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d3c064e22763",
+      "kind": "action",
+      "tone": null,
+      "text": "Mời Dương Anh Lạc đọc lại từng dòng cam kết trước khi mọi người xác nhận.",
+      "listeners": [],
+      "about": [
+       "duong_anh_lac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f9a4ad9e5dbd",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hàn trưởng môn, xin xác nhận đây chỉ là lời hứa cá nhân của ngài.",
+      "listeners": [
+       "han_tinh_chau"
+      ],
+      "about": [
+       "han_tinh_chau"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-a9cc8cf4030e",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tôi quyết giữ việc bảo đảm lối đi cho các đoàn người ở trung tâm cuộc thương lượng.",
+      "listeners": [],
+      "about": [
+       "phe_bao_ve_duong"
+      ],
+      "lie": null,
+      "feeling": "kiên định"
+     }
+    ]
+   }
+  ],
+  "10": [
+   {
+    "attempt": 1,
+    "commit_id": "ch10-a17230530034",
+    "player_action": "[Lời thoại, nói thật] Hàn trưởng môn, xin xác nhận đây chỉ là lời hứa cá nhân của ngài.",
+    "error_detail": null,
+    "summary": "Trong Đại Nghị Sảnh, tôi yêu cầu ghi rõ lời hứa của Hàn Tinh Châu chỉ ràng buộc cá nhân ông, không thể thay Băng Tâm Môn nhận trách nhiệm. Dương Anh Lạc ghi cam kết tạm thời về lối đi, để trống những ô chưa được xác nhận. Hàn Tinh Châu chấp nhận phạm vi lời hứa; Bạch Kinh Luân thừa nhận đã sắp đặt việc lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn để buộc hội nghị thương lượng, nhưng không thể ký thay liên minh. Khi các phe tranh cãi việc mở cửa và bảo đảm lối đi, tôi đề nghị mọi người đứng lại để đối chứng, không ai qua cửa hay chạm cơ chế khóa. Lão Thành Nguyên chặn bậc cửa, đám đông lùi lại; cuối chương cửa Đại Nghị Sảnh vẫn khóa, lối đi chưa có ai đứng ra bảo đảm và các ô xác nhận vẫn trắng.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lục Minh Vi buộc các trưởng môn phân biệt lời hứa cá nhân của Hàn Tinh Châu với cam kết của cả Băng Tâm Môn, để lời khai không bị biến thành cái cớ thanh trừng.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Lục Minh Vi nhìn thẳng Hàn Tinh Châu và nhắc lại câu hỏi của mình; Hàn đáp rằng lời hứa không tự ý chặn đoàn người qua vùng tranh chấp chỉ ràng buộc bản thân ông, không thể thay Băng Tâm Môn quyết định.",
+       "Dương Anh Lạc yêu cầu câu trả lời được ghi đúng nguyên văn bên cạnh cam kết tạm thời về lối đi, nhấn mạnh rằng không ai được viện cớ điều tra Mảnh Thiên Khuyết để giữ người qua đường.",
+       "Bạch Kinh Luân lạnh lùng chỉ ra rằng một lời hứa cá nhân không thể bảo đảm hành động của môn phái; Lục Minh Vi đáp rằng ít nhất nó ngăn hội nghị gán trách nhiệm cho cả Băng Tâm Môn khi chưa có lời xác nhận của họ.",
+       "Hàn Tinh Châu chấp nhận để lời hứa được ghi rõ phạm vi, nhưng cảnh cáo rằng ông sẽ không ký vào điều khoản nào buộc môn phái của mình chịu trách nhiệm thay người khác; Dương Anh Lạc giữ các ô cam kết của những bên chưa xác nhận để trống.",
+       "Lão Thành Nguyên nhắc mọi người tránh xa cơ chế khóa cửa; khi tranh luận chuyển từ lời khai sang việc ai sẽ đứng ra bảo đảm lối đi nếu cửa được mở, các trưởng môn hướng về lối ra mà không ai chịu nhường quyền kiểm soát trước."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh, khi lời hứa cá nhân của Hàn Tinh Châu đã được phân định rõ nhưng các bên đang dồn về lối ra và tranh cãi ai có quyền bảo đảm lối đi.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ngăn các trưởng môn biến lối ra thành chiến tuyến bằng cách buộc mọi cam kết phải ghi đúng người chịu trách nhiệm.",
+      "present": [
+       "protagonist",
+       "bach_kinh_luan",
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "lao_thanh_nguyen"
+      ],
+      "beats": [
+       "Tôi nhắc lại trước mọi người rằng lời hứa của Hàn Tinh Châu chỉ ràng buộc cá nhân ông, rồi yêu cầu không ai được lấy lời ấy làm cớ quy trách nhiệm cho Băng Tâm Môn.",
+       "Dương Anh Lạc đọc nguyên văn phần cam kết về lối đi và điều khoản không giữ người qua đường để điều tra Mảnh Thiên Khuyết; nàng xác nhận các ô chưa có người nhận lời vẫn để trống.",
+       "Bạch Kinh Luân nói rằng hắn đã sắp đặt việc lấy mảnh thần khí để ép hội nghị thương lượng, nhưng không thể thay liên minh nhận trách nhiệm; hắn cảnh báo một bản ghi chép không tự biến thành luật.",
+       "Tôi đề nghị lấy chính lời khai đã ghi làm giới hạn tạm thời: không ai tiến qua cửa trước, không ai chạm cơ chế khóa, và mỗi bên phải đứng lại để đối chứng thay vì ép bên kia lùi bước.",
+       "Lão Thành Nguyên chặn những người đang dồn về lối ra, còn Dương Anh Lạc giữ tờ ghi chép ở giữa sảnh; cuộc đối đầu dừng lại, nhưng cửa vẫn khóa và chưa phe nào nhận bảo đảm cho lối đi."
+      ],
+      "ends_at": "Cảnh kết trong Đại Nghị Sảnh, khi các bên tạm ngừng tiến về cửa nhưng vẫn chưa thống nhất ai sẽ bảo đảm lối đi.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-32d918eb1088",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị Dương Anh Lạc ghi lại nguyên văn lời các bên, không điền tên vào ô nào khi chưa được xác nhận.",
+      "listeners": [],
+      "about": [
+       "duong_anh_lac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8852f3c31f74",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với Hàn Tinh Châu: “Tôi không yêu cầu ông ký thay Băng Tâm Môn; chỉ xin ông giữ mọi người đứng lại để đối chứng.”",
+      "listeners": [
+       "han_tinh_chau"
+      ],
+      "about": [
+       "bang_tam_mon"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5bd16213ec2e",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo rằng những ô trống trên giấy sẽ trở thành cái cớ để các bên lại ép nhau lùi bước.",
+      "listeners": [],
+      "about": [
+       "duong_anh_lac",
+       "han_tinh_chau",
+       "bang_tam_mon"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": []
+}

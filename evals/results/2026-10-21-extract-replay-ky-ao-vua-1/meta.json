@@ -1,0 +1,155 @@
+{
+ "bench": "extract-replay",
+ "created": "2026-10-21T23:50:18+07:00",
+ "dry_run": false,
+ "stop": null,
+ "git": {
+  "commit": "0dd03d300b70c38c02c335b20ee44aecdbbc621b",
+  "dirty": false
+ },
+ "versions": {
+  "main": {
+   "commit": "9f0b013",
+   "prompt": "extract-2"
+  },
+  "branch": {
+   "commit": "0dd03d300b70c38c02c335b20ee44aecdbbc621b",
+   "prompt": "extract-3"
+  }
+ },
+ "source_run": "evals/results/2026-10-21-run-ky-ao-vua-1/",
+ "source_truth_dump_sha256": "959ddcb9f2bc18fa0210ac450f3626c67f52656abf62a945380031d9d3539b42",
+ "answer_key_sha256": "ff647ceecea6bf6e3c53c03e1d3ea797593e655445d25ef93aeaa4e69e73976b",
+ "chapters": [
+  6,
+  7,
+  8,
+  9,
+  10
+ ],
+ "runs_per_version": 2,
+ "model": "openai/gpt-6-luna",
+ "extra": {
+  "reasoning": {
+   "effort": "low"
+  }
+ },
+ "max_tokens": 16000,
+ "retries": {
+  "schema": 1,
+  "transient": 2
+ },
+ "config_sha256": {
+  "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+  "limits.yaml": "b0bca581502f2a1d678251b8b1c72f8f8429f0f676cea4cd4ae051ac0895fed5",
+  "models.yaml": "3a1e3dcc3f1b477cbb2e70532b9587871568deb17cf8a4bde8f741b31b4de81d",
+  "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+  "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+  "story_lengths.yaml": "3d81a344728d4d5514259ed83823ff4eebb156207b5b835046efb8dd994992f4"
+ },
+ "budget_usd": 0.05,
+ "cost_usd": 0.018796,
+ "calls": 20,
+ "unit": "cả chương một lời gọi (sản phẩm: mỗi cảnh một lời gọi)",
+ "summary": {
+  "main": {
+   "ok": 10,
+   "errors": 0,
+   "must_hit": 2,
+   "must_total": 6,
+   "may_hit": 1,
+   "false": 0,
+   "unknown": 0,
+   "resolved_total": 3,
+   "rejected_resolved": 0,
+   "rejected_total": 0,
+   "by_chapter": {
+    "6": [
+     [],
+     []
+    ],
+    "7": [
+     [],
+     []
+    ],
+    "8": [
+     [],
+     []
+    ],
+    "9": [
+     [],
+     []
+    ],
+    "10": [
+     [
+      "giao_uoc_nha_pho"
+     ],
+     [
+      "giao_uoc_nha_pho",
+      "mon_no_tran_mac"
+     ]
+    ]
+   }
+  },
+  "branch": {
+   "ok": 10,
+   "errors": 0,
+   "must_hit": 6,
+   "must_total": 6,
+   "may_hit": 11,
+   "false": 0,
+   "unknown": 0,
+   "resolved_total": 17,
+   "rejected_resolved": 1,
+   "rejected_total": 1,
+   "by_chapter": {
+    "6": [
+     [
+      "dau_vet_dau_gia"
+     ],
+     []
+    ],
+    "7": [
+     [
+      "dau_vet_dau_gia"
+     ],
+     [
+      "dau_vet_dau_gia",
+      "mon_no_tran_mac"
+     ]
+    ],
+    "8": [
+     [
+      "dau_vet_dau_gia",
+      "mon_no_tran_mac"
+     ],
+     [
+      "dau_vet_dau_gia",
+      "mon_no_tran_mac"
+     ]
+    ],
+    "9": [
+     [
+      "dau_vet_dau_gia",
+      "mon_no_tran_mac"
+     ],
+     [
+      "dau_vet_dau_gia",
+      "mon_no_tran_mac"
+     ]
+    ],
+    "10": [
+     [
+      "dau_vet_dau_gia",
+      "giao_uoc_nha_pho",
+      "mon_no_tran_mac"
+     ],
+     [
+      "dau_vet_dau_gia",
+      "giao_uoc_nha_pho"
+     ]
+    ]
+   }
+  }
+ }
+}
