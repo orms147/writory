@@ -1,0 +1,30 @@
+# Bài đo A — tham số chạy (docs/eval.md, mục "Bài A"; D-72, D-73). Khai TRƯỚC khi chạy.
+# Đã chạy thật rồi thì không sửa đè: tăng `version`.
+#
+# Model trả lời KHÔNG nằm ở đây: lấy từ config/models.yaml (roles.narrator, role_reasoning.narrator),
+# cùng một model cho cả năm hệ, và ghi vào meta.json. Tóm tắt của hệ "rolling" dùng vai `summary`.
+#
+# Soạn: Claude (nhánh bench-a-memory), 21/10/2026. Chờ điều phối và chủ dự án duyệt trước lần chạy thật.
+
+version: 1
+
+# Số lần hỏi mỗi (câu, hệ). Model không tất định; cờ --samples đổi được, có ghi vào meta.json.
+samples: 3
+
+# Giữ chỗ ngân sách (--budget): trước mỗi lời gọi trừ trước chi phí tối đa có thể =
+# token vào ước tính × giá vào + max_tokens_per_call × giá ra. Chi phí thật lấy từ usage.cost.
+max_tokens_per_call: 4000
+# USD / 1 triệu token, chỉ để giữ chỗ. Cả model trả lời lẫn model tóm tắt phải có giá ở đây.
+# Nguồn: evals/scenarios/narrator/run.yaml (cùng bảng giá, 20/10/2026).
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}
+
+# Hệ RAG (D-73): BM25 trên đoạn văn của chương 1..N-1.
+rag:
+  top_k: 4
+  chunk_chars: 500
+
+# Hệ đồ thị: có thêm chương N (chương người viết vừa viết xong) không. Giữ true để công bằng:
+# hệ "không bộ nhớ", "tóm tắt cuộn" và "RAG" đều được xem chương N. Bài đo là bộ nhớ về chương CŨ.
+graph:
+  recent_chapter: true
