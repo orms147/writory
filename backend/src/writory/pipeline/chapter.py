@@ -2,8 +2,10 @@
 
 Mỗi cảnh: dựng ngữ cảnh và mục tiêu của chương (`pipeline.pacing`, D-49) → dàn ý → viết → soát
 (chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, tự hé lộ tên trang vừa nêu, người canh, dò lộ,
-kiểm duyệt nội dung G9) → viết lại tối đa `limits.retries.rewrite_per_scene` lần → hiện. Bản
-viết lại có lỗi chặn mà bản trước không có thì hiện bản trước (D-50, bổ sung D-36). Hết cảnh
+kiểm duyệt nội dung G9) → viết lại tối đa `limits.retries.rewrite_per_scene` lần → hiện. Dàn ý
+cảnh cuối mà không dàn ý nào của chương định gỡ mạch đến hạn thì thử lại trong ngân sách của dàn
+ý; hết lượt thì viết tiếp với dàn ý cuối (D-82). Bộ trích nhận mạch phải gỡ đang mở ở mọi lượt.
+Bản viết lại có lỗi chặn mà bản trước không có thì hiện bản trước (D-50, bổ sung D-36). Hết cảnh
 cuối: gộp gói các cảnh → `store.commit` (D-6, tất cả hoặc không gì) → tóm tắt chương
 (`pipeline.summary`, D-49; lỗi không làm hỏng chương đã ghi) → tạo lựa chọn từ player_view (G1).
 Đề của chương N nhận tóm tắt chương N-1, N-2. Chương cuối của bản kế hoạch thì không tóm tắt,
@@ -60,9 +62,11 @@ from writory.pipeline.scene import (
     Rewrite,
     SceneBrief,
     SceneOutline,
+    keep_resolves,
     load_style_guide,
     outline_foreign_script,
     outline_messages,
+    unplanned_threads,
     writer_messages,
 )
 from writory.pipeline.store import ChapterStore
@@ -151,6 +155,9 @@ class AcceptedScene:
     attempts: int
     unresolved: list[ReviewIssue]  # lỗi còn lại ở bản được hiện (design §6.2 bước 4: ghi nhật ký)
     rejected: tuple[tuple[str, str], ...]
+    # Id mạch đến hạn mà hết lượt thử dàn ý vẫn không dàn ý nào của chương định gỡ (D-82); lớp
+    # truth, chỉ cho máy chủ đo.
+    unplanned_threads: tuple[str, ...] = ()
 
 
 @dataclass
@@ -245,6 +252,7 @@ class _State(TypedDict, total=False):
     context: WriterContext
     goals: ChapterGoals  # mục tiêu của chương cho cảnh đang làm (D-49)
     outline: SceneOutline
+    unplanned: list[str]  # mạch đến hạn dàn ý cảnh cuối vẫn bỏ sau mọi lượt thử (D-82)
     attempt: int
     draft: str
     finish_reason: str | None
@@ -507,6 +515,10 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
                                 _edge_ends(state))
     model = require_model(d.config.models.roles, "outline")
     retries = d.config.limits.retries
+    goals, last_scene = state["goals"], state["scene"] >= d.request.scene_count
+    earlier = [s.outline for s in state["accepted"]]
+    # Dàn ý đúng mọi điều trừ chỗ bỏ mạch đến hạn: dùng được khi hết lượt (D-82).
+    usable: list[SceneOutline] = []
 
     async def call() -> SceneOutline:
         outline, _ = await d.llm.chat_json(model, messages, SceneOutline,
@@ -515,10 +527,30 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
         if foreign:  # dàn ý phải viết tiếng Việt: sai thì như sai schema, thử lại (D-51, D-14)
             raise WritoryError(ErrorCode.LLM_BAD_RESPONSE,
                                detail=f"SceneOutline: chữ khác hệ ở {', '.join(foreign)}")
+        # Id mạch lạ bị bỏ như `present` (G11); cảnh cuối mà mạch đến hạn không dàn ý nào của
+        # chương định gỡ thì coi là sai, thử lại trong cùng ngân sách (D-82).
+        outline = keep_resolves(outline, goals)
+        missing = unplanned_threads(goals, [*earlier, outline], last_scene=last_scene)
+        if missing:
+            usable.append(outline)
+            raise WritoryError(ErrorCode.LLM_BAD_RESPONSE,
+                               detail=f"SceneOutline: cảnh cuối chương bỏ {len(missing)} mạch "
+                                      "đến hạn")
         return outline
 
-    outline = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                      transient_retries=retries.llm_transient)
+    try:
+        outline = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
+                                          transient_retries=retries.llm_transient)
+        unplanned: list[str] = []
+    except WritoryError as e:
+        if e.code is not ErrorCode.RETRY_LIMIT_REACHED or not usable:
+            raise
+        # Hết lượt mà dàn ý vẫn bỏ mạch đến hạn: không làm hỏng chương, viết tiếp với dàn ý cuối
+        # dùng được; người canh vẫn đòi gỡ ở bước soát (D-49). Log chỉ ghi số, không id hay chữ.
+        outline = usable[-1]
+        unplanned = unplanned_threads(goals, [*earlier, outline], last_scene=last_scene)
+        log.warning("chương %s cảnh %s: hết lượt thử dàn ý, %s mạch đến hạn chưa có dàn ý nào "
+                    "định gỡ; viết tiếp", state["chapter"], state["scene"], len(unplanned))
     allowed = {c.id for c in candidates}
     present = list(dict.fromkeys([protagonist, *(p for p in outline.present if p in allowed)]))
     dropped = len([p for p in outline.present if p not in allowed])
@@ -527,8 +559,8 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
                  state["chapter"], state["scene"], dropped)
     if set(present) != {c.id for c in ctx.present}:
         ctx = _writer_context(d, state, present)
-    return {"outline": outline, "present": present, "context": ctx, "attempt": 1, "review": None,
-            "fallback": None}
+    return {"outline": outline, "unplanned": unplanned, "present": present, "context": ctx,
+            "attempt": 1, "review": None, "fallback": None}
 
 
 async def _write(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -587,7 +619,8 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             d.llm, extract_model, chapter=chapter, chapter_id=state["header"].nodes[0].id,
             commit_id=state["commit_id"], protagonist_id=state["protagonist"],
             chapter_text=text, entities=entities, open_edges=open_edges,
-            extra=role_extra(cfg.models, "extract"),
+            # Mạch phải gỡ chưa gỡ trước cảnh này, kèm hạn; không kèm dàn ý định gỡ gì (D-82).
+            threads=state["goals"].threads, extra=role_extra(cfg.models, "extract"),
         ),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
     )
@@ -686,7 +719,8 @@ async def _accept(state: _State, runtime: Runtime[_Deps]) -> dict:
                     state["chapter"], scene, state["attempt"], _kinds(review.issues))
     runtime.stream_writer(SceneReady(scene=scene, text=review.text))
     accepted = AcceptedScene(scene, review.text, review.package, state["outline"],
-                             state["attempt"], list(review.issues), review.rejected)
+                             state["attempt"], list(review.issues), review.rejected,
+                             tuple(state.get("unplanned", [])))
     return {"accepted": [*state["accepted"], accepted], "scene": scene + 1, "review": None}
 
 

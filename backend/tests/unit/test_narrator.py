@@ -395,15 +395,26 @@ def _sentences(text: str) -> list[str]:
     return [s for s in re.split(r"(?<=[.!?…])\s+|\n+", text) if s.strip()]
 
 
+# Câu văn truyện lưới bắt oan đã biết (giới hạn đã ghi ở D-78, Hệ quả). Mỗi mục là (thư mục kết
+# quả, file, câu); muốn bỏ một mục thì phải sửa cụm trong META_HEDGE_PATTERNS, có test.
+KNOWN_STORY_FALSE_POSITIVES = {
+    # ky-ao-vua-2 (D-82): "chưa được nhắc" là chuyện biên bản trong truyện, không phải người kể.
+    ("2026-10-21-run-ky-ao-vua-2", "ch06.md",
+     "Còn quyền quản giữ lâu dài vẫn chưa được nhắc đến trên giấy."),
+}
+
+
 def test_no_sentence_of_any_story_text_in_the_repo_is_caught():
     """Văn truyện là nguồn của sổ tay: câu trả lời kể lại câu trên trang không được bị chặn oan.
-    Truyện mẫu viết tay và các truyện do pipeline viết trong evals/results."""
+    Truyện mẫu viết tay và các truyện do pipeline viết trong evals/results. Câu bắt oan đã biết
+    nằm riêng ở KNOWN_STORY_FALSE_POSITIVES, và phải vẫn bị bắt (để danh sách không cũ đi)."""
     files = sorted((REPO_ROOT / "data" / "sample-story").glob("ch*.md"))
     files += sorted(RESULTS.glob("*/chapters/ch*.md"))
     assert len(files) > 5
-    caught = [(f.name, s) for f in files for s in _sentences(f.read_text(encoding="utf-8"))
-              if meta_hedge(s) is not None]
-    assert caught == []
+    caught = {(f.parent.parent.name, f.name, s) for f in files
+              for s in _sentences(f.read_text(encoding="utf-8")) if meta_hedge(s) is not None}
+    assert caught - KNOWN_STORY_FALSE_POSITIVES == set()
+    assert KNOWN_STORY_FALSE_POSITIVES <= caught
 
 
 def test_every_pattern_has_a_name_and_catches_its_own_example():

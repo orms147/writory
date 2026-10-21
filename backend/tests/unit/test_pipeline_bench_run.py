@@ -22,6 +22,7 @@ from writory.pipeline.bench_run import (
     models_in_use,
     openrouter_client,
 )
+from writory.pipeline.scene import SceneOutline
 from writory.quality import check_scene
 
 SCENARIO_PATH = bench_run.DEFAULT_SCENARIO
@@ -119,6 +120,8 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     assert "| summary |" in summary_md and "Tóm tắt chương: tạo" in summary_md
     assert report["issues"]["left_when_shown"] == {"guard:overdue_secret": 1,
                                                    "guard:overdue_thread": 1}
+    # Dàn ý giả ghi gỡ mọi mạch có id trong đề (D-82): không dàn ý nào bị thử lại vì bỏ mạch.
+    assert report["outline_unplanned_threads"] == 0
 
     # Lựa chọn tự chọn ở chương 1 là hành động dẫn tới chương 2, đúng như người chơi bấm.
     picked = next(e for e in events if e["type"] == "choice_picked" and e["chapter"] == 1)
@@ -269,6 +272,41 @@ def _with_bad_edge(answer: str) -> str:
                           "kind": None, "score": None, "how": None, "told_by": None,
                           "quote": None, "known_as": None, "role": None})
     return json.dumps(data, ensure_ascii=False)
+
+
+class _NoResolves(DryRunLLM):
+    """DryRunLLM mà dàn ý không bao giờ định gỡ mạch nào."""
+
+    def reply(self, schema_name, text):
+        answer = super().reply(schema_name, text)
+        if schema_name == SceneOutline.__name__:
+            return json.dumps(json.loads(answer) | {"resolves": []}, ensure_ascii=False)
+        return answer
+
+
+async def test_outline_that_never_plans_a_due_thread_is_counted_not_fatal(tmp_path):
+    """D-82: hết lượt thử mà dàn ý cảnh cuối vẫn bỏ mạch đến hạn thì truyện vẫn đi tiếp; report
+    đếm số mạch như vậy (không id), id chỉ ở truth_dump."""
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, store, out = make_run(tmp_path, llm=_NoResolves(total), config=config)
+    assert await run.run() == bench_run.EXIT_OK
+    assert store.committed == total
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    # Mạch t_ngoc_boi chỉ đến hạn ở chương cuối, cảnh cuối (hạn gỡ total-1..total).
+    assert report["outline_unplanned_threads"] == 1
+    tries = 1 + config.limits.retries.extract_schema_retry
+    assert report["calls"]["by_role"]["outline"] == total * run.scenario.scene_count - 1 + tries
+    assert "Dàn ý cảnh cuối bỏ mạch đến hạn" in (out / "summary.md").read_text(encoding="utf-8")
+    assert "t_ngoc_boi" not in all_text(out, skip=("truth_dump.json",))
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    last = dump["chapters"][str(total)][-1]["outlines"][-1]
+    assert last["unplanned_threads"] == ["t_ngoc_boi"] and last["resolves"] == []
+
+
+def test_resolved_in_without_quote_has_its_own_reject_group():
+    assert bench_run.reject_reason("gỡ mạch mà không có câu trích (D-82)") == (
+        "gỡ mạch mà không có câu trích (D-82)")
 
 
 async def test_rewrites_issue_kinds_and_rejected_edges_are_counted(tmp_path):

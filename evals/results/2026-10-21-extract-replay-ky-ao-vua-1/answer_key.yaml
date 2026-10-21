@@ -1,0 +1,55 @@
+# Đáp án khai TRƯỚC khi gọi model (21/10/2026), đọc tay văn evals/results/2026-10-21-run-ky-ao-vua-1/chapters/ch06–ch10.md.
+# Người đọc: Claude. Mỗi chương phát lại độc lập, trên trạng thái của lần chạy gốc tới hết chương trước
+# (truth_dump.json, packages 0..N-1). Trong trạng thái đó: doan_nguoi_luu_lac đã gỡ ở chương 1; bốn mạch
+# còn lại chưa gỡ ở mọi chương 6–10 (lần chạy gốc ghi mon_no_tran_mac gỡ ở chương 10, tức sau chương 9).
+#
+# must:     chương đầu tiên mà văn gỡ rõ mạch (câu trả lời câu hỏi chính, hoặc quyết định mạch đòi). Không ghi là sót.
+# may:      văn gỡ một phần, ngầm, hoặc nói lại câu trả lời đã có ở chương trước. Ghi hay không đều chấp nhận.
+# must_not: văn chương này chưa gỡ mạch (hoặc mạch đã gỡ trong trạng thái). Ghi là gỡ giả.
+version: 1
+threads:
+  dau_vet_dau_gia: "Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí."
+  doan_nguoi_luu_lac: "Đưa đoàn người của Tào Vân Chi qua vùng đá trôi mà không để họ bị cuốn vào cuộc tranh đoạt."
+  mon_no_tran_mac: "Làm rõ cái giá Trần Mặc đã trả để giữ an toàn cho Hội Lưu Dân và quyết định có thể tiếp tục tin hắn hay không."
+  giao_uoc_nha_pho: "Khám phá giao ước của gia tộc Phó và quyết định số phận món đồ gia truyền."
+  so_phan_cho: "Ngăn các tiên môn biến khu chợ dưới đảo vỡ thành chiến trường và xác định ai sẽ bảo vệ người lưu lạc."
+chapters:
+  6:
+    must: []
+    may: [dau_vet_dau_gia, mon_no_tran_mac]
+    must_not: [giao_uoc_nha_pho, so_phan_cho, doan_nguoi_luu_lac]
+  7:
+    must: []
+    may: [dau_vet_dau_gia, mon_no_tran_mac]
+    must_not: [giao_uoc_nha_pho, so_phan_cho, doan_nguoi_luu_lac]
+  8:
+    must: [dau_vet_dau_gia, mon_no_tran_mac]
+    may: []
+    must_not: [giao_uoc_nha_pho, so_phan_cho, doan_nguoi_luu_lac]
+  9:
+    must: []
+    may: [dau_vet_dau_gia, mon_no_tran_mac]
+    must_not: [giao_uoc_nha_pho, so_phan_cho, doan_nguoi_luu_lac]
+  10:
+    must: [giao_uoc_nha_pho]
+    may: [dau_vet_dau_gia, mon_no_tran_mac]
+    must_not: [so_phan_cho, doan_nguoi_luu_lac]
+evidence:  # chNN:dòng trong chapters/chNN.md của lần chạy gốc
+  dau_vet_dau_gia:
+    - "ch06:81-83 người sống sót được hộ tống khỏi chợ; ch06:101 vệt khuyết khớp dấu món đồ gia tộc, chưa nối với mảnh thần khí: may"
+    - "ch07:93 xác nhận người dự đấu giá được đưa đi; ch07:59 'Còn dấu dẫn tới mảnh thần khí vẫn nằm dưới này': may (hướng, chưa phải dấu vết rõ)"
+    - "ch08:79-81 'Những người mua và bán đã được đưa đi nguyên vẹn khỏi chợ'; ch08:91 'Đầu mối của mảnh thần khí nằm dưới lớp đá này'; ch08:133 Mảnh Khiếp Tàn Thiên: must"
+    - "ch09:129, ch09:177 và ch10:101, ch10:161 nói lại câu trả lời: may"
+  mon_no_tran_mac:
+    - "ch06:47-53 lời thú nhận (cái giá); ch06:73 'Tôi còn phải quyết định...'; ch06:119-123 không giao thẻ: may"
+    - "ch07:107 thú nhận lại; ch07:131 'Ta không quay lại với ngươi lúc này' (quyết định tạm): may"
+    - "ch08:109 nói rõ cái giá, kể cả người bị bỏ ngoài; ch08:125-127 'từ giờ, ngươi sẽ không còn tự chọn thay ta...'; 'câu trả lời đã nằm trong khoảng cách giữa chúng tôi': must"
+    - "ch09:169 'Ngươi đi cùng chúng ta... Ta chưa tin ngươi vô điều kiện'; ch10:45-49, ch10:145 nói lại quyết định: may"
+  giao_uoc_nha_pho:
+    - "ch08:133 biết gia tộc Phó giữ mảnh theo giao ước, chưa biết điều khoản, chưa quyết số phận món đồ: must_not"
+    - "ch09:125-129 dấu trên món đồ khớp đường khắc, chưa có quyết định: must_not"
+    - "ch10:153-161 đọc giao ước, món đồ là dấu nhận người giữ giao ước; ch10:173 'Ta không giao nó cho Huyền Kính.': must"
+  so_phan_cho:
+    - "ch10:165-175 Huyền Kính đòi món đồ để 'bảo đảm khu chợ được yên', nhân vật chính từ chối, còn đang đối đầu: chưa gỡ ở chương 6–10"
+  doan_nguoi_luu_lac:
+    - "đã có RESOLVED_IN ở chương 1 trong trạng thái; ghi lại là gỡ giả"

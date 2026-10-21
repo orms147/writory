@@ -1,6 +1,7 @@
 """Trích thay đổi đồ thị từ văn bản một chương (design §6.2 bước 3; G3, G11, D-17, D-21, D-22).
 
-Đầu vào: danh mục thực thể đang có (id, nhãn, tên/chữ), các cạnh đang hiệu lực, văn bản chương.
+Đầu vào: danh mục thực thể đang có (id, nhãn, tên/chữ), các cạnh đang hiệu lực, mạch phải gỡ còn
+mở kèm trạng thái hạn (`guard.plan`, như mục tiêu của chương; D-82), văn bản chương.
 Đầu ra: `ChangePackage` của chương N. Model chỉ được tham chiếu id trong danh mục (G11); bản đầu
 chưa tạo nút mới, nên danh mục phải có sẵn mọi nút của chương (bài C v1, docs/eval.md).
 
@@ -8,10 +9,11 @@ Model trả JSON theo `ExtractOutput`: mọi trường bắt buộc, giá trị 
 JSON schema strict. Code đổi sang `ChangePackage`, kiểm từng cạnh một: cạnh sai quy tắc bị bỏ và
 đếm lại (`ExtractResult.rejected`), không làm hỏng cả gói. Một trong các quy tắc: `known_as` trùng
 tên hay biệt danh lớp truth của một nút khác thì bỏ cạnh, vì người chơi sẽ biết nút này dưới tên
-của nút kia (D-62, `safety.reveal.known_as_conflicts`).
+của nút kia (D-62, `safety.reveal.known_as_conflicts`). `RESOLVED_IN` phải kèm câu trích nguyên văn
+như hé lộ (D-82). Bộ trích không được biết dàn ý định gỡ mạch nào, để không ghi gỡ theo ý định.
 """
 
-from collections.abc import Mapping
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
@@ -21,6 +23,7 @@ from writory.graph.commit import needs_known_as
 from writory.graph.package import KNOWS_HOW, ChangePackage, CloseSpec, EdgeSpec, quote_in_text
 from writory.graph.schema import NAMED_LABELS
 from writory.llm.base import ChatResult, LLMClient
+from writory.pipeline.pacing import ThreadGoal
 from writory.safety.reveal import known_as_conflicts
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -30,7 +33,9 @@ from writory.safety.wrap import (
     user_message,
 )
 
-PROMPT_VERSION = "extract-2"  # đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1
+# Đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1. extract-3: mạch phải
+# gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82).
+PROMPT_VERSION = "extract-3"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -53,7 +58,7 @@ class ExtractedEdge(_Out):
     score: int | None  # RELATES_TO: −100…100
     how: KnowsHow | None  # KNOWS
     told_by: str | None  # KNOWS với how = "được kể"
-    quote: str | None  # REVEALED_TO_PLAYER và KNOWS của nhân vật chính: nguyên văn trong chương
+    quote: str | None  # REVEALED_TO_PLAYER, RESOLVED_IN, KNOWS của nhân vật chính: nguyên văn
     known_as: str | None  # hé lộ nút có tên: tên người chơi thấy, nằm trong quote
     role: str | None  # PARTICIPATED_IN
 
@@ -111,15 +116,21 @@ Kiểu cạnh:
 - KNOWS (nhân vật → sự thật/sự kiện/lời nói dối): nhân vật biết điều đó từ chương này. `how` là một trong: "chứng kiến", "được kể", "suy ra", "tự biết", "tự làm". Nếu "được kể" thì `told_by` là id người kể. KNOWS tới một lời nói dối nghĩa là biết đó là lời dối.
 - TOLD (người nói → lời nói dối) và TOLD_TO (lời nói dối → người nghe).
 - ABOUT (sự thật/sự kiện → thực thể mà nó nói về).
-- RESOLVED_IN (mạch → nút chương này): một mạch, cài cắm hay câu hỏi bỏ ngỏ được gỡ (trả lời, kết thúc) trong chương này.
+- RESOLVED_IN (mạch → nút chương này): một mạch, cài cắm hay câu hỏi bỏ ngỏ được gỡ trong chương này; xem mục "Gỡ mạch".
 - REVEALED_TO_PLAYER (thực thể → nút chương này): điều người chơi được thấy trên trang ở chương này, theo góc nhìn nhân vật chính.
 
 Hé lộ cho người chơi:
 - Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ ở chương trước thì không ghi lại.
 - Không đánh dấu hé lộ một bí mật mà trang chỉ gợi ý hay để người đọc đoán. Chỉ ghi khi trang nói rõ điều đó.
 
+Gỡ mạch (RESOLVED_IN):
+- Một mạch được gỡ khi trang trả lời rõ câu hỏi chính của mạch, hoặc khi nhân vật đưa ra quyết định mà mạch đòi. Chi tiết phụ còn bỏ ngỏ không giữ mạch mở: câu hỏi chính đã có câu trả lời, hay quyết định đã được nói ra, thì ghi gỡ.
+- Chỉ nhắc lại điều đã biết từ chương trước, chỉ gợi ý, hay hứa sẽ làm rõ sau thì KHÔNG phải gỡ.
+- Mục "Mạch phải gỡ đang mở" (nếu có) liệt kê các mạch truyện phải gỡ, kèm hạn: soát từng mạch trong đó với văn bản chương. Trạng thái hạn chỉ để biết mạch nào cần soát kỹ, không phải lý do để ghi gỡ.
+- RESOLVED_IN bắt buộc có `quote`: câu trên trang trả lời câu hỏi chính hay nói ra quyết định đó.
+
 Câu trích (`quote`):
-- Bắt buộc với REVEALED_TO_PLAYER và với KNOWS mà người biết là nhân vật chính. Không có câu trích thì KHÔNG ghi cạnh đó.
+- Bắt buộc với REVEALED_TO_PLAYER, với RESOLVED_IN, và với KNOWS mà người biết là nhân vật chính. Không có câu trích thì KHÔNG ghi cạnh đó.
 - Chép NGUYÊN VĂN một đoạn ngắn liền mạch trong chương (một câu là đủ); không sửa chữ, không ghép hai đoạn, không thêm dấu ba chấm.
 - Hé lộ một nhân vật, nơi chốn, đồ vật hay phe thì `known_as` là cái tên người chơi đọc thấy trên trang, CHÉP Y NGUYÊN từ bên trong `quote` (cùng chữ hoa, cùng dấu). Không dùng tên thật nếu trang chỉ gọi bằng biệt danh.
 
@@ -137,9 +148,37 @@ def _entity_line(e: Entity) -> list[str | UserAuthored]:
     return [head + escape_text(e.text + aliases)]
 
 
+# Trạng thái hạn của mạch phải gỡ, cho bộ trích (D-82). `later` (chưa tới khoảng gỡ) không liệt kê.
+_THREAD_STATUS = {"overdue": "quá hạn", "due": "đến hạn ở chương này", "open": "trong khoảng gỡ"}
+
+
+def _window(low: int | None, high: int | None) -> str:
+    if low is None or high is None:
+        return "trước khi kết truyện"
+    return f"chương {low}" if low == high else f"chương {low}–{high}"
+
+
+def _thread_lines(threads: Sequence[ThreadGoal]) -> list[str | UserAuthored]:
+    """Mục "Mạch phải gỡ đang mở". Mô tả do model khởi tạo viết thì escape; mạch người chơi viết
+    thì bọc (G4). Rỗng thì không có mục: bài C (truyện mẫu, không kế hoạch) không bị nhắc sai."""
+    listed = [t for t in threads if t.status in _THREAD_STATUS]
+    if not listed:
+        return []
+    parts: list[str | UserAuthored] = [
+        "Mạch phải gỡ đang mở (id | hạn gỡ | trạng thái | mô tả):"]
+    for t in listed:
+        head = (f"- {t.thread_id} | {_window(t.from_chapter, t.to_chapter)} | "
+                f"{_THREAD_STATUS[t.status]} | ")
+        if t.user_authored:
+            parts += [head, UserAuthored(t.description, "thread")]
+        else:
+            parts.append(head + escape_text(t.description))
+    return parts
+
+
 def build_messages(
     *, chapter: int, chapter_id: str, protagonist_id: str, chapter_text: str,
-    entities: list[Entity], open_edges: list[OpenEdge],
+    entities: list[Entity], open_edges: list[OpenEdge], threads: Sequence[ThreadGoal] = (),
 ):
     parts: list[str | UserAuthored] = [
         f"Chương: {chapter} (id nút chương: {chapter_id}). Nhân vật chính: {protagonist_id}.",
@@ -149,6 +188,7 @@ def build_messages(
         parts += _entity_line(e)
     parts.append("Cạnh đang hiệu lực trước chương này (id | kiểu | từ → tới):")
     parts += [f"- {o.id} | {o.type} | {o.source} → {o.target}" for o in open_edges] or ["- (không có)"]
+    parts += _thread_lines(threads)
     # Văn bản chương có thể chứa chữ người chơi (tên, hành động tự viết): luôn bọc như dữ liệu (G4).
     parts += ["Văn bản chương:", UserAuthored(chapter_text, "chapter_text")]
     return [system_message(SYSTEM_PROMPT, DATA_NOTICE), user_message(*parts)]
@@ -183,6 +223,10 @@ def to_package(
         if x.type == "KNOWS" and x.source == protagonist_id and not x.quote:
             # G3: người chơi chỉ biết điều có trên trang; thiếu bằng chứng thì không ghi.
             rejected.append((desc, "nhân vật chính biết mà không có câu trích (G3)"))
+            continue
+        if x.type == "RESOLVED_IN" and not x.quote:
+            # Gỡ mạch phải có bằng chứng trên trang, để không ghi gỡ giả (D-82).
+            rejected.append((desc, "gỡ mạch mà không có câu trích (D-82)"))
             continue
         props = {
             k: v for k, v in (("kind", x.kind), ("score", x.score), ("how", x.how),
@@ -225,12 +269,13 @@ def to_package(
 async def extract_changes(
     llm: LLMClient, model: str, *, chapter: int, chapter_id: str, commit_id: str,
     protagonist_id: str, chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
-    extra: Mapping[str, Any] | None = None,
+    threads: Sequence[ThreadGoal] = (), extra: Mapping[str, Any] | None = None,
 ) -> ExtractResult:
-    """Một lời gọi model. Lỗi schema để nơi gọi thử lại theo RETRY_SCHEMA (G11, D-14)."""
+    """Một lời gọi model. Lỗi schema để nơi gọi thử lại theo RETRY_SCHEMA (G11, D-14).
+    `threads`: mạch phải gỡ chưa gỡ, kèm trạng thái hạn (`ChapterGoals.threads`, D-82)."""
     messages = build_messages(
         chapter=chapter, chapter_id=chapter_id, protagonist_id=protagonist_id,
-        chapter_text=chapter_text, entities=entities, open_edges=open_edges,
+        chapter_text=chapter_text, entities=entities, open_edges=open_edges, threads=threads,
     )
     output, chat = await llm.chat_json(model, messages, ExtractOutput, extra=extra)
     package, rejected = to_package(

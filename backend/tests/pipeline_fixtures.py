@@ -185,12 +185,13 @@ def unavailable() -> WritoryError:
 # --- câu trả lời ghi sẵn ------------------------------------------------------------------------
 
 
-def outline_reply(present=("minh", "lan"), beats=None) -> str:
+def outline_reply(present=("minh", "lan"), beats=None, resolves=()) -> str:
     return json.dumps({
         "goal": "Lan tới thăm Minh, để lộ rằng cô biết thanh kiếm là của Lão Gù",
         "present": list(present),
         "beats": beats or ["Lan mang cháo tới gác", "Lan hỏi về thanh kiếm", "Lan về khi mưa ngớt"],
         "ends_at": "Lan rời gác",
+        "resolves": list(resolves),
     }, ensure_ascii=False)
 
 

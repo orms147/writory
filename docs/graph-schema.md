@@ -45,7 +45,7 @@ Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu 
 | `TOLD` | Character → Lie | | người nói |
 | `TOLD_TO` | Lie → Character | | người nghe |
 | `ABOUT` | Fact/Event/Lie → bất kỳ | | mệnh đề, sự kiện hay lời nói dối nói về ai, cái gì |
-| `RESOLVED_IN` | Thread → Chapter | | mạch được gỡ |
+| `RESOLVED_IN` | Thread → Chapter | `quote` | mạch được gỡ. Bộ trích chỉ ghi khi có `quote` nguyên văn trong chương: câu trả lời câu hỏi chính của mạch hay câu nói ra quyết định mạch đòi (`to_package`, D-82). Gói dựng tay (truyện mẫu) có thể không có `quote` |
 | `REVEALED_TO_PLAYER` | bất kỳ → Chapter | `quote` (bắt buộc, G3), `known_as`, `by_choice` | hé lộ trên trang ở chương đó. `by_choice`: id lựa chọn dẫn tới lần lộ (D-22) |
 
 **`known_as` (D-17).** Cạnh `REVEALED_TO_PLAYER` từ một nút có tên (Character/Location/Item/Faction), và cạnh `KNOWS` từ nhân vật chính tới một nút có tên, **bắt buộc** có `known_as`: tên người chơi biết lúc đó, phải nằm trong `quote` (cùng cách chuẩn hoá với `quote_in_text`). Một nút có thể được hé lộ nhiều lần với tên khác nhau, ví dụ biệt danh trước, tên thật sau. Thiếu `known_as` thì `apply_package` báo `InvalidPackageError`. `known_as` trùng tên hay biệt danh lớp truth của một nút khác (bỏ dấu, không phân biệt hoa thường) thì bộ trích bỏ cạnh, vì người chơi sẽ biết nút này dưới tên nút kia (`safety.reveal.known_as_conflicts`, D-62).
@@ -149,6 +149,6 @@ Truyện mẫu có chương 0 (gói khởi tạo, không có văn bản) và ch�
 ## Chưa làm
 - **Lời người chơi đã nghe.** Người chơi đã nghe lời nói dối của nhân vật khác (ví dụ `l_lan_cover`, `TOLD_TO` nhân vật chính), nhưng `player_view` chưa có gì về chuyện đó. Vì vậy sổ tay thiếu "Lan kể rằng cô trốn hôn nhân". Cần hiện dưới dạng **lời kể** ("Lan kể: …") và **không** được gắn nhãn `Lie`, vì gắn nhãn là lộ. Làm cùng sổ tay ở tuần 5, kèm test G1.
 - `player_view` chưa có quan hệ và người giữ đồ vật cho sổ tay (D-16).
-- G3 ở `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`. Đối chiếu câu trích với văn bản nằm ở `validate_sample` (truyện mẫu) và ở bộ trích (`to_package` gọi `quote_in_text` trên đúng chữ cảnh sẽ hiện, D-36); gói do nơi khác dựng thì chưa được đối chiếu.
+- G3 ở `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`. Đối chiếu câu trích với văn bản nằm ở `validate_sample` (truyện mẫu) và ở bộ trích (`to_package` gọi `quote_in_text` trên đúng chữ cảnh sẽ hiện, D-36; với `RESOLVED_IN` thì bắt buộc có câu trích, D-82); gói do nơi khác dựng thì chưa được đối chiếu. `apply_package` chưa đòi `quote` ở `RESOLVED_IN`.
 - **Tự reconcile lúc khởi động app.** Hiện `reconcile_pending` chỉ chạy tay (lệnh trong `docs/runbook.md`). App FastAPI đã có nhưng chưa gọi nó lúc khởi động (TODO ở `backend/src/writory/api/app.py:81`); cần nối để truyện không kẹt `pending` sau khi máy chủ chết giữa chừng.
 - **`writer_context` chạy trên `GraphState`.** Hiện chỉ đọc từ Neo4j ở chương đã commit. Pipeline (D-36) bù bằng cách đưa thêm văn và thay đổi đã trích của các cảnh trước vào đề, nhưng các mục của ngữ cảnh (người có mặt đang ở đâu, giữ gì, biết gì) chưa tính các gói chưa ghi đó.

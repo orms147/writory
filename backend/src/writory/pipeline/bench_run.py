@@ -435,6 +435,7 @@ _REJECT_REASONS = (
     "nhân vật chính biết mà không có câu trích (G3)", "hé lộ nút có tên mà thiếu known_as (D-17)",
     "trùng cạnh trong cùng gói", "không phải cạnh đang hiệu lực",
     "known_as là tên của nút khác",  # D-62
+    "gỡ mạch mà không có câu trích (D-82)",
 )
 
 
@@ -791,7 +792,9 @@ class StoryRun:
             "chapter": number, "attempt": attempt, "committed": out.committed,
             "blocked_scene": out.blocked_scene, "error": out.error.value if out.error else None,
             "scenes": [{"scene": s.number, "attempts": s.attempts, "chars": len(s.text),
-                        "left_when_shown": _kinds(s.unresolved)} for s in out.scenes],
+                        "left_when_shown": _kinds(s.unresolved),
+                        # Mạch đến hạn dàn ý cảnh cuối vẫn bỏ sau mọi lượt thử (D-82): chỉ số.
+                        "outline_unplanned": len(s.unplanned_threads)} for s in out.scenes],
             "reviews": reviews, "rewrites": sum(r["verdict"] == "rewrite" for r in reviews),
             "fallbacks": sum(r["verdict"] == "fallback" for r in reviews),
             "choices": len(out.choices), "cost_usd": round(out.cost_usd, 6),
@@ -803,7 +806,8 @@ class StoryRun:
         self.truth_chapters[str(number)].append({
             "attempt": attempt, "commit_id": out.commit_id, "player_action": action,
             "error_detail": out.error_detail, "summary": out.summary,
-            "outlines": [{"scene": s.number, **s.outline.model_dump()} for s in out.scenes],
+            "outlines": [{"scene": s.number, **s.outline.model_dump(),
+                          "unplanned_threads": list(s.unplanned_threads)} for s in out.scenes],
             "reviews": [{
                 "scene": r.scene, "attempt": r.attempt, "verdict": r.verdict,
                 "issues": [{"source": i.source, "kind": i.kind, "block": i.block,
@@ -1041,6 +1045,9 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         # Bản viết lại có lỗi chặn nên hiện bản trước (D-50, bổ sung D-36).
         "fallbacks": sum(a["fallbacks"] for a in run.attempts),
         "scenes_blocked": sum(1 for a in run.attempts if a["blocked_scene"]),
+        # Mạch đến hạn mà hết lượt thử dàn ý cảnh cuối vẫn không dàn ý nào định gỡ (D-82).
+        "outline_unplanned_threads": sum(s["outline_unplanned"] for a in run.attempts
+                                         for s in a["scenes"]),
         # Tóm tắt chương (D-49): tạo được, lỗi, và số chương đã ghi chạy thiếu tóm tắt chương trước.
         "summaries": {
             "made": sum(a["summary"] == "made" for a in run.attempts),
@@ -1098,6 +1105,8 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         (f"- Viết lại: {report['rewrites']}; hiện bản trước vì bản viết lại có lỗi chặn: "
          f"{report['fallbacks']}; cảnh bị chặn: {report['scenes_blocked']}; tự bấm thử "
          f"lại: {_fmt_counts(report['player_retries_used'])}."),
+        (f"- Dàn ý cảnh cuối bỏ mạch đến hạn sau mọi lượt thử (D-82): "
+         f"{report['outline_unplanned_threads']} mạch."),
         (f"- Tóm tắt chương: tạo {report['summaries']['made']}, lỗi "
          f"{report['summaries']['failed']}; chương chạy thiếu tóm tắt chương trước: "
          f"{report['summaries']['chapters_missing_previous']}."),
@@ -1329,9 +1338,9 @@ _EDGE_NULLS = {"kind": None, "score": None, "how": None, "told_by": None, "quote
 
 class DryRunLLM(FakeLLM):
     """--dry-run: model giả trả câu ghi sẵn theo vai (nhận ra qua schema JSON), đủ hợp lệ để đi hết
-    đường: 3 lựa chọn mỗi bước khởi tạo, thế giới `dry_run_world`, dàn ý, một cảnh viết tay, bộ trích
-    hé lộ `DRY_RUN_NPC` ở lần đầu nhân vật này xuất hiện, một tóm tắt chương, 3 lựa chọn dùng mã
-    trong sổ tay.
+    đường: 3 lựa chọn mỗi bước khởi tạo, thế giới `dry_run_world`, dàn ý (định gỡ mọi mạch có id
+    trong đề, D-82), một cảnh viết tay, bộ trích hé lộ `DRY_RUN_NPC` ở lần đầu nhân vật này xuất
+    hiện, một tóm tắt chương, 3 lựa chọn dùng mã trong sổ tay.
     Không mạng, không key."""
 
     def __init__(self, total_chapters: int, *, cost_usd: float | None = DRY_RUN_COST_USD) -> None:
@@ -1353,6 +1362,8 @@ class DryRunLLM(FakeLLM):
                 "beats": ["Hắn về sân sau một đêm ngồi thiền", "Sư tỷ hỏi chuyện vách đá",
                           "Sư tỷ đưa đan dược và dặn mang kiếm"],
                 "ends_at": "Hắn bị ghi tên vào sổ phạt",
+                # Mọi mạch có id trong mục tiêu của chương (D-82): dàn ý giả không bị thử lại.
+                "resolves": re.findall(r"\(id ([^,\s]+), hạn gỡ", text),
             },
             ExtractOutput.__name__: lambda: self._extract(text),
             ChoicesOutput.__name__: lambda: self._choices(text),
