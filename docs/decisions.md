@@ -653,6 +653,22 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** chạy lặp chỉ lộ sự không ổn định của model (suy luận thấp, lấy mẫu); nó không chứng minh một câu ổn định là đúng. Con số trên bộ giữ riêng là ước lượng độ chính xác trung thực hơn, nhưng bộ chỉ vài chục câu nên khoảng tin cậy rộng. Lần chạy thật do điều phối làm.
 - **Người quyết:** Claude (nhánh g9-holdout), điều phối giao việc, chờ duyệt · 21/10/2026
 
+## D-72 · Bài A (bộ nhớ): năm hệ trả lời cùng một model, câu hỏi chỉ về điều có trên trang, chấm bằng code
+- **Bối cảnh:** design §9 A đặt năm đối thủ và hẹn bản 1 chạy ba (tóm tắt, nhét cả truyện, đồ thị). Điều phối giao dựng khung đủ năm hệ; chưa có bộ câu hỏi nào, chỉ có truyện mẫu và `graph.yaml` dựng tay chờ duyệt.
+- **Quyết định:**
+  - Năm hệ (`pipeline/bench_a_systems.py`) cùng một model trả lời (vai `narrator` của `config/models.yaml`), khác ở ngữ cảnh. Mọi hệ trừ nhét cả truyện được xem thêm **chương N** (chương vừa viết xong), để bài đo là bộ nhớ về chương cũ chứ không phải đọc chương hiện tại; `run.yaml` có cờ cho hệ đồ thị. Hệ tóm tắt dùng tóm tắt từng chương của vai `summary` có sẵn (D-49) nối lại, không gấp dần một bản; chi phí dựng tính cho hệ này. Hệ đồ thị đọc chỉ qua `GraphState` (G10), nền Neo4j khi chạy thật, nền gói trong bộ nhớ khi chạy khô; test so hai nền ra cùng ngữ cảnh.
+  - Câu hỏi (`evals/scenarios/memory/questions.yaml`): năm nhóm, mỗi câu khai chương hỏi, chương của sự thật, đáp án gốc kèm `derive` (tính lại từ đồ thị) và `evidence` (câu trích có trên trang). Điều chỉ có ở lớp sự thật mà trang chưa nói (Lan là gián điệp từ đầu, Lan giữ kiếm ở chương 4, ai giết Lão Gù) không hỏi, vì hệ đồ thị thấy được còn các hệ khác không thể đúng.
+  - Chấm bằng code: tập thực thể, có/không, chọn một, nhóm từ khoá; "Không biết" tính riêng; lượt lỗi hay thiếu tính chưa đúng; Wilson cho khoảng tin cậy. Không giám khảo LLM ở v1.
+  - Khung kiểm: `FakeAnswerer` oracle chỉ đúng khi ngữ cảnh đủ chứng cứ; null; wrong.
+- **Hệ quả:** hệ đồ thị dùng đồ thị dựng tay nên đo **trần của phần đọc**; chất lượng bộ trích đo ở bài C, không ở đây. Hệ đồ thị thấy một ít lớp sự thật ngoài trang (người liên quan trong sự kiện, cạnh mở ở chương N chưa hé lộ); ghi nhận, vì trong sản phẩm người viết cũng thấy. Câu "quan hệ" chủ quan nhất (bạn hay yêu ở chương 2–3). Design §9 để `none` và `rag` cho bản 2: khung có sẵn, chạy cả năm hay chỉ ba do chủ dự án quyết (`--systems`). Chưa chạy thật; `bench_a plan` in chi phí ước tính.
+- **Người quyết:** Claude (nhánh bench-a-memory), chờ điều phối và chủ dự án duyệt · 21/10/2026
+
+## D-73 · Hệ RAG của bài A dùng BM25, không dùng embedding
+- **Bối cảnh:** design §9 A ghi "RAG vector thường". Embedding qua OpenRouter cần chọn model và giá, thêm lời gọi và chi phí; truyện mẫu chỉ vài chục đoạn.
+- **Quyết định:** truy hồi bằng BM25 thuần Python (`bench_a_systems.Bm25Index`), không thêm phụ thuộc: đoạn văn gộp tới cỡ trong `run.yaml`; token là âm tiết (giữ dấu, bỏ vài từ chức năng) cộng cặp âm tiết liền nhau; lấy `top_k` đoạn của chương 1..N-1, sắp theo thứ tự truyện, cộng chương N nguyên văn. Tất định, không tốn tiền, không cần key.
+- **Hệ quả:** BM25 khớp từ chứ không khớp nghĩa, nên đây là bản RAG **yếu hơn** RAG vector thật; kết luận "đồ thị hơn RAG" chỉ đúng với RAG từ vựng. Chạy khô với oracle (`--dry-run`) cho biết miễn phí phần chứng cứ mà truy hồi tìm lại được, trước khi tốn tiền. Muốn đối thủ mạnh hơn thì thêm hệ thứ sáu dùng embedding (cần chủ dự án chọn model, giá, trần chi phí) thay vì sửa hệ này.
+- **Người quyết:** Claude (nhánh bench-a-memory), chờ điều phối và chủ dự án duyệt · 21/10/2026
+
 ## D-74 · Nhân vật chính có mục trong sổ tay từ chương 0 (thay một phần D-38)
 - **Bối cảnh:** bài E trên `tu-tien-1` (`evals/results/2026-10-21-narrator-tu-tien-1/`): "Tôi tên là gì?" luôn nhận "Bạn chưa biết điều này.". Đọc lại dữ liệu thấy hai nguyên nhân. (1) D-38 giữ `player_view` chương 0 rỗng và D-62 bỏ qua nhân vật chính khi tự hé lộ, nên tên chỉ vào sổ tay khi bộ trích tình cờ hé lộ (ở `tu-tien-1` có, từ chương 1). (2) Dù có mục, sổ tay không nói mục đó là người chơi nên model không nối "tôi" với nó.
 - **Quyết định:**

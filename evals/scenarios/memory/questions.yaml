@@ -1,0 +1,462 @@
+# Bài đo A — bộ nhớ: câu hỏi về truyện mẫu 5 chương (data/sample-story/), khai TRƯỚC khi chạy.
+# docs/eval.md "Bài A"; D-72.
+#
+# TRẠNG THÁI: BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT. Đáp án gốc lấy từ data/sample-story/graph.yaml (dựng
+# tay, cũng chờ duyệt). Chưa duyệt thì không chạy thật. Đã chạy thật rồi thì không sửa đè: tăng `version`.
+#
+# Mỗi câu hỏi "sau khi đã đọc tới hết chương ask_chapter" (hệ trả lời chỉ thấy chương 1..ask_chapter).
+#   fact_chapter  chương CŨ NHẤT mà câu trả lời đúng dựa vào. Khoảng cách = ask_chapter - fact_chapter.
+#                 Câu hỏi về điều CHƯA xảy ra (đáp án "Không") lấy fact_chapter = ask_chapter.
+#   as_of         hỏi về trạng thái ở cuối chương này (mặc định = ask_chapter); câu "hồi đó".
+#   answer.type   entities: tập id thực thể (khớp tên và biệt danh của graph.yaml, cộng `aliases`)
+#                 bool:     true/false; câu trả lời phải bắt đầu bằng Có/Không
+#                 choice:   một trong `options`
+#                 text:     `gold` là danh sách nhóm từ khoá; mỗi nhóm phải có ít nhất một từ trong câu trả lời
+#   derive        cách tính lại đáp án từ đồ thị tại as_of (test kiểm derive == gold, nên đáp án gốc
+#                 không do tay gõ mà phải khớp đồ thị). Thiếu derive là lỗi.
+#   evidence      câu trích nguyên văn từ chương: điều người đọc thấy được trên trang. Test kiểm câu trích
+#                 có thật và nằm trong chương <= ask_chapter, nên câu hỏi luôn trả lời được từ trang.
+#
+# KHÔNG hỏi điều chỉ có trong lớp sự thật mà trang chưa nói (Lan là gián điệp từ đầu, Lan giữ thanh
+# kiếm ở chương 4, "con mồi", ai giết Lão Gù): hệ đồ thị thấy được, các hệ khác không thể trả lời đúng.
+
+version: 1
+status: "BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT"
+story: sample-story
+
+questions:
+  # ---------------------------------------------------------------- đồ vật
+  - id: item-01
+    group: item
+    fact_chapter: 1
+    ask_chapter: 1
+    question: "Cuối chương 1, ai đang giữ thanh kiếm Thanh Sương?"
+    answer: {type: entities, gold: [gu]}
+    derive: {op: holders, item: sword}
+    evidence: [{chapter: 1, quote: "trên đùi đặt một thanh kiếm dài"}]
+
+  - id: item-02
+    group: item
+    fact_chapter: 2
+    ask_chapter: 2
+    question: "Cuối chương 2, ai đang giữ thanh kiếm Thanh Sương?"
+    answer: {type: entities, gold: [minh]}
+    derive: {op: holders, item: sword}
+    evidence: [{chapter: 2, quote: "Lão đặt Thanh Sương vào tay Minh."}]
+
+  - id: item-03
+    group: item
+    fact_chapter: 2
+    ask_chapter: 3
+    question: "Cuối chương 3, ai đang giữ thanh kiếm Thanh Sương?"
+    answer: {type: entities, gold: [minh]}
+    derive: {op: holders, item: sword}
+    evidence: [{chapter: 2, quote: "Lão đặt Thanh Sương vào tay Minh."},
+               {chapter: 3, quote: "nghĩ tới thanh kiếm dưới gầm giường"}]
+
+  - id: item-04
+    group: item
+    fact_chapter: 4
+    ask_chapter: 4
+    question: "Cuối chương 4, thanh kiếm Thanh Sương còn ở chỗ Minh không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: edge_exists, type: HOLDS, from: minh, to: sword}
+    evidence: [{chapter: 4, quote: "Chỉ thanh kiếm biến mất."}]
+
+  - id: item-05
+    group: item
+    fact_chapter: 5
+    ask_chapter: 5
+    question: "Cuối chương 5, ai đang giữ thanh kiếm Thanh Sương?"
+    answer: {type: entities, gold: [minh]}
+    derive: {op: holders, item: sword}
+    evidence: [{chapter: 5, quote: "Minh bọc Thanh Sương vào áo khoác"}]
+
+  - id: item-06
+    group: item
+    fact_chapter: 2
+    ask_chapter: 5
+    question: "Ai là người đã giao thanh kiếm Thanh Sương cho Minh?"
+    answer: {type: entities, gold: [gu]}
+    derive: {op: handed_over, item: sword, to: minh}
+    evidence: [{chapter: 2, quote: "Ta giao nó cho mày."}]
+
+  - id: item-07
+    group: item
+    fact_chapter: 2
+    ask_chapter: 5
+    question: "Cuối chương 5, ai đang giữ lá thư niêm sáp đỏ của Lão Gù?"
+    answer: {type: entities, gold: [minh]}
+    derive: {op: holders, item: sealed_letter}
+    evidence: [{chapter: 2, quote: "Lá thư thì anh kẹp vào giữa cuốn gia phả đang chép dở."},
+               {chapter: 5, quote: "bên cạnh lá thư niêm sáp đỏ của Lão Gù"}]
+
+  - id: item-08
+    group: item
+    fact_chapter: 2
+    ask_chapter: 5
+    question: >-
+      Cuối chương 5, Minh đang giữ những đồ vật nào có tên trong truyện?
+      (Thanh Sương, lá thư niêm sáp đỏ của Lão Gù, thư của Hội Hắc Kỳ... liệt kê hết những gì Minh giữ.)
+    answer:
+      type: entities
+      gold: [sword, sealed_letter, hac_ky_letter]
+      aliases:
+        hac_ky_letter: ["xấp thư", "thư của Hội", "thư Hắc Kỳ", "thư buộc dây gai"]
+        sealed_letter: ["lá thư của Lão Gù", "thư niêm sáp", "thư của lão"]
+    derive: {op: held_by, holder: minh}
+    evidence: [{chapter: 2, quote: "Ta giao nó cho mày."},
+               {chapter: 5, quote: "Minh bọc Thanh Sương vào áo khoác, nhét lá thư vào ngực áo"},
+               {chapter: 5, quote: "bên cạnh lá thư niêm sáp đỏ của Lão Gù"}]
+
+  - id: item-09
+    group: item
+    fact_chapter: 2
+    ask_chapter: 4
+    question: "Cuối chương 4, Minh đang giữ những đồ vật nào có tên trong truyện? Liệt kê hết."
+    answer:
+      type: entities
+      gold: [sealed_letter]
+      aliases:
+        sealed_letter: ["lá thư của Lão Gù", "thư niêm sáp", "thư của lão", "lá thư"]
+    derive: {op: held_by, holder: minh}
+    evidence: [{chapter: 4, quote: "Lá thư niêm sáp đỏ vẫn kẹp trong cuốn gia phả, nguyên vẹn."},
+               {chapter: 4, quote: "Chỉ thanh kiếm biến mất."}]
+
+  - id: item-10
+    group: item
+    fact_chapter: 5
+    ask_chapter: 5
+    question: "Cuối chương 5, ai đang giữ xấp thư của Hội Hắc Kỳ gửi Lan?"
+    answer: {type: entities, gold: [minh]}
+    derive: {op: holders, item: hac_ky_letter}
+    evidence: [{chapter: 5, quote: "nhét lá thư vào ngực áo"}]
+
+  - id: item-11
+    group: item
+    fact_chapter: 2
+    ask_chapter: 5
+    as_of: 3
+    question: "Vào cuối chương 3, lúc Lão Gù vừa chết, thanh kiếm Thanh Sương nằm trong tay ai?"
+    answer: {type: entities, gold: [minh]}
+    derive: {op: holders, item: sword}
+    evidence: [{chapter: 2, quote: "Lão đặt Thanh Sương vào tay Minh."},
+               {chapter: 3, quote: "nghĩ tới thanh kiếm dưới gầm giường"}]
+
+  # ---------------------------------------------------------------- sống / chết
+  - id: alive-01
+    group: alive
+    fact_chapter: 2
+    ask_chapter: 2
+    question: "Cuối chương 2, Lão Gù còn sống không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    derive: {op: alive, character: gu}
+    evidence: [{chapter: 2, quote: "Lão ho nhiều hơn"}]
+
+  - id: alive-02
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 3
+    question: "Cuối chương 3, Lão Gù còn sống không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: alive, character: gu}
+    evidence: [{chapter: 3, quote: "đã chết từ đêm"}]
+
+  - id: alive-03
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 5
+    question: "Cuối chương 5, Lão Gù còn sống không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: alive, character: gu}
+    evidence: [{chapter: 3, quote: "đã chết từ đêm"}]
+
+  - id: alive-04
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 4
+    question: "Lão Gù được tìm thấy đã chết ở đâu?"
+    answer:
+      type: text
+      gold: [["miếu Bà", "sau miếu"]]
+    derive: {op: node_text, node: e_gu_death, keywords: [["miếu Bà"]]}
+    evidence: [{chapter: 3, quote: "Người ta tìm thấy Lão Gù nằm sấp sau miếu Bà"}]
+
+  - id: alive-05
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 5
+    question: "Lão Gù được tìm thấy đã chết ở đâu?"
+    answer:
+      type: text
+      gold: [["miếu Bà", "sau miếu"]]
+    derive: {op: node_text, node: e_gu_death, keywords: [["miếu Bà"]]}
+    evidence: [{chapter: 3, quote: "Người ta tìm thấy Lão Gù nằm sấp sau miếu Bà"}]
+
+  - id: alive-06
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 5
+    question: "Tới hết chương 5, nhân vật nào trong truyện đã chết? Liệt kê hết."
+    answer: {type: entities, gold: [gu]}
+    derive: {op: edge_sources_of_type, type: DIED_IN}
+    evidence: [{chapter: 3, quote: "đã chết từ đêm"}]
+
+  - id: alive-07
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 5
+    question: "Theo lời cai Khải, Lão Gù bị đánh vào chỗ nào trên cơ thể?"
+    answer:
+      type: text
+      gold: [["gáy"]]
+    derive: {op: node_text, node: e_gu_death, keywords: [["gáy"]]}
+    evidence: [{chapter: 3, quote: "lão bị đánh vào gáy"}]
+
+  # ---------------------------------------------------------------- ai biết gì
+  - id: knows-01
+    group: knows
+    fact_chapter: 5
+    ask_chapter: 5
+    question: "Cuối chương 5, Minh có biết Lan là người của Hội Hắc Kỳ không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    derive: {op: edge_exists, type: KNOWS, from: minh, to: f_lan_spy}
+    evidence: [{chapter: 5, quote: "Lan là người của Hội Hắc Kỳ."}]
+
+  - id: knows-02
+    group: knows
+    fact_chapter: 4
+    ask_chapter: 4
+    question: "Cuối chương 4, Minh có biết Lan là người của Hội Hắc Kỳ không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: edge_exists, type: KNOWS, from: minh, to: f_lan_spy}
+    evidence: [{chapter: 4, quote: "Em không giận. Lão tin anh nên mới giao cho anh. Em cũng tin anh."}]
+
+  - id: knows-03
+    group: knows
+    fact_chapter: 2
+    ask_chapter: 5
+    question: "Cuối chương 5, Minh có biết Lão Gù từng đi thuyền với Hội Hắc Kỳ không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    derive: {op: edge_exists, type: KNOWS, from: minh, to: f_gu_old_hac_ky}
+    evidence: [{chapter: 2, quote: "Ba mươi năm trước ta từng đi thuyền với chúng."}]
+
+  - id: knows-04
+    group: knows
+    fact_chapter: 1
+    ask_chapter: 1
+    question: "Cuối chương 1, Minh có biết Lão Gù từng đi thuyền với Hội Hắc Kỳ không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: edge_exists, type: KNOWS, from: minh, to: f_gu_old_hac_ky}
+    evidence: [{chapter: 1, quote: "Minh hỏi lão sợ ai, lão chỉ phẩy tay đuổi về."}]
+
+  - id: knows-05
+    group: knows
+    fact_chapter: 2
+    ask_chapter: 5
+    question: "Ai đã kể cho Minh nghe chuyện Lão Gù từng đi thuyền với Hội Hắc Kỳ?"
+    answer: {type: entities, gold: [gu]}
+    derive: {op: edge_prop, type: KNOWS, from: minh, to: f_gu_old_hac_ky, prop: told_by}
+    evidence: [{chapter: 2, quote: "Ba mươi năm trước ta từng đi thuyền với chúng."}]
+
+  - id: knows-06
+    group: knows
+    fact_chapter: 4
+    ask_chapter: 5
+    question: "Gã lái đò mặt sẹo buộc thuyền trước quán trà (chương 4) là ai? Cho biết tên."
+    answer: {type: entities, gold: [ly_that]}
+    derive: {op: resolve_alias, alias: "gã lái đò mặt sẹo"}
+    evidence: [{chapter: 4, quote: "một gã lái đò mặt sẹo buộc thuyền ngay trước quán trà"},
+               {chapter: 5, quote: "Cuối thư ký tên Lý Thất."}]
+
+  # ---------------------------------------------------------------- quan hệ hiện tại
+  - id: rel-01
+    group: relation
+    fact_chapter: 1
+    ask_chapter: 1
+    question: "Cuối chương 1, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "người quen", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 1, quote: "Lúc Minh đứng dậy, cô bảo mai anh lại ghé"}]
+
+  - id: rel-02
+    group: relation
+    fact_chapter: 2
+    ask_chapter: 2
+    question: "Cuối chương 2, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "bạn", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 2, quote: "lần đầu tiên thấy mình kể lại cho cô nghe chuyện cha mẹ mất sớm"}]
+
+  - id: rel-03
+    group: relation
+    fact_chapter: 3
+    ask_chapter: 3
+    question: "Cuối chương 3, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "yêu", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 3, quote: "Anh Minh, em thương anh thật đấy."}]
+
+  - id: rel-04
+    group: relation
+    fact_chapter: 3
+    ask_chapter: 4
+    question: "Cuối chương 4, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "yêu", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 4, quote: "Em không giận."}]
+
+  - id: rel-05
+    group: relation
+    fact_chapter: 5
+    ask_chapter: 5
+    question: "Cuối chương 5, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "thù", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 5, quote: "Phạm Thị Lan là người anh phải đề phòng nhất trên đời."}]
+
+  - id: rel-06
+    group: relation
+    fact_chapter: 3
+    ask_chapter: 5
+    as_of: 3
+    question: "Vào cuối chương 3, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "yêu", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 3, quote: "Anh Minh, em thương anh thật đấy."}]
+
+  - id: rel-07
+    group: relation
+    fact_chapter: 2
+    ask_chapter: 5
+    as_of: 2
+    question: "Vào cuối chương 2, quan hệ giữa Minh và Lan là gì? Chọn một: người quen, bạn, yêu, thù."
+    answer: {type: choice, gold: "bạn", options: ["người quen", "bạn", "yêu", "thù"]}
+    derive: {op: relation_kind, from: minh, to: lan}
+    evidence: [{chapter: 2, quote: "lần đầu tiên thấy mình kể lại cho cô nghe chuyện cha mẹ mất sớm"}]
+
+  - id: rel-08
+    group: relation
+    fact_chapter: 1
+    ask_chapter: 3
+    question: "Cai Trần Văn Khải có phải họ hàng của Minh không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: relation_is, from: khai, to: minh, kind: "họ hàng"}
+    evidence: [{chapter: 1, quote: "Khải cùng họ Trần với Minh nhưng chẳng họ hàng gì"}]
+
+  - id: rel-09
+    group: relation
+    fact_chapter: 1
+    ask_chapter: 5
+    question: "Cai Trần Văn Khải có phải họ hàng của Minh không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: relation_is, from: khai, to: minh, kind: "họ hàng"}
+    evidence: [{chapter: 1, quote: "Khải cùng họ Trần với Minh nhưng chẳng họ hàng gì"}]
+
+  # ---------------------------------------------------------------- lời nói dối
+  - id: lie-01
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 2
+    question: "Minh đã nói dối Lan điều gì về thanh kiếm? Trả lời bằng một câu ngắn."
+    answer:
+      type: text
+      gold: [["của cha", "cha tôi", "cha anh", "cha mình", "cha để lại"]]
+    derive: {op: node_text, node: l_sword_father, keywords: [["của cha"]]}
+    evidence: [{chapter: 2, quote: "Kiếm của cha tôi để lại."}]
+
+  - id: lie-02
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 5
+    question: "Minh đã nói dối ai rằng thanh kiếm là của cha anh để lại?"
+    answer: {type: entities, gold: [lan]}
+    derive: {op: edge_targets, type: TOLD_TO, from: l_sword_father}
+    evidence: [{chapter: 2, quote: "Kiếm của cha tôi để lại."}]
+
+  - id: lie-03
+    group: lie
+    fact_chapter: 3
+    ask_chapter: 3
+    question: "Minh đã nói dối cai Khải điều gì? Trả lời bằng một câu ngắn."
+    answer:
+      type: text
+      gold: [["ở nhà", "không ra khỏi cửa", "không ra ngoài"]]
+    derive: {op: node_text, node: l_home_night, keywords: [["ở nhà"]]}
+    evidence: [{chapter: 3, quote: "Đêm qua tôi ở nhà, không ra khỏi cửa."}]
+
+  - id: lie-04
+    group: lie
+    fact_chapter: 3
+    ask_chapter: 5
+    question: "Minh đã nói dối cai Khải điều gì? Trả lời bằng một câu ngắn."
+    answer:
+      type: text
+      gold: [["ở nhà", "không ra khỏi cửa", "không ra ngoài"]]
+    derive: {op: node_text, node: l_home_night, keywords: [["ở nhà"]]}
+    evidence: [{chapter: 3, quote: "Đêm qua tôi ở nhà, không ra khỏi cửa."}]
+
+  - id: lie-05
+    group: lie
+    fact_chapter: 3
+    ask_chapter: 3
+    question: "Cuối chương 3, Lan đã biết Minh nói dối về nguồn gốc thanh kiếm chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: edge_exists, type: KNOWS, from: lan, to: l_sword_father}
+    evidence: [{chapter: 3, quote: "Lan rủ Minh đi dọc bờ sông."}]
+
+  - id: lie-06
+    group: lie
+    fact_chapter: 4
+    ask_chapter: 4
+    question: "Cuối chương 4, Lan đã biết Minh nói dối về nguồn gốc thanh kiếm chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    derive: {op: edge_exists, type: KNOWS, from: lan, to: l_sword_father}
+    evidence: [{chapter: 4, quote: "Lão Gù từng kể với em đó là kiếm của lão."}]
+
+  - id: lie-07
+    group: lie
+    fact_chapter: 4
+    ask_chapter: 5
+    question: "Cuối chương 5, Lan đã biết Minh nói dối về nguồn gốc thanh kiếm chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    derive: {op: edge_exists, type: KNOWS, from: lan, to: l_sword_father}
+    evidence: [{chapter: 4, quote: "Lão Gù từng kể với em đó là kiếm của lão."}]
+
+  - id: lie-08
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 5
+    question: "Lan đã nói với Minh lý do gì khiến cô một mình lên phố Bến Sương? Trả lời bằng một câu ngắn."
+    answer:
+      type: text
+      gold: [["hôn nhân", "lấy chồng", "chồng", "ép gả"]]
+    derive: {op: node_text, node: l_lan_cover, keywords: [["hôn nhân"]]}
+    evidence: [{chapter: 2, quote: "cô một mình lên đây vì không muốn lấy chồng theo ý nhà"}]
+
+  - id: lie-09
+    group: lie
+    fact_chapter: 4
+    ask_chapter: 4
+    question: "Cuối chương 4, Minh đã nhận ra lý do Lan nói về việc lên phố Bến Sương là dối chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: edge_exists, type: KNOWS, from: minh, to: l_lan_cover}
+    evidence: [{chapter: 4, quote: "Em cũng tin anh."}]
+
+  - id: lie-10
+    group: lie
+    fact_chapter: 5
+    ask_chapter: 5
+    question: "Cuối chương 5, Minh đã nhận ra lý do Lan nói về việc lên phố Bến Sương là dối chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    derive: {op: edge_exists, type: KNOWS, from: minh, to: l_lan_cover}
+    evidence: [{chapter: 5, quote: "không phải để trốn một cuộc hôn nhân"}]
+
+  - id: lie-11
+    group: lie
+    fact_chapter: 3
+    ask_chapter: 5
+    question: "Cuối chương 5, cai Khải đã biết Minh nói dối về đêm Lão Gù chết chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    derive: {op: edge_exists, type: KNOWS, from: khai, to: l_home_night}
+    evidence: [{chapter: 4, quote: "Anh không dám báo cai Khải."}]
