@@ -12,7 +12,9 @@ Lần đo thật đầu tiên của bài A. Truyện mẫu 5 chương, đề 44 
 - Câu suy luận (`knows-06`, `inference`): cả 5 hệ đều đúng 3/3, kể cả "không bộ nhớ". Vậy chữ của chương 5 đã đủ để suy ra; câu này không thổi phồng hệ đồ thị.
 
 ## Hệ đồ thị sai ở đâu (12/132 lượt)
-1. **Chi tiết nhỏ chỉ có trong chữ:** `alive-07` ("Lão Gù bị đánh vào chỗ nào?") và `item-10` (ai giữ xấp thư). Đồ thị không lưu chi tiết này nên đồ thị trả "Không biết", trong khi các hệ đọc chữ trả đúng.
+1. **Chi tiết gắn với nguồn lời kể, và một câu có thể mơ hồ** (đã kiểm lại ngữ cảnh thật, D-81):
+   - `alive-07` ("Theo lời cai Khải, Lão Gù bị đánh vào chỗ nào?"): ngữ cảnh đồ thị CÓ "bị đánh vào gáy" trong sự kiện, nhưng thiếu ai nói điều đó ("theo lời cai Khải"), nên model trả "Không biết". Các hệ đọc chữ thấy câu trên trang.
+   - `item-10` (ai giữ "xấp thư" của Hội Hắc Kỳ): ngữ cảnh đồ thị CÓ cạnh `HOLDS minh>hac_ky_letter`, và hệ nhét cả truyện cũng trả "Không biết" 3/3. Câu hỏi viết "xấp thư" trong khi trang viết "lá thư", nên có thể là đề mơ hồ (chưa kiểm). Không tính câu này là bằng chứng đồ thị yếu.
 2. **Điều phủ định:** `rel-08`, `rel-09` ("Cai Trần Văn Khải có phải họ hàng của Minh?"). Đồ thị không có cạnh "không họ hàng", nên model đoán "Có" từ chuyện cùng họ Trần. Các hệ đọc chữ thấy câu phủ định trên trang.
 3. **Ai biết lời nói dối:** `lie-06`, `lie-07`. Đồ thị trả "Không". Cần đọc ngữ cảnh đồ thị thật trong `results.jsonl` để biết là đồ thị dựng tay thiếu cạnh `KNOWS` hay là phần đọc đồ thị không đưa cạnh đó vào ngữ cảnh. **Đã kiểm (D-81):** không phải cả hai; cạnh có trong ngữ cảnh hai lần, model trả lời lệch giữa các lần hỏi.
 
