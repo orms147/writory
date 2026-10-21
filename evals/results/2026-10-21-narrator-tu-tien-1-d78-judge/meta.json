@@ -1,0 +1,128 @@
+{
+  "bench": "E",
+  "created": "2026-10-21T23:26:44+07:00",
+  "narrator": {
+    "model": "openai/gpt-6-luna",
+    "reasoning": "low"
+  },
+  "judge": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "thinking": "adaptive",
+    "max_tokens": 8000
+  },
+  "versions": {
+    "questions": 1,
+    "plan": 1,
+    "run": 1
+  },
+  "story": {
+    "kind": "run",
+    "run_dir": "evals/results/2026-10-20-run-tu-tien-1"
+  },
+  "notebook_pad": null,
+  "fingerprint": {
+    "data_files": {
+      "questions": "questions-tu-tien-1.yaml",
+      "plan": "plan-tu-tien-1.yaml",
+      "run": "run.yaml"
+    },
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions-tu-tien-1.yaml": "a3ccbb011e93e4cbe19bd0403dce39aff1125604da73dc199ec7391d57bbbeb2",
+      "plan-tu-tien-1.yaml": "24d740a95aba8759b9036397c70af1e0ba92fda11fb85e932e63dcc0907297ef",
+      "run.yaml": "5b5125843c1df919709dbaeb6aefed3727319b65f8ee94b8bffd2900f46bead0",
+      "redteam/g4_prompt_injection.yaml": "ac19332f279f538dcf93015d8b2a3689c46d96b984750dfa75fe84cf76a3c0ac",
+      "run/truth_dump.json": "e99a43f259540cc451e28b387ef0c20d548b4b0fc228a87e8fdd331bfb7a5761",
+      "run/setup.json": "2ef64323ae817be93df2203c7739f3850ca9818f58d525907b49e2efbcd31228",
+      "run/meta.json": "ec492323508f895080acbf09fb338b845db02c70eb656bf170634b3ab49e2a29"
+    },
+    "config_sha256": {
+      "models.yaml": "3a1e3dcc3f1b477cbb2e70532b9587871568deb17cf8a4bde8f741b31b4de81d",
+      "limits.yaml": "b0bca581502f2a1d678251b8b1c72f8f8429f0f676cea4cd4ae051ac0895fed5"
+    },
+    "narrator": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "narrator_prompt": "narrator-3",
+    "narrator_prompt_sha256": "3bbf56c00963b86c8ef10272ecfcbf39613e06b098f49bdf4d961ac55dd8ae6e",
+    "judge_frame": "e-judge-1",
+    "judge_frame_sha256": "bd8eaa9aa5a16cd2ffb1d681c0f99fc1586c6cc5b517dad3e047d21ce9ed257b"
+  },
+  "runs": [
+    {
+      "started": "2026-10-21T23:26:44+07:00",
+      "commit": "9f0b013fb06a1fd26ad76867a141b2d9f12c4168",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "tu-tien-1-d78-judge",
+        "--questions-file",
+        "questions-tu-tien-1.yaml",
+        "--plan-file",
+        "plan-tu-tien-1.yaml",
+        "--budget",
+        "0.10",
+        "--judge",
+        "--budget-anthropic",
+        "0.50",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "samples": 3,
+      "concurrency": 4,
+      "judge": true,
+      "questions": "all",
+      "budgets": {
+        "openrouter": 0.1,
+        "anthropic": 0.5
+      },
+      "finished": "2026-10-21T23:28:36+07:00",
+      "wall_s": 111.4,
+      "stopped": "budget: trần anthropic 0.50 USD: đã tiêu 0.1614, đang giữ chỗ 0.2599, lời gọi tiếp ước tối đa 0.0866",
+      "spent_usd": {
+        "openrouter": 0.007232,
+        "anthropic": 0.170118
+      }
+    },
+    {
+      "started": "2026-10-21T23:28:56+07:00",
+      "commit": "9f0b013fb06a1fd26ad76867a141b2d9f12c4168",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--out",
+        "../evals/results/2026-10-21-narrator-tu-tien-1-d78-judge",
+        "--questions-file",
+        "questions-tu-tien-1.yaml",
+        "--plan-file",
+        "plan-tu-tien-1.yaml",
+        "--budget",
+        "0.10",
+        "--judge",
+        "--budget-anthropic",
+        "0.65",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "samples": 3,
+      "concurrency": 4,
+      "judge": true,
+      "questions": "all",
+      "budgets": {
+        "openrouter": 0.1,
+        "anthropic": 0.65
+      },
+      "finished": "2026-10-21T23:29:13+07:00",
+      "wall_s": 16.7,
+      "stopped": null,
+      "spent_usd": {
+        "openrouter": 0.008687,
+        "anthropic": 0.173091
+      }
+    }
+  ]
+}
