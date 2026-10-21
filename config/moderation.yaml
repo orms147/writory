@@ -1,6 +1,6 @@
 # Kiểm duyệt nội dung (G9, docs/security.md; D-57).
 #
-# BẢN NHÁP, CHỜ CHỦ DỰ ÁN DUYỆT: danh mục, mức xử lý, chữ mô tả và trần mức u tối bên dưới là đề xuất.
+# Chủ dự án duyệt 21/10/2026 (D-57): danh mục, mức xử lý, chữ mô tả và trần mức u tối bên dưới.
 # Danh sách loại là cố định trong code (`safety/categories.py`); file này chọn mức xử lý của từng loại,
 # chữ mô tả (đi vào prompt của bộ kiểm duyệt) và trần mức u tối.
 #
@@ -10,7 +10,7 @@
 #   block             chặn. Đầu vào: trả lỗi. Đầu ra: viết lại một lần, còn vi phạm thì không hiện.
 #   darkness_limited  cho tới trần của mức u tối; chỉ kiểm ở đầu ra (cảnh, lựa chọn), vì hành động
 #                     người chơi viết là điều nhân vật làm trong truyện, còn mức miêu tả do model viết.
-draft: true
+draft: false
 
 categories:
   sexual_minors:
