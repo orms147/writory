@@ -1,0 +1,89 @@
+{
+  "bench": "E",
+  "created": "2026-10-21T16:44:04+07:00",
+  "narrator": {
+    "model": "openai/gpt-6-luna",
+    "reasoning": "low"
+  },
+  "judge": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "thinking": "adaptive",
+    "max_tokens": 8000
+  },
+  "versions": {
+    "questions": 2,
+    "plan": 1,
+    "run": 1
+  },
+  "story": {
+    "kind": "sample",
+    "run_dir": null
+  },
+  "notebook_pad": {
+    "count": 400,
+    "seed": 20261020
+  },
+  "fingerprint": {
+    "data_files": {
+      "questions": "questions-v2.yaml",
+      "plan": "plan.yaml",
+      "run": "run.yaml"
+    },
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions-v2.yaml": "37bfac17a0baa01517454c9b4ad9ca8b6edcf7f258aa664c0824592e1be7c019",
+      "plan.yaml": "254db8ceaef7e19c980fa05a4c9d3b42a7ef360e9dd963613f5592381903456c",
+      "run.yaml": "5b5125843c1df919709dbaeb6aefed3727319b65f8ee94b8bffd2900f46bead0",
+      "redteam/g4_prompt_injection.yaml": "ac19332f279f538dcf93015d8b2a3689c46d96b984750dfa75fe84cf76a3c0ac",
+      "sample-story/graph.yaml": "e7a36786451a36250c9ffe9a88e43213b5cfa49f1ad11780e9eab249c319029f"
+    },
+    "config_sha256": {
+      "models.yaml": "3a1e3dcc3f1b477cbb2e70532b9587871568deb17cf8a4bde8f741b31b4de81d",
+      "limits.yaml": "b0bca581502f2a1d678251b8b1c72f8f8429f0f676cea4cd4ae051ac0895fed5"
+    },
+    "narrator": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "narrator_prompt": "narrator-2",
+    "narrator_prompt_sha256": "390fdcf52f95a86c032c237485d799f864461ef75f45fbbbdc9e897cb66c80c5",
+    "judge_frame": "e-judge-1",
+    "judge_frame_sha256": "bd8eaa9aa5a16cd2ffb1d681c0f99fc1586c6cc5b517dad3e047d21ce9ed257b"
+  },
+  "runs": [
+    {
+      "started": "2026-10-21T16:44:04+07:00",
+      "commit": "d7d4e1665e742d5f47fb74647931a54a37be9822",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "v2-d77",
+        "--questions-file",
+        "questions-v2.yaml",
+        "--judge",
+        "--budget",
+        "0.20",
+        "--budget-anthropic",
+        "1.20"
+      ],
+      "samples": 3,
+      "concurrency": 4,
+      "judge": true,
+      "questions": "all",
+      "budgets": {
+        "openrouter": 0.2,
+        "anthropic": 1.2
+      },
+      "finished": "2026-10-21T16:48:09+07:00",
+      "wall_s": 244.7,
+      "stopped": null,
+      "spent_usd": {
+        "openrouter": 0.034741,
+        "anthropic": 0.494126
+      }
+    }
+  ]
+}
