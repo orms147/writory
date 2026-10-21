@@ -2,7 +2,7 @@
 
 *Truyện tương tác tiếng Việt, nhớ mọi thứ bạn đã chọn.*
 
-Ngày viết: 19/10/2026 · Tác giả ý tưởng: Nguyễn Hà Bách · Trạng thái: bản thiết kế đầu, chưa có code.
+Ngày viết: 19/10/2026 · Tác giả ý tưởng: Nguyễn Hà Bách · Trạng thái: thiết kế bản 1; hiện trạng cài đặt ở `CLAUDE.md` mục 9.
 
 Ký hiệu trong tài liệu:
 - **[Chốt]** — người dùng (chủ dự án) đã nói rõ.
@@ -281,11 +281,11 @@ Bản 1 chạy đối thủ 2, 4, 5, bài B, bài D (tuần 2, để chọn mode
 
 ## 10. Chi phí
 - **Người chơi trả bằng key OpenRouter của chính họ** [Chốt]. Chủ dự án chỉ trả cho máy chủ và cho bộ đo. Key người chơi được mã hoá khi lưu, không bao giờ ghi vào log hay gửi về trình duyệt (`docs/security.md`). Nên thử luồng kết nối OAuth của OpenRouter để người chơi khỏi phải dán key tay (chưa kiểm luồng này có còn hoạt động không).
-- Ước lượng thô (chưa đo, giá tháng 10/2026): khoảng 0,05–0,12 USD mỗi chương với model viết tầm trung–cao, dưới 0,01 USD với model rẻ. Chi phí chủ yếu nằm ở token ra của bước viết. Số thật đo ở tuần 2.
+- Ước lượng thô ban đầu (giá tháng 10/2026): khoảng 0,05–0,12 USD mỗi chương với model viết tầm trung–cao, dưới 0,01 USD với model rẻ. Chi phí chủ yếu nằm ở token ra của bước viết. Số thật nằm trong các lần chạy ở `evals/results/` (ví dụ `2026-10-20-run-tu-tien-1/`).
 - Vẫn cần trần chi phí dù tiền là của người chơi: truyện lỗi lặp vô hạn không được đốt key của họ, và người chơi phải thấy trước mỗi chương tốn khoảng bao nhiêu.
 - Mỗi cảnh có tối thiểu 3 lần gọi model (viết, trích, kiểm), có thể thêm 1 lần viết lại.
 - Model rẻ cho trích/kiểm/tạo lựa chọn; model viết tiếng Việt tốt hơn cho chương truyện.
-- **Trần chi phí mỗi chương và mỗi truyện:** đặt sau khi đo thử ở tuần 2, ghi vào cấu hình; vượt trần thì dừng viết lại và báo.
+- **Trần chi phí mỗi chương và mỗi truyện:** nằm trong `config/limits.yaml` (số tạm, chỉnh sau khi có thêm lần chạy thật); vượt trần thì dừng viết lại và báo.
 - Tên model, trần token, trần chi phí nằm trong cấu hình, không viết cứng trong code.
 
 ## 11. Công nghệ [Quyết định thiết kế]
@@ -294,7 +294,7 @@ Bản 1 chạy đối thủ 2, 4, 5, bài B, bài D (tuần 2, để chọn mode
 - **Đồ thị:** Neo4j, truy vấn bằng Cypher, **tự viết lớp truy cập** (không dùng thư viện bộ nhớ có sẵn như Graphiti; lý do: `docs/decisions.md`). Phát triển bằng Docker trên máy. Gói AuraDB Free tự tạm dừng sau 3 ngày không dùng và chỉ dành cho dùng thử, nên khi có người chơi thật thì tự chạy Neo4j Community trên VPS hoặc trả tiền.
 - **Dữ liệu khác:** PostgreSQL — tài khoản, truyện, văn bản chương, lựa chọn, nhật ký chi phí, nhật ký người canh.
 - **Điều phối chương:** LangGraph (các bước §6.2).
-- **LLM:** qua OpenRouter. Chọn model viết bằng thử tiếng Việt ở tuần 2 (bài D, §9).
+- **LLM:** qua OpenRouter. Model viết chọn bằng bài D (§9): xem `config/models.yaml` và D-33.
 - **Vector** (chỉ cho đối thủ số 3 trong bộ đo): dùng gì cũng được [Để người làm quyết].
 
 ## 12. Kế hoạch bản 1 (6 tuần, ~10 giờ/tuần, một người)
@@ -328,7 +328,6 @@ Tuần 1 làm tay có chủ ý: thiết kế đồ thị sai thì mọi thứ sa
 
 ## 14. Còn mở
 - Ai là người dùng thật đầu tiên ngoài chủ dự án, và đưa cho họ bằng cách nào.
-- Model viết tiếng Việt cụ thể (chọn ở tuần 2 bằng thử).
-- Model kiểm duyệt nội dung cho tiếng Việt (chọn sau khi đo).
+- Model kiểm duyệt nội dung cho tiếng Việt: đang dùng tạm một model (`config/models.yaml`, vai `moderate`). Lần đo đầu còn lạc quan (`evals/results/2026-10-21-g9-luna-2/notes.md`); cần bộ câu giữ riêng.
 - Nghị định 147/2024/NĐ-CP (xác thực tài khoản bằng số điện thoại cho mạng xã hội) có áp dụng cho một trang truyện tương tác nhỏ không. Chưa kiểm; cần hỏi trước khi mở công khai cho người lạ.
 - Luồng OAuth của OpenRouter có dùng được không.

@@ -131,7 +131,7 @@ uv add <gói>                         # thêm phụ thuộc (không sửa tay py
 - CI: `.github/workflows/ci.yml` (job `fast` và `graph`, chạy trên mỗi PR và mỗi lần push lên `main`).
 - Stack: FastAPI + LangGraph + Neo4j 5 Community + PostgreSQL + React/TS/Tailwind + OpenRouter (design §11).
 - Quyết định đang hiệu lực: D-1 đến D-62, D-65 (`docs/decisions.md`). Đang ở nhánh chưa merge: D-63, D-64 (SSE thật, chi phí lời gọi bị huỷ), D-66, D-67 (endpoint cho giao diện), D-68, D-69 (frontend).
-- Model viết: GPT-6 Luna, một mức, suy luận none (D-33, D-43). Vai trích: GPT-6 Luna, suy luận thấp (D-35). Các vai khác: GPT-6 Luna tạm, suy luận thấp (D-47, `config/models.yaml`).
+- Model theo vai, mức suy luận và danh sách mức model viết: `config/models.yaml` (lý do: D-33, D-35, D-43, D-47).
 - Trần chi phí, ngưỡng kiểm văn và người canh, giới hạn người chơi: số tạm (D-47), chỉnh lại sau lần chạy thật đầu.
 - Chưa có: đăng nhập (G10; mọi người là người chơi dev `dev`, D-44); frontend (tuần 4, đang dựng theo `frontend/design-handoff/`, D-65).
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).
