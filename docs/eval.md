@@ -137,7 +137,7 @@ uv run python -m writory.pipeline.bench_e run --label tu-tien-1 --questions-file
 
 ## Chạy cả truyện
 Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đi hết đường người chơi trên một truyện để đo chi phí theo vai, đếm lỗi, và để đọc tay. Cách làm: D-42, D-43. Code: `writory.pipeline.bench_run`.
-- **Đề** (khai trước, `evals/scenarios/story_run/`; đã chạy thật thì không sửa đè, tăng `version` hoặc thêm file đề): tag, độ dài, quy ước tên, seed, số cảnh mỗi chương, số lần tự bấm thử lại, `max_tokens_per_call`, giá USD/1M token của mọi model config đang dùng (chỉ để giữ chỗ ngân sách). Đề mặc định: `tu-tien-ngan.yaml`.
+- **Đề** (khai trước, `evals/scenarios/story_run/`; đã chạy thật thì không sửa đè, tăng `version` hoặc thêm file đề): tag, độ dài, quy ước tên, seed, số cảnh mỗi chương, số lần tự bấm thử lại, `max_tokens_per_call`, giá USD/1M token của mọi model config đang dùng (chỉ để giữ chỗ ngân sách). Đề mặc định: `tu-tien-ngan.yaml`. Đề Truyện vừa cho mốc chạy liền 10 chương: `ky-ao-vua.yaml` (chưa chạy thật).
 - **Đường đi:** khởi tạo 4 bước (bước nào có 3 lựa chọn thì chọn theo seed) → ghi chương 0 → `ChapterRun` từng chương, tới chương cuối của kế hoạch hoặc `--chapters` (không vượt kế hoạch). Lựa chọn cuối chương chọn theo seed và thành hành động dẫn tới chương sau. Chương cuối của kế hoạch kết truyện: không có lựa chọn, sự kiện `story_finished`, lệnh dừng ở đó (D-50). Bị chặn, model trả sai, mạng lỗi: tự thử lại tối đa `player_retries` lần.
 - **Kết quả** `evals/results/<ngày>-run-<nhãn>/`:
   - `meta.json`: commit, sha256 của đề và từng file config, model và mức suy luận từng vai, seed, trần, phiên bản prompt, story_id, trạng thái;
