@@ -16,7 +16,7 @@ pytest.importorskip("anthropic")
 from writory.config import ConfigError, load_config
 from writory.graph.sample import read_sample
 from writory.pipeline import bench_e as be
-from writory.pipeline.narrator import NOT_KNOWN, PROMPT_VERSION, build_messages
+from writory.pipeline.narrator import NOT_KNOWN, PROMPT_VERSION, BlockReason, build_messages
 from writory.quality.bench_d import mock_judge_client
 from writory.safety.leak import check_leaks
 
@@ -272,6 +272,18 @@ async def test_oracle_dry_run_has_no_leak_and_full_marks(tmp_path):
     summary = (store.root / "summary.md").read_text(encoding="utf-8")
     assert "Lộ ở câu cuối: 0" in summary
     assert f"đề `{PROMPT_VERSION}`" in summary
+
+
+async def test_summary_lists_every_reason_code_can_block_with(tmp_path):
+    """Lý do chặn của code đọc từ `BlockReason`, kể cả `meta_hedge` (D-78); oracle không câu nào
+    bị lưới úp mở chặn."""
+    code, store, _ = await run(tmp_path)
+    assert code == be.EXIT_OK
+    summary = (store.root / "summary.md").read_text(encoding="utf-8")
+    code_reasons = set(BlockReason) - {BlockReason.MODEL_NOT_KNOWN, BlockReason.EMPTY_NOTEBOOK}
+    for reason in code_reasons:
+        assert f"`{reason.value}`" in summary, reason
+    assert all(r["blocked"] != BlockReason.META_HEDGE.value for r in store.rows(be.RESULTS))
 
 
 async def test_leaker_is_caught_raw_and_never_reaches_the_player(tmp_path):

@@ -53,6 +53,7 @@ from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.api.errors import HTTP_STATUS
 from writory.api.play import action_text, choice_record
+from writory.config import load_config
 from writory.db import (
     chapter_records,
     commit_chapter,
@@ -75,7 +76,7 @@ from writory.llm.cost import CostEstimator
 from writory.pipeline.choices import Choice, LieEffect
 from writory.pipeline.scene import SceneOutline
 from writory.pipeline.story_plan import StoryPlan
-from writory.safety.moderate import ModerationOutput
+from writory.safety.moderate import ChoicesModerationOutput, ModerationOutput
 from writory.safety.wrap import CLOSE_TAG
 
 pytestmark = pytest.mark.graph
@@ -364,7 +365,8 @@ class HangingLLM(ScriptedLLM):
 
     async def chat(self, model, messages, *, response_schema=None, extra=None):
         # Lời gọi kiểm duyệt (G9) có hàng đợi riêng, không đếm vào `hang_at`.
-        if response_schema is not ModerationOutput and len(self.calls) + 1 == self.hang_at:
+        if (response_schema not in (ModerationOutput, ChoicesModerationOutput)
+                and len(self.calls) + 1 == self.hang_at):
             self.calls.append(list(messages))
             try:
                 await asyncio.Event().wait()
@@ -707,9 +709,10 @@ def test_calls_over_the_per_minute_limit_get_429_without_reaching_the_model(
     sid = story(action=None)
     clock = FakeClock()
     llm = ScriptedLLM([classify_reply()] * 3)
-    # Mỗi ô tự viết tốn hai lượt: kiểm duyệt (G9) rồi phân loại (G5); kiểm duyệt cũng tốn tiền
-    # key người chơi nên tính vào cùng bộ đếm (D-58). Trần 4 = đúng hai ô tự viết.
-    with TestClient(limited_app(pg, driver, llm, tmp_path, clock, per_minute=4)) as client:
+    # Mỗi ô tự viết tốn ba lượt: kiểm duyệt hai lần (G9, `input_votes`, D-79) rồi phân loại (G5);
+    # kiểm duyệt cũng tốn tiền key người chơi nên tính vào cùng bộ đếm (D-58). Trần 6 = đúng hai ô.
+    assert load_config().moderation.input_votes == 2
+    with TestClient(limited_app(pg, driver, llm, tmp_path, clock, per_minute=6)) as client:
         first, second, third = act(client, sid), act(client, sid), act(client, sid)
         clock.now += 59
         still = act(client, sid)
@@ -719,12 +722,12 @@ def test_calls_over_the_per_minute_limit_get_429_without_reaching_the_model(
     assert third.status_code == 429 == still.status_code == HTTP_STATUS[ErrorCode.WRITORY_RATE_LIMITED]
     assert third.json() == WritoryError(ErrorCode.WRITORY_RATE_LIMITED).player_payload()
     assert later.status_code == 200
-    # Hai ô trước + một sau khi sang phút mới; lượt bị từ chối dừng ngay ở kiểm duyệt.
-    assert len(llm.moderation.moderation_calls) == 3 and len(llm.calls) == 3
+    # Hai ô trước + một sau khi sang phút mới; lượt bị từ chối dừng ngay ở lần kiểm duyệt đầu.
+    assert len(llm.moderation.moderation_calls) == 6 and len(llm.calls) == 3
     # Lượt bị từ chối không tốn tiền và không có dòng nhật ký chi phí.
     roles = [r for (r,) in pg.execute("SELECT role FROM llm_costs WHERE story_id = %s ORDER BY id",
                                       (sid,)).fetchall()]
-    assert roles == ["moderate", "classify"] * 3
+    assert roles == ["moderate", "moderate", "classify"] * 3
 
 
 def test_limit_not_set_fails_closed_before_any_model_call(pg, driver, story, tmp_path,
@@ -817,7 +820,8 @@ class ServerSideLLM(ScriptedLLM):
 
     async def chat(self, model, messages, *, response_schema=None, extra=None):
         # Lời gọi kiểm duyệt (G9) có hàng đợi riêng, không đếm vào `hold_at`.
-        if (self.hold_at is not None and response_schema is not ModerationOutput
+        if (self.hold_at is not None
+                and response_schema not in (ModerationOutput, ChoicesModerationOutput)
                 and len(self.calls) + 1 == self.hold_at):
             self.hold_at = None
             trace = current_trace()

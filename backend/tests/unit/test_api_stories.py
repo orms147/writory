@@ -393,7 +393,7 @@ def test_narrator_question_is_moderated_before_quota_and_model():
     assert len(moderated.moderation_calls) == 1
 
 
-def test_allowed_question_is_moderated_once_then_answered():
+def test_allowed_question_is_moderated_input_votes_times_then_answered():
     v = view(3)
     fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
     moderated = ModeratedLLM(fake)
@@ -401,6 +401,7 @@ def test_allowed_question_is_moderated_once_then_answered():
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
     assert resp.status_code == 200
     assert resp.json()["answer"] == "Lão Gù chết sau miếu Bà."
-    [messages] = moderated.moderation_calls
-    assert "Lão Gù chết ở đâu?" in messages[-1].content
+    assert len(moderated.moderation_calls) == CFG.moderation.input_votes  # D-79
+    for messages in moderated.moderation_calls:
+        assert "Lão Gù chết ở đâu?" in messages[-1].content
     assert len(fake.calls) == 1

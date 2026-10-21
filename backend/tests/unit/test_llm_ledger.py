@@ -27,7 +27,7 @@ from writory.pipeline.narrator import NarratorOutput
 from writory.pipeline.scene import SceneOutline
 from writory.pipeline.setup import BuildOutput, CharactersOutput, PlotsOutput, SettingsOutput
 from writory.safety.classify import Classification
-from writory.safety.moderate import ModerationOutput
+from writory.safety.moderate import ChoicesModerationOutput, ModerationOutput
 
 MSG = [Message(role="user", content="xin chào")]
 CAP = CostLimits(per_scene=1.0, per_chapter=1.0, per_story=1.0)
@@ -90,6 +90,7 @@ async def test_stream_records_once_at_the_end():
     (CharactersOutput, "setup"),
     (BuildOutput, "setup"),
     (ModerationOutput, "moderate"),  # G9, D-57
+    (ChoicesModerationOutput, "moderate"),  # bộ lựa chọn theo dòng, D-79
 ])
 def test_role_of_schema(schema, role):
     assert role_of_schema(schema) == role

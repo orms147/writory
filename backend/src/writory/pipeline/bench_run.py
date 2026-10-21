@@ -119,7 +119,7 @@ from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách
     load_keys,
 )
 from writory.safety.leak import leak_names
-from writory.safety.moderate import ModerationOutput
+from writory.safety.moderate import LINES_HEADER_RE, ChoicesModerationOutput, ModerationOutput
 from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
@@ -258,7 +258,7 @@ ROLE_BY_SCHEMA_NAME: dict[str, str] = {
     CharactersOutput.__name__: "setup", BuildOutput.__name__: "setup",
     SceneOutline.__name__: "outline", ExtractOutput.__name__: "extract",
     ChoicesOutput.__name__: "choices", SummaryOutput.__name__: "summary",
-    ModerationOutput.__name__: "moderate",
+    ModerationOutput.__name__: "moderate", ChoicesModerationOutput.__name__: "moderate",
 }
 _SETUP_STEP_BY_SCHEMA = dict(zip(
     (SettingsOutput.__name__, PlotsOutput.__name__, CharactersOutput.__name__,
@@ -1358,6 +1358,7 @@ class DryRunLLM(FakeLLM):
             ChoicesOutput.__name__: lambda: self._choices(text),
             SummaryOutput.__name__: lambda: {"summary": DRY_RUN_SUMMARY},
             ModerationOutput.__name__: lambda: {"findings": [], "reason": "chạy thử"},
+            ChoicesModerationOutput.__name__: lambda: self._moderate_lines(text),
         }
         return json.dumps(replies[schema_name](), ensure_ascii=False)
 
@@ -1370,6 +1371,14 @@ class DryRunLLM(FakeLLM):
             "quote": _DRY_QUOTE, "known_as": DRY_RUN_NPC_NAME,
         }]
         return {"edges": edges, "close": []}
+
+    @staticmethod
+    def _moderate_lines(text: str) -> dict[str, Any]:
+        """Bộ lựa chọn sạch: đúng một mục rỗng cho mỗi dòng (D-79)."""
+        found = LINES_HEADER_RE.search(text)
+        n = int(found.group(1)) if found else 0
+        return {"lines": [{"line": i, "findings": []} for i in range(1, n + 1)],
+                "reason": "chạy thử"}
 
     @staticmethod
     def _choices(text: str) -> dict[str, Any]:

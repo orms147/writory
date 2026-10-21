@@ -71,9 +71,11 @@ def test_narrator_reads_plan_and_key_from_postgres_and_logs_cost(pg, driver, new
     assert factory.keys == [FAKE_KEY]
     rows = pg.execute("SELECT owner_id, chapter, role, model FROM llm_costs WHERE story_id = %s "
                       "ORDER BY id", (sid,)).fetchall()
-    # Kiểm duyệt câu hỏi (G9, D-57) rồi người kể; cả hai ghi nhật ký ở chương đang đọc.
-    assert rows == [(DEV_OWNER_ID, 3, "moderate", CFG.models.roles.moderate),
-                    (DEV_OWNER_ID, 3, "narrator", CFG.models.roles.narrator)]
+    # Kiểm duyệt câu hỏi `input_votes` lần (G9, D-57, D-79) rồi người kể; mọi lời gọi ghi nhật ký
+    # ở chương đang đọc.
+    votes = CFG.moderation.input_votes
+    assert rows == [(DEV_OWNER_ID, 3, "moderate", CFG.models.roles.moderate)] * votes + [
+        (DEV_OWNER_ID, 3, "narrator", CFG.models.roles.narrator)]
     assert story_spent_usd(pg, sid) == pytest.approx(0.003)
 
 

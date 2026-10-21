@@ -7,11 +7,12 @@ from pathlib import Path
 import pytest
 import yaml
 
-from tests.moderation_fixtures import moderation_reply
+from tests.moderation_fixtures import lines_reply, moderation_reply
 from writory.config import CostLimits, load_config
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM
 from writory.safety import bench_g9
+from writory.safety import moderate as moderate_mod
 from writory.safety.bench_g9 import (
     CASES_PATH,
     build_parser,
@@ -26,9 +27,11 @@ ALLOW = moderation_reply()
 HARD = moderation_reply(("sexual_minors", "strong"))
 
 
-def case(cid: str, verdict: str) -> dict:
+def case(cid: str, verdict: str, source: str = "scene") -> dict:
+    """Mặc định nguồn `scene`: một lời gọi mỗi câu, để test cơ chế chạy lặp và trần đếm được lời
+    gọi. Đầu vào và bộ lựa chọn có cách gọi riêng (D-79), test ở cuối file."""
     findings = [{"category": "sexual_minors", "intensity": "strong"}] if verdict != "allow" else []
-    return {"id": cid, "lang": "vi", "source": "input", "tags": [], "text": f"câu {cid}",
+    return {"id": cid, "lang": "vi", "source": source, "tags": [], "text": f"câu {cid}",
             "expected": {"verdict": verdict, "findings": findings}}
 
 
@@ -167,3 +170,33 @@ async def test_result_json_marks_a_budget_stop(tmp_path):
 
 def test_module_still_exposes_main():
     assert callable(bench_g9.main)
+
+
+# --- bộ đo đi đúng cách gọi của sản phẩm (D-79) -----------------------------------------------------
+
+
+async def test_input_case_is_checked_input_votes_times_and_one_blocking_vote_counts():
+    cases = [case("a", "hard_blocked", "input"), case("b", "allow", "input")]
+    llm = FakeLLM.scripted([ALLOW, HARD, ALLOW, ALLOW])
+    result = await score(cases, llm=llm, config=CFG)
+    assert (result.total, result.correct) == (2, 2)
+    assert len(llm.calls) == 2 * CFG.moderation.input_votes
+
+
+async def test_choices_case_is_one_call_graded_line_by_line():
+    text = "Mở cửa.\nNói dối sư phụ.\nThầm sợ."
+    cases = [{**case("c", "hard_blocked", "choices"), "text": text}]
+    llm = FakeLLM.scripted([lines_reply(3, {2: [("sexual_minors", "strong")]})])
+    result = await score(cases, llm=llm, config=CFG)
+    assert (result.total, result.correct) == (1, 1)
+    assert llm.schemas == [moderate_mod.ChoicesModerationOutput]
+
+
+async def test_result_json_records_the_calling_method(tmp_path):
+    path = write_cases(tmp_path / "bo.yaml", [case("a", "allow")])
+    llm, tracker = metered(cost_usd=0.001, cap=1.0)
+    out = tmp_path / "kq"
+    await run_bench(path, repeat=1, budget=1.0, llm=llm, tracker=tracker, config=CFG, out=out)
+    meta = json.loads((out / "result.json").read_text(encoding="utf-8"))["meta"]
+    assert meta["input_votes"] == CFG.moderation.input_votes
+    assert meta["prompt"] == moderate_mod.PROMPT_VERSION

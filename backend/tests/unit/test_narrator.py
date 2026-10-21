@@ -30,6 +30,7 @@ from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM, render_context
 from writory.pipeline.narrator import (
+    META_HEDGE_PATTERNS,
     NOT_KNOWN,
     PROMPT_VERSION,
     SYSTEM_PROMPT,
@@ -38,6 +39,7 @@ from writory.pipeline.narrator import (
     NarratorOutput,
     ask_narrator,
     ask_narrator_reply,
+    meta_hedge,
     source_chapters,
 )
 from writory.pipeline.story_plan import StoryPlan
@@ -213,7 +215,7 @@ async def test_role_reasoning_is_passed_when_set():
 
 
 def test_prompt_lets_the_narrator_answer_about_the_same_thing_under_other_words():
-    assert PROMPT_VERSION == "narrator-2"
+    """Phần giúp được của `narrator-2` (D-77) còn nguyên trong `narrator-3` (D-78)."""
     for phrase in ("khác chữ", "cùng một thứ", "chức danh kèm tên", "tóm tắt", "câu trên trang",
                    "mới nhất", "known = true, kể cả khi"):
         assert phrase in SYSTEM_PROMPT, phrase
@@ -261,6 +263,174 @@ async def test_linking_a_nickname_to_a_hidden_name_is_still_blocked():
     fake = FakeLLM.scripted([reply(True, "Gã lái đò mặt sẹo chính là Lý Thất.",
                                    [ref(v, "ly_that")])])
     assert await ask("Gã lái đò mặt sẹo là ai?", 4, fake) == NOT_KNOWN
+
+
+# --- người kể không úp mở (D-78) ---------------------------------------------------------------
+# Bài E với đề narrator-2 (evals/results/2026-10-21-narrator-v2-d77/, -tu-tien-1-d77/): giám khảo
+# đánh `goi_y_an` các câu nói về việc thiếu thông tin ("chưa có nội dung được ghi lại"), và câu
+# hỏi thẳng một bí mật được đáp bằng mục lân cận. Đề narrator-3 đặt known = false cho câu sổ tay
+# không trả lời thẳng được; lưới bằng code (`meta_hedge`) đổi câu nói về việc thiếu thông tin
+# thành NOT_KNOWN. Đây là kiểm chữ đầu ra của model, không đọc ý định người chơi (G5 không áp).
+
+RESULTS = REPO_ROOT / "evals" / "results"
+_D77_RUNS = ("2026-10-21-narrator-v2-d77", "2026-10-21-narrator-tu-tien-1-d77")
+_ALL_RUNS = sorted(p.name for p in RESULTS.glob("*-narrator-*") if (p / "results.jsonl").is_file())
+
+
+def _rows(run: str) -> list[dict]:
+    text = (RESULTS / run / "results.jsonl").read_text(encoding="utf-8")
+    return [json.loads(line) for line in text.splitlines() if line.strip()]
+
+
+def _judged_hints() -> list[str]:
+    """Câu cuối (nguyên văn) mà giám khảo đánh `goi_y_an` ở các lần chạy narrator-2."""
+    out = []
+    for run in _D77_RUNS:
+        final = {(r["id"], r["sample"]): r["final"] for r in _rows(run)}
+        for line in (RESULTS / run / "judge.jsonl").read_text(encoding="utf-8").splitlines():
+            row = json.loads(line)
+            if ((row.get("scores") or {}).get("goi_y_an") or {}).get("score") == 1:
+                out.append(final[(row["id"], row["sample"])])
+    return out
+
+
+JUDGED_HINTS = _judged_hints()
+# Câu đúng loại a (đã mở khoá, dẫn đúng mục, đủ cụm) của mọi lần chạy bài E: không được bị đổi.
+CORRECT_UNLOCKED = sorted({r["final"] for run in _ALL_RUNS for r in _rows(run)
+                           if r["type"] == "a" and r["verdict"] == "correct"})
+
+
+def test_prompt_v3_sends_questions_the_notebook_cannot_answer_directly_to_known_false():
+    assert PROMPT_VERSION == "narrator-3"
+    for phrase in ("không trả lời thẳng", "có phải hay không", "ai đã làm", "nội dung là gì",
+                   "vì sao", "mục lân cận", "thiếu hay chưa biết thông tin", '"chưa có"',
+                   '"chưa được ghi"', '"không rõ"', '"chưa biết nội dung"'):
+        assert phrase in SYSTEM_PROMPT, phrase
+
+
+def test_the_judged_hints_are_the_ones_the_run_notes_name():
+    """notes.md của hai lần chạy: v2-d77 có 6 lượt (thư niêm sáp ×4, Lan ra miếu, kiếm nằm đâu),
+    tu-tien-1-d77 có 1 (phù âm). Đọc từ judge.jsonl, không chép tay."""
+    assert len(JUDGED_HINTS) == 7
+    assert any("niêm sáp đỏ" in a for a in JUDGED_HINTS)
+    assert any("Phù âm" in a for a in JUDGED_HINTS)
+    assert len(CORRECT_UNLOCKED) > 50
+
+
+@pytest.mark.parametrize("answer", JUDGED_HINTS)
+def test_every_answer_the_judge_flagged_as_a_hint_is_caught(answer):
+    assert meta_hedge(answer) is not None
+
+
+@pytest.mark.parametrize("answer", JUDGED_HINTS)
+async def test_a_flagged_hint_reaches_the_player_as_not_known(answer):
+    v = view(5)
+    raw = reply(True, answer, [ref(v, "e_gu_death")])
+    detailed = await ask_reply("Lá thư niêm sáp đỏ viết gì?", 5, FakeLLM.scripted([raw]))
+    assert (detailed.answer, detailed.blocked) == (NOT_KNOWN, BlockReason.META_HEDGE)
+    assert detailed.output is not None and detailed.output.answer == answer  # câu thô cho bài E
+    out = await ask_full("Lá thư niêm sáp đỏ viết gì?", 5, FakeLLM.scripted([raw]))
+    assert out == NarratorAnswer(NOT_KNOWN)  # không kèm nguồn
+
+
+@pytest.mark.parametrize("answer", CORRECT_UNLOCKED)
+def test_no_correct_unlocked_answer_of_any_bench_run_is_caught(answer):
+    assert meta_hedge(answer) is None
+
+
+_V2_CORRECT = [r for r in _rows("2026-10-21-narrator-v2-d77")
+               if r["type"] == "a" and r["verdict"] == "correct" and not r["pad"]]
+
+
+@pytest.mark.parametrize("row", _V2_CORRECT, ids=lambda r: f"{r['id']}-{r['sample']}")
+async def test_correct_unlocked_answers_still_reach_the_player_unchanged(row):
+    """Cùng câu thô của model ở lần chạy v2-d77, qua đủ các phép kiểm hiện hành."""
+    raw = json.dumps(row["raw"], ensure_ascii=False)
+    detailed = await ask_reply(row["question"], row["chapter"], FakeLLM.scripted([raw]))
+    assert (detailed.answer, detailed.blocked) == (row["final"], None)
+
+
+@pytest.mark.parametrize("answer", [
+    "Lan chưa trở về từ chợ.",
+    "Khe hở phía tây vẫn chưa khép, hắt ra một quầng sáng méo mó.",
+    "Minh chưa đọc lá thư; nó vẫn niêm sáp đỏ.",
+    "Thanh Sương chưa được tìm thấy sau đêm đó.",
+    "Lão Gù dặn Minh không được nói với ai.",
+    "Cuốn sổ tay của Lão Gù ghi tên ba người.",
+    "Bản ghi không có nội dung bàn giao lối xuống Mạch Nước Ngầm.",
+    "Sổ Trận và Tín Vật Huyền Nguyệt cũng đã xuất hiện.",
+    "Lối xuống không được ghi trong Sổ Trận.",
+    "Phù âm được nhắc đến khi Lục Hàn Sương ghé bên bàn đá.",
+    "Minh chỉ biết đứng nhìn chiếc thuyền xa dần.",
+], ids=["chua-tro-ve", "chua-khep", "chua-doc", "chua-tim-thay", "khong-duoc-noi", "so-tay-vat",
+        "ban-ghi-trong-truyen", "so-tran", "ghi-trong-so", "duoc-nhac", "chi-biet"])
+def test_natural_sentences_with_chua_or_khong_are_not_caught(answer):
+    """"chưa", "không" có mặt tự nhiên trong câu trả lời đúng, và truyện có thể có sổ sách thật:
+    chỉ cụm nói về thông tin hay về chính sổ tay mới bị bắt."""
+    assert meta_hedge(answer) is None
+
+
+@pytest.mark.parametrize("answer", [
+    "Không có thông tin về người đã gửi lá thư.",
+    "Hiện chưa có đủ thông tin để biết kẻ ra tay.",
+    "Thiếu dữ kiện để nói Lan có mặt hay không.",
+    "Chưa có ghi nhận nào về chuyện đó.",
+    "Điều Lão Gù muốn nói chưa được kể.",
+    "Tên thật của gã chưa được hé lộ.",
+    "Minh chưa biết nội dung lá thư.",
+    "Lá thư không rõ nội dung, chưa rõ nội dung thì càng khó nói.",
+    "Sổ tay của bạn không nói gì thêm về lá thư.",
+    "Trang sổ mới nhất không ghi Lan đi đâu.",
+    "Nơi giấu kiếm chưa được ghi lại.",
+    "CHƯA CÓ NỘI DUNG NÀO ĐƯỢC GHI LẠI.",
+    "Chưa   có\nnội dung nào được ghi lại.",
+], ids=["khong-co-thong-tin", "chua-du-thong-tin", "thieu-du-kien", "chua-ghi-nhan",
+        "chua-duoc-ke", "chua-duoc-he-lo", "chua-biet-noi-dung", "chua-ro-noi-dung",
+        "so-tay-khong-noi", "trang-so-khong-ghi", "chua-duoc-ghi", "hoa", "khoang-trang"])
+def test_other_ways_of_talking_about_missing_information_are_caught(answer):
+    assert meta_hedge(answer) is not None
+
+
+def _sentences(text: str) -> list[str]:
+    return [s for s in re.split(r"(?<=[.!?…])\s+|\n+", text) if s.strip()]
+
+
+def test_no_sentence_of_any_story_text_in_the_repo_is_caught():
+    """Văn truyện là nguồn của sổ tay: câu trả lời kể lại câu trên trang không được bị chặn oan.
+    Truyện mẫu viết tay và các truyện do pipeline viết trong evals/results."""
+    files = sorted((REPO_ROOT / "data" / "sample-story").glob("ch*.md"))
+    files += sorted(RESULTS.glob("*/chapters/ch*.md"))
+    assert len(files) > 5
+    caught = [(f.name, s) for f in files for s in _sentences(f.read_text(encoding="utf-8"))
+              if meta_hedge(s) is not None]
+    assert caught == []
+
+
+def test_every_pattern_has_a_name_and_catches_its_own_example():
+    names = [name for name, _, _ in META_HEDGE_PATTERNS]
+    assert len(names) == len(set(names))
+    for name, _, example in META_HEDGE_PATTERNS:
+        assert meta_hedge(example) == name, name
+
+
+async def test_meta_hedge_block_logs_the_pattern_name_not_the_text(caplog):
+    v = view(5)
+    answer = "Lá thư được niêm sáp đỏ; chưa có nội dung nào được ghi lại."
+    with caplog.at_level(logging.DEBUG, logger="writory.pipeline.narrator"):
+        detailed = await ask_reply("Thư viết gì?", 5,
+                                   FakeLLM.scripted([reply(True, answer, [ref(v, "e_gu_death")])]))
+    assert detailed.blocked is BlockReason.META_HEDGE
+    assert meta_hedge(answer) in caplog.text
+    assert "niêm sáp" not in caplog.text and "Thư viết gì" not in caplog.text
+
+
+async def test_a_leak_is_reported_as_a_leak_even_when_the_answer_also_hedges():
+    """Lý do nặng hơn được ghi: bài E đếm lộ theo `leak`."""
+    v = view(4)
+    answer = "Lan là gián điệp của Hội Hắc Kỳ; chưa có thông tin gì thêm."
+    detailed = await ask_reply("Lan là ai?", 4,
+                               FakeLLM.scripted([reply(True, answer, [ref(v, "lan")])]))
+    assert detailed.blocked is BlockReason.LEAK
 
 
 # --- "Bạn chưa biết điều này." (design §6.6) ------------------------------------------------
@@ -403,12 +573,15 @@ async def test_context_never_contains_truth_ids(chapter):
 
 async def test_echo_answer_returned_to_player_has_no_secret():
     """Chế độ echo cho vai trả JSON: model trả nguyên context làm câu trả lời. Chữ người chơi
-    nhận không được chứa bí mật nào."""
+    nhận không được chứa bí mật nào. Echo phần user (mọi dữ liệu model nhận): system prompt là chữ
+    cố định có ví dụ cụm úp mở, nên echo nó thì lưới D-78 chặn đúng."""
     v = view(4)
 
     class EchoJSON(FakeLLM):
         def _next(self, messages):
-            return reply(True, super()._next(messages), [ref(v, "lan")])
+            super()._next(messages)
+            data = "\n\n".join(m.content for m in messages if m.role == "user")
+            return reply(True, data, [ref(v, "lan")])
 
     answer = await ask("Lan là ai?", 4, EchoJSON(None))
     assert answer != NOT_KNOWN  # echo sạch nên được trả về...
@@ -597,6 +770,8 @@ def _scripted_outputs(v: PlayerView) -> dict[str, tuple[str, BlockReason | None]
         "truth-id": (reply(True, "Có.", ["ly_that"]), BlockReason.UNKNOWN_REF),
         "leak-secret": (reply(True, "Lan là gián điệp của Hội Hắc Kỳ.", [good]), BlockReason.LEAK),
         "leak-name": (reply(True, "Lý Thất giết lão.", [good]), BlockReason.LEAK),
+        "meta-hedge": (reply(True, "Lão Gù đã chết; chưa có thông tin về kẻ ra tay.", [good]),
+                       BlockReason.META_HEDGE),  # D-78
     }
 
 

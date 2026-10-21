@@ -15,8 +15,9 @@ mới. Mọi nơi tạo lựa chọn (chương, tạo lại ở `bench_run` và 
 G4: toàn bộ view và văn bản cảnh nằm trong khối dữ liệu, vì view không mang cờ `user_authored`.
 
 G9, D-57: cổng `moderate` kiểm mọi chữ người chơi sẽ thấy (chữ lựa chọn, lời nói dối, cảm xúc)
-sau dò lộ. Vượt mức hay thuộc loại bị chặn thì không hiện bộ nào, như dò lộ: không tự viết lại,
-người chơi bấm thử lại để tạo bộ mới.
+sau dò lộ, mỗi chuỗi một dòng; bộ kiểm duyệt chấm từng dòng trong một lời gọi (D-79). Vượt mức hay
+thuộc loại bị chặn thì không hiện bộ nào, như dò lộ: không tự viết lại, người chơi bấm thử lại để
+tạo bộ mới.
 """
 
 import logging
@@ -261,7 +262,8 @@ ChoicesGate = Callable[[str], Awaitable[ModerationResult]]
 
 def _player_facing_text(choices: list[Choice]) -> str:
     """Mọi chuỗi của bộ lựa chọn có thể tới người chơi: chữ lựa chọn, nội dung lời nói dối (vào sổ
-    tay), cảm xúc thầm của lựa chọn nội tâm."""
+    tay), cảm xúc thầm của lựa chọn nội tâm. Mỗi chuỗi đúng một dòng (xuống dòng bên trong gộp
+    thành khoảng trắng): kiểm duyệt chấm từng dòng như một hành động sẽ xảy ra (D-79)."""
     parts: list[str] = []
     for c in choices:
         parts.append(c.text)
@@ -269,7 +271,7 @@ def _player_facing_text(choices: list[Choice]) -> str:
             parts.append(c.lie.content)
         if c.feeling:
             parts.append(c.feeling)
-    return "\n".join(parts)
+    return "\n".join(" ".join(part.split()) for part in parts)
 
 
 async def _ensure_allowed(choices: list[Choice], moderate: ChoicesGate, chapter: int) -> None:

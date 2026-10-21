@@ -172,7 +172,8 @@ def test_allowed_action_is_moderated_then_classified_then_saved(monkeypatch):
         resp = c.post("/stories/s1/action", json={"text": "  Tôi rút kiếm.  "})
     assert resp.status_code == 200
     assert saved == ["Tôi rút kiếm."]
-    assert len(llm.moderation_calls) == 1 and len(fake.calls) == 1
+    # Kiểm duyệt `input_votes` lần (D-79), rồi phân loại G5 một lần.
+    assert len(llm.moderation_calls) == CFG.moderation.input_votes and len(fake.calls) == 1
 
 
 @pytest.mark.parametrize(("text", "code"), [
