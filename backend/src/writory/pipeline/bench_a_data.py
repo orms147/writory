@@ -76,6 +76,7 @@ class Question(_Strict):
     fact_chapter: int = Field(ge=1)
     ask_chapter: int = Field(ge=1)
     as_of: int | None = Field(default=None, ge=1)
+    inference: bool = False  # nối hai chi tiết trên trang; báo điểm tách riêng (D-72)
     question: str = Field(min_length=5)
     answer: AnswerSpec
     derive: Mapping[str, Any]

@@ -6,7 +6,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
 
 ## Bài A — Bộ nhớ
 - **Hỏi gì:** sau khi đã đọc tới hết chương N của một truyện cố định, hệ nhớ truyện tốt cỡ nào? Cùng bộ câu hỏi, cùng một model trả lời, chỉ khác bộ nhớ đưa cho nó. Cách làm: D-72, D-73.
-- **Dữ liệu (khai trước):** `evals/scenarios/memory/questions.yaml` trên truyện mẫu 5 chương `data/sample-story/` (chỉ đọc); tham số chạy, giá giữ chỗ ngân sách, cỡ đoạn RAG: `evals/scenarios/memory/run.yaml`. **Bản nháp, chờ chủ dự án duyệt** (câu hỏi lẫn `graph.yaml`); chưa duyệt thì không chạy thật. Đã chạy thật rồi thì không sửa đè, tăng `version`.
+- **Dữ liệu (khai trước):** `evals/scenarios/memory/questions.yaml` trên truyện mẫu 5 chương `data/sample-story/` (chỉ đọc); tham số chạy, giá giữ chỗ ngân sách, cỡ đoạn RAG: `evals/scenarios/memory/run.yaml`. Chủ dự án duyệt 21/10/2026, kèm hai sửa: câu quan hệ hỏi theo chiều của Minh; câu cần nối hai chi tiết trên trang gắn `inference: true` và báo điểm tách riêng (bảng "Câu nhớ và câu suy luận" trong `summary.md`). Đã chạy thật rồi thì không sửa đè, tăng `version`.
   - Năm nhóm: đồ vật, sống/chết, ai biết gì, quan hệ hiện tại, lời nói dối. Mỗi câu khai chương hỏi (`ask_chapter`), chương của sự thật (`fact_chapter`, khoảng cách = hiệu), có thể hỏi về trạng thái ở chương cũ (`as_of`).
   - Chỉ hỏi điều **người đọc thấy được trên trang** tới chương hỏi (mỗi câu có `evidence`: câu trích nguyên văn). Điều chỉ có ở lớp sự thật, trang chưa nói, không hỏi.
   - Đáp án gốc tính lại từ đồ thị dựng tay bằng `derive`, test kiểm đáp án khai khớp đồ thị; lệch là lỗi đề.
