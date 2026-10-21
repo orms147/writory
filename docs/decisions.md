@@ -447,7 +447,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `check_repetition(names=...)`: mỗi chỗ tên hay biệt danh thực thể (danh mục và player_view của chương đã commit, `chapter.entity_names`) tính là một từ.
   - Dàn ý có trường lẫn chữ khác hệ (`scene.outline_foreign_script`) là sai schema, thử lại theo D-14; đề dàn ý dặn viết tiếng Việt (`outline-2`).
 - **Hệ quả:** đổi ngôi một đoạn ngắn giữa cảnh có thể lọt, vì đo trên cả cảnh. "ta" trong lời kể không tính là ngôi thứ nhất. Cụm lặp không phải tên ("trận quanh linh mạch") vẫn bị bắt. Config thử của test đặt `third` vì văn thử lấy từ truyện mẫu. Bài D không chạy ngôi kể (ngôi theo từng case).
-- **Người quyết:** Claude (nhánh run1-fixes), điều phối duyệt (PR #23). Ngôi thứ nhất theo ghi chú chấm tay của chủ dự án (style guide v2); chốt cho cả bản 1: chờ chủ dự án xác nhận · 20/10/2026
+- **Người quyết:** Claude (nhánh run1-fixes), điều phối duyệt (PR #23). Ngôi thứ nhất theo ghi chú chấm tay của chủ dự án (style guide v2); chốt cho cả bản 1: Claude chọn, chủ dự án uỷ quyền (21/10/2026) · 20/10/2026
 
 ## D-52 · Bộ dò lộ: thiết lập truyện người chơi đã đọc là chữ đã thấy (bổ sung D-26, thay một phần D-48)
 - **Bối cảnh:** `notes.md` mục 4: chương 1 bị viết lại vì "Huyền Sát Tông", "Tín Vật Huyền Nguyệt", "động linh mạch". Bối cảnh, hướng truyện, nhân vật chính đã chọn là chữ người chơi đọc lúc khởi tạo (G1, D-37, D-45), nhưng bộ dò chỉ tính `player_view`.
@@ -516,7 +516,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Cảnh: sau dò lộ, cùng lượt soát, một lời gọi `moderate` trên đúng chữ sẽ hiện. Mỗi loại vi phạm là một lỗi mức chặn của lượt soát (nguồn `moderation`), đi cùng luồng D-36/D-50: viết lại một lần kèm lời nhắn nêu loại và trần (không trích lại chữ); còn vi phạm thì không hiện cảnh; có bản sạch trước đó thì hiện bản đó. Cảnh bị chặn dùng chung `SCENE_LEAK_BLOCKED` (câu trung tính, không nói lý do).
   - Bộ lựa chọn: `make_choices` nhận cổng `moderate` và kiểm mọi chữ người chơi thấy (chữ lựa chọn, nội dung lời nói dối, cảm xúc). Vi phạm thì không hiện bộ nào (`CHOICES_LEAK_BLOCKED`), không tự viết lại; người chơi bấm thử lại. Cả pipeline lẫn `POST /stories/{id}/choices` truyền cổng.
   - Mức u tối: `ChapterRequest.darkness_level` (khoá trong `moderation.darkness_levels`, None = `default_darkness_level`). Đường chơi chưa lưu mức theo truyện nên dùng mặc định.
-  - Chi phí: thêm một lời gọi mỗi lượt soát cảnh và mỗi bộ lựa chọn. Cách rẻ hơn, chưa làm: gộp báo loại vào lời gọi của bộ trích (nó đã đọc đúng chữ cảnh); đánh đổi là đổi một prompt đã đo ở bài C.
+  - Chi phí: thêm một lời gọi mỗi lượt soát cảnh và mỗi bộ lựa chọn. Cách rẻ hơn (gộp báo loại vào lời gọi của bộ trích) chưa làm: Claude chọn giữ lời gọi riêng (chủ dự án uỷ quyền, 21/10/2026), vì gộp phải đổi prompt trích đã đo ở bài C; xem lại khi có số chi phí thật.
 - **Hệ quả:** lời gọi `moderate` tính vào trần cảnh/chương/truyện (G8), vào nhật ký chi phí với vai `moderate`, và vào bộ đếm lời gọi mỗi phút (D-56), vì nó tốn tiền key người chơi: mỗi đầu vào của người chơi tốn thêm một lượt đếm (ô tự viết: kiểm duyệt rồi phân loại là hai lượt), mỗi lượt soát cảnh và mỗi bộ lựa chọn thêm một lượt. **Chủ dự án cần quyết:** mức u tối là lựa chọn có sẵn ở bước khởi tạo (cần đổi design §4.1 và thêm cột lưu theo truyện), hay model đọc tag chữ tự do.
 - **Người quyết:** Claude (nhánh moderation-g9), điều phối duyệt · 20/10/2026
 
@@ -568,3 +568,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bàn giao thiết kế được commit làm đầu vào cho frontend, trừ ảnh chụp màn và file zip (giữ trên máy, `.gitignore`). Khi frontend xong, chuyển quy tắc còn dùng vào `docs/design.md` rồi xoá thư mục.
 - **Hệ quả:** cần thêm trường cho `NarratorAnswerOut`. Các điểm còn lại của README mục 8 (endpoint danh sách truyện, chi phí đã dùng, giới hạn công khai, câu lỗi trần chi phí) làm cùng phần backend cho giao diện.
 - **Người quyết:** Chủ dự án · 21/10/2026
+
+## D-70 · Thang mức độ kiểm duyệt: tả lướt là `mild`; ám chỉ cảnh tình dục cũng tính
+- **Bối cảnh:** bài đo G9 lần 1 (`evals/results/2026-10-21-g9-luna-1/`) có 2 câu chặn nhầm cảnh đánh nhau bình thường ở mức Vừa. Nguyên nhân: thang mức độ trong config lấy "máu loang trên áo" làm ví dụ `strong`, lệch với bộ câu. Có thêm 1 câu bỏ sót: ám chỉ qua đêm ở mức Nhẹ.
+- **Quyết định:** `intensity_scale.mild` gồm cả tả lướt trong một câu; `strong` là miêu tả có chi tiết. Chữ mô tả `adult_sexual` nói rõ ám chỉ cũng tính. Danh sách loại và các trần không đổi.
+- **Hệ quả:** lần đo lại (`evals/results/2026-10-21-g9-luna-2/`) đúng 44/44, nhưng lạc quan vì ví dụ lấy từ chính bộ đo. Cần một bộ câu giữ riêng.
+- **Người quyết:** Claude, chủ dự án uỷ quyền chọn (21/10/2026) · 21/10/2026
