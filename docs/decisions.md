@@ -64,7 +64,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Người quyết:** Claude · 19/10/2026
 
 ## D-9 · Tên sản phẩm là WriTory
-- **Bối cảnh:** bản thiết kế đầu dùng tên tạm "Mạch Truyện".
+- **Bối cảnh:** bản thiết kế đầu dùng một tên tạm.
 - **Quyết định:** tên sản phẩm là **WriTory**, trùng tên repo và tên package `writory`. Bỏ mục "tên chính thức" khỏi danh sách còn mở (design §14).
 - **Hệ quả:** giao diện, tài liệu và nhận diện đều dùng "WriTory". Không dùng tên cũ ở bất kỳ đâu.
 - **Người quyết:** Chủ dự án · 19/10/2026
