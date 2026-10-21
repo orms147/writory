@@ -1,0 +1,57 @@
+/* WriTory — design tokens (bản 1).
+   Nguồn: canvas thiết kế "WriTory — UI/UX", trang Hệ nhận diện.
+   Dùng làm biến CSS gốc; tailwind-theme.js trỏ vào các biến này. */
+
+:root {
+  /* Mực: khung giao diện tối */
+  --ink-950: #121110;   /* nền chính */
+  --ink-900: #1A1917;   /* nền phụ, ô nhập */
+  --ink-850: #171614;   /* ngăn kéo, sheet */
+  --ink-800: #24221F;   /* bề mặt nổi */
+  --ink-750: #2E2B27;   /* viền thẻ */
+  --ink-700: #34312C;   /* viền */
+  --ink-600: #4A453E;   /* viền nút ghost */
+  --ink-500: #6E685E;   /* chữ rất mờ (chỉ ≥ 24px hoặc trang trí) */
+  --ink-400: #9A9286;   /* chữ mờ — 4.5:1 trên ink-950 */
+  --ink-200: #B5AC9E;   /* chữ phụ */
+  --ink-100: #D9D1C3;   /* chữ thân trên nền tối */
+  --ink-50:  #ECE6DA;   /* chữ chính trên nền tối */
+
+  /* Giấy: trang đọc */
+  --paper-50:  #F3ECDD; /* trang đọc */
+  --paper-100: #FBF6EC; /* thẻ trên giấy */
+  --paper-200: #E9DFCB; /* nền phân đoạn trên giấy */
+  --paper-400: #D6CAB2; /* viền trên giấy */
+  --paper-500: #8A7C68; /* chữ rất mờ trên giấy */
+  --paper-700: #6B5F4E; /* chữ phụ trên giấy — 4.5:1 */
+  --paper-800: #4E4538; /* chữ thân phụ trên giấy */
+  --paper-950: #1F1B16; /* mực trên giấy */
+
+  /* Điểm nhấn */
+  --cinnabar-700: #8E3220; /* chữ chu sa trên giấy, nền hover nút */
+  --cinnabar-600: #B8432B; /* nền nút chính (chữ #FFF6EE) */
+  --cinnabar-400: #E0674B; /* chu sa trên nền tối: chữ, viền chọn */
+  --cinnabar-200: #F0A08C; /* chữ cảnh báo nhẹ trên nền tối */
+  --cinnabar-100: #F4C9BC;
+  --jade-400: #6FB59A;     /* trạng thái tốt: đã có khoá */
+  --jade-200: #9CCFB9;
+  --on-cinnabar: #FFF6EE;
+
+  /* Chữ */
+  --font-display: 'Cormorant Garamond', 'Times New Roman', serif; /* tiêu đề, chỉ từ 20px trở lên */
+  --font-reading: 'Literata', Georgia, serif;                     /* văn truyện, câu trích */
+  --font-ui: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; /* giao diện */
+
+  --text-reading-desktop: 19px; --leading-reading-desktop: 1.8;
+  --text-reading-mobile: 18px;  --leading-reading-mobile: 1.75;
+  --measure-reading: 760px;     /* khổ trang đọc tối đa */
+
+  /* Hình khối */
+  --radius-sm: 8px; --radius-md: 12px; --radius-lg: 16px; --radius-xl: 20px; --radius-pill: 999px;
+  --tap-min: 44px;              /* vùng chạm tối thiểu */
+  --grid-cell: 96px;            /* ô kẻ nền mờ */
+
+  /* Chuyển động */
+  --ease-out: cubic-bezier(.2, .8, .2, 1);
+  --dur-fast: .2s; --dur-med: .4s; --dur-slow: .8s;
+}

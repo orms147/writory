@@ -1,0 +1,149 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Sổ tay — Ngọc Bội Rạn — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <div aria-hidden="true" style="position: absolute; inset: 0; display: flex; flex-direction: column; filter: blur(1px)">
+    <div style="height: 69px; border-bottom: 1px solid #26231F"></div>
+    <div style="flex: 1 1 auto; display: flex; justify-content: center; padding: 36px 20px 0">
+      <div style="width: 100%; max-width: 760px; background: #F3ECDD; color: #1F1B16; padding: 72px 88px; box-sizing: border-box; font-family: 'Literata', serif; font-size: 19px; line-height: 1.8">
+        <p style="margin: 0; text-align: center; font-family: 'Cormorant Garamond', serif; font-size: 46px; font-weight: 600">Đèn trường minh</p>
+        <p style="margin: 24px 0 0">Mưa trên núi Thanh Vân không rơi xuống mà trôi ngang, như ai đó vắt một tấm lụa ướt qua sườn đá. Lâm Thanh Y đứng dưới mái hiên Tạp Dịch Viện, hai tay giấu trong ống tay áo…</p>
+      </div>
+    </div>
+  </div>
+  <a href="D-Doc.dc.html" aria-label="Đóng sổ tay, về trang đọc" style="position: absolute; inset: 0; background: rgba(10,9,8,.62)"></a>
+
+  <aside aria-label="Sổ tay" class="wt-grain" style="position: absolute; top: 0; right: 0; bottom: 0; width: min(600px, 100%); background: #171614; border-left: 1px solid #2E2B27; box-shadow: -40px 0 80px -30px rgba(0,0,0,.8); display: flex; flex-direction: column">
+    <div style="padding: 22px 24px 0; display: flex; flex-direction: column; gap: 16px">
+      <div style="display: flex; align-items: center; justify-content: space-between; gap: 12px">
+        <div style="display: flex; flex-direction: column; line-height: 1.2">
+          <span style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286">Sổ tay của Thanh Y</span>
+          <h1 style="margin: 4px 0 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 34px">Những gì bạn đã biết</h1>
+        </div>
+        <a href="D-Doc.dc.html" class="wt-icon-btn" aria-label="Đóng sổ tay" style="width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: #D9D1C3"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+      </div>
+      <div role="tablist" aria-label="Mục sổ tay" style="display: flex; gap: 2px; overflow-x: auto; border-bottom: 1px solid #2E2B27; margin: 0 -24px; padding: 0 24px">
+        <sc-for list="{{tabs}}" as="t" hint-placeholder-count="5">
+          <button role="tab" aria-selected="{{t.sel}}" onClick="{{t.pick}}" style="flex: 0 0 auto; height: 46px; padding: 0 12px; border: none; background: transparent; font-size: 14px; font-weight: 600; color: {{t.fg}}; box-shadow: inset 0 -2px 0 {{t.line}}">{{t.label}}</button>
+        </sc-for>
+      </div>
+    </div>
+
+    <div style="flex: 1 1 auto; overflow-y: auto; padding: 8px 24px 24px">
+      <sc-if value="{{isEntries}}" hint-placeholder-val="{{ true }}">
+        <div style="display: flex; flex-direction: column">
+          <sc-for list="{{entries}}" as="e" hint-placeholder-count="4">
+            <article class="wt-row" style="padding: 18px 0; border-bottom: 1px solid #26231F; display: flex; flex-direction: column; gap: 8px">
+              <div style="display: flex; justify-content: space-between; align-items: baseline; gap: 12px; flex-wrap: wrap">
+                <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 25px; line-height: 1.1">{{e.name}}</h2>
+                <span style="font-size: 12px; color: #9A9286; white-space: nowrap">biết từ chương {{e.ch}}</span>
+              </div>
+              <sc-if value="{{e.hasAka}}" hint-placeholder-val="{{ true }}">
+                <span style="font-size: 13px; color: #B5AC9E">còn được gọi: {{e.aka}}</span>
+              </sc-if>
+              <blockquote style="margin: 2px 0 0; padding-left: 14px; border-left: 2px solid #4A453E; font-family: 'Literata', serif; font-style: italic; font-size: 15px; line-height: 1.65; color: #D9D1C3">“{{e.quote}}”</blockquote>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+
+      <sc-if value="{{isLies}}" hint-placeholder-val="{{ false }}">
+        <div style="display: flex; flex-direction: column">
+          <sc-for list="{{lies}}" as="l" hint-placeholder-count="2">
+            <article style="padding: 18px 0; border-bottom: 1px solid #26231F; display: flex; flex-direction: column; gap: 8px">
+              <span style="font-size: 13px; color: #B5AC9E">Nói với <span style="color: #ECE6DA; font-weight: 600">{{l.to}}</span> · chương {{l.ch}}</span>
+              <p style="margin: 0; font-family: 'Literata', serif; font-size: 18px; line-height: 1.55">{{l.said}}</p>
+            </article>
+          </sc-for>
+        </div>
+      </sc-if>
+    </div>
+
+    <div style="padding: 14px 24px; border-top: 1px solid #2E2B27; display: flex; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: #9A9286">
+      <span>Chỉ ghi điều đã hiện trên trang.</span>
+      <a href="D-HoiNguoiKe.dc.html" class="wt-link" style="font-weight: 600">Hỏi người kể →</a>
+    </div>
+  </aside>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  state = { tab: 'people' };
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    const D = {
+      people: [
+        { name: 'Vân Phong', aka: 'sư huynh Vân Phong', ch: 1, quote: 'Sư huynh Vân Phong nằm giữa hai giá sách, mắt mở, môi tím.' },
+        { name: 'Tô Vãn Tình', aka: '', ch: 1, quote: 'Ở cuối hành lang Tàng Kinh Các, Tô Vãn Tình đứng yên nhìn nàng.' },
+        { name: 'Chấp sự Hồ', aka: '', ch: 2, quote: 'Giọng chấp sự Hồ vang lên sau lưng, khàn như tiếng chổi tre quét sân.' },
+        { name: 'Trưởng lão Mạc Hàn', aka: 'trưởng lão Mạc', ch: 2, quote: 'Trưởng lão Mạc Hàn không nhìn đám tạp dịch.' }
+      ],
+      places: [
+        { name: 'Tàng Kinh Các', aka: '', ch: 1, quote: 'Nàng đẩy cửa Tàng Kinh Các lúc trời còn chưa rạng.' },
+        { name: 'Tạp Dịch Viện', aka: 'viện', ch: 2, quote: 'Lâm Thanh Y đứng dưới mái hiên Tạp Dịch Viện, hai tay giấu trong ống tay áo.' },
+        { name: 'Từ đường', aka: '', ch: 2, quote: 'Đường lên Từ đường có chín trăm bậc.' }
+      ],
+      items: [
+        { name: 'Ngọc bội khắc chữ “Vân”', aka: 'ngọc bội, miếng ngọc', ch: 1, quote: 'Nàng gỡ từng ngón tay lạnh ngắt ra khỏi miếng ngọc.' },
+        { name: 'Đèn trường minh', aka: '', ch: 2, quote: 'Bên trong, hàng trăm ngọn đèn trường minh cháy đều trên giá gỗ mun.' },
+        { name: 'Chìa khoá đồng', aka: 'chùm chìa khoá', ch: 2, quote: 'Chấp sự Hồ khẽ đưa tay chạm vào thắt lưng, nơi chùm chìa khoá vẫn treo.' }
+      ],
+      facts: [
+        { name: 'Ngọc bội đã rạn', aka: '', ch: 2, quote: 'Vết rạn chạy chéo qua chữ “Vân” khắc trên mặt ngọc. Đêm qua nó chưa có.' },
+        { name: 'Một ngọn đèn trường minh đã tắt', aka: '', ch: 2, quote: 'Chỉ có một ngọn đã tắt: ngọn thứ bảy, hàng thứ ba.' },
+        { name: 'Vân Phong chết trước canh ba', aka: '', ch: 2, quote: '- Vân Phong chết trước canh ba - ông nói, giọng đều như đọc sổ.' },
+        { name: 'Từ canh hai tới canh ba, Tàng Kinh Các chỉ mở cho người có chìa khoá đồng', aka: '', ch: 2, quote: '- Từ canh hai tới canh ba, Tàng Kinh Các chỉ mở cho người có chìa khoá đồng.' }
+      ]
+    };
+    const tab = this.state.tab;
+    const tabs = [['people', 'Nhân vật'], ['places', 'Nơi chốn'], ['items', 'Đồ vật'], ['facts', 'Sự thật'], ['lies', 'Lời nói dối của tôi']].map(([id, label]) => {
+      const on = tab === id;
+      return { label, sel: on ? 'true' : 'false', fg: on ? '#ECE6DA' : '#9A9286', line: on ? '#E0674B' : 'transparent', pick: () => this.setState({ tab: id }) };
+    });
+    const entries = (D[tab] || []).map((e) => ({ ...e, hasAka: !!e.aka }));
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave, tabs, entries,
+      isEntries: tab !== 'lies', isLies: tab === 'lies',
+      lies: [
+        { to: 'Chấp sự Hồ', ch: 1, said: '- Đệ tử không thấy gì lạ đêm qua.' },
+        { to: 'Tô Vãn Tình', ch: 1, said: '- Ta chỉ đi lấy nước.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

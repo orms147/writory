@@ -1,0 +1,209 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Truyện mới · Khuôn truyện — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <header style="position: relative; z-index: 2; border-bottom: 1px solid #26231F">
+    <div style="max-width: 1240px; margin: 0 auto; padding: 16px 24px; display: flex; flex-wrap: wrap; align-items: center; gap: 16px 28px">
+      <a href="D-ThuVien.dc.html" class="wt-icon-btn" aria-label="Thoát, về tủ truyện" style="width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: #B5AC9E"><svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" aria-hidden="true"><path d="M6 6l12 12M18 6L6 18"/></svg></a>
+      <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px">Truyện mới</span>
+      <ol aria-label="Các bước" style="list-style: none; margin: 0 0 0 auto; padding: 0; display: flex; flex-wrap: wrap; gap: 6px 18px; font-size: 13px">
+        <li aria-current="step" style="display: flex; align-items: center; gap: 8px; color: #ECE6DA; font-weight: 600"><span style="width: 24px; height: 24px; border-radius: 50%; background: #B8432B; color: #FFF6EE; display: grid; place-items: center; font-size: 12px">1</span>Khuôn truyện</li>
+        <li style="display: flex; align-items: center; gap: 8px; color: #9A9286"><span style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #4A453E; display: grid; place-items: center; font-size: 12px">2</span>Bối cảnh</li>
+        <li style="display: flex; align-items: center; gap: 8px; color: #9A9286"><span style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #4A453E; display: grid; place-items: center; font-size: 12px">3</span>Hướng truyện</li>
+        <li style="display: flex; align-items: center; gap: 8px; color: #9A9286"><span style="width: 24px; height: 24px; border-radius: 50%; border: 1px solid #4A453E; display: grid; place-items: center; font-size: 12px">4</span>Nhân vật</li>
+      </ol>
+    </div>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 40px 24px 64px; display: flex; flex-wrap: wrap; gap: 40px; align-items: flex-start">
+    <div style="flex: 999 1 560px; min-width: 0; display: flex; flex-direction: column; gap: 40px">
+      <div class="wt-rise" style="display: flex; flex-direction: column; gap: 6px">
+        <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 50px; line-height: 1.05">Bạn muốn sống trong loại truyện nào?</h1>
+        <p style="margin: 0; color: #B5AC9E; font-size: 16px">Chọn một thể loại chính. Phần còn lại để ngòi bút đề xuất.</p>
+      </div>
+
+      <section aria-labelledby="tl-h" style="display: flex; flex-direction: column; gap: 14px">
+        <h2 id="tl-h" style="margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286; font-weight: 600">a · Thể loại chính <span style="text-transform: none; letter-spacing: 0; font-weight: 400">— chọn một</span></h2>
+        <div role="radiogroup" aria-label="Thể loại chính" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{genres}}" as="g" hint-placeholder-count="7">
+            <button role="radio" aria-checked="{{g.checked}}" onClick="{{g.pick}}" class="wt-chip" style="height: 46px; padding: 0 18px; border-radius: 999px; font-size: 15px; font-weight: 600; border: 1px solid {{g.bd}}; background: {{g.bg}}; color: {{g.fg}}">{{g.label}}</button>
+          </sc-for>
+        </div>
+        <div style="display: flex; flex-wrap: wrap; align-items: center; gap: 8px 10px; margin-top: 6px">
+          <span style="font-size: 13px; color: #9A9286; margin-right: 4px">Tag phụ, tuỳ chọn:</span>
+          <sc-for list="{{tags}}" as="t" hint-placeholder-count="7">
+            <button aria-pressed="{{t.pressed}}" onClick="{{t.toggle}}" class="wt-chip" style="height: 36px; padding: 0 14px; border-radius: 999px; font-size: 13px; font-weight: 500; border: 1px solid {{t.bd}}; background: {{t.bg}}; color: {{t.fg}}">{{t.label}}</button>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-labelledby="ten-h" style="display: flex; flex-direction: column; gap: 14px">
+        <div style="display: flex; flex-wrap: wrap; align-items: baseline; justify-content: space-between; gap: 8px">
+          <h2 id="ten-h" style="margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286; font-weight: 600">b · Tên người &amp; địa danh</h2>
+          <sc-if value="{{isDefault}}" hint-placeholder-val="{{ true }}"><span style="font-size: 13px; color: #9A9286">Đang theo mặc định của {{genreName}}</span></sc-if>
+          <sc-if value="{{isCustom}}" hint-placeholder-val="{{ false }}"><button onClick="{{resetNames}}" style="border: none; background: transparent; color: #E0674B; font-size: 13px; padding: 0; min-height: 32px">Đã đổi · dùng lại mặc định</button></sc-if>
+        </div>
+        <div style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(300px, 100%), 1fr)); gap: 14px">
+          <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #2E2B27; padding-top: 14px">
+            <span style="font-weight: 600">Tên nhân vật</span>
+            <div role="radiogroup" aria-label="Kiểu tên nhân vật" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: #1A1917; border: 1px solid #2A2724">
+              <sc-for list="{{nameOpts}}" as="o" hint-placeholder-count="2">
+                <button role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="height: 40px; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button>
+              </sc-for>
+            </div>
+            <span style="font-family: 'Literata', serif; font-style: italic; font-size: 14px; color: #B5AC9E">Ví dụ: {{nameEx}}</span>
+          </div>
+          <div style="display: flex; flex-direction: column; gap: 10px; border-top: 1px solid #2E2B27; padding-top: 14px">
+            <span style="font-weight: 600">Địa danh</span>
+            <div role="radiogroup" aria-label="Kiểu địa danh" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 12px; background: #1A1917; border: 1px solid #2A2724">
+              <sc-for list="{{placeOpts}}" as="o" hint-placeholder-count="2">
+                <button role="radio" aria-checked="{{o.checked}}" onClick="{{o.pick}}" style="height: 40px; border: none; border-radius: 9px; font-size: 14px; font-weight: 600; background: {{o.bg}}; color: {{o.fg}}">{{o.label}}</button>
+              </sc-for>
+            </div>
+            <span style="font-family: 'Literata', serif; font-style: italic; font-size: 14px; color: #B5AC9E">Ví dụ: {{placeEx}}</span>
+          </div>
+        </div>
+      </section>
+
+      <section aria-labelledby="gv-h" style="display: flex; flex-direction: column; gap: 18px">
+        <h2 id="gv-h" style="margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286; font-weight: 600">c · Giọng văn &amp; độ u tối</h2>
+        <div role="radiogroup" aria-label="Giọng văn" style="display: flex; flex-wrap: wrap; gap: 8px">
+          <sc-for list="{{voices}}" as="v" hint-placeholder-count="4">
+            <button role="radio" aria-checked="{{v.checked}}" onClick="{{v.pick}}" class="wt-chip" style="height: 40px; padding: 0 16px; border-radius: 999px; font-size: 14px; font-weight: 500; border: 1px solid {{v.bd}}; background: {{v.bg}}; color: {{v.fg}}">{{v.label}}</button>
+          </sc-for>
+        </div>
+        <div role="radiogroup" aria-label="Độ u tối" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 8px; max-width: 640px">
+          <sc-for list="{{darks}}" as="d" hint-placeholder-count="3">
+            <button role="radio" aria-checked="{{d.checked}}" onClick="{{d.pick}}" class="wt-chip" style="text-align: left; padding: 12px 14px; border-radius: 12px; border: 1px solid {{d.bd}}; background: {{d.bg}}; display: flex; flex-direction: column; gap: 4px">
+              <span style="font-weight: 600; font-size: 14px">{{d.label}}</span>
+              <span style="font-size: 12px; color: #9A9286; line-height: 1.45">{{d.hint}}</span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-labelledby="dd-h" style="display: flex; flex-direction: column; gap: 14px">
+        <h2 id="dd-h" style="margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286; font-weight: 600">d · Độ dài</h2>
+        <div role="radiogroup" aria-label="Độ dài" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); gap: 12px">
+          <sc-for list="{{lengths}}" as="l" hint-placeholder-count="4">
+            <button role="radio" aria-checked="{{l.checked}}" onClick="{{l.pick}}" class="wt-card" data-selected="{{l.selFlag}}" style="text-align: left; border: 1px solid #2E2B27; border-radius: 16px; background: {{l.bg}}; padding: 20px; display: flex; flex-direction: column; gap: 14px; color: #ECE6DA">
+              <span style="height: 56px; display: flex; align-items: flex-end; gap: 3px" aria-hidden="true">
+                <sc-for list="{{l.spines}}" as="sp" hint-placeholder-count="3"><span style="width: {{sp.w}}; height: {{sp.h}}; border-radius: 2px; background: {{sp.c}}"></span></sc-for>
+              </span>
+              <span style="display: flex; flex-direction: column; gap: 2px">
+                <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 24px; line-height: 1.1">{{l.name}}</span>
+                <span style="font-size: 13px; color: #B5AC9E">~{{l.pages}} trang · {{l.ch}} chương</span>
+              </span>
+            </button>
+          </sc-for>
+        </div>
+      </section>
+
+      <section aria-labelledby="gn-h" style="display: flex; flex-direction: column; gap: 14px">
+        <h2 id="gn-h" style="margin: 0; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286; font-weight: 600">e · Góc nhìn</h2>
+        <div role="radiogroup" aria-label="Góc nhìn" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(min(260px, 100%), 1fr)); gap: 12px">
+          <button role="radio" aria-checked="true" class="wt-card" data-selected="1" style="text-align: left; border: 1px solid #2E2B27; border-radius: 16px; background: #201D1A; padding: 18px 20px; display: flex; flex-direction: column; gap: 2px; color: #ECE6DA">
+            <span style="font-weight: 600">Chỉ nhân vật chính</span><span style="font-size: 13px; color: #B5AC9E">Bạn chỉ thấy những gì nhân vật của bạn thấy, nghe, đoán.</span>
+          </button>
+          <div aria-disabled="true" style="border: 1px solid #26231F; border-radius: 16px; padding: 18px 20px; display: flex; flex-direction: column; gap: 4px; color: #9A9286">
+            <span style="display: flex; align-items: center; gap: 10px; font-weight: 600; color: #B5AC9E">Nhiều nhân vật <span style="height: 22px; padding: 0 8px; border-radius: 999px; background: #24221F; font-size: 11px; font-weight: 600; display: inline-flex; align-items: center; color: #D9D1C3">sắp có</span></span><span style="font-size: 13px">Có chương kể qua mắt người khác.</span>
+          </div>
+        </div>
+      </section>
+    </div>
+
+    <aside aria-label="Tóm tắt khuôn truyện" style="flex: 1 1 300px; border-top: 1px solid #2E2B27; padding-top: 22px; display: flex; flex-direction: column; gap: 18px">
+      <span style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286; font-weight: 600">Khuôn của bạn</span>
+      <p style="margin: 0; font-family: 'Cormorant Garamond', serif; font-size: 26px; line-height: 1.25">{{summary}}</p>
+      <div style="display: flex; justify-content: space-between; gap: 12px; font-size: 14px; border-top: 1px solid #26231F; padding-top: 14px">
+        <span style="color: #9A9286">Ước tính cả truyện</span><span style="color: #9A9286; font-style: italic">chưa có ước tính</span>
+      </div>
+      <a href="D-KhoiTao-BoiCanh.dc.html" class="wt-btn wt-btn-primary" style="height: 52px; border-radius: 12px; background: #B8432B; color: #FFF6EE; text-decoration: none; font-weight: 600; display: flex; align-items: center; justify-content: center; gap: 10px">Gợi ý bối cảnh <span class="wt-arrow">→</span></a>
+      <span style="font-size: 12px; color: #9A9286; text-align: center; margin-top: -8px">Ngòi bút sẽ đưa ra 3 bối cảnh để bạn chọn.</span>
+    </aside>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1320}}'>
+class Component extends DCLogic {
+  state = { genre: 'ky-ao', tags: { 'Bí ẩn': true }, names: null, places: null, voice: 'tram', dark: 'vua', len: 'dai' };
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    const st = this.state;
+    const on = (x) => ({ bd: x ? '#E0674B' : '#3A3631', bg: x ? 'rgba(212,85,58,.16)' : 'transparent', fg: x ? '#F7D5CA' : '#D9D1C3' });
+    const G = [
+      ['ky-ao', 'Kỳ ảo · tu tiên', 'han', 'hu'], ['co-trang', 'Cổ trang', 'han', 'hu'], ['lich-su', 'Lịch sử', 'viet', 'that'],
+      ['trinh-tham', 'Trinh thám', 'viet', 'that'], ['do-thi', 'Đô thị', 'viet', 'that'], ['hien-dai', 'Hiện đại', 'viet', 'hu'], ['tuong-lai', 'Tương lai giả tưởng', 'viet', 'hu']
+    ];
+    const g = G.find((x) => x[0] === st.genre) || G[0];
+    const names = st.names || g[2], places = st.places || g[3];
+    const isCustom = (st.names && st.names !== g[2]) || (st.places && st.places !== g[3]);
+    const genres = G.map(([id, label]) => { const c = id === st.genre; return { label, ...on(c), checked: c ? 'true' : 'false', pick: () => this.setState({ genre: id, names: null, places: null }) }; });
+    const tags = ['Bí ẩn', 'Lãng mạn', 'Cung đấu', 'Báo thù', 'Kinh dị', 'Hóm hỉnh', 'Sinh tồn'].map((label) => { const c = !!st.tags[label]; return { label, ...on(c), pressed: c ? 'true' : 'false', toggle: () => this.setState({ tags: { ...st.tags, [label]: !c } }) }; });
+    const seg = (cur, id, label, key) => { const c = cur === id; return { label, checked: c ? 'true' : 'false', bg: c ? '#ECE6DA' : 'transparent', fg: c ? '#121110' : '#B5AC9E', pick: () => this.setState({ [key]: id }) }; };
+    const nameOpts = [seg(names, 'han', 'Kiểu Hán Việt', 'names'), seg(names, 'viet', 'Kiểu Việt', 'names')];
+    const placeOpts = [seg(places, 'hu', 'Hư cấu', 'places'), seg(places, 'that', 'Có thật', 'places')];
+    const nameEx = names === 'han' ? 'Lâm Thanh Y, Mạc Hàn, Tô Vãn Tình' : 'Nguyễn Thị Hạnh, Trần Văn Lục, bà Tư';
+    const placeEx = places === 'that' ? 'phố Hàng Bạc, chợ Bến Thành, sông Hương' : (names === 'han' ? 'Thanh Vân Tông, trấn Vong Xuyên' : 'phố Bến Mây, làng Đồng Sương');
+    const voices = [['tram', 'Trầm, lạnh'], ['tru-tinh', 'Trữ tình'], ['gai-goc', 'Gai góc'], ['hom-hinh', 'Hóm hỉnh']].map(([id, label]) => { const c = st.voice === id; return { label, ...on(c), checked: c ? 'true' : 'false', pick: () => this.setState({ voice: id }) }; });
+    const darks = [['nhe', 'Nhẹ', 'Có hiểm nguy, ít máu.'], ['vua', 'Vừa', 'Cái chết có thật, kể tiết chế.'], ['dam', 'Đậm', 'Tàn nhẫn, mất mát nặng nề.']].map(([id, label, hint]) => { const c = st.dark === id; return { label, hint, checked: c ? 'true' : 'false', bd: c ? '#E0674B' : '#3A3631', bg: c ? 'rgba(212,85,58,.12)' : 'transparent', pick: () => this.setState({ dark: id }) }; });
+    const L = [
+      { id: 'ngan', name: 'Truyện ngắn', pages: 10, ch: '4–8', n: 1 },
+      { id: 'vua', name: 'Truyện vừa', pages: 30, ch: '10–20', n: 2 },
+      { id: 'dai', name: 'Truyện dài', pages: 60, ch: '20–35', n: 3 },
+      { id: 'mong', name: 'Tiểu thuyết mỏng', pages: 100, ch: '30–60', n: 4 }
+    ];
+    const cur = L.find((l) => l.id === st.len) || L[2];
+    const lengths = L.map((l) => {
+      const c = l.id === st.len; const spines = [];
+      for (let i = 0; i < l.n; i++) spines.push({ w: (8 + i * 4) + 'px', h: (30 + i * 8) + 'px', c: c ? (i % 2 ? '#B8432B' : '#E0674B') : (i % 2 ? '#3A3631' : '#4A453E') });
+      return { ...l, spines, checked: c ? 'true' : 'false', selFlag: c ? '1' : '0', bg: c ? '#201D1A' : '#181715', pick: () => this.setState({ len: l.id }) };
+    });
+    const tagList = Object.keys(st.tags).filter((k) => st.tags[k]);
+    const voiceLabel = { tram: 'trầm, lạnh', 'tru-tinh': 'trữ tình', 'gai-goc': 'gai góc', 'hom-hinh': 'hóm hỉnh' }[st.voice];
+    const darkLabel = { nhe: 'u tối nhẹ', vua: 'u tối vừa', dam: 'u tối đậm' }[st.dark];
+    const summary = g[1] + (tagList.length ? ' · ' + tagList.join(', ').toLowerCase() : '') + ' · ' + voiceLabel + ' · ' + darkLabel + ' · ' + (names === 'han' ? 'tên Hán Việt' : 'tên Việt') + ', địa danh ' + (places === 'that' ? 'có thật' : 'hư cấu') + ' · ' + cur.name.toLowerCase() + ', ~' + cur.pages + ' trang, ' + cur.ch + ' chương.';
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave,
+      genres, tags, nameOpts, placeOpts, nameEx, placeEx, voices, darks, lengths, summary,
+      genreName: g[1].toLowerCase(), isDefault: !isCustom, isCustom: !!isCustom,
+      resetNames: () => this.setState({ names: null, places: null })
+    };
+  }
+}
+</script>
+</body>
+</html>

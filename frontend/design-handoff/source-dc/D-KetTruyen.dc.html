@@ -1,0 +1,95 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Hết truyện — Án Mạng Phố Hàng Bạc — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: radial-gradient(ellipse at 50% 0%, #241F1B 0%, #121110 60%); color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <header style="position: relative; z-index: 2; max-width: 1240px; margin: 0 auto; padding: 18px 24px; display: flex; justify-content: space-between; align-items: center">
+    <a href="D-ThuVien.dc.html" class="wt-link" style="color: #B5AC9E; font-size: 14px">← Thư viện</a>
+    <span style="font-size: 13px; color: #9A9286">Trinh thám · Truyện ngắn</span>
+  </header>
+
+  <main style="position: relative; z-index: 1; max-width: 1040px; margin: 0 auto; padding: 24px 24px 80px; display: flex; flex-direction: column; gap: 48px">
+    <section style="display: flex; flex-direction: column; align-items: center; text-align: center; gap: 22px">
+      <span class="wt-rise" style="width: 108px; height: 108px; border: 4px solid #E0674B; border-radius: 16px; transform: rotate(-8deg); display: grid; place-items: center; color: #E0674B; font-family: 'Cormorant Garamond', serif; font-weight: 700; font-size: 38px; line-height: 1">Hết</span>
+      <h1 class="wt-rise wt-d1" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 64px; line-height: 1.02">Án Mạng Phố Hàng Bạc</h1>
+      <p class="wt-rise wt-d2" style="margin: 0; max-width: 620px; font-family: 'Literata', serif; font-style: italic; font-size: 19px; line-height: 1.7; color: #D9D1C3">“Lục gấp sổ, để lại cây bút trên bàn ông Cả. Ngoài phố, tiếng đe Hàng Bạc lại vang lên như chưa từng có gì xảy ra.”</p>
+      <div class="wt-rise wt-d3" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 10px 28px; font-size: 14px; color: #B5AC9E">
+        <span><span style="color: #ECE6DA; font-weight: 600">10</span> trang</span>
+        <span><span style="color: #ECE6DA; font-weight: 600">6</span> chương</span>
+        <span><span style="color: #ECE6DA; font-weight: 600">5</span> lựa chọn</span>
+        <span><span style="color: #ECE6DA; font-weight: 600">2</span> lời nói dối</span>
+        <span>tổng chi phí <span style="color: #ECE6DA; font-weight: 600; font-variant-numeric: tabular-nums">$0,22</span></span>
+      </div>
+      <div class="wt-rise wt-d4" style="display: flex; flex-wrap: wrap; justify-content: center; gap: 12px">
+        <a href="D-Doc.dc.html" class="wt-btn wt-btn-primary" style="height: 52px; padding: 0 24px; border-radius: 12px; background: #B8432B; color: #FFF6EE; text-decoration: none; display: flex; align-items: center; gap: 10px; font-weight: 600">Đọc lại từ trang đầu</a>
+        <a href="D-KhoiTao-Khuon.dc.html" class="wt-btn wt-btn-ghost" style="height: 52px; padding: 0 20px; border: 1px solid #4A453E; border-radius: 12px; color: #ECE6DA; text-decoration: none; display: flex; align-items: center; font-weight: 500">Bắt đầu một đời mới</a>
+      </div>
+    </section>
+
+    <section aria-labelledby="nga-re" style="display: flex; flex-direction: column; gap: 16px">
+      <h2 id="nga-re" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 32px">Những ngã rẽ bạn đã chọn</h2>
+      <ol style="list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; border-left: 1px solid #34312C; margin-left: 8px">
+        <sc-for list="{{path}}" as="p" hint-placeholder-count="5">
+          <li style="position: relative; padding: 0 0 18px 26px; display: flex; flex-direction: column; gap: 2px">
+            <span style="position: absolute; left: -6px; top: 7px; width: 11px; height: 11px; border-radius: 50%; background: #121110; border: 2px solid #E0674B"></span>
+            <span style="font-size: 12px; color: #9A9286">Chương {{p.ch}} · {{p.type}}</span>
+            <span style="font-family: 'Literata', serif; font-size: 16px; line-height: 1.6">{{p.text}}</span>
+          </li>
+        </sc-for>
+      </ol>
+    </section>
+
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1000}}'>
+class Component extends DCLogic {
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = t && t.closest && t.closest('[data-paper]') ? '1' : '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave,
+      path: [
+        { ch: 1, type: 'Lời thoại · nói dối', text: 'Nói với bà chủ hiệu rằng mình là thợ chạm bạc tìm việc, không phải phóng viên.' },
+        { ch: 2, type: 'Hành động', text: 'Lật tấm khăn phủ bàn đe, tìm vết bạc nung còn dở.' },
+        { ch: 3, type: 'Nội tâm', text: 'Nhớ lại khuôn mặt người khách đội mũ dạ đã gặp ở ga Hàng Cỏ.' },
+        { ch: 4, type: 'Lời thoại · im lặng', text: 'Không đáp khi ông Cả hỏi ai đã mở két sắt.' },
+        { ch: 6, type: 'Tự viết', text: 'Đặt cuốn sổ ghi chép lên bàn và để ông Cả tự đọc trang cuối.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

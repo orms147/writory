@@ -538,3 +538,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Model giả: `oracle` chỉ trả lời điều nó thấy; `leaker` lấy chữ từ `leak_terms` của kế hoạch khi truyện do pipeline viết.
 - **Hệ quả:** bộ dò lộ lúc chạy (`safety/leak.py`) chỉ áp `leak_terms` khi chương < `reveal_from_chapter`. Ở tu-tien-1 hai bí mật có khoảng lộ 3-6 và 4-6 mà chưa hề hé lộ, nên từ chương 3-4 người kể có thể nói ra chúng mà không bị chặn theo cụm từ (chỉ còn quy tắc tên riêng). Đường người kể và lựa chọn chỉ dùng chữ của `player_view` nên có thể chặn mọi bí mật chưa hé lộ; cần chủ dự án quyết có đổi không. Chưa chạy thật.
 - **Người quyết:** Claude (nhánh narrator-retrieval), chờ điều phối duyệt · 20/10/2026
+
+## D-65 · Giao diện bản 1: theo bàn giao thiết kế; sắc thái theo máy chủ, bỏ ô thời đại, người kể có số câu còn lại và nguồn
+- **Bối cảnh:** bàn giao thiết kế (`frontend/design-handoff/`, README mục 8) có các chỗ chưa khớp với code và design.
+- **Quyết định:**
+  - Sắc thái lời thoại theo máy chủ: mỗi lựa chọn mang một `tone` cố định, giao diện hiện nhãn, không có bộ chọn sắc thái.
+  - Bỏ ô thời đại: thể loại chính đã gồm thời đại. API giữ `tags.era` tuỳ chọn; giao diện không gửi.
+  - Người kể trả thêm số câu hỏi còn lại của chương và nguồn (chương của các mục sổ tay câu trả lời dẫn), tính bằng code từ `player_view`.
+  - Bàn giao thiết kế được commit làm đầu vào cho frontend, trừ ảnh chụp màn và file zip (giữ trên máy, `.gitignore`). Khi frontend xong, chuyển quy tắc còn dùng vào `docs/design.md` rồi xoá thư mục.
+- **Hệ quả:** cần thêm trường cho `NarratorAnswerOut`. Các điểm còn lại của README mục 8 (endpoint danh sách truyện, chi phí đã dùng, giới hạn công khai, câu lỗi trần chi phí) làm cùng phần backend cho giao diện.
+- **Người quyết:** Chủ dự án · 21/10/2026

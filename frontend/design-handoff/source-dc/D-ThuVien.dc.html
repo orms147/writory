@@ -1,0 +1,119 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Tủ truyện — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+.ml-row{transition:background-color .35s}
+.ml-row:hover{background-color:rgba(236,230,218,.025)}
+.ml-row .ml-title{transition:transform .5s cubic-bezier(.2,.8,.2,1),color .3s}
+.ml-row:hover .ml-title{transform:translateX(14px);color:#F4C9BC}
+.ml-row .ml-num{transition:color .3s}
+.ml-row:hover .ml-num{color:#E0674B}
+.ml-row .ml-peek{opacity:0;transform:translate(24px,-50%) rotate(3deg);clip-path:inset(0 0 100% 0);transition:opacity .3s,transform .55s cubic-bezier(.2,.8,.2,1),clip-path .55s cubic-bezier(.2,.8,.2,1)}
+.ml-row:hover .ml-peek{opacity:1;transform:translate(0,-50%) rotate(-2deg);clip-path:inset(0 0 0 0)}
+.ml-row .ml-go{transition:transform .4s cubic-bezier(.2,.8,.2,1),opacity .3s;opacity:.35}
+.ml-row:hover .ml-go{transform:translateX(6px);opacity:1}
+@media (prefers-reduced-motion: reduce){.ml-row:hover .ml-title,.ml-row:hover .ml-go{transform:none}.ml-row .ml-peek{transition:none}}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <header style="max-width: 1240px; margin: 0 auto; padding: 22px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: #9A9286">
+    <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; color: #ECE6DA">Wri<span style="font-style: italic; color: #E0674B">Tory</span></span>
+    <nav aria-label="Chính" style="display: flex; gap: 28px; align-items: center">
+      <a class="wt-link" href="D-ThuVien.dc.html" aria-current="page" style="color: #ECE6DA">Tủ truyện</a>
+      <a class="wt-link" href="D-KetNoiKhoa.dc.html" style="color: #9A9286">Khoá ••7f3a</a>
+      <a class="wt-link" href="#tk" style="color: #9A9286">Bách</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 36px">
+      <h1 class="wt-rise" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(80px, 11vw, 168px); line-height: .85; letter-spacing: -.03em">Mục <span style="font-style: italic; color: #E0674B">lục</span></h1>
+      <div class="wt-rise wt-d2" style="display: flex; flex-direction: column; gap: 4px; max-width: 320px; font-size: 14px; color: #B5AC9E; padding-bottom: 12px">
+        <span style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9A9286">Tủ truyện của Bách</span>
+        <span>Bốn cuốn, bốn đời. Một cuốn đã khép, ba cuốn còn đang viết dở.</span>
+      </div>
+    </div>
+
+    <ol style="list-style: none; margin: 0; padding: 0; border-bottom: 1px solid #2E2B27">
+      <sc-for list="{{rows}}" as="r" hint-placeholder-count="4">
+        <li>
+          <a href="{{r.href}}" class="ml-row" style="position: relative; display: grid; grid-template-columns: 72px minmax(0, 1fr) minmax(0, 220px) 150px 36px; gap: 20px; align-items: center; padding: 30px 8px; border-top: 1px solid #2E2B27; text-decoration: none; color: #ECE6DA">
+            <span class="ml-num" style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 30px; color: #6E685E">{{r.num}}</span>
+            <span style="display: flex; flex-direction: column; gap: 8px; min-width: 0">
+              <span class="ml-title" style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(34px, 4vw, 56px); line-height: 1">{{r.title}}</span>
+              <sc-if value="{{r.hasLine}}" hint-placeholder-val="{{ false }}"><span style="font-family: 'Literata', serif; font-style: italic; font-size: 15px; color: #B5AC9E">“{{r.line}}”</span></sc-if>
+            </span>
+            <span style="display: flex; flex-direction: column; gap: 2px; font-size: 13px; color: #9A9286">
+              <span>vai <span style="color: #D9D1C3">{{r.role}}</span></span>
+              <span>{{r.tags}}</span>
+            </span>
+            <span style="display: flex; flex-direction: column; gap: 6px; font-size: 13px">
+              <span style="color: {{r.stateColor}}">{{r.state}}</span>
+            </span>
+            <span class="ml-go" aria-hidden="true" style="font-size: 20px; color: #E0674B">→</span>
+            <span class="ml-peek" aria-hidden="true" style="position: absolute; right: 230px; top: 50%; width: 150px; height: 200px; overflow: hidden; border-radius: 4px; box-shadow: 0 30px 60px -20px rgba(0,0,0,.9); background: {{r.tint}}; pointer-events: none; z-index: 2">
+              <img src="/_blob/3e0bfc2f582f0aee5884e77aaa1abbe0" alt="" style="width: 100%; height: 100%; object-fit: cover; object-position: {{r.pos}}; mix-blend-mode: luminosity; opacity: .85">
+            </span>
+          </a>
+        </li>
+      </sc-for>
+      <li>
+        <a href="D-KhoiTao-Khuon.dc.html" class="ml-row" style="display: grid; grid-template-columns: 72px minmax(0, 1fr) 36px; gap: 20px; align-items: center; padding: 30px 8px; border-top: 1px solid #2E2B27; text-decoration: none; color: #9A9286">
+          <span class="ml-num" style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 30px; color: #6E685E">V.</span>
+          <span class="ml-title" style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 40px; line-height: 1">Mở một trang chưa viết</span>
+          <span class="ml-go" aria-hidden="true" style="font-size: 20px; color: #E0674B">+</span>
+        </a>
+      </li>
+    </ol>
+    <p style="margin: 20px 0 0; font-size: 12px; color: #9A9286; display: flex; justify-content: space-between; flex-wrap: wrap; gap: 8px"><span>Rê chuột lên một cuốn để xem bìa.</span><span style="font-variant-numeric: tabular-nums">Tháng này đã dùng $0,91</span></p>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":1040}}'>
+class Component extends DCLogic {
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave,
+      rows: [
+        { num: 'I.', href: 'D-Doc.dc.html', title: 'Ngọc Bội Rạn', hasLine: true, line: 'Dưới chân nó, tro vẫn còn ấm.', role: 'Lâm Thanh Y', tags: 'Kỳ ảo · truyện dài, 20–35 chương', state: 'Chương 2 · đọc tiếp', stateColor: '#F4C9BC', pct: '17%', bar: '#E0674B', tint: '#2A1E1A', pos: '70% 30%' },
+        { num: 'II.', href: 'D-Doc.dc.html', title: 'Bến Đò Vong Xuyên', hasLine: false, line: '', role: 'Hàn Mặc', tags: 'Kỳ ảo · truyện vừa, 10–20 chương', state: 'Chương 6 · 3 ngày trước', stateColor: '#9CCFB9', pct: '90%', bar: '#6FB59A', tint: '#1A2622', pos: '20% 60%' },
+        { num: 'III.', href: 'D-Cho.dc.html', title: 'Hoàng Thành Mưa Bụi', hasLine: false, line: '', role: 'Tạ Uyển', tags: 'Cổ trang · tiểu thuyết mỏng, 30–60 chương', state: 'Cảnh đầu đang viết', stateColor: '#F0A08C', pct: '2%', bar: '#E0674B', tint: '#2A1A1E', pos: '50% 80%' },
+        { num: 'IV.', href: 'D-KetTruyen.dc.html', title: 'Án Mạng Phố Hàng Bạc', hasLine: false, line: '', role: 'Phạm Lục', tags: 'Trinh thám · truyện ngắn', state: 'Đã khép · 6 chương, 10 trang', stateColor: '#B5AC9E', pct: '100%', bar: '#6E685E', tint: '#1C1E28', pos: '30% 40%' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

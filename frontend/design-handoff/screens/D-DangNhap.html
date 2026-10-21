@@ -1,0 +1,80 @@
+<!doctype html>
+<html lang="vi"><head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Đăng nhập — WriTory</title>
+
+
+
+
+
+
+
+
+
+
+
+
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<link rel="stylesheet" href="../assets/effects.css">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</head>
+<body style="margin:0">
+<div id="dc-root">
+
+<div class="wt wt-grain" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; display: flex; flex-wrap: wrap">
+  <div class="wt-halo" aria-hidden="true"></div>
+
+  <div style="flex: 999 1 560px; min-height: 420px; position: relative; overflow: hidden; display: flex; flex-direction: column; justify-content: space-between; padding: 48px clamp(24px, 5vw, 72px)">
+    <img class="wt-drift" src="../assets/mountains.svg" alt="" style="position: absolute; top: 0; left: -4%; width: 108%; height: 100%; object-fit: cover; z-index: 0">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,17,16,.55) 0%, rgba(18,17,16,0) 30%, rgba(18,17,16,0) 60%, #121110 100%); z-index: 0"></div>
+    <a href="D-DangNhap.html" style="position: relative; z-index: 1; display: flex; align-items: center; gap: 12px; text-decoration: none; color: #ECE6DA; width: fit-content">
+      <svg width="36" height="36" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="#B8432B"></rect><path d="M16 27 V17 M16 17 C16 12 10.5 12 9.5 6.5 M16 17 V5.5 M16 17 C16 13 21.5 13.5 22.5 8.5" fill="none" stroke="#FFF3EA" stroke-width="2.2" stroke-linecap="round"></path></svg>
+      <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px; line-height: 1">Wri<span style="font-style: italic; color: #E0674B">Tory</span></span>
+    </a>
+    <div class="wt-rise" style="position: relative; z-index: 1; display: flex; flex-direction: column; gap: 20px; max-width: 640px">
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(44px, 5.4vw, 76px); line-height: 1.02; letter-spacing: -0.01em; text-wrap: balance">Bạn sống từng lựa chọn.<br><span style="font-style: italic; color: #E0674B">Ngòi bút</span> viết thành tiểu thuyết.</h1>
+      <p style="margin: 0; font-size: 17px; color: #D9D1C3; max-width: 520px">Truyện tương tác tiếng Việt, từ mười đến một trăm trang. Thế giới nhớ những gì bạn đã làm — và cả những lời bạn đã nói dối.</p>
+    </div>
+  </div>
+
+  <div style="flex: 1 1 420px; max-width: 100%; display: flex; align-items: center; justify-content: center; padding: 48px clamp(24px, 4vw, 64px); background: #161513; border-left: 1px solid #2A2724; position: relative; z-index: 1">
+    <div class="wt-rise wt-d2" style="width: 100%; max-width: 420px; display: flex; flex-direction: column; gap: 28px">
+      <div role="tablist" aria-label="Đăng nhập hoặc đăng ký" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: #1E1C1A; border: 1px solid #2E2B27">
+        <button role="tab" aria-selected="true" style="height: 44px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; background: #ECE6DA; color: #121110">Đăng nhập</button>
+        <button role="tab" aria-selected="false" style="height: 44px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; background: transparent; color: #B5AC9E">Tạo tài khoản</button>
+      </div>
+
+      <div style="display: flex; flex-direction: column; gap: 6px">
+        <h2 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 38px; line-height: 1.1">Mừng bạn quay lại</h2>
+        <p style="margin: 0; color: #B5AC9E">Truyện của bạn vẫn đang chờ ở trang bạn bỏ dở.</p>
+      </div>
+
+      <form style="display: flex; flex-direction: column; gap: 18px">
+        
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <label for="dn-email" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Email</label>
+          <input id="dn-email" class="wt-input" type="email" value="bach@thuvien.vn" style="height: 52px; padding: 0px 16px; border-radius: 12px; border: 1px solid rgb(58, 54, 49); background: rgb(30, 28, 26); color: rgb(236, 230, 218); font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-size: 16px;">
+        </div>
+        <div style="display: flex; flex-direction: column; gap: 8px">
+          <div style="display: flex; justify-content: space-between; align-items: baseline">
+            <label for="dn-mk" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Mật khẩu</label>
+          </div>
+          <input id="dn-mk" class="wt-input" type="password" value="matkhau12" style="height: 52px; padding: 0px 16px; border-radius: 12px; border: 1px solid rgb(58, 54, 49); background: rgb(30, 28, 26); color: rgb(236, 230, 218); font-style: inherit; font-variant: inherit; font-weight: inherit; font-stretch: inherit; line-height: inherit; font-family: inherit; font-optical-sizing: inherit; font-size-adjust: inherit; font-kerning: inherit; font-feature-settings: inherit; font-variation-settings: inherit; font-size: 16px;">
+          
+        </div>
+        <a href="D-ThuVien.html" class="wt-btn wt-btn-primary" style="height: 54px; border-radius: 12px; background: #B8432B; color: #FFF6EE; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none; margin-top: 6px">Vào thư viện <span class="wt-arrow">→</span></a>
+      </form>
+
+      <p style="margin: 0; font-size: 13px; color: #9A9286; border-top: 1px solid #2A2724; padding-top: 20px">WriTory dùng khoá OpenRouter của chính bạn để viết truyện — bạn kết nối khoá sau khi vào, và tự trả phí gọi model theo từng chương.</p>
+    </div>
+  </div>
+</div>
+</div>
+
+
+
+</body></html>

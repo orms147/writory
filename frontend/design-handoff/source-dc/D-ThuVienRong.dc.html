@@ -1,0 +1,93 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Tủ truyện rỗng — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+.ml-row{transition:background-color .35s}
+.ml-row:hover{background-color:rgba(236,230,218,.025)}
+.ml-row .ml-title{transition:transform .5s cubic-bezier(.2,.8,.2,1),color .3s}
+.ml-row:hover .ml-title{transform:translateX(14px);color:#F4C9BC}
+@media (prefers-reduced-motion: reduce){.ml-row:hover .ml-title{transform:none}}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <header style="max-width: 1240px; margin: 0 auto; padding: 22px 24px; display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; font-size: 13px; color: #9A9286">
+    <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 22px; color: #ECE6DA">Wri<span style="font-style: italic; color: #E0674B">Tory</span></span>
+    <nav aria-label="Chính" style="display: flex; gap: 28px; align-items: center">
+      <a class="wt-link" href="D-ThuVienRong.dc.html" aria-current="page" style="color: #ECE6DA">Tủ truyện</a>
+      <a class="wt-link" href="D-KetNoiKhoa.dc.html" style="color: #F0A08C">Chưa có khoá</a>
+      <a class="wt-link" href="#tk" style="color: #9A9286">An</a>
+    </nav>
+  </header>
+
+  <main style="max-width: 1240px; margin: 0 auto; padding: 40px 24px 80px">
+    <div style="display: flex; flex-wrap: wrap; align-items: flex-end; justify-content: space-between; gap: 20px; padding-bottom: 36px">
+      <h1 class="wt-rise" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(80px, 11vw, 168px); line-height: .85; letter-spacing: -.03em">Mục <span style="font-style: italic; color: #E0674B">lục</span></h1>
+      <div class="wt-rise wt-d2" style="display: flex; flex-direction: column; gap: 4px; max-width: 340px; font-size: 14px; color: #B5AC9E; padding-bottom: 12px">
+        <span style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9A9286">Tủ truyện của An</span>
+        <span>Tủ còn trống. Trang đầu tiên của một đời khác đang chờ bạn.</span>
+      </div>
+    </div>
+
+    <ol style="list-style: none; margin: 0; padding: 0; border-bottom: 1px solid #2E2B27">
+      <li>
+        <a href="D-KetNoiKhoa.dc.html" class="ml-row" style="display: grid; grid-template-columns: 72px minmax(0, 1fr) 220px; gap: 20px; align-items: center; padding: 30px 8px; border-top: 1px solid #2E2B27; text-decoration: none; color: #ECE6DA">
+          <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 30px; color: #E0674B">I.</span>
+          <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+            <span class="ml-title" style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: clamp(34px, 4vw, 52px); line-height: 1">Dán khoá OpenRouter</span>
+            <span style="font-size: 14px; color: #B5AC9E">Bạn trả phí gọi model qua tài khoản OpenRouter của mình. Khoá được mã hoá khi lưu.</span>
+          </span>
+          <span style="font-size: 13px; color: #F0A08C; text-align: right">chưa có khoá</span>
+        </a>
+      </li>
+      <li>
+        <a href="D-KhoiTao-Khuon.dc.html" class="ml-row" style="display: grid; grid-template-columns: 72px minmax(0, 1fr) 220px; gap: 20px; align-items: center; padding: 30px 8px; border-top: 1px solid #2E2B27; text-decoration: none; color: #9A9286">
+          <span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 30px; color: #6E685E">II.</span>
+          <span style="display: flex; flex-direction: column; gap: 6px; min-width: 0">
+            <span class="ml-title" style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: clamp(34px, 4vw, 52px); line-height: 1; color: #D9D1C3">Mở một trang chưa viết</span>
+            <span style="font-size: 14px">Chọn thể loại, độ dài và nhân vật cho truyện đầu tiên.</span>
+          </span>
+          <span style="font-size: 13px; text-align: right">sau khi có khoá</span>
+        </a>
+      </li>
+    </ol>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() { return { setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave }; }
+}
+</script>
+</body>
+</html>

@@ -1,0 +1,111 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đang viết chương 1 — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+@keyframes ca-fill{from{transform:scaleX(0)}to{transform:scaleX(1)}}
+.ca-live{transform-origin:left center;animation:ca-fill 14s cubic-bezier(.3,.1,.3,1) infinite}
+@keyframes ca-word{from{opacity:0;filter:blur(6px);transform:translateY(4px)}to{opacity:1;filter:none;transform:none}}
+.ca-w{display:inline-block;opacity:0;animation:ca-word .9s ease-out forwards}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6; display: flex; flex-direction: column">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <header style="width: 100%; max-width: 1240px; margin: 0 auto; padding: 22px 24px; box-sizing: border-box; display: flex; justify-content: space-between; align-items: center; font-size: 13px; color: #9A9286">
+    <a href="D-ThuVien.dc.html" class="wt-link" style="color: #9A9286">← Mục lục, truyện sẽ đợi</a>
+    <span>Ngọc Bội Rạn · trong vai Lâm Thanh Y</span>
+  </header>
+
+  <main style="flex: 1 1 auto; width: 100%; max-width: 1240px; margin: 0 auto; padding: 40px 24px 64px; box-sizing: border-box; display: flex; flex-direction: column; justify-content: center; gap: 56px">
+    <div style="display: flex; flex-wrap: wrap; gap: 48px; align-items: flex-end; justify-content: space-between">
+      <h1 role="status" style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 500; font-size: clamp(88px, 12vw, 180px); line-height: .82; letter-spacing: -.03em">Chương<br><span style="font-style: italic; color: #E0674B">một</span></h1>
+      <div style="flex: 0 1 440px; display: flex; flex-direction: column; gap: 12px; padding-bottom: 14px">
+        <span style="font-size: 11px; letter-spacing: .18em; text-transform: uppercase; color: #9A9286">Bạn đã chọn</span>
+        <p style="margin: 0; font-family: 'Literata', serif; font-style: italic; font-size: 18px; line-height: 1.7; color: #D9D1C3">
+          <sc-for list="{{words}}" as="w" hint-placeholder-count="20"><span class="ca-w" style="animation-delay: {{w.d}}">{{w.t}}&nbsp;</span></sc-for>
+        </p>
+      </div>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 14px">
+      <div style="display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px" aria-hidden="true">
+        <span style="height: 2px; background: #E0674B"></span>
+        <span style="height: 2px; background: #E0674B"></span>
+        <span style="height: 2px; background: {{seg3}}; overflow: hidden"><sc-if value="{{writing}}" hint-placeholder-val="{{ true }}"><span class="ca-live" style="display: block; height: 100%; background: #E0674B"></span></sc-if></span>
+        <span style="height: 2px; background: {{seg4}}"></span>
+      </div>
+      <ol style="list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(4, minmax(0, 1fr)); gap: 10px; font-size: 12px; letter-spacing: .12em; text-transform: uppercase">
+        <li style="color: #9A9286">Dựng thế giới</li>
+        <li style="color: #9A9286">Phác dàn ý</li>
+        <li style="color: {{l3}}; display: flex; align-items: center; gap: 8px">Viết cảnh đầu <sc-if value="{{writing}}" hint-placeholder-val="{{ true }}"><span style="color: #E0674B; display: inline-flex; gap: 3px"><span class="wt-dot"></span><span class="wt-dot"></span><span class="wt-dot"></span></span></sc-if></li>
+        <li style="color: {{l4}}">Soát lại mạch</li>
+      </ol>
+    </div>
+
+    <div style="display: flex; flex-wrap: wrap; justify-content: space-between; align-items: center; gap: 12px; border-top: 1px solid #2E2B27; padding-top: 18px; font-size: 14px; color: #B5AC9E; min-height: 52px">
+      <sc-if value="{{writing}}" hint-placeholder-val="{{ true }}">
+        <span style="font-variant-numeric: tabular-nums">{{msg}}</span>
+      </sc-if>
+      <sc-if value="{{writing}}" hint-placeholder-val="{{ true }}">
+        <span>Bạn có thể rời trang — khi xong, cuốn này sẽ sáng lên trong mục lục.</span>
+      </sc-if>
+      <sc-if value="{{ready}}" hint-placeholder-val="{{ false }}">
+        <span class="wt-rise" style="font-family: 'Literata', serif; font-style: italic; font-size: 17px; color: #D9D1C3">Trang đầu đã khô mực. Cảnh 2 sẽ được viết trong lúc bạn đọc.</span>
+      </sc-if>
+      <sc-if value="{{ready}}" hint-placeholder-val="{{ false }}">
+        <a href="D-Doc.dc.html" class="wt-btn wt-btn-primary wt-rise" style="height: 52px; padding: 0 26px; border-radius: 12px; background: #B8432B; color: #FFF6EE; text-decoration: none; font-weight: 600; font-size: 16px; display: inline-flex; align-items: center; gap: 10px">Mở trang đầu <span class="wt-arrow">→</span></a>
+      </sc-if>
+    </div>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":900}}'>
+class Component extends DCLogic {
+  state = { t: 18 };
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false; tick = null;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentDidMount() { this.tick = setInterval(() => this.setState({ t: this.state.t >= 48 ? 18 : this.state.t + 1 }), 1000); }
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); if (this.tick) clearInterval(this.tick); }
+  renderVals() {
+    const text = 'Thanh Vân Tông, đêm tế tổ. Một sư huynh chết trong Tàng Kinh Các, và thứ hắn nắm trong tay giờ nằm trong tay áo bạn.';
+    const words = text.split(' ').map((t, i) => ({ t, d: (0.3 + i * 0.12).toFixed(2) + 's' }));
+    const t = this.state.t;
+    const ready = t >= 38;
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave, words,
+      writing: !ready, ready,
+      seg3: ready ? '#E0674B' : '#2C2925', seg4: ready ? '#E0674B' : '#2C2925',
+      l3: ready ? '#9A9286' : '#ECE6DA', l4: ready ? '#9A9286' : '#6E685E',
+      msg: 'Đã ' + t + ' giây · ngòi bút vẫn đang viết'
+    };
+  }
+}
+</script>
+</body>
+</html>

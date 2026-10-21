@@ -1,0 +1,130 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Khi có trục trặc — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" onMouseMove="{{onMove}}" onMouseLeave="{{onLeave}}" style="position: relative; min-height: 100vh; width: 100%; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.6">
+  <div class="wt-halo" ref="{{setHalo}}" aria-hidden="true"></div>
+
+  <main style="position: relative; z-index: 1; max-width: 1240px; margin: 0 auto; padding: 56px 24px 80px; display: flex; flex-direction: column; gap: 48px">
+    <div style="display: flex; flex-direction: column; gap: 8px; max-width: 760px">
+      <span style="font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: #9A9286">Trạng thái lỗi · theo nhóm lỗi của hệ thống</span>
+      <h1 style="margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 52px; line-height: 1.05">Mực đổ thì lau, trang vẫn còn đó.</h1>
+      <p style="margin: 0; color: #B5AC9E; font-size: 16px">Mỗi thông báo nói chuyện gì vừa xảy ra và bạn làm gì tiếp. Không mã lỗi, không con số đoán trước; chỗ cần số sẽ lấy từ hệ thống.</p>
+    </div>
+
+    <sc-for list="{{groups}}" as="g" hint-placeholder-count="6">
+      <section style="display: flex; flex-direction: column; gap: 16px">
+        <h2 style="margin: 0; display: flex; align-items: baseline; gap: 14px; border-top: 1px solid #2E2B27; padding-top: 18px"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; color: #E0674B">{{g.num}}</span><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px">{{g.title}}</span></h2>
+        <div style="display: grid; grid-template-columns: repeat(auto-fill, minmax(min(360px, 100%), 1fr)); gap: 16px">
+          <sc-for list="{{g.items}}" as="e" hint-placeholder-count="2">
+            <article role="alert" style="border: 1px solid #2E2B27; border-radius: 16px; background: #181715; padding: 22px; display: flex; flex-direction: column; gap: 10px">
+              <span style="display: flex; align-items: center; gap: 8px; font-size: 12px; color: #9A9286"><span style="width: 8px; height: 8px; border-radius: 50%; background: {{e.dot}}"></span>{{e.where}}</span>
+              <h3 style="margin: 0; font-size: 18px; font-weight: 600; line-height: 1.35">{{e.title}}</h3>
+              <p style="margin: 0; color: #D9D1C3; font-size: 15px">{{e.body}}</p>
+              <div style="display: flex; flex-wrap: wrap; gap: 10px; margin-top: 4px">
+                <a href="{{e.href1}}" class="wt-btn wt-btn-primary" style="height: 44px; padding: 0 18px; border-radius: 11px; background: #B8432B; color: #FFF6EE; text-decoration: none; display: inline-flex; align-items: center; font-weight: 600; font-size: 14px">{{e.a1}}</a>
+                <sc-if value="{{e.has2}}" hint-placeholder-val="{{ true }}">
+                  <a href="{{e.href2}}" class="wt-btn wt-btn-ghost" style="height: 44px; padding: 0 16px; border: 1px solid #4A453E; border-radius: 11px; color: #ECE6DA; text-decoration: none; display: inline-flex; align-items: center; font-weight: 500; font-size: 14px">{{e.a2}}</a>
+                </sc-if>
+              </div>
+            </article>
+          </sc-for>
+        </div>
+      </section>
+    </sc-for>
+
+    <section style="display: flex; flex-direction: column; gap: 16px">
+      <h2 style="margin: 0; display: flex; align-items: baseline; gap: 14px; border-top: 1px solid #2E2B27; padding-top: 18px"><span style="font-family: 'Cormorant Garamond', serif; font-style: italic; font-size: 24px; color: #E0674B">VI.</span><span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 30px">Ô tự viết hành động</span></h2>
+      <p style="margin: -6px 0 0; font-size: 14px; color: #9A9286">Báo ngay dưới ô, không mở hộp thoại. Lựa chọn chưa được gửi, chưa có gì bị trừ.</p>
+      <div data-paper="1" style="background: #F3ECDD; color: #1F1B16; border-radius: 16px; padding: 24px; display: grid; grid-template-columns: repeat(auto-fill, minmax(min(340px, 100%), 1fr)); gap: 20px 24px">
+        <sc-for list="{{field}}" as="f" hint-placeholder-count="5">
+          <div style="display: flex; flex-direction: column; gap: 6px">
+            <span style="font-size: 12px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #6B5F4E">{{f.kind}}</span>
+            <div style="min-height: 52px; padding: 10px 12px; border-radius: 10px; border: 1.5px solid #B8432B; background: #FBF6EC; font-family: 'Literata', serif; font-size: 15px; color: {{f.inkColor}}">{{f.input}}</div>
+            <span role="alert" style="display: flex; gap: 8px; align-items: flex-start; font-size: 14px; color: #8E3220"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true" style="flex: 0 0 16px; margin-top: 3px"><circle cx="12" cy="12" r="9"/><path d="M12 7v6M12 16.5h.01"/></svg>{{f.msg}}</span>
+          </div>
+        </sc-for>
+      </div>
+    </section>
+  </main>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":1440,"height":2600}}'>
+class Component extends DCLogic {
+  hx = 0; hy = 0; tx = 0; ty = 0; halo = null; raf = null; started = false;
+  setHalo = (el) => { this.halo = el; };
+  onMove = (e) => {
+    const root = e.currentTarget; const r = root.getBoundingClientRect();
+    const s = (r.width / (root.offsetWidth || r.width)) || 1;
+    this.tx = (e.clientX - r.left) / s; this.ty = (e.clientY - r.top) / s;
+    if (!this.started) { this.hx = this.tx; this.hy = this.ty; this.started = true; }
+    const h = this.halo;
+    if (h) { const t = e.target; h.dataset.on = '1'; h.dataset.hover = t && t.closest && t.closest('a,button,label,input,textarea,[data-press]') ? '1' : '0'; h.dataset.paper = t && t.closest && t.closest('[data-paper]') ? '1' : '0'; }
+    if (!this.raf) this.raf = requestAnimationFrame(this.loop);
+  };
+  onLeave = () => { if (this.halo) this.halo.dataset.on = '0'; };
+  loop = () => {
+    this.hx += (this.tx - this.hx) * 0.2; this.hy += (this.ty - this.hy) * 0.2;
+    if (this.halo) this.halo.style.transform = 'translate3d(' + this.hx + 'px,' + this.hy + 'px,0)';
+    this.raf = (Math.abs(this.tx - this.hx) + Math.abs(this.ty - this.hy) > 0.3) ? requestAnimationFrame(this.loop) : null;
+  };
+  componentWillUnmount() { if (this.raf) cancelAnimationFrame(this.raf); }
+  renderVals() {
+    const H = '#E0674B', S = '#9A9286';
+    const it = (o) => ({ has2: !!o.a2, href2: '#', ...o });
+    return {
+      setHalo: this.setHalo, onMove: this.onMove, onLeave: this.onLeave,
+      groups: [
+        { num: 'I.', title: 'Khoá OpenRouter', items: [
+          it({ dot: H, where: 'Khi viết cảnh', title: 'OpenRouter từ chối khoá kết thúc bằng 7f3a', body: 'Khoá có thể đã bị xoá hoặc thu hồi trên OpenRouter. Truyện dừng ở cuối cảnh 1, chưa có gì bị trừ cho cảnh 2.', a1: 'Dán khoá khác', href1: 'D-KetNoiKhoa.dc.html', a2: 'Về tủ truyện', href2: 'D-ThuVien.dc.html' }),
+          it({ dot: H, where: 'Khi viết cảnh', title: 'WriTory không đọc được khoá đã lưu', body: 'Khoá đã lưu bị hỏng nên không dùng được nữa. Dán lại khoá là viết tiếp được; truyện vẫn nguyên.', a1: 'Dán lại khoá', href1: 'D-KetNoiKhoa.dc.html' }),
+          it({ dot: H, where: 'Khi bắt đầu truyện', title: 'Bạn chưa dán khoá OpenRouter', body: 'Ngòi bút cần một khoá để viết. Dán khoá ở trang Khoá & chi phí rồi quay lại đây.', a1: 'Dán khoá', href1: 'D-KetNoiKhoa.dc.html' })
+        ] },
+        { num: 'II.', title: 'Credit &amp; trần chi phí'.replace('&amp;', '&'), items: [
+          it({ dot: H, where: 'Khi viết cảnh', title: 'Tài khoản OpenRouter đã hết credit', body: 'Cảnh 2 chưa được viết. Nạp thêm trên OpenRouter rồi bấm Thử lại; truyện giữ nguyên chỗ bạn đang đọc.', a1: 'Thử lại', href1: 'D-Doc.dc.html', a2: 'Mở OpenRouter ↗', href2: '#openrouter' }),
+          it({ dot: H, where: 'Trong cảnh 2', title: 'Cảnh này đã chạm trần chi phí cho một cảnh', body: 'Ngòi bút dừng lại để không vượt trần. Bạn có thể thử lại cảnh này, hoặc bắt đầu một truyện mới.', a1: 'Thử lại', href1: 'D-Doc.dc.html', a2: 'Bắt đầu truyện mới', href2: 'D-KhoiTao-Khuon.dc.html' }),
+          it({ dot: H, where: 'Trong chương 2', title: 'Chương này đã chạm trần chi phí cho một chương', body: 'Phần đã viết vẫn còn. Bạn có thể thử lại, hoặc bắt đầu một truyện mới.', a1: 'Thử lại', href1: 'D-Doc.dc.html', a2: 'Bắt đầu truyện mới', href2: 'D-KhoiTao-Khuon.dc.html' }),
+          it({ dot: H, where: 'Trước chương 7 · Bến Đò Vong Xuyên', title: 'Truyện này đã chạm trần chi phí cho cả truyện', body: 'Các chương đã có vẫn đọc lại được. Bạn có thể thử lại, hoặc bắt đầu một truyện mới.', a1: 'Thử lại', href1: 'D-Doc.dc.html', a2: 'Bắt đầu truyện mới', href2: 'D-KhoiTao-Khuon.dc.html' })
+        ] },
+        { num: 'III.', title: 'Viết cảnh', items: [
+          it({ dot: S, where: 'Cảnh 2 · chương 2', title: 'Cảnh vừa viết chưa qua bước kiểm tra cuối', body: 'Chúng tôi chưa hiện bản này. Bạn có thể cho ngòi bút viết lại cảnh một lần.', a1: 'Viết lại cảnh', href1: 'D-Doc.dc.html', a2: 'Quay về lựa chọn', href2: 'D-LuaChon.dc.html' }),
+          it({ dot: H, where: 'Cảnh 2 · chương 2', title: 'Cảnh này đã viết lại một lần và vẫn chưa qua kiểm tra', body: 'Mỗi cảnh chỉ được viết lại một lần. Hãy quay về lựa chọn cuối chương trước và chọn một hướng khác.', a1: 'Quay về lựa chọn', href1: 'D-LuaChon.dc.html', a2: 'Về tủ truyện', href2: 'D-ThuVien.dc.html' })
+        ] },
+        { num: 'IV.', title: 'Giới hạn tần suất', items: [
+          it({ dot: S, where: 'Khi viết cảnh', title: 'OpenRouter đang tạm giới hạn lượt gọi cho khoá của bạn', body: 'Đây là giới hạn phía OpenRouter. Đợi một lát rồi thử lại; truyện không mất gì.', a1: 'Thử lại', href1: 'D-Doc.dc.html' }),
+          it({ dot: S, where: 'Khi gửi lựa chọn', title: 'Bạn đang gửi nhanh hơn giới hạn mỗi phút của WriTory', body: 'Đợi sang phút sau rồi thử lại. Lựa chọn của bạn vẫn được giữ.', a1: 'Thử lại', href1: 'D-LuaChon.dc.html' })
+        ] },
+        { num: 'V.', title: 'Phiên đọc &amp; dữ liệu'.replace('&amp;', '&'), items: [
+          it({ dot: S, where: 'Khi mở truyện', title: 'Truyện này đang mở ở một thẻ khác', body: 'Để không ghi đè lên nhau, chỉ một thẻ được viết tiếp. Tiếp tục ở đây thì thẻ kia chỉ còn đọc.', a1: 'Tiếp tục ở đây', href1: 'D-Doc.dc.html', a2: 'Về tủ truyện', href2: 'D-ThuVien.dc.html' }),
+          it({ dot: S, where: 'Khi mở đường dẫn', title: 'Không tìm thấy truyện này', body: 'Đường dẫn có thể sai, hoặc truyện không còn trong tủ của bạn.', a1: 'Về tủ truyện', href1: 'D-ThuVien.dc.html' }),
+          it({ dot: S, where: 'Khi mở lại truyện', title: 'Chương 2 đang lưu dở', body: 'Lần lưu trước bị gián đoạn nên chưa có gì được ghi; lựa chọn của bạn chưa được tính. Lưu lại để đi tiếp.', a1: 'Lưu lại', href1: 'D-LuaChon.dc.html', a2: 'Về tủ truyện', href2: 'D-ThuVien.dc.html' }),
+          it({ dot: S, where: 'Đang hiện cảnh 1', title: 'Mất kết nối giữa chừng', body: 'Phần chữ đã hiện vẫn được giữ. Khi có mạng lại, cảnh chạy tiếp từ đúng câu đang dừng.', a1: 'Thử lại ngay', href1: 'D-Doc.dc.html' }),
+          it({ dot: S, where: 'Bất kỳ lúc nào', title: 'WriTory gặp sự cố, không phải do bạn', body: 'Truyện của bạn chưa thay đổi gì. Hãy thử lại; nếu vẫn lỗi, về tủ truyện và mở lại sau.', a1: 'Thử lại', href1: 'D-Doc.dc.html', a2: 'Về tủ truyện', href2: 'D-ThuVien.dc.html' })
+        ] }
+      ],
+      field: [
+        { kind: 'Trống', input: '', inkColor: '#8A7C68', msg: 'Bạn chưa viết gì. Gõ một hành động, hoặc chọn một trong ba hướng.' },
+        { kind: 'Quá dài', input: 'Giả vờ ngất, rồi khi mọi người xúm lại thì lẻn ra sau giá đèn, nhặt tro, giấu vào tay áo, sau đó…', inkColor: '#1F1B16', msg: 'Hành động dài hơn giới hạn. Hãy rút gọn lại.' },
+        { kind: 'Ngoài truyện', input: 'Kể cho tôi nghe công thức làm bánh mì.', inkColor: '#1F1B16', msg: 'Câu này nằm ngoài câu chuyện. Hãy viết điều Thanh Y làm trong cảnh.' },
+        { kind: 'Không hiểu', input: 'cái kia đi chỗ đó', inkColor: '#1F1B16', msg: 'Ngòi bút chưa hiểu hành động này. Thử viết rõ: Thanh Y làm gì, với ai.' },
+        { kind: 'Nội dung truyện không viết', input: '[nội dung bị chặn]', inkColor: '#8A7C68', msg: 'WriTory không viết nội dung này. Hãy viết lại theo cách khác.' }
+      ]
+    };
+  }
+}
+</script>
+</body>
+</html>

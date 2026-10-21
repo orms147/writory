@@ -1,0 +1,53 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Đăng nhập (điện thoại) — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#121110}
+a{color:#E0674B}a:hover{color:#F08A70}
+</style>
+</helmet>
+<div class="wt wt-grain" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #121110; color: #ECE6DA; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.55; display: flex; flex-direction: column">
+  <div style="position: relative; height: 330px; flex: 0 0 330px; overflow: hidden; padding: 56px 24px 24px; display: flex; flex-direction: column; justify-content: space-between">
+    <img class="wt-drift" src="/_blob/3e0bfc2f582f0aee5884e77aaa1abbe0" alt="" style="position: absolute; top: 0; left: -10%; width: 120%; height: 100%; object-fit: cover; object-position: 60% 40%">
+    <div style="position: absolute; inset: 0; background: linear-gradient(180deg, rgba(18,17,16,.3) 0%, rgba(18,17,16,0) 40%, #121110 100%)"></div>
+    <div style="position: relative; display: flex; align-items: center; gap: 10px">
+      <svg width="30" height="30" viewBox="0 0 32 32" aria-hidden="true"><rect x="1" y="1" width="30" height="30" rx="7" fill="#B8432B"/><path d="M16 27 V17 M16 17 C16 12 10.5 12 9.5 6.5 M16 17 V5.5 M16 17 C16 13 21.5 13.5 22.5 8.5" fill="none" stroke="#FFF3EA" stroke-width="2.2" stroke-linecap="round"/></svg>
+      <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 26px; line-height: 1">Wri<span style="font-style: italic; color: #E0674B">Tory</span></span>
+    </div>
+    <h1 class="wt-rise" style="position: relative; margin: 0; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 40px; line-height: 1.05">Bạn sống từng lựa chọn. <span style="font-style: italic; color: #E0674B">Ngòi bút</span> viết thành tiểu thuyết.</h1>
+  </div>
+
+  <div class="wt-rise wt-d2" style="flex: 1 1 auto; padding: 8px 24px 28px; display: flex; flex-direction: column; gap: 16px">
+    <div role="tablist" aria-label="Đăng nhập hoặc đăng ký" style="display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 4px; padding: 4px; border-radius: 14px; background: #1E1C1A; border: 1px solid #2E2B27">
+      <button role="tab" aria-selected="true" style="height: 44px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; background: #ECE6DA; color: #121110">Đăng nhập</button>
+      <button role="tab" aria-selected="false" style="height: 44px; border: none; border-radius: 10px; font-size: 15px; font-weight: 600; background: transparent; color: #B5AC9E">Tạo tài khoản</button>
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <label for="m-email" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Email</label>
+      <input id="m-email" class="wt-input" type="email" value="bach@thuvien.vn" style="height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 16px">
+    </div>
+    <div style="display: flex; flex-direction: column; gap: 8px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><label for="m-mk" style="font-size: 13px; font-weight: 500; color: #D9D1C3">Mật khẩu</label></div>
+      <input id="m-mk" class="wt-input" type="password" value="matkhau12" style="height: 52px; padding: 0 16px; border-radius: 12px; border: 1px solid #3A3631; background: #1E1C1A; color: #ECE6DA; font: inherit; font-size: 16px">
+    </div>
+    <a href="M-ThuVien.dc.html" class="wt-btn wt-btn-primary" style="height: 54px; margin-top: auto; border-radius: 12px; background: #B8432B; color: #FFF6EE; font-weight: 600; font-size: 16px; display: flex; align-items: center; justify-content: center; gap: 10px; text-decoration: none">Vào thư viện <span class="wt-arrow">→</span></a>
+    <p style="margin: 0; font-size: 12px; color: #9A9286; text-align: center">Bạn dùng khoá OpenRouter của chính mình để viết truyện.</p>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  renderVals() { return {}; }
+}
+</script>
+</body>
+</html>

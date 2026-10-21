@@ -1,0 +1,98 @@
+<!doctype html>
+<html lang="vi">
+<head>
+<meta charset="utf-8">
+<title>Lựa chọn (điện thoại) — Ngọc Bội Rạn — WriTory</title>
+<script src="./support.js"></script>
+<link rel="stylesheet" href="/_blob/9f4fdc577a938bca1fe9340fa8d526c1">
+</head>
+<body>
+<x-dc>
+<helmet>
+<link href="https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&family=Cormorant+Garamond:ital,wght@0,500;0,600;0,700;1,500;1,600&family=Literata:ital,opsz,wght@0,7..72,400;0,7..72,500;1,7..72,400&display=swap" rel="stylesheet">
+<style>
+body{margin:0;background:#F3ECDD}
+a{color:#B8432B}a:hover{color:#8E3220}
+</style>
+</helmet>
+<div class="wt wt-grain wt-grain-paper" data-paper="1" style="width: 390px; height: 844px; position: relative; overflow: hidden; background: #F3ECDD; color: #1F1B16; font-family: 'Be Vietnam Pro', 'Segoe UI', system-ui, sans-serif; font-size: 15px; line-height: 1.55; display: flex; flex-direction: column">
+  <header style="padding: 44px 8px 0">
+    <div style="display: flex; align-items: center; gap: 4px">
+      <a href="M-Doc.dc.html" aria-label="Quay lại trang đọc" style="width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: #4E4538"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M15 6l-6 6 6 6"/></svg></a>
+      <div style="flex: 1 1 auto; display: flex; flex-direction: column; line-height: 1.25">
+        <span style="font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 19px">Ngọc Bội Rạn</span>
+        <span style="font-size: 12px; color: #6B5F4E">Hết chương 2 · truyện dài</span>
+      </div>
+      <a href="M-SoTay.dc.html" aria-label="Mở sổ tay" style="width: 44px; height: 44px; border-radius: 10px; display: grid; place-items: center; color: #4E4538"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><path d="M5 4h11a3 3 0 0 1 3 3v13H8a3 3 0 0 1-3-3z"/><path d="M5 17a3 3 0 0 1 3-3h11"/></svg></a>
+    </div>
+  </header>
+
+  <main style="flex: 1 1 auto; overflow: hidden; padding: 4px 18px 0; display: flex; flex-direction: column; gap: 10px">
+    <p style="margin: 0; padding: 0 4px; font-family: 'Literata', serif; font-size: 15.5px; line-height: 1.65; color: #4E4538">- Đêm qua - trưởng lão quay lại, ánh mắt dừng trên nàng - ai đã ra khỏi viện?</p>
+    <h1 style="margin: 4px 0 0; padding: 0 4px; font-family: 'Cormorant Garamond', serif; font-weight: 600; font-size: 26px; line-height: 1.1">Thanh Y sẽ…</h1>
+
+    <div role="radiogroup" aria-label="Lựa chọn" style="display: flex; flex-direction: column; gap: 8px">
+      <sc-for list="{{choices}}" as="c" hint-placeholder-count="3">
+        <div style="border: 1px solid {{c.bd}}; border-radius: 14px; background: {{c.bg}}">
+          <button role="radio" aria-checked="{{c.checked}}" onClick="{{c.pick}}" style="width: 100%; text-align: left; border: none; background: transparent; padding: 11px 14px; display: flex; flex-direction: column; gap: 3px; color: #1F1B16; min-height: 44px">
+            <span style="font-size: 11px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: #8E3220">{{c.type}}</span>
+            <span style="font-family: 'Literata', serif; font-size: 14.5px; line-height: 1.45">{{c.text}}</span>
+          </button>
+          <sc-if value="{{c.showTones}}" hint-placeholder-val="{{ false }}">
+            <div style="padding: 0 14px 12px; display: flex; flex-direction: column; gap: 8px">
+              <div role="radiogroup" aria-label="Sắc thái" style="display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 3px; padding: 3px; border-radius: 10px; background: #E9DFCB">
+                <sc-for list="{{tones}}" as="t" hint-placeholder-count="3">
+                  <button role="radio" aria-checked="{{t.checked}}" onClick="{{t.pick}}" style="height: 40px; border: none; border-radius: 8px; font-size: 13px; font-weight: 600; background: {{t.bg}}; color: {{t.fg}}">{{t.label}}</button>
+                </sc-for>
+              </div>
+              <span style="font-family: 'Literata', serif; font-style: italic; font-size: 13.5px; line-height: 1.5; color: #3B342B">{{toneLine}}</span>
+            </div>
+          </sc-if>
+        </div>
+      </sc-for>
+    </div>
+
+    <div style="display: flex; flex-direction: column; gap: 6px; margin-top: 2px">
+      <div style="display: flex; justify-content: space-between; align-items: baseline"><label for="m-tuviet" style="font-size: 13px; font-weight: 600">Hoặc tự viết hành động</label><span style="font-size: 12px; color: {{countColor}}; font-variant-numeric: tabular-nums">{{count}} / 200</span></div>
+      <textarea id="m-tuviet" class="wt-input" rows="3" maxlength="200" value="{{custom}}" onChange="{{onCustom}}" placeholder="Ví dụ: Giả vờ trượt chân trên bậc đá để kéo dài thời gian." style="padding: 10px 12px; border-radius: 12px; border: 1px solid {{customBd}}; background: #FBF6EC; color: #1F1B16; font-family: 'Literata', serif; font-size: 15px; line-height: 1.55; resize: none"></textarea>
+    </div>
+  </main>
+
+  <div style="margin: 10px 12px 24px; padding: 12px 12px 12px 16px; border-radius: 18px; background: #1F1B16; color: #ECE6DA; display: flex; align-items: center; justify-content: space-between; gap: 10px">
+    <div style="display: flex; flex-direction: column; font-size: 12px; color: #B5AC9E; line-height: 1.4">
+      <span>Chương 3: <span style="font-style: italic">chưa có ước tính</span></span>
+      <span style="font-variant-numeric: tabular-nums">Đã dùng $0,09</span>
+    </div>
+    <a href="{{sendHref}}" aria-disabled="{{noPick}}" class="wt-btn wt-btn-primary" style="height: 50px; padding: 0 16px; border-radius: 12px; background: {{sendBg}}; color: {{sendFg}}; text-decoration: none; font-weight: 600; display: flex; align-items: center; gap: 6px">{{sendLabel}}</a>
+  </div>
+</div>
+</x-dc>
+<script type="text/x-dc" data-dc-script data-props='{"$preview":{"width":390,"height":844}}'>
+class Component extends DCLogic {
+  state = { pick: null, tone: null, custom: '' };
+  renderVals() {
+    const st = this.state;
+    const usingCustom = st.custom.trim().length > 0;
+    const C = [
+      { kind: 'act', type: 'Hành động', text: 'Lặng lẽ nhặt một nhúm tro dưới ngọn đèn tắt khi trưởng lão quay đi.' },
+      { kind: 'talk', type: 'Lời thoại', text: 'Trả lời câu hỏi của trưởng lão Mạc, trước mặt cả Từ đường.' },
+      { kind: 'mind', type: 'Nội tâm', text: 'Nhớ lại thật kỹ câu cuối cùng Vân Phong nói với nàng ba ngày trước.' }
+    ];
+    const choices = C.map((c, i) => { const on = !usingCustom && i === st.pick; return { ...c, checked: on ? 'true' : 'false', showTones: on && c.kind === 'talk', bd: on ? '#B8432B' : '#D6CAB2', bg: on ? '#FFF9EF' : '#FBF6EC', pick: () => this.setState({ pick: i, custom: '', tone: c.kind === 'talk' ? st.tone : null }) }; });
+    const T = [['that', 'Nói thật', '- Gần sáng đệ tử ra khỏi viện, và là người đầu tiên thấy sư huynh.'], ['doi', 'Nói dối', '- Đệ tử ở trong viện suốt đêm, chấp sự Hồ có thể làm chứng.'], ['lang', 'Im lặng', 'Cúi đầu, không đáp, chờ xem ai lên tiếng trước.']];
+    const tones = T.map(([id, label]) => { const on = st.tone === id; return { label, checked: on ? 'true' : 'false', bg: on ? '#1F1B16' : 'transparent', fg: on ? '#F3ECDD' : '#4E4538', pick: () => this.setState({ tone: id }) }; });
+    const found = T.find((t) => t[0] === st.tone);
+    const hasPick = usingCustom || (st.pick !== null && (C[st.pick].kind !== 'talk' || !!st.tone));
+    const n = st.custom.length;
+    return {
+      choices, tones, toneLine: found ? found[2] : 'Chọn cách trả lời: nói thật, nói dối hay im lặng.',
+      custom: st.custom, onCustom: (e) => this.setState({ custom: e.target.value.slice(0, 200), pick: null, tone: null }),
+      count: String(n), countColor: n > 180 ? '#B8432B' : '#6B5F4E', customBd: usingCustom ? '#B8432B' : '#D6CAB2',
+      noPick: hasPick ? 'false' : 'true', sendHref: hasPick ? 'M-SoTay.dc.html' : '#chon', sendBg: hasPick ? '#B8432B' : '#4A453E', sendFg: hasPick ? '#FFF6EE' : '#B5AC9E',
+      sendLabel: hasPick ? 'Viết chương 3 →' : 'Chọn một hướng'
+    };
+  }
+}
+</script>
+</body>
+</html>
