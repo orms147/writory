@@ -914,6 +914,16 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Người quyết:** Claude (writory-2a giao việc 22/10/2026), nhánh feature/long-pacing · 22/10/2026
 
 
+## D-99 · Ba cách trình bày khối đồ thị của bài A: không biến thể nào đạt luật, giữ nền
+- **Bối cảnh:** `knows-05` có dòng đúng trong ngữ cảnh đồ thị ("Đã biết: …; cách biết: suy ra") mà model đáp "Không" 3/3. Ba giả thuyết: H1 "suy ra" bị coi là chưa chắc, H2 dòng vị trí đồ vật nghe mâu thuẫn, H3 dòng chìm trong danh sách dài sắp theo thời gian (`evals/results/2026-10-22-memory-ky-ao-vua-1-facts-nb1/notes.md`).
+- **Làm gì:** cờ `--graph-style` của `bench_a run`, mặc định `base`: `natural` (cách biết bằng câu thường), `relevance` (tối đa 4 dòng "Đã biết" khớp câu hỏi lên đầu nhóm, chỉ đổi thứ tự), `no_item_place` (bỏ dòng vị trí đồ vật đã có Fact). Luật quyết định khai và commit trước khi chạy (`docs/eval.md`, commit `3754252`): giữ khi đúng tổng ≥ 89/117 (nền cộng 5 điểm) và không nhóm nào tụt quá 10 điểm.
+- **Kết quả** (`evals/results/2026-10-23-memory-ky-ao-vua-1-facts-natural/notes.md`, hệ `graph`, 39 câu × 3 lần, Luna low, Neo4j): nền 83/117; `natural` 85, `relevance` 86, `no_item_place` 86. Không nhóm nào tụt quá 10 điểm, nhưng cả ba trượt điều kiện tổng. Mỗi biến thể đổi 5–6 câu cả hai chiều, chênh ròng +2 đến +3 lượt, nằm trong nhiễu.
+- **Quyết định:** BỎ cả ba; cách trình bày nền giữ nguyên, không đổi `graph/context.py` (không biến thể nào thắng nên không có đề xuất cho ngữ cảnh người viết). Cờ và ba kiểu giữ trong mã (mặc định `base`, có test) để lặp lại phép đo; sản phẩm không dùng.
+- **Không kết luận được về H1–H3:** `knows-05` lật từ 0/3 sang 2/3, 3/3, 2/3 ở cả ba biến thể dù mỗi biến thể sửa một thứ khác nhau, nên không tách được giả thuyết nào; câu này nhạy với mọi đổi ngữ cảnh (hay nhiễu của model).
+- **Sự cố:** lượt đầu bị nhiễu vì tôi khởi động hai chuỗi đo chồng nhau trên cùng truyện `bench-a-run` (0,0518 USD bỏ đi); số trong kết quả là của các lượt chạy lại sạch, chi tổng khoảng 0,0925 USD (trần được duyệt 0,11). Chi tiết ở notes.
+- **Chưa kiểm:** nền không chạy lại cùng ngày; không thử tổ hợp; không đo `graph_quotes`; một truyện.
+- **Người quyết:** Claude (writory-6f giao việc 22/10/2026), nhánh eval/graph-presentation-ab · 23/10/2026
+
 ## D-100 · Đổi model: bỏ GPT-6 Luna, mọi vai và mức model viết dùng DeepSeek V4 Flash (thay một phần D-33, D-35, D-43, D-47)
 - **Bối cảnh:** chủ dự án bỏ Luna vì chi phí và chọn DeepSeek hoặc model Trung Quốc (22/10/2026). Mọi số đo trước (bài A, C, D, E, các lần chạy truyện) là của Luna.
 - **Quyết định:**
