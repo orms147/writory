@@ -40,6 +40,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   uv run python -m writory.pipeline.bench_a run --label lan-1 --budget 1.0   # chạy thật
   uv run python -m writory.pipeline.bench_a run --label lai-1 --systems graph_quotes --budget 0.3  # chỉ hệ lai
   uv run python -m writory.pipeline.bench_a summary --out ../evals/results/<thư mục>
+  uv run python -m writory.pipeline.bench_a retrieval --questions-file questions-ky-ao-vua-1-facts.yaml  # truy hồi đoạn, không gọi model (D-96)
   # truyện do pipeline viết (D-83): thêm --questions-file vào plan, run, summary
   uv run python -m writory.pipeline.bench_a plan --questions-file questions-ky-ao-vua-1.yaml
   uv run python -m writory.pipeline.bench_a run --dry-run --label ky-ao-vua-1-khung --questions-file questions-ky-ao-vua-1.yaml
@@ -49,6 +50,8 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   uv run pytest -m graph tests/graph/test_bench_a_graph_parity.py            # cần docker compose up -d
   ```
   Chạy thật cần `OPENROUTER_API_KEY` trong `.env` và Neo4j đang chạy (`docker compose up -d`; kết nối theo `NEO4J_URI`/`NEO4J_USER`/`NEO4J_PASSWORD`): lệnh nạp truyện (truyện mẫu, hoặc các gói chương của lượt chạy pipeline) vào một `story_id` riêng rồi xoá khi xong. `--graph-backend memory` đọc đồ thị từ gói trong bộ nhớ, không cần Neo4j. Đổi `--fake`, đề hay cấu hình thì dùng nhãn mới (lệnh từ chối ghi tiếp lên kết quả khác đề). Cần chủ dự án duyệt trước lần chạy thật.
+- **Đoạn trên trang của hệ `graph_quotes` (D-96):** đoạn BM25 kèm `limits.context.page_quotes_neighbors` đoạn liền sau mỗi đoạn trúng (cùng chương), trong trần `page_quotes_max_chars`: cùng hai số với ngữ cảnh model viết (D-85); `run.yaml` giữ `top_k` và cỡ đoạn. Cờ `--page-neighbors N` ghi đè (0 = điều kiện trước D-96, để so với kết quả cũ); số thực dùng ghi ở `page_quotes` của `meta.json` và vào dấu vân tay, nên không chạy tiếp lên thư mục kết quả có số khác. Hệ `rag` không dùng đoạn kế, giữ nguyên làm đối chứng. `bench_a retrieval` đếm, không tốn tiền, số câu có câu trích bằng chứng (ở chương cũ hơn chương hỏi) nằm trong các đoạn lấy về, theo `top_k` và số đoạn kế: dùng nó để chọn số, không dùng kết quả trả lời. Trúng chỉ là điều kiện cần.
+- **Cache prompt (D-96):** nhà cung cấp tính rẻ hơn nhiều phần prompt lặp. Mỗi lời gọi trong `results.jsonl` có `cached_tokens` (số token vào đọc từ cache; null là phản hồi không báo). `summary.md` tách lời gọi lạnh (0 token cache) khỏi lời gọi có cache: USD mỗi lời gọi giữa hai lần chạy chỉ so được khi tỉ lệ cache giống nhau, và lần hỏi thứ 2, 3 của cùng câu gần như luôn có cache. Giữ chỗ `--budget` và trần G8 vẫn tính theo giá lạnh.
 - **Kết quả:** `evals/results/<ngày>-memory-<nhãn>/` (`summary.md`, `results.jsonl`, `summaries.jsonl`, `errors.jsonl`, `meta.json` với commit, hash đề và config, tên model). Tài liệu này không chép số.
 
 ## Bài B — Người canh

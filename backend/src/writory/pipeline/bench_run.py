@@ -373,6 +373,7 @@ class BudgetedClient(LLMClient):
             "cost_usd": cost, "cost_estimated_usd": estimate if cost is None else None,
             "prompt_tokens": result.usage.prompt_tokens,
             "completion_tokens": result.usage.completion_tokens,
+            "cached_tokens": result.usage.cached_tokens,  # D-96; None = phản hồi không báo
             "latency_s": round(self._clock() - started, 3),
         })
         return result

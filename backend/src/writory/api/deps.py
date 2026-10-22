@@ -452,7 +452,7 @@ class PlayerLLM:
             self._ledger.record(
                 CostEntry(cost.role, cost.model, cost.prompt_tokens, cost.completion_tokens,
                           cost.cost_usd, estimated=cost.estimated,
-                          generation_id=cost.generation_id),
+                          generation_id=cost.generation_id, cached_tokens=cost.cached_tokens),
                 story_id=story_id, setup_id=setup_id, chapter=chapter,
             )
 

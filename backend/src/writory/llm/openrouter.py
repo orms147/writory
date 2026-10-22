@@ -8,6 +8,10 @@ Theo docs openrouter.ai (tra ngày 19/10/2026; chưa đối chiếu với lời 
   Lỗi giữa chừng tới dưới dạng chunk có trường `error`, HTTP vẫn 200.
 - Lỗi: {"error": {"code", "message", "metadata"}}; có thể tới cả khi HTTP 200.
 
+Token cache (tra ngày 22/10/2026, D-96): `usage.prompt_tokens_details.cached_tokens` là "số token
+đọc từ cache" (use-cases/usage-accounting, features/prompt-caching); `cache_write_tokens` chỉ có ở
+model có cache tường minh. Phản hồi không có trường này thì `cached_tokens` là None, không phải 0.
+
 Id generation và tra chi phí theo id (tra ngày 21/10/2026, D-64; chưa đối chiếu với lời gọi thật):
 - Header `X-Generation-Id` có ở mọi endpoint (api-reference/streaming); `id` của thân phản hồi là
   id generation (use-cases/usage-accounting). Status và header được gửi ngay khi nhà cung cấp nhận
@@ -85,10 +89,15 @@ def _error_from(status: int, data: Any) -> WritoryError | None:
 def _usage(raw: Any) -> Usage:
     raw = raw if isinstance(raw, dict) else {}
     cost = raw.get("cost")
+    details = raw.get("prompt_tokens_details")
+    cached = details.get("cached_tokens") if isinstance(details, dict) else None
     return Usage(
         prompt_tokens=raw.get("prompt_tokens") or 0,
         completion_tokens=raw.get("completion_tokens") or 0,
         cost_usd=float(cost) if isinstance(cost, int | float) else None,
+        # Chỉ nhận số nguyên không âm; bool là int trong Python nên loại ra.
+        cached_tokens=(cached if isinstance(cached, int) and not isinstance(cached, bool)
+                       and cached >= 0 else None),
     )
 
 

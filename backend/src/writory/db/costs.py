@@ -25,6 +25,7 @@ class CostEntry:
     cost_usd: float | None
     estimated: bool = False
     generation_id: str | None = None
+    cached_tokens: int | None = None  # token vào đọc từ cache prompt (D-96)
 
 
 def record_cost(
@@ -35,10 +36,11 @@ def record_cost(
         raise ValueError("dòng chi phí cần story_id hoặc setup_id")
     conn.execute(
         "INSERT INTO llm_costs (owner_id, story_id, setup_session_id, chapter, role, model, "
-        "prompt_tokens, completion_tokens, cost_usd, estimated, generation_id) "
-        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
+        "prompt_tokens, completion_tokens, cost_usd, estimated, generation_id, cached_tokens) "
+        "VALUES (%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s)",
         (owner_id, story_id, setup_id, chapter, entry.role, entry.model, entry.prompt_tokens,
-         entry.completion_tokens, entry.cost_usd, entry.estimated, entry.generation_id),
+         entry.completion_tokens, entry.cost_usd, entry.estimated, entry.generation_id,
+         entry.cached_tokens),
     )
 
 

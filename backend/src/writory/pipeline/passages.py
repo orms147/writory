@@ -111,15 +111,24 @@ class PagePool:
         self._chunks = [c for ch in sorted(chapters)
                         for c in chunk_chapter(ch, chapters[ch], chunk_chars=chunk_chars)]
         self._index = Bm25Index(self._chunks)
+        self._by_key = {(c.chapter, c.index): c for c in self._chunks}
 
     @property
     def size(self) -> int:
         return len(self._chunks)
 
-    def top(self, query: str, *, top_k: int, max_chars: int | None = None) -> list[Chunk]:
+    def top(self, query: str, *, top_k: int, max_chars: int | None = None,
+            neighbors: int = 0) -> list[Chunk]:
         """Tối đa `top_k` đoạn điểm cao nhất, sắp theo thứ tự truyện. `max_chars`: tổng độ dài chữ
         tối đa; vượt thì bỏ đoạn điểm thấp trước, giữ đoạn điểm cao nhất ngay cả khi riêng nó đã
-        vượt (một đoạn cụt giữa câu tệ hơn một đoạn dài)."""
+        vượt (một đoạn cụt giữa câu tệ hơn một đoạn dài).
+
+        `neighbors` (D-96): mỗi đoạn trúng kéo theo tối đa `neighbors` đoạn liền sau nó trong CÙNG
+        chương, vì câu trả lời hay nằm ở đoạn tiếp ngay sau đoạn có từ khoá (người nhận thẻ ở câu
+        sau lời hẹn). Đoạn kế chỉ vào khi còn chỗ trong `max_chars`, theo thứ hạng của đoạn trúng; các
+        đoạn trúng không bao giờ bị đoạn kế đẩy ra."""
+        if neighbors < 0:
+            raise ValueError(f"neighbors phải >= 0, nhận {neighbors}")
         ranked = self._index.top(query, top_k)
         if max_chars is not None:
             kept: list[Chunk] = []
@@ -130,4 +139,18 @@ class PagePool:
                 kept.append(c)
                 used += len(c.text)
             ranked = kept
-        return sorted(ranked, key=lambda c: (c.chapter, c.index))
+        picked = list(ranked)
+        if neighbors:
+            have = {(c.chapter, c.index) for c in picked}
+            used = sum(len(c.text) for c in picked)
+            for hit in ranked:
+                for step in range(1, neighbors + 1):
+                    nxt = self._by_key.get((hit.chapter, hit.index + step))
+                    if nxt is None or (nxt.chapter, nxt.index) in have:
+                        continue
+                    if max_chars is not None and used + len(nxt.text) > max_chars:
+                        break
+                    picked.append(nxt)
+                    have.add((nxt.chapter, nxt.index))
+                    used += len(nxt.text)
+        return sorted(picked, key=lambda c: (c.chapter, c.index))

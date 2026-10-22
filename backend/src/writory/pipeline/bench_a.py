@@ -228,8 +228,10 @@ class ContextBuilder:
     trong bộ nhớ). `summaries[k]`: tóm tắt chương k (thiếu thì hệ "rolling" không dựng được)."""
 
     def __init__(self, data: BenchData, graph_state: Callable[[int], GraphState],
-                 summaries: Mapping[int, str]) -> None:
+                 summaries: Mapping[int, str], *, page_neighbors: int = 0,
+                 page_max_chars: int | None = None) -> None:
         self.data, self._graph_state, self.summaries = data, graph_state, summaries
+        self._page_neighbors, self._page_max_chars = page_neighbors, page_max_chars
         self._cache: dict[tuple[str, str], Context] = {}
 
     def rolling_text(self, upto: int) -> dict[int, str]:
@@ -260,7 +262,9 @@ class ContextBuilder:
             ctx = context_graph_quotes(self._graph_state(n), q.question, n, story=story,
                                        top_k=run.graph_quotes.top_k,
                                        chunk_chars=run.rag.chunk_chars,
-                                       recent=run.graph.recent_chapter)
+                                       recent=run.graph.recent_chapter,
+                                       neighbors=self._page_neighbors,
+                                       max_chars=self._page_max_chars)
         else:
             raise ValueError(f"hệ không biết: {system}")
         self._cache[key] = ctx
@@ -328,6 +332,17 @@ class RunOptions:
     groups: Sequence[str] = ()
     graph_backend: str | None = None  # None: memory khi --dry-run, neo4j khi chạy thật
     graph_story_id: str | None = None  # None: id mặc định của bộ đo; test truyền id riêng
+    page_neighbors: int | None = None  # None: limits.context.page_quotes_neighbors (D-96)
+
+
+def page_settings(config: AppConfig, neighbors: int | None = None) -> dict[str, int | None]:
+    """Cách lấy đoạn trên trang của hệ `graph_quotes` (D-96): đúng số của sản phẩm trong
+    `limits.context` (đoạn kế, trần ký tự); `neighbors` là cờ ghi đè, để đo lại điều kiện cũ."""
+    if neighbors is not None and neighbors < 0:
+        raise ConfigError(f"--page-neighbors phải >= 0, nhận {neighbors}")
+    ctx = config.limits.context
+    return {"neighbors": ctx.page_quotes_neighbors if neighbors is None else neighbors,
+            "max_chars": ctx.page_quotes_max_chars}
 
 
 def check_options(opts: RunOptions) -> None:
@@ -415,6 +430,34 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
                        "prompt": SUMMARY_PROMPT_VERSION},
         "answer_prompt": ANSWER_PROMPT_VERSION,
         "answer_prompt_sha256": _sha256(f"{ANSWER_SYSTEM}\n{DATA_NOTICE}".encode()),
+        "page_quotes": page_settings(config, opts.page_neighbors),
+    }
+
+
+CACHE_COLD = "lạnh"  # lời gọi báo cached_tokens = 0
+CACHE_WARM = "có cache"  # lời gọi báo cached_tokens > 0
+
+
+def cache_stats(rows: Sequence[Mapping[str, Any]]) -> dict[str, Any]:
+    """Chi phí tách theo cache prompt (D-96): lượt lạnh (nhà cung cấp báo 0 token cache), lượt có
+    cache (báo > 0), và lượt không rõ (phản hồi không có trường, nhật ký cũ). Giá của lượt có cache
+    thấp hơn nhiều, nên USD mỗi lời gọi giữa các lần chạy chỉ so được khi cùng tỉ lệ cache."""
+    calls = [c for r in rows for c in r.get("calls", []) if c.get("status", "ok") == "ok"]
+    cold = [c for c in calls if c.get("cached_tokens") == 0]
+    warm = [c for c in calls if (c.get("cached_tokens") or 0) > 0]
+    known = len(cold) + len(warm)
+
+    def usd(group: Sequence[Mapping[str, Any]]) -> float:
+        return sum(c.get("cost_usd") or 0.0 for c in group)
+
+    return {
+        "calls": len(calls), "cold_calls": len(cold), "warm_calls": len(warm),
+        "unknown_calls": len(calls) - known,
+        "cold_usd": usd(cold), "warm_usd": usd(warm),
+        "cold_usd_per_call": usd(cold) / len(cold) if cold else None,
+        "warm_usd_per_call": usd(warm) / len(warm) if warm else None,
+        "prompt_tokens": sum(c.get("prompt_tokens") or 0 for c in calls),
+        "cached_tokens": sum(c.get("cached_tokens") or 0 for c in calls),
     }
 
 
@@ -439,7 +482,10 @@ class Runner:
         self.samples = opts.samples or data.run.samples
         self.done = {(r["id"], r["system"], r["sample"]) for r in store.rows(RESULTS)}
         self.summaries = {r["chapter"]: r["summary"] for r in store.rows(SUMMARIES)}
-        self.builder = ContextBuilder(data, graph_state, self.summaries)
+        page = page_settings(config, opts.page_neighbors)
+        self.builder = ContextBuilder(data, graph_state, self.summaries,
+                                      page_neighbors=page["neighbors"] or 0,
+                                      page_max_chars=page["max_chars"])
         self.stop: tuple[str, str] | None = None
 
     def _halt(self, kind: str, message: str) -> None:
@@ -608,7 +654,8 @@ async def run_bench(
                     "graph_backend": opts.graph_backend or ("memory" if opts.dry_run else "neo4j"),
                     "questions": [q.id for q in questions]
                     if (opts.question_ids or opts.groups) else "all",
-                    "budget": opts.budget}
+                    "budget": opts.budget,
+                    "page_quotes": page_settings(config, opts.page_neighbors)}
         meta_extra = {"versions": {"questions": data.questions.version, "run": data.run.version},
                       "status": data.questions.status, "story": data.source}
         _open_results(store, fingerprint(data, config_dir, opts, config), meta_extra, run_info)
@@ -692,6 +739,7 @@ def compute_report(data: BenchData, store: Store, systems: Sequence[str],
                                    if mine else None),
             "errors": Counter(e["code"] for e in errors if e["system"] == system),
             "correct": correct,
+            "cache": cache_stats(mine),
         }
     return out
 
@@ -779,6 +827,22 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
         lines.append(f"| {SYSTEM_LABELS[s]} | " + " | ".join(
             _pct(report["systems"][s]["by_bin"][b]["k"], report["systems"][s]["by_bin"][b]["n"])
             for b in DISTANCE_BINS) + " |")
+    lines += ["", "## Cache prompt (D-96)", "",
+              (f"Lượt {CACHE_COLD}: nhà cung cấp báo 0 token đọc từ cache; lượt {CACHE_WARM}: báo > 0. "
+               "Prompt lặp (lần hỏi thứ 2, 3 hoặc chạy lại trong vài chục phút) được cache nên rẻ hơn "
+               "nhiều: so USD mỗi lời gọi giữa hai lần chạy chỉ có nghĩa khi tỉ lệ cache giống nhau. "
+               "Giữ chỗ ngân sách và trần G8 vẫn tính theo giá lạnh."),
+              "",
+              (f"| Hệ | Lời gọi {CACHE_COLD} | USD / lời gọi {CACHE_COLD} | Lời gọi {CACHE_WARM} | "
+              f"USD / lời gọi {CACHE_WARM} | Không rõ | Token vào được cache |"),
+              "|---|---|---|---|---|---|---|"]
+    for s in systems:
+        c = report["systems"][s]["cache"]
+        share = "—" if not c["prompt_tokens"] else f"{100 * c['cached_tokens'] / c['prompt_tokens']:.0f}%"
+        per_cold = "—" if c["cold_usd_per_call"] is None else f"{c['cold_usd_per_call']:.6f}"
+        per_warm = "—" if c["warm_usd_per_call"] is None else f"{c['warm_usd_per_call']:.6f}"
+        lines.append(f"| {SYSTEM_LABELS[s]} | {c['cold_calls']} | {per_cold} | {c['warm_calls']} | "
+                     f"{per_warm} | {c['unknown_calls']} | {share} |")
     err_lines = [f"- {SYSTEM_LABELS[s]}: " + ", ".join(
         f"{c} ×{n}" for c, n in sorted(report["systems"][s]["errors"].items()))
         for s in systems if report["systems"][s]["errors"]]
@@ -860,7 +924,8 @@ def _options(args: argparse.Namespace) -> RunOptions:
         out=resolve_out(args), dry_run=args.dry_run, fake=args.fake,
         systems=_split(args.systems), budget=args.budget, samples=args.samples,
         concurrency=args.concurrency, question_ids=_split(args.questions),
-        groups=_split(args.groups), graph_backend=args.graph_backend)
+        groups=_split(args.groups), graph_backend=args.graph_backend,
+        page_neighbors=args.page_neighbors)
 
 
 async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
@@ -907,6 +972,29 @@ def _cmd_plan(args: argparse.Namespace) -> int:
     return EXIT_OK
 
 
+def _ints(value: str, name: str) -> list[int]:
+    try:
+        out = [int(v) for v in _split(value)]
+    except ValueError:
+        raise ConfigError(f"{name} phải là số nguyên cách nhau dấu phẩy: {value!r}") from None
+    if not out or any(v < 0 for v in out):
+        raise ConfigError(f"{name} cần ít nhất một số >= 0: {value!r}")
+    return out
+
+
+def _cmd_retrieval(args: argparse.Namespace) -> int:
+    """Phép kiểm truy hồi không tốn tiền (D-96): in bảng trúng theo (top_k, đoạn kế)."""
+    from writory.pipeline.bench_a_retrieval import recall_table, table_text
+
+    data = _load(args)
+    cap = (load_app_config(Path(args.config_dir)).limits.context.page_quotes_max_chars
+           if args.max_chars is None else (args.max_chars or None))
+    table = recall_table(data, top_ks=_ints(args.top_k, "--top-k"),
+                         neighbors=_ints(args.neighbors, "--neighbors"), max_chars=cap)
+    print(table_text(table, max_chars=cap))
+    return EXIT_OK
+
+
 def _parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="python -m writory.pipeline.bench_a",
                                 description="Bài đo A: bộ nhớ, sáu hệ trả lời (docs/eval.md).")
@@ -919,6 +1007,9 @@ def _parser() -> argparse.ArgumentParser:
                      help="model giả khi --dry-run: oracle (đúng nếu ngữ cảnh đủ), null (không "
                           "biết), wrong (luôn sai)")
     run.add_argument("--budget", type=float, help="trần OpenRouter, USD; bắt buộc khi chạy thật")
+    run.add_argument("--page-neighbors", type=int,
+                     help="ghi đè limits.context.page_quotes_neighbors cho hệ graph_quotes "
+                          "(0 = như trước D-96); có ghi vào meta.json")
     run.add_argument("--samples", type=int, help="số lần hỏi mỗi câu (mặc định: run.yaml)")
     run.add_argument("--concurrency", type=int, default=4)
     run.add_argument("--systems", help=f"chỉ các hệ này, cách nhau dấu phẩy ({', '.join(SYSTEMS)}); "
@@ -931,10 +1022,16 @@ def _parser() -> argparse.ArgumentParser:
     run.add_argument("--env-file", default=str(REPO_ROOT / ".env"))
     summary = sub.add_parser("summary", help="dựng lại summary.md từ thư mục kết quả")
     summary.add_argument("--out", required=True)
+    retrieval = sub.add_parser("retrieval", help="phép kiểm truy hồi đoạn, không gọi model (D-96)")
+    retrieval.add_argument("--top-k", default="2,3,4", help="các top_k, cách nhau dấu phẩy")
+    retrieval.add_argument("--neighbors", default="0,1", help="các số đoạn kế, cách nhau dấu phẩy")
+    retrieval.add_argument("--max-chars", type=int,
+                           help="trần ký tự (mặc định: limits.context.page_quotes_max_chars; 0 = không trần)")
+    retrieval.add_argument("--config-dir", default=str(REPO_CONFIG_DIR))
     plan = sub.add_parser("plan", help="ước tính chi phí, không gọi model")
     plan.add_argument("--samples", type=int, help="mặc định: run.yaml")
     plan.add_argument("--systems", help="chỉ các hệ này")
-    for sp in (run, summary, plan):
+    for sp in (run, summary, plan, retrieval):
         sp.add_argument("--data", default=str(DATA_DIR), help="thư mục đề")
         sp.add_argument("--questions-file", default="questions.yaml")
     for sp in (run, plan):
@@ -957,6 +1054,8 @@ def main(argv: Sequence[str] | None = None) -> int:
             return asyncio.run(_cmd_run(args, argv))
         if args.command == "summary":
             return _cmd_summary(args)
+        if args.command == "retrieval":
+            return _cmd_retrieval(args)
         return _cmd_plan(args)
     except ConfigError as e:
         print(f"Lỗi: {e}", file=sys.stderr)

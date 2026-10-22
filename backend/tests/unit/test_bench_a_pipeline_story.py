@@ -18,6 +18,7 @@ from writory.pipeline.bench_a import (
     RunOptions,
     compute_report,
     main,
+    page_settings,
     plan_text,
     run_bench,
 )
@@ -269,7 +270,9 @@ def test_dry_run_oracle_is_perfect_on_full_and_matches_support_elsewhere(tmp_pat
     store = run_dry(tmp_path, systems=["graph", "graph_quotes", "none", "rag", "full"])
     rows = store.rows(RESULTS)
     assert len(rows) == len(QS) * 5
-    builder = ContextBuilder(RUN, RUN.state_at, {})
+    page = page_settings(CONFIG)  # đoạn kế và trần như lượt chạy (D-96)
+    builder = ContextBuilder(RUN, RUN.state_at, {}, page_neighbors=page["neighbors"],
+                             page_max_chars=page["max_chars"])
     for r in rows:
         question = q(r["id"])
         expected = context_supports(question, builder.build(r["system"], question), RUN)
