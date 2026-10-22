@@ -362,8 +362,12 @@ async def test_correct_unlocked_answers_still_reach_the_player_unchanged(row):
     "Lối xuống không được ghi trong Sổ Trận.",
     "Phù âm được nhắc đến khi Lục Hàn Sương ghé bên bàn đá.",
     "Minh chỉ biết đứng nhìn chiếc thuyền xa dần.",
+    # ky-ao-vua-2 ch06: chuyện biên bản trong truyện, không phải người kể nói về sổ tay (D-78)
+    "Còn quyền quản giữ lâu dài vẫn chưa được nhắc đến trên giấy.",
+    "Điều khoản bàn giao chưa được nhắc tới trong biên bản.",
 ], ids=["chua-tro-ve", "chua-khep", "chua-doc", "chua-tim-thay", "khong-duoc-noi", "so-tay-vat",
-        "ban-ghi-trong-truyen", "so-tran", "ghi-trong-so", "duoc-nhac", "chi-biet"])
+        "ban-ghi-trong-truyen", "so-tran", "ghi-trong-so", "duoc-nhac", "chi-biet",
+        "nhac-tren-giay", "nhac-trong-bien-ban"])
 def test_natural_sentences_with_chua_or_khong_are_not_caught(answer):
     """"chưa", "không" có mặt tự nhiên trong câu trả lời đúng, và truyện có thể có sổ sách thật:
     chỉ cụm nói về thông tin hay về chính sổ tay mới bị bắt."""
@@ -384,9 +388,21 @@ def test_natural_sentences_with_chua_or_khong_are_not_caught(answer):
     "Nơi giấu kiếm chưa được ghi lại.",
     "CHƯA CÓ NỘI DUNG NÀO ĐƯỢC GHI LẠI.",
     "Chưa   có\nnội dung nào được ghi lại.",
+    # Câu giám khảo chấm `goi_y_an` ở evals/results/2026-10-21-narrator-v2-d77/judge.jsonl
+    "Chỉ biết đó là một lá thư gấp bốn, niêm sáp đỏ; chưa có nội dung được ghi lại.",
+    "Đó là một lá thư gấp bốn, niêm sáp đỏ. Chưa có nội dung nào của thư được ghi lại.",
+    "Đó là lá thư gấp bốn, niêm sáp đỏ; nội dung thư không được ghi lại.",
+    "Lan đã lẻn vào gác lấy Thanh Sương, nhưng nơi thanh kiếm đang nằm hiện không được ghi lại.",
+    # "chưa được nhắc" là úp mở khi nói về điều người chơi chưa thấy: cuối câu, trong sổ tay, trên trang
+    "Điều đó chưa được nhắc đến.",
+    "Danh tính gã chưa được nhắc tới trong sổ tay.",
+    "Lan chưa được nhắc đến trên trang.",
+    "Chưa được nhắc đến, nên tôi không nói thêm được.",
 ], ids=["khong-co-thong-tin", "chua-du-thong-tin", "thieu-du-kien", "chua-ghi-nhan",
         "chua-duoc-ke", "chua-duoc-he-lo", "chua-biet-noi-dung", "chua-ro-noi-dung",
-        "so-tay-khong-noi", "trang-so-khong-ghi", "chua-duoc-ghi", "hoa", "khoang-trang"])
+        "so-tay-khong-noi", "trang-so-khong-ghi", "chua-duoc-ghi", "hoa", "khoang-trang", "judge-chua-co-noi-dung",
+        "judge-chua-co-noi-dung-cua-thu", "judge-khong-duoc-ghi-lai", "judge-vi-tri-kiem",
+        "nhac-cuoi-cau", "nhac-trong-so-tay", "nhac-tren-trang", "nhac-dau-cau"])
 def test_other_ways_of_talking_about_missing_information_are_caught(answer):
     assert meta_hedge(answer) is not None
 
@@ -395,26 +411,16 @@ def _sentences(text: str) -> list[str]:
     return [s for s in re.split(r"(?<=[.!?…])\s+|\n+", text) if s.strip()]
 
 
-# Câu văn truyện lưới bắt oan đã biết (giới hạn đã ghi ở D-78, Hệ quả). Mỗi mục là (thư mục kết
-# quả, file, câu); muốn bỏ một mục thì phải sửa cụm trong META_HEDGE_PATTERNS, có test.
-KNOWN_STORY_FALSE_POSITIVES = {
-    # ky-ao-vua-2 (D-82): "chưa được nhắc" là chuyện biên bản trong truyện, không phải người kể.
-    ("2026-10-21-run-ky-ao-vua-2", "ch06.md",
-     "Còn quyền quản giữ lâu dài vẫn chưa được nhắc đến trên giấy."),
-}
-
-
 def test_no_sentence_of_any_story_text_in_the_repo_is_caught():
     """Văn truyện là nguồn của sổ tay: câu trả lời kể lại câu trên trang không được bị chặn oan.
-    Truyện mẫu viết tay và các truyện do pipeline viết trong evals/results. Câu bắt oan đã biết
-    nằm riêng ở KNOWN_STORY_FALSE_POSITIVES, và phải vẫn bị bắt (để danh sách không cũ đi)."""
+    Truyện mẫu viết tay và các truyện do pipeline viết trong evals/results. Thấy câu bị bắt oan
+    thì sửa cụm trong META_HEDGE_PATTERNS (kèm test hai chiều), không thêm danh sách ngoại lệ."""
     files = sorted((REPO_ROOT / "data" / "sample-story").glob("ch*.md"))
     files += sorted(RESULTS.glob("*/chapters/ch*.md"))
     assert len(files) > 5
     caught = {(f.parent.parent.name, f.name, s) for f in files
               for s in _sentences(f.read_text(encoding="utf-8")) if meta_hedge(s) is not None}
-    assert caught - KNOWN_STORY_FALSE_POSITIVES == set()
-    assert KNOWN_STORY_FALSE_POSITIVES <= caught
+    assert caught == set()
 
 
 def test_every_pattern_has_a_name_and_catches_its_own_example():
