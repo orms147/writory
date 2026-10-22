@@ -1,0 +1,745 @@
+# Bài đo A trên đồ thị có Fact mới do bộ trích tạo (D-93). Dẫn xuất từ questions-ky-ao-vua-1.yaml.
+#
+# Cùng 39 câu, cùng đáp án gốc lấy từ trang, cùng câu trích. Khác ở nguồn đồ thị (`run_dir`: lần phát lại
+# bộ trích extract-6, văn và dàn ý là bản gốc của run-ky-ao-vua-1) và ở 12 câu sau, khai SAU khi đã thấy
+# đồ thị đó (không phải khai trước như đề gốc), nên cờ `graph_agrees` chỉ là mô tả, không phải đáp án:
+#   - knows-02, 03, 05, 06: đã có `derive`, nay đồ thị đúng;
+#   - item-03, 04, 07, 08, alive-01, 04, knows-12, 13: thêm `derive` trỏ tới Fact mới có chữ trả lời.
+# 10 câu còn lại của nhóm "không có nút trong danh mục" vẫn `graph_agrees: false`, không có `derive`.
+version: 1
+status: 'CHỜ DUYỆT. Dẫn xuất từ questions-ky-ao-vua-1.yaml (đã duyệt 22/10/2026): cùng câu hỏi, đáp án
+  và câu trích; chỉ đổi nguồn đồ thị sang lần phát lại có Fact mới (D-93) và cờ graph_agrees/derive của
+  12 câu theo đồ thị đó, soạn SAU khi thấy đồ thị.'
+story: run
+run_dir: evals/results/2026-10-22-new-facts-replay-1
+run_sha256:
+  truth_dump.json: c398266a99436f7cafcebda0d598add29c224da447db87cb53d3942565479bb9
+  chapters/ch01.md: bb10d749af77d19352437020d971635f930a1043ea243dd7e7afc634f65f76e4
+  chapters/ch02.md: 6362b3884b609bff51d048e3148014a77a8ff823d9f8f79a0950ba8326092f51
+  chapters/ch03.md: 9b94c0ccbfc7401c0d05ff9ac3e556ae338767e9020310023570440eaf14d436
+  chapters/ch04.md: e65142520e23f697f1552aa9b845961b425abd898b2ba4b3f7a314a1a96a1565
+  chapters/ch05.md: a0becfa315201d4cedbb933a139f4c8b2ded76ea80b256838405ec85cc3f9747
+  chapters/ch06.md: aa243829145987fe85ed4cc36f537094b2999b7368f25d535bbe0025740fd7d4
+  chapters/ch07.md: 02e0af32e74a39bb703704e91df492531a83bf5b8934ad09e2836b0a5d3383bc
+  chapters/ch08.md: ba728d363b50f002b14245de7cca7d943cc5783faa959d76999f554ae6903c3e
+  chapters/ch09.md: 20fbe00eb026755cb0c9fcd6d07796f0bcfab7940ff9567fd3c87dbdb9ca5a4b
+  chapters/ch10.md: 54026dda3ab150af200207aeb5ca046d1d64b9c24ade2e58ed1305a1baab11eb
+questions:
+- id: item-01
+  group: item
+  fact_chapter: 1
+  ask_chapter: 1
+  question: Cuối chương 1, ai đang giữ Thẻ Định Phong?
+  answer:
+    type: entities
+    gold:
+    - protagonist
+    aliases:
+      protagonist: &id001
+      - nhân vật chính
+      - người kể chuyện
+      - người kể
+      - người dẫn chuyện
+      - tôi
+      - Cảnh Hành
+  graph_agrees: true
+  derive:
+    op: holders
+    item: thep_dinh_phong
+  evidence:
+  - chapter: 1
+    quote: Tôi rút Thẻ Định Phong khỏi tay áo.
+- id: item-02
+  group: item
+  fact_chapter: 3
+  ask_chapter: 10
+  as_of: 3
+  question: Vào cuối chương 3, ai đang giữ Thẻ Định Phong?
+  answer:
+    type: entities
+    gold:
+    - protagonist
+    aliases:
+      protagonist: *id001
+  graph_agrees: true
+  derive:
+    op: holders
+    item: thep_dinh_phong
+  evidence:
+  - chapter: 3
+    quote: Tôi cất Thẻ Định Phong vào tay áo.
+- id: item-03
+  group: item
+  fact_chapter: 4
+  ask_chapter: 4
+  question: Ở chương 4, Phó Cảnh Hành (nhân vật chính) cho ai mượn Thẻ Định Phong?
+  answer:
+    type: entities
+    gold:
+    - tran_mac
+  graph_agrees: true
+  evidence:
+  - chapter: 4
+    quote: Cho ta mượn Thẻ Định Phong đến hết chuyến qua đá trôi.
+  - chapter: 4
+    quote: Ta cho ngươi mượn.
+  - chapter: 4
+    quote: Trần Mặc nắm lấy đầu còn lại.
+  derive:
+    op: edge_targets
+    type: ABOUT
+    from: fact_c4s1_2
+- id: item-04
+  group: item
+  fact_chapter: 4
+  ask_chapter: 10
+  question: Ở chương 4, Phó Cảnh Hành (nhân vật chính) cho ai mượn Thẻ Định Phong?
+  answer:
+    type: entities
+    gold:
+    - tran_mac
+  graph_agrees: true
+  evidence:
+  - chapter: 4
+    quote: Cho ta mượn Thẻ Định Phong đến hết chuyến qua đá trôi.
+  - chapter: 4
+    quote: Ta cho ngươi mượn.
+  - chapter: 4
+    quote: Trần Mặc nắm lấy đầu còn lại.
+  derive:
+    op: edge_targets
+    type: ABOUT
+    from: fact_c4s1_2
+- id: item-05
+  group: item
+  fact_chapter: 4
+  ask_chapter: 4
+  question: Cuối chương 4, Thẻ Định Phong đã trở lại tay Phó Cảnh Hành (nhân vật chính) chưa? Trả lời
+    Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: HOLDS
+    from: protagonist
+    to: thep_dinh_phong
+  evidence:
+  - chapter: 4
+    quote: Hắn đặt Thẻ Định Phong vào tay tôi.
+- id: item-06
+  group: item
+  fact_chapter: 4
+  ask_chapter: 10
+  as_of: 4
+  question: Vào cuối chương 4, Thẻ Định Phong đã trở lại tay Phó Cảnh Hành (nhân vật chính) chưa? Trả
+    lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: HOLDS
+    from: protagonist
+    to: thep_dinh_phong
+  evidence:
+  - chapter: 4
+    quote: Hắn đặt Thẻ Định Phong vào tay tôi.
+- id: item-07
+  group: item
+  fact_chapter: 4
+  ask_chapter: 8
+  question: Ở chương 4, Trần Mặc đòi gì để đổi lấy việc chỉ một lối an toàn cho đoàn người của Vân Chi
+    qua vùng đá trôi?
+  answer:
+    type: text
+    gold:
+    - - thẻ
+  graph_agrees: true
+  evidence:
+  - chapter: 4
+    quote: Ta biết một lối an toàn cho đoàn người của Vân Chi qua vùng đá trôi.
+  - chapter: 4
+    quote: Cho ta mượn Thẻ Định Phong đến hết chuyến qua đá trôi.
+  derive:
+    op: node_text
+    node: fact_c4s1_2
+    keywords:
+    - - thẻ
+- id: item-08
+  group: item
+  fact_chapter: 4
+  ask_chapter: 9
+  question: Ở chương 4, Phó Cảnh Hành (nhân vật chính) cho Trần Mặc mượn Thẻ Định Phong tới khi nào thì
+    thẻ phải trở lại tay anh?
+  answer:
+    type: text
+    gold:
+    - - đá trôi
+  graph_agrees: true
+  evidence:
+  - chapter: 4
+    quote: Qua khỏi vùng đá trôi, thẻ trở lại tay ta.
+  derive:
+    op: node_text
+    node: fact_c4s1_2
+    keywords:
+    - - đá trôi
+- id: item-09
+  group: item
+  fact_chapter: 6
+  ask_chapter: 9
+  as_of: 6
+  question: Vào cuối chương 6, sau khi Trần Mặc thú nhận, Thẻ Định Phong có nằm trong tay Trần Mặc không?
+    Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: HOLDS
+    from: tran_mac
+    to: thep_dinh_phong
+  evidence:
+  - chapter: 6
+    quote: Tôi sẽ không giao thẻ cho Trần Mặc.
+  - chapter: 6
+    quote: Thẻ đi cùng ta.
+- id: item-10
+  group: item
+  fact_chapter: 10
+  ask_chapter: 10
+  question: Cuối chương 10, ai đang giữ Thẻ Định Phong?
+  answer:
+    type: entities
+    gold:
+    - protagonist
+    aliases:
+      protagonist: *id001
+  graph_agrees: true
+  derive:
+    op: holders
+    item: thep_dinh_phong
+  evidence:
+  - chapter: 10
+    quote: Thẻ Định Phong nằm trong tay tôi
+- id: item-11
+  group: item
+  fact_chapter: 10
+  ask_chapter: 10
+  inference: true
+  question: 'Ở chương 10, chiếc đèn lưu quang ngoài cửa Điện Tàn Tinh nằm trong tay người của phe nào?
+    Chọn một: Huyền Kính, Thanh Tiêu, Hội Lưu Dân.'
+  answer:
+    type: choice
+    gold: Huyền Kính
+    options:
+    - Huyền Kính
+    - Thanh Tiêu
+    - Hội Lưu Dân
+  graph_agrees: false
+  evidence:
+  - chapter: 10
+    quote: Bạch Thiên Sách đứng ngay ngoài cửa Điện Tàn Tinh, bên cạnh là mấy tu sĩ Huyền Kính.
+  - chapter: 10
+    quote: Một người cầm đèn lưu quang soi xuống nền đá
+- id: alive-01
+  group: alive
+  fact_chapter: 1
+  ask_chapter: 10
+  question: Ở chương 1, khi gió đẩy một đứa trẻ sát mép đá, ai đã cứu nó?
+  answer:
+    type: entities
+    gold:
+    - protagonist
+    aliases:
+      protagonist: *id001
+  graph_agrees: true
+  evidence:
+  - chapter: 1
+    quote: một đứa trẻ trượt khỏi tay mẹ, bị gió đẩy sát mép đá.
+  - chapter: 1
+    quote: Tôi chộp lấy cổ áo nó, kéo giật vào trong.
+  derive:
+    op: edge_targets
+    type: ABOUT
+    from: fact_c1s1_1
+- id: alive-02
+  group: alive
+  fact_chapter: 1
+  ask_chapter: 10
+  question: Ở chương 1, khi đoàn người qua vùng đá trôi, một ông lão bị vấp. Ai đã kịp đỡ ông?
+  answer:
+    type: entities
+    gold:
+    - tao_van_chi
+  graph_agrees: false
+  evidence:
+  - chapter: 1
+    quote: Một ông lão vấp ở phiến thứ hai, nhưng Vân Chi kịp nắm lấy cánh tay ông.
+- id: alive-03
+  group: alive
+  fact_chapter: 1
+  ask_chapter: 7
+  question: Ở chương 1, có ai trong đoàn người bị gió cuốn khỏi lối đi qua vùng đá trôi không? Trả lời
+    Có hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: false
+  evidence:
+  - chapter: 1
+    quote: Không ai bị cuốn khỏi lối đi.
+- id: alive-04
+  group: alive
+  fact_chapter: 4
+  ask_chapter: 9
+  question: Ở chương 4, Trần Mặc nói gì về chuyện những người dự đấu giá biến mất còn sống hay đã chết?
+  answer:
+    type: text
+    gold:
+    - - chưa chắc
+      - không chắc
+      - có thể chưa chết
+      - có thể còn sống
+      - có thể vẫn còn sống
+  graph_agrees: true
+  evidence:
+  - chapter: 4
+    quote: Nhưng những người dự đấu giá có thể đã rời chợ theo lối đó. Chưa chắc họ đã chết.
+  derive:
+    op: node_text
+    node: fact_c4s1_3
+    keywords:
+    - - chưa chắc
+- id: alive-05
+  group: alive
+  fact_chapter: 10
+  ask_chapter: 10
+  question: Cuối chương 10, Tào Vân Chi còn sống không? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: alive
+    character: tao_van_chi
+  evidence:
+  - chapter: 10
+    quote: Vân Chi đứng bên trái tôi
+- id: knows-01
+  group: knows
+  fact_chapter: 5
+  ask_chapter: 5
+  question: Cuối chương 5, Phó Cảnh Hành (nhân vật chính) đã biết Trần Mặc đem dấu vết món đồ nhà họ Phó
+    đổi với Huyền Kính chưa? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: KNOWS
+    from: protagonist
+    to: fact_tran_mac_ban_tin
+  evidence:
+  - chapter: 5
+    quote: Còn vì sao phải giữ kín đến thế, hắn không nói.
+- id: knows-02
+  group: knows
+  fact_chapter: 6
+  ask_chapter: 6
+  question: Cuối chương 6, Phó Cảnh Hành (nhân vật chính) đã biết Trần Mặc đem dấu vết món đồ nhà họ Phó
+    đổi với Huyền Kính chưa? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: KNOWS
+    from: protagonist
+    to: fact_tran_mac_ban_tin
+  evidence:
+  - chapter: 6
+    quote: Có một cuộc trao đổi. Ta đưa cho họ dấu vết dẫn tới món đồ nhà họ Phó.
+- id: knows-03
+  group: knows
+  fact_chapter: 6
+  ask_chapter: 10
+  question: 'Phó Cảnh Hành (nhân vật chính) biết chuyện Trần Mặc đem dấu vết món đồ nhà họ Phó đổi với
+    Huyền Kính từ chương nào? Chọn một: chương 4, chương 5, chương 6, chương 7, chương 8, chương 9, chương
+    10.'
+  answer:
+    type: choice
+    gold: chương 6
+    options:
+    - chương 4
+    - chương 5
+    - chương 6
+    - chương 7
+    - chương 8
+    - chương 9
+    - chương 10
+  graph_agrees: true
+  derive:
+    op: edge_since
+    type: KNOWS
+    from: protagonist
+    to: fact_tran_mac_ban_tin
+  evidence:
+  - chapter: 6
+    quote: Có một cuộc trao đổi. Ta đưa cho họ dấu vết dẫn tới món đồ nhà họ Phó.
+- id: knows-04
+  group: knows
+  fact_chapter: 7
+  ask_chapter: 7
+  question: Cuối chương 7, Phó Cảnh Hành (nhân vật chính) đã biết gia tộc Phó từng cất giữ Mảnh Khiếp
+    Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh chưa? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: KNOWS
+    from: protagonist
+    to: fact_gia_toc_giu_manh
+  evidence:
+  - chapter: 7
+    quote: Còn dấu dẫn tới mảnh thần khí vẫn nằm dưới này.
+- id: knows-05
+  group: knows
+  fact_chapter: 8
+  ask_chapter: 9
+  question: Cuối chương 9, Phó Cảnh Hành (nhân vật chính) đã biết gia tộc Phó từng cất giữ Mảnh Khiếp
+    Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh chưa? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: KNOWS
+    from: protagonist
+    to: fact_gia_toc_giu_manh
+  evidence:
+  - chapter: 8
+    quote: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn
+      Tinh
+- id: knows-06
+  group: knows
+  fact_chapter: 8
+  ask_chapter: 10
+  question: 'Phó Cảnh Hành (nhân vật chính) biết chuyện gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên
+    theo giao ước từ chương nào? Chọn một: chương 6, chương 7, chương 8, chương 9, chương 10.'
+  answer:
+    type: choice
+    gold: chương 8
+    options:
+    - chương 6
+    - chương 7
+    - chương 8
+    - chương 9
+    - chương 10
+  graph_agrees: true
+  derive:
+    op: edge_since
+    type: KNOWS
+    from: protagonist
+    to: fact_gia_toc_giu_manh
+  evidence:
+  - chapter: 8
+    quote: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn
+      Tinh
+- id: knows-07
+  group: knows
+  fact_chapter: 5
+  ask_chapter: 10
+  question: Ai đã cho Phó Cảnh Hành (nhân vật chính) biết Lưu Tố Nguyệt đưa một số người sống sót khỏi
+    khu chợ trước khi các tiên môn tới?
+  answer:
+    type: entities
+    gold:
+    - tao_van_chi
+  graph_agrees: true
+  derive:
+    op: edge_prop
+    type: KNOWS
+    from: protagonist
+    to: fact_luu_tu_nguyet_cuu_dan
+    prop: told_by
+  evidence:
+  - chapter: 5
+    quote: Vân Chi vuốt lại cổ tay áo, nơi bụi đá bám thành một vệt xám.
+  - chapter: 5
+    quote: Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới.
+- id: knows-08
+  group: knows
+  fact_chapter: 5
+  ask_chapter: 9
+  as_of: 4
+  question: Vào cuối chương 4, Tào Vân Chi đã biết Lưu Tố Nguyệt đưa một số người sống sót khỏi khu chợ
+    chưa? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: KNOWS
+    from: tao_van_chi
+    to: fact_luu_tu_nguyet_cuu_dan
+  evidence:
+  - chapter: 5
+    quote: nhớ lại những lần nàng im lặng khi chúng tôi lần dấu quanh lều đấu giá
+  - chapter: 5
+    quote: Nàng giấu chuyện này từ trước.
+- id: knows-09
+  group: knows
+  fact_chapter: 4
+  ask_chapter: 4
+  question: Cuối chương 4, Phó Cảnh Hành (nhân vật chính) đã biết Lưu Tố Nguyệt đưa một số người sống
+    sót khỏi khu chợ chưa? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: true
+  derive:
+    op: edge_exists
+    type: KNOWS
+    from: protagonist
+    to: fact_luu_tu_nguyet_cuu_dan
+  evidence:
+  - chapter: 4
+    quote: Chưa chắc họ đã chết.
+- id: knows-10
+  group: knows
+  fact_chapter: 7
+  ask_chapter: 9
+  inference: true
+  question: Những dấu hộ tống trên vách mà Vân Chi lần theo ở chương 9 là dấu của ai?
+  answer:
+    type: entities
+    gold:
+    - luu_tu_nguyet
+  graph_agrees: false
+  evidence:
+  - chapter: 7
+    quote: '- Dấu của Nguyệt cô.'
+  - chapter: 9
+    quote: Dấu hộ tống. Đoàn người đã qua đây sống sót.
+- id: knows-11
+  group: knows
+  fact_chapter: 1
+  ask_chapter: 10
+  question: Ở chương 1, Tào Vân Chi cảnh báo dấu vết trên nền chợ có thể chỉ là gì?
+  answer:
+    type: text
+    gold:
+    - - mồi nhử
+      - mồi
+      - bẫy
+  graph_agrees: false
+  evidence:
+  - chapter: 1
+    quote: Ngươi định bảo vệ người sống hay chạy theo một dấu vết có thể chỉ là mồi nhử?
+- id: knows-12
+  group: knows
+  fact_chapter: 6
+  ask_chapter: 10
+  question: Theo lời Trần Mặc ở chương 6, để đổi lấy dấu vết, Huyền Kính hứa sẽ không làm hai việc gì
+    với người trong chợ?
+  answer:
+    type: text
+    gold:
+    - - lục
+    - - khai
+      - tra hỏi
+      - tra khảo
+      - thẩm vấn
+  graph_agrees: true
+  evidence:
+  - chapter: 6
+    quote: Không lục từng lều, không bắt người trong chợ khai về cuộc đấu giá.
+  derive:
+    op: node_text
+    node: fact_c6s2_1
+    keywords:
+    - - lục
+    - - khai
+- id: knows-13
+  group: knows
+  fact_chapter: 2
+  ask_chapter: 9
+  question: Ở chương 2, Phó Cảnh Hành (nhân vật chính) tìm thấy dấu in hình nét cong với một đường gãy
+    ở đâu?
+  answer:
+    type: text
+    gold:
+    - - lều
+  graph_agrees: true
+  evidence:
+  - chapter: 2
+    quote: Chiếc lều cuối chợ nằm nép dưới một mỏm đá chìa ra
+  - chapter: 2
+    quote: 'Trong lớp bụi mỏng hiện ra một vết in nhòe: nét cong khép dở, bên cạnh là một đường gãy ngắn.'
+  derive:
+    op: node_text
+    node: fact_c2s1_1
+    keywords:
+    - - lều
+- id: knows-14
+  group: knows
+  fact_chapter: 3
+  ask_chapter: 10
+  question: Ở chương 3, Tào Vân Chi hỏi dấu khắc giống dấu hiệu nhà họ Phó có thể đã bị làm sao?
+  answer:
+    type: text
+    gold:
+    - - giả
+  graph_agrees: false
+  evidence:
+  - chapter: 3
+    quote: Dấu khắc ấy có thể bị làm giả không?
+- id: knows-15
+  group: knows
+  fact_chapter: 9
+  ask_chapter: 10
+  question: Theo lời Trần Mặc ở chương 9, người nào của Huyền Kính đã cam kết che chở người của Hội Lưu
+    Dân?
+  answer:
+    type: entities
+    gold:
+    - bach_thien_sach
+  graph_agrees: false
+  evidence:
+  - chapter: 9
+    quote: Bạch Thiên Sách chỉ cam kết che chở người của Hội.
+- id: knows-16
+  group: knows
+  fact_chapter: 5
+  ask_chapter: 10
+  question: Ở chương 5, Tào Vân Chi giải thích vì sao trước đó nàng giấu chuyện có người sống sót?
+  answer:
+    type: text
+    gold:
+    - - nguy hiểm
+  graph_agrees: false
+  evidence:
+  - chapter: 5
+    quote: Khi ấy, nói ra chỉ khiến người được cứu gặp nguy hiểm.
+- id: rel-01
+  group: relation
+  fact_chapter: 5
+  ask_chapter: 10
+  as_of: 5
+  question: Vào cuối chương 5, Phó Cảnh Hành (nhân vật chính) có nhận lời giữ kín lối xuống theo yêu cầu
+    của Trần Mặc không? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: false
+  evidence:
+  - chapter: 5
+    quote: Được. Tôi sẽ không chỉ hướng ấy cho ai, cũng không quay lại dò trước khi người của anh rời
+      đi.
+- id: rel-02
+  group: relation
+  fact_chapter: 7
+  ask_chapter: 10
+  as_of: 7
+  question: Vào cuối chương 7, Phó Cảnh Hành (nhân vật chính) có còn đi cùng Trần Mặc không? Trả lời Có
+    hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: false
+  evidence:
+  - chapter: 7
+    quote: Ta không quay lại với ngươi lúc này.
+  - chapter: 7
+    quote: Khi chúng tôi khuất sau vách, Trần Mặc vẫn đứng trước ngã rẽ xuống khe.
+- id: rel-03
+  group: relation
+  fact_chapter: 9
+  ask_chapter: 9
+  question: Cuối chương 9, Phó Cảnh Hành (nhân vật chính) có cho Trần Mặc đi cùng không? Trả lời Có hoặc
+    Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: false
+  evidence:
+  - chapter: 9
+    quote: Ngươi đi cùng chúng ta.
+- id: rel-04
+  group: relation
+  fact_chapter: 9
+  ask_chapter: 10
+  as_of: 9
+  question: Vào cuối chương 9, Phó Cảnh Hành (nhân vật chính) đã tin Trần Mặc vô điều kiện chưa? Trả lời
+    Có hoặc Không.
+  answer:
+    type: bool
+    gold: false
+  graph_agrees: false
+  evidence:
+  - chapter: 9
+    quote: Ta chưa tin ngươi vô điều kiện
+- id: rel-05
+  group: relation
+  fact_chapter: 10
+  ask_chapter: 10
+  question: Phó Cảnh Hành (nhân vật chính) và Trần Mặc có quen nhau từ trước khi truyện bắt đầu không?
+    Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: true
+  derive:
+    op: relation_is
+    from: tran_mac
+    to: protagonist
+    kind: bạn cũ
+  evidence:
+  - chapter: 10
+    quote: Ngày trước, Trần Mặc có thể nghe một câu mà đoán được ba điều người ta giấu.
+  - chapter: 10
+    quote: Tôi không thể trả lại lòng tin cũ chỉ bằng một câu nhận tội
+- id: rel-06
+  group: relation
+  fact_chapter: 1
+  ask_chapter: 10
+  question: Ở chương 1, khi Phó Cảnh Hành (nhân vật chính) quay lại nền chợ xem dấu vết, Tào Vân Chi có
+    đi cùng không? Trả lời Có hoặc Không.
+  answer:
+    type: bool
+    gold: true
+  graph_agrees: false
+  evidence:
+  - chapter: 1
+    quote: Nàng không cản.
+  - chapter: 1
+    quote: Chúng tôi trở về nền chợ.
+  - chapter: 1
+    quote: Vân Chi ngồi xổm cách tôi một khoảng.
+- id: rel-07
+  group: relation
+  fact_chapter: 6
+  ask_chapter: 10
+  question: Ở chương 6, sau lời thú nhận của Trần Mặc, Phó Cảnh Hành (nhân vật chính) rời nhánh xuống
+    khe cùng ai?
+  answer:
+    type: entities
+    gold:
+    - tao_van_chi
+  graph_agrees: false
+  evidence:
+  - chapter: 6
+    quote: Vân Chi quay về phía lối vòng qua mấy phiến đá nghiêng, chờ tôi bước tới.
+  - chapter: 6
+    quote: Tôi theo nàng rời khỏi nhánh xuống khe.

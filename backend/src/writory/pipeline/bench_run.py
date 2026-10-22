@@ -443,6 +443,10 @@ _REJECT_REASONS = (
     "trùng cạnh trong cùng gói", "không phải cạnh đang hiệu lực",
     "known_as là tên của nút khác",  # D-62
     "gỡ mạch mà không có câu trích (D-82)",
+    # Fact mới (D-93)
+    "hết trần Fact mới", "ref phải dạng", "chữ phải một dòng", "chữ Fact không bám trang",
+    "trùng Fact", "lộ bí mật hay tên đang giấu (G2)", "thiếu ABOUT", "thiếu KNOWS",
+    "Fact mới",
 )
 
 
@@ -1088,6 +1092,8 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         "chapters_planned": run.plan.total_chapters if run.plan else None,
         "chapters_target": run.target, "chapters_clamped": run.clamped,
         "chapters_committed": len(committed), "story_finished": run.finished,
+        # Fact mới do bộ trích tạo sau chương 0 (D-93)
+        "new_facts": sum(1 for n in committed for nd in run.packages[n].nodes if nd.label == "Fact"),
         "plan_vs_result": plan_vs_result(run.progress),
         "cost": {
             "total_usd": _usd(sum(by_role.values())),

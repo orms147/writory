@@ -703,3 +703,30 @@ async def test_quotes_log_is_empty_when_passages_are_off(tmp_path):
     run, _, _, out = make_run(tmp_path)
     assert await run.run() == bench_run.EXIT_OK
     assert json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))["quotes"] == []
+
+
+async def test_new_facts_are_counted_and_their_rejections_are_grouped(tmp_path):
+    """D-93: report đếm Fact mới đã ghi; lý do bỏ Fact mới có nhóm riêng, không rơi vào "sai schema"."""
+    quote = bench_run._DRY_QUOTE
+    fact = {"ref": "new_1", "text": "Mạc Vân Hà chịu chỉ cho tôi vài thế kiếm cơ bản", "quote": quote}
+    bad = {"ref": "new_2", "text": "Điều hoàn toàn không có trên trang này đâu nhé",
+           "quote": quote}
+    edge = {"kind": None, "score": None, "how": None, "told_by": None, "quote": None,
+            "known_as": None, "role": None}
+
+    def with_facts(answer):
+        data = json.loads(answer)
+        data["edges"] += [
+            edge | {"type": "ABOUT", "source": "new_1", "target": bench_run.DRY_RUN_NPC},
+            edge | {"type": "KNOWS", "source": "protagonist", "target": "new_1", "how": "chứng kiến",
+                    "quote": quote}]
+        data["new_facts"] = [fact, bad]
+        return json.dumps(data, ensure_ascii=False)
+
+    config = trial_config(tmp_path)
+    llm = _Scripted(config.story_lengths.levels["short"].chapters.min, {("extract", 1): with_facts})
+    run, _, _, out = make_run(tmp_path, llm=llm, config=config, chapters=1)
+    assert await run.run() == bench_run.EXIT_OK
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["new_facts"] == 1
+    assert report["rejected_edges"]["by_reason"].get("chữ Fact không bám trang") == 1

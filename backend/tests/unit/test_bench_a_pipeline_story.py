@@ -318,3 +318,17 @@ def test_cli_dry_run_and_plan_pick_the_story_from_the_question_file(tmp_path, ca
     capsys.readouterr()
     assert main(["plan", "--samples", "1", "--questions-file", QUESTIONS_FILE]) == 0
     assert "Tổng ước tính" in capsys.readouterr().out
+
+
+def test_the_new_facts_variant_loads_and_every_flag_matches_its_graph():
+    """D-93: đề dẫn xuất cho đồ thị có Fact mới: `load_data` kiểm cờ `graph_agrees` và `derive` của từng
+    câu với đúng đồ thị của lần phát lại (hash các file khoá đề theo đúng truyện)."""
+    data = load_data(questions_file="questions-ky-ao-vua-1-facts.yaml")
+    flags = {q.id: q.graph_agrees for q in data.questions.questions}
+    assert flags["item-07"] and flags["knows-02"] and not flags["item-11"]
+    assert data.source == "evals/results/2026-10-22-new-facts-replay-1"
+    # Cùng câu hỏi, cùng đáp án gốc với đề truyện vừa: chỉ cờ và derive của 12 câu đổi.
+    base = {q.id: q.answer for q in RUN.questions.questions}
+    assert {q.id: q.answer for q in data.questions.questions} == base
+    changed = {q.id for q in data.questions.questions if q.graph_agrees != RUN.question(q.id).graph_agrees}
+    assert len(changed) == 12

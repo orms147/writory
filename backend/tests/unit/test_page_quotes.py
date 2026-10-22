@@ -160,7 +160,10 @@ def test_only_the_chapter_pipeline_uses_the_passage_store():
     root = Path(__file__).parents[2] / "src" / "writory"
     users = {p.relative_to(root).as_posix() for p in root.rglob("*.py")
              if "pipeline.passages" in p.read_text(encoding="utf-8")}
-    assert users == {"pipeline/bench_a_systems.py", "pipeline/chapter.py", "pipeline/scene.py"}
+    # extract.py chỉ dùng `flat` và `STOPWORDS` để so chữ Fact mới với trang (D-93): không đưa đoạn
+    # nào vào đề của vai nào.
+    assert users == {"pipeline/bench_a_systems.py", "pipeline/chapter.py", "pipeline/extract.py",
+                     "pipeline/scene.py"}
 
 
 # --- G4: đoạn là dữ liệu --------------------------------------------------------------------------------

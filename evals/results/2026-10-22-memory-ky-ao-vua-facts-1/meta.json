@@ -1,0 +1,79 @@
+{
+  "bench": "A",
+  "created": "2026-10-22T15:44:03+07:00",
+  "versions": {
+    "questions": 1,
+    "run": 2
+  },
+  "status": "CHỜ DUYỆT. Dẫn xuất từ questions-ky-ao-vua-1.yaml (đã duyệt 22/10/2026): cùng câu hỏi, đáp án và câu trích; chỉ đổi nguồn đồ thị sang lần phát lại có Fact mới (D-93) và cờ graph_agrees/derive của 12 câu theo đồ thị đó, soạn SAU khi thấy đồ thị.",
+  "story": "evals/results/2026-10-22-new-facts-replay-1",
+  "fingerprint": {
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions-ky-ao-vua-1-facts.yaml": "428f2794005f2c8471976b7b92cb9dcc4779c1fd7b78d4e5608f639848040ee2",
+      "run.yaml": "859ada9d3400f7bbb329e4044384cbc967eb06e4f9602a4b011251e22b98f805",
+      "run/truth_dump.json": "c398266a99436f7cafcebda0d598add29c224da447db87cb53d3942565479bb9",
+      "run/chapters/ch01.md": "bb10d749af77d19352437020d971635f930a1043ea243dd7e7afc634f65f76e4",
+      "run/chapters/ch02.md": "6362b3884b609bff51d048e3148014a77a8ff823d9f8f79a0950ba8326092f51",
+      "run/chapters/ch03.md": "9b94c0ccbfc7401c0d05ff9ac3e556ae338767e9020310023570440eaf14d436",
+      "run/chapters/ch04.md": "e65142520e23f697f1552aa9b845961b425abd898b2ba4b3f7a314a1a96a1565",
+      "run/chapters/ch05.md": "a0becfa315201d4cedbb933a139f4c8b2ded76ea80b256838405ec85cc3f9747",
+      "run/chapters/ch06.md": "aa243829145987fe85ed4cc36f537094b2999b7368f25d535bbe0025740fd7d4",
+      "run/chapters/ch07.md": "02e0af32e74a39bb703704e91df492531a83bf5b8934ad09e2836b0a5d3383bc",
+      "run/chapters/ch08.md": "ba728d363b50f002b14245de7cca7d943cc5783faa959d76999f554ae6903c3e",
+      "run/chapters/ch09.md": "20fbe00eb026755cb0c9fcd6d07796f0bcfab7940ff9567fd3c87dbdb9ca5a4b",
+      "run/chapters/ch10.md": "54026dda3ab150af200207aeb5ca046d1d64b9c24ade2e58ed1305a1baab11eb"
+    },
+    "config_sha256": {
+      "models.yaml": "1b56e7acaaf68f287b93a7cc5c21e37f35b6c784ad626f17bc4796d588600f54",
+      "limits.yaml": "b1ee81fe72320200872ac484e3bd490e22b00bed44d8d322cf31ee86d33bcff1"
+    },
+    "answerer": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summarizer": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low",
+      "prompt": "summary-1"
+    },
+    "answer_prompt": "a-answer-1",
+    "answer_prompt_sha256": "aaf69478cfd41c7b47a6db2d70f3a1f4df84bdea22c0d0d55291ce7556bea0be"
+  },
+  "runs": [
+    {
+      "started": "2026-10-22T15:44:03+07:00",
+      "commit": "87f84987bdff98287dec7793af07b6a525d615d5",
+      "dirty": true,
+      "argv": [
+        "run",
+        "--label",
+        "ky-ao-vua-facts-1",
+        "--questions-file",
+        "questions-ky-ao-vua-1-facts.yaml",
+        "--systems",
+        "graph,graph_quotes",
+        "--samples",
+        "1",
+        "--budget",
+        "0.06",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "samples": 1,
+      "concurrency": 4,
+      "systems": [
+        "graph",
+        "graph_quotes"
+      ],
+      "graph_backend": "neo4j",
+      "questions": "all",
+      "budget": 0.06,
+      "finished": "2026-10-22T15:44:48+07:00",
+      "wall_s": 45.6,
+      "stopped": null,
+      "spent_usd": 0.041997
+    }
+  ]
+}
