@@ -143,6 +143,20 @@ def test_role_extra_carries_reasoning_effort_from_config():
     models = load_config().models
     models = models.model_copy(update={
         "role_reasoning": models.role_reasoning.model_copy(update={"extract": "low", "setup": None}),
+        "provider_ignore": [],
     })
     assert role_extra(models, "extract") == {"reasoning": {"effort": "low"}}
     assert role_extra(models, "setup") is None
+
+
+def test_role_extra_carries_the_provider_blacklist_from_config():
+    """D-100: nhà cung cấp trả JSON hỏng dù nhận structured_outputs bị loại bằng config; đi cùng
+    `require_parameters`, kể cả khi vai không đặt mức suy luận."""
+    from writory.llm.base import role_extra
+
+    models = load_config().models
+    assert models.provider_ignore  # config thật đang loại ít nhất một nhà cung cấp
+    got = role_extra(models, "setup")
+    assert got["provider"] == {"require_parameters": True, "ignore": list(models.provider_ignore)}
+    assert role_extra(models, "extract")["reasoning"] == {"effort": "low"}
+    assert role_extra(models, "extract")["provider"] == got["provider"]

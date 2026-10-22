@@ -41,7 +41,7 @@ from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerView, public_entries, public_lies
 from writory.graph.story import require_story_id
-from writory.llm.base import require_model
+from writory.llm.base import require_model, role_extra
 from writory.llm.cost import MeteredClient
 from writory.llm.retry import RETRY_SCHEMA, RETRY_TRANSIENT, with_retries
 from writory.pipeline.notebook import (
@@ -337,8 +337,7 @@ async def ask_narrator_reply(
 
     selection = select_notebook(question, view, notebook_limits)
     messages = build_messages(question, view, selection)
-    effort = config.models.role_reasoning.narrator
-    extra = {"reasoning": {"effort": effort}} if effort else None
+    extra = role_extra(config.models, "narrator")
     retries = config.limits.retries
 
     async def call() -> NarratorOutput:

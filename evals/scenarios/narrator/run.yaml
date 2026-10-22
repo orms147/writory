@@ -18,7 +18,8 @@ max_tokens_per_call: 4000
 # USD / 1 triệu token, chỉ để giữ chỗ. Model của roles.narrator phải có giá ở đây.
 # Nguồn: evals/scenarios/quality/models.yaml (openrouter.ai/api/v1/models, 20/10/2026).
 prices:
-  openai/gpt-6-luna: {in: 0.10, out: 0.50}
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}   # các lần đo trước D-100
+  deepseek/deepseek-v4-flash: {in: 0.091, out: 0.182}   # D-100; openrouter.ai/api/v1/models, 22/10/2026
 
 # Giám khảo (cờ --judge): chỉ chấm câu trả lời cuối KHÁC "Bạn chưa biết điều này.".
 # Thấy sổ tay, câu hỏi, câu trả lời; không thấy lớp truth, không thấy tên model người kể.

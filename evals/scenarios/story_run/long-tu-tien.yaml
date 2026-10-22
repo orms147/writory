@@ -39,4 +39,5 @@ max_tokens_per_call: 16000
 # extract, summary, choices, moderate phải có giá ở đây, không thì lệnh báo lỗi trước lời gọi đầu.
 # Nguồn: evals/scenarios/quality/models.yaml (openrouter.ai/api/v1/models, 20/10/2026).
 prices:
-  openai/gpt-6-luna: {in: 0.10, out: 0.50}
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}   # các lần đo trước D-100
+  deepseek/deepseek-v4-flash: {in: 0.091, out: 0.182}   # D-100; openrouter.ai/api/v1/models, 22/10/2026

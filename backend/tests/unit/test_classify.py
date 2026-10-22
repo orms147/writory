@@ -215,3 +215,15 @@ async def test_logged_reason_never_contains_key_like_string(caplog):
         await classify_action(f"key của tôi là {fake_key}", llm=llm, config=CFG)
     assert "out_of_story_request" in caplog.text
     assert fake_key not in caplog.text
+
+
+async def test_classify_call_carries_the_provider_blacklist_but_no_reasoning():
+    """D-100: nhà cung cấp bị loại đi vào mọi lời gọi có schema, kể cả phân loại ô tự viết. Phân loại
+    chưa dùng `role_reasoning.classify` (hành vi đã đo ở bài G5), nên không thêm suy luận."""
+    from writory.llm.base import provider_extra
+
+    llm = FakeLLM.scripted([answer("in_story_action")])
+    await classify_action("Tôi mở cửa.", llm=llm, config=CFG)
+    assert llm.extras == [provider_extra(CFG.models)]
+    assert llm.extras[0]["provider"]["ignore"] == list(CFG.models.provider_ignore)
+    assert "reasoning" not in llm.extras[0]

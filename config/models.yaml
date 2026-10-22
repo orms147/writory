@@ -1,17 +1,19 @@
 # Model theo vai. Lý do tách vai: docs/design.md §6.5, docs/decisions.md D-3.
-# null = chưa chọn. D-47: các vai chưa có bài đo riêng dùng tạm GPT-6 Luna, đo lại sau lần chạy thật đầu.
+# null = chưa chọn. D-100 (chủ dự án bỏ GPT-6 Luna vì chi phí, 22/10/2026): mọi vai và mức model viết dùng
+# DeepSeek V4 Flash. Các số đo cũ (bài A, C, D, E, các lần chạy truyện) là của GPT-6 Luna; D-35, D-43,
+# D-47 và D-33 nói về Luna là lịch sử, số suy luận bên dưới giữ nguyên chờ đo lại.
 
 # Vai giữ trí nhớ: cố định, người chơi không đổi được.
 # Người canh bản 1 chỉ kiểm bằng code nên không có vai ở đây; phần LLM để bản sau (D-88).
 roles:
-  outline: openai/gpt-6-luna    # dàn ý cảnh (tạm, D-47)
-  extract: openai/gpt-6-luna   # trích thay đổi -> JSON (D-35, bài C v2)
-  choices: openai/gpt-6-luna    # tạo 3 lựa chọn (tạm, D-47)
-  narrator: openai/gpt-6-luna   # hỏi người kể (tạm, D-47)
-  classify: openai/gpt-6-luna   # phân loại ô tự viết, G5 (tạm, D-47)
-  setup: openai/gpt-6-luna      # khởi tạo truyện: bối cảnh, cốt truyện, nhân vật, kế hoạch + chương 0 (D-39; tạm, D-47)
-  summary: openai/gpt-6-luna    # tóm tắt chương vừa ghi cho đề các chương sau (D-49; tạm, D-47)
-  moderate: openai/gpt-6-luna   # kiểm duyệt nội dung đầu vào và đầu ra, G9 (D-57; tạm, D-47)
+  outline: deepseek/deepseek-v4-flash    # dàn ý cảnh (tạm, D-47)
+  extract: deepseek/deepseek-v4-flash   # trích thay đổi -> JSON (D-35, bài C v2)
+  choices: deepseek/deepseek-v4-flash    # tạo 3 lựa chọn (tạm, D-47)
+  narrator: deepseek/deepseek-v4-flash   # hỏi người kể (tạm, D-47)
+  classify: deepseek/deepseek-v4-flash   # phân loại ô tự viết, G5 (tạm, D-47)
+  setup: deepseek/deepseek-v4-flash      # khởi tạo truyện: bối cảnh, cốt truyện, nhân vật, kế hoạch + chương 0 (D-39; tạm, D-47)
+  summary: deepseek/deepseek-v4-flash    # tóm tắt chương vừa ghi cho đề các chương sau (D-49; tạm, D-47)
+  moderate: deepseek/deepseek-v4-flash   # kiểm duyệt nội dung đầu vào và đầu ra, G9 (D-57; tạm, D-47)
 
 # Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model.
 role_reasoning:
@@ -25,18 +27,25 @@ role_reasoning:
   moderate: low
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
-# D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).
+# D-33 (Chủ dự án, 20/10/2026): một mức duy nhất; D-100: model là DeepSeek V4 Flash. Chưa qua bài D
+# (bài D chỉ đo GPT-6 Luna): `eval_result` trỏ lần chạy truyện đầu tiên với model này.
 writer_tiers:
   - id: standard
     label: "Tiêu chuẩn"
-    model: "openai/gpt-6-luna"
-    eval_result: "evals/results/2026-10-20-quality-r2/"
+    model: "deepseek/deepseek-v4-flash"
+    eval_result: "evals/results/2026-10-22-run-deepseek-1/"
     reasoning: none   # như bài D đã đo (D-43, chủ dự án duyệt 20/10/2026); null = mặc định của model
+
+# Nhà cung cấp OpenRouter bị loại cho mọi lời gọi có vai (D-100). DigitalOcean niêm yết
+# `structured_outputs` cho DeepSeek V4 Flash nhưng trả JSON hỏng (`{"{ "answer": ...}`) ở 5/6 lời gọi
+# thăm dò 22/10/2026 (finish_reason stop, `require_parameters` không chặn được); bỏ nó thì 8/8 hợp lệ.
+provider_ignore: [DigitalOcean]
 
 # Giá (USD / 1 triệu token), chỉ để ước tính chi phí tối đa của lời gọi không có usage: bị huỷ,
 # đứt giữa chừng, thiếu usage.cost (D-64). Mọi model ở roles và writer_tiers phải có giá ở đây,
 # không thì lời gọi bằng key người chơi bị từ chối trước khi gửi. Chi phí thật lấy từ usage.cost
-# hoặc tra lại theo id generation. Nguồn: evals/scenarios/quality/models.yaml
-# (openrouter.ai/api/v1/models, 20/10/2026).
+# hoặc tra lại theo id generation. Nguồn: openrouter.ai/api/v1/models, tra 22/10/2026 16:39 (giờ máy
+# chủ dự án). Model này có nhiều nhà cung cấp, giá vào 0,05 đến 0,70 và ra 0,14 đến 1,32 (D-100):
+# giá dưới đây là giá niêm yết của model, không phải chặn trên của mọi nhà cung cấp.
 prices:
-  openai/gpt-6-luna: {in: 0.10, out: 0.50}
+  deepseek/deepseek-v4-flash: {in: 0.091, out: 0.182}

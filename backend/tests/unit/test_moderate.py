@@ -9,6 +9,7 @@ import pytest
 
 from writory.config import CostLimits, load_config
 from writory.errors import ErrorCode, WritoryError
+from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM
 from writory.llm.ratelimit import RateLimitedClient
@@ -124,7 +125,8 @@ async def test_calls_the_moderate_model_with_structured_output_and_reasoning():
     result = await moderate("Hai tu sĩ giao đấu.", source=Source.SCENE, llm=llm, config=CFG)
     assert result.verdict is Verdict.ALLOW
     assert llm.schemas == [ModerationOutput]
-    assert llm.extras == [{"reasoning": {"effort": "low"}}]  # config/models.yaml role_reasoning
+    assert llm.extras == [role_extra(CFG.models, "moderate")]  # reasoning + provider, config/models.yaml
+    assert llm.extras[0]["reasoning"] == {"effort": "low"}
 
 
 async def test_text_is_data_never_system_and_catalogue_comes_from_config():

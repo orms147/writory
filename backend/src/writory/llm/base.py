@@ -31,8 +31,19 @@ def reasoning_extra(effort: str | None) -> dict[str, Any] | None:
 
 def role_extra(models: ModelsConfig, role: str) -> dict[str, Any] | None:
     """Tham số riêng của một vai cho `chat`/`chat_json` (`extra`): mức suy luận trong
-    `role_reasoning` (tham số `reasoning` của OpenRouter, như bài C). null thì không gửi gì."""
-    return reasoning_extra(getattr(models.role_reasoning, role))
+    `role_reasoning` (tham số `reasoning` của OpenRouter, như bài C) và nhà cung cấp bị loại
+    (`provider_ignore`, D-100). Không có gì thì trả None."""
+    extra = reasoning_extra(getattr(models.role_reasoning, role)) or {}
+    extra.update(provider_extra(models) or {})
+    return extra or None
+
+
+def provider_extra(models: ModelsConfig) -> dict[str, Any] | None:
+    """Chỉ phần nhà cung cấp của `extra` (D-100): `provider_ignore` trong config/models.yaml, kèm
+    `require_parameters`. Cho lời gọi chưa có mức suy luận riêng (phân loại ô tự viết)."""
+    if not models.provider_ignore:
+        return None
+    return {"provider": {"require_parameters": True, "ignore": list(models.provider_ignore)}}
 
 
 class Message(BaseModel):
