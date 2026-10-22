@@ -332,3 +332,13 @@ def test_the_new_facts_variant_loads_and_every_flag_matches_its_graph():
     assert {q.id: q.answer for q in data.questions.questions} == base
     changed = {q.id for q in data.questions.questions if q.graph_agrees != RUN.question(q.id).graph_agrees}
     assert len(changed) == 12
+
+
+def test_the_new_facts_variant_is_marked_approved_by_the_owner():
+    """Chủ dự án duyệt đề dẫn xuất (22/10/2026): trạng thái và dòng TRẠNG THÁI đầu file cùng nói vậy."""
+    name = "questions-ky-ao-vua-1-facts.yaml"
+    data = load_data(questions_file=name)
+    assert data.questions.status == "CHỦ DỰ ÁN DUYỆT 22/10/2026"
+    header = (DATA_DIR / name).read_text(encoding="utf-8").splitlines()[:12]
+    assert any(line.startswith("# TRẠNG THÁI: CHỦ DỰ ÁN DUYỆT 22/10/2026") for line in header)
+    assert not any("CHỜ" in line for line in header)

@@ -1,5 +1,8 @@
 # Bài đo A trên đồ thị có Fact mới do bộ trích tạo (D-93). Dẫn xuất từ questions-ky-ao-vua-1.yaml.
 #
+# TRẠNG THÁI: CHỦ DỰ ÁN DUYỆT 22/10/2026 (đề dẫn xuất và lượt đo `bench_a run --systems graph,graph_quotes`).
+# Chưa chạy thật khi duyệt. Đã chạy thật rồi thì không sửa đè: tăng `version`.
+#
 # Cùng 39 câu, cùng đáp án gốc lấy từ trang, cùng câu trích. Khác ở nguồn đồ thị (`run_dir`: lần phát lại
 # bộ trích extract-6, văn và dàn ý là bản gốc của run-ky-ao-vua-1) và ở 12 câu sau, khai SAU khi đã thấy
 # đồ thị đó (không phải khai trước như đề gốc), nên cờ `graph_agrees` chỉ là mô tả, không phải đáp án:
@@ -7,9 +10,7 @@
 #   - item-03, 04, 07, 08, alive-01, 04, knows-12, 13: thêm `derive` trỏ tới Fact mới có chữ trả lời.
 # 10 câu còn lại của nhóm "không có nút trong danh mục" vẫn `graph_agrees: false`, không có `derive`.
 version: 1
-status: 'CHỜ DUYỆT. Dẫn xuất từ questions-ky-ao-vua-1.yaml (đã duyệt 22/10/2026): cùng câu hỏi, đáp án
-  và câu trích; chỉ đổi nguồn đồ thị sang lần phát lại có Fact mới (D-93) và cờ graph_agrees/derive của
-  12 câu theo đồ thị đó, soạn SAU khi thấy đồ thị.'
+status: "CHỦ DỰ ÁN DUYỆT 22/10/2026"
 story: run
 run_dir: evals/results/2026-10-22-new-facts-replay-1
 run_sha256:
