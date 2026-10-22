@@ -106,7 +106,10 @@ META_HEDGE_PATTERNS: tuple[tuple[str, str, str], ...] = (
      r"\bchưa\s+(?:(?:hề|có|rõ|biết|thấy|được)\s+){1,2}nội dung\b",
      "Lá thư được niêm sáp đỏ; chưa có nội dung nào được ghi lại."),
     ("chua_duoc_ke",
-     (r"\bchưa\s+(?:hề\s+)?(?:được\s+(?:kể|nhắc|tiết lộ|hé lộ|cho biết|nói rõ|biết)"
+     (r"\bchưa\s+(?:hề\s+)?(?:được\s+(?:kể|tiết lộ|hé lộ|cho biết|nói rõ|biết)"
+      # "chưa được nhắc" cũng là chuyện của truyện ("chưa được nhắc đến trên giấy"): chỉ bắt khi câu
+      # dừng ngay đó hoặc nói về sổ tay hay trang đã đọc
+      r"|được\s+nhắc(?:\s+(?:đến|tới))?(?=\s*(?:$|[,.;:!?…])|\s+trong sổ tay|\s+trên trang)"
       r"|thấy\s+(?:nói|nhắc|ghi|kể))\b"),
      "Điều Lão Gù muốn nói chưa được kể."),
     ("so_tay",
