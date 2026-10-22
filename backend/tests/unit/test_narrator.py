@@ -366,9 +366,12 @@ async def test_correct_unlocked_answers_still_reach_the_player_unchanged(row):
     # ky-ao-vua-2 ch06: chuyện biên bản trong truyện, không phải người kể nói về sổ tay (D-78)
     "Còn quyền quản giữ lâu dài vẫn chưa được nhắc đến trên giấy.",
     "Điều khoản bàn giao chưa được nhắc tới trong biên bản.",
+    # long-tu-tien-2 ch07: "ghi nhận mới" là bản ghi MỚI trong thế giới truyện (D-86, bổ sung)
+    "Cô đừng quay lại gần khi chưa có ghi nhận mới.",
+    "Chưa có ghi chép mới thì chưa ai được vào đàn.",
 ], ids=["chua-tro-ve", "chua-khep", "chua-doc", "chua-tim-thay", "khong-duoc-noi", "so-tay-vat",
         "ban-ghi-trong-truyen", "so-tran", "ghi-trong-so", "duoc-nhac", "chi-biet",
-        "nhac-tren-giay", "nhac-trong-bien-ban"])
+        "nhac-tren-giay", "nhac-trong-bien-ban", "ghi-nhan-moi", "ghi-chep-moi"])
 def test_natural_sentences_with_chua_or_khong_are_not_caught(answer):
     """"chưa", "không" có mặt tự nhiên trong câu trả lời đúng, và truyện có thể có sổ sách thật:
     chỉ cụm nói về thông tin hay về chính sổ tay mới bị bắt."""
@@ -399,11 +402,15 @@ def test_natural_sentences_with_chua_or_khong_are_not_caught(answer):
     "Danh tính gã chưa được nhắc tới trong sổ tay.",
     "Lan chưa được nhắc đến trên trang.",
     "Chưa được nhắc đến, nên tôi không nói thêm được.",
+    # cùng cụm "chưa có ghi nhận/ghi chép": úp mở khi nói về điều người chơi chưa thấy, kể cả "mới nào"
+    "Chưa có ghi nhận nào nói thư ấy do ai viết.",
+    "Chưa có ghi chép mới nào về người đã gửi lá thư.",
 ], ids=["khong-co-thong-tin", "chua-du-thong-tin", "thieu-du-kien", "chua-ghi-nhan",
         "chua-duoc-ke", "chua-duoc-he-lo", "chua-biet-noi-dung", "chua-ro-noi-dung",
         "so-tay-khong-noi", "trang-so-khong-ghi", "chua-duoc-ghi", "hoa", "khoang-trang", "judge-chua-co-noi-dung",
         "judge-chua-co-noi-dung-cua-thu", "judge-khong-duoc-ghi-lai", "judge-vi-tri-kiem",
-        "nhac-cuoi-cau", "nhac-trong-so-tay", "nhac-tren-trang", "nhac-dau-cau"])
+        "nhac-cuoi-cau", "nhac-trong-so-tay", "nhac-tren-trang", "nhac-dau-cau",
+        "ghi-nhan-nao", "ghi-chep-moi-nao"])
 def test_other_ways_of_talking_about_missing_information_are_caught(answer):
     assert meta_hedge(answer) is not None
 
