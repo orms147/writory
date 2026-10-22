@@ -1,0 +1,33 @@
+# Đề so 3 model viết trên CÙNG một thế giới (D-101): khởi tạo MỘT lần (`--setup-only`), rồi ba lượt
+# `--setup-from` thư mục đó, mỗi lượt đổi model viết và model dàn ý bằng cờ (`--writer-model`,
+# `--outline-model`). Khai TRƯỚC mọi lần chạy thật; chạy rồi thì không sửa đè: tăng `version` hoặc
+# thêm file đề mới. `--setup-from` đòi cùng đề (sha256) và cùng seed nên cả bốn lệnh dùng file này.
+#
+# Hướng đề: như tu-tien-ngan.yaml (tu tiên, tên Hán Việt, địa danh hư cấu, Truyện ngắn). Seed riêng
+# để thế giới khác các lần chạy trước. Soạn: Claude, theo yêu cầu chủ dự án 22/10/2026.
+
+version: 1
+
+tags:
+  genre: tu tiên
+  era: loạn thế, các đại tông môn tranh đoạt linh mạch
+  voice: căng thẳng, nhiều mưu tính và đối đáp sắc
+  darkness: vừa phải, có phản bội và chết chóc, không tả máu me
+length_level: short                         # config/story_lengths.yaml
+naming: {names: han_viet, places: hu_cau}
+pov: protagonist
+writer_tier: null                           # null = mức đầu; cờ --writer-model ghi đè model của mức này
+
+seed: 20261022
+scene_count: 2
+player_retries: 1
+
+# Trần token ra mỗi lời gọi, gồm cả token suy luận; cả ba model đều cho ra nhiều hơn số này.
+max_tokens_per_call: 16000
+
+# USD / 1 triệu token, chỉ để giữ chỗ ngân sách. Tra openrouter.ai/api/v1/models lúc
+# 2026-10-22T10:16Z (17:16 giờ Việt Nam). Giá thật của lượt chạy lấy từ usage.cost.
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}
+  deepseek/deepseek-v4-flash: {in: 0.091, out: 0.182}
+  tencent/hy3: {in: 0.132, out: 0.528}

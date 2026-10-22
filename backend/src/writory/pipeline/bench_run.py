@@ -42,11 +42,11 @@ import traceback
 import uuid
 from collections import Counter, defaultdict
 from collections.abc import AsyncIterator, Callable, Mapping, Sequence
-from dataclasses import asdict, dataclass
+from dataclasses import asdict, dataclass, field
 from datetime import date, datetime
 from functools import partial
 from pathlib import Path
-from typing import Any, Protocol
+from typing import Any, Protocol, get_args
 
 import httpx
 import yaml
@@ -62,7 +62,14 @@ from pydantic import (
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
-from writory.config import REPO_CONFIG_DIR, REPO_ROOT, AppConfig, ConfigError, load_config
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    ConfigError,
+    ReasoningEffort,
+    load_config,
+)
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage
 from writory.graph.schema import EDGE_TYPES
@@ -258,6 +265,54 @@ def run_problems(config: AppConfig, scenario: RunScenario) -> list[str]:
     return problems
 
 
+# --- ghi đè model (D-101) -----------------------------------------------------------------------
+
+OMIT_REASONING = "omit"  # không gửi tham số `reasoning` (model không hỗ trợ nó)
+OVERRIDE_REASONING = (*get_args(ReasoningEffort), OMIT_REASONING)
+
+
+@dataclass(frozen=True)
+class ModelOverrides:
+    """Ghi đè model viết và model dàn ý của một lần chạy, để so nhiều model trên cùng một thế giới
+    (D-101). Các vai trí nhớ không ghi đè được: chúng phải giữ nguyên giữa các lần so.
+    `*_reasoning`: None = giữ config; "omit" = không gửi `reasoning`."""
+
+    writer_model: str | None = None
+    writer_reasoning: str | None = None
+    outline_model: str | None = None
+    outline_reasoning: str | None = None
+
+    def as_meta(self) -> dict[str, Any]:
+        return {"writer_model": self.writer_model, "writer_reasoning": self.writer_reasoning,
+                "outline_model": self.outline_model, "outline_reasoning": self.outline_reasoning}
+
+
+def _effort(value: str | None) -> str | None:
+    return None if value == OMIT_REASONING else value
+
+
+def apply_model_overrides(config: AppConfig, scenario: RunScenario,
+                          overrides: ModelOverrides) -> AppConfig:
+    """Bản config với model viết (mức mà đề dùng) và vai dàn ý bị ghi đè. Không sửa `config`."""
+    models = config.models
+    if overrides.writer_model is not None or overrides.writer_reasoning is not None:
+        tier_id = writer_tier(config, scenario.writer_tier).id
+        change: dict[str, Any] = {}
+        if overrides.writer_model is not None:
+            change["model"] = overrides.writer_model
+        if overrides.writer_reasoning is not None:
+            change["reasoning"] = _effort(overrides.writer_reasoning)
+        models = models.model_copy(update={"writer_tiers": [
+            t.model_copy(update=change) if t.id == tier_id else t for t in models.writer_tiers]})
+    if overrides.outline_model is not None:
+        models = models.model_copy(update={"roles": models.roles.model_copy(
+            update={"outline": overrides.outline_model})})
+    if overrides.outline_reasoning is not None:
+        models = models.model_copy(update={"role_reasoning": models.role_reasoning.model_copy(
+            update={"outline": _effort(overrides.outline_reasoning)})})
+    return config if models is config.models else config.model_copy(update={"models": models})
+
+
 # --- đo chi phí từng lời gọi ---------------------------------------------------------------------
 
 ROLE_BY_SCHEMA_NAME: dict[str, str] = {
@@ -431,6 +486,8 @@ class RunOptions:
     config_dir: Path = REPO_CONFIG_DIR
     scenario_path: Path | None = None
     setup_from: Path | None = None  # dùng lại khởi tạo của lần chạy này (không gọi model khởi tạo)
+    setup_only: bool = False  # dừng sau khởi tạo (chương 0): thư mục kết quả làm nguồn --setup-from
+    overrides: ModelOverrides = field(default_factory=ModelOverrides)  # D-101
 
 
 def player_action_text(choice: PlayerChoice) -> str:
@@ -487,6 +544,7 @@ class StoryRun:
         store: RunStore, options: RunOptions, style_guide: str | None = None,
         log: Callable[[str], None] = print,
     ) -> None:
+        config = apply_model_overrides(config, scenario, options.overrides)
         self.scenario, self.scenario_sha, self.config = scenario, scenario_sha, config
         self.store, self.options, self._print = store, options, log
         # Mức u tối của truyện (D-67): khoá của đề, không khai thì mức mặc định, như đường chơi.
@@ -540,7 +598,7 @@ class StoryRun:
         self.started = datetime.now().astimezone().isoformat(timespec="seconds")
         self.files.write_meta(self._meta("running"))
         try:
-            if await self._setup():
+            if await self._setup() and not self.options.setup_only:
                 await self._chapters()
         except Exception:  # noqa: BLE001 — lỗi của khung chạy: ghi lại, vẫn ghi đủ file
             self._stop("error", "harness", ErrorCode.INTERNAL_ERROR,
@@ -990,6 +1048,8 @@ class StoryRun:
             "max_tokens_per_call": self.scenario.max_tokens_per_call,
             "page_quotes_top_k": self.config.limits.context.page_quotes_top_k,  # 0 = tắt (D-85)
             "setup_from": repo_path(self.options.setup_from) if self.options.setup_from else None,
+            "setup_only": self.options.setup_only,
+            "overrides": self.options.overrides.as_meta(),
             "prompt_versions": {
                 "setup": setup_mod.PROMPT_VERSION, "outline": scene_mod.OUTLINE_PROMPT_VERSION,
                 "writer": scene_mod.WRITER_PROMPT_VERSION, "extract": extract_mod.PROMPT_VERSION,
@@ -1549,6 +1609,8 @@ async def _cli(args: argparse.Namespace) -> int:
             update={"page_quotes_top_k": args.page_quotes_top_k})
         config = config.model_copy(update={"limits": config.limits.model_copy(
             update={"context": context})})
+    overrides = overrides_from_args(args)
+    config = apply_model_overrides(config, scenario, overrides)
     problems = run_problems(config, scenario)
     if problems:  # trước khi kết nối kho hay đọc key
         raise ConfigError("config hoặc đề chưa đủ để chạy:\n- " + "\n- ".join(problems))
@@ -1599,7 +1661,8 @@ async def _cli(args: argparse.Namespace) -> int:
                                seed=args.seed, dry_run=args.dry_run,
                                keep_story=args.keep_story or not args.dry_run, label=label,
                                config_dir=config_dir, scenario_path=scenario_path,
-                               setup_from=Path(args.setup_from) if args.setup_from else None),
+                               setup_from=Path(args.setup_from) if args.setup_from else None,
+                               setup_only=args.setup_only, overrides=overrides),
         )
         return await run.run()
     finally:
@@ -1607,6 +1670,12 @@ async def _cli(args: argparse.Namespace) -> int:
         conn.close()
         if http is not None:
             await http.aclose()
+
+
+def overrides_from_args(args: argparse.Namespace) -> ModelOverrides:
+    return ModelOverrides(
+        writer_model=args.writer_model, writer_reasoning=args.writer_reasoning,
+        outline_model=args.outline_model, outline_reasoning=args.outline_reasoning)
 
 
 def _parser() -> argparse.ArgumentParser:
@@ -1620,6 +1689,14 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--seed", type=int, help="ghi đè seed của đề")
     p.add_argument("--setup-from", help="thư mục kết quả của lần chạy trước: dùng lại khởi tạo "
                    "của nó (kế hoạch, chương 0, lựa chọn khởi tạo), không gọi model khởi tạo")
+    p.add_argument("--setup-only", action="store_true",
+                   help="chỉ khởi tạo (chương 0) rồi dừng; thư mục kết quả dùng làm --setup-from")
+    p.add_argument("--writer-model", help="ghi đè model viết của mức mà đề dùng (D-101)")
+    p.add_argument("--writer-reasoning", choices=OVERRIDE_REASONING,
+                   help="ghi đè mức suy luận model viết; omit = không gửi `reasoning`")
+    p.add_argument("--outline-model", help="ghi đè model vai dàn ý (D-101)")
+    p.add_argument("--outline-reasoning", choices=OVERRIDE_REASONING,
+                   help="ghi đè mức suy luận vai dàn ý; omit = không gửi `reasoning`")
     p.add_argument("--page-quotes-top-k", type=int,
                    help="ghi đè limits.context.page_quotes_top_k (0 = tắt đoạn trên trang, D-85)")
     p.add_argument("--dry-run", action="store_true", help="model giả, không key, không gọi model")
