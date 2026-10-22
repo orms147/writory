@@ -35,8 +35,9 @@ from writory.safety.wrap import (
 
 # Đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1. extract-3: mạch phải
 # gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82). extract-4: mạch nhiều vế chỉ
-# gỡ khi mọi vế có trả lời (D-84).
-PROMPT_VERSION = "extract-4"
+# gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
+# nhân vật chính biết, không để sang chương sau (D-92).
+PROMPT_VERSION = "extract-5"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -123,6 +124,12 @@ Kiểu cạnh:
 Hé lộ cho người chơi:
 - Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ ở chương trước thì không ghi lại.
 - Không đánh dấu hé lộ một bí mật mà trang chỉ gợi ý hay để người đọc đoán. Chỉ ghi khi trang nói rõ điều đó.
+
+Nhân vật chính biết gì (KNOWS):
+- KNOWS của nhân vật chính phải được ghi ngay ở chương này khi trang cho thấy nhân vật chính biết: nghe người khác nói ra, tự thấy, tự đọc hay tự suy ra một sự thật, sự kiện hay lời nói dối có trong danh mục. Ghi ngay ở chương này; đừng để sang chương sau, kể cả khi điều ấy còn được nhắc lại nhiều lần về sau.
+- Sự thật mà trang vừa hé lộ cho người đọc (REVEALED_TO_PLAYER tới một sự thật) trong lúc nhân vật chính có mặt và nghe thấy thì ghi thêm KNOWS từ nhân vật chính tới sự thật đó, kèm `quote`. Hé lộ cho người đọc và nhân vật chính biết là hai cạnh khác nhau, cần cả hai.
+- `how`: "được kể" (kèm `told_by`) nếu người khác nói ra với nhân vật chính; "chứng kiến" nếu tự thấy; "suy ra" nếu tự nối các chi tiết.
+- Không ghi KNOWS cho điều trang chỉ để người đọc đoán, hay điều chỉ nhân vật khác biết khi nhân vật chính không có mặt.
 
 Gỡ mạch (RESOLVED_IN):
 - Một mạch được gỡ khi trang trả lời rõ câu hỏi chính của mạch, hoặc khi nhân vật đưa ra quyết định mà mạch đòi. Chi tiết phụ còn bỏ ngỏ không giữ mạch mở: câu hỏi chính đã có câu trả lời, hay quyết định đã được nói ra, thì ghi gỡ.
@@ -269,6 +276,33 @@ def to_package(
             continue
         seen.add(spec.id)
         edges.append(spec)
+    # Người kể tự thú chuyện của chính mình thì chính trang chứng minh họ biết (D-92). Đồ thị chương 0
+    # hay thiếu người biết (bí mật "Trần Mặc bán tin" chỉ cho người khác biết), nên người canh báo
+    # `teller_does_not_know`, cạnh KNOWS "được kể" bị cắt và cảnh bị viết lại oan. Chỉ khi điều kể
+    # nói về chính người kể: có ABOUT tới họ, hay họ tham gia sự kiện mà điều đó nói về. Người thứ ba
+    # kể bí mật của người khác thì giữ luật cũ: đó đúng là chuyện người canh phải bắt.
+    links = [(o.type, o.source, o.target) for o in open_edges]
+    links += [(e.type, e.source, e.target) for e in edges]
+    about: dict[str, set[str]] = {}
+    for kind, source, target in links:
+        if kind == "ABOUT":
+            about.setdefault(source, set()).add(target)
+    took_part = {(source, target) for kind, source, target in links if kind == "PARTICIPATED_IN"}
+    knowers = {(source, target) for kind, source, target in links if kind == "KNOWS"}
+    for e in list(edges):
+        teller = e.props.get("told_by")  # chỉ KNOWS "được kể" có (EdgeSpec)
+        if (e.type != "KNOWS" or not isinstance(teller, str) or teller == protagonist_id
+                or known[teller].label != "Character" or (teller, e.target) in knowers):
+            continue
+        subjects = about.get(e.target, set())
+        if teller not in subjects and not any(
+                (teller, x) in took_part for x in (*subjects, e.target)):
+            continue
+        spec = EdgeSpec.model_validate({"type": "KNOWS", "from": teller, "to": e.target,
+                                        "valid_from_chapter": chapter, "props": {"how": "tự biết"}})
+        if spec.id not in seen:  # bộ trích đã tự ghi KNOWS cho người kể (cùng id)
+            seen.add(spec.id)
+            edges.append(spec)
     close: list[CloseSpec] = []
     for cid in dict.fromkeys(output.close):
         if cid not in open_by_id:

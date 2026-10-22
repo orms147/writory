@@ -373,7 +373,130 @@ def test_prompt_says_a_multi_part_thread_is_resolved_only_when_every_part_is_ans
     của "vế"), nên đây là luật trong đề."""
     for phrase in ("nhiều vế", "MỌI vế", "mới trả lời một vế", "thoả thuận tạm"):
         assert phrase in SYSTEM_PROMPT, phrase
-    assert PROMPT_VERSION == "extract-4"
+    assert PROMPT_VERSION == "extract-5"
+
+
+def test_prompt_tells_the_extractor_to_record_what_the_protagonist_learns_in_the_same_chapter():
+    """Hồi quy ky-ao-vua-1: trang lộ một sự thật ở chương 6 và 8 mà KNOWS của nhân vật chính chỉ được
+    ghi ở chương 9 và 10 (bộ trích chỉ ghi REVEALED_TO_PLAYER). Kiểm bằng code không đọc được nghĩa
+    nên là luật trong đề; đo bằng phát lại bộ trích (evals/results/*-extract-recall-*)."""
+    for phrase in ("KNOWS của nhân vật chính", "ngay ở chương này", "đừng để sang chương sau"):
+        assert phrase in SYSTEM_PROMPT, phrase
+
+
+# --- người kể phải biết điều mình kể: trang là bằng chứng (D-92) ------------------------------------
+
+_TOLD_ENTITIES = [
+    Entity(id="protagonist", label="Character", text="Bạn"),
+    Entity(id="tran_mac", label="Character", text="Trần Mặc"),
+    Entity(id="doan_khuong", label="Character", text="Đoàn Khương"),
+    Entity(id="fact_ban_tin", label="Fact", text="Trần Mặc bán tin cho Huyền Kính"),
+]
+_TOLD_TEXT = "Trần Mặc nói: Ta đưa cho họ dấu vết dẫn tới món đồ nhà họ Phó."
+_TOLD_QUOTE = "Ta đưa cho họ dấu vết dẫn tới món đồ nhà họ Phó."
+
+
+_SELF_ABOUT = OpenEdge("a1", "ABOUT", "fact_ban_tin", "tran_mac")  # điều kể nói về chính người kể
+
+
+def _told_package(open_edges=(_SELF_ABOUT,), *, told_by="tran_mac", source="protagonist", extra=(),
+                  entities=None):
+    told = _edge(type="KNOWS", source=source, target="fact_ban_tin", how="được kể",
+                 told_by=told_by, quote=_TOLD_QUOTE if source == "protagonist" else None)
+    out = ExtractOutput(edges=[told, *extra], close=[])
+    return to_package(out, chapter=6, commit_id="c", protagonist_id="protagonist",
+                      chapter_text=_TOLD_TEXT, entities=entities or _TOLD_ENTITIES,
+                      open_edges=list(open_edges))
+
+
+def test_a_teller_the_graph_does_not_know_as_a_knower_gets_a_knows_edge_from_the_page():
+    """Hồi quy ky-ao-vua-1 chương 6: Trần Mặc tự kể chuyện mình bán tin, nhưng chương 0 chỉ cho Bạch
+    Thiên Sách biết. Người canh báo `teller_does_not_know`, cạnh KNOWS của nhân vật chính bị cắt (và
+    cảnh bị viết lại oan). Điều kể nói về chính người kể, họ nói ra trên trang: trang chứng minh họ
+    biết."""
+    pkg, rejected = _told_package()
+    assert rejected == []
+    by_id = {e.id: e for e in pkg.edges}
+    teller = by_id["KNOWS:tran_mac>fact_ban_tin@6"]
+    assert teller.props == {"how": "tự biết"}
+    assert by_id["KNOWS:protagonist>fact_ban_tin@6"].props["told_by"] == "tran_mac"
+
+
+def test_a_third_party_telling_someone_elses_secret_is_still_left_to_the_guard():
+    """Đoàn Khương kể bí mật của Trần Mặc mà đồ thị không cho ông biết: đó đúng là chuyện
+    `teller_does_not_know` phải bắt. Không thêm KNOWS cho người kể."""
+    pkg, _ = _told_package(told_by="doan_khuong")
+    assert [e.id for e in pkg.edges] == ["KNOWS:protagonist>fact_ban_tin@6"]
+    pkg, _ = _told_package([], told_by="tran_mac")  # không có ABOUT nào: không biết điều đó nói về ai
+    assert [e.id for e in pkg.edges] == ["KNOWS:protagonist>fact_ban_tin@6"]
+
+
+def test_a_teller_who_took_part_in_the_event_the_fact_is_about_gets_a_knows_edge():
+    entities = [*_TOLD_ENTITIES, Entity(id="ev_ban_tin", label="Event", text="Cuộc trao đổi tin")]
+    about = OpenEdge("a2", "ABOUT", "fact_ban_tin", "ev_ban_tin")
+    part = OpenEdge("p1", "PARTICIPATED_IN", "tran_mac", "ev_ban_tin")
+    pkg, _ = _told_package([about, part], entities=entities)
+    assert sorted(e.id for e in pkg.edges) == [
+        "KNOWS:protagonist>fact_ban_tin@6", "KNOWS:tran_mac>fact_ban_tin@6"]
+    bystander = OpenEdge("p2", "PARTICIPATED_IN", "doan_khuong", "ev_ban_tin")
+    pkg, _ = _told_package([about, bystander], entities=entities)  # người khác tham gia, không phải
+    assert [e.id for e in pkg.edges] == ["KNOWS:protagonist>fact_ban_tin@6"]
+
+
+def test_a_teller_who_took_part_in_the_event_being_told_gets_a_knows_edge():
+    """Đích của KNOWS chính là Event mà người kể tham gia."""
+    entities = [*_TOLD_ENTITIES, Entity(id="ev_ban_tin", label="Event", text="Cuộc trao đổi tin")]
+    part = OpenEdge("p1", "PARTICIPATED_IN", "tran_mac", "ev_ban_tin")
+    told = _edge(type="KNOWS", source="protagonist", target="ev_ban_tin", how="được kể",
+                 told_by="tran_mac", quote=_TOLD_QUOTE)
+    pkg, _ = to_package(ExtractOutput(edges=[told], close=[]), chapter=6, commit_id="c",
+                        protagonist_id="protagonist", chapter_text=_TOLD_TEXT, entities=entities,
+                        open_edges=[part])
+    assert "KNOWS:tran_mac>ev_ban_tin@6" in {e.id for e in pkg.edges}
+
+
+def test_a_teller_who_already_knows_gets_no_extra_edge():
+    known = OpenEdge("k1", "KNOWS", "tran_mac", "fact_ban_tin")
+    pkg, _ = _told_package([_SELF_ABOUT, known])
+    assert [e.id for e in pkg.edges] == ["KNOWS:protagonist>fact_ban_tin@6"]
+
+
+def test_the_extractors_own_knows_edge_for_the_teller_is_not_duplicated():
+    own = _edge(type="KNOWS", source="tran_mac", target="fact_ban_tin", how="chứng kiến")
+    pkg, rejected = _told_package(extra=[own])
+    assert rejected == []
+    assert sorted(e.id for e in pkg.edges) == [
+        "KNOWS:protagonist>fact_ban_tin@6", "KNOWS:tran_mac>fact_ban_tin@6"]
+    assert next(e for e in pkg.edges if e.source == "tran_mac").props["how"] == "chứng kiến"
+
+
+def test_no_edge_is_invented_for_the_protagonist_as_teller_or_for_other_how():
+    """Nhân vật chính là người kể: KNOWS của nhân vật chính cần câu trích, code không bịa. Cạnh không
+    phải "được kể" thì không đụng."""
+    pkg, _ = _told_package(told_by="protagonist", source="doan_khuong")
+    assert [e.id for e in pkg.edges] == ["KNOWS:doan_khuong>fact_ban_tin@6"]
+    seen = _edge(type="KNOWS", source="protagonist", target="fact_ban_tin", how="chứng kiến",
+                 quote=_TOLD_QUOTE)
+    pkg, _ = to_package(ExtractOutput(edges=[seen], close=[]), chapter=6, commit_id="c",
+                        protagonist_id="protagonist", chapter_text=_TOLD_TEXT,
+                        entities=_TOLD_ENTITIES, open_edges=[])
+    assert [e.id for e in pkg.edges] == ["KNOWS:protagonist>fact_ban_tin@6"]
+
+
+def test_a_teller_that_is_not_a_character_gets_no_knows_edge():
+    """KNOWS chỉ đi ra từ nhân vật: id không phải nhân vật làm người kể thì để người canh bắt."""
+    entities = [*_TOLD_ENTITIES, Entity(id="the_bai", label="Item", text="Thẻ bài")]
+    told = _edge(type="KNOWS", source="doan_khuong", target="fact_ban_tin", how="được kể",
+                 told_by="the_bai")
+    pkg, _ = to_package(ExtractOutput(edges=[told], close=[]), chapter=6, commit_id="c",
+                        protagonist_id="protagonist", chapter_text=_TOLD_TEXT,
+                        entities=entities, open_edges=[])
+    assert [e.id for e in pkg.edges] == ["KNOWS:doan_khuong>fact_ban_tin@6"]
+
+
+def test_an_unknown_or_missing_teller_is_left_to_the_guard():
+    pkg, rejected = _told_package(told_by="nguoi_la")
+    assert pkg.edges == [] and "id không có trong danh mục" in rejected[0][1]
 
 
 # --- đồ vật chỉ có một chỗ: cạnh đối nghịch tự đóng (D-90) ----------------------------------------

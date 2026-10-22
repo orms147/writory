@@ -287,6 +287,40 @@ async def test_guard_issue_left_after_rewrite_is_not_written_to_graph(tmp_path):
     assert "HOLDS:gu>sealed_letter@4" not in {e.id for e in package.edges}
 
 
+async def test_edge_cut_by_the_guard_takes_its_paired_close_with_it(tmp_path):
+    """Hồi quy ky-ao-vua-1 chương 9: cạnh RELATES_TO mới đổi điểm quá nhanh bị người canh cắt, nhưng
+    `close` của cạnh cũ vẫn vào gói, nên quan hệ biến mất khỏi đồ thị (đóng mà không mở lại)."""
+    jump = extract_reply(
+        [{"type": "RELATES_TO", "source": "lan", "target": "minh", "kind": "bạn", "score": 60}],
+        close=["RELATES_TO:lan>minh@1"])
+    script = [outline_reply(), SCENE_1, jump, SCENE_1, jump,
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    _, outcome, _, store = await run(script, tmp_path)
+
+    assert {i.kind for i in outcome.scenes[0].unresolved} == {"sudden_relationship"}
+    [(_, _, package)] = store.commits
+    assert not [e for e in package.edges if e.type == "RELATES_TO" and e.source == "lan"]
+    assert "RELATES_TO:lan>minh@1" not in {c.id for c in package.close}
+    assert "holds_sword_minh_2" in {c.id for c in package.close}  # close không liên quan vẫn còn
+
+
+async def test_third_party_telling_a_secret_is_still_caught_by_the_guard(tmp_path):
+    """Khải kể cho Lan chuyện thanh kiếm của cha Minh mà đồ thị không cho Khải biết, và chuyện đó
+    không nói về Khải: `teller_does_not_know` vẫn bắt, viết lại một lần, cạnh KNOWS bị cắt, và code
+    không bịa KNOWS cho Khải (D-92 chỉ cho người kể tự thú chuyện của chính mình)."""
+    told = extract_reply([{"type": "KNOWS", "source": "lan", "target": "l_sword_father",
+                           "how": "được kể", "told_by": "khai"}])
+    script = [outline_reply(), SCENE_1, told, SCENE_1, told,
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    _, outcome, llm, store = await run(script, tmp_path)
+
+    assert outcome.scenes[0].attempts == 2
+    assert {i.kind for i in outcome.scenes[0].unresolved} == {"teller_does_not_know"}
+    assert len(calls_of(llm, "writer")) == 3  # cảnh 1 viết lại một lần
+    [(_, _, package)] = store.commits
+    assert not [e for e in package.edges if e.type == "KNOWS" and e.target == "l_sword_father"]
+
+
 # --- chặn ---------------------------------------------------------------------------------------
 
 
@@ -958,6 +992,46 @@ def test_merge_keeps_end_of_chapter_state():
     [rel] = merged.edges
     assert rel.props["score"] == 10
     assert [c.id for c in merged.close] == ["holds_sword_minh_2"]
+
+
+def _close(kind, edge_id):
+    return CloseSpec(type=kind, id=edge_id, valid_to_chapter=4)
+
+
+def test_prune_drops_the_close_of_every_slot_the_cut_edge_would_have_filled():
+    """Đồ vật chỉ ở nơi hoặc được giữ (D-90): HOLDS bị cắt thì close của người giữ cũ VÀ close của
+    nơi cũ cũng bỏ, cạnh khác chỗ thì giữ."""
+    from writory.pipeline.chapter import _prune
+
+    ends = {"h_old": ("HOLDS", "minh", "sword"), "l_old": ("LOCATED_AT", "sword", "cho"),
+            "l_minh": ("LOCATED_AT", "minh", "cho"), "r_old": ("RELATES_TO", "minh", "lan")}
+    cut = _edge("HOLDS", "lan", "sword")
+    package = ChangePackage(commit_id="c", edges=[cut], close=[
+        _close("HOLDS", "h_old"), _close("LOCATED_AT", "l_old"), _close("LOCATED_AT", "l_minh"),
+        _close("RELATES_TO", "r_old"), _close("MEMBER_OF", "id_la_khong_biet")])
+    pruned = _prune(package, {cut.id}, ends)
+    assert pruned.edges == []
+    assert [c.id for c in pruned.close] == ["l_minh", "r_old", "id_la_khong_biet"]
+
+
+def test_prune_keeps_a_close_when_another_kept_edge_fills_the_same_slot():
+    from writory.pipeline.chapter import _prune
+
+    ends = {"r_old": ("RELATES_TO", "minh", "lan")}
+    cut = _edge("RELATES_TO", "minh", "lan", kind="thù", score=-90)
+    package = ChangePackage(commit_id="c", edges=[cut, _edge("LOCATED_AT", "minh", "mieu_ba")],
+                            close=[_close("RELATES_TO", "r_old")])
+    pruned = _prune(package, {cut.id}, ends)
+    assert [e.type for e in pruned.edges] == ["LOCATED_AT"]
+    assert [c.id for c in pruned.close] == []  # cạnh thay thế bị cắt: close cũng bỏ
+
+    # Hai cạnh chung chỗ (nơi ở của Minh): một bị cắt, một còn: cạnh còn vẫn thay cạnh cũ.
+    ends = {"l_old": ("LOCATED_AT", "minh", "cho")}
+    cut = _edge("LOCATED_AT", "minh", "mieu_ba")
+    package = ChangePackage(commit_id="c", edges=[cut, _edge("LOCATED_AT", "minh", "cho_dem")],
+                            close=[_close("LOCATED_AT", "l_old")])
+    pruned = _prune(package, {cut.id}, ends)
+    assert len(pruned.edges) == 1 and [c.id for c in pruned.close] == ["l_old"]
 
 
 def test_scene_count_outside_config_range_is_refused(tmp_path):
