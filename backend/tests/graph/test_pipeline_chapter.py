@@ -36,8 +36,8 @@ def _story_through_3(pg, driver, sid):
         commit_chapter(pg, driver, sid, ch.number, [ch.text] if ch.text else [], ch.package)
 
 
-async def _run(pg, driver, sid, tmp_path, script):
-    config = make_config(tmp_path)
+async def _run(pg, driver, sid, tmp_path, script, **overrides):
+    config = make_config(tmp_path, **overrides)
     llm = ScriptedLLM(script)
     run = ChapterRun(
         ChapterRequest(present_ids=("minh", "lan"), scene_count=2,
@@ -92,7 +92,8 @@ async def test_graph_store_gives_committed_page_text_and_the_writer_quotes_it(
     assert sorted(texts) == [1, 2, 3]  # chương 0 không có văn, chương 4 chưa ghi
     assert texts[2] == "\n\n".join(chapter_scenes(pg, sid, 2))
 
-    _, _, llm = await _run(pg, driver, sid, tmp_path, full_script())
+    _, _, llm = await _run(pg, driver, sid, tmp_path, full_script(),
+                           limits={"context": {"page_quotes_top_k": 3}})  # mặc định tắt (D-85)
     writers = [c for c in llm.calls if c[0].content.startswith("Văn phong thử.")]
     blocks = re.findall(r'<player_data source="page_quote">\n(.*?)\n</player_data>',
                         writers[0][-1].content, re.DOTALL)

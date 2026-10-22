@@ -24,7 +24,7 @@ import logging
 import traceback
 import unicodedata
 import uuid
-from collections.abc import AsyncIterator, Mapping, Sequence
+from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from dataclasses import dataclass, field, replace
 from functools import partial
 from typing import Any, Literal, TypedDict
@@ -236,6 +236,8 @@ class _Deps:
     config: AppConfig
     plan: StoryPlan
     style_guide: str
+    # Chỉ cho bộ đo (evals): nhận câu hỏi và id đoạn của mỗi lần lấy đoạn trên trang (D-85).
+    on_quotes: Callable[[dict[str, Any]], None] | None = None
 
 
 class _State(TypedDict, total=False):
@@ -320,8 +322,6 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.limits.context, "writer_max_neighbors"),
         (config.limits.context, "summary_max_chars"),
         (config.limits.context, "page_quotes_top_k"),
-        (config.limits.context, "page_quotes_chunk_chars"),
-        (config.limits.context, "page_quotes_max_chars"),
         (config.quality.repetition, "ngram_words"),
         (config.quality.repetition, "max_repeats"),
         (config.quality.foreign_script, "latin_run_min_words"),
@@ -330,6 +330,9 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.guard.relationship, "max_score_jump_without_event"),
     ):
         check(_require, section, name)
+    if config.limits.context.page_quotes_top_k:  # 0 = tắt: hai giá trị còn lại không cần (D-85)
+        for name in ("page_quotes_chunk_chars", "page_quotes_max_chars"):
+            check(_require, config.limits.context, name)
     return problems
 
 
@@ -407,12 +410,17 @@ def _writer_context(d: _Deps, state: _State, present: Sequence[str]) -> WriterCo
 def _quotes(d: _Deps, state: _State, outline: SceneOutline | None = None) -> list[Chunk]:
     """Đoạn đã hiện trên trang cho dàn ý (chưa có `outline`) hoặc cho model viết (D-85). Chỉ chữ của
     các chương đã ghi: các cảnh trước của chương này đã nằm nguyên văn trong đề (`_earlier`)."""
-    pool, limits = state["page_pool"], d.config.limits.context
-    if pool.size == 0:
+    pool, limits = state.get("page_pool"), d.config.limits.context
+    if pool is None or pool.size == 0:  # tắt (`page_quotes_top_k: 0`) hoặc chưa có chương nào
         return []
-    return pool.top(page_query(_brief(d, state), state["context"], outline),
-                    top_k=_require(limits, "page_quotes_top_k"),
+    query = page_query(_brief(d, state), state["context"], outline)
+    hits = pool.top(query, top_k=_require(limits, "page_quotes_top_k"),
                     max_chars=_require(limits, "page_quotes_max_chars"))
+    if d.on_quotes is not None:
+        d.on_quotes({"chapter": state["chapter"], "scene": state["scene"],
+                     "attempt": state.get("attempt"), "role": "writer" if outline else "outline",
+                     "query": query, "passages": [[c.chapter, c.index] for c in hits]})
+    return hits
 
 
 def _candidates(ctx: WriterContext, protagonist: str) -> list[Candidate]:
@@ -490,10 +498,13 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
     if missing:
         log.warning("chương %s: thiếu tóm tắt chương %s; viết tiếp không có chúng", chapter,
                     missing)
-    pool = PagePool(d.store.chapter_texts(range(1, chapter)),
-                    chunk_chars=_require(d.config.limits.context, "page_quotes_chunk_chars"))
+    # Tắt (`page_quotes_top_k: 0`): không dựng kho đoạn, đề y như khi chưa có tính năng (D-85).
+    pool = None
+    if _require(d.config.limits.context, "page_quotes_top_k") > 0:
+        pool = PagePool(d.store.chapter_texts(range(1, chapter)),
+                        chunk_chars=_require(d.config.limits.context, "page_quotes_chunk_chars"))
     return {
-        "page_pool": pool,
+        **({"page_pool": pool} if pool is not None else {}),
         "summaries": [(c, found[c]) for c in wanted if c in found],
         "summaries_missing": missing,
         "chapter": chapter,
@@ -867,6 +878,7 @@ class ChapterRun:
     def __init__(
         self, request: ChapterRequest, *, llm: LLMClient, store: ChapterStore,
         config: AppConfig, plan: StoryPlan, tracker: CostTracker, style_guide: str | None = None,
+        on_quotes: Callable[[dict[str, Any]], None] | None = None,
     ) -> None:
         allowed = config.story_lengths.scenes_per_chapter
         if not allowed.min <= request.scene_count <= allowed.max:
@@ -876,7 +888,7 @@ class ChapterRun:
         guide = style_guide if style_guide is not None else load_style_guide()
         # Câu ngôi kể lấy từ cùng config mà kiểm văn dùng để bắt lệch ngôi (D-51).
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,
-                           f"{guide}\n\n{narration_instruction(config.quality)}")
+                           f"{guide}\n\n{narration_instruction(config.quality)}", on_quotes)
         self.outcome = ChapterOutcome()
         self._task: asyncio.Task[None] | None = None
         self._cancel_sent = False
