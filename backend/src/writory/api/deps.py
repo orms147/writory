@@ -79,7 +79,7 @@ def get_app_config(request: Request) -> AppConfig:
 
 
 def get_owner_id() -> str:
-    """Người đang dùng. TODO(G10, tuần 5): lấy từ phiên đăng nhập; chưa có thì mọi người là dev."""
+    """Người đang dùng. TODO(tuần 5, đăng nhập): lấy từ phiên đăng nhập; chưa có thì mọi người là dev."""
     return DEV_OWNER_ID
 
 
