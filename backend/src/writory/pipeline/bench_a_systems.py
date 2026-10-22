@@ -17,15 +17,20 @@ chương N. Cùng một model trả lời nhận ngữ cảnh đó, nên khác b
 bộ nhớ cần đo là bộ nhớ về các chương CŨ HƠN. Không hệ nào thấy chương sau N.
 """
 
-import itertools
-import math
 import re
-import unicodedata
-from collections import Counter
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 
 from writory.guard.state import EdgeRow, GraphState
+from writory.pipeline.passages import (  # noqa: F401 — tên cũ vẫn dùng được từ đây
+    STOPWORDS,
+    Bm25Index,
+    Chunk,
+    PagePool,
+    chunk_chapter,
+    flat,
+    tokens,
+)
 
 SYSTEMS = ("graph", "graph_quotes", "none", "rolling", "rag", "full")
 # Hệ bật/tắt bằng run.yaml (`<tên>.enabled`); tắt thì không chạy khi bỏ trống --systems (D-81).
@@ -41,12 +46,6 @@ SYSTEM_LABELS = {
 
 
 # --- chuẩn hoá chữ -------------------------------------------------------------------------------
-
-
-def flat(text: str) -> str:
-    """NFC, hạ chữ thường, mọi ký tự không phải chữ/số thành một khoảng trắng. GIỮ dấu tiếng Việt:
-    bỏ dấu thì "Minh" trùng "mình" (đại từ), "thù" trùng "thư"."""
-    return " ".join(re.findall(r"\w+", unicodedata.normalize("NFC", text).casefold()))
 
 
 def contains_phrase(flat_text: str, phrase: str) -> bool:
@@ -119,86 +118,12 @@ def context_rolling(story: Mapping[int, str], chapter: int,
 
 # --- BM25 (đối thủ RAG, D-73) ----------------------------------------------------------------------
 
-# Âm tiết chức năng rất thường gặp, không giúp phân biệt đoạn.
-STOPWORDS = frozenset(
-    ["là", "của", "và", "có", "không", "được", "ở", "đã", "bị", "thì", "mà", "cho", "với", "một", "những", "các", "ai", "gì", "nào", "đâu", "hay", "chưa", "còn", "bao", "nhiêu", "thế", "này", "đó", "kia", "khi", "sẽ", "đang", "rất", "như", "từ", "đến", "trong", "trên", "dưới", "ra", "vào", "lên", "xuống"]
-)
-
-
-def tokens(text: str) -> list[str]:
-    """Âm tiết (bỏ âm tiết chức năng) cộng cặp âm tiết liền nhau, vì từ tiếng Việt
-    thường gồm 2 âm tiết."""
-    syllables = [t for t in flat(text).split() if t not in STOPWORDS]
-    return syllables + [f"{a}_{b}" for a, b in itertools.pairwise(syllables)]
-
-
-@dataclass(frozen=True)
-class Chunk:
-    chapter: int
-    index: int
-    text: str
-
-
-def chunk_chapter(chapter: int, text: str, *, chunk_chars: int) -> list[Chunk]:
-    """Đoạn văn liền nhau gộp tới khi đủ `chunk_chars` ký tự (câu thoại một dòng quá ngắn để tự
-    đứng). Bỏ dòng tiêu đề markdown."""
-    paragraphs = [p.strip() for p in re.split(r"\n\s*\n", text)
-                  if p.strip() and not p.lstrip().startswith("#")]
-    chunks: list[Chunk] = []
-    buf: list[str] = []
-    for p in paragraphs:
-        buf.append(p)
-        if sum(len(x) for x in buf) >= chunk_chars:
-            chunks.append(Chunk(chapter, len(chunks), "\n".join(buf)))
-            buf = []
-    if buf:
-        chunks.append(Chunk(chapter, len(chunks), "\n".join(buf)))
-    return chunks
-
-
-class Bm25Index:
-    """BM25 Okapi thuần Python. Không phụ thuộc, tất định, không tốn lời gọi model."""
-
-    def __init__(self, chunks: Sequence[Chunk], *, k1: float = 1.5, b: float = 0.75) -> None:
-        self.chunks = list(chunks)
-        self.k1, self.b = k1, b
-        self._tf = [Counter(tokens(c.text)) for c in self.chunks]
-        self._len = [sum(tf.values()) for tf in self._tf]
-        self._avg = (sum(self._len) / len(self._len)) if self._len else 0.0
-        df: Counter[str] = Counter()
-        for tf in self._tf:
-            df.update(tf.keys())
-        n = len(self.chunks)
-        self._idf = {t: math.log(1 + (n - d + 0.5) / (d + 0.5)) for t, d in df.items()}
-
-    def scores(self, query: str) -> list[float]:
-        q = Counter(tokens(query))
-        out = []
-        for tf, length in zip(self._tf, self._len, strict=True):
-            s = 0.0
-            for term in q:
-                f = tf.get(term, 0)
-                if f:
-                    norm = f + self.k1 * (1 - self.b + self.b * length / (self._avg or 1.0))
-                    s += self._idf[term] * f * (self.k1 + 1) / norm
-            out.append(s)
-        return out
-
-    def top(self, query: str, k: int) -> list[Chunk]:
-        """k đoạn điểm cao nhất (điểm 0 thì bỏ), hoà thì đoạn ở chương trước, đoạn đứng trước."""
-        scored = sorted(
-            ((s, c) for s, c in zip(self.scores(query), self.chunks, strict=True) if s > 0),
-            key=lambda sc: (-sc[0], sc[1].chapter, sc[1].index),
-        )
-        return [c for _, c in scored[:k]]
-
-
 def retrieve(story: Mapping[int, str], chapters: Sequence[int], question: str, *, top_k: int,
              chunk_chars: int) -> tuple[list[Chunk], int]:
-    """(`top_k` đoạn BM25 của các chương `chapters`, sắp theo thứ tự truyện; số đoạn trong kho)."""
-    pool = [c for ch in sorted(chapters) for c in chunk_chapter(ch, story[ch], chunk_chars=chunk_chars)]
-    hits = sorted(Bm25Index(pool).top(question, top_k), key=lambda c: (c.chapter, c.index))
-    return hits, len(pool)
+    """(`top_k` đoạn BM25 của các chương `chapters`, sắp theo thứ tự truyện; số đoạn trong kho).
+    Dùng `passages.PagePool`, cùng code với ngữ cảnh dàn ý và viết của sản phẩm (D-85)."""
+    pool = PagePool({ch: story[ch] for ch in chapters}, chunk_chars=chunk_chars)
+    return pool.top(question, top_k=top_k), pool.size
 
 
 def passages_block(heading: str, hits: Sequence[Chunk]) -> str:

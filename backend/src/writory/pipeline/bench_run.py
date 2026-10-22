@@ -12,7 +12,12 @@ Kết quả ở `evals/results/<ngày>-run-<nhãn>/`, tách theo người đư�
   lỗi, loại lỗi: meta.json, setup.json, events.jsonl, chapters/, calls.jsonl, report.json,
   summary.md. Không có bản kế hoạch, id nút, góp ý của người canh hay chi tiết lỗi.
 - truth_dump.json: kế hoạch, gói thay đổi từng chương, đồ thị cuối, dàn ý, góp ý viết lại, cạnh
-  bộ trích bỏ, chi tiết lỗi (đã redact). Để chấm tay.
+  bộ trích bỏ, chi tiết lỗi (đã redact), và với đoạn trên trang (D-85) câu hỏi cùng id đoạn của
+  mỗi lời gọi dàn ý và viết (`quotes`; câu hỏi có tên và nhịp dàn ý). Để chấm tay.
+
+`--setup-from <thư mục kết quả>`: dùng lại khởi tạo của một lần chạy trước (bản kế hoạch, gói
+chương 0 và ba lựa chọn khởi tạo) thay vì gọi model khởi tạo, để so hai cách chạy trên CÙNG một
+thế giới. Đề phải cùng sha256 và seed phải khớp (cùng dãy chọn).
 
 Trần: `--budget` (USD) cho cả lần chạy. Trước mỗi lời gọi giữ chỗ chi phí tối đa của lời gọi đó
 (giá trong đề × token vào ước tính + `max_tokens_per_call` × giá ra), như bài D, nên không vượt
@@ -39,6 +44,7 @@ from collections import Counter, defaultdict
 from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass
 from datetime import date, datetime
+from functools import partial
 from pathlib import Path
 from typing import Any, Protocol
 
@@ -422,6 +428,7 @@ class RunOptions:
     label: str = ""
     config_dir: Path = REPO_CONFIG_DIR
     scenario_path: Path | None = None
+    setup_from: Path | None = None  # dùng lại khởi tạo của lần chạy này (không gọi model khởi tạo)
 
 
 def player_action_text(choice: PlayerChoice) -> str:
@@ -494,6 +501,8 @@ class StoryRun:
         self.attempts: list[dict[str, Any]] = []  # chung: số đếm, loại lỗi
         self.truth_chapters: dict[str, list[dict[str, Any]]] = defaultdict(list)
         self.errors: list[dict[str, Any]] = []  # chi tiết lỗi, chỉ vào truth_dump
+        # Câu hỏi và id đoạn trên trang của mỗi lời gọi dàn ý, viết (D-85), chỉ vào truth_dump.
+        self.quotes: list[dict[str, Any]] = []
         self.retries_used = {"setup": 0, "chapter": 0, "choices": 0}
         # Lượt sửa của build_story (D-54): lượt "bấm thử lại", loại lỗi, danh sách lỗi (có id, chỉ
         # vào truth_dump).
@@ -554,6 +563,9 @@ class StoryRun:
     def _event(self, row: dict[str, Any]) -> None:
         self.files.append("events.jsonl", row)
 
+    def _record_quotes(self, attempt: int, row: dict[str, Any]) -> None:
+        self.quotes.append({"run_attempt": attempt, **row})
+
     def _record_call(self, row: dict[str, Any]) -> None:
         self.calls.append(row)
         self.files.append("calls.jsonl", row)
@@ -569,10 +581,60 @@ class StoryRun:
 
     # -- khởi tạo --
 
+    async def _setup_from(self, source: Path) -> bool:
+        """Khởi tạo lấy từ một lần chạy trước (`--setup-from`): cùng bản kế hoạch, cùng gói chương 0,
+        cùng ba lựa chọn khởi tạo, không tốn lời gọi model. Tự chọn dùng lại cùng `random.Random(seed)`
+        nên dãy chọn lựa chọn cuối chương cũng cùng luật."""
+        try:
+            meta = json.loads((source / "meta.json").read_text(encoding="utf-8"))
+            record = json.loads((source / "setup.json").read_text(encoding="utf-8"))
+            truth = json.loads((source / "truth_dump.json").read_text(encoding="utf-8"))
+            if meta["scenario"]["sha256"] != self.scenario_sha:
+                raise ConfigError(f"--setup-from: đề khác lần chạy {source} (sha256 không khớp)")
+            if meta["seed"] != self.seed:
+                raise ConfigError(f"--setup-from: seed {self.seed} khác seed {meta['seed']} của "
+                                  f"lần chạy {source}")
+            plan = StoryPlan.model_validate(truth["plan"])
+            package = ChangePackage.model_validate(truth["packages"]["0"]).model_copy(
+                update={"commit_id": f"{self.store.story_id}-ch0"})
+            picked: list[Any] = []
+            for step, cls in (("settings", setup_mod.SettingOption),
+                              ("plots", setup_mod.PlotOption),
+                              ("characters", setup_mod.CharacterOption)):
+                options = [cls.model_validate(o) for o in record[step]["options"]]
+                index = self.rng.randrange(len(options))
+                if index != record[step]["picked"]:
+                    raise ConfigError(f"--setup-from: lựa chọn bước {step} không khớp seed")
+                self.setup_record[step] = record[step]
+                self._event({"type": "setup_options", "step": step,
+                             "options": record[step]["options"], "picked": index})
+                picked.append(options[index])
+        except (OSError, KeyError, ValueError) as e:
+            raise ConfigError(f"--setup-from: không đọc được khởi tạo từ {source}: {e}") from None
+        choices = self.scenario.story_choices()
+        self.plan = plan
+        self.setup_record["build"] = {"done": True, "chapters_planned": plan.total_chapters,
+                                      "reused_from": repo_path(source)}
+        try:
+            self.store.create_story(choices.length_level, self.darkness_level)
+            self.store.commit(0, [], package)
+        except WritoryError as e:
+            self._fail("setup:commit", 1, e)
+            self._stop("error", "setup:commit", e.code, e.detail)
+            return False
+        self.packages[0] = package
+        self.brief = story_brief(choices, *picked, moderation=self.config.moderation)
+        self._event({"type": "chapter_committed", "chapter": 0})
+        self._print(f"[khởi tạo] dùng lại của {repo_path(source)}; kế hoạch {plan.total_chapters} "
+                    "chương, không gọi model")
+        return True
+
     async def _setup(self) -> bool:
         assert self.budgeted is not None and self.metered is not None
         self.budgeted.chapter = 0
         self.tracker.start_chapter()
+        if self.options.setup_from is not None:
+            return await self._setup_from(self.options.setup_from)
         llm, cfg, choices = self.metered, self.config, self.scenario.story_choices()
         settings = await self._setup_step(
             "settings", lambda: propose_settings(choices, llm=llm, config=cfg))
@@ -676,7 +738,8 @@ class StoryRun:
                 darkness_level=self.darkness_level,
             )
             run = ChapterRun(request, llm=self.budgeted, store=self.store, config=self.config,
-                             plan=self.plan, tracker=self.tracker, style_guide=self.style_guide)
+                             plan=self.plan, tracker=self.tracker, style_guide=self.style_guide,
+                             on_quotes=partial(self._record_quotes, attempt))
             shown: list[str] = []
             async for event in run.events():
                 self._event({"chapter": number, "attempt": attempt,
@@ -879,6 +942,7 @@ class StoryRun:
                          for n, p in sorted(self.packages.items())},
             "final": final, "chapters": self.truth_chapters, "errors": self.errors,
             "setup_repairs": self.setup_repairs,
+            "quotes": self.quotes,
         }
         self._write_json("truth_dump.json", truth)
         self._write_json("setup.json", self.setup_record)
@@ -917,6 +981,8 @@ class StoryRun:
                        "sha256": config_sha256(self.options.config_dir)},
             "models": models_in_use(self.config, self.scenario),
             "max_tokens_per_call": self.scenario.max_tokens_per_call,
+            "page_quotes_top_k": self.config.limits.context.page_quotes_top_k,  # 0 = tắt (D-85)
+            "setup_from": repo_path(self.options.setup_from) if self.options.setup_from else None,
             "prompt_versions": {
                 "setup": setup_mod.PROMPT_VERSION, "outline": scene_mod.OUTLINE_PROMPT_VERSION,
                 "writer": scene_mod.WRITER_PROMPT_VERSION, "extract": extract_mod.PROMPT_VERSION,
@@ -1464,6 +1530,13 @@ async def _cli(args: argparse.Namespace) -> int:
     scenario, scenario_sha = load_scenario(scenario_path)
     config_dir = Path(args.config_dir)
     config = load_config(config_dir)
+    if args.page_quotes_top_k is not None:
+        if args.page_quotes_top_k < 0:
+            raise ConfigError("--page-quotes-top-k phải từ 0 trở lên")
+        context = config.limits.context.model_copy(
+            update={"page_quotes_top_k": args.page_quotes_top_k})
+        config = config.model_copy(update={"limits": config.limits.model_copy(
+            update={"context": context})})
     problems = run_problems(config, scenario)
     if problems:  # trước khi kết nối kho hay đọc key
         raise ConfigError("config hoặc đề chưa đủ để chạy:\n- " + "\n- ".join(problems))
@@ -1513,7 +1586,8 @@ async def _cli(args: argparse.Namespace) -> int:
             options=RunOptions(out=out, budget_usd=args.budget, chapters=args.chapters,
                                seed=args.seed, dry_run=args.dry_run,
                                keep_story=args.keep_story or not args.dry_run, label=label,
-                               config_dir=config_dir, scenario_path=scenario_path),
+                               config_dir=config_dir, scenario_path=scenario_path,
+                               setup_from=Path(args.setup_from) if args.setup_from else None),
         )
         return await run.run()
     finally:
@@ -1532,6 +1606,10 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--budget", type=float, help="trần USD cho cả lần chạy; bắt buộc khi chạy thật")
     p.add_argument("--chapters", type=int, help="số chương tối đa (mặc định: số chương kế hoạch)")
     p.add_argument("--seed", type=int, help="ghi đè seed của đề")
+    p.add_argument("--setup-from", help="thư mục kết quả của lần chạy trước: dùng lại khởi tạo "
+                   "của nó (kế hoạch, chương 0, lựa chọn khởi tạo), không gọi model khởi tạo")
+    p.add_argument("--page-quotes-top-k", type=int,
+                   help="ghi đè limits.context.page_quotes_top_k (0 = tắt đoạn trên trang, D-85)")
     p.add_argument("--dry-run", action="store_true", help="model giả, không key, không gọi model")
     p.add_argument("--keep-story", action="store_true",
                    help="dry-run: giữ truyện trong Neo4j + Postgres (chạy thật luôn giữ)")

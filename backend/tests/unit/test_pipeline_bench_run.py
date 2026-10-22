@@ -637,3 +637,69 @@ def test_bench_run_accepts_story_lengths_closed_to_players(tmp_path, level):
     assert not config.story_lengths.levels[level].player_selectable
     problems = bench_run.run_problems(config, scenario_for(config, length_level=level))
     assert not [p for p in problems if "độ dài" in p], problems
+
+# --- dùng lại khởi tạo (--setup-from) và nhật ký đoạn trên trang (D-85) --------------------------
+
+
+def _config_with_quotes(tmp_path, top_k):
+    return make_config(tmp_path, **FIRST_PERSON, limits={"context": {"page_quotes_top_k": top_k}})
+
+
+async def test_setup_from_reuses_plan_chapter_0_and_picks_without_a_setup_call(tmp_path):
+    first, _, _, source = make_run(tmp_path / "a", out=tmp_path / "a" / "out")
+    assert await first.run() == bench_run.EXIT_OK
+    config = trial_config(tmp_path / "a")
+    llm = DryRunLLM(4)
+    again, _, store, out = make_run(tmp_path / "b", llm=llm, config=config, setup_from=source,
+                                    store=OverlayStore("mem-run-2"), out=tmp_path / "b" / "out")
+    assert await again.run() == bench_run.EXIT_OK
+
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert "setup" not in report["cost"]["by_role"] or report["cost"]["by_role"]["setup"] == 0
+    assert report["calls"]["by_role"].get("setup", 0) == 0
+    assert again.plan == first.plan and again.brief == first.brief
+    assert again.packages[0].model_copy(update={"commit_id": ""}) == first.packages[0].model_copy(
+        update={"commit_id": ""})
+    assert again.packages[0].commit_id == f"{store.story_id}-ch0"
+    old, new = (json.loads((d / "setup.json").read_text(encoding="utf-8")) for d in (source, out))
+    assert all(old[k] == new[k] for k in ("settings", "plots", "characters"))
+    assert new["build"]["reused_from"].endswith("out") and store.committed == first.plan.total_chapters
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["setup_from"] and meta["page_quotes_top_k"] == 0
+    # Cùng luật chọn: dãy lựa chọn cuối chương cũng khớp khi model trả như nhau.
+    assert _picks(source) == _picks(out)
+
+
+async def test_setup_from_refuses_another_scenario_or_seed(tmp_path):
+    first, _, _, source = make_run(tmp_path / "a", out=tmp_path / "a" / "out")
+    assert await first.run() == bench_run.EXIT_OK
+    config = trial_config(tmp_path / "a")
+    other, _, _, _ = make_run(tmp_path / "b", config=config, setup_from=source, seed=first.seed + 1,
+                              out=tmp_path / "b" / "out")
+    assert await other.run() == bench_run.EXIT_ABORT
+    assert "khác seed" in json.dumps(other.errors, ensure_ascii=False)
+    diff, _, _, _ = make_run(tmp_path / "c", config=config, setup_from=source,
+                             out=tmp_path / "c" / "out")
+    diff.scenario_sha = "sha-khac"
+    assert await diff.run() == bench_run.EXIT_ABORT
+    assert "sha256" in json.dumps(diff.errors, ensure_ascii=False)
+
+
+async def test_quotes_log_has_query_and_passage_ids_only_in_truth_dump(tmp_path):
+    config = _config_with_quotes(tmp_path, 3)
+    run, _, _, out = make_run(tmp_path, config=config)
+    assert await run.run() == bench_run.EXIT_OK
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    quotes = dump["quotes"]
+    assert quotes and {q["role"] for q in quotes} == {"outline", "writer"}
+    assert all(q["query"] and q["passages"] and q["chapter"] >= 2 for q in quotes)
+    assert all(len(ids) == 2 for q in quotes for ids in q["passages"])
+    assert json.loads((out / "meta.json").read_text(encoding="utf-8"))["page_quotes_top_k"] == 3
+    general = all_text(out, skip=("truth_dump.json",))
+    assert all(q["query"] not in general for q in quotes)
+
+
+async def test_quotes_log_is_empty_when_passages_are_off(tmp_path):
+    run, _, _, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    assert json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))["quotes"] == []

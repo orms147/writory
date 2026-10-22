@@ -20,7 +20,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   | Hệ (`--systems`) | Ngữ cảnh |
   |---|---|
   | `graph` đồ thị WriTory | nhân vật/đồ vật/nơi chốn nêu trong câu hỏi, cạnh và cửa sổ hiệu lực tới hết chương N, lời nói dối và sự kiện dẫn tới, danh sách nhân vật còn sống/đã chết; đọc chỉ qua `GraphState` của lớp `graph/` (G10); thêm chương N |
-  | `graph_quotes` đồ thị + câu trích (D-81) | đúng phần đồ thị của `graph`, cộng `graph_quotes.top_k` đoạn BM25 của chương 1..N-1 (cùng cách cắt đoạn và chấm điểm như `rag`, ít đoạn hơn), cộng chương N |
+  | `graph_quotes` đồ thị + câu trích (D-81) | đúng phần đồ thị của `graph`, cộng `graph_quotes.top_k` đoạn BM25 của chương 1..N-1 (cùng cách cắt đoạn và chấm điểm như `rag`, ít đoạn hơn; code chung với sản phẩm: `pipeline/passages.py`, D-85), cộng chương N |
   | `none` không bộ nhớ | chỉ chương N |
   | `rolling` tóm tắt | tóm tắt từng chương 1..N-1 (vai `summary`, đúng thứ pipeline lưu, D-49) nối lại, cộng chương N |
   | `rag` RAG | BM25 trên đoạn của chương 1..N-1 (D-73), cộng chương N |
@@ -193,11 +193,21 @@ Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đ
 - **Mã thoát:** 0 xong; 1 lỗi config, đề hoặc kết nối; 2 dừng vì chạm `--budget`; 3 dừng vì lỗi còn lại sau khi đã tự thử lại.
 - Cần Neo4j + Postgres (`docker compose up -d`, biến `NEO4J_*`, `POSTGRES_DSN`), cả khi dry-run. Kết quả dry-run (`*-dryrun/`) không commit.
 
+- **Dùng lại khởi tạo, bật/tắt đoạn trên trang (D-85):** `--setup-from <thư mục kết quả>` dùng lại bản kế hoạch, gói chương 0 và ba lựa chọn khởi tạo của một lần chạy (đề cùng sha256, seed khớp; không gọi model khởi tạo); `--page-quotes-top-k N` ghi đè `limits.context.page_quotes_top_k` (0 tắt). `truth_dump.json` có `quotes`: câu hỏi và id đoạn của từng lời gọi dàn ý và viết. `meta.json` ghi `page_quotes_top_k` và `setup_from`.
+- **So bật/tắt đoạn trên trang** (cách chấm, khai trước khi chạy): hai lần chạy 10 chương từ cùng một khởi tạo, cùng đề và seed, một lần `--page-quotes-top-k 0`, một lần `3`; trần mỗi lần 0,12 USD. Đọc tay `chapters/`, ghi mỗi mục kèm câu trích `chNN.md:dòng`, số riêng cho từng lần chạy:
+  1. **Lỗi liền mạch**, mỗi lỗi một dòng, ba loại: đồ vật ở đâu và ai cầm; cửa và nơi chốn (mở hay khoá, ai ở đâu); ai biết gì (nhân vật nói hay làm điều chưa thể biết, hoặc phủ nhận điều đã nói). Lỗi kéo dài nhiều chương đếm một lỗi, ghi các chương bị ảnh hưởng.
+  2. **Lặp nhịp**: nhịp là một sự kiện hay lượt thoại tóm được bằng một câu ("A thú nhận X", "hai bên khẳng định lại yêu sách"). Liệt kê nhịp từng chương; đếm số nhịp xuất hiện ở từ hai chương trở lên, và số chương có ít nhất nửa số nhịp là lặp lại chương liền trước.
+  3. **Token vào thêm**: trung bình `prompt_tokens` mỗi lời gọi dàn ý và viết, từ `calls.jsonl`, kèm số lời gọi (viết lại khác nhau làm lệch).
+  4. Phụ: chi phí, số lần viết lại, mạch gỡ đúng khoảng, lỗi còn khi hiện.
+  5. Với lần bật: đối chiếu từng lỗi liền mạch với `quotes` (đoạn chứa chi tiết đúng có được chọn không), để tách "kho không tìm ra" khỏi "model không dùng".
+  Quy ước kết luận (khai trước): "có lợi" nếu lần bật ít lỗi liền mạch hơn từ hai lỗi trở lên mà lặp nhịp không tăng; "có hại" nếu lặp nhịp tăng rõ (thêm từ hai nhịp lặp); còn lại "chưa phân biệt được". Giới hạn đã biết: một thế giới, một lần chạy mỗi bên, model có nhiễu, nên chênh nhỏ không kết luận.
+
 Lệnh (chạy trong `backend/`):
 ```bash
 uv run python -m writory.pipeline.bench_run --label thu --dry-run              # model giả, không key, xoá truyện khi xong
 uv run python -m writory.pipeline.bench_run --label <nhãn> --budget <USD>      # đề mặc định, chạy tới hết kế hoạch
 uv run python -m writory.pipeline.bench_run --label <nhãn> --scenario <đề> --chapters <N> --seed <S> --budget <USD>
+uv run python -m writory.pipeline.bench_run --label <nhãn> --scenario <đề> --setup-from <thư mục> --page-quotes-top-k <0|3> --budget <USD>   # D-85
 ```
 
 ## Red-team guardrail

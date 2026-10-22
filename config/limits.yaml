@@ -26,6 +26,12 @@ narrator_notebook:   # sổ tay lớn thì người kể chỉ nhận phần li�
 context:
   writer_max_neighbors: 30  # số nút lân cận tối đa trong ngữ cảnh model viết (D-28; tạm, D-47)
   summary_max_chars: 800    # độ dài tối đa của tóm tắt một chương (D-49; tạm)
+  # Đoạn nguyên văn đã hiện trên trang cho dàn ý và model viết (D-85; tạm, D-47). Cỡ đoạn như
+  # bài đo A (D-81). `page_quotes_top_k: 0` là TẮT (mặc định): không dựng kho đoạn, đề như cũ.
+  # Bật = 3 (bài A dùng 2) khi đo cùng thế giới cho thấy có lợi.
+  page_quotes_top_k: 0
+  page_quotes_chunk_chars: 500
+  page_quotes_max_chars: 2400
 llm_call:   # mọi lời gọi model trả bằng key người chơi (D-64)
   # Gửi làm max_tokens (gồm token suy luận), như max_tokens_per_call của bench_run (D-43); cũng
   # là chặn trên của chi phí ước tính khi lời gọi không có usage (huỷ, đứt, thiếu usage.cost).

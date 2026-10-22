@@ -1,6 +1,9 @@
 """Đường đi một chương trên Neo4j + Postgres thật (D-36): nạp truyện mẫu chương 0–3 qua
 `commit_chapter`, viết chương 4 bằng model giả, rồi kiểm chương đã ghi, đồ thị và player_view."""
 
+import html
+import re
+
 import pytest
 
 from tests.pipeline_fixtures import (
@@ -11,7 +14,13 @@ from tests.pipeline_fixtures import (
     full_script,
     make_config,
 )
-from writory.db import chapter_records, commit_chapter, create_story, current_chapter
+from writory.db import (
+    chapter_records,
+    chapter_scenes,
+    commit_chapter,
+    create_story,
+    current_chapter,
+)
 from writory.graph import item_holder, knows, player_view, story_snapshot
 from writory.llm.cost import CostTracker
 from writory.pipeline.chapter import ChapterRequest, ChapterRun
@@ -27,8 +36,8 @@ def _story_through_3(pg, driver, sid):
         commit_chapter(pg, driver, sid, ch.number, [ch.text] if ch.text else [], ch.package)
 
 
-async def _run(pg, driver, sid, tmp_path, script):
-    config = make_config(tmp_path)
+async def _run(pg, driver, sid, tmp_path, script, **overrides):
+    config = make_config(tmp_path, **overrides)
     llm = ScriptedLLM(script)
     run = ChapterRun(
         ChapterRequest(present_ids=("minh", "lan"), scene_count=2,
@@ -71,6 +80,26 @@ async def test_chapter_4_is_committed_and_visible(pg, driver, new_db_story_id, t
     writer = [c for c in llm.calls if c[0].content.startswith("Văn phong thử.")]
     assert len(writer) == 2 and "Sự thật cần tôn trọng" in writer[0][-1].content
     assert normalize_dashes(SCENE_2) in {e.text for e in events if e.type == "scene_ready"}
+
+
+async def test_graph_store_gives_committed_page_text_and_the_writer_quotes_it(
+        pg, driver, new_db_story_id, tmp_path):
+    """D-85: đoạn trên trang lấy từ Postgres (chương đã ghi), không phải từ đồ thị."""
+    sid = new_db_story_id()
+    _story_through_3(pg, driver, sid)
+    store = GraphStore(pg, driver, sid)
+    texts = store.chapter_texts([0, 1, 2, 3, 4])
+    assert sorted(texts) == [1, 2, 3]  # chương 0 không có văn, chương 4 chưa ghi
+    assert texts[2] == "\n\n".join(chapter_scenes(pg, sid, 2))
+
+    _, _, llm = await _run(pg, driver, sid, tmp_path, full_script(),
+                           limits={"context": {"page_quotes_top_k": 3}})  # mặc định tắt (D-85)
+    writers = [c for c in llm.calls if c[0].content.startswith("Văn phong thử.")]
+    blocks = re.findall(r'<player_data source="page_quote">\n(.*?)\n</player_data>',
+                        writers[0][-1].content, re.DOTALL)
+    assert blocks
+    source = "\n".join(texts.values())
+    assert all(line in source for b in blocks for line in html.unescape(b).split("\n"))
 
 
 async def test_blocked_chapter_writes_nothing(pg, driver, new_db_story_id, tmp_path):

@@ -312,6 +312,10 @@ class MemoryStore:
         self.commits: list[tuple[int, list[str], ChangePackage]] = []
         self.context_calls: list[tuple[int, tuple[str, ...]]] = []
         self.saved_summaries: dict[int, str] = dict(summaries or {})
+        # văn đã hiện: truyện mẫu tới chương `through`, cộng các chương ghi qua `commit`
+        self.text_requests: list[tuple[int, ...]] = []  # chương mỗi lần hỏi văn đã hiện
+        self.texts: dict[int, str] = {c.number: c.text for c in SAMPLE.chapters
+                                      if 1 <= c.number <= through and c.text}
 
     def summaries(self, chapters) -> dict[int, str]:
         return {c: self.saved_summaries[c] for c in chapters if c in self.saved_summaries}
@@ -319,6 +323,10 @@ class MemoryStore:
     def save_summary(self, chapter: int, text: str) -> None:
         assert chapter <= self.committed, (chapter, self.committed)  # chỉ sau khi ghi chương
         self.saved_summaries.setdefault(chapter, text)
+
+    def chapter_texts(self, chapters) -> dict[int, str]:
+        self.text_requests.append(tuple(chapters))
+        return {c: self.texts[c] for c in chapters if c in self.texts}
 
     def committed_chapter(self) -> int | None:
         return self.committed
@@ -346,6 +354,7 @@ class MemoryStore:
         self.packages.append(package)
         self.committed = number
         self.commits.append((number, scenes, package))
+        self.texts[number] = "\n\n".join(scenes)
 
     def player_view(self, chapter: int) -> PlayerView:
         return player_view_of(self.state(), chapter, story_id=self.story_id)
@@ -401,6 +410,7 @@ class OverlayStore:
         self.deleted = False
         self.commits: list[tuple[int, list[str]]] = []
         self.saved_summaries: dict[int, str] = {}
+        self.texts: dict[int, str] = {}
 
     def summaries(self, chapters) -> dict[int, str]:
         return {c: self.saved_summaries[c] for c in chapters if c in self.saved_summaries}
@@ -414,6 +424,9 @@ class OverlayStore:
 
     def delete_story(self) -> None:
         self.deleted = True
+
+    def chapter_texts(self, chapters) -> dict[int, str]:
+        return {c: self.texts[c] for c in chapters if c in self.texts}
 
     def committed_chapter(self) -> int | None:
         return self.committed
@@ -454,6 +467,7 @@ class OverlayStore:
         self.packages.append(package)
         self.committed = number
         self.commits.append((number, scenes))
+        self.texts[number] = "\n\n".join(scenes)
 
     def player_view(self, chapter: int) -> PlayerView:
         return player_view_of(self.state(), chapter, story_id=self.story_id)
