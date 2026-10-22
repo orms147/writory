@@ -843,4 +843,4 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Lượt viết lại sau `leak:name`: phản hồi nói "dùng «X» thay vào" hoặc "tên này chưa được hé lộ: tả bằng vai hay dáng vẻ".
   - **Đổi luật (a):** tên thật nằm trọn trong chữ đã hé lộ không bị cấm (người đọc đã đọc chữ đó). Tên không nằm trong chữ đã hé lộ, và tên được bảo vệ (b), giữ nguyên. Đây là nới nhỏ cho báo nhầm; đề nghị chủ dự án hay writory-75 xem lại trước khi gộp.
 - **Hệ quả:** thêm một mục vào mỗi đề dàn ý và đề viết khi có tên cấm (mỗi nút một dòng, chưa có trần số dòng). Báo trước chỉ là lời nhắc: an toàn vẫn do bộ dò (G1, G2). Đo: `evals/results/2026-10-22-run-tu-tien-names-{1,2,3}/notes.md`; lần 1 dừng ở chương 1 vì báo nhầm nói trên, lần 2 và 3 chạy đủ 3 chương, không `leak:name`; chưa có lần chạy lại cùng một thế giới trước và sau, nên chưa đo được mục báo trước có giảm `leak:name` hay không.
-- **Người quyết:** Claude (writory-75 giao việc 22/10/2026), nhánh feature/forbidden-names · 22/10/2026
+- **Người quyết:** Claude (writory-75 giao việc 22/10/2026), nhánh feature/forbidden-names; nới luật D-61 (tên thật nằm trọn trong chữ đã hé lộ thì không cấm): chủ dự án duyệt 22/10/2026
