@@ -1,10 +1,10 @@
 """Router `stories`: tủ truyện, sổ tay và hỏi người kể (design §4.2, §6.6; D-40, D-41, D-66).
 
-Truyện được kiểm theo chủ (`deps.get_owned_story`: truyện của người khác → STORY_NOT_FOUND), nhưng
-CHƯA có đăng nhập (tuần 5): mọi người là người chơi dev, nên G10 chưa thật sự được thi hành. Vì vậy
-`create_app` chỉ mount router này khi `Settings.enable_dev_routes` bật (mặc định tắt), và mọi route
-ở đây còn kiểm lại cờ đó lúc chạy, để gắn router vào app khác cũng không mở được.
-TODO(G10, tuần 5): `deps.get_owner_id` lấy người đang đăng nhập.
+Truyện được kiểm theo chủ ("G10 ở API", docs/security.md): `deps.get_owned_story` so với người đang
+dùng (`deps.get_owner_id`: người chơi dev ở chế độ `dev`, chủ của phiên đăng nhập bằng mã mời ở chế
+độ `invite`, D-89); truyện của người khác → STORY_NOT_FOUND. `create_app` mount router này theo chế
+độ (D-41, D-89), và mọi route còn kiểm lại lúc chạy (`deps.api_guard`), để gắn router vào app khác
+cũng không mở được.
 """
 
 from collections.abc import Mapping
@@ -36,7 +36,7 @@ from writory.pipeline.narrator import (
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.moderate import ensure_input_allowed
 
-router = APIRouter(prefix="/stories", dependencies=[Depends(deps.dev_routes_only)])
+router = APIRouter(prefix="/stories", dependencies=[Depends(deps.api_guard)])
 Counter = Annotated[NarratorCounter, Depends(deps.get_narrator_quota)]
 
 

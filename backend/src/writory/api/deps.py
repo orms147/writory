@@ -3,17 +3,23 @@
 Hàm đọc dữ liệu là `def` thường: FastAPI chạy chúng trong threadpool, nên driver Neo4j và
 psycopg (đồng bộ) không chặn event loop. Mặc định nào chưa làm được thì fail closed.
 
-Chưa có đăng nhập (tuần 5): mọi yêu cầu là người chơi dev `DEV_OWNER_ID`, và mọi router dùng các
-hàm này chỉ mount khi bật `ENABLE_DEV_ROUTES` (D-41). Đường ống kiểm chủ (truyện, phiên khởi tạo,
-key, nhật ký chi phí đều theo `owner_id`) đã có; tuần 5 chỉ cần đổi `get_owner_id`.
+Người đang dùng (`get_owner_id`, D-89) theo `Settings.auth_mode`:
+- `dev`: mọi yêu cầu là người chơi dev `DEV_OWNER_ID`; router chỉ mount khi bật `ENABLE_DEV_ROUTES`
+  (D-41).
+- `invite`: chủ của phiên đăng nhập trong cookie (mã mời, `db.auth`); thiếu, sai hay hết hạn thì
+  AUTH_REQUIRED. Truyện, phiên khởi tạo, key, nhật ký chi phí đều theo `owner_id` (D-44), nên kiểm
+  chủ ở API là kiểm owner_id này.
+Mọi router của người chơi qua `api_guard`: router đã bật cho app này, và ở chế độ `invite` thì route
+ghi phải là JSON cùng origin (chống CSRF, D-89).
 """
 
 import asyncio
 import time
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
-from datetime import datetime
+from datetime import UTC, datetime
 from typing import Annotated, Protocol
+from urllib.parse import urlsplit
 
 import psycopg
 from fastapi import Depends, HTTPException, Request
@@ -45,6 +51,7 @@ from writory.db import (
     take_narrator_question,
 )
 from writory.db import get_owned_story as db_get_owned_story
+from writory.db.auth import SESSION_COOKIE, PostgresSessionLookup, SessionInfo
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerView
 from writory.guard.state import Neo4jState
@@ -65,23 +72,92 @@ from writory.safety.crypto import KeyCipher
 from writory.safety.leak import leak_names
 from writory.safety.moderate import ChoicesModerationOutput, ModerationOutput
 
-# TODO(G10, tuần 5): bỏ khi có đăng nhập; mọi dòng `dev` đổi sang tài khoản thật (migration 0003).
+# Người chơi của chế độ `dev` (D-44). Ở chế độ `invite` không ai là `dev`: dữ liệu cũ của `dev`
+# không thuộc mã mời nào.
 DEV_OWNER_ID = "dev"
 
+Clock = Callable[[], float]
 
-def dev_routes_only(request: Request) -> None:
-    """Fail closed: chỉ chạy khi create_app đã bật cờ dev cho chính app này (D-41)."""
-    if getattr(request.app.state, "dev_routes_enabled", False) is not True:
+_SAFE_METHODS = frozenset({"GET", "HEAD", "OPTIONS"})
+_SAME_ORIGIN_SITES = frozenset({"same-origin", "none"})  # "none": người dùng tự gõ, không trang nào
+
+
+def _same_origin_json(request: Request) -> None:
+    """Chống CSRF tối thiểu cho route ghi khi đăng nhập bằng cookie (D-89, docs/security.md):
+    - `Content-Type` phải là `application/json`, kể cả khi không có thân. Form của trang khác không
+      gửi được kiểu này; `fetch` khác origin gửi kiểu này thì trình duyệt phải hỏi trước (preflight),
+      mà máy chủ không bật CORS nên bị chặn.
+    - `Sec-Fetch-Site` (trình duyệt gửi) phải là cùng origin. Trình duyệt không gửi header đó thì
+      `Origin`, nếu có, phải trùng `Host`.
+    Cookie `SameSite=Lax` là lớp thứ ba."""
+    ctype = request.headers.get("content-type", "").split(";", 1)[0].strip().lower()
+    site = request.headers.get("sec-fetch-site")
+    origin = request.headers.get("origin")
+    if ctype != "application/json":
+        reason = "content-type không phải JSON"
+    elif site is not None and site.lower() not in _SAME_ORIGIN_SITES:
+        reason = f"sec-fetch-site {site[:20]!r}"
+    elif site is None and origin is not None and (
+            origin == "null" or urlsplit(origin).netloc != request.headers.get("host")):
+        reason = "origin khác host"
+    else:
+        return
+    raise WritoryError(ErrorCode.REQUEST_ORIGIN_INVALID,
+                       detail=f"{request.method} {request.url.path}: {reason}")
+
+
+def api_guard(request: Request) -> None:
+    """Gắn vào mọi router của người chơi. Fail closed: router chưa bật cho chính app này (D-41,
+    D-89) thì 404; chế độ `invite` thì route ghi phải là JSON cùng origin."""
+    if getattr(request.app.state, "player_routes_enabled", False) is not True:
         raise HTTPException(status_code=404)
+    if (request.app.state.settings.auth_mode == "invite"
+            and request.method not in _SAFE_METHODS):
+        _same_origin_json(request)
 
 
 def get_app_config(request: Request) -> AppConfig:
     return request.app.state.config
 
 
-def get_owner_id() -> str:
-    """Người đang dùng. TODO(tuần 5, đăng nhập): lấy từ phiên đăng nhập; chưa có thì mọi người là dev."""
-    return DEV_OWNER_ID
+class SessionLookup(Protocol):
+    def owner_of(self, token: str, *, now: datetime) -> SessionInfo | None: ...
+
+
+def get_session_lookup(request: Request) -> SessionLookup:
+    """Tra phiên trong Postgres, mở kết nối riêng chỉ khi có cookie cần tra (D-89)."""
+    settings = request.app.state.settings
+    return PostgresSessionLookup(lambda: connect(settings), close=True)
+
+
+def get_clock() -> Clock:
+    """Giờ cho bộ đếm tần suất và hạn phiên (giây kể từ epoch). Test thay bằng đồng hồ giả."""
+    return time.time
+
+
+def current_session(request: Request,
+                    sessions: Annotated[SessionLookup, Depends(get_session_lookup)],
+                    clock: Annotated[Clock, Depends(get_clock)]) -> SessionInfo | None:
+    """Phiên còn hạn trong cookie (chỉ chế độ `invite`); không có thì None."""
+    token = request.cookies.get(SESSION_COOKIE)
+    if request.app.state.settings.auth_mode != "invite" or not token:
+        return None
+    return sessions.owner_of(token, now=datetime.fromtimestamp(clock(), UTC))
+
+
+def get_owner_id(request: Request,
+                 sessions: Annotated[SessionLookup, Depends(get_session_lookup)],
+                 clock: Annotated[Clock, Depends(get_clock)]) -> str:
+    """Người đang dùng (D-89): `dev` thì người chơi dev; `invite` thì chủ của phiên, không có phiên
+    hợp lệ thì AUTH_REQUIRED (401). Không bao giờ đưa token vào lỗi hay log."""
+    if request.app.state.settings.auth_mode != "invite":
+        return DEV_OWNER_ID
+    info = current_session(request, sessions, clock)
+    if info is None:
+        has_cookie = SESSION_COOKIE in request.cookies
+        raise WritoryError(ErrorCode.AUTH_REQUIRED,
+                           detail="phiên sai hoặc hết hạn" if has_cookie else "không có cookie phiên")
+    return info.owner_id
 
 
 def get_pg_conn(request: Request) -> Iterator[psycopg.Connection]:
@@ -291,14 +367,6 @@ def get_llm_factory(request: Request) -> LLMFactory:
 
 
 # --- giới hạn tần suất (G8, D-56) ---------------------------------------------------------------
-
-Clock = Callable[[], float]
-
-
-def get_clock() -> Clock:
-    """Giờ cho bộ đếm tần suất (giây kể từ epoch). Test thay bằng đồng hồ giả."""
-    return time.time
-
 
 class PostgresCallQuota:
     """Lượt gọi model mỗi phút của một người chơi, đếm trong Postgres (`db.take_llm_call`).

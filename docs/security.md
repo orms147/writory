@@ -15,6 +15,7 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 | T5 | Nội dung cấm | người chơi lái truyện sang nội dung tình dục liên quan trẻ vị thành niên hoặc nội dung vượt mức u tối đã chọn |
 | T6 | Lộ dữ liệu giữa người dùng | truy vấn đồ thị quên lọc `story_id` |
 | T7 | Ghi dữ liệu hỏng vào đồ thị | JSON trích sai schema, thực thể bịa, ghi nửa chừng |
+| T8 | Dùng tài khoản của người khác | đoán hay trộm mã mời, trộm token phiên, trang khác gửi yêu cầu kèm cookie của người chơi (CSRF), gọi API truyện của người khác bằng `story_id` |
 
 ## Guardrail
 
@@ -50,13 +51,24 @@ Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
 
+## Đăng nhập bằng mã mời (D-89)
+Chống T8. Chỉ ở `AUTH_MODE=invite`; chế độ `dev` như trước (D-41, D-44).
+
+| Mối đe doạ | Thi hành | Test |
+|---|---|---|
+| Đoán mã mời | Mã 160 bit (`db/auth.new_invite_code`); 8 ký tự đầu để tra hàng, 120 bit còn lại so với SHA-256 đã lưu bằng `hmac.compare_digest`, kể cả khi không có hàng (so với băm giả). Đếm mọi lần nhập mã theo máy trong cửa sổ cố định (`db/auth.take_login_attempt`, `config/limits.yaml` `auth`); hết lượt thì `LOGIN_RATE_LIMITED`, không kiểm mã. Sai thì `INVITE_CODE_INVALID`, không nói sai ở đâu | `tests/unit/test_auth.py` (dạng mã, sai dạng bị từ chối trước khi tra), `tests/graph/test_auth_api.py::test_wrong_code_is_401_with_its_own_code_and_never_echoed`, `::test_login_attempts_are_limited_per_client_then_reopen_next_window` (đồng hồ giả; đúng mã cũng bị chặn khi hết lượt) |
+| Lộ mã hay token | Postgres chỉ giữ băm của mã và của token phiên (migration 0009); mã in một lần lúc tạo, `list` không in. Token chỉ ở cookie `HttpOnly`, không trong thân phản hồi. Bộ lọc log xoá chuỗi dạng mã (`wt-…`), token (`wts_…`) và `writory_session=…` (`safety/redact.py`) | `test_auth.py::test_codes_and_tokens_are_redacted_from_logs`, `test_auth_api.py::test_invite_code_is_never_stored_only_its_hash`, `::test_login_sets_httponly_lax_cookie_and_stores_only_the_token_hash` (kể cả log), `::test_cli_prints_the_code_once_and_list_never_shows_it` |
+| Trộm hay giữ phiên cũ | Cookie `HttpOnly`, `SameSite=Lax`, `Secure` trừ localhost, `Max-Age` theo `auth.session_ttl_hours`. Phiên hết hạn theo giờ máy chủ; đăng xuất xoá phiên phía máy chủ; thu hồi mã xoá mọi phiên của mã. Thiếu, sai, hết hạn: `AUTH_REQUIRED` (401) | `test_auth.py::test_invite_mode_unknown_or_expired_session_is_401`, `test_auth_api.py::test_session_expires_on_the_fake_clock`, `::test_logout_ends_the_session_on_the_server`, `::test_revoked_invite_cannot_log_in_and_its_sessions_stop`, `::test_cookie_is_secure_when_not_on_localhost` |
+| CSRF | Mọi route ghi của người chơi (`deps.api_guard`): `Content-Type: application/json` bắt buộc kể cả khi không có thân (form của trang khác không gửi được; `fetch` khác origin phải preflight mà máy chủ không bật CORS); `Sec-Fetch-Site` phải là `same-origin`/`none`, trình duyệt không gửi thì `Origin` phải trùng `Host`. Sai: `REQUEST_ORIGIN_INVALID` (403), trước khi đọc phiên. Giao diện gửi JSON cho mọi yêu cầu ghi (`frontend/src/api/client.ts`) | `test_auth.py::test_write_routes_refuse_requests_that_may_come_from_another_site` (mọi kiểu sai trên route ghi, kể cả đăng nhập), `::test_same_origin_json_write_passes_the_check` (kể cả qua proxy Vite), `::test_reads_are_not_checked_for_origin`; `frontend/src/test/auth.test.tsx` (POST không thân vẫn gửi JSON) |
+| Đọc, ghi dữ liệu người khác ("G10 ở API") | Mỗi mã một `owner_id`; `deps.get_owner_id` lấy từ phiên; truyện, phiên khởi tạo, key, nhật ký chi phí theo `owner_id` (D-44): của người khác thì `STORY_NOT_FOUND`/`SETUP_NOT_FOUND` (404), không gọi model, không giải mã key | `test_auth_api.py::test_player_b_gets_404_on_every_route_of_player_a_story` và `::..._setup_session` (mọi route có `story_id`, `session_id` đọc từ OpenAPI của app, nên route mới tự được kiểm), `::test_player_a_still_sees_own_story` (đối chứng) |
+
 ## Đo guardrail
 - Test nhanh (mỗi commit): G1–G12 với model giả, không mạng.
 - Red-team với model thật: chạy tay hoặc định kỳ, có trần chi phí; báo tỉ lệ tấn công thành công. Lệnh và kết quả: `docs/eval.md`, `evals/results/`.
 - Mỗi lỗi bảo mật tìm được thêm thành một test hồi quy trước khi sửa.
 
 ## Chưa giải quyết
-- G10 ở API: chưa có đăng nhập. Đường ống kiểm chủ đã có (truyện, phiên khởi tạo, key, nhật ký chi phí đều theo `owner_id`; truyện của người khác → 404, `tests/graph/test_story_api_deps.py`), nhưng mọi người đều là người chơi dev `dev` (`api/deps.get_owner_id`, D-44). Tủ truyện và chi phí người chơi cũng lọc theo `owner_id` (`tests/graph/test_ui_api.py`, D-66). Vì vậy mọi router dùng nó chỉ mount khi bật `ENABLE_DEV_ROUTES` (D-41).
+- Đăng nhập (D-89): chế độ mặc định vẫn là `AUTH_MODE=dev` (mọi người là người chơi dev, router sau `ENABLE_DEV_ROUTES`, D-41). Ở chế độ dev không kiểm CSRF: trang khác mở trong trình duyệt của máy dev vẫn gửi được yêu cầu ghi tới `localhost:8000` (ví dụ viết chương bằng key đã lưu). Giới hạn lần nhập mã theo địa chỉ máy uvicorn thấy; sau proxy thì mọi người chung một bộ đếm (chưa đọc `X-Forwarded-For`), và băm địa chỉ IPv4 dò ngược được. Chưa có trang quản trị: tạo, thu hồi mã bằng dòng lệnh. Chưa thử sau HTTPS proxy thật (cookie `Secure`, header `Host`).
 - Nghị định 147/2024/NĐ-CP có áp dụng cho app này không (design §14). Phải kiểm trước khi mở cho người lạ.
 - G9: danh mục `config/moderation.yaml` đã được chủ dự án duyệt (D-57). Bộ đo `writory.safety.bench_g9` đã chạy hai lần với model thật (`evals/results/2026-10-21-g9-luna-1/`, `-2/`; D-70), nhưng thang mức độ được chỉnh bằng chính các câu trong bộ đo nên kết quả lạc quan; bộ câu giữ riêng v1 (D-71) đã chạy một lần (`evals/results/2026-10-21-g9-holdout-1/`: 0 chặn nhầm, bỏ sót ở đầu vào và ở bộ lựa chọn), rồi được dùng để đổi cách gọi (D-79), nên nay là bộ chỉnh. Đã soạn bộ giữ riêng v2 (`evals/redteam/g9_moderation_holdout_v2.yaml`, D-80) để đo lại cách gọi mới; nó đo được chặn nhầm trên truyện u tối hợp lệ và việc nhận ra một mô tả loại cấm, nhưng **không** đo được việc bắt chữ tấn công thật (loại nặng chỉ ở dạng mô tả). Cách gọi mới chưa đo với model thật. Mức u tối: người chơi chọn sẵn một trong các mức của `moderation.darkness_levels` lúc khởi tạo, mức lưu theo truyện (D-67); truyện tạo trước D-67 chạy ở mức mặc định. Nghị định 147 (dòng trên) vẫn chỉ là câu hỏi mở.
 - G6: bản 1 người canh chỉ kiểm bằng code (D-88), nên chưa có gì kiểm cảnh có chiều theo hành động vượt luật hay không; chỉ đề viết dặn (`pipeline/scene.py`). Test ở bảng trên ("người canh đánh dấu") chờ phần LLM của người canh ở bản sau.

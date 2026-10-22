@@ -140,5 +140,5 @@ npm install -D <gói>                 # thêm phụ thuộc frontend; commit c�
 - Model theo vai, mức suy luận và danh sách mức model viết: `config/models.yaml` (lý do: D-33, D-35, D-43, D-47).
 - Trần chi phí, ngưỡng kiểm văn và người canh, giới hạn người chơi: số tạm (D-47), chỉnh lại sau lần chạy thật đầu.
 - Frontend (`frontend/`, D-68, D-69): các màn bản 1 theo bàn giao thiết kế (`frontend/design-handoff/`, D-65); chạy với máy chủ giả (`npm run dev:mock`) hoặc backend thật qua proxy Vite (`npm run dev`, docs/runbook.md). Endpoint giao diện D-66, mức u tối chọn sẵn D-67, nhân vật chính trong sổ tay D-74 (nhãn "Bạn" trên giao diện, D-76). Bài đo A: đề đã duyệt, đã chạy thật lần đầu trên truyện mẫu (`evals/results/2026-10-21-memory-lan-1/`; D-72, D-73), có thêm hệ lai đồ thị + BM25 (D-81).
-- Chưa có: đăng nhập (G10; mọi người là người chơi dev `dev`, D-44; màn `/dang-nhap` chỉ là giao diện).
+- Đăng nhập bằng mã mời (D-89): `AUTH_MODE=invite` thì người chơi nhập mã chủ dự án tạo bằng `python -m writory.db.invites`, phiên trong cookie HttpOnly, kiểm chủ sở hữu ở API theo `owner_id` của phiên; mặc định `AUTH_MODE=dev` (mọi người là người chơi dev `dev`, router sau `ENABLE_DEV_ROUTES`, D-41, D-44). Chưa có: deploy.
 - Plugin của project: `.claude/settings.json` (context7, pyright-lsp, security-guidance, superpowers).

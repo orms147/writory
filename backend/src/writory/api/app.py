@@ -1,9 +1,11 @@
 """App FastAPI (D-29). Chạy dev: docs/runbook.md.
 
 Tạo app bằng factory `create_app`, không tạo lúc import, để import không cần biến môi trường.
-Router chưa có đăng nhập (`DEV_ROUTERS`: truyện, khởi tạo, key và chi phí người chơi, cấu hình
-công khai cho giao diện) chỉ mount khi `enable_dev_routes` bật (D-41, D-66). Không bật CORS: giao
-diện dev gọi API qua proxy của Vite, cùng origin (D-66, docs/runbook.md).
+Router của người chơi (`PLAYER_ROUTERS`: truyện, khởi tạo, key và chi phí người chơi, cấu hình
+công khai cho giao diện, đăng nhập) mount khi `AUTH_MODE=invite` (có đăng nhập bằng mã mời, D-89),
+hoặc khi `enable_dev_routes` bật ở chế độ `dev` (mọi người là người chơi dev, D-41, D-66). Không
+bật CORS: giao diện gọi API qua proxy của Vite, cùng origin (D-66, docs/runbook.md); chống CSRF
+dựa vào điều đó (`deps.api_guard`).
 """
 
 import asyncio
@@ -17,6 +19,7 @@ from fastapi import FastAPI
 from fastapi.responses import JSONResponse
 from neo4j import GraphDatabase
 
+from writory.api.auth import router as auth_router
 from writory.api.errors import install_error_handlers
 from writory.api.keys import router as keys_router
 from writory.api.play import router as play_router
@@ -30,8 +33,9 @@ from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
 
-# Router chưa có đăng nhập (D-41): chỉ mount khi bật ENABLE_DEV_ROUTES.
-DEV_ROUTERS = (stories_router, play_router, setup_router, keys_router, public_config_router)
+# Router của người chơi (D-41, D-89): mount theo `player_routes_enabled`.
+PLAYER_ROUTERS = (stories_router, play_router, setup_router, keys_router, public_config_router,
+                  auth_router)
 
 # Logger của uvicorn có handler riêng và không truyền record lên root, nên phải gắn riêng (G7).
 UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")
@@ -87,7 +91,7 @@ def create_app(
             if health_checks is not None
             else _default_health_checks(app, settings)
         )
-        if app.state.dev_routes_enabled:
+        if app.state.player_routes_enabled:
             # Một httpx client cho mọi client OpenRouter (mỗi client mang key một người chơi).
             app.state.openrouter_http = httpx.AsyncClient(timeout=DEFAULT_TIMEOUT)
         try:
@@ -104,12 +108,14 @@ def create_app(
     install_error_handlers(app)
     app.state.settings = settings
     app.state.config = config
-    # D-41: router chưa có đăng nhập chỉ mount khi bật cờ dev; mặc định tắt (fail closed).
-    app.state.dev_routes_enabled = settings.enable_dev_routes is True
-    if app.state.dev_routes_enabled:
+    # D-41, D-89: chế độ `dev` (không đăng nhập) chỉ mount khi bật cờ dev, mặc định tắt (fail
+    # closed); chế độ `invite` luôn mount, vì mọi route đọc người chơi từ phiên đăng nhập.
+    app.state.player_routes_enabled = (settings.auth_mode == "invite"
+                                       or settings.enable_dev_routes is True)
+    if app.state.player_routes_enabled:
         # D-11: khoá mã hoá key sai thì app không khởi động (lỗi không chép lại khoá).
         app.state.key_cipher = KeyCipher(settings.player_key_encryption_key)
-        for router in DEV_ROUTERS:
+        for router in PLAYER_ROUTERS:
             app.include_router(router)
 
     @app.get("/health")

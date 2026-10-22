@@ -22,7 +22,7 @@
 - G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động.
 - Chọn lựa chọn lưu hành động cho chương sau; khi viết chương đó, lời nói dối (`Lie`, `TOLD`, `TOLD_TO`,
   `ABOUT`) và nội tâm (`FEELS`) của lựa chọn được ghi vào gói của chính chương đó (D-55).
-Chỉ mount khi bật cờ dev (D-41).
+Mount theo chế độ đăng nhập (`deps.api_guard`, D-41, D-89).
 """
 
 import logging
@@ -80,7 +80,7 @@ from writory.safety.redact import redact
 
 log = logging.getLogger(__name__)
 
-router = APIRouter(prefix="/stories", dependencies=[Depends(deps.dev_routes_only)])
+router = APIRouter(prefix="/stories", dependencies=[Depends(deps.api_guard)])
 Plan = Annotated[StoryPlan, Depends(deps.get_story_plan)]
 
 

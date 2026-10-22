@@ -138,6 +138,16 @@ class ChapterEstimateLimits(_Section):
     default_usd: NonNegativeFloat | None = None
 
 
+class AuthLimits(_Section):
+    """Đăng nhập bằng mã mời (D-89), chỉ dùng khi `AUTH_MODE=invite`. Số tạm (D-47)."""
+
+    _path = "auth"
+    _file = "limits.yaml"
+    session_ttl_hours: PositiveInt | None = None  # phiên hết hạn sau ngần này giờ kể từ lúc đăng nhập
+    login_attempts_per_window: PositiveInt | None = None  # số lần nhập mã mỗi máy trong một cửa sổ
+    login_window_seconds: PositiveInt | None = None  # độ dài cửa sổ cố định của bộ đếm trên
+
+
 class LimitsConfig(_Strict):
     cost_usd: CostLimits
     retries: RetryLimits
@@ -147,6 +157,7 @@ class LimitsConfig(_Strict):
     context: ContextLimits
     llm_call: LLMCallLimits = LLMCallLimits()
     chapter_estimate: ChapterEstimateLimits = ChapterEstimateLimits()
+    auth: AuthLimits = AuthLimits()
 
 
 # --- models.yaml -----------------------------------------------------------------------
@@ -450,6 +461,10 @@ class Settings(BaseSettings):
     postgres_dsn: SecretStr
     # Khoá Fernet mã hoá key OpenRouter của người chơi (G7). Cách tạo: docs/runbook.md
     player_key_encryption_key: SecretStr
-    # Mount router chưa có đăng nhập (sổ tay, hỏi người kể; D-41). Mặc định tắt: chưa kiểm được
-    # truyện thuộc ai (G10), nên chỉ bật trên máy dev.
+    # Chế độ `dev` (không đăng nhập, mọi người là người chơi dev): mount router của người chơi
+    # (D-41). Mặc định tắt; chỉ bật trên máy dev. Chế độ `invite` không cần cờ này (D-89).
     enable_dev_routes: bool = False
+    # Cách biết người đang dùng (D-89). `dev`: mọi người là người chơi dev, router chỉ mount khi bật
+    # `enable_dev_routes` (như D-41). `invite`: đăng nhập bằng mã mời, router luôn mount, thiếu hay
+    # sai phiên thì AUTH_REQUIRED. Mặc định `dev` để app đang chạy trên máy dev không đổi.
+    auth_mode: Literal["dev", "invite"] = "dev"

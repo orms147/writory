@@ -25,7 +25,11 @@ curl http://127.0.0.1:8000/health   # {"neo4j": "ok"|"down", "postgres": "ok"|"d
 ```
 App tạo bằng factory (`--factory`), nên import `writory.api` không cần biến môi trường.
 
-API truyện (`/stories/...`), khởi tạo (`/setup/...`), key và chi phí người chơi (`/player/...`) và cấu hình công khai (`/config/public`) chưa có đăng nhập, nên mọi người đều là người chơi dev `dev` và chưa kiểm được truyện thuộc ai (G10). Các router này chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ bật trên máy dev, không bật trên máy chủ thật. Chạy migration trước (mục Migration Postgres).
+API truyện (`/stories/...`), khởi tạo (`/setup/...`), key và chi phí người chơi (`/player/...`), đăng nhập (`/auth/...`) và cấu hình công khai (`/config/public`) theo `AUTH_MODE` (D-89):
+- `AUTH_MODE=dev` (mặc định): không có đăng nhập, mọi người là người chơi dev `dev`. Router chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ dùng trên máy dev. Các lệnh `curl` dưới đây chạy ở chế độ này.
+- `AUTH_MODE=invite`: đăng nhập bằng mã mời (mục Đăng nhập bằng mã mời), router luôn được gắn, không cần `ENABLE_DEV_ROUTES`.
+
+Chạy migration trước (mục Migration Postgres).
 ```bash
 ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
 curl -X PUT http://127.0.0.1:8000/player/key -H 'content-type: application/json' -d '{"api_key": "sk-or-v1-..."}'
@@ -85,7 +89,24 @@ npm run build          # bản build vào frontend/dist/
 ```
 - **Proxy:** `npm run dev` chuyển `/api/*` tới `http://localhost:8000/*` (bỏ tiền tố `/api`, vì app FastAPI không có tiền tố). Đổi đích bằng `WRITORY_API_URL`; đổi tiền tố phía trình duyệt bằng `VITE_API_BASE`. Backend phải chạy với `ENABLE_DEV_ROUTES=true` (mục trên). Luồng SSE `POST /stories/{id}/chapters/next` đi qua proxy này.
 - **Mock (D-69):** `npm run dev:mock` (hoặc `VITE_MOCK=1 npm run dev`) thay `fetch` bằng máy chủ giả `frontend/src/mock/`: truyện bịa, mọi endpoint giao diện dùng, luồng SSE có `: ping` và sự kiện bị cắt đôi. Trạng thái nằm trong bộ nhớ, tải lại trang là về đầu. Thêm `?mock=rong` vào URL để mở tủ trống chưa có khoá; `?loi=<MÃ>` để giả một lỗi, ví dụ `/truyen/s-chuong?loi=COST_LIMIT_CHAPTER`, `?loi=SCENE_LEAK_BLOCKED`, `?loi=ACTION_UNCLEAR`. Bản build thường không chứa lớp mock.
-- Chưa có đăng nhập: màn `/dang-nhap` chỉ là giao diện, không gửi gì đi (D-44).
+- Đăng nhập (D-89): backend ở `AUTH_MODE=invite` thì chưa đăng nhập là về `/dang-nhap`, nhập mã mời; nút "Đăng xuất" ở thanh trên. Ở `AUTH_MODE=dev` màn này chỉ báo không cần đăng nhập. Máy chủ giả: thêm `?auth=invite` vào URL lúc mở trang, mã thử là `MOCK_INVITE_CODE` trong `frontend/src/mock/server.ts`.
+
+## Đăng nhập bằng mã mời
+Cho bạn bè chơi (D-89). Chủ dự án tạo một mã cho mỗi người; mỗi mã là một người chơi riêng (`owner_id` riêng: truyện, key, chi phí riêng). Mã chỉ in ra **một lần** lúc tạo; Postgres chỉ giữ băm, nên mất mã thì thu hồi và tạo mã mới. Gửi mã cho bạn qua kênh riêng.
+```bash
+cd backend   # đọc POSTGRES_DSN từ .env; chạy migration trước
+uv run python -m writory.db.invites create --name "Tên bạn"   # in id inv-... và mã wt-...
+uv run python -m writory.db.invites list                       # id, tên, owner_id, lần đăng nhập gần nhất; không in mã
+uv run python -m writory.db.invites revoke inv-...             # thu hồi; các phiên của mã bị xoá ngay
+```
+Chạy backend ở chế độ này:
+```bash
+AUTH_MODE=invite uv run uvicorn writory.api:create_app --factory --host 127.0.0.1 --port 8000
+```
+- Cookie phiên `writory_session`: `HttpOnly`, `SameSite=Lax`, `Secure` trừ khi truy cập qua `localhost`/`127.0.0.1`. Sau HTTPS proxy thì proxy phải giữ nguyên header `Host`.
+- Mọi yêu cầu ghi (POST, PUT, DELETE) phải có `content-type: application/json` và cùng origin (chống CSRF, docs/security.md). Gọi bằng `curl` ở chế độ này thì thêm `-H 'content-type: application/json'` cả khi không có thân, và gửi cookie (`-b`).
+- Giới hạn lần nhập mã tính theo địa chỉ máy mà uvicorn thấy. Sau proxy, mọi người chung một địa chỉ (chưa đọc `X-Forwarded-For`).
+- Dữ liệu cũ của người chơi dev `dev` không thuộc mã nào, nên không thấy được ở chế độ `invite`.
 
 ## CI
 GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi lần push lên `main`.
@@ -111,7 +132,7 @@ uv run python -c "from writory.config import Settings; from writory.db import co
 ```
 Test `-m graph` tự chạy migration trên database trong `POSTGRES_DSN`.
 
-Sau khi kéo code có migration mới thì chạy lệnh trên trước khi mở app. Ví dụ `0004_chapter_summaries` thêm bảng `chapter_summaries` (tóm tắt chương, D-49); chưa chạy thì viết chương báo `INTERNAL_ERROR` vì không đọc được bảng này. `0005_llm_call_windows` thêm bảng đếm lời gọi model mỗi phút (D-56); chưa chạy thì mọi lời gọi model của API báo `INTERNAL_ERROR`. `0008_story_darkness_level` thêm cột `stories.darkness_level` (mức u tối theo truyện, D-67); chưa chạy thì mọi route đọc truyện báo `INTERNAL_ERROR`. `bench_run` tự chạy migration.
+Sau khi kéo code có migration mới thì chạy lệnh trên trước khi mở app. Ví dụ `0004_chapter_summaries` thêm bảng `chapter_summaries` (tóm tắt chương, D-49); chưa chạy thì viết chương báo `INTERNAL_ERROR` vì không đọc được bảng này. `0005_llm_call_windows` thêm bảng đếm lời gọi model mỗi phút (D-56); chưa chạy thì mọi lời gọi model của API báo `INTERNAL_ERROR`. `0008_story_darkness_level` thêm cột `stories.darkness_level` (mức u tối theo truyện, D-67); chưa chạy thì mọi route đọc truyện báo `INTERNAL_ERROR`. `0009_invite_login` thêm bảng mã mời, phiên đăng nhập và bộ đếm lần nhập mã (D-89); chưa chạy thì ở `AUTH_MODE=invite` đăng nhập và mọi route cần đăng nhập báo `INTERNAL_ERROR`, ở `AUTH_MODE=dev` không ảnh hưởng. `bench_run` tự chạy migration.
 
 ## Ghi chương bị kẹt `pending`
 Chương ở lại `pending` khi Neo4j không trả lời hoặc tiến trình chết giữa chừng (D-6). Truyện đó không ghi được chương mới cho tới khi reconcile:
@@ -130,7 +151,8 @@ Danh sách đầy đủ: `.env.example`. Không commit `.env`.
   uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
   ```
   Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại. Khi `ENABLE_DEV_ROUTES=true`, khoá sai định dạng thì app không khởi động (D-11, D-45).
-- `ENABLE_DEV_ROUTES` (mặc định `false`): gắn router chưa có đăng nhập (truyện, khởi tạo, key và chi phí người chơi, cấu hình công khai; D-41, D-66). Chỉ bật trên máy dev.
+- `ENABLE_DEV_ROUTES` (mặc định `false`): ở `AUTH_MODE=dev`, gắn router của người chơi (truyện, khởi tạo, key và chi phí người chơi, cấu hình công khai, đăng nhập; D-41, D-66), mọi người là người chơi dev. Chỉ bật trên máy dev.
+- `AUTH_MODE` (mặc định `dev`): `dev` hoặc `invite` (D-89). `invite`: đăng nhập bằng mã mời, router luôn được gắn. Thời hạn phiên và số lần nhập mã mỗi máy: `config/limits.yaml`, mục `auth`.
 - Cấu hình runtime nằm trong `config/*.yaml`, được nạp và kiểm schema bằng `writory.config.load_config()`. Giá trị `null` nghĩa là chưa đặt; code nào cần giá trị đó sẽ báo lỗi.
 
 ## Deploy

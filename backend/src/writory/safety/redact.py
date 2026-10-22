@@ -13,6 +13,10 @@ _PATTERNS = [
     (re.compile(r"sk-[A-Za-z0-9_-]{20,}"), REDACTED),  # key kiểu OpenAI/Anthropic
     (re.compile(r"(?i)(bearer\s+)[A-Za-z0-9._~+/=-]{8,}"), r"\g<1>" + REDACTED),
     (re.compile(r"gAAAAA[A-Za-z0-9_=-]{20,}"), REDACTED),  # token Fernet (key đã mã hoá)
+    # Mã mời và token phiên đăng nhập (D-89): `db.auth.new_invite_code`, `new_session_token`.
+    (re.compile(r"(?i)\bwt-[a-z2-7]{4}(?:[-\s]?[a-z2-7]{4}){7}"), REDACTED),
+    (re.compile(r"wts_[A-Za-z0-9_-]{20,}"), REDACTED),
+    (re.compile(r"(writory_session=)[^;\s]+"), r"\g<1>" + REDACTED),
 ]
 
 

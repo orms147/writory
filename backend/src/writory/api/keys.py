@@ -3,7 +3,8 @@ bằng key đó (D-66).
 
 Thêm và thay bằng PUT, xoá bằng DELETE, xem bằng GET. Phản hồi chỉ có 4 ký tự cuối. Key gốc chỉ
 sống trong yêu cầu PUT (để mã hoá) và trong client model (để gọi); không vào log, lỗi hay phản hồi.
-Chỉ mount khi bật cờ dev (D-41): chưa có đăng nhập, mọi người là người chơi dev (TODO G10, tuần 5).
+Key và chi phí theo `owner_id` của người đang dùng (`deps.get_owner_id`: người chơi dev ở chế độ
+`dev`, chủ của phiên đăng nhập bằng mã mời ở chế độ `invite`, D-89). Mount theo chế độ đăng nhập (`deps.api_guard`, D-41, D-89).
 """
 
 from datetime import UTC, datetime
@@ -16,7 +17,7 @@ from writory.api.schemas import PlayerCostsOut, PlayerKeyIn, PlayerKeyOut
 from writory.errors import WritoryError
 from writory.safety.crypto import key_last4, validate_player_key
 
-router = APIRouter(prefix="/player", dependencies=[Depends(deps.dev_routes_only)])
+router = APIRouter(prefix="/player", dependencies=[Depends(deps.api_guard)])
 
 
 @router.get("/key", response_model=PlayerKeyOut)

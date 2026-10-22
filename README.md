@@ -36,7 +36,7 @@ Bộ đo khai câu hỏi và cách chấm **trước** khi chạy ([docs/eval.md
 
 ## Trạng thái
 
-**Bản 1, đang làm** (kế hoạch: [docs/design.md](docs/design.md) mục 12). Đã chạy thử app đầu cuối qua API và giao diện dev với model thật (CLAUDE.md mục 9). Chưa mở cho người khác: chưa có đăng nhập (API truyện và key người chơi chỉ bật được ở máy dev), chưa có deploy. Hiện trạng chi tiết: [CLAUDE.md](CLAUDE.md) mục 9; các quyết định và người quyết: [docs/decisions.md](docs/decisions.md).
+**Bản 1, đang làm** (kế hoạch: [docs/design.md](docs/design.md) mục 12). Đã chạy thử app đầu cuối qua API và giao diện dev với model thật (CLAUDE.md mục 9). Đăng nhập bằng mã mời cho bạn bè đã có (D-89, cách tạo mã: [docs/runbook.md](docs/runbook.md)); chưa mở cho người khác vì chưa có deploy. Hiện trạng chi tiết: [CLAUDE.md](CLAUDE.md) mục 9; các quyết định và người quyết: [docs/decisions.md](docs/decisions.md).
 
 ## Tài liệu
 

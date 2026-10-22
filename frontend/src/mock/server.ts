@@ -54,7 +54,14 @@ export interface MockOptions {
   /** Mã lỗi giả lập (như `?loi=`); hàm thì đọc lại ở mỗi lời gọi. */
   fault?: string | null | (() => string | null);
   now?: () => Date;
+  /** Chế độ đăng nhập của máy chủ giả (D-89). `invite`: phải đăng nhập bằng `MOCK_INVITE_CODE`;
+   *  route ghi phải gửi `content-type: application/json` như máy chủ thật. Mặc định `dev`. */
+  auth?: 'dev' | 'invite';
 }
+
+/** Mã mời của máy chủ giả (không phải mã thật; máy chủ thật tạo mã bằng `writory.db.invites`). */
+export const MOCK_INVITE_CODE = 'wt-mock-mock-mock-mock-mock-mock-mock-mock';
+const MOCK_INVITE_NAME = 'Bạn thử';
 
 const KEY_PREFIX = 'sk-or-';
 
@@ -106,6 +113,7 @@ export function createMockServer(options: MockOptions = {}) {
   const stories = new Map<string, MockStory>();
   const setups = new Map<string, MockSetup>();
   let seq = 0;
+  let loggedIn = false;
 
   const daysAgo = (d: number) => new Date(now().getTime() - d * 86400000).toISOString();
 
@@ -287,6 +295,33 @@ export function createMockServer(options: MockOptions = {}) {
     const parts = path.split('/').filter(Boolean).map(decodeURIComponent);
 
     if (path === '/config/public' && method === 'GET') return jsonResponse(MOCK_CONFIG);
+
+    // --- đăng nhập (D-89) ---
+    const authMode = options.auth ?? 'dev';
+    const sessionOut = () =>
+      authMode === 'dev'
+        ? { mode: 'dev', logged_in: true, name: null }
+        : { mode: 'invite', logged_in: loggedIn, name: loggedIn ? MOCK_INVITE_NAME : null };
+    if (authMode === 'invite' && method !== 'GET') {
+      const headers = new Headers(init?.headers);
+      if ((headers.get('content-type') ?? '').split(';')[0]?.trim() !== 'application/json') {
+        return errorResponse('REQUEST_ORIGIN_INVALID');
+      }
+    }
+    if (path === '/auth/session' && method === 'GET') return jsonResponse(sessionOut());
+    if (path === '/auth/login' && method === 'POST') {
+      if (authMode === 'invite') {
+        const typed = typeof body.code === 'string' ? body.code.trim().toLowerCase() : '';
+        if (typed !== MOCK_INVITE_CODE) return errorResponse('INVITE_CODE_INVALID');
+        loggedIn = true;
+      }
+      return jsonResponse(sessionOut());
+    }
+    if (path === '/auth/logout' && method === 'POST') {
+      loggedIn = false;
+      return jsonResponse(sessionOut());
+    }
+    if (authMode === 'invite' && !loggedIn) return errorResponse('AUTH_REQUIRED');
 
     // --- key, chi phí ---
     if (path === '/player/key') {

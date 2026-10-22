@@ -14,7 +14,7 @@ bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau
 - Gọi model bằng key người chơi (`deps.PlayerLLM`), ghi nhật ký theo phiên rồi gắn vào truyện (G8).
 - Mức u tối (D-67): một khoá của `moderation.darkness_levels`, chọn lúc tạo phiên (bỏ trống thì mức
   mặc định, ghi hẳn khoá vào phiên); lưu theo truyện lúc chốt, làm trần kiểm duyệt mỗi chương.
-Chỉ mount khi bật cờ dev (D-41).
+Mount theo chế độ đăng nhập (`deps.api_guard`, D-41, D-89).
 """
 
 import uuid
@@ -56,7 +56,7 @@ from writory.pipeline.setup import (
 )
 from writory.safety.moderate import ensure_input_allowed
 
-router = APIRouter(prefix="/setup", dependencies=[Depends(deps.dev_routes_only)])
+router = APIRouter(prefix="/setup", dependencies=[Depends(deps.api_guard)])
 
 _PREVIOUS: dict[SetupStep, SetupStep | None] = {
     "settings": None, "plots": "settings", "characters": "plots"}
