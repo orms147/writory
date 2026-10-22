@@ -45,8 +45,9 @@ from writory.safety.wrap import (
 # Đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1. extract-3: mạch phải
 # gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82). extract-4: mạch nhiều vế chỉ
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
-# nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93).
-PROMPT_VERSION = "extract-6"
+# nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
+# Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95).
+PROMPT_VERSION = "extract-7"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -107,6 +108,8 @@ class FactRules:
     scene: int
     duplicate_overlap: float
     grounded_min: float
+    # Trùng khi Fact mới gần như nằm trọn trong Fact kia VÀ cùng nói về một thực thể (D-95).
+    related_overlap: float = 1.0
 
 
 @dataclass(frozen=True)
@@ -183,7 +186,10 @@ Câu trích (`quote`):
 - Hé lộ một nhân vật, nơi chốn, đồ vật hay phe thì `known_as` là cái tên người chơi đọc thấy trên trang, CHÉP Y NGUYÊN từ bên trong `quote` (cùng chữ hoa, cùng dấu). Không dùng tên thật nếu trang chỉ gọi bằng biệt danh.
 
 Sự thật mới (`new_facts`):
-- Chỉ khi trang nêu một điều CỤ THỂ đã xảy ra hay đã được nói ra mà không sự thật nào trong danh mục diễn đạt được: ai cứu ai, ai hứa hay đòi gì, nhân vật phát hiện điều gì ở đâu, ai nói gì. Có sự thật trong danh mục nói đúng điều đó thì dùng id có sẵn, KHÔNG tạo mới. Không tạo sự thật mới cho cảm xúc, suy đoán, hay điều trang chỉ gợi ý.
+- Chỉ ghi điều ĐÃ XẢY RA hay ĐÚNG trong thế giới truyện mà trang nêu cụ thể: ai làm gì với ai, vật ở đâu, ai hứa hay đòi gì, ai nói gì (nội dung lời nói), ai phát hiện điều gì ở đâu. Mỗi sự thật một việc.
+- KHÔNG ghi: ý định, quyết định, cảm nghĩ, nhận xét, đánh giá hay suy đoán của nhân vật chính hay của ai khác ("quyết định…", "cho rằng…", "nghĩ…", "có căn cứ…", "nhớ…", "lo…"); điều trang chỉ gợi ý; và điều danh mục đã có, kể cả bí mật đã lộ, dù diễn đạt khác (dùng id có sẵn trong KNOWS); hai sự thật cùng nói về một việc.
+- Ví dụ ĐÚNG: "Lan đưa gói trà cho Minh trước khi rời quán." "Lão Gù hứa giữ kín chuyện thanh kiếm." "Khải đòi Minh trả lại chiếc nhẫn trước đêm nay."
+- Ví dụ SAI: "Minh quyết định không nói với Lan." (quyết định) "Minh nghĩ Lan đang giấu điều gì." (suy đoán) "Minh nhớ nét chữ trên mảnh giấy." (cảm nghĩ) "Lan làm việc cho Hội Hắc Kỳ" khi danh mục đã có sự thật "Lan là gián điệp của Hội Hắc Kỳ" (trùng, dù diễn đạt khác).
 - Mỗi sự thật mới có `ref` (new_1, new_2…), `text` và `quote`. `text` là MỘT câu ngắn, trung tính, một dòng, chỉ nêu điều trang đã nói bằng chữ của trang, không thêm suy đoán hay chi tiết. `quote` chép NGUYÊN VĂN từ chương.
 - Dùng `ref` như một id trong các cạnh. Mỗi sự thật mới BẮT BUỘC có ít nhất một cạnh ABOUT (sự thật mới → thực thể trong danh mục mà nó nói về) và một cạnh KNOWS (người biết → sự thật mới; nhân vật chính biết thì KNOWS cần `quote` như mọi KNOWS của nhân vật chính). Thiếu một trong hai thì sự thật mới bị bỏ.
 - Không ghi REVEALED_TO_PLAYER cho sự thật mới: code tự ghi. Số sự thật mới tối đa cho chương này ghi ở cuối đề; có thể để `new_facts` rỗng.
@@ -271,6 +277,25 @@ def _overlap(a: set[str], b: set[str]) -> float:
     return len(a & b) / len(a | b) if a | b else 0.0
 
 
+def _human_protagonist(text: str, protagonist: Entity | None) -> str:
+    """Model hay chép id nội bộ ("protagonist") vào chữ Fact; sổ tay sẽ hiện chữ tiếng Anh. Đổi thành
+    "nhân vật chính", trừ khi id là một phần tên thật (truyện mẫu: id `minh`, tên Trần Minh)."""
+    if protagonist is None:
+        return text
+    pid = protagonist.id
+    names = flat(" ".join((protagonist.text, *protagonist.aliases)))
+    if pid.casefold() in names.split():
+        return text
+    out = re.sub(rf"\b{re.escape(pid)}\b", "nhân vật chính", text, flags=re.IGNORECASE)
+    return out[:1].upper() + out[1:] if out != text and text[:1].isupper() else out
+
+
+def _covered(new: set[str], old: set[str]) -> float:
+    """Phần âm tiết của Fact MỚI đã nằm trong Fact cũ. Một chiều có chủ đích: Fact cụ thể hơn, chứa trọn
+    Fact cũ cộng thêm chi tiết (điều khoản, nơi chốn), có độ phủ thấp nên được giữ."""
+    return len(new & old) / len(new) if new else 0.0
+
+
 @dataclass
 class _FactPlan:
     nodes: dict[str, NodeSpec] = field(default_factory=dict)  # id sinh ra → nút
@@ -283,11 +308,16 @@ class _FactPlan:
 
 def _plan_new_facts(
     facts: Sequence[NewFact], rules: FactRules | None, *, chapter: int,
-    known: Mapping[str, Entity], chapter_text: str,
+    known: Mapping[str, Entity], chapter_text: str, about_of: Mapping[str, set[str]],
+    protagonist_id: str = "",
 ) -> _FactPlan:
     """Kiểm từng Fact mới bằng code (D-93): câu trích nguyên văn (G3), một câu ngắn bám trang, không
-    trùng Fact đã có (trùng thì dùng lại id cũ), dưới trần mỗi chương. Id do code sinh. Chữ chép tên
-    người chơi viết thì đánh dấu `user_authored` (G4)."""
+    trùng Fact đã có, kể cả bí mật đã lộ, hay trùng Fact mới khác trong chương (trùng thì dùng lại id
+    cũ), dưới trần mỗi chương. Trùng là Jaccard âm tiết từ `duplicate_overlap`, hoặc một Fact gần như
+    nằm trọn trong Fact kia (`related_overlap`, đo trên Fact mới) và cùng ABOUT một thực thể (D-95: hai
+    ngưỡng này bắt các cặp nói lại của lần phát lại D-93, không bắt hai Fact chỉ chung vài từ, cũng không
+    bắt Fact cụ thể hơn Fact cũ). Id do code
+    sinh. Chữ chép tên người chơi viết thì đánh dấu `user_authored` (G4)."""
     plan = _FactPlan()
     page = _syllables(chapter_text)
     theirs = {e.id: _syllables(e.text) for e in known.values() if e.label == "Fact"}
@@ -314,7 +344,10 @@ def _plan_new_facts(
             elif not quote_in_text(f.quote, chapter_text):
                 drop("câu trích không có nguyên văn trong chương (G3)")
             elif (same := next((i for i, t in {**theirs, **mine}.items()
-                                if _overlap(tokens, t) >= rules.duplicate_overlap), None)) is not None:
+                                if _overlap(tokens, t) >= rules.duplicate_overlap
+                                or (_covered(tokens, t) >= rules.related_overlap
+                                    and about_of.get(f.ref, set()) & about_of.get(i, set()))),
+                               None)) is not None:
                 plan.ids[f.ref] = same
                 plan.remapped.add(f.ref)
                 plan.rejected.append((desc, f"trùng Fact {same}, dùng lại id đó"))
@@ -327,7 +360,8 @@ def _plan_new_facts(
                     n = 1
                     while (fid := f"fact_c{chapter}s{rules.scene}_{n}") in known or fid in plan.nodes:
                         n += 1
-                    props: dict[str, Any] = {"text": text}
+                    props: dict[str, Any] = {
+                        "text": _human_protagonist(text, known.get(protagonist_id))}
                     if any(name and name in flat(text) for name in player_names):
                         props["user_authored"] = True
                     plan.nodes[fid] = NodeSpec(id=fid, label="Fact", props=props)
@@ -347,8 +381,16 @@ def to_package(
     mạch trong đó còn `later` (chưa tới khoảng gỡ) bị bỏ (D-84); mạch ngoài danh sách không đổi."""
     known = {e.id: e for e in entities}
     existing = set(known)  # id có sẵn trước khi thêm Fact mới
+    # Thực thể mỗi Fact nói về: Fact có sẵn theo cạnh ABOUT đang hiệu lực, Fact mới theo cạnh trong đầu ra.
+    about_of: dict[str, set[str]] = {}
+    for o in open_edges:
+        if o.type == "ABOUT":
+            about_of.setdefault(o.source, set()).add(o.target)
+    for x in output.edges:
+        if x.type == "ABOUT":
+            about_of.setdefault(x.source, set()).add(x.target)
     plan = _plan_new_facts(output.new_facts, fact_rules, chapter=chapter, known=known,
-                           chapter_text=chapter_text)
+                           chapter_text=chapter_text, about_of=about_of, protagonist_id=protagonist_id)
     for fid, node in plan.nodes.items():
         known[fid] = Entity(fid, "Fact", node.props["text"],
                             user_authored=bool(node.props.get("user_authored")))
@@ -357,6 +399,7 @@ def to_package(
     names = {e.id: (e.text, *e.aliases) for e in entities if e.label in NAMED_LABELS}
     open_by_id = {o.id: o for o in open_edges}
     rejected: list[tuple[str, str]] = list(plan.rejected)
+    open_knows = {(o.source, o.target) for o in open_edges if o.type == "KNOWS"}
     edges: list[EdgeSpec] = []
     seen: set[str] = set()
     for x in output.edges:
@@ -373,6 +416,10 @@ def to_package(
         missing = [i for i in (x.source, x.target, x.told_by) if i is not None and i not in known]
         if missing:
             rejected.append((desc, f"id không có trong danh mục: {missing}"))
+            continue
+        if x.type == "KNOWS" and (x.source, x.target) in open_knows:
+            # Hai KNOWS đang hiệu lực giữa cùng hai nút làm hỏng truy vấn một-cạnh (D-95).
+            rejected.append((desc, "đã có KNOWS đang hiệu lực giữa hai nút này"))
             continue
         if ((x.source in plan.nodes and x.type != "ABOUT") or x.told_by in plan.nodes
                 or (x.target in plan.nodes and x.type != "KNOWS")):

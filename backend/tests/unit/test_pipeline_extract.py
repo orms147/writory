@@ -373,7 +373,7 @@ def test_prompt_says_a_multi_part_thread_is_resolved_only_when_every_part_is_ans
     của "vế"), nên đây là luật trong đề."""
     for phrase in ("nhiều vế", "MỌI vế", "mới trả lời một vế", "thoả thuận tạm"):
         assert phrase in SYSTEM_PROMPT, phrase
-    assert PROMPT_VERSION == "extract-6"
+    assert PROMPT_VERSION == "extract-7"
 
 
 def test_prompt_tells_the_extractor_to_record_what_the_protagonist_learns_in_the_same_chapter():

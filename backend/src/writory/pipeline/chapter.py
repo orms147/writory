@@ -374,7 +374,7 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         check(_require, section, name)
     check(_require, config.limits.facts, "max_new_per_chapter")
     if config.limits.facts.max_new_per_chapter:  # 0 = tắt: các giá trị còn lại không cần (D-93)
-        for name in ("text_max_chars", "duplicate_overlap", "grounded_min",
+        for name in ("text_max_chars", "duplicate_overlap", "related_overlap", "grounded_min",
                      "writer_max_page_facts"):
             check(_require, config.limits.facts, name)
     if config.limits.context.page_quotes_top_k:  # 0 = tắt: hai giá trị còn lại không cần (D-85)
@@ -473,7 +473,8 @@ def _fact_rules(d: _Deps, state: _State, scene: int) -> FactRules:
     made = sum(1 for s in state.get("accepted", []) for n in s.package.nodes if n.label == "Fact")
     return FactRules(
         max_new=max(0, cap - made), max_chars=_require(f, "text_max_chars"), scene=scene,
-        duplicate_overlap=_require(f, "duplicate_overlap"), grounded_min=_require(f, "grounded_min"))
+        duplicate_overlap=_require(f, "duplicate_overlap"), grounded_min=_require(f, "grounded_min"),
+        related_overlap=_require(f, "related_overlap"))
 
 
 def _quotes(d: _Deps, state: _State, outline: SceneOutline | None = None) -> list[Chunk]:
