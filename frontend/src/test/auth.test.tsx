@@ -103,8 +103,8 @@ describe('chống CSRF: yêu cầu ghi luôn là JSON (D-89)', () => {
     expect(seen[3]).toEqual({ method: 'GET', type: null });
   });
 
-  it('máy chủ giả ở chế độ invite từ chối route ghi không phải JSON, như máy chủ thật', async () => {
-    const server = withMock({ auth: 'invite' });
+  it.each(['invite', 'dev'] as const)('máy chủ giả (%s) từ chối route ghi không phải JSON, như máy chủ thật', async (auth) => {
+    const server = withMock({ auth });
     const resp = await server.fetch('/api/auth/login', { method: 'POST', body: JSON.stringify({ code: MOCK_INVITE_CODE }) });
     expect(resp.status).toBe(403);
     expect((await resp.json()).code).toBe('REQUEST_ORIGIN_INVALID');

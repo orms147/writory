@@ -23,6 +23,9 @@ from writory.db import NON_CHAPTER_ROLES, CostEntry, OwnerCosts
 from writory.llm.base import GenerationCost, LLMClient
 from writory.llm.ledger import PendingEstimate
 
+# Mọi yêu cầu ghi tới router người chơi phải là JSON cùng origin, kể cả không có thân (chống CSRF,
+# `api.deps.api_guard`, D-89), như giao diện gửi (`frontend/src/api/client.ts`).
+JSON_HEADERS = {"content-type": "application/json"}
 FAKE_KEY = "sk-or-v1-" + "5eed1e55" * 8  # dạng key OpenRouter, không phải key thật
 MASTER_KEY = Fernet.generate_key().decode()
 

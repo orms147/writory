@@ -55,7 +55,8 @@ export interface MockOptions {
   fault?: string | null | (() => string | null);
   now?: () => Date;
   /** Chế độ đăng nhập của máy chủ giả (D-89). `invite`: phải đăng nhập bằng `MOCK_INVITE_CODE`;
-   *  route ghi phải gửi `content-type: application/json` như máy chủ thật. Mặc định `dev`. */
+   *  mặc định `dev`. Ở mọi chế độ, route ghi phải gửi `content-type: application/json` như máy chủ
+   *  thật (chống CSRF). */
   auth?: 'dev' | 'invite';
 }
 
@@ -302,7 +303,7 @@ export function createMockServer(options: MockOptions = {}) {
       authMode === 'dev'
         ? { mode: 'dev', logged_in: true, name: null }
         : { mode: 'invite', logged_in: loggedIn, name: loggedIn ? MOCK_INVITE_NAME : null };
-    if (authMode === 'invite' && method !== 'GET') {
+    if (method !== 'GET') {
       const headers = new Headers(init?.headers);
       if ((headers.get('content-type') ?? '').split(';')[0]?.trim() !== 'application/json') {
         return errorResponse('REQUEST_ORIGIN_INVALID');

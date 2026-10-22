@@ -138,8 +138,7 @@ def test_dev_mode_is_unchanged_everyone_is_dev_and_routes_need_the_dev_flag():
     with TestClient(app) as c:
         assert c.get("/player/key").status_code == 200
         assert c.get("/auth/session").json() == {"mode": "dev", "logged_in": True, "name": None}
-        # Không kiểm CSRF ở chế độ dev (không có cookie đăng nhập): curl của runbook vẫn chạy.
-        assert c.delete("/player/key").status_code == 200
+        assert c.delete("/player/key", headers=JSON).status_code == 200
     assert seen == [deps.DEV_OWNER_ID, deps.DEV_OWNER_ID]
     off, _ = make_app("dev", dev=False)
     assert not any(p.startswith(("/player", "/auth", "/stories")) for p in off.openapi()["paths"])
@@ -229,9 +228,12 @@ JSON = {"content-type": "application/json"}
     {**JSON, "origin": "https://evil.example"},
     {**JSON, "origin": "null"},
 ])
-def test_write_routes_refuse_requests_that_may_come_from_another_site(method, path, headers):
+@pytest.mark.parametrize("mode", ["invite", "dev"])
+def test_write_routes_refuse_requests_that_may_come_from_another_site(mode, method, path, headers):
+    """Cả ở `dev` (D-89, điều phối quyết): trang lạ trong trình duyệt của máy dev gửi được yêu cầu
+    ghi tới localhost và tiêu key đã lưu, dù không có cookie đăng nhập."""
     sessions = FixedSessions({"wts_ok": SessionInfo("u-a", "Lan", NOW + timedelta(hours=1))})
-    app, seen = make_app("invite", sessions=sessions)
+    app, seen = make_app(mode, dev=True, sessions=sessions)
     with TestClient(app) as c:
         c.cookies.set(SESSION_COOKIE, "wts_ok")
         assert_origin_rejected(c.request(method, path, headers=headers))
@@ -245,18 +247,20 @@ def test_write_routes_refuse_requests_that_may_come_from_another_site(method, pa
     # Qua proxy của Vite: Origin là cổng giao diện, nhưng trình duyệt báo cùng origin.
     {**JSON, "origin": "http://localhost:5173", "sec-fetch-site": "same-origin"},
 ])
-def test_same_origin_json_write_passes_the_check(headers):
+@pytest.mark.parametrize("mode", ["invite", "dev"])
+def test_same_origin_json_write_passes_the_check(mode, headers):
     sessions = FixedSessions({"wts_ok": SessionInfo("u-a", "Lan", NOW + timedelta(hours=1))})
-    app, seen = make_app("invite", sessions=sessions)
+    app, seen = make_app(mode, dev=True, sessions=sessions)
     with TestClient(app) as c:
         c.cookies.set(SESSION_COOKIE, "wts_ok")
         assert c.delete("/player/key", headers=headers).status_code == 200
-    assert seen == ["u-a"]
+    assert seen == ["u-a" if mode == "invite" else deps.DEV_OWNER_ID]
 
 
-def test_reads_are_not_checked_for_origin():
+@pytest.mark.parametrize("mode", ["invite", "dev"])
+def test_reads_are_not_checked_for_origin(mode):
     sessions = FixedSessions({"wts_ok": SessionInfo("u-a", "Lan", NOW + timedelta(hours=1))})
-    app, _ = make_app("invite", sessions=sessions)
+    app, _ = make_app(mode, dev=True, sessions=sessions)
     with TestClient(app) as c:
         c.cookies.set(SESSION_COOKIE, "wts_ok")
         assert c.get("/player/key", headers={"sec-fetch-site": "cross-site"}).status_code == 200

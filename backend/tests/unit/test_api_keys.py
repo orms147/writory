@@ -12,6 +12,7 @@ from pydantic import SecretStr
 
 from tests.api_fixtures import (
     FAKE_KEY,
+    JSON_HEADERS,
     KeyedFactory,
     MemoryCostLedger,
     MemoryKeyStore,
@@ -113,9 +114,9 @@ def test_replace_then_delete_key():
         client.put("/player/key", json={"api_key": FAKE_KEY})
         assert client.put("/player/key", json={"api_key": other}).json()["last4"] == other[-4:]
         assert cipher_of(app).decrypt(store.token).get_secret_value() == other
-        assert client.delete("/player/key").json() == {"has_key": False, "last4": None}
+        assert client.delete("/player/key", headers=JSON_HEADERS).json() == {"has_key": False, "last4": None}
         assert store.token is None
-        assert client.delete("/player/key").status_code == 200
+        assert client.delete("/player/key", headers=JSON_HEADERS).status_code == 200
         assert client.get("/player/key").json() == {"has_key": False, "last4": None}
 
 

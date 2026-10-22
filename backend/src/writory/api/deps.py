@@ -9,8 +9,8 @@ Người đang dùng (`get_owner_id`, D-89) theo `Settings.auth_mode`:
 - `invite`: chủ của phiên đăng nhập trong cookie (mã mời, `db.auth`); thiếu, sai hay hết hạn thì
   AUTH_REQUIRED. Truyện, phiên khởi tạo, key, nhật ký chi phí đều theo `owner_id` (D-44), nên kiểm
   chủ ở API là kiểm owner_id này.
-Mọi router của người chơi qua `api_guard`: router đã bật cho app này, và ở chế độ `invite` thì route
-ghi phải là JSON cùng origin (chống CSRF, D-89).
+Mọi router của người chơi qua `api_guard`: router đã bật cho app này, và route ghi phải là JSON
+cùng origin ở cả hai chế độ (chống CSRF, D-89).
 """
 
 import asyncio
@@ -83,7 +83,7 @@ _SAME_ORIGIN_SITES = frozenset({"same-origin", "none"})  # "none": người dùn
 
 
 def _same_origin_json(request: Request) -> None:
-    """Chống CSRF tối thiểu cho route ghi khi đăng nhập bằng cookie (D-89, docs/security.md):
+    """Chống CSRF tối thiểu cho route ghi, ở mọi chế độ (D-89, docs/security.md):
     - `Content-Type` phải là `application/json`, kể cả khi không có thân. Form của trang khác không
       gửi được kiểu này; `fetch` khác origin gửi kiểu này thì trình duyệt phải hỏi trước (preflight),
       mà máy chủ không bật CORS nên bị chặn.
@@ -108,11 +108,11 @@ def _same_origin_json(request: Request) -> None:
 
 def api_guard(request: Request) -> None:
     """Gắn vào mọi router của người chơi. Fail closed: router chưa bật cho chính app này (D-41,
-    D-89) thì 404; chế độ `invite` thì route ghi phải là JSON cùng origin."""
+    D-89) thì 404. Route ghi phải là JSON cùng origin ở MỌI chế độ: ở `dev`, trang lạ trong trình
+    duyệt của máy dev cũng gửi được yêu cầu ghi tới localhost và tiêu key đã lưu (D-89)."""
     if getattr(request.app.state, "player_routes_enabled", False) is not True:
         raise HTTPException(status_code=404)
-    if (request.app.state.settings.auth_mode == "invite"
-            and request.method not in _SAFE_METHODS):
+    if request.method not in _SAFE_METHODS:
         _same_origin_json(request)
 
 

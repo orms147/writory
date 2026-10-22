@@ -29,6 +29,8 @@ API truyện (`/stories/...`), khởi tạo (`/setup/...`), key và chi phí ng�
 - `AUTH_MODE=dev` (mặc định): không có đăng nhập, mọi người là người chơi dev `dev`. Router chỉ được gắn khi đặt `ENABLE_DEV_ROUTES=true` (D-41). Chỉ dùng trên máy dev. Các lệnh `curl` dưới đây chạy ở chế độ này.
 - `AUTH_MODE=invite`: đăng nhập bằng mã mời (mục Đăng nhập bằng mã mời), router luôn được gắn, không cần `ENABLE_DEV_ROUTES`.
 
+Ở cả hai chế độ, mọi yêu cầu ghi (POST, PUT, DELETE) phải có `content-type: application/json`, kể cả khi không có thân, và không được đến từ trang khác origin (chống CSRF, D-89, docs/security.md); thiếu thì `403 REQUEST_ORIGIN_INVALID`. Các lệnh `curl` dưới đây đều gửi header đó.
+
 Chạy migration trước (mục Migration Postgres).
 ```bash
 ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload
@@ -46,14 +48,14 @@ curl -X POST http://127.0.0.1:8000/stories/<story_id>/narrator -H 'content-type:
 Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
 ```bash
 curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "moderate"}'
-curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings
+curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json'
 curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
 # tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:
-curl -X POST http://127.0.0.1:8000/setup/<session_id>/finalize   # trả story_id
+curl -X POST http://127.0.0.1:8000/setup/<session_id>/finalize -H 'content-type: application/json'   # trả story_id
 ```
 Viết chương (SSE, D-46) rồi chọn hành động cho chương sau:
 ```bash
-curl -N -X POST http://127.0.0.1:8000/stories/<story_id>/chapters/next   # event: stage | scene_ready | … | choices_ready
+curl -N -X POST http://127.0.0.1:8000/stories/<story_id>/chapters/next -H 'content-type: application/json'   # event: stage | scene_ready | … | choices_ready
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: application/json' -d '{"choice_id": "choice-…"}'
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
 curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện
@@ -104,7 +106,7 @@ Chạy backend ở chế độ này:
 AUTH_MODE=invite uv run uvicorn writory.api:create_app --factory --host 127.0.0.1 --port 8000
 ```
 - Cookie phiên `writory_session`: `HttpOnly`, `SameSite=Lax`, `Secure` trừ khi truy cập qua `localhost`/`127.0.0.1`. Sau HTTPS proxy thì proxy phải giữ nguyên header `Host`.
-- Mọi yêu cầu ghi (POST, PUT, DELETE) phải có `content-type: application/json` và cùng origin (chống CSRF, docs/security.md). Gọi bằng `curl` ở chế độ này thì thêm `-H 'content-type: application/json'` cả khi không có thân, và gửi cookie (`-b`).
+- Gọi bằng `curl` ở chế độ này thì ngoài `-H 'content-type: application/json'` (mọi chế độ, mục trên) còn phải gửi cookie phiên (`-b`).
 - Giới hạn lần nhập mã tính theo địa chỉ máy mà uvicorn thấy. Sau proxy, mọi người chung một địa chỉ (chưa đọc `X-Forwarded-For`).
 - Dữ liệu cũ của người chơi dev `dev` không thuộc mã nào, nên không thấy được ở chế độ `invite`.
 

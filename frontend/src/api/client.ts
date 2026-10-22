@@ -36,7 +36,7 @@ export function setFetch(fn: FetchLike): void {
 async function send(method: string, path: string, body?: unknown, signal?: AbortSignal): Promise<Response> {
   const init: RequestInit = { method, headers: { accept: 'application/json' } };
   // Mọi yêu cầu ghi gửi `content-type: application/json`, kể cả khi không có thân: máy chủ dùng nó
-  // để chống CSRF khi đăng nhập bằng cookie (D-89, `deps.api_guard`). Cookie phiên đi kèm vì cùng
+  // để chống CSRF ở mọi chế độ (D-89, `deps.api_guard`). Cookie phiên đi kèm vì cùng
   // origin (`credentials` mặc định `same-origin`).
   if (method !== 'GET') init.headers = { ...init.headers, 'content-type': 'application/json' };
   if (body !== undefined) init.body = JSON.stringify(body);
