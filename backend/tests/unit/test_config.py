@@ -70,7 +70,7 @@ def test_require_returns_value_when_set(config_dir: Path):
         ("limits.yaml", "per_scene: 0.02", "per_scene: 0.02\n  per_sceen: 1", "per_sceen"),
         ("limits.yaml", "rewrite_per_scene: 1", "rewrite_per_scene: -1", "rewrite_per_scene"),
         ("limits.yaml", "setup_repair: 1", "setup_repair: -1", "setup_repair"),
-        ("models.yaml", '    model: "deepseek/deepseek-v4-flash"\n', "", "model"),  # mức thiếu model
+        ("models.yaml", '    model: "openai/gpt-6-luna"\n', "", "model"),  # mức thiếu model
         ("story_lengths.yaml", "chapter_chars: {min: 3000, max: 10000}",
          "chapter_chars: {min: 10000, max: 3000}", "chapter_chars"),
         ("quality.yaml", "dialogue_style: dash", "dialogue_style: html", "dialogue_style"),
@@ -143,7 +143,7 @@ def test_settings_validation_error_never_echoes_secret_values(monkeypatch, tmp_p
     assert "7777777777" not in text
 
 
-PROJECT_MODEL = "deepseek/deepseek-v4-flash"  # D-100: thay GPT-6 Luna cho mọi vai và mức model viết
+PROJECT_MODEL = "openai/gpt-6-luna"  # D-102 (thay D-100): mọi vai và mức model viết
 
 
 def test_role_extract_uses_the_project_model_with_low_reasoning():
@@ -266,3 +266,13 @@ def test_story_lengths_need_at_least_one_open_level(config_dir):
                     encoding="utf-8")
     with pytest.raises(ConfigError, match="player_selectable"):
         load_config(config_dir)
+
+
+def test_the_writer_tier_points_back_to_bench_d_and_no_provider_is_ignored():
+    """D-102: Luna đã qua bài D (`eval_result`), nên không còn lý do loại nhà cung cấp nào; cơ chế
+    `provider_ignore` của D-100 vẫn còn, danh sách rỗng."""
+    models = load_config().models
+    [tier] = models.writer_tiers
+    assert tier.eval_result == "evals/results/2026-10-20-quality-r2/"
+    assert models.provider_ignore == []
+    assert PROJECT_MODEL in models.prices
