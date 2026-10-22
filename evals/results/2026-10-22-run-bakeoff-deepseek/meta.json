@@ -1,0 +1,123 @@
+{
+  "bench": "run",
+  "label": "bakeoff-deepseek",
+  "started": "2026-10-22T21:00:30+07:00",
+  "finished": "2026-10-22T22:04:41+07:00",
+  "status": "done",
+  "exit_code": 0,
+  "stop": null,
+  "dry_run": false,
+  "git": {
+    "commit": "cbb9f077ac282736f79badd40bf660f45825573f",
+    "dirty": true
+  },
+  "story_id": "run-20261022-bakeoff-deepseek-b8c242f0",
+  "seed": 20261022,
+  "budget_usd": 0.15,
+  "chapters_arg": 6,
+  "scenario": {
+    "path": "evals/scenarios/story_run/model-bakeoff.yaml",
+    "sha256": "127d59f2867ad35664c062017372d8737947eee5dddfa235243e6b27e0c5e947",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "tu tiên",
+        "era": "loạn thế, các đại tông môn tranh đoạt linh mạch",
+        "voice": "căng thẳng, nhiều mưu tính và đối đáp sắc",
+        "darkness": "vừa phải, có phản bội và chết chóc, không tả máu me"
+      },
+      "length_level": "short",
+      "naming": {
+        "names": "han_viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261022,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        },
+        "deepseek/deepseek-v4-flash": {
+          "in": 0.091,
+          "out": 0.182
+        },
+        "tencent/hy3": {
+          "in": 0.132,
+          "out": 0.528
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "6ad8ba9dcef36fc3bbb8f6a13aa6fa67dffdbaf0a82aef69ec6ccea1aa18c600",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "6c331f63a90804c9d743cc65cae499cdc2f7b1465fd5e751bec88ddf5f32afcb",
+      "models.yaml": "236b444c7398b56298b172826c8c4d704a5696efdfce58661d7777ec0bddc2dc",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "deepseek/deepseek-v4-flash",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "setup_from": "evals/results/2026-10-22-run-bakeoff-setup",
+  "setup_only": false,
+  "overrides": {
+    "writer_model": "deepseek/deepseek-v4-flash",
+    "writer_reasoning": "none",
+    "outline_model": "deepseek/deepseek-v4-flash",
+    "outline_reasoning": "low"
+  },
+  "prompt_versions": {
+    "setup": "setup-8",
+    "outline": "outline-9",
+    "writer": "writer-9",
+    "extract": "extract-7",
+    "choices": "choices-3"
+  },
+  "style_guide_sha256": "58292c7ff5fc0db6aa95fa1a31bba158f0838ac7dc7bb9d04d32f3312a7ffffa",
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}

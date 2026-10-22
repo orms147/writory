@@ -192,8 +192,10 @@ def test_pack_refuses_the_same_model_twice_and_a_wrong_count(world, tmp_path):
     _, sha = bb.load_data()
     with pytest.raises(ConfigError, match="cùng model viết"):
         bb.build_pack([runs[0], runs[1], twin], 1, tmp_path / "o1", sha)
-    with pytest.raises(ConfigError, match="đúng 3"):
-        bb.build_pack(runs[:2], 1, tmp_path / "o2", sha)
+    with pytest.raises(ConfigError, match="2 hoặc 3"):
+        bb.build_pack(runs[:1], 1, tmp_path / "o2", sha)
+    with pytest.raises(ConfigError, match="2 hoặc 3"):
+        bb.build_pack([*runs, twin], 1, tmp_path / "o3", sha)
 
 
 def test_pack_never_overwrites_an_existing_pack(world, pack):
@@ -586,3 +588,84 @@ def test_cli_real_run_needs_a_budget_and_a_key(pack, tmp_path, monkeypatch, caps
 def test_cli_refuses_a_directory_without_a_pack(tmp_path, capsys):
     assert bb.main(["summary", "--dir", str(tmp_path)]) == bb.EXIT_CONFIG
     assert "pack" in capsys.readouterr().err
+
+
+# --- hai truyện thay vì ba (chủ dự án loại hy3 giữa chừng, 22/10/2026; D-101) ----------------------
+
+
+@pytest.fixture
+def pack2(world):
+    root, runs = world
+    out = root / "evals" / "results" / "bakeoff2"
+    _, sha = bb.load_data()
+    bb.build_pack(runs[:2], 11, out, sha)
+    return out
+
+
+def test_two_runs_make_a_pack_labelled_a_and_b_only(pack2):
+    key = json.loads((pack2 / "key.json").read_text(encoding="utf-8"))
+    assert sorted(key) == ["A", "B"] and {k["model"] for k in key.values()} == set(MODELS[:2])
+    assert sorted(p.name for p in (pack2 / "stories").iterdir()) == ["A.md", "B.md"]
+    assert json.loads((pack2 / "pack_meta.json").read_text(encoding="utf-8"))["labels"] == ["A", "B"]
+    assert sorted(json.loads((pack2 / "code_metrics.json").read_text(encoding="utf-8"))) == ["A", "B"]
+
+
+def test_three_run_pack_records_its_labels_too(pack):
+    assert json.loads((pack / "pack_meta.json").read_text(encoding="utf-8"))["labels"] == [
+        "A", "B", "C"]
+
+
+def test_plan_for_two_labels_is_two_solo_and_two_reversed_compares():
+    units = bb.plan_units(("A", "B"))
+    assert [u.key for u in units] == ["solo:A", "solo:B", "compare:AB", "compare:BA"]
+    assert bb.plan_units() == bb.plan_units(("A", "B", "C"))  # mặc định như cũ
+
+
+def test_schemas_and_parsers_use_only_the_labels_of_the_pack():
+    data, _ = bb.load_data()
+    labels = ("A", "B")
+    schema = bb.compare_schema(data, labels)
+    assert schema["properties"]["ranking"]["items"]["enum"] == ["A", "B"]
+    value = bb.value_schema(data, labels)
+    assert value["properties"]["recommendation"]["enum"] == ["A", "B"]
+    assert list(value["properties"]["per_story"]["properties"]) == ["A", "B"]
+    reply = json.loads(compare_reply(data))
+    reply["ranking"] = ["B", "A"]
+    for cid in data.ids:
+        reply["per_criterion"][cid].update(best="A", worst="B")
+    assert bb.parse_compare(json.dumps(reply), data, labels)["ranking"] == ["B", "A"]
+    reply["ranking"] = ["A", "B", "C"]
+    with pytest.raises(bb.VerdictError, match="hoán vị"):
+        bb.parse_compare(json.dumps(reply), data, labels)
+    reply["ranking"] = ["B", "A"]
+    reply["per_criterion"][data.ids[0]].update(best="C")
+    with pytest.raises(bb.VerdictError, match="nhãn"):
+        bb.parse_compare(json.dumps(reply), data, labels)
+
+
+async def test_judge_runs_four_units_for_two_stories_and_never_mentions_a_third(pack2):
+    requests: list = []
+    bake, _ = make_bake(pack2, requests=requests)
+    assert await bake.run_units() == bb.EXIT_OK
+    assert [r["unit"] for r in rows(pack2)] == ["solo:A", "solo:B", "compare:AB", "compare:BA"]
+    compare_bodies = [r.content.decode("utf-8") for r in requests[2:]]
+    assert len(requests) == 4
+    for body in compare_bodies:
+        assert 'nhan=\\"C\\"' not in body and "Ba truyện" not in body
+        assert "Ba tác giả" not in body and "ba truyện" not in body.lower().replace("hai truyện", "")
+
+
+def test_cli_dry_run_with_two_runs_goes_through_every_step(world, tmp_path, capsys):
+    _root, runs = world
+    out = tmp_path / "bakeoff-two"
+    argv = ["pack", "--seed", "5", "--out", str(out)]
+    for r in runs[:2]:
+        argv += ["--run", str(r)]
+    assert bb.main(argv) == bb.EXIT_OK
+    assert bb.main(["judge", "--dir", str(out), "--dry-run"]) == bb.EXIT_OK
+    assert bb.main(["value", "--dir", str(out), "--dry-run"]) == bb.EXIT_OK
+    assert bb.main(["summary", "--dir", str(out)]) == bb.EXIT_OK
+    text = (out / "summary.md").read_text(encoding="utf-8")
+    assert "so 2 model" in text and "Khuyến nghị đáng tiền" in text
+    assert text.count("alpha/vi-writer") + text.count("beta/vi-writer") >= 2
+    assert "gamma/vi-writer" not in text

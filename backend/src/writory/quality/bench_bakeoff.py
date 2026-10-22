@@ -3,8 +3,8 @@
 Các lượt viết chạy bằng `writory.pipeline.bench_run` (`--setup-only` rồi `--setup-from`, đổi model
 bằng `--writer-model` và `--outline-model`). Module này lo phần sau:
 
-    pack     ba thư mục kết quả -> truyện gắn nhãn A/B/C ngẫu nhiên + khoá giải nhãn ở file riêng
-    judge    chấm mù: mỗi truyện một lượt `solo`, rồi `compare` cả ba hai lần với thứ tự đảo
+    pack     hai hay ba thư mục kết quả -> truyện gắn nhãn A/B(/C) ngẫu nhiên + khoá giải nhãn
+    judge    chấm mù: mỗi truyện một lượt `solo`, rồi `compare` tất cả hai lần với thứ tự đảo
     value    sau khi điểm mù đã khoá: đưa chi phí thật, hỏi khuyến nghị "đáng tiền"
     summary  giải nhãn, bảng tổng hợp
 
@@ -69,7 +69,7 @@ from writory.quality.bench_d import (
 DATA_DIR = REPO_ROOT / "evals" / "scenarios" / "bakeoff"
 JUDGE_FILE = "judge.yaml"
 STORY_TAG = "truyen"
-LABELS = ("A", "B", "C")
+LABELS = ("A", "B", "C")  # nhãn tối đa; gói hai truyện dùng A, B (`labels_for`, ghi ở pack_meta)
 SOLO, COMPARE, VALUE = "solo", "compare", "value"
 VERDICTS = ("dang_tien", "chap_nhan_duoc", "khong_dang_tien")
 RESULTS_FILE, ERRORS_FILE, LOCK_FILE = "results.jsonl", "errors.jsonl", "value_lock.json"
@@ -247,8 +247,9 @@ def cost_table(run: RunInfo) -> dict[str, Any]:
 
 
 def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str) -> dict[str, Any]:
-    if len(run_dirs) != len(LABELS):
-        raise ConfigError(f"cần đúng {len(LABELS)} thư mục kết quả, nhận {len(run_dirs)}")
+    if not 2 <= len(run_dirs) <= len(LABELS):
+        raise ConfigError(f"cần 2 hoặc {len(LABELS)} thư mục kết quả, nhận {len(run_dirs)}")
+    labels = labels_for(len(run_dirs))
     if (out / "pack_meta.json").exists():
         raise ConfigError(f"{out} đã có gói truyện; dùng thư mục mới")
     runs = [load_run(d) for d in run_dirs]
@@ -258,7 +259,7 @@ def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str) ->
     key: dict[str, Any] = {}
     metrics: dict[str, Any] = {}
     (out / "stories").mkdir(parents=True, exist_ok=True)
-    for label, index in zip(LABELS, order, strict=True):
+    for label, index in zip(labels, order, strict=True):
         run = runs[index]
         text = story_text(run)
         (out / "stories" / f"{label}.md").write_text(text + "\n", encoding="utf-8", newline="\n")
@@ -270,9 +271,22 @@ def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str) ->
     _write_json(out / "key.json", key)  # KHOÁ GIẢI NHÃN: giám khảo không bao giờ đọc file này
     _write_json(out / "code_metrics.json", metrics)
     meta = {"bench": "F", "seed": seed, "judge_yaml_sha256": data_sha, "git": git_state(),
-            "brief_sha256": _sha256(brief.encode()), "runs": [_rel(d) for d in run_dirs]}
+            "brief_sha256": _sha256(brief.encode()), "runs": [_rel(d) for d in run_dirs],
+            "labels": list(labels)}
     _write_json(out / "pack_meta.json", meta)
     return meta
+
+
+def labels_for(count: int) -> tuple[str, ...]:
+    return LABELS[:count]
+
+
+def pack_labels(pack: Path) -> tuple[str, ...]:
+    """Nhãn của một gói (`pack_meta.json`); gói cũ không ghi thì A, B, C."""
+    meta = pack / "pack_meta.json"
+    if not meta.exists():
+        return LABELS
+    return tuple(json.loads(meta.read_text(encoding="utf-8")).get("labels", LABELS))
 
 
 def _rel(path: Path) -> str:
@@ -328,12 +342,12 @@ def _object(props: Mapping[str, Any]) -> dict[str, Any]:
             "additionalProperties": False}
 
 
-def solo_schema(data: BakeoffData) -> dict[str, Any]:
+def solo_schema(data: BakeoffData, labels: Sequence[str] = LABELS) -> dict[str, Any]:
     return _object({cid: _score_prop() for cid in data.ids})
 
 
-def compare_schema(data: BakeoffData) -> dict[str, Any]:
-    label = {"type": "string", "enum": list(LABELS)}
+def compare_schema(data: BakeoffData, labels: Sequence[str] = LABELS) -> dict[str, Any]:
+    label = {"type": "string", "enum": list(labels)}
     return _object({
         "ranking": {"type": "array", "items": label},
         "reason": {"type": "string"},
@@ -345,22 +359,23 @@ def compare_schema(data: BakeoffData) -> dict[str, Any]:
     })
 
 
-def value_schema(data: BakeoffData) -> dict[str, Any]:
+def value_schema(data: BakeoffData, labels: Sequence[str] = LABELS) -> dict[str, Any]:
     story = _object({"verdict": {"type": "string", "enum": list(VERDICTS)},
                      "reason": {"type": "string"}})
     return _object({
-        "recommendation": {"type": "string", "enum": list(LABELS)},
-        "per_story": _object({label: story for label in LABELS}),
+        "recommendation": {"type": "string", "enum": list(labels)},
+        "per_story": _object({label: story for label in labels}),
         "reason": {"type": "string"},
         "caveats": {"type": "array", "items": {"type": "string"}},
     })
 
 
-SCHEMAS: dict[str, Callable[[BakeoffData], dict[str, Any]]] = {
+SCHEMAS: dict[str, Callable[[BakeoffData, Sequence[str]], dict[str, Any]]] = {
     SOLO: solo_schema, COMPARE: compare_schema, VALUE: value_schema}
 
 
-def judge_request(data: BakeoffData, kind: str, blocks: Sequence[str]) -> dict[str, Any]:
+def judge_request(data: BakeoffData, kind: str, blocks: Sequence[str],
+                  labels: Sequence[str] = LABELS) -> dict[str, Any]:
     """Không có tên model viết; không temperature (Sonnet 5.5 không nhận), không fallbacks (D-25).
     Đề bài chung là khối đầu của tin nhắn và nằm trong cache cùng system."""
     judge = data.judge
@@ -371,7 +386,7 @@ def judge_request(data: BakeoffData, kind: str, blocks: Sequence[str]) -> dict[s
         "model": judge.model, "max_tokens": judge.max_tokens,
         "thinking": {"type": judge.thinking},
         "output_config": {"effort": judge.effort,
-                          "format": {"type": "json_schema", "schema": SCHEMAS[kind](data)}},
+                          "format": {"type": "json_schema", "schema": SCHEMAS[kind](data, labels)}},
         "system": [{"type": "text", "text": system_text(data, kind),
                     "cache_control": {"type": "ephemeral"}}],
         "messages": [{"role": "user", "content": content}],
@@ -405,13 +420,14 @@ def _text(value: Any, where: str) -> str:
     return value
 
 
-def _label(value: Any, where: str) -> str:
-    if value not in LABELS:
-        raise VerdictError(f"{where}: nhãn {value!r} ngoài {LABELS}")
+def _label(value: Any, where: str, labels: Sequence[str] = LABELS) -> str:
+    if value not in labels:
+        raise VerdictError(f"{where}: nhãn {value!r} ngoài {tuple(labels)}")
     return value
 
 
-def parse_solo(text: str, data: BakeoffData) -> dict[str, dict[str, Any]]:
+def parse_solo(text: str, data: BakeoffData,
+               labels: Sequence[str] = LABELS) -> dict[str, dict[str, Any]]:
     obj = _exact_keys(_load(text), data.ids, "solo")
     out = {}
     for cid in data.ids:
@@ -424,16 +440,17 @@ def parse_solo(text: str, data: BakeoffData) -> dict[str, dict[str, Any]]:
     return out
 
 
-def parse_compare(text: str, data: BakeoffData) -> dict[str, Any]:
+def parse_compare(text: str, data: BakeoffData, labels: Sequence[str] = LABELS) -> dict[str, Any]:
     obj = _exact_keys(_load(text), ["ranking", "reason", "per_criterion", "evidence"], "compare")
     ranking = obj["ranking"]
-    if not isinstance(ranking, list) or sorted(map(str, ranking)) != sorted(LABELS):
-        raise VerdictError(f"ranking phải là hoán vị của {LABELS}, nhận {ranking!r}")
+    if not isinstance(ranking, list) or sorted(map(str, ranking)) != sorted(labels):
+        raise VerdictError(f"ranking phải là hoán vị của {tuple(labels)}, nhận {ranking!r}")
     per = _exact_keys(obj["per_criterion"], data.ids, "per_criterion")
     per_out = {}
     for cid in data.ids:
         item = _exact_keys(per[cid], ["best", "worst", "reason"], cid)
-        best, worst = _label(item["best"], f"{cid}.best"), _label(item["worst"], f"{cid}.worst")
+        best = _label(item["best"], f"{cid}.best", labels)
+        worst = _label(item["worst"], f"{cid}.worst", labels)
         if best == worst:
             raise VerdictError(f"{cid}: tốt nhất và kém nhất cùng là {best}")
         per_out[cid] = {"best": best, "worst": worst, "reason": _text(item["reason"], cid)}
@@ -443,17 +460,17 @@ def parse_compare(text: str, data: BakeoffData) -> dict[str, Any]:
     ev_out = []
     for i, item in enumerate(evidence):
         item = _exact_keys(item, ["label", "quote"], f"evidence[{i}]")
-        ev_out.append({"label": _label(item["label"], f"evidence[{i}]"),
+        ev_out.append({"label": _label(item["label"], f"evidence[{i}]", labels),
                        "quote": _text(item["quote"], f"evidence[{i}]")})
     return {"ranking": list(ranking), "reason": _text(obj["reason"], "reason"),
             "per_criterion": per_out, "evidence": ev_out}
 
 
-def parse_value(text: str, data: BakeoffData) -> dict[str, Any]:
+def parse_value(text: str, data: BakeoffData, labels: Sequence[str] = LABELS) -> dict[str, Any]:
     obj = _exact_keys(_load(text), ["recommendation", "per_story", "reason", "caveats"], "value")
-    stories = _exact_keys(obj["per_story"], LABELS, "per_story")
+    stories = _exact_keys(obj["per_story"], labels, "per_story")
     per = {}
-    for label in LABELS:
+    for label in labels:
         item = _exact_keys(stories[label], ["verdict", "reason"], label)
         if item["verdict"] not in VERDICTS:
             raise VerdictError(f"{label}.verdict {item['verdict']!r} ngoài {VERDICTS}")
@@ -461,11 +478,12 @@ def parse_value(text: str, data: BakeoffData) -> dict[str, Any]:
     caveats = obj["caveats"]
     if not isinstance(caveats, list) or not all(isinstance(c, str) for c in caveats):
         raise VerdictError("caveats phải là mảng chuỗi")
-    return {"recommendation": _label(obj["recommendation"], "recommendation"), "per_story": per,
+    return {"recommendation": _label(obj["recommendation"], "recommendation", labels),
+            "per_story": per,
             "reason": _text(obj["reason"], "reason"), "caveats": list(caveats)}
 
 
-PARSERS: dict[str, Callable[[str, BakeoffData], Any]] = {
+PARSERS: dict[str, Callable[[str, BakeoffData, Sequence[str]], Any]] = {
     SOLO: parse_solo, COMPARE: parse_compare, VALUE: parse_value}
 
 
@@ -499,9 +517,10 @@ class Unit:
     labels: tuple[str, ...]  # nhãn truyện đưa vào, theo thứ tự trình bày
 
 
-def plan_units() -> list[Unit]:
-    solo = [Unit(SOLO, f"{SOLO}:{label}", (label,)) for label in LABELS]
-    forward, backward = LABELS, tuple(reversed(LABELS))
+def plan_units(labels: Sequence[str] = LABELS) -> list[Unit]:
+    labels = tuple(labels)
+    solo = [Unit(SOLO, f"{SOLO}:{label}", (label,)) for label in labels]
+    forward, backward = labels, tuple(reversed(labels))
     compare = [Unit(COMPARE, f"{COMPARE}:{''.join(order)}", order) for order in (forward, backward)]
     return [*solo, *compare]
 
@@ -517,8 +536,9 @@ class Bakeoff:
         self.budget, self.workspace_id, self._log = budget, workspace_id, log
         self._sleep, self._clock, self._rng = sleep, clock, rng or random.Random()
         self.brief = (pack / "brief.md").read_text(encoding="utf-8").strip()
+        self.labels = pack_labels(pack)
         self.texts = {label: (pack / "stories" / f"{label}.md").read_text(encoding="utf-8").strip()
-                      for label in LABELS}
+                      for label in self.labels}
         self.stop: tuple[str, str] | None = None
 
     # -- đơn vị --
@@ -531,15 +551,15 @@ class Bakeoff:
         if unit.kind == SOLO:
             blocks.append(f"# Truyện\n\n{wrap_story(self.texts[unit.labels[0]])}")
         else:
-            blocks.append("# Ba truyện\n\n" + "\n\n".join(
+            blocks.append("# Các truyện\n\n" + "\n\n".join(
                 wrap_story(self.texts[label], label) for label in unit.labels))
         if extra:
             blocks.append(extra)
-        return judge_request(self.data, unit.kind, blocks)
+        return judge_request(self.data, unit.kind, blocks, self.labels)
 
     async def run_units(self) -> int:
         finished = self.done()
-        for unit in plan_units():
+        for unit in plan_units(self.labels):
             if unit.key in finished:
                 continue
             if not await self._run(unit, self.request_for(unit), self._texts_for(unit)):
@@ -550,7 +570,7 @@ class Bakeoff:
         return {"story": self.texts[unit.labels[0]]} if unit.kind == SOLO else dict(self.texts)
 
     async def run_value(self, extra: str) -> int:
-        unit = Unit(VALUE, VALUE, LABELS)
+        unit = Unit(VALUE, VALUE, self.labels)
         if unit.key not in self.done():
             await self._run(unit, self.request_for(unit, extra), {})
         return self._exit()
@@ -622,7 +642,7 @@ class Bakeoff:
             return True
         body = next((b.text for b in msg.content if b.type == "text"), "")
         try:
-            parsed = PARSERS[unit.kind](body, self.data)
+            parsed = PARSERS[unit.kind](body, self.data, self.labels)
         except VerdictError as e:
             self._error(unit, "JUDGE_BAD_JSON", str(e)[:300], attempts, unknown, cost=cost)
             return True
@@ -660,7 +680,7 @@ def blind_sha256(store: Store) -> str:
 def lock_blind_scores(store: Store) -> str:
     """Ghi dấu bước 1 trước khi đưa chi phí. Có dấu rồi mà điểm đã đổi thì từ chối."""
     done = {r["unit"] for r in blind_rows(store) if r["status"] == "ok"}
-    missing = [u.key for u in plan_units() if u.key not in done]
+    missing = [u.key for u in plan_units(pack_labels(store.root)) if u.key not in done]
     if missing:
         raise ConfigError(f"chấm mù chưa đủ, còn thiếu {missing}: chạy `judge` cho xong trước")
     sha = blind_sha256(store)
@@ -688,14 +708,15 @@ def value_context(data: BakeoffData, pack: Path, store: Store) -> str:
     """Điểm đã khoá và chi phí thật, theo nhãn (vẫn mù tên model)."""
     key = _read_json(pack / "key.json")
     metrics = _read_json(pack / "code_metrics.json")
-    summary = blind_summary(data, store)
+    labels = pack_labels(pack)
+    summary = blind_summary(data, store, labels)
     lines = ["# Kết quả đã khoá", "", "Điểm trung bình theo tiêu chí (chấm riêng từng truyện):"]
-    for label in LABELS:
+    for label in labels:
         scores = ", ".join(f"{cid}={summary['solo_mean'][label][cid]:.1f}" for cid in data.ids)
         lines.append(f"- {label}: {scores}")
     lines.append(f"Xếp hạng so sánh (hạng trung bình, 1 là tốt nhất): {summary['mean_rank']}")
     lines += ["", "# Chi phí thật và độ tin cậy (USD)", ""]
-    for label in LABELS:
+    for label in labels:
         c = key[label]["costs"]
         lines += [(f"- {label}: {c['chapters_committed']}/{c['chapters_target']} chương, trạng thái "
                   f"{c['status']}; tổng {c['total_usd']} USD, {c['usd_per_chapter']} USD/chương; "
@@ -706,11 +727,12 @@ def value_context(data: BakeoffData, pack: Path, store: Store) -> str:
     return "\n".join(lines)
 
 
-def blind_summary(data: BakeoffData, store: Store) -> dict[str, Any]:
+def blind_summary(data: BakeoffData, store: Store,
+                  labels: Sequence[str] = LABELS) -> dict[str, Any]:
     solo = {r["labels"][0]: r["result"] for r in ok_results(store, SOLO)}
     solo_mean = {label: {cid: float(solo[label][cid]["score"]) for cid in data.ids}
                  for label in solo}
-    ranks: dict[str, list[int]] = {label: [] for label in LABELS}
+    ranks: dict[str, list[int]] = {label: [] for label in labels}
     rankings = []
     for r in ok_results(store, COMPARE):
         order = r["result"]["ranking"]
@@ -726,12 +748,13 @@ def build_summary(data: BakeoffData, pack: Path, store: Store) -> str:
     """Giải nhãn và dựng bảng: model | điểm từng mục | xếp hạng | USD/chương | lỗi."""
     key = _read_json(pack / "key.json")
     metrics = _read_json(pack / "code_metrics.json")
-    blind = blind_summary(data, store)
+    labels = pack_labels(pack)
+    blind = blind_summary(data, store, labels)
     value = ok_results(store, VALUE)
     head = ["Model", *[c.label for c in data.criteria], "Trung bình", "Hạng so sánh", "USD/chương",
             "Lỗi (code)", "Lỗi lời gọi"]
     rows = []
-    for label in sorted(LABELS, key=lambda x: blind["mean_rank"].get(x, 9)):
+    for label in sorted(labels, key=lambda x: blind["mean_rank"].get(x, 9)):
         scores = blind["solo_mean"].get(label, {})
         mean = sum(scores.values()) / len(scores) if scores else None
         c = key[label]["costs"]
@@ -745,7 +768,7 @@ def build_summary(data: BakeoffData, pack: Path, store: Store) -> str:
             f"{sum(c['failed_calls'].values())}"])
     out = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
     out += ["| " + " | ".join(r) + " |" for r in rows]
-    lines = ["# Bài F: so 3 model viết trên cùng một thế giới", "", *out, "",
+    lines = [f"# Bài F: so {len(labels)} model viết trên cùng một thế giới", "", *out, "",
              (f"Hạng so sánh: trung bình của hai lượt thứ tự đảo; hai lượt "
              f"{'đồng ý' if blind['order_agrees'] else 'KHÔNG đồng ý (nghi thiên lệch vị trí)'}.")]
     for r in blind["rankings"]:
@@ -785,15 +808,17 @@ def fake_judge_reply(body: dict[str, Any]) -> dict[str, Any]:
     """Phản hồi Messages API giả theo schema của yêu cầu: điểm giữa thang, xếp hạng theo nhãn."""
     props = body["output_config"]["format"]["schema"]["properties"]
     if "ranking" in props:
+        labels = props["ranking"]["items"]["enum"]
         crit = list(props["per_criterion"]["properties"])
         verdict: dict[str, Any] = {
-            "ranking": list(LABELS), "reason": "dry-run", "evidence": [],
-            "per_criterion": {cid: {"best": LABELS[0], "worst": LABELS[-1], "reason": "dry-run"}
+            "ranking": list(labels), "reason": "dry-run", "evidence": [],
+            "per_criterion": {cid: {"best": labels[0], "worst": labels[-1], "reason": "dry-run"}
                               for cid in crit}}
     elif "recommendation" in props:
-        verdict = {"recommendation": LABELS[0], "reason": "dry-run", "caveats": ["dry-run"],
+        labels = props["recommendation"]["enum"]
+        verdict = {"recommendation": labels[0], "reason": "dry-run", "caveats": ["dry-run"],
                    "per_story": {label: {"verdict": VERDICTS[1], "reason": "dry-run"}
-                                 for label in LABELS}}
+                                 for label in labels}}
     else:
         verdict = {cid: {"quote": NO_QUOTE, "reason": "dry-run", "score": 3} for cid in props}
     return {
@@ -867,7 +892,7 @@ def _cmd_pack(args: argparse.Namespace) -> int:
     _, sha = load_data(Path(args.data_dir))
     out = Path(args.out)
     meta = build_pack([Path(d) for d in args.run], args.seed, out, sha)
-    print(f"Đã đóng gói 3 truyện vào {out} (nhãn xáo theo seed {meta['seed']}); khoá: key.json")
+    print(f"Đã đóng gói {len(meta['labels'])} truyện vào {out} (nhãn xáo theo seed {meta['seed']}); khoá: key.json")
     return EXIT_OK
 
 
@@ -884,9 +909,9 @@ def _parser() -> argparse.ArgumentParser:
     p = argparse.ArgumentParser(prog="python -m writory.quality.bench_bakeoff",
                                 description="Bài F: so nhiều model viết (D-101).")
     sub = p.add_subparsers(dest="command", required=True)
-    pack = sub.add_parser("pack", help="đóng gói mù ba lần chạy")
+    pack = sub.add_parser("pack", help="đóng gói mù hai hoặc ba lần chạy")
     pack.add_argument("--run", action="append", required=True, metavar="DIR",
-                      help="thư mục kết quả của bench_run (lặp lại đúng ba lần)")
+                      help="thư mục kết quả của bench_run (lặp lại hai hoặc ba lần)")
     pack.add_argument("--seed", type=int, required=True, help="seed xáo nhãn A/B/C")
     pack.add_argument("--out", required=True, help="thư mục kết quả mới của bài F")
     for name, helptext in (("judge", "chấm mù: solo ×3 + compare ×2"),

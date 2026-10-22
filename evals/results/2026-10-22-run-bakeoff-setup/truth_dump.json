@@ -1,0 +1,1212 @@
+{
+ "story_id": "run-20261022-bakeoff-setup-89ea2b59",
+ "plan": {
+  "acts": [
+   {
+    "name": "Mở đầu",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Phát triển",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Cao trào",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "name": "Kết",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact3",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Lục Thanh Phong",
+      "Ma Môn"
+     ],
+     [
+      "thư tín",
+      "Lục Thanh Phong",
+      "Ma Môn"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact4",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Lục Thanh Phong",
+      "khống chế",
+      "trận pháp"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "thread_chinh",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "thread_phu",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Trần Huyền Cơ kích động thành công mâu thuẫn giữa ba trưởng lão, khiến họ bắt đầu nghi ngờ lẫn nhau.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Trần Huyền Cơ phát hiện manh mối về âm mưu của Lục Thanh Phong với Ma Môn.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Trần Huyền Cơ đối đầu trực diện với Lục Thanh Phong, phá giải trận pháp và buộc hắn thú tội.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Vụ án phản bội được giải quyết, Trần Huyền Cơ giành lại Tông Chủ Ấn và củng cố quyền lực trong tông.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "fact3",
+    "text": "Lục Thanh Phong đã bí mật liên lạc với Ma Môn, hứa cắt linh mạch cho chúng để đổi lấy ủng hộ chiếm Tông Chủ Ấn.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "fact4",
+    "text": "Trận pháp giết người bên ngoài đại điện do Lục Thanh Phong khống chế, hắn có thể kích hoạt bất kỳ lúc nào.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "thread_chinh",
+    "description": "Liệu Trần Huyền Cơ có thể chiếm quyền kiểm soát Vạn Đạo Tông trước khi trận pháp giết người hoàn tất?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_phu",
+    "description": "Ai là kẻ chủ mưu thực sự đứng sau vụ án phản bội?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-bakeoff-setup-89ea2b59-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Trần Huyền Cơ",
+      "personality": "Nóng nảy, bộc trực, giàu tình nghĩa. Hắn không thích âm mưu, thà đấu kiếm hơn đấu miệng.",
+      "backstory": "Con nuôi của tông chủ tiền nhiệm, sau khi tông chủ mất, hắn giữ Tông Chủ ấn. Các trưởng lão nghi ngờ hắn có mưu đồ và vu cho hắn âm mưu hợp tác với Ma Môn để tiêu diệt tông môn.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "luc_thanh_phong",
+     "label": "Character",
+     "props": {
+      "name": "Lục Thanh Phong",
+      "aliases": [
+       "Lục trưởng lão"
+      ],
+      "personality": "Giảo hoạt, thâm trầm, luôn giữ thái độ điềm tĩnh. Là người có dã tâm lớn và không từ thủ đoạn.",
+      "backstory": "Trưởng lão thủ tịch của Vạn Đạo Tông, từng là đại đệ tử của tông chủ tiền nhiệm, luôn khao khát ngôi vị tông chủ. Sau khi tông chủ mất, hắn mưu tính kết hợp với Ma Môn để hạ bệ Trần Huyền Cơ."
+     }
+    },
+    {
+     "id": "trieu_van_son",
+     "label": "Character",
+     "props": {
+      "name": "Triệu Vân Sơn",
+      "aliases": [
+       "Triệu trưởng lão"
+      ],
+      "personality": "Bảo thủ, trung thành với tông môn nhưng dễ bị lung lay bởi lợi ích. Không thích âm mưu nhưng lại bị cuốn vào.",
+      "backstory": "Trưởng lão kỳ cựu, phụ trách tài vụ của tông. Ban đầu tin vào lời Lục Thanh Phong rằng Trần Huyền Cơ có tội, nhưng trong lòng còn nhiều nghi vấn."
+     }
+    },
+    {
+     "id": "vuong_tuyet_nghi",
+     "label": "Character",
+     "props": {
+      "name": "Vương Tuyết Nghi",
+      "aliases": [
+       "Vương trưởng lão"
+      ],
+      "personality": "Trầm tĩnh, sắc sảo, nhạy bén với mưu đồ. Trong lòng vẫn tin vào Trần Huyền Cơ nhưng phải giữ thể diện tông môn.",
+      "backstory": "Nữ trưởng lão duy nhất, từng là đệ tử thân tín của cố tông chủ. Biết nhiều bí mật về cái chết của tông chủ và đang lặng lẽ điều tra."
+     }
+    },
+    {
+     "id": "van_dao_dien",
+     "label": "Location",
+     "props": {
+      "name": "Vạn Đạo Điện",
+      "aliases": [
+       "Đại điện"
+      ],
+      "description": "Phủ chủ điện của Vạn Đạo Tông, rộng lớn và lạnh lẽo, chỉ có vài ngọn đèn dầu leo lét."
+     }
+    },
+    {
+     "id": "hau_dien",
+     "label": "Location",
+     "props": {
+      "name": "Hậu Điện",
+      "aliases": [
+       "Phòng án ngữ"
+      ],
+      "description": "Khu vực phía sau đại điện, nơi đặt trận pháp giết người do Lục Thanh Phong điều khiển."
+     }
+    },
+    {
+     "id": "van_dao_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Vạn Đạo Tông",
+      "aliases": [
+       "Tông môn"
+      ],
+      "description": "Một trong những đại tông môn tu tiên, đang trong thời kỳ hỗn loạn sau khi tông chủ qua đời."
+     }
+    },
+    {
+     "id": "ma_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Ma Môn",
+      "aliases": [
+       "Ma đạo"
+      ],
+      "description": "Thế lực tà ác chuyên săn lùng linh mạch, luôn tìm cách thao túng các tông môn chính đạo."
+     }
+    },
+    {
+     "id": "tong_chu_an",
+     "label": "Item",
+     "props": {
+      "name": "Tông Chủ Ấn",
+      "aliases": [
+       "Ấn ngọc",
+       "Tông ấn"
+      ],
+      "description": "Ấn tỷ bằng ngọc bích, biểu tượng quyền lực tối cao của Vạn Đạo Tông, do Trần Huyền Cơ giữ."
+     }
+    },
+    {
+     "id": "fact1",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Huyền Cơ là con nuôi của tông chủ tiền nhiệm và nắm giữ Tông Chủ Ấn."
+     }
+    },
+    {
+     "id": "fact2",
+     "label": "Fact",
+     "props": {
+      "text": "Tông chủ tiền nhiệm qua đời trong một bí ẩn, không ai rõ nguyên nhân thực sự."
+     }
+    },
+    {
+     "id": "fact3",
+     "label": "Fact",
+     "props": {
+      "text": "Lục Thanh Phong đã bí mật liên lạc với Ma Môn, hứa cắt linh mạch cho chúng để đổi lấy ủng hộ chiếm Tông Chủ Ấn."
+     }
+    },
+    {
+     "id": "fact4",
+     "label": "Fact",
+     "props": {
+      "text": "Trận pháp giết người bên ngoài đại điện do Lục Thanh Phong khống chế, hắn có thể kích hoạt bất kỳ lúc nào."
+     }
+    },
+    {
+     "id": "fact5",
+     "label": "Fact",
+     "props": {
+      "text": "Vương Tuyết Nghi từng là đệ tử thân tín của cố tông chủ, biết nhiều bí mật về cái chết của ông."
+     }
+    },
+    {
+     "id": "thread_chinh",
+     "label": "Thread",
+     "props": {
+      "description": "Liệu Trần Huyền Cơ có thể chiếm quyền kiểm soát Vạn Đạo Tông trước khi trận pháp giết người hoàn tất?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "thread_phu",
+     "label": "Thread",
+     "props": {
+      "description": "Ai là kẻ chủ mưu thực sự đứng sau vụ án phản bội?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "thread_an",
+     "label": "Thread",
+     "props": {
+      "description": "Tông Chủ Ấn có thể bị cướp mất không, và ai sẽ là người nắm giữ nó cuối cùng?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luc_thanh_phong",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luc_thanh_phong>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "trieu_van_son",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:trieu_van_son>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "vuong_tuyet_nghi",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:vuong_tuyet_nghi>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>tong_chu_an@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luc_thanh_phong",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luc_thanh_phong>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "trieu_van_son",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:trieu_van_son>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "vuong_tuyet_nghi",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:vuong_tuyet_nghi>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>luc_thanh_phong@0",
+     "props": {
+      "kind": "thù",
+      "score": -80
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>trieu_van_son@0",
+     "props": {
+      "kind": "nghi kỵ",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>vuong_tuyet_nghi@0",
+     "props": {
+      "kind": "mơ hồ",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luc_thanh_phong",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luc_thanh_phong>trieu_van_son@0",
+     "props": {
+      "kind": "đồng minh",
+      "score": 60
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luc_thanh_phong",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luc_thanh_phong>vuong_tuyet_nghi@0",
+     "props": {
+      "kind": "đối địch",
+      "score": -40
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "vuong_tuyet_nghi",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:vuong_tuyet_nghi>protagonist@0",
+     "props": {
+      "kind": "trung thành",
+      "score": 50
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact1",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact1>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact1",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact1>tong_chu_an@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact2",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact2>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact3",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact3>luc_thanh_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact3",
+     "to": "ma_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact3>ma_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact3",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact3>tong_chu_an@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact4",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact4>luc_thanh_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact4",
+     "to": "hau_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact4>hau_dien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact4",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact4@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact5",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact5>vuong_tuyet_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Trần Huyền Cơ",
+      "known_as": "Trần Huyền Cơ"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "fact1": {
+    "label": "Fact",
+    "props": {
+     "text": "Trần Huyền Cơ là con nuôi của tông chủ tiền nhiệm và nắm giữ Tông Chủ Ấn."
+    }
+   },
+   "fact2": {
+    "label": "Fact",
+    "props": {
+     "text": "Tông chủ tiền nhiệm qua đời trong một bí ẩn, không ai rõ nguyên nhân thực sự."
+    }
+   },
+   "fact3": {
+    "label": "Fact",
+    "props": {
+     "text": "Lục Thanh Phong đã bí mật liên lạc với Ma Môn, hứa cắt linh mạch cho chúng để đổi lấy ủng hộ chiếm Tông Chủ Ấn."
+    }
+   },
+   "fact4": {
+    "label": "Fact",
+    "props": {
+     "text": "Trận pháp giết người bên ngoài đại điện do Lục Thanh Phong khống chế, hắn có thể kích hoạt bất kỳ lúc nào."
+    }
+   },
+   "fact5": {
+    "label": "Fact",
+    "props": {
+     "text": "Vương Tuyết Nghi từng là đệ tử thân tín của cố tông chủ, biết nhiều bí mật về cái chết của ông."
+    }
+   },
+   "hau_dien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Phòng án ngữ"
+     ],
+     "name": "Hậu Điện",
+     "description": "Khu vực phía sau đại điện, nơi đặt trận pháp giết người do Lục Thanh Phong điều khiển."
+    }
+   },
+   "luc_thanh_phong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng lão thủ tịch của Vạn Đạo Tông, từng là đại đệ tử của tông chủ tiền nhiệm, luôn khao khát ngôi vị tông chủ. Sau khi tông chủ mất, hắn mưu tính kết hợp với Ma Môn để hạ bệ Trần Huyền Cơ.",
+     "aliases": [
+      "Lục trưởng lão"
+     ],
+     "personality": "Giảo hoạt, thâm trầm, luôn giữ thái độ điềm tĩnh. Là người có dã tâm lớn và không từ thủ đoạn.",
+     "name": "Lục Thanh Phong"
+    }
+   },
+   "ma_mon": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Ma đạo"
+     ],
+     "name": "Ma Môn",
+     "description": "Thế lực tà ác chuyên săn lùng linh mạch, luôn tìm cách thao túng các tông môn chính đạo."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Con nuôi của tông chủ tiền nhiệm, sau khi tông chủ mất, hắn giữ Tông Chủ ấn. Các trưởng lão nghi ngờ hắn có mưu đồ và vu cho hắn âm mưu hợp tác với Ma Môn để tiêu diệt tông môn.",
+     "personality": "Nóng nảy, bộc trực, giàu tình nghĩa. Hắn không thích âm mưu, thà đấu kiếm hơn đấu miệng.",
+     "name": "Trần Huyền Cơ",
+     "is_protagonist": true
+    }
+   },
+   "thread_an": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tông Chủ Ấn có thể bị cướp mất không, và ai sẽ là người nắm giữ nó cuối cùng?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 4
+    }
+   },
+   "thread_chinh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Liệu Trần Huyền Cơ có thể chiếm quyền kiểm soát Vạn Đạo Tông trước khi trận pháp giết người hoàn tất?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 6
+    }
+   },
+   "thread_phu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai là kẻ chủ mưu thực sự đứng sau vụ án phản bội?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "tong_chu_an": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Ấn ngọc",
+      "Tông ấn"
+     ],
+     "name": "Tông Chủ Ấn",
+     "description": "Ấn tỷ bằng ngọc bích, biểu tượng quyền lực tối cao của Vạn Đạo Tông, do Trần Huyền Cơ giữ."
+    }
+   },
+   "trieu_van_son": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng lão kỳ cựu, phụ trách tài vụ của tông. Ban đầu tin vào lời Lục Thanh Phong rằng Trần Huyền Cơ có tội, nhưng trong lòng còn nhiều nghi vấn.",
+     "aliases": [
+      "Triệu trưởng lão"
+     ],
+     "personality": "Bảo thủ, trung thành với tông môn nhưng dễ bị lung lay bởi lợi ích. Không thích âm mưu nhưng lại bị cuốn vào.",
+     "name": "Triệu Vân Sơn"
+    }
+   },
+   "van_dao_dien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Đại điện"
+     ],
+     "name": "Vạn Đạo Điện",
+     "description": "Phủ chủ điện của Vạn Đạo Tông, rộng lớn và lạnh lẽo, chỉ có vài ngọn đèn dầu leo lét."
+    }
+   },
+   "van_dao_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Tông môn"
+     ],
+     "name": "Vạn Đạo Tông",
+     "description": "Một trong những đại tông môn tu tiên, đang trong thời kỳ hỗn loạn sau khi tông chủ qua đời."
+    }
+   },
+   "vuong_tuyet_nghi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Nữ trưởng lão duy nhất, từng là đệ tử thân tín của cố tông chủ. Biết nhiều bí mật về cái chết của tông chủ và đang lặng lẽ điều tra.",
+     "aliases": [
+      "Vương trưởng lão"
+     ],
+     "personality": "Trầm tĩnh, sắc sảo, nhạy bén với mưu đồ. Trong lòng vẫn tin vào Trần Huyền Cơ nhưng phải giữ thể diện tông môn.",
+     "name": "Vương Tuyết Nghi"
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:luc_thanh_phong>trieu_van_son@0",
+    "type": "RELATES_TO",
+    "source": "luc_thanh_phong",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 60,
+     "kind": "đồng minh"
+    }
+   },
+   {
+    "id": "RELATES_TO:luc_thanh_phong>vuong_tuyet_nghi@0",
+    "type": "RELATES_TO",
+    "source": "luc_thanh_phong",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -40,
+     "kind": "đối địch"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>luc_thanh_phong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -80,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>trieu_van_son@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "nghi kỵ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>vuong_tuyet_nghi@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "mơ hồ"
+    }
+   },
+   {
+    "id": "RELATES_TO:vuong_tuyet_nghi>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "vuong_tuyet_nghi",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 50,
+     "kind": "trung thành"
+    }
+   },
+   {
+    "id": "LOCATED_AT:luc_thanh_phong>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "luc_thanh_phong",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:trieu_van_son>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "trieu_van_son",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:vuong_tuyet_nghi>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "vuong_tuyet_nghi",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>tong_chu_an@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "tong_chu_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luc_thanh_phong>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "luc_thanh_phong",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:trieu_van_son>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "trieu_van_son",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:vuong_tuyet_nghi>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "vuong_tuyet_nghi",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact1@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact2@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact4@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact4",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact5@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact1@0",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact2@0",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact5@0",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact1@0",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact2@0",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact5@0",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:fact1>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact1",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact1>tong_chu_an@0",
+    "type": "ABOUT",
+    "source": "fact1",
+    "target": "tong_chu_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact2>van_dao_tong@0",
+    "type": "ABOUT",
+    "source": "fact2",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact3>luc_thanh_phong@0",
+    "type": "ABOUT",
+    "source": "fact3",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact3>ma_mon@0",
+    "type": "ABOUT",
+    "source": "fact3",
+    "target": "ma_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact3>tong_chu_an@0",
+    "type": "ABOUT",
+    "source": "fact3",
+    "target": "tong_chu_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact4>hau_dien@0",
+    "type": "ABOUT",
+    "source": "fact4",
+    "target": "hau_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact4>luc_thanh_phong@0",
+    "type": "ABOUT",
+    "source": "fact4",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact5>vuong_tuyet_nghi@0",
+    "type": "ABOUT",
+    "source": "fact5",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Trần Huyền Cơ",
+     "known_as": "Trần Huyền Cơ"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "pacing": 1
+   },
+   "problems": [
+    "chương 5 có 4 việc đến hạn, tối đa 3 (trừ chương cuối)"
+   ]
+  }
+ ],
+ "quotes": []
+}
