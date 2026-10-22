@@ -81,7 +81,14 @@ from writory.quality import (
     narration_instruction,
     normalize_dashes,
 )
-from writory.safety.leak import check_leaks, leak_names, protected_ids
+from writory.safety.leak import (
+    LeakHit,
+    LeakKind,
+    check_leaks,
+    forbidden_for_prompt,
+    leak_names,
+    protected_ids,
+)
 from writory.safety.moderate import Source, Verdict, moderate, rewrite_feedback
 from writory.safety.redact import redact
 from writory.safety.reveal import auto_reveals
@@ -392,11 +399,18 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
     lengths = d.config.story_lengths.chapter_chars
     act = next((a.name for a in d.plan.acts if a.from_chapter <= chapter <= a.to_chapter), None)
     earlier = tuple(EarlierScene(s.number, s.text, s.package) for s in state.get("accepted", []))
+    # Tên cấm trên trang, cùng hàm với bộ dò lộ ở bước soát (D-91), trên nền đã commit cộng các
+    # cảnh trước: đúng player_view mà bộ dò sẽ thấy, trừ hé lộ của chính cảnh đang viết.
+    overlay = OverlayState(d.store.state(), _earlier_packages(state))
+    forbidden = forbidden_for_prompt(
+        overlay, view=player_view_of(overlay, chapter), plan=d.plan,
+        story_brief=d.request.story_brief, scope="scene")
     return SceneBrief(
         chapter=chapter, scene=state["scene"], scene_count=count,
         min_chars=lengths.min // count, max_chars=lengths.max // count, act=act,
         story_brief=d.request.story_brief, player_action=d.request.player_action,
         earlier=earlier, goals=state["goals"], summaries=tuple(state["summaries"]),
+        forbidden=tuple(forbidden),
     )
 
 
@@ -613,6 +627,19 @@ async def _write(state: _State, runtime: Runtime[_Deps]) -> dict:
     return {"draft": result.text, "finish_reason": result.finish_reason}
 
 
+def _leak_feedback(hit: LeakHit) -> str:
+    """Lời nhắn cho lượt viết lại (lớp truth, không tới người chơi). Tên bị lộ thì nói người đọc
+    đã biết nút đó là gì để dùng thay, hoặc nói nút chưa hé lộ nên đừng nêu tên (D-91)."""
+    base = (f"lộ bí mật: đoạn «{hit.excerpt}» nói ra điều người đọc chưa được biết; "
+            "viết lại để không nói ra điều đó")
+    if hit.kind is not LeakKind.NAME:
+        return base
+    if hit.shown_as is not None:
+        return (f"{base}. Người đọc chỉ biết nhân vật hay vật này là «{hit.shown_as}»: "
+                f"dùng «{hit.shown_as}» thay vào")
+    return f"{base}. Tên này chưa được hé lộ: đừng nêu tên, tả bằng vai hay dáng vẻ"
+
+
 _QUALITY_LABELS = {
     IssueKind.LENGTH: "độ dài", IssueKind.REPETITION: "lặp từ", IssueKind.CLICHE: "sáo ngữ",
     IssueKind.FOREIGN_SCRIPT: "lẫn chữ khác hệ", IssueKind.DIALOGUE_FORMAT: "định dạng lời thoại",
@@ -691,10 +718,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     hits = check_leaks(text, view=player_view_of(overlay, chapter), plan=d.plan,
                        truth_names=leak_names(overlay), story_brief=d.request.story_brief,
                        scope="scene")
-    issues += [ReviewIssue("leak", h.kind.value, True,
-                           f"lộ bí mật: đoạn «{h.excerpt}» nói ra điều người đọc chưa được biết; "
-                           "viết lại để không nói ra điều đó")
-               for h in hits]
+    issues += [ReviewIssue("leak", h.kind.value, True, _leak_feedback(h)) for h in hits]
 
     # 6. Kiểm duyệt nội dung trên đúng chữ sẽ hiện (G9, D-57). Mọi vi phạm đều ở mức chặn: vượt
     # mức thì viết lại một lần, còn thì không hiện (bản sạch trước đó, nếu có, được hiện thay).

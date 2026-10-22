@@ -36,7 +36,7 @@ import logging
 import re
 import unicodedata
 from collections.abc import Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, replace
 from enum import StrEnum
 from typing import Literal, Protocol, get_args
 
@@ -95,6 +95,21 @@ class LeakHit:
     start: int
     end: int
     excerpt: str
+    # Chỉ với `NAME`: nút mang tên cấm, và tên người đọc đã biết nút đó (None nếu chưa hé lộ), để
+    # lượt viết lại nói được "dùng X thay vào" (D-91).
+    node_id: str | None = None
+    shown_as: str | None = None
+
+
+@dataclass(frozen=True)
+class ForbiddenName:
+    """Một tên lớp truth mà trang chưa được viết (D-61) và người đọc biết nút đó là gì (D-91).
+    `shown_as`: tên người đọc đã biết (`known_as` trong player_view); None nếu nút chưa hé lộ."""
+
+    node_id: str
+    term: str
+    shown_as: str | None
+    user_authored: bool = False  # nút do người chơi viết: chữ vào đề phải bọc (G4)
 
 
 def strip_diacritics(text: str) -> str:
@@ -155,26 +170,49 @@ def protected_ids(plan: StoryPlan, view: PlayerView, scope: Scope) -> set[str]:
 
 def _hidden_names(names: Sequence[str], entry: PlayerEntry) -> list[str]:
     """(a) Tên lớp truth của một nút đã có trong player_view mà người chơi chưa được biết: không
-    chứa trọn một tên đã hé lộ, không chung từ viết hoa nào với tên đã hé lộ."""
+    chứa trọn một tên đã hé lộ, không nằm trọn trong một tên đã hé lộ ("Thuyền Nhỏ" khi trang gọi
+    nó là "chiếc thuyền nhỏ", D-91), không chung từ viết hoa nào với tên đã hé lộ."""
     shown = (entry.text, *entry.aliases)
     keys = [name_key(t) for t in shown]
     tokens = set().union(*(_proper_tokens(t) for t in shown))
     return [n for n in names
-            if not any(_contains_words(name_key(n), k) for k in keys)
+            if not any(_contains_words(name_key(n), k) or _contains_words(k, name_key(n))
+                       for k in keys)
             and not _proper_tokens(n) & tokens]
 
 
-def _forbidden_names(
-    truth_names: Mapping[str, tuple[str, ...]], view: PlayerView, plan: StoryPlan,
-    seen: list[str], scope: Scope,
-) -> list[str]:
+def forbidden_names(
+    *, truth_names: Mapping[str, tuple[str, ...]], view: PlayerView, plan: StoryPlan,
+    story_brief: str, scope: Scope,
+) -> list[ForbiddenName]:
+    """Mọi tên bị cấm trên trang (D-61): luật (a) và (b) ở đầu file. MỘT nguồn cho bộ dò
+    (`check_leaks`) và cho đề của dàn ý và model viết (D-91): sửa luật ở đây thì cả hai theo."""
+    if scope not in get_args(Scope):
+        raise ValueError(f"scope phải là một trong {get_args(Scope)}, nhận {scope!r}")
     entries = {e.id: e for e in view.entries}
-    candidates = [n for node_id, names in truth_names.items() if node_id in entries
+    candidates = [(node_id, n) for node_id, names in truth_names.items() if node_id in entries
                   for n in _hidden_names(names, entries[node_id])]  # (a)
-    candidates += [n for node_id in protected_ids(plan, view, scope)
+    candidates += [(node_id, n) for node_id in sorted(protected_ids(plan, view, scope))
                    for n in truth_names.get(node_id, ())]  # (b)
-    known = set().union(*(_proper_tokens(t) for t in seen))
-    return sorted({n for n in candidates if _proper_tokens(n) - known})
+    known = set().union(*(_proper_tokens(t) for t in _seen_text(view, story_brief)))
+    out: dict[str, ForbiddenName] = {}
+    for node_id, term in candidates:
+        if _proper_tokens(term) - known and term not in out:
+            shown = entries[node_id].text if node_id in entries else None
+            out[term] = ForbiddenName(node_id, term, shown)
+    return [out[t] for t in sorted(out)]
+
+
+def forbidden_for_prompt(
+    state: NamedState, *, view: PlayerView, plan: StoryPlan, story_brief: str, scope: Scope,
+) -> list[ForbiddenName]:
+    """`forbidden_names` cho đề của model: thêm cờ `user_authored` của nút (G4)."""
+    found = forbidden_names(truth_names=leak_names(state), view=view, plan=plan,
+                            story_brief=story_brief, scope=scope)
+    rows = state.nodes(sorted({f.node_id for f in found}))
+    return [replace(f, user_authored=bool(rows.get(f.node_id)
+                                          and rows[f.node_id].props.get("user_authored") is True))
+            for f in found]
 
 
 def _excerpt(text: str, start: int, end: int) -> str:
@@ -202,10 +240,11 @@ def check_leaks(
     flat = strip_diacritics(text)
     hits: list[LeakHit] = []
 
-    for term in _forbidden_names(truth_names, view, plan, _seen_text(view, story_brief), scope):
-        for m in _pattern(term).finditer(flat):
-            hits.append(LeakHit(LeakKind.NAME, term, m.start(), m.end(),
-                                _excerpt(text, m.start(), m.end())))
+    for f in forbidden_names(truth_names=truth_names, view=view, plan=plan,
+                             story_brief=story_brief, scope=scope):
+        for m in _pattern(f.term).finditer(flat):
+            hits.append(LeakHit(LeakKind.NAME, f.term, m.start(), m.end(),
+                                _excerpt(text, m.start(), m.end()), f.node_id, f.shown_as))
 
     secrets = active_secrets(plan, view, scope)
     for secret in secrets:

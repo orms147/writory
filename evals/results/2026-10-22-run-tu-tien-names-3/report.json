@@ -1,0 +1,386 @@
+{
+ "status": "done",
+ "stop": null,
+ "chapters_planned": 6,
+ "chapters_target": 3,
+ "chapters_clamped": false,
+ "chapters_committed": 3,
+ "story_finished": false,
+ "plan_vs_result": {
+  "chapter": 3,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "n": 1,
+    "window": [
+     3,
+     4
+    ],
+    "revealed_chapter": null,
+    "status": "pending"
+   },
+   {
+    "n": 2,
+    "window": [
+     4,
+     5
+    ],
+    "revealed_chapter": null,
+    "status": "pending"
+   }
+  ],
+  "threads": [
+   {
+    "n": 1,
+    "window": [
+     1,
+     2
+    ],
+    "resolved_chapter": 1,
+    "status": "on_time"
+   },
+   {
+    "n": 2,
+    "window": [
+     3,
+     5
+    ],
+    "resolved_chapter": 3,
+    "status": "on_time"
+   },
+   {
+    "n": 3,
+    "window": [
+     4,
+     6
+    ],
+    "resolved_chapter": null,
+    "status": "pending"
+   },
+   {
+    "n": 4,
+    "window": [
+     5,
+     6
+    ],
+    "resolved_chapter": null,
+    "status": "pending"
+   }
+  ]
+ },
+ "cost": {
+  "total_usd": 0.024828,
+  "estimated_unbilled_usd": 0.0,
+  "by_role": {
+   "choices": 0.001473,
+   "extract": 0.00606,
+   "moderate": 0.001263,
+   "outline": 0.005474,
+   "setup": 0.00376,
+   "summary": 0.001074,
+   "writer": 0.005725
+  },
+  "by_chapter": {
+   "0": {
+    "setup": 0.00376,
+    "total": 0.00376
+   },
+   "1": {
+    "choices": 0.000434,
+    "extract": 0.002191,
+    "moderate": 0.000348,
+    "outline": 0.001663,
+    "summary": 0.000342,
+    "total": 0.006772,
+    "writer": 0.001794
+   },
+   "2": {
+    "choices": 0.00049,
+    "extract": 0.001921,
+    "moderate": 0.000443,
+    "outline": 0.00186,
+    "summary": 0.00034,
+    "total": 0.006888,
+    "writer": 0.001834
+   },
+   "3": {
+    "choices": 0.000549,
+    "extract": 0.001947,
+    "moderate": 0.000472,
+    "outline": 0.001952,
+    "summary": 0.000392,
+    "total": 0.007408,
+    "writer": 0.002096
+   }
+  },
+  "max_chapter_attempt_usd": 0.007408,
+  "max_scene_usd": 0.003294,
+  "scenes": [
+   {
+    "chapter": 1,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.002983
+   },
+   {
+    "chapter": 1,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.002665
+   },
+   {
+    "chapter": 2,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.002513
+   },
+   {
+    "chapter": 2,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003102
+   },
+   {
+    "chapter": 3,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.002701
+   },
+   {
+    "chapter": 3,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003294
+   }
+  ],
+  "limits": {
+   "per_scene": 0.02,
+   "per_chapter": 0.08,
+   "per_story": 1.0
+  }
+ },
+ "calls": {
+  "total": 37,
+  "by_role": {
+   "choices": 3,
+   "extract": 6,
+   "moderate": 9,
+   "outline": 6,
+   "setup": 4,
+   "summary": 3,
+   "writer": 6
+  },
+  "by_status": {
+   "ok": 37
+  }
+ },
+ "tokens": {
+  "choices": {
+   "prompt": 7255,
+   "completion": 1133
+  },
+  "extract": {
+   "prompt": 38644,
+   "completion": 4616
+  },
+  "moderate": {
+   "prompt": 17802,
+   "completion": 902
+  },
+  "outline": {
+   "prompt": 26579,
+   "completion": 4304
+  },
+  "setup": {
+   "prompt": 7240,
+   "completion": 6406
+  },
+  "summary": {
+   "prompt": 5986,
+   "completion": 652
+  },
+  "writer": {
+   "prompt": 33001,
+   "completion": 5002
+  }
+ },
+ "issues": {
+  "found": {},
+  "blocking_found": {},
+  "left_when_shown": {}
+ },
+ "rewrites": 0,
+ "fallbacks": 0,
+ "scenes_blocked": 0,
+ "outline_unplanned_threads": 0,
+ "summaries": {
+  "made": 3,
+  "failed": 0,
+  "chapters_missing_previous": 0
+ },
+ "rejected_edges": {
+  "total": 0,
+  "by_reason": {}
+ },
+ "player_retries_used": {
+  "setup": 0,
+  "chapter": 0,
+  "choices": 0
+ },
+ "setup_repairs": {
+  "used": 0,
+  "kinds": {}
+ },
+ "chapters": [
+  {
+   "chapter": 1,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2875,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 1908,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.006772,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 2,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2246,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2931,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.006888,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 3,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3215,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2667,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.007408,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  }
+ ]
+}

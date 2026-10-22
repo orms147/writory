@@ -1387,3 +1387,83 @@ async def test_blocked_category_in_choices_is_never_shown(tmp_path):
     blocked = moderation_reply(("political_propaganda_real", "mild"))
     events, outcome, _, _ = await run(full_script(), tmp_path, moderation=[ALLOW, ALLOW, blocked])
     assert of_type(events, "choices_ready") == [] and outcome.choices == []
+
+
+# --- báo trước tên đang cấm cho dàn ý và model viết (D-91) ---------------------------------------
+
+
+async def test_scene_two_prompts_list_the_name_scene_one_hid_behind_a_nickname(tmp_path):
+    """Cảnh 1 hé lộ gã lái đò mặt sẹo (bộ trích): từ cảnh 2, "Lý Thất" là tên cấm, và cả dàn ý lẫn
+    đề viết nói người đọc biết nút đó là gì."""
+    script = [outline_reply(), SCENE_2, EXTRACT_2, outline_reply(), SCENE_1, EXTRACT_1,
+              SUMMARY, choices_reply()]
+    events, _, llm, _ = await run(script, tmp_path)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    outlines, writers = calls_of(llm, "outline"), calls_of(llm, "writer")
+    for prompt in (outlines[0][-1].content, writers[0][-1].content):
+        assert "Tên người đọc chưa được biết" not in prompt  # cảnh 1: chưa có gì bị cấm
+    for prompt in (outlines[1][-1].content, writers[1][-1].content):
+        assert "Tên người đọc chưa được biết" in prompt
+        line = next(ln for ln in prompt.split("\n") if ln.startswith("- Người đọc biết là"))
+        assert "«gã lái đò mặt sẹo»" in line and "«Lý Thất»" in line
+
+
+async def test_forbidden_names_in_the_prompt_are_exactly_the_names_the_leak_check_blocks(tmp_path):
+    """Một nguồn: mọi tên bộ dò cấm ở cảnh 2 đều có trong đề viết cảnh 2."""
+    from writory.guard.state import OverlayState, player_view_of
+    from writory.safety.leak import forbidden_names, leak_names
+
+    script = [outline_reply(), SCENE_2, EXTRACT_2, outline_reply(), SCENE_1, EXTRACT_1,
+              SUMMARY, choices_reply()]
+    store = MemoryStore()
+    _, _, llm, _ = await run(script, tmp_path, store=store)
+    state = OverlayState(store.state(), [])
+    # Dựng lại nền cảnh 2 như người viết thấy: nền đã commit cộng gói cảnh 1 (có hé lộ).
+    from writory.graph import ChangePackage
+    scene_one = ChangePackage.model_validate({
+        "commit_id": "x", "edges": [{"type": "REVEALED_TO_PLAYER", "from": "ly_that", "to": "ch4",
+                                      "valid_from_chapter": 4,
+                                      "props": {"quote": "một gã lái đò mặt sẹo buộc thuyền",
+                                                "known_as": "gã lái đò mặt sẹo"}}]})
+    overlay = OverlayState(state, [scene_one])
+    names = forbidden_names(truth_names=leak_names(overlay), view=player_view_of(overlay, 4),
+                            plan=PLAN, story_brief=request().story_brief, scope="scene")
+    assert names, "kịch bản phải có tên cấm"
+    writer_two = calls_of(llm, "writer")[1][-1].content
+    for f in names:
+        assert f"«{f.term}»" in writer_two
+
+
+async def test_protected_name_of_an_unrevealed_node_is_listed_as_not_yet_revealed(tmp_path):
+    text = f"Tô Nguyệt Hoa đứng ngoài cổng. {SETUP_PC_NAME} không quay lại.{chr(10)*2}{SCENE_1}"
+    script = [outline_reply(present=("protagonist",)), text, extract_reply(), text, extract_reply()]
+    package, plan = setup_chapter_0()
+    plan = _protecting(plan, "to_nguyet_hoa")
+    store = OverlayStore("new-story")
+    store.commit(0, [], package)
+    config = make_config(tmp_path)
+    llm = ScriptedLLM(script)
+    chapter_run = ChapterRun(
+        ChapterRequest(present_ids=(), scene_count=2, story_brief="Kiếm hiệp, Hán Việt.",
+                       commit_id="c-ch1"),
+        llm=llm, store=store, config=config, plan=plan,
+        tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE,
+    )
+    [e async for e in chapter_run.events()]
+    first, rewrite = calls_of(llm, "writer")
+    for prompt in (first[-1].content, calls_of(llm, "outline")[0][-1].content):
+        line = next(ln for ln in prompt.split(chr(10)) if ln.startswith("- Chưa hé lộ;"))
+        assert "«Tô Nguyệt Hoa»" in line and "«Nguyệt Hoa»" in line  # tên và biệt danh lớp truth
+    # Lượt viết lại: phản hồi nói nút này chưa hé lộ nên đừng nêu tên (D-91).
+    assert "chưa được hé lộ" in rewrite[-1].content and "tả bằng vai" in rewrite[-1].content
+
+
+async def test_rewrite_after_a_hidden_name_says_which_name_to_use(tmp_path):
+    """Phản hồi lượt viết lại cho biết người đọc đã biết nút đó là gì: dùng tên đó thay vào."""
+    leaky = f"Lý Thất buộc thuyền trước quán trà.{chr(10)*2}{SCENE_2}"
+    script = [outline_reply(), SCENE_2, EXTRACT_2, outline_reply(), leaky, EXTRACT_1,
+              SCENE_1, EXTRACT_1, SUMMARY, choices_reply()]
+    events, _, llm, _ = await run(script, tmp_path)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    rewrite = calls_of(llm, "writer")[2][-1].content
+    assert "dùng «gã lái đò mặt sẹo» thay vào" in rewrite

@@ -21,6 +21,8 @@ from writory.safety.leak import (
     LeakKind,
     check_leaks,
     ensure_no_leak,
+    forbidden_for_prompt,
+    forbidden_names,
     leak_names,
     protected_ids,
     strip_diacritics,
@@ -498,3 +500,111 @@ def test_setup_text_counts_only_the_names_it_contains():
     """Tên bí mật vẫn bị cấm dù thiết lập truyện có chữ khác (D-26, D-48 giữ nguyên)."""
     hits = leaks("Gã lái đò, tức Lý Thất, buộc thuyền.", 4, brief="Kiếm hiệp, phố Bến Sương.")
     assert [h.term for h in hits] == ["Lý Thất"]
+
+
+# --- danh sách tên cấm báo trước cho model (D-91) -------------------------------------------------
+
+
+def forbidden(state: OverlayState, chapter: int, plan: StoryPlan = PLAN, brief: str = "",
+              scope: str = "scene"):
+    return forbidden_names(truth_names=leak_names(state), view=player_view_of(state, chapter),
+                           plan=plan, story_brief=brief, scope=scope)
+
+
+def test_forbidden_names_say_what_the_reader_knows_a_hidden_name_as():
+    """Truyện mẫu chương 4: người đọc biết "gã lái đò mặt sẹo", chưa được biết là Lý Thất."""
+    [f] = [f for f in forbidden(through(4), 4) if f.term == "Lý Thất"]
+    assert (f.node_id, f.shown_as) == ("ly_that", "gã lái đò mặt sẹo")
+    assert f.user_authored is False
+
+
+def test_forbidden_protected_name_of_an_unrevealed_node_has_no_shown_name():
+    [f] = forbidden(mask_world(), 1, MASK_PLAN)
+    assert (f.node_id, f.term, f.shown_as) == ("hac_y", "Lâm Hắc Y", None)
+
+
+@pytest.mark.parametrize(("chapter", "plan", "scope"), [
+    (4, PLAN, "scene"), (4, PLAN, "player_path"), (3, PLAN, "scene"), (1, PLAN, "scene"),
+])
+def test_prompt_list_and_leak_check_share_one_source(chapter, plan, scope):
+    """Mọi tên trong danh sách báo trước đều là tên bộ dò chặn, và ngược lại: hai bên cùng một hàm."""
+    state = through(chapter)
+    terms = {f.term for f in forbidden(state, chapter, plan, scope=scope)}
+    probe = " / ".join(sorted(terms)) or "Minh rót trà."
+    hit_terms = {h.term for h in leaks(probe, chapter, plan, scope=scope) if h.kind is LeakKind.NAME}
+    assert hit_terms == terms
+
+
+def test_protected_and_hidden_lists_share_one_source_in_a_mixed_world():
+    state = mask_world()
+    terms = {f.term for f in forbidden(state, 1, MASK_PLAN)}
+    hits = {h.term for h in mask_hits("Lâm Hắc Y đứng đó.", 1, "scene")}
+    assert terms == hits == {"Lâm Hắc Y"}
+
+
+def test_hit_carries_the_node_and_the_name_the_reader_knows():
+    [hit] = leaks("Gã lái đò mặt sẹo, tức Lý Thất, buộc thuyền trước quán.", 4)
+    assert (hit.node_id, hit.shown_as) == ("ly_that", "gã lái đò mặt sẹo")
+    [hit] = mask_hits(MASK_TEXT, 1, "scene")
+    assert (hit.node_id, hit.shown_as) == ("hac_y", None)
+
+
+def test_secret_group_hits_have_no_node():
+    [hit] = [h for h in leaks("Lan là gián điệp của Hội.", 4) if h.kind is LeakKind.SECRET]
+    assert hit.node_id is None and hit.shown_as is None
+
+
+def test_forbidden_names_flag_player_authored_nodes():
+    """Tên do người chơi viết (D-48): `name` không bao giờ cấm, nhưng biệt danh của nút đó có thể
+    cấm; chữ đi vào đề phải bọc (G4), nên danh sách phải mang cờ."""
+    nodes = [
+        {"id": PROTAGONIST_ID, "label": "Character",
+         "props": {"name": "Kỷ Trầm Uyên", "is_protagonist": True, "user_authored": True}},
+        {"id": "hac_y", "label": "Character",
+         "props": {"name": "Lâm Hắc Y", "aliases": ["Hắc Y Nhân"], "user_authored": True}},
+        {"id": "f_mask", "label": "Fact", "props": {"text": "Hắc Y Nhân là Lâm Hắc Y"}},
+    ]
+    state = OverlayState(EmptyState(), [ChangePackage.model_validate(
+        {"commit_id": "c0", "nodes": nodes})])
+    [f] = forbidden_for_prompt(state, view=player_view_of(state, 1), plan=MASK_PLAN,
+                               story_brief="", scope="scene")
+    assert (f.node_id, f.term, f.user_authored) == ("hac_y", "Hắc Y Nhân", True)
+    # Cùng danh sách với hàm thuần, chỉ thêm cờ.
+    assert [(g.node_id, g.term) for g in forbidden(state, 1, MASK_PLAN)] == [(f.node_id, f.term)]
+
+
+# --- tên thật nằm trọn trong chữ người đọc đã thấy (hồi quy tu-tien-names-1, D-91) ---------------
+
+
+def boat_world() -> OverlayState:
+    """Đồ vật "Thuyền Nhỏ"; trang gọi nó là "chiếc thuyền nhỏ" (known_as)."""
+    nodes = [
+        {"id": PROTAGONIST_ID, "label": "Character",
+         "props": {"name": "Đỗ Minh Viễn", "is_protagonist": True, "user_authored": True}},
+        {"id": "thuyen_nho", "label": "Item", "props": {"name": "Thuyền Nhỏ"}},
+        {"id": "chuong", "label": "Chapter", "number": 1},
+    ]
+    edges = [{"type": "REVEALED_TO_PLAYER", "from": "thuyen_nho", "to": "chuong",
+              "valid_from_chapter": 1,
+              "props": {"quote": "Anh thấy chiếc thuyền nhỏ nằm sát mép bến", "known_as": "chiếc thuyền nhỏ"}}]
+    return OverlayState(EmptyState(), [ChangePackage.model_validate(
+        {"commit_id": "c0", "nodes": nodes, "edges": edges})])
+
+
+@pytest.mark.parametrize("text", [
+    "Chiếc thuyền nhỏ nằm sát mép bến.", "Anh nhảy lên thuyền nhỏ.", "chiec thuyen nho",
+])
+def test_true_name_inside_what_the_reader_already_saw_is_not_forbidden(text):
+    """Người đọc biết nút là "chiếc thuyền nhỏ", nên viết "thuyền nhỏ" không lộ gì. Trước D-91 luật
+    (a) chỉ xét tên thật CHỨA chữ đã hé lộ, không xét chữ đã hé lộ chứa tên thật: cảnh bị chặn dù
+    model làm đúng lời nhắc "dùng «chiếc thuyền nhỏ»"."""
+    state = boat_world()
+    assert forbidden(state, 1, PLAN) == []
+    assert check_leaks(text, view=player_view_of(state, 1), truth_names=leak_names(state),
+                       plan=PLAN, story_brief="", scope="scene") == []
+
+
+def test_a_real_hidden_name_is_still_forbidden_beside_a_contained_one():
+    """Giữ nguyên D-61: tên thật không nằm trong chữ đã hé lộ vẫn bị cấm."""
+    [hit] = leaks("Gã lái đò mặt sẹo, tức Lý Thất, buộc thuyền trước quán.", 4)
+    assert hit.term == "Lý Thất"
