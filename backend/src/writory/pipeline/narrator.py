@@ -97,7 +97,10 @@ META_HEDGE_PATTERNS: tuple[tuple[str, str, str], ...] = (
       r"{0,3}(?:thông tin|dữ liệu|dữ kiện)\b"),
      "Lão Gù bị đánh vào gáy, nhưng không có thông tin về việc kẻ ra tay là người quen."),
     ("chua_ghi_chep",
-     r"\bchưa\s+(?:(?:hề|có|thấy|một|bất kỳ|bất cứ)\s+){0,3}ghi (?:chép|nhận)\b",
+     # "ghi nhận/ghi chép mới" là bản ghi mới trong thế giới truyện ("khi chưa có ghi nhận mới"), không
+     # phải người kể nói về sổ tay (D-86, bổ sung); "mới nào" vẫn là câu úp mở.
+     (r"\bchưa\s+(?:(?:hề|có|thấy|một|bất kỳ|bất cứ)\s+){0,3}ghi (?:chép|nhận)\b"
+      r"(?!\s+mới\b(?!\s+nào))"),
      "Chưa có ghi chép nào nói phù âm ấy là giả hay thật."),
     ("khong_duoc_ghi",
      rf"\b(?:{_NEG}\s+(?:hề\s+)?được\s+ghi\s+(?:lại|nhận|chép)|chưa\s+(?:hề\s+)?được\s+ghi)\b",
