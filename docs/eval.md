@@ -20,7 +20,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   | Hệ (`--systems`) | Ngữ cảnh |
   |---|---|
   | `graph` đồ thị WriTory | nhân vật/đồ vật/nơi chốn nêu trong câu hỏi, cạnh và cửa sổ hiệu lực tới hết chương N, lời nói dối và sự kiện dẫn tới, danh sách nhân vật còn sống/đã chết; đọc chỉ qua `GraphState` của lớp `graph/` (G10); thêm chương N |
-  | `graph_quotes` đồ thị + câu trích (D-81) | đúng phần đồ thị của `graph`, cộng `graph_quotes.top_k` đoạn BM25 của chương 1..N-1 (cùng cách cắt đoạn và chấm điểm như `rag`, ít đoạn hơn), cộng chương N |
+  | `graph_quotes` đồ thị + câu trích (D-81) | đúng phần đồ thị của `graph`, cộng `graph_quotes.top_k` đoạn BM25 của chương 1..N-1 (cùng cách cắt đoạn và chấm điểm như `rag`, ít đoạn hơn; code chung với sản phẩm: `pipeline/passages.py`, D-85), cộng chương N |
   | `none` không bộ nhớ | chỉ chương N |
   | `rolling` tóm tắt | tóm tắt từng chương 1..N-1 (vai `summary`, đúng thứ pipeline lưu, D-49) nối lại, cộng chương N |
   | `rag` RAG | BM25 trên đoạn của chương 1..N-1 (D-73), cộng chương N |

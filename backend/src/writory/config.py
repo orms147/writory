@@ -118,6 +118,10 @@ class ContextLimits(_Section):
     _file = "limits.yaml"
     writer_max_neighbors: PositiveInt | None
     summary_max_chars: PositiveInt | None = None  # độ dài tối đa của tóm tắt chương (D-49)
+    # Đoạn nguyên văn đã hiện trên trang đưa vào ngữ cảnh dàn ý và viết (D-85).
+    page_quotes_top_k: PositiveInt | None = None  # số đoạn tối đa mỗi lời gọi
+    page_quotes_chunk_chars: PositiveInt | None = None  # cỡ một đoạn khi chia chương
+    page_quotes_max_chars: PositiveInt | None = None  # tổng độ dài chữ tối đa của các đoạn
 
 
 class LLMCallLimits(_Section):

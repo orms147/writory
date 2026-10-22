@@ -11,6 +11,11 @@ chữ người chơi) chỉ vào vai user, bọc bằng `UserAuthored`. Mọi ch
 
 Mục tiêu của chương theo bản kế hoạch (`pipeline.pacing`, D-49) vào cả đề dàn ý lẫn đề viết.
 Dàn ý ghi mạch cảnh này gỡ (`resolves`, D-82); đề viết hiện mô tả của các mạch đó.
+
+Đoạn nguyên văn đã hiện trên trang (D-85): vài đoạn của các chương đã ghi, chọn bằng BM25 theo
+nhân vật, đồ vật, nơi chốn của cảnh và lựa chọn vừa rồi (`page_query`), để cảnh mới thấy đúng chữ
+đã kể (cửa đã mở, ai nói gì) mà đồ thị và tóm tắt không giữ. Đó là chữ người chơi đã đọc và có thể
+nhắc lại chữ người chơi, nên luôn bọc `UserAuthored` (G4). Chỉ hai vai này nhận chúng.
 """
 
 import re
@@ -26,6 +31,7 @@ from writory.graph import ChangePackage
 from writory.graph.context import WriterContext, render_writer_context
 from writory.llm.base import Message
 from writory.pipeline.pacing import ChapterGoals, render_chapter_goals, resolvable
+from writory.pipeline.passages import Chunk
 from writory.quality import check_foreign_script
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -39,8 +45,9 @@ from writory.safety.wrap import (
 # outline-4, writer-4: thêm tóm tắt hai chương gần nhất (D-49).
 # outline-5, writer-5: định nghĩa "gỡ mạch"; dàn ý ghi `resolves`, đề viết hiện mạch cảnh gỡ (D-82).
 # outline-6, writer-6: mục "Bí mật đã lộ" và câu mạch nhiều vế trong mục tiêu của chương (D-84).
-OUTLINE_PROMPT_VERSION = "outline-6"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-6"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-7, writer-7: đoạn nguyên văn đã hiện trên trang, chọn bằng BM25 (D-85).
+OUTLINE_PROMPT_VERSION = "outline-7"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-7"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -256,6 +263,31 @@ def _earlier(out: _Lines, brief: SceneBrief, names: Mapping[str, Named],
             out.line(*line)
 
 
+def page_query(brief: SceneBrief, ctx: WriterContext, outline: SceneOutline | None = None) -> str:
+    """Câu hỏi cho kho đoạn (D-85): nhân vật có mặt (tên, biệt danh, nơi đứng, đồ cầm), nút lân cận
+    gần, lựa chọn vừa rồi của người chơi và, khi đã có dàn ý, mục tiêu, nhịp và chỗ kết của cảnh.
+    Chỉ dùng để chấm điểm BM25 trên chữ đã hiện; không vào prompt hay tới người chơi."""
+    parts: list[str] = [brief.player_action] if brief.player_action else []
+    for c in ctx.present:
+        parts += [c.name, *c.aliases]
+        if c.location is not None:
+            parts.append(c.location.value)
+        parts += [h.value for h in c.holds]
+    parts += [n.text for n in ctx.neighbors if n.hops <= 1]
+    if outline is not None:
+        parts += [outline.goal, *outline.beats, outline.ends_at]
+    return "\n".join(parts)
+
+
+def _quotes(out: _Lines, quotes: Sequence[Chunk]) -> None:
+    if not quotes:
+        return
+    out.line("## Đoạn đã hiện trên trang liên quan (nguyên văn; chỉ để giữ nhất quán chi tiết: cửa "
+             "mở hay đóng, ai đứng đâu, ai đã nói gì, đồ vật ở đâu. Không chép lại, không lặp nhịp)")
+    for q in quotes:
+        out.line(f"### Chương {q.chapter}", UserAuthored(q.text, "page_quote"))
+
+
 def _goals(out: _Lines, brief: SceneBrief, *, thread_ids: bool = False) -> None:
     """Mục tiêu của chương (D-49). `render_chapter_goals` đã escape chữ của model và bọc chữ
     người chơi, nên các phần đi thẳng vào `line`, không escape lần nữa."""
@@ -284,10 +316,12 @@ Quy tắc:
 def outline_messages(
     brief: SceneBrief, ctx: WriterContext, candidates: Sequence[Candidate],
     names: Mapping[str, Named], edge_ends: Mapping[str, tuple[str, str, str]],
+    quotes: Sequence[Chunk] = (),
 ) -> list[Message]:
     out = _Lines()
     _head(out, brief)
     out.extend(render_writer_context(ctx))
+    _quotes(out, quotes)
     out.line("## Nhân vật có thể có mặt (id | tên)")
     for c in candidates:
         mark = " (nhân vật chính)" if c.protagonist else ""
@@ -301,11 +335,12 @@ def outline_messages(
 def writer_messages(
     style_guide: str, brief: SceneBrief, ctx: WriterContext, outline: SceneOutline,
     names: Mapping[str, Named], edge_ends: Mapping[str, tuple[str, str, str]],
-    rewrite: Rewrite | None = None,
+    rewrite: Rewrite | None = None, quotes: Sequence[Chunk] = (),
 ) -> list[Message]:
     out = _Lines()
     _head(out, brief)
     out.extend(render_writer_context(ctx))
+    _quotes(out, quotes)
     _earlier(out, brief, names, edge_ends)
     _goals(out, brief)
     out.line("## Dàn ý cảnh này (các nhịp, theo thứ tự)")

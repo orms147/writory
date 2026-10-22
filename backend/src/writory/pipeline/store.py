@@ -16,6 +16,7 @@ from neo4j import Driver
 
 from writory.db import (
     chapter_records,
+    chapter_scenes,
     commit_chapter,
     current_chapter,
     load_chapter_summaries,
@@ -67,6 +68,11 @@ class ChapterStore(Protocol):
         """Lưu tóm tắt của chương đã ghi. Đã có thì giữ bản cũ."""
         ...
 
+    def chapter_texts(self, chapters: Sequence[int]) -> dict[int, str]:
+        """Văn đã hiện cho người chơi của các chương đã commit (các cảnh nối lại); chương chưa có
+        thì không có khoá (D-85)."""
+        ...
+
 
 def entities_from_rows(rows: Mapping[str, NodeRow]) -> list[Entity]:
     return [Entity.from_node(nid, row.label, row.props) for nid, row in sorted(rows.items())]
@@ -107,3 +113,7 @@ class GraphStore:
 
     def save_summary(self, chapter: int, text: str) -> None:
         save_chapter_summary(self._conn, self._story_id, chapter, text)
+
+    def chapter_texts(self, chapters: Sequence[int]) -> dict[int, str]:
+        scenes = {c: chapter_scenes(self._conn, self._story_id, c) for c in chapters}
+        return {c: "\n\n".join(s) for c, s in scenes.items() if s}

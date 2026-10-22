@@ -55,6 +55,7 @@ from writory.pipeline.events import (
 )
 from writory.pipeline.extract import Entity, OpenEdge, extract_changes
 from writory.pipeline.pacing import ChapterGoals, chapter_goals
+from writory.pipeline.passages import Chunk, PagePool
 from writory.pipeline.scene import (
     Candidate,
     EarlierScene,
@@ -66,6 +67,7 @@ from writory.pipeline.scene import (
     load_style_guide,
     outline_foreign_script,
     outline_messages,
+    page_query,
     unplanned_threads,
     writer_messages,
 )
@@ -250,6 +252,7 @@ class _State(TypedDict, total=False):
     scene: int  # cảnh đang làm, 1-based
     present: list[str]
     context: WriterContext
+    page_pool: PagePool  # đoạn của các chương đã ghi, dựng một lần mỗi chương (D-85)
     goals: ChapterGoals  # mục tiêu của chương cho cảnh đang làm (D-49)
     outline: SceneOutline
     unplanned: list[str]  # mạch đến hạn dàn ý cảnh cuối vẫn bỏ sau mọi lượt thử (D-82)
@@ -316,6 +319,9 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.limits.cost_usd, "per_story"),
         (config.limits.context, "writer_max_neighbors"),
         (config.limits.context, "summary_max_chars"),
+        (config.limits.context, "page_quotes_top_k"),
+        (config.limits.context, "page_quotes_chunk_chars"),
+        (config.limits.context, "page_quotes_max_chars"),
         (config.quality.repetition, "ngram_words"),
         (config.quality.repetition, "max_repeats"),
         (config.quality.foreign_script, "latin_run_min_words"),
@@ -398,6 +404,17 @@ def _writer_context(d: _Deps, state: _State, present: Sequence[str]) -> WriterCo
     )
 
 
+def _quotes(d: _Deps, state: _State, outline: SceneOutline | None = None) -> list[Chunk]:
+    """Đoạn đã hiện trên trang cho dàn ý (chưa có `outline`) hoặc cho model viết (D-85). Chỉ chữ của
+    các chương đã ghi: các cảnh trước của chương này đã nằm nguyên văn trong đề (`_earlier`)."""
+    pool, limits = state["page_pool"], d.config.limits.context
+    if pool.size == 0:
+        return []
+    return pool.top(page_query(_brief(d, state), state["context"], outline),
+                    top_k=_require(limits, "page_quotes_top_k"),
+                    max_chars=_require(limits, "page_quotes_max_chars"))
+
+
 def _candidates(ctx: WriterContext, protagonist: str) -> list[Candidate]:
     """Nhân vật dàn ý được chọn cho có mặt: người đang có mặt và nhân vật lân cận trong ngữ cảnh."""
     out = {c.id: Candidate(c.id, Named(c.name, c.user_authored), c.id == protagonist)
@@ -473,7 +490,10 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
     if missing:
         log.warning("chương %s: thiếu tóm tắt chương %s; viết tiếp không có chúng", chapter,
                     missing)
+    pool = PagePool(d.store.chapter_texts(range(1, chapter)),
+                    chunk_chars=_require(d.config.limits.context, "page_quotes_chunk_chars"))
     return {
+        "page_pool": pool,
         "summaries": [(c, found[c]) for c in wanted if c in found],
         "summaries_missing": missing,
         "chapter": chapter,
@@ -512,7 +532,7 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
     ctx, protagonist = state["context"], state["protagonist"]
     candidates = _candidates(ctx, protagonist)
     messages = outline_messages(_brief(d, state), ctx, candidates, state["names"],
-                                _edge_ends(state))
+                                _edge_ends(state), _quotes(d, state))
     model = require_model(d.config.models.roles, "outline")
     retries = d.config.limits.retries
     goals, last_scene = state["goals"], state["scene"] >= d.request.scene_count
@@ -570,7 +590,8 @@ async def _write(state: _State, runtime: Runtime[_Deps]) -> dict:
     rewrite = (Rewrite(review.text, tuple(i.feedback for i in review.issues))
                if review is not None else None)
     messages = writer_messages(d.style_guide, _brief(d, state), state["context"],
-                               state["outline"], state["names"], _edge_ends(state), rewrite)
+                               state["outline"], state["names"], _edge_ends(state), rewrite,
+                               _quotes(d, state, state["outline"]))
     tier = writer_tier(d.config, d.request.writer_tier)
     extra = reasoning_extra(tier.reasoning)
     result = await with_retries(lambda: d.llm.chat(tier.model, messages, extra=extra),
