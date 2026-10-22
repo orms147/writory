@@ -20,6 +20,7 @@ export function oddConfig(): PublicConfig {
       narrator_question_max_chars: 89,
     },
     cost_usd: { per_scene: 0.37, per_chapter: 1.23, per_story: 4.56 },
+    chapter_estimate_default_usd: 0.0377,
   };
 }
 

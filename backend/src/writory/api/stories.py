@@ -15,6 +15,7 @@ from fastapi import APIRouter, Depends
 
 from writory.api import deps
 from writory.api.schemas import (
+    ChapterEstimateOut,
     NarratorAnswerOut,
     NarratorQuestionIn,
     NarratorRemainingOut,
@@ -25,7 +26,7 @@ from writory.api.schemas import (
 from writory.config import AppConfig
 from writory.db import owned_story_summaries
 from writory.graph import PlayerView
-from writory.llm.cost import MeteredClient
+from writory.llm.cost import MeteredClient, estimate_chapter_cost
 from writory.pipeline.narrator import (
     NarratorCounter,
     ask_narrator,
@@ -95,3 +96,16 @@ async def narrator_remaining(story: deps.OwnedStory, config: deps.Config,
     chapter = story.committed_chapter or 0
     return NarratorRemainingOut(
         remaining=await remaining_questions(quota, story.id, chapter, config))
+
+
+@router.get("/{story_id}/estimate", response_model=ChapterEstimateOut)
+def chapter_estimate(story: deps.OwnedStory, config: deps.Config,
+                     ledger: Annotated[deps.CostLedger, Depends(deps.get_cost_ledger)]
+                     ) -> ChapterEstimateOut:
+    """Chương tới tốn khoảng bao nhiêu (design §10, D-87): trung vị chi phí thật các chương đã ghi
+    của chính truyện; chưa có chương nào thì số mặc định trong config. Không gọi model, không cần
+    key."""
+    est = estimate_chapter_cost(ledger.chapter_costs(story.id),
+                                default_usd=config.limits.chapter_estimate.default_usd)
+    return ChapterEstimateOut(chapter=(story.committed_chapter or 0) + 1, usd=est.usd,
+                              source=est.source, chapters_used=est.chapters_used)

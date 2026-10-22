@@ -321,6 +321,16 @@ export function createMockServer(options: MockOptions = {}) {
       if (!s) return errorResponse('STORY_NOT_FOUND');
       const rest = parts.slice(2).join('/');
       if (rest === '' && method === 'GET') return jsonResponse(storyOut(s));
+      if (rest === 'estimate' && method === 'GET') {
+        // Giả: trung bình chi phí đã tiêu trên số chương đã viết; chưa viết chương nào thì số mặc định.
+        const measured = s.chapter >= 1;
+        return jsonResponse({
+          chapter: s.chapter + 1,
+          usd: measured ? s.spent / s.chapter : MOCK_CONFIG.chapter_estimate_default_usd,
+          source: measured ? 'story_median' : 'default',
+          chapters_used: measured ? s.chapter : 0,
+        });
+      }
       if (rest === 'chapters/next' && method === 'POST') {
         if (!key) return errorResponse('PLAYER_KEY_MISSING');
         if (s.busy) return errorResponse('STORY_BUSY');

@@ -35,8 +35,10 @@ from writory.db.choices import (
 )
 from writory.db.connection import connect
 from writory.db.costs import (
+    NON_CHAPTER_ROLES,
     CostEntry,
     OwnerCosts,
+    chapter_costs,
     owner_costs,
     pending_cost_estimates,
     record_cost,
@@ -75,6 +77,7 @@ from writory.db.setup import (
 from writory.db.summaries import load_chapter_summaries, save_chapter_summary
 
 __all__ = [
+    "NON_CHAPTER_ROLES",
     "STEPS",
     "ActionRecord",
     "ChapterCommitError",
@@ -94,6 +97,7 @@ __all__ = [
     "StoryNotFoundError",
     "StoryRecord",
     "StorySummaryRecord",
+    "chapter_costs",
     "chapter_records",
     "chapter_scenes",
     "choose_setup_option",

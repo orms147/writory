@@ -5,6 +5,7 @@ import { ApiError, asApiError, clientError, errorFromResponse, isAbortError } fr
 import { readChapterEvents } from './sse';
 import type {
   ActionOut,
+  ChapterEstimateOut,
   ChapterEvent,
   ChapterOut,
   CharacterChoiceIn,
@@ -84,6 +85,7 @@ export const api = {
     request<ActionOut>('POST', `/stories/${enc(id)}/choice`, { choice_id: choiceId }),
   customAction: (id: string, text: string) => request<ActionOut>('POST', `/stories/${enc(id)}/action`, { text }),
 
+  chapterEstimate: (id: string) => request<ChapterEstimateOut>('GET', `/stories/${enc(id)}/estimate`),
   notebook: (id: string) => request<NotebookOut>('GET', `/stories/${enc(id)}/notebook`),
   narratorQuota: (id: string) => request<NarratorQuotaOut>('GET', `/stories/${enc(id)}/narrator`),
   askNarrator: (id: string, question: string) =>

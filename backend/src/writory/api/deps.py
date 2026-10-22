@@ -25,6 +25,7 @@ from writory.db import (
     CostEntry,
     OwnerCosts,
     StoryRecord,
+    chapter_costs,
     committed_player_view,
     connect,
     delete_player_key,
@@ -211,6 +212,7 @@ class CostLedger(Protocol):
                           limit: int) -> list[PendingEstimate]: ...
     def settle_estimate(self, row_id: int, cost: GenerationCost) -> None: ...
     def owner_costs(self, now: datetime) -> OwnerCosts: ...
+    def chapter_costs(self, story_id: str) -> list[float]: ...
 
 
 class PostgresCostLedger:
@@ -242,6 +244,10 @@ class PostgresCostLedger:
     def owner_costs(self, now: datetime) -> OwnerCosts:
         """Số người này đã trả (`/player/costs`, D-66); tháng theo UTC của `now`."""
         return owner_costs(self._conn, self._owner, now=now)
+
+    def chapter_costs(self, story_id: str) -> list[float]:
+        """Chi phí thật mỗi chương đã ghi của một truyện (ước tính chương tới, D-87)."""
+        return chapter_costs(self._conn, story_id)
 
 
 def get_cost_ledger(conn: PgConn, owner: Owner) -> CostLedger:

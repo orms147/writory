@@ -1,13 +1,14 @@
 import { useId, useState } from 'react';
 import { api } from '../../api/client';
 import { asApiError, type ApiError } from '../../api/errors';
-import type { ChoiceKind, PlayerChoice } from '../../api/types';
+import type { ChapterEstimateOut, ChoiceKind, PlayerChoice } from '../../api/types';
 import { ErrorBlock, FieldError } from '../../components/ErrorBlock';
 import { RadioGroup } from '../../components/RadioGroup';
 import { Arrow, CharCount, IconPen, cx } from '../../components/ui';
 import { usePublicConfig } from '../../config/PublicConfig';
 import { errorGroup } from '../../lib/errorGroups';
 import { formatUsd, numberWords, roman } from '../../lib/format';
+import { useResource } from '../../lib/useResource';
 
 function KindIcon({ kind }: { kind: ChoiceKind }) {
   const common = { width: 13, height: 13, viewBox: '0 0 24 24', fill: 'none', stroke: 'currentColor', strokeWidth: 2, strokeLinecap: 'round' as const, strokeLinejoin: 'round' as const, 'aria-hidden': true };
@@ -19,6 +20,19 @@ function KindIcon({ kind }: { kind: ChoiceKind }) {
 /** Nhãn lựa chọn theo máy chủ: "Lời thoại · nói dối" (D-65: sắc thái cố định, không bộ chọn). */
 export function choiceLabel(c: PlayerChoice): string {
   return c.tone_label ? `${c.kind_label} · ${c.tone_label}` : c.kind_label;
+}
+
+/** Chi phí chương tới, số của máy chủ (D-87): trung vị các chương đã viết của truyện, hoặc số mặc định.
+ *  Không có số (null, hoặc API lỗi) thì ghi "chưa có ước tính", không tự đặt số. */
+export function EstimateText({ estimate, loading }: { estimate: ChapterEstimateOut | null; loading: boolean }) {
+  if (loading) return <span className="italic text-ink-200">đang ước tính…</span>;
+  if (!estimate || estimate.usd === null) return <span className="italic text-ink-50">chưa có ước tính</span>;
+  const basis = estimate.source === 'story_median' ? `theo ${estimate.chapters_used} chương đã viết` : 'số mặc định';
+  return (
+    <span className="text-ink-50">
+      khoảng {formatUsd(estimate.usd)} mỗi chương <span className="text-ink-300">({basis})</span>
+    </span>
+  );
 }
 
 /** Lựa chọn cuối chương (D-/M-LuaChon). Không chọn sẵn; ba lựa chọn cùng kiểu dáng; ô tự viết đếm
@@ -54,6 +68,7 @@ export function ChoicePanel({
   const keepBefore = !usingCustom && picked === null && chosenBefore !== null;
   const canSend = !sending && (usingCustom || picked !== null || keepBefore);
   const next = chapter + 1;
+  const estimate = useResource(() => api.chapterEstimate(storyId), `estimate:${storyId}:${chapter}`);
   const fieldError = error && errorGroup(error.code) === 'action_input' ? error : null;
   const blockError = error && !fieldError ? error : null;
 
@@ -168,7 +183,7 @@ export function ChoicePanel({
 
       <div className="sticky bottom-3 z-10 mt-6 flex flex-wrap items-center justify-between gap-3 rounded-[16px] bg-ink-950 px-5 py-4 text-ink-200 shadow-[0_20px_40px_-20px_rgba(0,0,0,.6)]">
         <p className="text-[13px] leading-snug">
-          Chương {next} · ước tính: <span className="italic text-ink-50">chưa có ước tính</span>
+          Chương {next} · ước tính: <EstimateText estimate={estimate.data} loading={estimate.loading} />
           {spentUsd !== null && (
             <>
               <br />

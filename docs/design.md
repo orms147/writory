@@ -283,7 +283,7 @@ Bản 1 chạy đối thủ 2, 4, 5, bài B, bài D (tuần 2, để chọn mode
 ## 10. Chi phí
 - **Người chơi trả bằng key OpenRouter của chính họ** [Chốt]. Chủ dự án chỉ trả cho máy chủ và cho bộ đo. Key người chơi được mã hoá khi lưu, không bao giờ ghi vào log hay gửi về trình duyệt (`docs/security.md`). Nên thử luồng kết nối OAuth của OpenRouter để người chơi khỏi phải dán key tay (chưa kiểm luồng này có còn hoạt động không).
 - Ước lượng thô ban đầu (giá tháng 10/2026): khoảng 0,05–0,12 USD mỗi chương với model viết tầm trung–cao, dưới 0,01 USD với model rẻ. Chi phí chủ yếu nằm ở token ra của bước viết. Số thật nằm trong các lần chạy ở `evals/results/` (ví dụ `2026-10-20-run-tu-tien-1/`).
-- Vẫn cần trần chi phí dù tiền là của người chơi: truyện lỗi lặp vô hạn không được đốt key của họ, và người chơi phải thấy trước mỗi chương tốn khoảng bao nhiêu.
+- Vẫn cần trần chi phí dù tiền là của người chơi: truyện lỗi lặp vô hạn không được đốt key của họ, và người chơi phải thấy trước mỗi chương tốn khoảng bao nhiêu (ước tính: D-87).
 - Mỗi cảnh có tối thiểu 3 lần gọi model (viết, trích, kiểm), có thể thêm 1 lần viết lại.
 - Model rẻ cho trích/kiểm/tạo lựa chọn; model viết tiếng Việt tốt hơn cho chương truyện.
 - **Trần chi phí mỗi chương và mỗi truyện:** nằm trong `config/limits.yaml` (số tạm, chỉnh sau khi có thêm lần chạy thật); vượt trần thì dừng viết lại và báo.

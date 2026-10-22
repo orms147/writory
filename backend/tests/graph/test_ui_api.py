@@ -271,3 +271,51 @@ def test_narrator_get_of_another_owners_story_is_404(pg, driver, new_db_story_id
         resp = client.get(f"/stories/{sid}/narrator")
     assert (resp.status_code, resp.json()["code"]) == (404, "STORY_NOT_FOUND")
     assert sid not in resp.text
+
+
+# --- ước tính chi phí chương tới (D-87) -----------------------------------------------------------
+
+
+def spend(pg, owner_id, sid, chapter, role, usd):
+    record_cost(pg, owner_id=owner_id, entry=CostEntry(role, "m", 1, 1, usd), story_id=sid,
+                chapter=chapter)
+
+
+def test_chapter_estimate_is_the_median_of_committed_written_chapters(pg, driver, new_db_story_id,
+                                                                      owner):
+    sid = make_story(pg, driver, new_db_story_id(), owner, up_to=3)  # chương 0..3 đã ghi
+    other = make_story(pg, driver, new_db_story_id(), "nguoi-khac", up_to=1)
+    for chapter, usd in ((1, 0.004), (2, 0.010), (3, 0.040)):
+        spend(pg, owner, sid, chapter, "writer", usd)
+        spend(pg, owner, sid, chapter, "extract", usd)  # mọi lời gọi của chương cộng lại
+    spend(pg, owner, sid, 2, "narrator", 0.5)  # việc của người chơi, không phải viết chương
+    spend(pg, owner, sid, 2, "classify", 0.5)
+    spend(pg, owner, sid, 0, "setup", 0.5)
+    spend(pg, owner, sid, 0, "writer", 0.5)  # chương 0 không phải chương viết
+    spend(pg, owner, sid, 4, "writer", 0.5)  # lần viết chương 4 chưa ghi (bỏ dở)
+    spend(pg, owner, sid, 1, "moderate", None)  # thiếu chi phí: không cộng được (D-10)
+    spend(pg, "nguoi-khac", other, 1, "writer", 0.5)
+    try:
+        with TestClient(make_app(pg, driver, owner)) as client:
+            body = client.get(f"/stories/{sid}/estimate").json()
+    finally:
+        pg.execute("DELETE FROM llm_costs WHERE owner_id = 'nguoi-khac' AND story_id = %s",
+                   (other,))
+    assert body == {"chapter": 4, "usd": pytest.approx(0.020), "source": "story_median",
+                    "chapters_used": 3}
+
+
+def test_chapter_estimate_of_a_story_with_no_written_chapter_is_the_default(pg, driver,
+                                                                           new_db_story_id, owner):
+    sid = make_story(pg, driver, new_db_story_id(), owner, up_to=0)
+    spend(pg, owner, sid, 1, "writer", 0.3)  # lần viết chương 1 chưa ghi
+    with TestClient(make_app(pg, driver, owner)) as client:
+        body = client.get(f"/stories/{sid}/estimate").json()
+    assert body == {"chapter": 1, "usd": CFG.limits.chapter_estimate.default_usd,
+                    "source": "default", "chapters_used": 0}
+
+
+def test_chapter_estimate_of_someone_elses_story_is_404(pg, driver, new_db_story_id, owner):
+    other = make_story(pg, driver, new_db_story_id(), "nguoi-khac", up_to=1)
+    with TestClient(make_app(pg, driver, owner)) as client:
+        assert client.get(f"/stories/{other}/estimate").status_code == 404

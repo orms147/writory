@@ -44,6 +44,16 @@ export interface PublicConfig {
   darkness_levels: DarknessLevelOption[];
   default_darkness_level: string | null;
   writer_tier: { label: string };
+  /** Số mặc định cho màn không gắn truyện (D-87); null: chưa đặt. */
+  chapter_estimate_default_usd: number | null;
+}
+
+/** Ước tính chi phí chương tới của một truyện (D-87). `usd` null: không có số nào. */
+export interface ChapterEstimateOut {
+  chapter: number;
+  usd: number | null;
+  source: 'story_median' | 'default';
+  chapters_used: number;
 }
 
 // --- tủ truyện, chi phí -------------------------------------------------------------------------

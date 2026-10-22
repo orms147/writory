@@ -34,6 +34,7 @@ export const MOCK_CONFIG: PublicConfig = {
   ],
   default_darkness_level: 'medium',
   writer_tier: { label: 'Tiêu chuẩn' },
+  chapter_estimate_default_usd: 0.01,
 };
 
 export const SCENES: string[] = [

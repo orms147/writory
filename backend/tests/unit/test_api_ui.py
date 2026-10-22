@@ -201,6 +201,7 @@ def expected_public(cfg) -> dict:
         "darkness_levels": [{"key": k, "label": v.label}
                             for k, v in cfg.moderation.darkness_levels.items()],
         "default_darkness_level": cfg.moderation.default_darkness_level,
+        "chapter_estimate_default_usd": lim.chapter_estimate.default_usd,
     }
 
 
