@@ -38,8 +38,9 @@ from writory.safety.wrap import (
 # outline-3, writer-3: thêm mục tiêu của chương theo bản kế hoạch (D-49).
 # outline-4, writer-4: thêm tóm tắt hai chương gần nhất (D-49).
 # outline-5, writer-5: định nghĩa "gỡ mạch"; dàn ý ghi `resolves`, đề viết hiện mạch cảnh gỡ (D-82).
-OUTLINE_PROMPT_VERSION = "outline-5"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-5"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-6, writer-6: mục "Bí mật đã lộ" và câu mạch nhiều vế trong mục tiêu của chương (D-84).
+OUTLINE_PROMPT_VERSION = "outline-6"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-6"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"

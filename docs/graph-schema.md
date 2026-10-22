@@ -45,7 +45,7 @@ Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu 
 | `TOLD` | Character → Lie | | người nói |
 | `TOLD_TO` | Lie → Character | | người nghe |
 | `ABOUT` | Fact/Event/Lie → bất kỳ | | mệnh đề, sự kiện hay lời nói dối nói về ai, cái gì |
-| `RESOLVED_IN` | Thread → Chapter | `quote` | mạch được gỡ. Bộ trích chỉ ghi khi có `quote` nguyên văn trong chương: câu trả lời câu hỏi chính của mạch hay câu nói ra quyết định mạch đòi (`to_package`, D-82). Gói dựng tay (truyện mẫu) có thể không có `quote` |
+| `RESOLVED_IN` | Thread → Chapter | `quote` | mạch được gỡ. Bộ trích chỉ ghi khi có `quote` nguyên văn trong chương; với mạch phải gỡ chưa tới khoảng gỡ thì code bỏ cạnh (D-84): câu trả lời câu hỏi chính của mạch hay câu nói ra quyết định mạch đòi (`to_package`, D-82). Gói dựng tay (truyện mẫu) có thể không có `quote` |
 | `REVEALED_TO_PLAYER` | bất kỳ → Chapter | `quote` (bắt buộc, G3), `known_as`, `by_choice` | hé lộ trên trang ở chương đó. `by_choice`: id lựa chọn dẫn tới lần lộ (D-22) |
 
 **`known_as` (D-17).** Cạnh `REVEALED_TO_PLAYER` từ một nút có tên (Character/Location/Item/Faction), và cạnh `KNOWS` từ nhân vật chính tới một nút có tên, **bắt buộc** có `known_as`: tên người chơi biết lúc đó, phải nằm trong `quote` (cùng cách chuẩn hoá với `quote_in_text`). Một nút có thể được hé lộ nhiều lần với tên khác nhau, ví dụ biệt danh trước, tên thật sau. Thiếu `known_as` thì `apply_package` báo `InvalidPackageError`. `known_as` trùng tên hay biệt danh lớp truth của một nút khác (bỏ dấu, không phân biệt hoa thường) thì bộ trích bỏ cạnh, vì người chơi sẽ biết nút này dưới tên nút kia (`safety.reveal.known_as_conflicts`, D-62).

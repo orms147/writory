@@ -10,6 +10,7 @@ from writory.graph.sample import read_sample
 from writory.llm.fake import FakeLLM
 from writory.pipeline import bench_c
 from writory.pipeline.extract import (
+    PROMPT_VERSION,
     SYSTEM_PROMPT,
     Entity,
     ExtractedEdge,
@@ -304,3 +305,72 @@ async def test_extract_changes_passes_threads_to_the_prompt():
                           protagonist_id=PROTAGONIST, chapter_text=text, entities=entities,
                           open_edges=open_edges, threads=[_thread("t_sealed_letter", "due")])
     assert "- t_sealed_letter | chương 2–6 | đến hạn ở chương này" in fake.calls[0][-1].content
+
+
+# --- gỡ mạch chưa tới khoảng gỡ, mạch nhiều vế (D-84) ---------------------------------------------
+
+_QUOTE = "Những người mua và bán đã được đưa đi nguyên vẹn khỏi chợ"
+
+
+def _resolve_package(threads, *, thread="dau_vet_dau_gia", quote=_QUOTE):
+    out = ExtractOutput(edges=[_edge(type="RESOLVED_IN", source=thread, target="ch8",
+                                     quote=quote)], close=[])
+    return to_package(out, chapter=8, commit_id="c", protagonist_id="protagonist",
+                      chapter_text=_RES_TEXT, entities=_RES_ENTITIES, open_edges=[],
+                      threads=threads)
+
+
+@pytest.mark.parametrize("status", ["open", "due", "overdue"])
+def test_resolved_in_is_kept_once_the_thread_reached_its_window(status):
+    pkg, rejected = _resolve_package([_thread("dau_vet_dau_gia", status)])
+    assert [e.type for e in pkg.edges] == ["RESOLVED_IN"] and rejected == []
+
+
+def test_resolved_in_of_a_thread_before_its_window_is_dropped_with_its_own_reason():
+    """Hồi quy ky-ao-vua-2, chương 1: `loi_khai_cua_min_vi` (hạn gỡ 5–12) bị ghi gỡ vì bộ trích lấy
+    mạch từ danh mục. Mạch chưa tới khoảng không có trong mục "đang mở", nên code bỏ cạnh."""
+    pkg, rejected = _resolve_package([_thread("dau_vet_dau_gia", "later", low=5, high=12)])
+    assert pkg.edges == []
+    assert rejected == [("RESOLVED_IN dau_vet_dau_gia→ch8",
+                         "mạch phải gỡ chưa tới khoảng gỡ, chương 5–12 (D-84)")]
+
+
+def test_resolved_in_of_a_thread_outside_the_plan_is_untouched():
+    """Mạch phụ (không trong `must_resolve_threads`) không có trong `threads`: không đổi."""
+    pkg, rejected = _resolve_package([_thread("mon_no_tran_mac", "later")])
+    assert [e.type for e in pkg.edges] == ["RESOLVED_IN"] and rejected == []
+    pkg, rejected = _resolve_package([])
+    assert [e.type for e in pkg.edges] == ["RESOLVED_IN"] and rejected == []
+
+
+def test_the_final_chapter_never_counts_as_before_the_window():
+    """Chương cuối truyện: `deadline(final=True)` ra `due` kể cả mạch có khoảng xa hơn."""
+    from writory.guard.plan import deadline
+
+    assert deadline(10, 12, 14, final=True) == "due"
+    assert deadline(5, 12, 14, final=False) == "later"
+    pkg, rejected = _resolve_package(
+        [_thread("dau_vet_dau_gia", deadline(10, 12, 14, final=True), low=12, high=14)])
+    assert [e.type for e in pkg.edges] == ["RESOLVED_IN"] and rejected == []
+
+
+async def test_extract_changes_drops_the_early_resolution_from_the_model_reply():
+    reply = json.dumps({"edges": [{
+        "type": "RESOLVED_IN", "source": "dau_vet_dau_gia", "target": "ch8", "kind": None,
+        "score": None, "how": None, "told_by": None, "quote": _QUOTE, "known_as": None,
+        "role": None}], "close": []})
+    result = await extract_changes(
+        FakeLLM.scripted([reply]), "m", chapter=8, chapter_id="ch8", commit_id="c",
+        protagonist_id="protagonist", chapter_text=_RES_TEXT, entities=_RES_ENTITIES,
+        open_edges=[], threads=[_thread("dau_vet_dau_gia", "later", low=9, high=12)])
+    assert result.package.edges == [] and len(result.rejected) == 1
+    assert "D-84" in result.rejected[0][1]
+
+
+def test_prompt_says_a_multi_part_thread_is_resolved_only_when_every_part_is_answered():
+    """Hồi quy ky-ao-vua-2 (`dau_vet_dau_gia`, `quyen_quan_giu_than_khi`): mạch hai vế bị ghi gỡ khi
+    mới trả lời vế đầu hay mới có thoả thuận tạm. Kiểm bằng code không làm được (không đọc được nghĩa
+    của "vế"), nên đây là luật trong đề."""
+    for phrase in ("nhiều vế", "MỌI vế", "mới trả lời một vế", "thoả thuận tạm"):
+        assert phrase in SYSTEM_PROMPT, phrase
+    assert PROMPT_VERSION == "extract-4"

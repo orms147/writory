@@ -77,7 +77,8 @@ class Secret(_Strict):
 
 class ThreadPlan(_Strict):
     """Mạch phải gỡ trước khi kết, kèm khoảng chương phải gỡ (D-49). Kế hoạch cũ không có khoảng
-    (cả hai None)."""
+    (cả hai None). Mỗi mạch phải gỡ hỏi đúng một câu hỏi chính (D-84): đề của `build_story` đòi
+    như vậy, nhưng code không kiểm được, vì không đọc được nghĩa của "vế"."""
 
     thread_id: str = Field(pattern=ID_PATTERN)
     resolve_from_chapter: PositiveInt | None = None
