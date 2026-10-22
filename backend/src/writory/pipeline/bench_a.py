@@ -267,12 +267,14 @@ class ContextBuilder:
         return ctx
 
 
-def open_graph_backend(kind: str, data: BenchData
+def open_graph_backend(kind: str, data: BenchData, *, story_id: str | None = None
                        ) -> tuple[Callable[[int], GraphState], Callable[[], None]]:
     """(hàm chương -> GraphState, hàm đóng). `memory`: gói trong bộ nhớ, không dịch vụ. `neo4j`: nạp
     truyện vào Neo4j rồi đọc qua `Neo4jState`: truyện mẫu bằng `load_sample_story`, truyện do
     pipeline viết bằng cách áp lần lượt các gói chương 0..N của lượt chạy (D-83). Kết nối theo
-    NEO4J_URI/USER/PASSWORD (mặc định theo .env.example)."""
+    NEO4J_URI/USER/PASSWORD (mặc định theo .env.example). `story_id`: test truyền id riêng, vì nạp và
+    đóng đều xoá truyện đó; dùng chung id với lượt đo thật thì test xoá đồ thị của lượt đang chạy
+    (hồi quy 22/10/2026: 54 lượt mỗi hệ đồ thị lỗi "0 nhân vật chính")."""
     if kind == "memory":
         return data.state_at, lambda: None
     if kind != "neo4j":
@@ -283,7 +285,7 @@ def open_graph_backend(kind: str, data: BenchData
     from writory.guard.state import Neo4jState
 
     from_run = data.questions.story == "run"
-    story_id = RUN_STORY_ID if from_run else STORY_ID
+    story_id = story_id or (RUN_STORY_ID if from_run else STORY_ID)
     driver = GraphDatabase.driver(
         os.environ.get("NEO4J_URI", "bolt://localhost:7687"),
         auth=(os.environ.get("NEO4J_USER", "neo4j"),
@@ -325,6 +327,7 @@ class RunOptions:
     question_ids: Sequence[str] = ()
     groups: Sequence[str] = ()
     graph_backend: str | None = None  # None: memory khi --dry-run, neo4j khi chạy thật
+    graph_story_id: str | None = None  # None: id mặc định của bộ đo; test truyền id riêng
 
 
 def check_options(opts: RunOptions) -> None:
@@ -595,7 +598,8 @@ async def run_bench(
     close: Callable[[], None] = lambda: None
     if graph_state is None:
         graph_state, close = open_graph_backend(
-            opts.graph_backend or ("memory" if opts.dry_run else "neo4j"), data)
+            opts.graph_backend or ("memory" if opts.dry_run else "neo4j"), data,
+            story_id=opts.graph_story_id)
     try:
         store = Store(opts.out)
         samples = opts.samples or data.run.samples
