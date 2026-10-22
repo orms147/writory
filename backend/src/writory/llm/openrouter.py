@@ -179,6 +179,10 @@ class OpenRouterClient(LLMClient):
                     "schema": response_schema.model_json_schema(),
                 },
             }
+        if response_schema is not None:
+            # D-100: một model có nhiều nhà cung cấp, có nơi không hỗ trợ structured_outputs; đòi
+            # nhà cung cấp nhận đủ tham số của yêu cầu. Người gọi đặt `provider` riêng thì theo họ.
+            body["provider"] = {"require_parameters": True}
         if extra:
             clash = sorted(set(extra) & {"model", "messages", "stream", "response_format"})
             if clash:

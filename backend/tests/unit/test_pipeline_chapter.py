@@ -174,7 +174,8 @@ async def test_writer_uses_first_writer_tier_and_style_guide(tmp_path):
     for role in ("outline", "choices"):
         assert by_role[role] == {(f"test/{role}", repr(role_extra(config.models, role)))}
     # role_reasoning.extract = low (D-35)
-    assert by_role["extract"] == {(config.models.roles.extract, "{'reasoning': {'effort': 'low'}}")}
+    assert by_role["extract"] == {(config.models.roles.extract,
+                                   repr(role_extra(config.models, "extract")))}
 
 
 async def test_writer_tier_without_reasoning_sends_no_extra(tmp_path):

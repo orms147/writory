@@ -238,6 +238,9 @@ class ModelsConfig(_Strict):
     writer_tiers: list[WriterTier]
     # Model nào không có giá thì lời gọi bằng key người chơi bị từ chối trước khi gửi (D-64).
     prices: dict[str, ModelPrice] = Field(default_factory=dict)
+    # Nhà cung cấp OpenRouter không được dùng (D-100): có nơi nhận `structured_outputs` mà trả JSON
+    # hỏng. Đi vào `provider.ignore` của mọi lời gọi qua `role_extra`.
+    provider_ignore: list[str] = Field(default_factory=list)
 
 
 # --- story_lengths.yaml ----------------------------------------------------------------

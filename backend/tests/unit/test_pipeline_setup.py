@@ -288,7 +288,8 @@ async def test_reasoning_effort_from_config_goes_into_extra():
     })})
     llm = FakeLLM.scripted([_options("settings")])
     await propose_settings(CHOICES, llm=llm, config=cfg)
-    assert llm.extras == [{"reasoning": {"effort": "low"}}]
+    assert llm.extras == [role_extra(cfg.models, "setup")]
+    assert llm.extras[0]["reasoning"] == {"effort": "low"}
 
 
 def test_unknown_length_level_is_rejected():

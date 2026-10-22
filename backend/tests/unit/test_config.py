@@ -70,7 +70,7 @@ def test_require_returns_value_when_set(config_dir: Path):
         ("limits.yaml", "per_scene: 0.02", "per_scene: 0.02\n  per_sceen: 1", "per_sceen"),
         ("limits.yaml", "rewrite_per_scene: 1", "rewrite_per_scene: -1", "rewrite_per_scene"),
         ("limits.yaml", "setup_repair: 1", "setup_repair: -1", "setup_repair"),
-        ("models.yaml", '    model: "openai/gpt-6-luna"\n', "", "model"),  # mức thiếu model
+        ("models.yaml", '    model: "deepseek/deepseek-v4-flash"\n', "", "model"),  # mức thiếu model
         ("story_lengths.yaml", "chapter_chars: {min: 3000, max: 10000}",
          "chapter_chars: {min: 10000, max: 3000}", "chapter_chars"),
         ("quality.yaml", "dialogue_style: dash", "dialogue_style: html", "dialogue_style"),
@@ -143,10 +143,14 @@ def test_settings_validation_error_never_echoes_secret_values(monkeypatch, tmp_p
     assert "7777777777" not in text
 
 
-def test_role_extract_uses_luna_with_low_reasoning():
-    """D-35: vai trích dùng GPT-6 Luna, suy luận mức thấp (bài C v2). Mức suy luận nằm trong config."""
+PROJECT_MODEL = "deepseek/deepseek-v4-flash"  # D-100: thay GPT-6 Luna cho mọi vai và mức model viết
+
+
+def test_role_extract_uses_the_project_model_with_low_reasoning():
+    """D-35, D-100: vai trích dùng model của dự án, suy luận mức thấp. Mức suy luận nằm trong
+    config (số đo bài C v2 là của GPT-6 Luna, chưa đo lại với model mới)."""
     models = load_config().models
-    assert models.roles.require("extract") == "openai/gpt-6-luna"
+    assert models.roles.require("extract") == PROJECT_MODEL
     assert models.role_reasoning.extract == "low"
 
 
@@ -169,11 +173,11 @@ def test_narrator_limits_exist_in_config():
     assert "narrator_question_max_chars:" in text
 
 
-def test_provisional_roles_use_luna_with_low_reasoning():
-    """D-47: các vai chưa có bài đo riêng dùng tạm GPT-6 Luna; vai trả JSON suy luận thấp."""
+def test_provisional_roles_use_the_project_model_with_low_reasoning():
+    """D-47, D-100: các vai chưa có bài đo riêng dùng tạm model của dự án; vai trả JSON suy luận thấp."""
     models = load_config().models
     for role in ("outline", "choices", "narrator", "classify", "setup"):
-        assert models.roles.require(role) == "openai/gpt-6-luna"
+        assert models.roles.require(role) == PROJECT_MODEL
         assert getattr(models.role_reasoning, role) == "low"
 
 
@@ -181,7 +185,7 @@ def test_unset_role_raises_clear_error(config_dir):
     """D-39: vai chưa chọn model thì báo lỗi rõ, không đoán model."""
     path = config_dir / "models.yaml"
     text = path.read_text(encoding="utf-8")
-    old = "  setup: openai/gpt-6-luna"
+    old = f"  setup: {PROJECT_MODEL}"
     assert old in text, "test hỏng: config thật đã đổi"
     path.write_text(text.replace(old, "  setup: null"), encoding="utf-8")
     with pytest.raises(LimitNotSetError, match="roles.setup"):
@@ -189,9 +193,17 @@ def test_unset_role_raises_clear_error(config_dir):
 
 
 def test_writer_tier_reasoning_none_matches_bench_d():
-    """D-43: mức "standard" đặt reasoning none, như bài D đã đo GPT-6 Luna."""
+    """D-43: mức "standard" đặt reasoning none (như bài D đã đo; model nay là của D-100)."""
     [tier] = load_config().models.writer_tiers
-    assert (tier.id, tier.reasoning) == ("standard", "none")
+    assert (tier.id, tier.reasoning, tier.model) == ("standard", "none", PROJECT_MODEL)
+
+
+def test_every_configured_model_has_a_price_and_no_price_is_orphaned():
+    """Mọi model ở `roles` và `writer_tiers` có giá trong `prices` (không thì lời gọi bằng key người
+    chơi bị từ chối trước khi gửi, D-64), và `prices` không giữ giá của model không dùng nữa."""
+    models = load_config().models
+    used = {m for m in models.roles.model_dump().values() if m} | {t.model for t in models.writer_tiers}
+    assert used <= set(models.prices) and set(models.prices) <= used
 
 
 def test_writer_tier_reasoning_is_optional_and_checked(config_dir):

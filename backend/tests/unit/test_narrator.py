@@ -203,7 +203,8 @@ async def test_role_reasoning_is_passed_when_set():
     v = view(3)
     fake = FakeLLM.scripted([reply(True, "Ở miếu Bà.", [ref(v, "mieu_ba")])])
     await ask("Ở đâu?", 3, fake, config=with_limits(reasoning__narrator="low"))
-    assert fake.extras == [{"reasoning": {"effort": "low"}}]
+    assert fake.extras == [role_extra(CFG.models, "narrator")]
+    assert fake.extras[0]["reasoning"] == {"effort": "low"}
 
 
 # --- người kể bớt dè dặt (D-77) ----------------------------------------------------------------

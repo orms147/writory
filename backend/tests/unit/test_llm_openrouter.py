@@ -486,3 +486,30 @@ async def test_programming_errors_are_not_swallowed_as_network_errors():
     client, _ = client_with(_raises(ValueError("lỗi lập trình")))
     with pytest.raises(ValueError):
         await client.chat("x/y", MSGS)
+
+
+# --- chỉ nhà cung cấp nhận đủ tham số (D-100) -----------------------------------------------------------
+
+
+class _Out(BaseModel):
+    name: str
+
+
+async def test_schema_call_requires_providers_that_support_every_parameter():
+    """Một model có nhiều nhà cung cấp, có nơi không hỗ trợ `structured_outputs` (D-100): đòi
+    `provider.require_parameters` để OpenRouter không chuyển lời gọi có schema sang nơi đó."""
+    client, seen = client_with(lambda r: httpx.Response(200, json=completion('{"name": "Lan"}')))
+    await client.chat_json("x/y", MSGS, _Out)
+    assert json.loads(seen[0].content)["provider"] == {"require_parameters": True}
+
+
+async def test_plain_call_has_no_provider_preference():
+    client, seen = client_with(lambda r: httpx.Response(200, json=completion()))
+    await client.chat("x/y", MSGS)
+    assert "provider" not in json.loads(seen[0].content)
+
+
+async def test_caller_provider_preference_wins_over_the_default():
+    client, seen = client_with(lambda r: httpx.Response(200, json=completion('{"name": "Lan"}')))
+    await client.chat_json("x/y", MSGS, _Out, extra={"provider": {"sort": "price"}})
+    assert json.loads(seen[0].content)["provider"] == {"sort": "price"}
