@@ -1,14 +1,23 @@
-"""Dữ liệu và bộ chấm của bài đo A (bộ nhớ; docs/eval.md "Bài A"; D-72).
+"""Dữ liệu và bộ chấm của bài đo A (bộ nhớ; docs/eval.md "Bài A"; D-72, D-83).
 
-- Đề khai trước ở evals/scenarios/memory/ (`questions.yaml`, `run.yaml`).
-- Đáp án gốc kiểm lại từ đồ thị dựng tay: mỗi câu có `derive` tính lại đáp án từ
-  `data/sample-story/graph.yaml` tại chương `as_of`; lệch là lỗi đề (`check_question`). Mỗi câu có
-  `evidence`: câu trích nguyên văn từ chương <= ask_chapter, nên câu hỏi luôn trả lời được từ trang.
+- Đề khai trước ở evals/scenarios/memory/ (`questions*.yaml`, `run.yaml` dùng chung). Trường `story`
+  của file đề chọn truyện: `sample-story` (truyện mẫu dựng tay, data/sample-story/) hoặc `run`
+  (truyện do pipeline viết: thư mục kết quả `run_dir` của `pipeline.bench_run`, khoá theo
+  `run_sha256`; D-83).
+- Truyện mẫu: đáp án gốc kiểm lại từ đồ thị dựng tay: mỗi câu có `derive` tính lại đáp án từ
+  `data/sample-story/graph.yaml` tại chương `as_of`; lệch là lỗi đề (`check_question`).
+- Truyện do pipeline viết: đồ thị do bộ trích dựng, không phải đáp án. Đáp án gốc lấy từ trang; mỗi
+  câu khai `graph_agrees` và code kiểm cờ đó với đồ thị (có `derive` thì derive == gold khi true,
+  != gold khi false).
+- Mỗi câu có `evidence`: câu trích nguyên văn từ chương <= ask_chapter, nên câu hỏi luôn trả lời
+  được từ trang.
 - Chấm bằng code, không dùng giám khảo LLM (D-72): tập thực thể, có/không, chọn một, nhóm từ khoá.
   Câu trả lời "không biết" tính riêng (kiêng cữ), không tính là đúng.
 """
 
 import hashlib
+import json
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -17,7 +26,8 @@ from typing import Any, Literal, Self
 from pydantic import BaseModel, ConfigDict, Field, PositiveInt, model_validator
 
 from writory.config import REPO_ROOT, ConfigError
-from writory.graph.sample import DEFAULT_SAMPLE_DIR, SampleStory, read_sample
+from writory.graph import ChangePackage
+from writory.graph.sample import DEFAULT_SAMPLE_DIR, read_sample
 from writory.guard.state import EmptyState, GraphState, OverlayState
 from writory.pipeline.bench_a_systems import (
     OPTIONAL_SYSTEMS,
@@ -27,6 +37,7 @@ from writory.pipeline.bench_a_systems import (
     edge_key,
     flat,
 )
+from writory.pipeline.bench_e_story import run_packages
 from writory.pipeline.bench_run import Price
 from writory.quality.bench_d import _parse_yaml
 
@@ -84,9 +95,12 @@ class Question(_Strict):
     ask_chapter: int = Field(ge=1)
     as_of: int | None = Field(default=None, ge=1)
     inference: bool = False  # nối hai chi tiết trên trang; báo điểm tách riêng (D-72)
+    # Đồ thị có cho đúng đáp án của trang không (D-83). Truyện mẫu: luôn true (đồ thị dựng tay là
+    # đáp án). Truyện do pipeline viết: khai từng câu; `check_question` kiểm với đồ thị.
+    graph_agrees: bool = True
     question: str = Field(min_length=5)
     answer: AnswerSpec
-    derive: Mapping[str, Any]
+    derive: Mapping[str, Any] | None = None  # bỏ trống chỉ khi graph_agrees false: đồ thị không có gì để tính
     evidence: tuple[Evidence, ...] = Field(min_length=1)
 
     @model_validator(mode="after")
@@ -98,7 +112,10 @@ class Question(_Strict):
         if not self.id.startswith({"item": "item", "alive": "alive", "knows": "knows",
                                    "relation": "rel", "lie": "lie"}[self.group] + "-"):
             raise ValueError(f"id {self.id} không khớp nhóm {self.group}")
-        if "op" not in self.derive:
+        if self.derive is None:
+            if self.graph_agrees:
+                raise ValueError("thiếu derive: graph_agrees true cần derive để kiểm với đồ thị")
+        elif "op" not in self.derive:
             raise ValueError("derive thiếu op")
         return self
 
@@ -114,11 +131,26 @@ class Question(_Strict):
 class QuestionsFile(_Strict):
     version: PositiveInt
     status: str
-    story: Literal["sample-story"]
+    story: Literal["sample-story", "run"]
+    # story "run" (D-83): thư mục kết quả của pipeline.bench_run (tương đối thì tính từ gốc repo),
+    # và sha256 của từng file đọc từ đó (đường dẫn tương đối trong run_dir), khoá đề theo đúng truyện.
+    run_dir: str | None = None
+    run_sha256: Mapping[str, str] = Field(default_factory=dict)
     questions: tuple[Question, ...] = Field(min_length=1)
 
     @model_validator(mode="after")
     def _unique(self) -> Self:
+        if self.story == "run":
+            if not self.run_dir:
+                raise ValueError("story: run cần run_dir (thư mục kết quả của pipeline.bench_run)")
+            if not self.run_sha256:
+                raise ValueError("story: run cần run_sha256 (hash các file đọc từ run_dir)")
+        else:
+            if self.run_dir is not None or self.run_sha256:
+                raise ValueError("run_dir và run_sha256 chỉ dùng với story: run")
+            loose = [q.id for q in self.questions if not q.graph_agrees]
+            if loose:  # đồ thị dựng tay là đáp án: không có câu nào đồ thị "sai"
+                raise ValueError(f"truyện mẫu: graph_agrees phải true: {', '.join(loose)}")
         ids = [q.id for q in self.questions]
         dupes = sorted({i for i in ids if ids.count(i) > 1})
         if dupes:
@@ -182,8 +214,9 @@ class BenchData:
     questions: QuestionsFile
     run: RunFile
     story: Mapping[int, str]  # chương -> văn bản
-    sample: SampleStory
+    packages: tuple[tuple[int, ChangePackage], ...]  # (chương, gói thay đổi), gồm chương 0
     hashes: Mapping[str, str]
+    source: str = "sample-story"  # nguồn truyện, ghi vào meta.json: "sample-story" hoặc run_dir
 
     @property
     def chapters(self) -> tuple[int, ...]:
@@ -191,8 +224,7 @@ class BenchData:
 
     def state_at(self, chapter: int) -> GraphState:
         """Đồ thị đã biết tới hết chương `chapter`: các gói chương 0..chapter phủ lên nền rỗng."""
-        packages = [c.package for c in self.sample.chapters if c.number <= chapter]
-        return OverlayState(EmptyState(), packages)
+        return OverlayState(EmptyState(), [pkg for n, pkg in self.packages if n <= chapter])
 
     def question(self, qid: str) -> Question:
         for q in self.questions.questions:
@@ -203,22 +235,77 @@ class BenchData:
 
 def load_data(data_dir: Path = DATA_DIR, *, sample_dir: Path | None = None,
               questions_file: str = "questions.yaml") -> BenchData:
-    root = sample_dir or DEFAULT_SAMPLE_DIR
     raw_q, raw_r = _read(data_dir / questions_file), _read(data_dir / "run.yaml")
     questions = _parse_yaml(questions_file, raw_q, QuestionsFile)
     run = _parse_yaml("run.yaml", raw_r, RunFile)
-    sample = read_sample(root)
-    story = {c.number: c.text for c in sample.chapters if c.number >= 1}
-    hashes = {
-        questions_file: sha256(raw_q), "run.yaml": sha256(raw_r),
-        "sample-story/graph.yaml": sha256(_read(root / "graph.yaml")),
-        **{f"sample-story/ch{n:02d}.md": sha256(_read(root / f"ch{n:02d}.md")) for n in story},
-    }
-    data = BenchData(questions, run, story, sample, hashes)
+    hashes = {questions_file: sha256(raw_q), "run.yaml": sha256(raw_r)}
+    if questions.story == "run":
+        story, packages, files = _read_run(questions)
+        source = str(questions.run_dir)
+    else:
+        root = sample_dir or DEFAULT_SAMPLE_DIR
+        sample = read_sample(root)
+        story = {c.number: c.text for c in sample.chapters if c.number >= 1}
+        packages = tuple((c.number, c.package) for c in sample.chapters)
+        files = {
+            "sample-story/graph.yaml": sha256(_read(root / "graph.yaml")),
+            **{f"sample-story/ch{n:02d}.md": sha256(_read(root / f"ch{n:02d}.md")) for n in story},
+        }
+        source = "sample-story"
+    data = BenchData(questions, run, story, packages, {**hashes, **files}, source)
     problems = [p for q in questions.questions for p in check_question(q, data)]
     if problems:
         raise ConfigError("đề bài A sai:\n- " + "\n- ".join(problems))
     return data
+
+
+# --- truyện do pipeline viết (D-83) -----------------------------------------------------------------
+
+CHOICES_HEADING = "## Lựa chọn cuối chương"
+# Dòng của lệnh chạy, không phải văn: tiêu đề chương và ghi chú in nghiêng của `bench_run`.
+_HARNESS_LINE = re.compile(
+    r"^(# Chương \d+|_(Trạng thái: .*|Lựa chọn dẫn tới chương này: .*|Hết truyện\.)_)$")
+
+
+def run_chapter_text(raw: str) -> str:
+    """Văn một chương trong chapters/chNN.md của `bench_run`: bỏ tiêu đề, ghi chú in nghiêng của
+    lệnh chạy (trạng thái, lựa chọn dẫn tới chương, hết truyện) và mục lựa chọn cuối chương. Giữ
+    nguyên chữ của các cảnh và dòng ngắt cảnh."""
+    body = raw.replace("\r\n", "\n").split(f"\n{CHOICES_HEADING}\n", 1)[0]
+    kept = [line for line in body.split("\n") if not _HARNESS_LINE.match(line.strip())]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip() + "\n"
+
+
+def _resolve_run_dir(value: str) -> Path:
+    path = Path(value)
+    return path if path.is_absolute() else REPO_ROOT / path
+
+
+def _read_run(questions: QuestionsFile
+              ) -> tuple[dict[int, str], tuple[tuple[int, ChangePackage], ...], dict[str, str]]:
+    """(văn từng chương, gói từng chương, hash các file) của `run_dir`. Hash phải khớp đúng
+    `run_sha256`: đề viết cho đúng những byte đó."""
+    assert questions.run_dir is not None
+    root = _resolve_run_dir(questions.run_dir)
+    raw_dump = _read(root / "truth_dump.json")
+    try:
+        dump = json.loads(raw_dump.decode("utf-8"))
+    except (UnicodeDecodeError, json.JSONDecodeError) as e:
+        raise ConfigError(f"{root / 'truth_dump.json'} không phải JSON hợp lệ: {e}") from None
+    packages = run_packages(dump)
+    raw_chapters = {n: _read(root / "chapters" / f"ch{n:02d}.md") for n, _ in packages if n >= 1}
+    try:
+        story = {n: run_chapter_text(raw.decode("utf-8")) for n, raw in raw_chapters.items()}
+    except UnicodeDecodeError as e:
+        raise ConfigError(f"{root / 'chapters'}: chương không phải UTF-8: {e}") from None
+    files = {"truth_dump.json": sha256(raw_dump),
+             **{f"chapters/ch{n:02d}.md": sha256(raw) for n, raw in raw_chapters.items()}}
+    pinned = dict(questions.run_sha256)
+    wrong = sorted(f for f in files.keys() | pinned.keys() if files.get(f) != pinned.get(f))
+    if wrong:
+        raise ConfigError(f"{questions.run_dir}: hash khác `run_sha256` của đề (thiếu, thừa hoặc đã "
+                          f"sửa sau khi khai đề): {', '.join(wrong)}")
+    return story, packages, {f"run/{f}": h for f, h in files.items()}
 
 
 # --- tính lại đáp án từ đồ thị --------------------------------------------------------------------
@@ -276,6 +363,9 @@ def derive(spec: Mapping[str, Any], state: GraphState, chapter: int) -> Any:
     if op == "edge_prop":
         return [_single_edge(state, spec["type"], chapter, spec["from"],
                              spec["to"]).props[spec["prop"]]]
+    if op == "edge_since":  # chương mà đồ thị ghi cạnh đang hiệu lực, dạng lựa chọn "chương N"
+        edge = _single_edge(state, spec["type"], chapter, spec["from"], spec["to"])
+        return f"chương {edge.valid_from_chapter}"
     if op == "resolve_alias":
         found = AliasIndex(state.named_nodes()).find(spec["alias"])
         if len(found) != 1:
@@ -291,9 +381,31 @@ def _chapter_texts_upto(data: BenchData, chapter: int) -> dict[int, str]:
     return {n: flat(t) for n, t in data.story.items() if n <= chapter}
 
 
+_DERIVE_ID_KEYS = ("item", "holder", "from", "to", "character", "node")
+_RESULT_SHAPE = {"entities": list, "bool": bool, "choice": str, "text": bool}
+
+
+def _graph_problems(q: Question, result: Any) -> list[str]:
+    """Đáp án gốc so với kết quả `derive` (đồ thị nói gì). Rỗng = đồ thị cho đúng đáp án."""
+    a = q.answer
+    pre = f"câu {q.id}:"
+    if a.type == "entities":
+        return [] if result == sorted(a.gold) else [f"{pre} gold {sorted(a.gold)} khác đồ thị {result}"]
+    if a.type in ("bool", "choice"):
+        return [] if result == a.gold else [f"{pre} gold {a.gold!r} khác đồ thị {result!r}"]
+    assert q.derive is not None
+    problems = [] if result is True else [f"{pre} từ khoá derive không có trong chữ của nút"]
+    accepted = {flat(alt) for group in a.gold for alt in group}
+    for group in q.derive["keywords"]:
+        if not any(flat(g) in accepted for g in group):
+            problems.append(f"{pre} gold không chấp nhận từ khoá của đồ thị: {group}")
+    return problems
+
+
 def check_question(q: Question, data: BenchData) -> list[str]:
-    """Lỗi của một câu hỏi (rỗng = sạch): chương không có, câu trích không có trên trang, đáp án gốc
-    lệch đồ thị, id thực thể không có trong đồ thị."""
+    """Lỗi của một câu hỏi (rỗng = sạch): chương không có, câu trích không có trên trang, id thực thể
+    không có trong đồ thị, `derive` trỏ tới nút không có, và cờ `graph_agrees` sai: true mà đáp án
+    gốc lệch đồ thị, hoặc false mà đồ thị lại cho đúng đáp án (D-83)."""
     problems: list[str] = []
     pre = f"câu {q.id}:"
     if q.ask_chapter not in data.story:
@@ -305,32 +417,33 @@ def check_question(q: Question, data: BenchData) -> list[str]:
         elif flat(ev.quote) not in texts.get(ev.chapter, ""):
             problems.append(f"{pre} câu trích không có nguyên văn trong chương {ev.chapter}: "
                             f"{ev.quote!r}")
-    state = data.state_at(q.ask_chapter)
-    try:
-        result = derive(q.derive, data.state_at(q.state_chapter), q.state_chapter)
-    except (ValueError, KeyError, LookupError) as e:
-        return [*problems, f"{pre} derive lỗi: {type(e).__name__}: {e}"]
-    names = state.named_nodes()
+    names = data.state_at(q.ask_chapter).named_nodes()
     a = q.answer
     if a.type == "entities":
-        unknown = sorted(set(a.gold) - set(state.named_nodes()))
+        unknown = sorted(set(a.gold) - set(names))
         if unknown:
             problems.append(f"{pre} id không có trong đồ thị: {unknown}")
-        if result != sorted(a.gold):
-            problems.append(f"{pre} gold {sorted(a.gold)} khác đồ thị {result}")
         stray = sorted(set(a.aliases) - set(names))
         if stray:
             problems.append(f"{pre} aliases cho id không có: {stray}")
-    elif a.type in ("bool", "choice"):
-        if result != a.gold:
-            problems.append(f"{pre} gold {a.gold!r} khác đồ thị {result!r}")
-    else:
-        if result is not True:
-            problems.append(f"{pre} từ khoá derive không có trong chữ của nút")
-        accepted = {flat(alt) for group in a.gold for alt in group}
-        for group in q.derive["keywords"]:
-            if not any(flat(g) in accepted for g in group):
-                problems.append(f"{pre} gold không chấp nhận từ khoá của đồ thị: {group}")
+    if q.derive is None:  # graph_agrees false (Question đã kiểm): đồ thị không có gì để tính
+        return problems
+    state = data.state_at(q.state_chapter)
+    ids = [q.derive[k] for k in _DERIVE_ID_KEYS if isinstance(q.derive.get(k), str)]
+    absent = sorted(set(ids) - set(state.nodes(ids)))
+    if absent:  # gõ sai id thì derive ra rỗng, trông như "đồ thị sai": chặn trước
+        return [*problems, f"{pre} derive trỏ tới id không có nút trong đồ thị: {absent}"]
+    try:
+        result = derive(q.derive, state, q.state_chapter)
+    except (ValueError, KeyError, LookupError) as e:
+        return [*problems, f"{pre} derive lỗi: {type(e).__name__}: {e}"]
+    if not isinstance(result, _RESULT_SHAPE[a.type]):
+        return [*problems, f"{pre} derive trả {type(result).__name__}, không hợp answer.type {a.type}"]
+    against = _graph_problems(q, result)
+    if q.graph_agrees:
+        problems += against
+    elif not against:
+        problems.append(f"{pre} graph_agrees: false nhưng đồ thị cho đúng đáp án ({result!r})")
     return problems
 
 
@@ -460,8 +573,8 @@ def support_keys(spec: Mapping[str, Any], state: GraphState, chapter: int) -> se
         return {f"status:{n}" for n, label in labels.items() if label == "Character"}
     if op == "handed_over":
         return keys_of(state.edges_at("HOLDS", chapter, target_id=spec["item"], ever=True))
-    if op in ("relation_kind", "relation_is", "edge_prop"):
-        edge_type = "RELATES_TO" if op != "edge_prop" else spec["type"]
+    if op in ("relation_kind", "relation_is", "edge_prop", "edge_since"):
+        edge_type = spec["type"] if op in ("edge_prop", "edge_since") else "RELATES_TO"
         return keys_of(state.edges_at(edge_type, chapter, source_id=spec["from"],
                                       target_id=spec["to"]))
     if op == "alive":
@@ -475,18 +588,19 @@ def support_keys(spec: Mapping[str, Any], state: GraphState, chapter: int) -> se
 
 
 def context_supports(q: Question, ctx: Any, data: BenchData) -> bool:
-    """Ngữ cảnh có đủ chứng cứ để trả lời câu `q` không. Hệ đồ thị: đủ khoá `facts` mà `derive` cần.
-    Hệ khác: mọi câu trích bằng chứng của trang nằm trong chữ ngữ cảnh. Hệ đồ thị + câu trích
-    (D-81): một trong hai nguồn đủ là đủ."""
+    """Ngữ cảnh có đủ chứng cứ để trả lời câu `q` không. Trang: mọi câu trích bằng chứng nằm trong
+    chữ ngữ cảnh. Đồ thị: đủ khoá `facts` mà `derive` cần, và chỉ khi đồ thị cho đúng đáp án
+    (`graph_agrees`; đồ thị sai thì khoá dẫn tới câu sai). Hai hệ đồ thị đủ khi một trong hai nguồn
+    đủ (D-81, D-83): chữ của chúng có cả chương N, nên trần của chúng không dưới hệ "không bộ nhớ"."""
     def graph_ok() -> bool:
+        if not q.graph_agrees or q.derive is None:
+            return False
         return support_keys(q.derive, data.state_at(q.state_chapter), q.state_chapter) <= ctx.facts
 
     def page_ok() -> bool:
         flat_ctx = flat(ctx.text)
         return all(flat(ev.quote) in flat_ctx for ev in q.evidence)
 
-    if ctx.system == "graph":
-        return graph_ok()
-    if ctx.system == "graph_quotes":
+    if ctx.system in ("graph", "graph_quotes"):
         return graph_ok() or page_ok()
     return page_ok()

@@ -57,3 +57,26 @@ def test_neo4j_backend_loads_a_private_story_and_removes_it(driver):
     finally:
         close()
     assert probe.node_labels(["minh"]) == {}
+
+
+# --- truyện do pipeline viết (D-83): các gói chương của lượt chạy áp lần lượt vào Neo4j ---------------
+
+RUN = load_data(questions_file="questions-ky-ao-vua-1.yaml")
+
+
+def test_neo4j_and_memory_give_the_same_contexts_on_the_pipeline_story(driver):
+    from writory.pipeline.bench_a import RUN_STORY_ID
+
+    probe = Neo4jState(driver, RUN_STORY_ID)
+    state_for, close = open_graph_backend("neo4j", RUN)
+    try:
+        assert probe.protagonist_id() == "protagonist"
+        on_neo4j = ContextBuilder(RUN, state_for, {})
+        in_memory = ContextBuilder(RUN, RUN.state_at, {})
+        for q in RUN.questions.questions:
+            for system in ("graph", "graph_quotes"):
+                a, b = on_neo4j.build(system, q), in_memory.build(system, q)
+                assert a.text == b.text and a.facts == b.facts, (q.id, system)
+    finally:
+        close()
+    assert probe.node_labels(["protagonist"]) == {}

@@ -1,16 +1,18 @@
 """Bài đo A: bộ nhớ, hỏi đáp trên truyện cố định, sáu hệ trả lời cạnh tranh (design §9 A;
-docs/eval.md "Bài A"; D-72, D-73, D-81).
+docs/eval.md "Bài A"; D-72, D-73, D-81, D-83).
 
-Cùng một bộ câu hỏi khai trước (evals/scenarios/memory/questions.yaml) trên truyện mẫu 5 chương.
-Mỗi câu hỏi "sau khi đã đọc tới hết chương N"; các hệ khác nhau ở bộ nhớ đưa cho CÙNG một model trả
+Cùng một bộ câu hỏi khai trước trên một truyện cố định: truyện mẫu 5 chương
+(evals/scenarios/memory/questions.yaml), hoặc truyện do pipeline viết mà file đề trỏ tới bằng
+`run_dir` (chọn bằng --questions-file; D-83). Mỗi câu hỏi "sau khi đã đọc tới hết chương N"; các hệ
+khác nhau ở bộ nhớ đưa cho CÙNG một model trả
 lời (vai `narrator` của config/models.yaml): đồ thị WriTory, đồ thị + câu trích, không bộ nhớ, tóm
 tắt từng chương, RAG BM25, nhét cả truyện (`pipeline.bench_a_systems`). Chấm bằng code
 (`pipeline.bench_a_data`), không giám khảo LLM. Chi phí ghi theo từng hệ, gồm cả chi phí dựng bộ
 nhớ (tóm tắt của hệ "tóm tắt"). Hệ tuỳ chọn (`graph_quotes`) bật/tắt trong run.yaml.
 
 Hai hệ đồ thị đọc đồ thị CHỈ qua `GraphState` của lớp graph/ (G10): chạy thật qua `Neo4jState` (nạp
-truyện mẫu vào Neo4j, `story_id` riêng), chạy khô qua `OverlayState` (cùng nghĩa "ở chương N";
-test so hai nền: tests/graph/test_bench_a_graph_parity.py).
+truyện mẫu, hoặc các gói chương của lượt chạy pipeline, vào Neo4j, `story_id` riêng), chạy khô qua
+`OverlayState` (cùng nghĩa "ở chương N"; test so hai nền: tests/graph/test_bench_a_graph_parity.py).
 
 Trần: `--budget` (OpenRouter), USD, tính cả các lần chạy trước trong cùng thư mục. Trước mỗi lời gọi
 giữ chỗ chi phí tối đa (`bench_run.BudgetedClient`, `bench_d.Budget`). Key: chỉ OPENROUTER_API_KEY
@@ -94,7 +96,8 @@ from writory.safety.redact import install_log_redaction, redact
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
-STORY_ID = "bench-a-sample"
+STORY_ID = "bench-a-sample"  # story_id trên Neo4j của truyện mẫu
+RUN_STORY_ID = "bench-a-run"  # story_id trên Neo4j của truyện do pipeline viết (D-83)
 SystemName = Literal["graph", "graph_quotes", "none", "rolling", "rag", "full"]
 
 ANSWER_PROMPT_VERSION = "a-answer-1"  # đổi chữ prompt thì tăng số: kết quả cũ không còn so được
@@ -164,8 +167,9 @@ class FakeAnswerer(LLMClient):
     và ngữ cảnh nào đã được dựng (qua `register`).
 
     - oracle: đáp án gốc nếu ngữ cảnh ĐỦ chứng cứ (`context_supports`), còn không thì "Không biết".
-      Nên 100% ở hệ đồ thị và hệ nhét cả truyện chứng tỏ hai hệ đó dựng đúng ngữ cảnh; các hệ khác
-      cho biết trần của chúng nếu model đọc hoàn hảo.
+      Nên 100% ở hệ nhét cả truyện, và ở hai hệ đồ thị trên truyện mẫu (đồ thị dựng tay), chứng tỏ
+      các hệ đó dựng đúng ngữ cảnh; các hệ khác, và hệ đồ thị trên truyện do pipeline viết (đồ thị
+      do bộ trích dựng, D-83), cho biết trần của chúng nếu model đọc hoàn hảo.
     - null: luôn "Không biết". - wrong: luôn một câu sai (không phải kiêng cữ).
     Tóm tắt (SummaryOutput) trả một câu giả không chứa gì của chương.
     """
@@ -266,17 +270,20 @@ class ContextBuilder:
 def open_graph_backend(kind: str, data: BenchData
                        ) -> tuple[Callable[[int], GraphState], Callable[[], None]]:
     """(hàm chương -> GraphState, hàm đóng). `memory`: gói trong bộ nhớ, không dịch vụ. `neo4j`: nạp
-    truyện mẫu vào Neo4j rồi đọc qua `Neo4jState`; kết nối theo NEO4J_URI/USER/PASSWORD (mặc định
-    theo .env.example)."""
+    truyện vào Neo4j rồi đọc qua `Neo4jState`: truyện mẫu bằng `load_sample_story`, truyện do
+    pipeline viết bằng cách áp lần lượt các gói chương 0..N của lượt chạy (D-83). Kết nối theo
+    NEO4J_URI/USER/PASSWORD (mặc định theo .env.example)."""
     if kind == "memory":
         return data.state_at, lambda: None
     if kind != "neo4j":
         raise ConfigError(f"--graph-backend phải là memory hoặc neo4j: {kind!r}")
     from neo4j import GraphDatabase
 
-    from writory.graph import delete_story, ensure_schema, load_sample_story
+    from writory.graph import apply_package, delete_story, ensure_schema, load_sample_story
     from writory.guard.state import Neo4jState
 
+    from_run = data.questions.story == "run"
+    story_id = RUN_STORY_ID if from_run else STORY_ID
     driver = GraphDatabase.driver(
         os.environ.get("NEO4J_URI", "bolt://localhost:7687"),
         auth=(os.environ.get("NEO4J_USER", "neo4j"),
@@ -284,16 +291,20 @@ def open_graph_backend(kind: str, data: BenchData
     try:
         driver.verify_connectivity()
         ensure_schema(driver)
-        delete_story(driver, STORY_ID)  # nạp sạch: không để lại gói của lần chạy trước
-        load_sample_story(driver, STORY_ID)
+        delete_story(driver, story_id)  # nạp sạch: không để lại gói của lần chạy trước
+        if from_run:
+            for _, package in data.packages:
+                apply_package(driver, story_id, package)
+        else:
+            load_sample_story(driver, story_id)
     except Exception as e:  # noqa: BLE001 — chuyển thành lỗi cấu hình nói rõ việc cần làm
         driver.close()
-        raise ConfigError("không nạp được truyện mẫu vào Neo4j (đã chạy `docker compose up -d` "
+        raise ConfigError("không nạp được truyện vào Neo4j (đã chạy `docker compose up -d` "
                           f"chưa? NEO4J_URI/USER/PASSWORD đúng chưa?): {type(e).__name__}") from None
-    state = Neo4jState(driver, STORY_ID)
+    state = Neo4jState(driver, story_id)
 
     def close() -> None:
-        delete_story(driver, STORY_ID)
+        delete_story(driver, story_id)
         driver.close()
 
     return (lambda _n: state), close
@@ -595,7 +606,7 @@ async def run_bench(
                     if (opts.question_ids or opts.groups) else "all",
                     "budget": opts.budget}
         meta_extra = {"versions": {"questions": data.questions.version, "run": data.run.version},
-                      "status": data.questions.status, "story": "sample-story"}
+                      "status": data.questions.status, "story": data.source}
         _open_results(store, fingerprint(data, config_dir, opts, config), meta_extra, run_info)
         budget = Budget("openrouter", math.inf if opts.dry_run or opts.budget is None
                         else opts.budget, spent_usd=spent_from_store(store))
@@ -664,9 +675,12 @@ def compute_report(data: BenchData, store: Store, systems: Sequence[str],
         by_kind = {kind: cell([r for r in mine if qs[r["id"]].inference is flag],
                               sum(1 for q in qs.values() if q.inference is flag) * samples)
                    for kind, flag in (("memory", False), ("inference", True))}
+        by_graph = {kind: cell([r for r in mine if qs[r["id"]].graph_agrees is flag],
+                               sum(1 for q in qs.values() if q.graph_agrees is flag) * samples)
+                    for kind, flag in (("agrees", True), ("disagrees", False))}
         out["systems"][system] = {
             "overall": cell(mine, expected_per_system), "by_group": by_group, "by_bin": by_bin,
-            "by_kind": by_kind,
+            "by_kind": by_kind, "by_graph": by_graph,
             "cost_answer_usd": cost_answer, "cost_build_usd": cost_build,
             "cost_usd": cost_answer + cost_build,
             "cost_per_answer_usd": (cost_answer + cost_build) / len(mine) if mine else None,
@@ -705,7 +719,8 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
     lines = [
         "# Bài A: bộ nhớ, kết quả",
         "",
-        (f"- Đề: {meta.get('status', '?')}; questions v{meta.get('versions', {}).get('questions')}, "
+        (f"- Đề: {meta.get('status', '?')}; truyện `{meta.get('story', '?')}`; "
+        f"questions v{meta.get('versions', {}).get('questions')}, "
         f"run v{meta.get('versions', {}).get('run')}."),
         (f"- Commit `{str(last.get('commit', '?'))[:12]}`"
         f"{' (có sửa chưa commit)' if last.get('dirty') else ''}; model trả lời "
@@ -744,6 +759,15 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
         k = report["systems"][s]["by_kind"]
         lines.append(f"| {SYSTEM_LABELS[s]} | {_pct(k['memory']['k'], k['memory']['n'])} | "
                      f"{_pct(k['inference']['k'], k['inference']['n'])} |")
+    if any(not q.graph_agrees for q in data.questions.questions):
+        lines += ["", "## Đồ thị bộ trích có đáp án hay không (`graph_agrees`, D-83)", "",
+                  ("Đáp án gốc lấy từ trang. \"Có đáp án\": đồ thị bộ trích đã dựng cho đúng đáp án ở "
+                   "chương được hỏi (code kiểm). \"Thiếu hoặc sai\": đồ thị không có hoặc nói khác."),
+                  "", "| Hệ | Đồ thị có đáp án | Đồ thị thiếu hoặc sai |", "|---|---|---|"]
+        for s in systems:
+            g = report["systems"][s]["by_graph"]
+            lines.append(f"| {SYSTEM_LABELS[s]} | {_pct(g['agrees']['k'], g['agrees']['n'])} | "
+                         f"{_pct(g['disagrees']['k'], g['disagrees']['n'])} |")
     lines += ["", "## Theo khoảng cách (chương hỏi trừ chương của sự thật)", "",
               "| Hệ | " + " | ".join(f"cách {b} chương" for b in DISTANCE_BINS) + " |",
               "|---|" + "---|" * len(DISTANCE_BINS)]
