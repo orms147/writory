@@ -1541,3 +1541,38 @@ async def test_rewrite_after_a_hidden_name_says_which_name_to_use(tmp_path):
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     rewrite = calls_of(llm, "writer")[2][-1].content
     assert "dùng «gã lái đò mặt sẹo» thay vào" in rewrite
+
+
+# --- trần số dòng của mục tên cấm (D-94) ---------------------------------------------------------
+
+
+async def test_cap_cuts_only_the_prompt_never_the_leak_check(tmp_path):
+    """Trần 1 nút, ba nút được kế hoạch bảo vệ: đề liệt kê một nút và ghi "Và N tên khác", nhưng
+    bản nháp nêu cả ba tên vẫn bị bộ dò bắt đủ ba."""
+    names = ("Tô Nguyệt Hoa", "Hà Bá Tùng", "Đoàn Khương")
+    text = f"{', '.join(names)} đứng ngoài cổng. {SETUP_PC_NAME} không quay lại.{chr(10) * 2}{SCENE_1}"
+    package, plan = setup_chapter_0()
+    plan = _protecting(plan, "to_nguyet_hoa", "ha_ba_tung", "doan_khuong")
+    store = OverlayStore("new-story")
+    store.commit(0, [], package)
+    config = make_config(tmp_path, limits={"context": {"forbidden_names_max": 1}})
+    llm = ScriptedLLM([outline_reply(present=("protagonist",)), text, extract_reply(), text,
+                       extract_reply()])
+    chapter_run = ChapterRun(
+        ChapterRequest(present_ids=(), scene_count=2, story_brief="Kiếm hiệp, Hán Việt.",
+                       commit_id="c-ch1"),
+        llm=llm, store=store, config=config, plan=plan,
+        tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE,
+    )
+    [e async for e in chapter_run.events()]
+    for prompt in (calls_of(llm, "outline")[0][-1].content, calls_of(llm, "writer")[0][-1].content):
+        listed = [ln for ln in prompt.split(chr(10)) if ln.startswith("- Chưa hé lộ;")]
+        assert len(listed) == 1 and re.search(r"- Và \d+ tên khác", prompt)
+    [bad] = [r for r in chapter_run.outcome.reviews if r.scene == 1 and r.attempt == 1]
+    hit_text = " ".join(i.feedback for i in bad.issues if i.source == "leak")
+    for name in names:
+        assert f"«{name}»" in hit_text
+
+
+def test_forbidden_names_cap_is_in_config():
+    assert load_config().limits.context.forbidden_names_max >= 1  # D-94; số tạm, D-47
