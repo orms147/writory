@@ -124,6 +124,7 @@ class ContextLimits(_Section):
     page_quotes_max_chars: PositiveInt | None = None  # tổng độ dài chữ tối đa của các đoạn
     page_quotes_neighbors: NonNegativeInt = 0  # đoạn liền sau mỗi đoạn trúng cũng lấy (D-96)
     forbidden_names_max: PositiveInt | None = None  # số nút tối đa trong mục tên cấm (D-94)
+    standstill_chapters: PositiveInt | None = None  # nhân vật chính ở yên từng ấy chương (D-98)
 
 
 class LLMCallLimits(_Section):

@@ -11,6 +11,7 @@ from writory.errors import ErrorCode, WritoryError
 from writory.graph import public_entries
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.pipeline.choices import (
+    STALLED_NOTE,
     SYSTEM_PROMPT,
     TONE_GUIDANCE,
     ChoicesOutput,
@@ -90,10 +91,11 @@ def _refs_by_text():
     return {text[eid]: ref for ref, eid in refs.items()}
 
 
-async def _make(llm, *, brief: str = "", plan: StoryPlan = PLAN):
+async def _make(llm, *, brief: str = "", plan: StoryPlan = PLAN, stalled: bool = False):
     return await make_choices(
         llm, "m", view=VIEW, protagonist_id="minh", last_scene_text=SCENE,
         truth_names=STATE.named_nodes(), plan=plan, retries=RETRIES, story_brief=brief,
+        stalled=stalled,
     )
 
 
@@ -183,3 +185,40 @@ def test_prompt_asks_to_vary_dialogue_tone_when_the_scene_fits():
     honest = _reply(_refs_by_text(), **{"1": {"tone": "truth", "lie_content": None,
                                                "listeners": [lan]}})
     ChoicesOutput.model_validate_json(honest)  # nói thật vẫn hợp lệ: không ép bằng code
+
+
+# --- lựa chọn khi truyện đứng yên (D-98) --------------------------------------------------------
+# Hồi quy long-tu-tien-1: ba lựa chọn cuối chương 10, 14, 15 đều là "giữ yên, dò thêm, tự nhắc mình
+# thận trọng". Cờ "đứng yên" chỉ là đúng/sai, không mang tên nơi chốn (G1).
+
+
+def _user(stalled: bool) -> str:
+    kwargs = {"stalled": stalled} if stalled else {}
+    [_, user], _ = build_choice_messages(VIEW, protagonist_id="minh", last_scene_text=SCENE, **kwargs)
+    return user.content
+
+
+def test_stalled_story_asks_for_a_choice_that_breaks_the_standoff():
+    text = _user(True)
+    assert "thế giằng co" in text and "nhất một" in text and "không chỉ giữ yên" in text
+
+
+def test_story_that_moves_gets_the_same_prompt_as_before():
+    assert "thế giằng co" not in _user(False)
+    assert _user(False) == "\n".join(
+        m.content for m in build_choice_messages(VIEW, protagonist_id="minh",
+                                                 last_scene_text=SCENE)[0][1:])
+
+
+def test_the_stalled_note_is_fixed_code_text_and_the_rest_of_the_prompt_is_unchanged():
+    """G1: cờ chỉ thêm đúng một đoạn chữ cố định của code, không tên, id hay chữ lớp truth."""
+    assert STALLED_NOTE in _user(True)
+    squash = lambda t: "".join(t.split())
+    assert squash(_user(True).replace(STALLED_NOTE, "")) == squash(_user(False))
+    assert "{" not in STALLED_NOTE and OPEN_TAG_START not in STALLED_NOTE  # không có chỗ điền chữ
+
+
+async def test_make_choices_passes_the_flag_into_the_prompt():
+    llm = ScriptedLLM([_reply(_refs_by_text())])
+    await _make(llm, stalled=True)
+    assert "thế giằng co" in llm.calls[0][-1].content

@@ -12,7 +12,7 @@ import pytest
 
 from writory.graph import ChangePackage, read_sample
 from writory.guard.state import EmptyState, OverlayState
-from writory.pipeline.pacing import chapter_goals, render_chapter_goals
+from writory.pipeline.pacing import Standstill, chapter_goals, render_chapter_goals, standstill
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import UserAuthored
 
@@ -254,3 +254,76 @@ def test_the_revealed_section_is_only_in_the_chapter_goals_not_in_the_extractor_
     from writory.pipeline import extract
 
     assert "Bí mật đã lộ" not in extract.SYSTEM_PROMPT
+
+
+# --- thế giằng co: nhân vật chính ở yên một nơi nhiều chương (D-98) ------------------------------
+# Hồi quy long-tu-tien-1: nhân vật chính ở Cốc Đèn từ chương 6 tới 15, chương 10–15 lặp một cảnh dò
+# đường. Đo trên chính lần chạy đó: độ giống chữ giữa các chương liền và số cạnh đổi mỗi chương không
+# tách được chương lặp khỏi chương thường (xem D-98); nơi chốn của nhân vật chính thì tách được.
+
+THRESHOLD = 4
+
+
+def at(place: str, since: int, *, name: str | None = None, authored: bool = False) -> ChangePackage:
+    nodes = []
+    if name is not None:
+        nodes = [{"id": place, "label": "Location",
+                  "props": {"name": name, **({"user_authored": True} if authored else {})}}]
+    return ChangePackage.model_validate({
+        "commit_id": f"loc-{place}-{since}", "nodes": nodes,
+        "edges": [{"type": "LOCATED_AT", "from": "minh", "to": place, "valid_from_chapter": since}],
+    })
+
+
+def test_standing_still_for_enough_chapters_is_detected_with_the_place_name():
+    state = through(4, at("lo_ren", 1))
+    found = standstill(state, 5, THRESHOLD)
+    assert found == Standstill("lò rèn của Lão Gù", False, 4)
+    assert standstill(state, 4, THRESHOLD) is None  # mới 3 chương
+    assert standstill(state, 5, None) is None  # tắt
+
+
+def test_the_latest_location_counts_when_an_old_edge_was_never_closed():
+    """Bộ trích có thể để hai cạnh LOCATED_AT cùng mở (long-tu-tien-1 chương 6–10): lấy cạnh mới nhất."""
+    state = through(4, at("lo_ren", 1), at("quan_tra", 4))
+    assert standstill(state, 5, THRESHOLD) is None
+    assert standstill(state, 8, THRESHOLD) == Standstill("quán trà đầu bến", False, 4)
+
+
+def test_no_location_in_the_graph_means_no_standstill():
+    assert standstill(through(4), 5, THRESHOLD) is None  # truyện mẫu không có vị trí của Minh
+    assert standstill(OverlayState(EmptyState(), []), 5, THRESHOLD) is None  # chưa có nhân vật chính
+
+
+def test_chapter_goals_carry_the_standstill_only_when_asked():
+    state = through(4, at("lo_ren", 1))
+    assert chapter_goals(PLAN, 5, state).standstill is None
+    goals = chapter_goals(PLAN, 5, state, standstill_chapters=THRESHOLD)
+    assert goals.standstill == Standstill("lò rèn của Lão Gù", False, 4)
+
+
+def test_render_tells_the_writer_this_chapter_must_change_the_situation():
+    goals = chapter_goals(PLAN, 5, through(4, at("lo_ren", 1)), standstill_chapters=THRESHOLD)
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    assert "lò rèn của Lão Gù" in text and "4 chương" in text
+    assert "PHẢI đổi tình thế" in text and "không lặp lại" in text
+
+
+def test_render_has_no_standstill_section_otherwise():
+    for goals in (chapter_goals(PLAN, 5, through(4, at("lo_ren", 4)), standstill_chapters=THRESHOLD),
+                  chapter_goals(PLAN, 5, through(4, at("lo_ren", 1)))):
+        assert "PHẢI đổi tình thế" not in _text(render_chapter_goals(goals, scene=1, scene_count=2))
+
+
+def test_the_final_chapter_is_never_asked_to_change_the_situation():
+    goals = chapter_goals(PLAN, 6, through(5, at("lo_ren", 1)), standstill_chapters=THRESHOLD)
+    assert goals.final and "PHẢI đổi tình thế" not in _text(
+        render_chapter_goals(goals, scene=1, scene_count=2))
+
+
+def test_standstill_place_from_the_player_is_wrapped():
+    state = through(4, at("cho_cua_toi", 1, name="[PLAYER-place]", authored=True))
+    goals = chapter_goals(PLAN, 5, state, standstill_chapters=THRESHOLD)
+    parts = render_chapter_goals(goals, scene=1, scene_count=2)
+    assert not any(isinstance(p, str) and "[PLAYER-place]" in p for p in parts)
+    assert any(isinstance(p, UserAuthored) and p.text == "[PLAYER-place]" for p in parts)

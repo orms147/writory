@@ -61,7 +61,7 @@ from writory.pipeline.extract import (
     orphan_facts,
     without_facts,
 )
-from writory.pipeline.pacing import ChapterGoals, chapter_goals
+from writory.pipeline.pacing import ChapterGoals, chapter_goals, stalled_after
 from writory.pipeline.passages import Chunk, PagePool
 from writory.pipeline.scene import (
     Candidate,
@@ -364,6 +364,7 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.limits.context, "summary_max_chars"),
         (config.limits.context, "page_quotes_top_k"),
         (config.limits.context, "forbidden_names_max"),
+        (config.limits.context, "standstill_chapters"),
         (config.quality.repetition, "ngram_words"),
         (config.quality.repetition, "max_repeats"),
         (config.quality.foreign_script, "latin_run_min_words"),
@@ -605,7 +606,9 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
     # thì cảnh này không bị giục nữa (D-49).
     before = OverlayState(d.store.state(), _earlier_packages(state))
     return {"context": _writer_context(d, state, state["present"]),
-            "goals": chapter_goals(d.plan, state["chapter"], before)}
+            "goals": chapter_goals(d.plan, state["chapter"], before,
+                                   standstill_chapters=_require(d.config.limits.context,
+                                                                "standstill_chapters"))}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -921,6 +924,8 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
         retries=d.config.limits.retries, extra=role_extra(d.config.models, "choices"),
         moderate=partial(moderate, source=Source.CHOICES, llm=d.llm, config=d.config,
                          darkness_level=d.request.darkness_level),
+        stalled=stalled_after(d.store.state(), chapter,
+                              _require(d.config.limits.context, "standstill_chapters")),
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,
                                        choices=[c.for_player() for c in choices]))

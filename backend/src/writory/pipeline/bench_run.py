@@ -93,6 +93,7 @@ from writory.pipeline.chapter import (
 from writory.pipeline.choices import Choice, ChoicesOutput, make_choices
 from writory.pipeline.events import ChoicesReady, PlayerChoice, error_event
 from writory.pipeline.extract import ExtractOutput
+from writory.pipeline.pacing import stalled_after
 from writory.pipeline.scene import SceneOutline, load_style_guide
 from writory.pipeline.setup import (
     BuildOutput,
@@ -833,6 +834,7 @@ class StoryRun:
             last_scene_text=out.scenes[-1].text, truth_names=leak_names(state), plan=self.plan,
             story_brief=self.brief,
             retries=self.config.limits.retries, extra=role_extra(self.config.models, "choices"),
+            stalled=stalled_after(state, number, self.config.limits.context.standstill_chapters),
         )
 
     def _pick_choice(self, number: int, choices: Sequence[Choice]) -> int:

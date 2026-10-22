@@ -48,8 +48,9 @@ from writory.safety.wrap import (
 # outline-6, writer-6: mục "Bí mật đã lộ" và câu mạch nhiều vế trong mục tiêu của chương (D-84).
 # outline-7, writer-7: đoạn nguyên văn đã hiện trên trang, chọn bằng BM25 (D-85).
 # outline-8, writer-8: mục "Tên người đọc chưa được biết", tên người đọc biết cạnh tên thật (D-91).
-OUTLINE_PROMPT_VERSION = "outline-8"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-8"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-9, writer-9: dòng "PHẢI đổi tình thế" khi nhân vật chính ở yên nhiều chương (D-98).
+OUTLINE_PROMPT_VERSION = "outline-9"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-9"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"

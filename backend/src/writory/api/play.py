@@ -71,6 +71,7 @@ from writory.pipeline.events import (
     PlayerChoice,
     error_event,
 )
+from writory.pipeline.pacing import stalled_after
 from writory.pipeline.store import GraphStore
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.classify import check_action_text, classify_action, ensure_in_story
@@ -299,6 +300,9 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
         # G9, D-57: kiểm duyệt như đường của pipeline, ở mức u tối của truyện (D-67).
         moderate=partial(moderate, source=Source.CHOICES, llm=client, config=config,
                          darkness_level=story.darkness_level),
+        # D-98: như đường của pipeline, truyện đứng yên thì lựa chọn phải có một bước vượt ra.
+        stalled=stalled_after(Neo4jState(driver, story.id), chapter,
+                              config.limits.context.standstill_chapters),
     )
     saved = save_choices(conn, story.id, chapter, [choice_record(c) for c in choices])
     return ChoicesOut(chapter=chapter, choices=_for_player(saved))
