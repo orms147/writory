@@ -178,6 +178,28 @@ uv run python -m writory.pipeline.bench_e run --label tu-tien-1 --questions-file
     --plan-file plan-tu-tien-1.yaml --budget <USD>
 ```
 
+## Bài F — So model viết trên cùng một thế giới
+So nhiều model viết trên cùng một khởi tạo, rồi để giám khảo Claude chấm cả truyện và hỏi khuyến nghị "đáng tiền" (D-101). Khác bài D: chấm truyện nhiều chương (liền mạch, nhịp, lựa chọn), qua đúng đường `bench_run`, có chi phí thật. Code: `writory.quality.bench_bakeoff` (chấm), `writory.pipeline.bench_run` (viết).
+
+- **Dữ liệu** (khai trước, đã chạy thật thì không sửa đè, tăng `version`): `evals/scenarios/story_run/model-bakeoff.yaml` (đề viết, giá của ba model) và `evals/scenarios/bakeoff/judge.yaml` (giám khảo, tiêu chí kèm mốc 1/3/5, hướng dẫn cho ba loại lượt gọi).
+- **Giữ nguyên giữa các lượt:** thế giới (một `--setup-only`, mọi lượt `--setup-from` nó), seed và luật chọn lựa chọn, đề, mọi vai trí nhớ. Chỉ đổi model viết và model dàn ý (`--writer-model`, `--outline-model`).
+- **Chấm mù (bước 1):** `pack` xáo nhãn A/B/C theo `--seed`, ghi truyện, đề bài chung (đúng `story_brief` model viết nhận) và khoá giải nhãn `key.json`; giám khảo không đọc `key.json`, không thấy tên model ở bất kỳ bước nào. `judge` chạy: `solo` từng truyện (điểm 1–5 mỗi tiêu chí, kèm lý do và câu trích), và `compare` cả ba hai lần, thứ tự trình bày đảo (xếp hạng, tốt nhất/kém nhất từng tiêu chí). Câu trích phải có thật trong đúng truyện được nhắc (`quote_found`).
+- **Khuyến nghị đáng tiền (bước 2):** `value` khoá điểm bước 1 (`value_lock.json`, sha256), rồi đưa giám khảo bảng chi phí thật theo nhãn (USD mỗi chương, riêng phần model viết và dàn ý, lượt viết lại, lời gọi lỗi, truyện dừng sớm, lỗi do bộ kiểm văn). Điểm bước 1 đổi sau đó thì `value` từ chối và `summary` báo.
+- **Kết quả** `evals/results/<ngày>-model-bakeoff-<n>/`: `key.json`, `brief.md`, `stories/`, `code_metrics.json`, `results.jsonl`, `errors.jsonl`, `traces/` (yêu cầu và phản hồi thô), `summary.md` (giải nhãn: model | điểm từng mục | hạng so sánh | USD/chương | lỗi), `notes.md` đọc tay. Ba thư mục `run-*` của các lượt viết nằm cạnh.
+- **Key:** `ANTHROPIC_API_KEY` và `ANTHROPIC_WORKSPACE_ID` (khi key không gắn workspace) cho giám khảo; `OPENROUTER_API_KEY` cho lượt viết. **Trần:** cả hai lệnh bắt buộc `--budget` khi chạy thật; chạy tiếp tính cả phần đã tiêu.
+
+```bash
+# khởi tạo một lần, rồi ba lượt viết (model khác nhau), 6 chương mỗi lượt
+uv run python -m writory.pipeline.bench_run --label bakeoff-setup --scenario ../evals/scenarios/story_run/model-bakeoff.yaml --setup-only --budget <USD>
+uv run python -m writory.pipeline.bench_run --label bakeoff-<tên> --scenario ../evals/scenarios/story_run/model-bakeoff.yaml --setup-from <thư mục khởi tạo> --chapters 6 --writer-model <M> --outline-model <M> --budget <USD>
+# chấm
+uv run python -m writory.quality.bench_bakeoff pack --run <d1> --run <d2> --run <d3> --seed <S> --out ../evals/results/<ngày>-model-bakeoff-<n>
+uv run python -m writory.quality.bench_bakeoff judge --dir <out> --budget <USD>     # --dry-run: giám khảo giả, không key
+uv run python -m writory.quality.bench_bakeoff value --dir <out> --budget <USD>
+uv run python -m writory.quality.bench_bakeoff summary --dir <out>
+```
+Giới hạn: một thế giới, vài chương, một giám khảo; điểm giám khảo chưa hiệu chuẩn với người đọc; hai thứ tự `compare` chỉ phát hiện thiên lệch vị trí.
+
 ## Chạy cả truyện
 Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đi hết đường người chơi trên một truyện để đo chi phí theo vai, đếm lỗi, và để đọc tay. Cách làm: D-42, D-43. Code: `writory.pipeline.bench_run`.
 - **Đề** (khai trước, `evals/scenarios/story_run/`; đã chạy thật thì không sửa đè, tăng `version` hoặc thêm file đề): tag, độ dài, quy ước tên, seed, số cảnh mỗi chương, số lần tự bấm thử lại, `max_tokens_per_call`, giá USD/1M token của mọi model config đang dùng (chỉ để giữ chỗ ngân sách). Đề mặc định: `tu-tien-ngan.yaml`. Đề Truyện vừa cho mốc chạy liền 10 chương: `ky-ao-vua.yaml`. Đề Truyện dài (mức chưa mở cho người chơi, D-88): `long-tu-tien.yaml`; `--dry-run` dựng kế hoạch giả đủ số mốc của mức đề chọn.
@@ -196,6 +218,7 @@ Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đ
 - **Mã thoát:** 0 xong; 1 lỗi config, đề hoặc kết nối; 2 dừng vì chạm `--budget`; 3 dừng vì lỗi còn lại sau khi đã tự thử lại.
 - Cần Neo4j + Postgres (`docker compose up -d`, biến `NEO4J_*`, `POSTGRES_DSN`), cả khi dry-run. Kết quả dry-run (`*-dryrun/`) không commit.
 
+- **Chỉ khởi tạo và ghi đè model (D-101):** `--setup-only` dừng sau chương 0 (thư mục kết quả làm nguồn `--setup-from`). `--writer-model`, `--outline-model` thay model viết (mức model viết mà đề dùng) và model vai dàn ý; `--writer-reasoning`, `--outline-reasoning` (`none|minimal|low|medium|high|omit`, `omit` là không gửi `reasoning`) thay mức suy luận. Model ghi đè phải có giá ở `prices` của đề. `meta.json` ghi `overrides` và `setup_only`; dùng cho bài F.
 - **Dùng lại khởi tạo, bật/tắt đoạn trên trang (D-85):** `--setup-from <thư mục kết quả>` dùng lại bản kế hoạch, gói chương 0 và ba lựa chọn khởi tạo của một lần chạy (đề cùng sha256, seed khớp; không gọi model khởi tạo); `--page-quotes-top-k N` ghi đè `limits.context.page_quotes_top_k` (0 tắt). `truth_dump.json` có `quotes`: câu hỏi và id đoạn của từng lời gọi dàn ý và viết. `meta.json` ghi `page_quotes_top_k` và `setup_from`.
 - **So bật/tắt đoạn trên trang** (cách chấm, khai trước khi chạy): hai lần chạy 10 chương từ cùng một khởi tạo, cùng đề và seed, một lần `--page-quotes-top-k 0`, một lần `3`; trần mỗi lần 0,12 USD. Đọc tay `chapters/`, ghi mỗi mục kèm câu trích `chNN.md:dòng`, số riêng cho từng lần chạy:
   1. **Lỗi liền mạch**, mỗi lỗi một dòng, ba loại: đồ vật ở đâu và ai cầm; cửa và nơi chốn (mở hay khoá, ai ở đâu); ai biết gì (nhân vật nói hay làm điều chưa thể biết, hoặc phủ nhận điều đã nói). Lỗi kéo dài nhiều chương đếm một lỗi, ghi các chương bị ảnh hưởng.
