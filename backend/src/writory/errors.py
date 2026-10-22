@@ -59,6 +59,10 @@ class ErrorCode(StrEnum):
     CHAPTER_NOT_FOUND = "CHAPTER_NOT_FOUND"
     STORY_COMPLETE = "STORY_COMPLETE"
     STORY_BUSY = "STORY_BUSY"
+    AUTH_REQUIRED = "AUTH_REQUIRED"
+    INVITE_CODE_INVALID = "INVITE_CODE_INVALID"
+    LOGIN_RATE_LIMITED = "LOGIN_RATE_LIMITED"
+    REQUEST_ORIGIN_INVALID = "REQUEST_ORIGIN_INVALID"
 
 
 @dataclass(frozen=True)
@@ -292,6 +296,25 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Truyện này đang được viết hoặc tạo ở một yêu cầu khác (có thể bạn mở nó ở hai nơi), "
         "nên hệ thống không chạy thêm lần nữa để khỏi trừ tiền key của bạn hai lần.",
         "Đợi việc đang chạy xong rồi tải lại trang.",
+    ),
+    # Đăng nhập bằng mã mời (D-89). Không nhắc lại mã hay token, không nói mã sai ở phần nào.
+    ErrorCode.AUTH_REQUIRED: PlayerMessage(
+        "Bạn chưa đăng nhập, hoặc phiên đăng nhập đã hết hạn hay đã bị đăng xuất.",
+        "Vào trang đăng nhập và nhập mã mời của bạn.",
+    ),
+    ErrorCode.INVITE_CODE_INVALID: PlayerMessage(
+        "Mã mời không đúng hoặc đã bị thu hồi.",
+        "Chép lại nguyên mã mời (bắt đầu bằng \"wt-\") rồi thử lại; vẫn không được thì hỏi người "
+        "đã mời bạn.",
+    ),
+    ErrorCode.LOGIN_RATE_LIMITED: PlayerMessage(
+        "Máy này đã nhập mã mời quá nhiều lần trong thời gian ngắn nên tạm bị chặn.",
+        "Đợi một lúc rồi thử lại; nếu vẫn bị chặn, hỏi người đã mời bạn.",
+    ),
+    # Chống CSRF (D-89): yêu cầu ghi không phải JSON cùng origin.
+    ErrorCode.REQUEST_ORIGIN_INVALID: PlayerMessage(
+        "Yêu cầu bị từ chối vì không được gửi từ trang WriTory.",
+        "Mở WriTory trực tiếp, tải lại trang rồi thử lại.",
     ),
 }
 

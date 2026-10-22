@@ -2,6 +2,7 @@
 // máy chủ (`backend/src/writory/errors.py` MESSAGES); ở đây chỉ có nhãn nhóm và nhãn nút.
 
 export type ErrorGroup =
+  | 'auth'
   | 'key'
   | 'credits'
   | 'cost'
@@ -18,6 +19,8 @@ export type ErrorGroup =
   | 'generic';
 
 const GROUP_OF: Record<string, ErrorGroup> = {
+  AUTH_REQUIRED: 'auth',
+  LOGIN_RATE_LIMITED: 'rate',
   PLAYER_KEY_MISSING: 'key',
   PLAYER_KEY_UNREADABLE: 'key',
   PLAYER_KEY_INVALID: 'key',
@@ -65,6 +68,7 @@ export function errorGroup(code: string): ErrorGroup {
 
 /** Nhãn nhỏ phía trên câu lỗi: nói lỗi thuộc phần nào, không nói thêm điều máy chủ không nói. */
 export const GROUP_KICKER: Record<ErrorGroup, string> = {
+  auth: 'Đăng nhập',
   key: 'Khoá OpenRouter',
   credits: 'Credit OpenRouter',
   cost: 'Trần chi phí',
@@ -82,6 +86,7 @@ export const GROUP_KICKER: Record<ErrorGroup, string> = {
 };
 
 export type ErrorAction =
+  | 'login'
   | 'paste_key'
   | 'home'
   | 'retry'
@@ -92,6 +97,7 @@ export type ErrorAction =
   | 'back_to_reading';
 
 export const ACTION_LABEL: Record<ErrorAction, string> = {
+  login: 'Đăng nhập',
   paste_key: 'Dán khoá',
   home: 'Về tủ truyện',
   retry: 'Thử lại',
@@ -104,6 +110,7 @@ export const ACTION_LABEL: Record<ErrorAction, string> = {
 
 /** Nút theo nhóm, nút đầu là nút chính. Không có "Nâng trần", không đếm ngược (mục 6). */
 export const GROUP_ACTIONS: Record<ErrorGroup, ErrorAction[]> = {
+  auth: ['login'],
   key: ['paste_key', 'home'],
   credits: ['retry', 'open_openrouter'],
   cost: ['retry', 'new_story'],

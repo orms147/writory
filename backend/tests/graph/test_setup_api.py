@@ -18,6 +18,7 @@ from pydantic import SecretStr
 
 from tests.api_fixtures import (
     FAKE_KEY,
+    JSON_HEADERS,
     AllowAllQuota,
     KeyedFactory,
     asgi_request,
@@ -131,9 +132,9 @@ def start(client, created) -> dict:
 def to_finalize(client, created) -> str:
     sid = start(client, created)["session_id"]
     for step in ("settings", "plots"):
-        assert client.post(f"/setup/{sid}/{step}").status_code == 200
+        assert client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS).status_code == 200
         assert client.put(f"/setup/{sid}/{step}", json={"index": 0}).status_code == 200
-    assert client.post(f"/setup/{sid}/characters").status_code == 200
+    assert client.post(f"/setup/{sid}/characters", headers=JSON_HEADERS).status_code == 200
     resp = client.put(f"/setup/{sid}/characters", json={"index": 0})
     assert resp.status_code == 200 and resp.json()["step"] == "finalize"
     return sid
@@ -166,16 +167,16 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
         assert body["darkness_level"] == "light"  # mức người chơi chọn (D-67)
         sid = body["session_id"]
 
-        first = client.post(f"/setup/{sid}/settings").json()
-        again = client.post(f"/setup/{sid}/settings").json()  # lấy lại, không gọi model
+        first = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).json()
+        again = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).json()  # lấy lại, không gọi model
         assert first == again and len(fake.calls) == 1
         assert [o["title"] for o in first["settings"]] == ["Bối cảnh 0", "Bối cảnh 1", "Bối cảnh 2"]
         bodies += [first, client.put(f"/setup/{sid}/settings", json={"index": 1}).json()]
         assert bodies[-1]["setting_index"] == 1 and bodies[-1]["step"] == "plots"
 
-        bodies.append(client.post(f"/setup/{sid}/plots").json())
+        bodies.append(client.post(f"/setup/{sid}/plots", headers=JSON_HEADERS).json())
         bodies.append(client.put(f"/setup/{sid}/plots", json={"index": 2}).json())
-        bodies.append(client.post(f"/setup/{sid}/characters").json())
+        bodies.append(client.post(f"/setup/{sid}/characters", headers=JSON_HEADERS).json())
         resp = client.put(f"/setup/{sid}/characters", json={
             "index": 0, "name": "Lục Thanh Vân", "backstory": ATTACK})
         assert resp.status_code == 200
@@ -185,7 +186,7 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
                                              "backstory": ATTACK}
         assert bodies[-1]["step"] == "finalize"
 
-        resp = client.post(f"/setup/{sid}/finalize")
+        resp = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS)
         assert resp.status_code == 200, resp.text
         done = resp.json()
         bodies.append(done)
@@ -243,9 +244,9 @@ def test_finalize_twice_returns_the_same_story(pg, driver, created):
     fake = FakeLLM.scripted(script())
     with TestClient(make_app(pg, driver, fake)) as client:
         sid = to_finalize(client, created)
-        first = client.post(f"/setup/{sid}/finalize").json()
+        first = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).json()
         created[1].append(first["story_id"])
-        second = client.post(f"/setup/{sid}/finalize").json()
+        second = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).json()
     assert first == second and len(fake.calls) == 4
 
 
@@ -261,7 +262,8 @@ def test_steps_out_of_order_are_refused_without_calling_the_model(pg, driver, cr
                                    ("post", "characters", None),
                                    ("put", "characters", {"index": 0}),
                                    ("post", "finalize", None)):
-            resp = client.request(method.upper(), f"/setup/{sid}/{path}", json=body)
+            resp = client.request(method.upper(), f"/setup/{sid}/{path}", json=body,
+                                  headers=JSON_HEADERS)
             assert resp.status_code == 409, (method, path)
             assert resp.json() == WritoryError(ErrorCode.SETUP_STEP_NOT_READY).player_payload()
         assert client.get(f"/setup/{sid}").json()["step"] == "settings"
@@ -273,7 +275,7 @@ def test_index_outside_0_to_2_is_refused(pg, driver, created, index):
     fake = FakeLLM.scripted([options("settings")])
     with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
         sid = start(client, created)["session_id"]
-        client.post(f"/setup/{sid}/settings")
+        client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
         resp = client.put(f"/setup/{sid}/settings", json={"index": index})
         assert resp.status_code == 422
         assert resp.json() == WritoryError(ErrorCode.REQUEST_INVALID,
@@ -285,13 +287,13 @@ def test_changing_an_earlier_choice_clears_later_steps(pg, driver, created):
     fake = FakeLLM.scripted([options("settings"), options("plots"), options("plots", " mới")])
     with TestClient(make_app(pg, driver, fake)) as client:
         sid = start(client, created)["session_id"]
-        client.post(f"/setup/{sid}/settings")
+        client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
         client.put(f"/setup/{sid}/settings", json={"index": 0})
-        client.post(f"/setup/{sid}/plots")
+        client.post(f"/setup/{sid}/plots", headers=JSON_HEADERS)
         client.put(f"/setup/{sid}/plots", json={"index": 1})
         body = client.put(f"/setup/{sid}/settings", json={"index": 2}).json()
         assert (body["step"], body["plots"], body["plot_index"]) == ("plots", None, None)
-        plots = client.post(f"/setup/{sid}/plots").json()["plots"]
+        plots = client.post(f"/setup/{sid}/plots", headers=JSON_HEADERS).json()["plots"]
     assert plots[0]["title"] == "Hướng 0 mới"
     assert "Bối cảnh 2" in fake.calls[-1][-1].content  # hướng mới dựa trên bối cảnh mới
 
@@ -301,7 +303,7 @@ def test_session_of_another_owner_is_not_found(pg, driver, created):
         sid = start(client, created)["session_id"]
     other = make_app(pg, driver, FakeLLM.scripted([]), owner="someone-else")
     with TestClient(other, raise_server_exceptions=False) as client:
-        for resp in (client.get(f"/setup/{sid}"), client.post(f"/setup/{sid}/settings")):
+        for resp in (client.get(f"/setup/{sid}"), client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)):
             assert resp.status_code == 404
             assert resp.json() == WritoryError(ErrorCode.SETUP_NOT_FOUND).player_payload()
 
@@ -321,9 +323,9 @@ def test_bad_character_edit_is_refused_and_changes_nothing(pg, driver, created, 
     with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
         sid = start(client, created)["session_id"]
         for step in ("settings", "plots"):
-            client.post(f"/setup/{sid}/{step}")
+            client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS)
             client.put(f"/setup/{sid}/{step}", json={"index": 0})
-        client.post(f"/setup/{sid}/characters")
+        client.post(f"/setup/{sid}/characters", headers=JSON_HEADERS)
         resp = client.put(f"/setup/{sid}/characters", json={"index": 1, **edit})
         assert resp.status_code == 422
         # G12: nói trường nào phải sửa, đúng thứ tự tên, tính cách, quá khứ.
@@ -351,7 +353,7 @@ def test_invalid_build_creates_no_story(pg, driver, created):
     before = _dev_story_count(pg)
     with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
         sid = to_finalize(client, created)
-        resp = client.post(f"/setup/{sid}/finalize")
+        resp = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS)
         assert resp.status_code == 502
         assert resp.json() == WritoryError(ErrorCode.STORY_SETUP_INVALID).player_payload()
         assert_no_truth(resp.text)
@@ -366,8 +368,8 @@ def test_finalize_can_be_retried_after_a_failed_attempt(pg, driver, created):
     with TestClient(make_app(pg, driver, fake, own_conns=True),
                     raise_server_exceptions=False) as client:
         sid = to_finalize(client, created)
-        assert client.post(f"/setup/{sid}/finalize").status_code == 502
-        resp = client.post(f"/setup/{sid}/finalize")
+        assert client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).status_code == 502
+        resp = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS)
     assert resp.status_code == 200, resp.text
     created[1].append(resp.json()["story_id"])
     assert resp.json()["step"] == "done"
@@ -462,7 +464,7 @@ def test_graph_failure_at_chapter_0_leaves_no_story(pg, driver, created, monkeyp
     before = _dev_story_count(pg)
     with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
         sid = to_finalize(client, created)
-        resp = client.post(f"/setup/{sid}/finalize")
+        resp = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS)
         assert resp.status_code == 409
         assert resp.json()["code"] == "CHAPTER_SAVE_FAILED"
         assert client.get(f"/setup/{sid}").json()["step"] == "finalize"
@@ -480,7 +482,7 @@ def test_generation_without_player_key_fails_closed(pg, driver, created):
     fake = FakeLLM.scripted([])
     with TestClient(make_app(pg, driver, fake, key=False), raise_server_exceptions=False) as c:
         sid = start(c, created)["session_id"]
-        resp = c.post(f"/setup/{sid}/settings")
+        resp = c.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
         assert resp.status_code == 400
         assert resp.json() == WritoryError(ErrorCode.PLAYER_KEY_MISSING).player_payload()
         assert c.get(f"/setup/{sid}").json()["settings"] is None
@@ -494,7 +496,7 @@ def test_setup_spending_counts_toward_story_cap(pg, driver, created):
         cap = client.app.state.config.limits.cost_usd.per_story
         record_cost(pg, owner_id=DEV_OWNER_ID, setup_id=sid,
                     entry=CostEntry("setup", "m", 0, 0, cap))
-        resp = client.post(f"/setup/{sid}/settings")
+        resp = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
     assert (resp.status_code, resp.json()["code"]) == (402, "COST_LIMIT_STORY")
     assert fake.calls == []
 
@@ -505,9 +507,9 @@ def test_setup_spending_counts_toward_story_cap(pg, driver, created):
 def to_characters(client, created) -> str:
     sid = start(client, created)["session_id"]
     for step in ("settings", "plots"):
-        assert client.post(f"/setup/{sid}/{step}").status_code == 200
+        assert client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS).status_code == 200
         assert client.put(f"/setup/{sid}/{step}", json={"index": 0}).status_code == 200
-    assert client.post(f"/setup/{sid}/characters").status_code == 200
+    assert client.post(f"/setup/{sid}/characters", headers=JSON_HEADERS).status_code == 200
     return sid
 
 
@@ -517,7 +519,7 @@ def test_blocked_tags_stop_generation_and_save_nothing(pg, driver, created):
     app = make_app(pg, driver, fake, moderation=block)
     with TestClient(app, raise_server_exceptions=False) as client:
         sid = start(client, created)["session_id"]
-        resp = client.post(f"/setup/{sid}/settings")
+        resp = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
         body = client.get(f"/setup/{sid}").json()
     assert resp.status_code == 422 and resp.json()["code"] == "INPUT_BLOCKED"
     assert "incitement" not in resp.text
@@ -529,8 +531,8 @@ def test_clean_tags_are_moderated_when_options_are_generated_and_not_again(pg, d
     app = make_app(pg, driver, fake)
     with TestClient(app, raise_server_exceptions=False) as client:
         sid = start(client, created)["session_id"]
-        assert client.post(f"/setup/{sid}/settings").status_code == 200
-        assert client.post(f"/setup/{sid}/settings").status_code == 200  # trả lại bộ đã có
+        assert client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).status_code == 200
+        assert client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).status_code == 200  # trả lại bộ đã có
     calls = app.state.moderated.moderation_calls
     assert len(calls) == VOTES  # kiểm `input_votes` lần (D-79), một lần cho cả bộ tag
     for messages in calls:
@@ -584,10 +586,10 @@ def test_story_without_a_chosen_darkness_level_stores_the_default(pg, driver, cr
         assert body["darkness_level"] == default
         sid = body["session_id"]
         for step in ("settings", "plots"):
-            client.post(f"/setup/{sid}/{step}")
+            client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS)
             client.put(f"/setup/{sid}/{step}", json={"index": 0})
-        client.post(f"/setup/{sid}/characters")
+        client.post(f"/setup/{sid}/characters", headers=JSON_HEADERS)
         client.put(f"/setup/{sid}/characters", json={"index": 0})
-        done = client.post(f"/setup/{sid}/finalize").json()
+        done = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).json()
     created[1].append(done["story_id"])
     assert get_story(pg, done["story_id"]).darkness_level == default

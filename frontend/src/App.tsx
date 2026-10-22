@@ -9,6 +9,7 @@ import { SetupSession } from './screens/setup/SetupSession';
 import { Template } from './screens/setup/Template';
 import { ReadBack } from './screens/story/ReadBack';
 import { StoryScreen } from './screens/story/StoryScreen';
+import { AuthProvider, RequireLogin, useAuth } from './state/Auth';
 import { PlayerKeyProvider } from './state/PlayerKey';
 
 // Route theo README bàn giao mục 3. Sổ tay và hỏi người kể là lớp trên `/truyen/:id`.
@@ -27,14 +28,26 @@ export function AppRoutes() {
   );
 }
 
+/** Trạng thái theo người chơi (key) dựng lại khi đổi người: đăng nhập, đăng xuất (D-89). */
+function PlayerScope() {
+  const s = useAuth().data;
+  return (
+    <PlayerKeyProvider key={s ? `${s.mode}:${s.logged_in}:${s.name ?? ''}` : ''}>
+      <AppRoutes />
+    </PlayerKeyProvider>
+  );
+}
+
 export function App() {
   return (
     <BrowserRouter>
       <InkHalo />
       <PublicConfigProvider>
-        <PlayerKeyProvider>
-          <AppRoutes />
-        </PlayerKeyProvider>
+        <AuthProvider>
+          <RequireLogin>
+            <PlayerScope />
+          </RequireLogin>
+        </AuthProvider>
       </PublicConfigProvider>
     </BrowserRouter>
   );

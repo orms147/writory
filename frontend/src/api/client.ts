@@ -5,6 +5,7 @@ import { ApiError, asApiError, clientError, errorFromResponse, isAbortError } fr
 import { readChapterEvents } from './sse';
 import type {
   ActionOut,
+  AuthSession,
   ChapterEstimateOut,
   ChapterEvent,
   ChapterOut,
@@ -34,10 +35,11 @@ export function setFetch(fn: FetchLike): void {
 
 async function send(method: string, path: string, body?: unknown, signal?: AbortSignal): Promise<Response> {
   const init: RequestInit = { method, headers: { accept: 'application/json' } };
-  if (body !== undefined) {
-    init.headers = { ...init.headers, 'content-type': 'application/json' };
-    init.body = JSON.stringify(body);
-  }
+  // Mọi yêu cầu ghi gửi `content-type: application/json`, kể cả khi không có thân: máy chủ dùng nó
+  // để chống CSRF ở mọi chế độ (D-89, `deps.api_guard`). Cookie phiên đi kèm vì cùng
+  // origin (`credentials` mặc định `same-origin`).
+  if (method !== 'GET') init.headers = { ...init.headers, 'content-type': 'application/json' };
+  if (body !== undefined) init.body = JSON.stringify(body);
   if (signal) init.signal = signal;
   try {
     return await fetchImpl(`${API_BASE}${path}`, init);
@@ -76,6 +78,11 @@ export async function* streamChapter(storyId: string, signal?: AbortSignal): Asy
 
 export const api = {
   publicConfig: () => request<PublicConfig>('GET', '/config/public'),
+
+  session: () => request<AuthSession>('GET', '/auth/session'),
+  /** Mã mời chỉ sống trong thân yêu cầu này; không lưu ở trình duyệt, không log (D-89). */
+  login: (code: string) => request<AuthSession>('POST', '/auth/login', { code }),
+  logout: () => request<AuthSession>('POST', '/auth/logout'),
 
   stories: () => request<StoriesOut>('GET', '/stories'),
   story: (id: string) => request<StoryOut>('GET', `/stories/${enc(id)}`),

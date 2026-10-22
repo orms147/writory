@@ -46,5 +46,9 @@ export const MOCK_ERRORS: Record<string, { message: string; status: number }> = 
   CHOICE_REQUIRED: { message: "Bạn chưa chọn hành động cho chương tiếp theo. Chọn một lựa chọn hoặc tự viết hành động, rồi bấm viết tiếp.", status: 409 },
   CHAPTER_NOT_FOUND: { message: "Không tìm thấy chương này. Quay về truyện để đọc chương mới nhất.", status: 404 },
   STORY_COMPLETE: { message: "Truyện đã tới chương cuối. Bạn vẫn đọc lại được các chương đã có; muốn chơi tiếp thì bắt đầu truyện mới.", status: 409 },
+  AUTH_REQUIRED: { message: "Bạn chưa đăng nhập, hoặc phiên đăng nhập đã hết hạn hay đã bị đăng xuất. Vào trang đăng nhập và nhập mã mời của bạn.", status: 401 },
+  INVITE_CODE_INVALID: { message: "Mã mời không đúng hoặc đã bị thu hồi. Chép lại nguyên mã mời (bắt đầu bằng \"wt-\") rồi thử lại; vẫn không được thì hỏi người đã mời bạn.", status: 401 },
+  LOGIN_RATE_LIMITED: { message: "Máy này đã nhập mã mời quá nhiều lần trong thời gian ngắn nên tạm bị chặn. Đợi một lúc rồi thử lại; nếu vẫn bị chặn, hỏi người đã mời bạn.", status: 429 },
+  REQUEST_ORIGIN_INVALID: { message: "Yêu cầu bị từ chối vì không được gửi từ trang WriTory. Mở WriTory trực tiếp, tải lại trang rồi thử lại.", status: 403 },
   STORY_BUSY: { message: "Truyện này đang được viết hoặc tạo ở một yêu cầu khác (có thể bạn mở nó ở hai nơi), nên hệ thống không chạy thêm lần nữa để khỏi trừ tiền key của bạn hai lần. Đợi việc đang chạy xong rồi tải lại trang.", status: 409 },
 };

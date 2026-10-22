@@ -20,6 +20,7 @@ from pydantic import SecretStr
 
 from tests.api_fixtures import (
     FAKE_KEY,
+    JSON_HEADERS,
     AllowAllQuota,
     CountedConnections,
     KeyedFactory,
@@ -157,7 +158,7 @@ def make_app(pg, driver, llm, tmp_path, *, key: bool = True, own_conns: bool = F
 
 
 def write_next(client, sid):
-    return client.post(f"/stories/{sid}/chapters/next")
+    return client.post(f"/stories/{sid}/chapters/next", headers=JSON_HEADERS)
 
 
 # --- luồng đủ -----------------------------------------------------------------------------------
@@ -297,7 +298,7 @@ def test_last_planned_chapter_finishes_the_story_without_choices(pg, driver, sto
     with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
         resp = write_next(client, sid)
         state = client.get(f"/stories/{sid}").json()
-        regenerated = client.post(f"/stories/{sid}/choices")
+        regenerated = client.post(f"/stories/{sid}/choices", headers=JSON_HEADERS)
         pick = client.post(f"/stories/{sid}/choice", json={"choice_id": "choice-000000000000"})
         custom = client.post(f"/stories/{sid}/action", json={"text": "Tôi rời phố Bến Sương."})
         again = write_next(client, sid)
@@ -344,8 +345,8 @@ def test_leaky_choices_are_not_shown_then_can_be_regenerated(pg, driver, story, 
         assert events[-1][1]["code"] == "CHOICES_LEAK_BLOCKED"
         assert "Lý Thất" not in resp.text
         assert current_chapter(pg, sid) == 4 and load_choices(pg, sid, 4) == []
-        regenerated = client.post(f"/stories/{sid}/choices")
-        again = client.post(f"/stories/{sid}/choices")
+        regenerated = client.post(f"/stories/{sid}/choices", headers=JSON_HEADERS)
+        again = client.post(f"/stories/{sid}/choices", headers=JSON_HEADERS)
     assert regenerated.status_code == 200
     body = regenerated.json()
     assert body["chapter"] == 4 and len(body["choices"]) == 3
@@ -848,7 +849,7 @@ def live_app(pg, driver, llm, tmp_path) -> tuple[object, CountedConnections]:
 
 
 def stream_lines(client: httpx.Client, path: str) -> tuple[httpx.Response, list[str]]:
-    with client.stream("POST", path) as resp:
+    with client.stream("POST", path, headers=JSON_HEADERS) as resp:
         return resp, list(resp.iter_lines())
 
 
@@ -894,7 +895,7 @@ def test_uvicorn_disconnect_mid_chapter_cancels_writes_nothing_and_frees_the_loc
     path = f"/stories/{sid}/chapters/next"
     with live_server(app, timeout=WAIT_S) as base:
         with httpx.Client(base_url=base, timeout=WAIT_S) as client, \
-                client.stream("POST", path) as resp:
+                client.stream("POST", path, headers=JSON_HEADERS) as resp:
             assert resp.status_code == 200
             # Giữ tham chiếu tới iterator: iterator của httpx bị thu dọn là đóng kết nối ngay.
             lines = resp.iter_lines()
@@ -949,7 +950,7 @@ def test_uvicorn_sends_ping_while_the_model_is_slow(pg, driver, story, tmp_path,
     path = f"/stories/{sid}/chapters/next"
     with live_server(app, timeout=WAIT_S) as base, \
             httpx.Client(base_url=base, timeout=WAIT_S) as client, \
-            client.stream("POST", path) as resp:
+            client.stream("POST", path, headers=JSON_HEADERS) as resp:
         for line in resp.iter_lines():
             lines.append(line)
             if line == ": ping" and llm.held.is_set() and not pinged_while_held:
@@ -991,7 +992,7 @@ def test_regenerated_choices_are_moderated_at_the_story_darkness_level(pg, drive
     sid = story(action=None, darkness_level=level)
     llm = ScriptedLLM([choices_after_chapter_3], moderation=[VIOLENT])
     with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
-        resp = client.post(f"/stories/{sid}/choices")
+        resp = client.post(f"/stories/{sid}/choices", headers=JSON_HEADERS)
     if shown:
         assert resp.status_code == 200 and len(resp.json()["choices"]) == 3
     else:

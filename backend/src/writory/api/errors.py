@@ -77,6 +77,11 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.CHOICE_REQUIRED: 409,
     ErrorCode.CHAPTER_NOT_FOUND: 404,
     ErrorCode.STORY_COMPLETE: 409,
+    # Đăng nhập bằng mã mời (D-89)
+    ErrorCode.AUTH_REQUIRED: 401,
+    ErrorCode.INVITE_CODE_INVALID: 401,
+    ErrorCode.LOGIN_RATE_LIMITED: 429,
+    ErrorCode.REQUEST_ORIGIN_INVALID: 403,  # CSRF: route ghi không phải JSON cùng origin
     ErrorCode.STORY_BUSY: 409,  # D-46: đang có một lần viết/chốt khác của cùng truyện, phiên
 }
 

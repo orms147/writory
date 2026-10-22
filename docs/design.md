@@ -107,7 +107,7 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 | Người canh: mâu thuẫn + lộ sớm, viết lại tối đa 1 lần (§8) | lõi; chỉ kiểm bằng code, phần LLM để bản sau (D-88) |
 | Sổ tay (chỉ lớp người chơi biết) | chỉ xem |
 | Hỏi người kể chuyện (chỉ trả lời từ lớp người chơi biết) | không mất lượt |
-| Đăng nhập đơn giản, lưu truyện, mở lại chơi tiếp | |
+| Đăng nhập đơn giản, lưu truyện, mở lại chơi tiếp | đăng nhập bằng mã mời cho bạn bè (D-89) |
 | Bộ đo (§9) | lõi |
 
 **Bản 2 — chiều sâu (+4 tuần)**

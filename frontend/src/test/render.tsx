@@ -2,11 +2,14 @@ import { render } from '@testing-library/react';
 import type { ReactElement } from 'react';
 import { MemoryRouter } from 'react-router';
 import { setFetch } from '../api/client';
-import type { PublicConfig } from '../api/types';
+import type { AuthSession, PublicConfig } from '../api/types';
 import { ConfigValue } from '../config/PublicConfig';
 import { MOCK_CONFIG } from '../mock/data';
 import { createMockServer, type MockOptions } from '../mock/server';
+import { AuthValue } from '../state/Auth';
 import { PlayerKeyProvider } from '../state/PlayerKey';
+
+export const DEV_SESSION: AuthSession = { mode: 'dev', logged_in: true, name: null };
 
 /** Config mẫu với số lạ, để test thấy giao diện lấy số từ config chứ không tự đặt. */
 export function oddConfig(): PublicConfig {
@@ -30,11 +33,16 @@ export function withMock(options: MockOptions = {}) {
   return server;
 }
 
-export function renderApp(ui: ReactElement, { config = oddConfig(), route = '/' }: { config?: PublicConfig; route?: string } = {}) {
+export function renderApp(
+  ui: ReactElement,
+  { config = oddConfig(), route = '/', auth = DEV_SESSION }: { config?: PublicConfig; route?: string; auth?: AuthSession } = {},
+) {
   return render(
     <MemoryRouter initialEntries={[route]}>
       <ConfigValue value={config}>
-        <PlayerKeyProvider>{ui}</PlayerKeyProvider>
+        <AuthValue value={auth}>
+          <PlayerKeyProvider>{ui}</PlayerKeyProvider>
+        </AuthValue>
       </ConfigValue>
     </MemoryRouter>,
   );

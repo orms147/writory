@@ -35,3 +35,7 @@ chapter_estimate:   # D-87: số hiện cho người chơi khi truyện chưa c�
   # evals/results/2026-10-21-run-tu-tien-4, -run-ky-ao-vua-2, -run-ky-ao-vua-1), vì lúc chơi còn có
   # lượt tạo lại lựa chọn.
   default_usd: 0.01
+auth:   # đăng nhập bằng mã mời, chỉ khi AUTH_MODE=invite (D-89; số tạm, D-47)
+  session_ttl_hours: 720          # phiên hết hạn sau ngần này giờ kể từ lúc đăng nhập
+  login_attempts_per_window: 10   # số lần nhập mã (đúng hay sai) mỗi máy trong một cửa sổ
+  login_window_seconds: 900       # cửa sổ cố định của bộ đếm trên

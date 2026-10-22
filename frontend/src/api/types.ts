@@ -81,6 +81,14 @@ export interface PlayerCosts {
 
 // --- key người chơi -----------------------------------------------------------------------------
 
+/** `GET /auth/session`, `POST /auth/login`, `POST /auth/logout` (D-89). Không có token: phiên chỉ
+ *  nằm trong cookie HttpOnly, trang không đọc được. */
+export interface AuthSession {
+  mode: 'dev' | 'invite';
+  logged_in: boolean;
+  name: string | null;
+}
+
 export interface PlayerKeyOut {
   has_key: boolean;
   last4: string | null;

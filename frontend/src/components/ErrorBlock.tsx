@@ -33,6 +33,8 @@ function ActionButton({ action, primary, tone, handlers }: { action: ErrorAction
   const label = ACTION_LABEL[action];
   const cls = btnClass(primary, tone);
   switch (action) {
+    case 'login':
+      return <Link className={cls} to="/dang-nhap">{label}</Link>;
     case 'paste_key':
       return <Link className={cls} to="/khoa">{label}</Link>;
     case 'home':
