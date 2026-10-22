@@ -202,6 +202,8 @@ Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đ
   5. Với lần bật: đối chiếu từng lỗi liền mạch với `quotes` (đoạn chứa chi tiết đúng có được chọn không), để tách "kho không tìm ra" khỏi "model không dùng".
   Quy ước kết luận (khai trước): "có lợi" nếu lần bật ít lỗi liền mạch hơn từ hai lỗi trở lên mà lặp nhịp không tăng; "có hại" nếu lặp nhịp tăng rõ (thêm từ hai nhịp lặp); còn lại "chưa phân biệt được". Giới hạn đã biết: một thế giới, một lần chạy mỗi bên, model có nhiễu, nên chênh nhỏ không kết luận.
 
+- **Độ phủ của bộ trích (D-92):** không có lệnh riêng. Phát lại bộ trích trên văn của một lần chạy: dựng `StoryRun` (kho trong bộ nhớ, `--setup-from` thư mục lần chạy gốc) với model giả trả đúng dàn ý và văn cảnh của lần chạy gốc, chỉ vai trích gọi model thật; rồi tính lại `graph_agrees` của đề bài A bằng `bench_a_data.derive` trên các gói chương của lần phát lại. Script dùng một lần, để ngoài repo; `evals/results/2026-10-22-extract-recall-*/notes.md` ghi đủ để dựng lại.
+
 Lệnh (chạy trong `backend/`):
 ```bash
 uv run python -m writory.pipeline.bench_run --label thu --dry-run              # model giả, không key, xoá truyện khi xong

@@ -1,0 +1,4077 @@
+{
+ "story_id": "replay-2026-10-22-extract-recall-v5-2",
+ "plan": {
+  "acts": [
+   {
+    "name": "Dấu vết trên nền chợ",
+    "from_chapter": 1,
+    "to_chapter": 3
+   },
+   {
+    "name": "Giá của manh mối",
+    "from_chapter": 4,
+    "to_chapter": 6
+   },
+   {
+    "name": "Liên minh rạn vỡ",
+    "from_chapter": 7,
+    "to_chapter": 9
+   },
+   {
+    "name": "Mảnh thần khí",
+    "from_chapter": 10,
+    "to_chapter": 12
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_tran_mac_ban_tin",
+    "reveal_from_chapter": 6,
+    "reveal_to_chapter": 7,
+    "leak_terms": [
+     [
+      "Trần Mặc",
+      "bán tin"
+     ],
+     [
+      "Trần Mặc",
+      "đổi sự an toàn"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_gia_toc_giu_manh",
+    "reveal_from_chapter": 8,
+    "reveal_to_chapter": 9,
+    "leak_terms": [
+     [
+      "gia tộc Phó",
+      "cất giữ Mảnh Khiếp Tàn Thiên"
+     ],
+     [
+      "giao ước",
+      "Điện Tàn Tinh"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "dau_vet_dau_gia",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "doan_nguoi_luu_lac",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "mon_no_tran_mac",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 8
+   },
+   {
+    "thread_id": "giao_uoc_nha_pho",
+    "resolve_from_chapter": 6,
+    "resolve_to_chapter": 10
+   },
+   {
+    "thread_id": "so_phan_cho",
+    "resolve_from_chapter": 7,
+    "resolve_to_chapter": 12
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Phó Cảnh Hành tìm được dấu vết đầu tiên nối cuộc đấu giá kín với món đồ của gia tộc mình.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Đoàn người của Tào Vân Chi qua được vùng đá trôi, nhưng manh mối buộc Phó Cảnh Hành phải trả một cái giá.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Phó Cảnh Hành phát hiện Trần Mặc đã bán tin cho Huyền Kính và buộc phải chọn cách đối diện với sự phản bội.",
+    "from_chapter": 6,
+    "to_chapter": 7
+   },
+   {
+    "kind": "climax",
+    "goal": "Các phe đối đầu tại Điện Tàn Tinh và Phó Cảnh Hành phải quyết định trao mảnh thần khí cho một tiên môn hay bảo vệ người lưu lạc.",
+    "from_chapter": 10,
+    "to_chapter": 11
+   },
+   {
+    "kind": "ending",
+    "goal": "Phó Cảnh Hành chốt số phận mảnh thần khí và khu chợ, chấp nhận cái giá của lựa chọn ấy.",
+    "from_chapter": 12,
+    "to_chapter": 12
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 10,
+  "total_chapters": 12,
+  "secrets": [
+   {
+    "fact_id": "fact_tran_mac_ban_tin",
+    "text": "Trần Mặc đã bán cho Huyền Kính tin tức về dấu vết dẫn tới món đồ của gia tộc Phó để đổi lấy sự an toàn cho người của Hội Lưu Dân.",
+    "user_authored": false,
+    "from_chapter": 6,
+    "to_chapter": 7,
+    "revealed_chapter": 7
+   },
+   {
+    "fact_id": "fact_gia_toc_giu_manh",
+    "text": "Gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo một giao ước với những người dựng nên Điện Tàn Tinh.",
+    "user_authored": false,
+    "from_chapter": 8,
+    "to_chapter": 9,
+    "revealed_chapter": 8
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "dau_vet_dau_gia",
+    "description": "Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 6,
+    "resolved_chapter": 7
+   },
+   {
+    "thread_id": "doan_nguoi_luu_lac",
+    "description": "Đưa đoàn người của Tào Vân Chi qua vùng đá trôi mà không để họ bị cuốn vào cuộc tranh đoạt.",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 5,
+    "resolved_chapter": 1
+   },
+   {
+    "thread_id": "mon_no_tran_mac",
+    "description": "Làm rõ cái giá Trần Mặc đã trả để giữ an toàn cho Hội Lưu Dân và quyết định có thể tiếp tục tin hắn hay không.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 8,
+    "resolved_chapter": 8
+   },
+   {
+    "thread_id": "giao_uoc_nha_pho",
+    "description": "Khám phá giao ước của gia tộc Phó và quyết định số phận món đồ gia truyền.",
+    "user_authored": false,
+    "from_chapter": 6,
+    "to_chapter": 10,
+    "resolved_chapter": 10
+   },
+   {
+    "thread_id": "so_phan_cho",
+    "description": "Ngăn các tiên môn biến khu chợ dưới đảo vỡ thành chiến trường và xác định ai sẽ bảo vệ người lưu lạc.",
+    "user_authored": false,
+    "from_chapter": 7,
+    "to_chapter": 12,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "replay-2026-10-22-extract-recall-v5-2-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Phó Cảnh Hành",
+      "personality": "Lanh trí, giỏi ứng biến và có tài đọc ra điều người khác cố giấu trong lời nói. Chàng sẵn sàng mặc cả để đạt mục đích, song vẫn giữ một giới hạn riêng mà chính chàng chưa chắc đã muốn thừa nhận.",
+      "backstory": "Phó Cảnh Hành kiếm sống bằng việc tìm lại vật thất lạc cho khách ở khu chợ dưới đảo vỡ, nơi một manh mối đôi khi đáng giá hơn cả pháp bảo. Trong cuộc đấu giá kín vừa bị phá ngang, chàng nhận ra dấu hiệu dẫn tới một món đồ từng thuộc về gia tộc mình. Chàng lần theo dấu vết để tìm hiểu món đồ ấy trước khi các tiên môn kéo quân tới, đồng thời phải cân nhắc xem có thể tin những đồng minh đang ngày một đưa ra cái giá khắc nghiệt hơn hay không.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "tao_van_chi",
+     "label": "Character",
+     "props": {
+      "name": "Tào Vân Chi",
+      "aliases": [
+       "Vân Chi"
+      ],
+      "personality": "Điềm tĩnh, thực tế, nói năng ít mà thường đặt đúng câu hỏi khiến người khác lúng túng; khi đã hứa thì giữ lời, nhưng không chịu hy sinh người của mình vì một lời thề xa lạ.",
+      "backstory": "Từng là người chép sổ cho một thương đoàn lưu lạc, nàng nay dẫn một đoàn dân chạy nạn qua vùng đá trôi để tìm nơi trú chân an toàn."
+     }
+    },
+    {
+     "id": "tran_mac",
+     "label": "Character",
+     "props": {
+      "name": "Trần Mặc",
+      "aliases": [
+       "Mặc tiên sinh"
+      ],
+      "personality": "Khéo mặc cả, sắc sảo và luôn chừa cho mình một lối lui; coi lòng tin là món nợ phải được tính sổ.",
+      "backstory": "Từng cùng Phó Cảnh Hành dò tìm đồ thất lạc ở khu chợ dưới đảo vỡ, hắn biết nhiều lối đi bí mật và nhiều món nợ chưa trả."
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "Đoàn chấp sự"
+      ],
+      "personality": "Nghiêm cẩn, kiêu ngạo, tin rằng trật tự chỉ có thể được dựng lên bằng kỷ luật và sức mạnh.",
+      "backstory": "Là chấp sự của tiên môn Thanh Tiêu, hắn được phái tới thu gom di vật chiến tranh và ngăn các phái nhỏ tranh giành chúng."
+     }
+    },
+    {
+     "id": "luu_tu_nguyet",
+     "label": "Character",
+     "props": {
+      "name": "Lưu Tố Nguyệt",
+      "aliases": [
+       "Nguyệt cô"
+      ],
+      "personality": "Lạnh lùng, kiên nhẫn và giỏi nhận ra những điều người khác cố giấu; lòng trắc ẩn của nàng thường ẩn dưới vẻ thờ ơ.",
+      "backstory": "Nàng chữa trị cho người lưu lạc ở chợ, đồng thời bí mật tìm cách ngăn các tiên môn đưa dân thường vào cuộc tranh đoạt."
+     }
+    },
+    {
+     "id": "bach_thien_sach",
+     "label": "Character",
+     "props": {
+      "name": "Bạch Thiên Sách",
+      "aliases": [
+       "Bạch trưởng lão"
+      ],
+      "personality": "Nhã nhặn, nhẫn nại và xem mọi cuộc xung đột như một bàn cờ có thể sắp lại theo ý mình.",
+      "backstory": "Là trưởng lão của tiên môn Huyền Kính, hắn từng tham gia dàn xếp hậu quả đại chiến và nay muốn thu hồi mọi mảnh vỡ thần khí."
+     }
+    },
+    {
+     "id": "cho_duoi_dao_vo",
+     "label": "Location",
+     "props": {
+      "name": "Chợ Dưới Đảo Vỡ",
+      "aliases": [
+       "khu chợ"
+      ],
+      "description": "Một khu lều quán tạm bợ bám vào rìa hòn đảo bay nứt đôi, nơi người lưu lạc đổi tin tức và di vật lấy đường sống."
+     }
+    },
+    {
+     "id": "lac_tinh",
+     "label": "Location",
+     "props": {
+      "name": "Thành Lạc Tinh",
+      "aliases": [
+       "Lạc Tinh"
+      ],
+      "description": "Thành trì dựng trên phần đảo còn nguyên, nơi các phái nhỏ chen chúc dưới bóng những tiên môn lớn."
+     }
+    },
+    {
+     "id": "vung_da_troi",
+     "label": "Location",
+     "props": {
+      "name": "Vùng Đá Trôi",
+      "aliases": [
+       "đá trôi"
+      ],
+      "description": "Dải đá lơ lửng quanh đảo vỡ, luôn đổi vị trí theo những luồng khí hỗn loạn còn sót lại từ đại chiến."
+     }
+    },
+    {
+     "id": "dien_tan_tinh",
+     "label": "Location",
+     "props": {
+      "name": "Điện Tàn Tinh",
+      "aliases": [
+       "điện cổ"
+      ],
+      "description": "Tàn tích nằm sâu dưới vết nứt của đảo, nơi những luồng linh lực cổ xưa vẫn chập chờn trong bóng tối."
+     }
+    },
+    {
+     "id": "thanh_tieu",
+     "label": "Faction",
+     "props": {
+      "name": "Tiên môn Thanh Tiêu",
+      "aliases": [
+       "Thanh Tiêu"
+      ],
+      "description": "Một tiên môn coi việc thu hồi di vật hậu chiến là nền tảng để lập lại trật tự giữa các đảo bay."
+     }
+    },
+    {
+     "id": "huyen_kinh",
+     "label": "Faction",
+     "props": {
+      "name": "Tiên môn Huyền Kính",
+      "aliases": [
+       "Huyền Kính"
+      ],
+      "description": "Một tiên môn giàu thế lực, chuyên thu thập cổ vật và dùng hiệp ước để ràng buộc các phái nhỏ."
+     }
+    },
+    {
+     "id": "hoi_luu_dan",
+     "label": "Faction",
+     "props": {
+      "name": "Hội Lưu Dân",
+      "aliases": [
+       "Hội"
+      ],
+      "description": "Một liên minh lỏng lẻo của người lưu lạc và các phái nhỏ ở chợ dưới đảo vỡ."
+     }
+    },
+    {
+     "id": "manh_khiep_tan_thien",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh Khiếp Tàn Thiên",
+      "aliases": [
+       "mảnh thần khí"
+      ],
+      "description": "Một mảnh kim loại đen có hoa văn như những đường nứt trên trời, được cho là tàn dư của thần khí cổ."
+     }
+    },
+    {
+     "id": "thep_dinh_phong",
+     "label": "Item",
+     "props": {
+      "name": "Thẻ Định Phong",
+      "aliases": [
+       "thẻ đồng"
+      ],
+      "description": "Một thẻ đồng cũ khắc dấu hiệu gia tộc Phó, có thể dẫn đường qua những luồng khí dữ quanh đảo vỡ."
+     }
+    },
+    {
+     "id": "den_luu_quang",
+     "label": "Item",
+     "props": {
+      "name": "Đèn Lưu Quang",
+      "aliases": [
+       "đèn"
+      ],
+      "description": "Một chiếc đèn nhỏ giữ được ánh sáng ổn định giữa vùng linh lực nhiễu loạn."
+     }
+    },
+    {
+     "id": "fact_dau_gia_bien_mat",
+     "label": "Fact",
+     "props": {
+      "text": "Những người mua và bán trong cuộc đấu giá kín đã biến mất trước khi tin tức được truyền đi khỏi khu chợ."
+     }
+    },
+    {
+     "id": "fact_thanh_tieu_den",
+     "label": "Fact",
+     "props": {
+      "text": "Tiên môn Thanh Tiêu đã cử Đoàn Khương tới chợ để thu hồi di vật hậu chiến."
+     }
+    },
+    {
+     "id": "fact_huyen_kinh_den",
+     "label": "Fact",
+     "props": {
+      "text": "Tiên môn Huyền Kính đang tìm cách giành quyền kiểm soát các mảnh vỡ thần khí quanh đảo vỡ."
+     }
+    },
+    {
+     "id": "fact_the_pho_dan_duong",
+     "label": "Fact",
+     "props": {
+      "text": "Thẻ Định Phong có thể chỉ lối qua những luồng khí đổi chiều ở vùng đá trôi."
+     }
+    },
+    {
+     "id": "fact_man_h_la_di_vat",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh Khiếp Tàn Thiên là một phần của thần khí cổ từng bị vỡ trong đại chiến."
+     }
+    },
+    {
+     "id": "fact_gia_toc_giu_manh",
+     "label": "Fact",
+     "props": {
+      "text": "Gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo một giao ước với những người dựng nên Điện Tàn Tinh."
+     }
+    },
+    {
+     "id": "fact_tran_mac_ban_tin",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Mặc đã bán cho Huyền Kính tin tức về dấu vết dẫn tới món đồ của gia tộc Phó để đổi lấy sự an toàn cho người của Hội Lưu Dân."
+     }
+    },
+    {
+     "id": "fact_luu_tu_nguyet_cuu_dan",
+     "label": "Fact",
+     "props": {
+      "text": "Lưu Tố Nguyệt đã bí mật đưa một số người sống sót khỏi khu chợ trước khi các tiên môn tới."
+     }
+    },
+    {
+     "id": "fact_dien_co_mat",
+     "label": "Fact",
+     "props": {
+      "text": "Điện Tàn Tinh nằm dưới vết nứt sâu nhất của đảo vỡ."
+     }
+    },
+    {
+     "id": "dau_vet_dau_gia",
+     "label": "Thread",
+     "props": {
+      "description": "Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí.",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "doan_nguoi_luu_lac",
+     "label": "Thread",
+     "props": {
+      "description": "Đưa đoàn người của Tào Vân Chi qua vùng đá trôi mà không để họ bị cuốn vào cuộc tranh đoạt.",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "mon_no_tran_mac",
+     "label": "Thread",
+     "props": {
+      "description": "Làm rõ cái giá Trần Mặc đã trả để giữ an toàn cho Hội Lưu Dân và quyết định có thể tiếp tục tin hắn hay không.",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 8
+     }
+    },
+    {
+     "id": "giao_uoc_nha_pho",
+     "label": "Thread",
+     "props": {
+      "description": "Khám phá giao ước của gia tộc Phó và quyết định số phận món đồ gia truyền.",
+      "planted_chapter": 0,
+      "due_from_chapter": 6,
+      "due_to_chapter": 10
+     }
+    },
+    {
+     "id": "so_phan_cho",
+     "label": "Thread",
+     "props": {
+      "description": "Ngăn các tiên môn biến khu chợ dưới đảo vỡ thành chiến trường và xác định ai sẽ bảo vệ người lưu lạc.",
+      "planted_chapter": 0,
+      "due_from_chapter": 7,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "tao_van_chi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>tao_van_chi@0",
+     "props": {
+      "kind": "đồng minh mong manh",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tao_van_chi",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tao_van_chi>protagonist@0",
+     "props": {
+      "kind": "đồng minh mong manh",
+      "score": 40
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "tran_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>tran_mac@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_mac",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_mac>protagonist@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khuong@0",
+     "props": {
+      "kind": "đối địch dè chừng",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>protagonist@0",
+     "props": {
+      "kind": "đối địch dè chừng",
+      "score": -15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "luu_tu_nguyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>luu_tu_nguyet@0",
+     "props": {
+      "kind": "quen biết",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luu_tu_nguyet",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luu_tu_nguyet>protagonist@0",
+     "props": {
+      "kind": "quen biết",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "bach_thien_sach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>bach_thien_sach@0",
+     "props": {
+      "kind": "chưa gặp",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "bach_thien_sach",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:bach_thien_sach>protagonist@0",
+     "props": {
+      "kind": "chưa gặp",
+      "score": 0
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tao_van_chi",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tao_van_chi>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_mac",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_mac>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "lac_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>lac_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_tu_nguyet",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_tu_nguyet>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bach_thien_sach",
+     "to": "lac_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bach_thien_sach>lac_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "manh_khiep_tan_thien",
+     "to": "dien_tan_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:manh_khiep_tan_thien>dien_tan_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "thep_dinh_phong",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:thep_dinh_phong>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "den_luu_quang",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:den_luu_quang>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "thep_dinh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>thep_dinh_phong@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "luu_tu_nguyet",
+     "to": "den_luu_quang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:luu_tu_nguyet>den_luu_quang@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "bach_thien_sach",
+     "to": "huyen_kinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:bach_thien_sach>huyen_kinh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tao_van_chi",
+     "to": "hoi_luu_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tao_van_chi>hoi_luu_dan@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tran_mac",
+     "to": "hoi_luu_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tran_mac>hoi_luu_dan@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luu_tu_nguyet",
+     "to": "hoi_luu_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luu_tu_nguyet>hoi_luu_dan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_dau_gia_bien_mat",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_dau_gia_bien_mat>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tao_van_chi",
+     "to": "fact_dau_gia_bien_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tao_van_chi>fact_dau_gia_bien_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "fact_dau_gia_bien_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>fact_dau_gia_bien_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_tieu_den",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_tieu_den>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_tieu_den",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_tieu_den>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_tieu_den",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_tieu_den>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_thanh_tieu_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_thanh_tieu_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_huyen_kinh_den",
+     "to": "huyen_kinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_huyen_kinh_den>huyen_kinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_huyen_kinh_den",
+     "to": "manh_khiep_tan_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_huyen_kinh_den>manh_khiep_tan_thien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_thien_sach",
+     "to": "fact_huyen_kinh_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_thien_sach>fact_huyen_kinh_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_the_pho_dan_duong",
+     "to": "thep_dinh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_the_pho_dan_duong>thep_dinh_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_the_pho_dan_duong",
+     "to": "vung_da_troi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_the_pho_dan_duong>vung_da_troi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "fact_the_pho_dan_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>fact_the_pho_dan_duong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tao_van_chi",
+     "to": "fact_the_pho_dan_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tao_van_chi>fact_the_pho_dan_duong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_man_h_la_di_vat",
+     "to": "manh_khiep_tan_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_man_h_la_di_vat>manh_khiep_tan_thien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_thien_sach",
+     "to": "fact_man_h_la_di_vat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_thien_sach>fact_man_h_la_di_vat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_gia_toc_giu_manh",
+     "to": "manh_khiep_tan_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_gia_toc_giu_manh>manh_khiep_tan_thien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_gia_toc_giu_manh",
+     "to": "dien_tan_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_gia_toc_giu_manh>dien_tan_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_thien_sach",
+     "to": "fact_gia_toc_giu_manh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_thien_sach>fact_gia_toc_giu_manh@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tran_mac_ban_tin",
+     "to": "tran_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tran_mac_ban_tin>tran_mac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tran_mac_ban_tin",
+     "to": "huyen_kinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tran_mac_ban_tin>huyen_kinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tran_mac_ban_tin",
+     "to": "hoi_luu_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tran_mac_ban_tin>hoi_luu_dan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_thien_sach",
+     "to": "fact_tran_mac_ban_tin",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_thien_sach>fact_tran_mac_ban_tin@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_luu_tu_nguyet_cuu_dan",
+     "to": "luu_tu_nguyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_luu_tu_nguyet_cuu_dan>luu_tu_nguyet@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_luu_tu_nguyet_cuu_dan",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_luu_tu_nguyet_cuu_dan>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tao_van_chi",
+     "to": "fact_luu_tu_nguyet_cuu_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tao_van_chi>fact_luu_tu_nguyet_cuu_dan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_tu_nguyet",
+     "to": "fact_luu_tu_nguyet_cuu_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_tu_nguyet>fact_luu_tu_nguyet_cuu_dan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_dien_co_mat",
+     "to": "dien_tan_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_dien_co_mat>dien_tan_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_dien_co_mat",
+     "to": "cho_duoi_dao_vo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_dien_co_mat>cho_duoi_dao_vo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_thien_sach",
+     "to": "fact_dien_co_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_thien_sach>fact_dien_co_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Phó Cảnh Hành",
+      "known_as": "Phó Cảnh Hành"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-d522336592bf",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tao_van_chi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tao_van_chi>ch1@1",
+     "props": {
+      "quote": "Tào Vân Chi đứng ở đầu lối chợ, một tay giữ dây buộc túi hành lý.",
+      "known_as": "Tào Vân Chi"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cho_duoi_dao_vo",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cho_duoi_dao_vo>ch1@1",
+     "props": {
+      "quote": "Tào Vân Chi đứng ở đầu lối chợ, một tay giữ dây buộc túi hành lý.",
+      "known_as": "chợ"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thep_dinh_phong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thep_dinh_phong>ch1@1",
+     "props": {
+      "quote": "Tôi rút Thẻ Định Phong khỏi tay áo.",
+      "known_as": "Thẻ Định Phong"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "vung_da_troi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:vung_da_troi>ch1@1",
+     "props": {
+      "quote": "- Có lối qua đá trôi. Đi được, nếu đừng chen nhau.",
+      "known_as": "đá trôi"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_dau_gia_bien_mat",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_dau_gia_bien_mat>ch1@1",
+     "props": {
+      "quote": "Kẻ mua, người bán đều đã biến mất."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_the_pho_dan_duong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_the_pho_dan_duong>ch1@1",
+     "props": {
+      "quote": "Thẻ rung nhẹ trong lòng bàn tay, một nhịp ngắn rồi ngừng."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_dau_gia_bien_mat",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_dau_gia_bien_mat@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Kẻ mua, người bán đều đã biến mất."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_the_pho_dan_duong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_the_pho_dan_duong@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Những đường khắc khẽ sáng lên, chỉ ra một khoảng trống giữa hai phiến đá đang chao nghiêng."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "doan_nguoi_luu_lac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:doan_nguoi_luu_lac>ch1@1",
+     "props": {
+      "quote": "Không ai bị cuốn khỏi lối đi."
+     }
+    }
+   ],
+   "close": []
+  },
+  "2": {
+   "commit_id": "ch2-3845be23d9d2",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  },
+  "3": {
+   "commit_id": "ch3-268fb387b21d",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-69a0011af2ef",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "vung_da_troi",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>vung_da_troi@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_mac",
+     "to": "vung_da_troi",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_mac>vung_da_troi@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tao_van_chi",
+     "to": "vung_da_troi",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tao_van_chi>vung_da_troi@4",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tran_mac",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tran_mac>ch4@4",
+     "props": {
+      "quote": "Tôi nhận ra Trần Mặc.",
+      "known_as": "Trần Mặc"
+     }
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "thep_dinh_phong",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>thep_dinh_phong@4",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:protagonist>thep_dinh_phong@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>cho_duoi_dao_vo@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tran_mac>cho_duoi_dao_vo@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tao_van_chi>cho_duoi_dao_vo@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:thep_dinh_phong>cho_duoi_dao_vo@0",
+     "valid_to_chapter": 4
+    }
+   ]
+  },
+  "5": {
+   "commit_id": "ch5-331c7bc06e46",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_luu_tu_nguyet_cuu_dan",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_luu_tu_nguyet_cuu_dan@5",
+     "props": {
+      "how": "được kể",
+      "told_by": "tao_van_chi",
+      "quote": "Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_luu_tu_nguyet_cuu_dan",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_luu_tu_nguyet_cuu_dan>ch5@5",
+     "props": {
+      "quote": "Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luu_tu_nguyet",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luu_tu_nguyet>ch5@5",
+     "props": {
+      "quote": "Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới.",
+      "known_as": "Lưu Tố Nguyệt"
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-59485694e4ad",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "tao_van_chi",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>tao_van_chi@6",
+     "props": {
+      "feeling": "áy náy"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "huyen_kinh",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:huyen_kinh>ch6@6",
+     "props": {
+      "quote": "Huyền Kính đã tới.",
+      "known_as": "Huyền Kính"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hoi_luu_dan",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hoi_luu_dan>ch6@6",
+     "props": {
+      "quote": "Huyền Kính hứa để người của Hội Lưu Dân được yên.",
+      "known_as": "Hội Lưu Dân"
+     }
+    }
+   ],
+   "close": []
+  },
+  "7": {
+   "commit_id": "ch7-1a1ee9e0f6e7",
+   "nodes": [
+    {
+     "id": "ch7",
+     "label": "Chapter",
+     "props": {
+      "number": 7
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "tao_van_chi",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>tao_van_chi@7",
+     "props": {
+      "feeling": "áy náy"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_tran_mac_ban_tin",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_tran_mac_ban_tin>ch7@7",
+     "props": {
+      "quote": "Ta đã trao cho Huyền Kính đầu mối về dấu vết nhà họ Phó. Đổi lấy lời hứa bảo vệ Hội Lưu Dân."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "dau_vet_dau_gia",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:dau_vet_dau_gia>ch7@7",
+     "props": {
+      "quote": "Những người dự đấu giá đã được đưa khỏi khu chợ theo đường này; còn vết giày mới ngoài kia dẫn xuống nhánh khe."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "FEELS",
+     "id": "FEELS:protagonist>tao_van_chi@6",
+     "valid_to_chapter": 7
+    }
+   ]
+  },
+  "8": {
+   "commit_id": "ch8-e8bd146ab524",
+   "nodes": [
+    {
+     "id": "ch8",
+     "label": "Chapter",
+     "props": {
+      "number": 8
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "mon_no_tran_mac",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:mon_no_tran_mac>ch8@8",
+     "props": {
+      "quote": "- Huyền Kính hứa bảo vệ người của Hội Lưu Dân. Ta nhận lời, vì họ đang bị dồn vào chân tường.\n\n- Những người Lưu Tố Nguyệt đưa khỏi chợ thì sao?\n\nTrần Mặc im lặng một nhịp.\n\n- Ta không được bảo đảm cho họ.\n\nBàn tay Vân Chi siết lại trên chuôi kiếm. Nàng vẫn đứng nguyên chỗ, nhưng khoảng trống giữa chúng tôi và Trần Mặc dường như đã hẹp đi.\n\n- Dấu cũ xác nhận người dự đấu giá được dẫn đi trước khi tiên môn tới. Vết giày mới của Huyền Kính lại chỉ xuống khe này.\n\nNàng đưa mắt về phía đoạn đường chúng tôi vừa đi qua.\n\n- Ta không biết họ đang ở đâu. Cũng không dám nói họ đã thoát khỏi cuộc truy tìm.\n\nTrần Mặc khẽ cúi đầu, như thể câu ấy đã thay hắn nói nốt điều còn lại. Tôi nhìn xuống nền đá. Một vệt khuyết mảnh chạy ngang vách, đúng hình dáng dấu từng gặp ở hõm đá. Tôi đưa tay chạm gần mép vết, không để da thịt chạm vào mặt đá.\n\nDấu ấy không chỉ về lối người sống sót đã đi. Nó dẫn sâu hơn vào vùng đá trôi, nơi đầu mối món đồ nhà họ Phó còn chưa dứt.\n\nTrần Mặc nhìn theo tay tôi.\n\n- Cho ta đi cùng. Ta đã hứa với Hội, ít nhất phải tìm cách giữ lời.\n\nTôi rút tay về.\n\n- Đi sau ta và Vân Chi. Không chạm vào dấu khắc."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dien_tan_tinh",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dien_tan_tinh>ch8@8",
+     "props": {
+      "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh.",
+      "known_as": "Điện Tàn Tinh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "manh_khiep_tan_thien",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:manh_khiep_tan_thien>ch8@8",
+     "props": {
+      "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh.",
+      "known_as": "Mảnh Khiếp Tàn Thiên"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_gia_toc_giu_manh",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_gia_toc_giu_manh>ch8@8",
+     "props": {
+      "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_gia_toc_giu_manh",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_gia_toc_giu_manh@8",
+     "props": {
+      "how": "suy ra",
+      "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh."
+     }
+    }
+   ],
+   "close": []
+  },
+  "9": {
+   "commit_id": "ch9-f2fb2edb1272",
+   "nodes": [
+    {
+     "id": "ch9",
+     "label": "Chapter",
+     "props": {
+      "number": 9
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_dien_co_mat",
+     "to": "ch9",
+     "valid_from_chapter": 9,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_dien_co_mat>ch9@9",
+     "props": {
+      "quote": "Đường này dẫn tới Mảnh Khiếp Tàn Thiên, và Điện Tàn Tinh ở phía dưới."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bach_thien_sach",
+     "to": "ch9",
+     "valid_from_chapter": 9,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bach_thien_sach>ch9@9",
+     "props": {
+      "quote": "- Bạch Thiên Sách chỉ cam kết che chở người của Hội",
+      "known_as": "Bạch Thiên Sách"
+     }
+    }
+   ],
+   "close": []
+  },
+  "10": {
+   "commit_id": "ch10-8347db4a579c",
+   "nodes": [
+    {
+     "id": "ch10",
+     "label": "Chapter",
+     "props": {
+      "number": 10
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "dien_tan_tinh",
+     "valid_from_chapter": 10,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>dien_tan_tinh@10",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tao_van_chi",
+     "to": "dien_tan_tinh",
+     "valid_from_chapter": 10,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tao_van_chi>dien_tan_tinh@10",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_mac",
+     "to": "dien_tan_tinh",
+     "valid_from_chapter": 10,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_mac>dien_tan_tinh@10",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "giao_uoc_nha_pho",
+     "to": "ch10",
+     "valid_from_chapter": 10,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:giao_uoc_nha_pho>ch10@10",
+     "props": {
+      "quote": "Ta không giao nó cho Huyền Kính."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>vung_da_troi@4",
+     "valid_to_chapter": 10
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tao_van_chi>vung_da_troi@4",
+     "valid_to_chapter": 10
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tran_mac>vung_da_troi@4",
+     "valid_to_chapter": 10
+    }
+   ]
+  }
+ },
+ "final": {
+  "chapter": 10,
+  "nodes": {
+   "bach_thien_sach": {
+    "label": "Character",
+    "props": {
+     "name": "Bạch Thiên Sách",
+     "aliases": [
+      "Bạch trưởng lão"
+     ],
+     "personality": "Nhã nhặn, nhẫn nại và xem mọi cuộc xung đột như một bàn cờ có thể sắp lại theo ý mình.",
+     "backstory": "Là trưởng lão của tiên môn Huyền Kính, hắn từng tham gia dàn xếp hậu quả đại chiến và nay muốn thu hồi mọi mảnh vỡ thần khí."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch10": {
+    "label": "Chapter",
+    "props": {
+     "number": 10
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "ch7": {
+    "label": "Chapter",
+    "props": {
+     "number": 7
+    }
+   },
+   "ch8": {
+    "label": "Chapter",
+    "props": {
+     "number": 8
+    }
+   },
+   "ch9": {
+    "label": "Chapter",
+    "props": {
+     "number": 9
+    }
+   },
+   "cho_duoi_dao_vo": {
+    "label": "Location",
+    "props": {
+     "name": "Chợ Dưới Đảo Vỡ",
+     "aliases": [
+      "khu chợ"
+     ],
+     "description": "Một khu lều quán tạm bợ bám vào rìa hòn đảo bay nứt đôi, nơi người lưu lạc đổi tin tức và di vật lấy đường sống."
+    }
+   },
+   "dau_vet_dau_gia": {
+    "label": "Thread",
+    "props": {
+     "description": "Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí.",
+     "planted_chapter": 0,
+     "due_from_chapter": 2,
+     "due_to_chapter": 6
+    }
+   },
+   "den_luu_quang": {
+    "label": "Item",
+    "props": {
+     "name": "Đèn Lưu Quang",
+     "aliases": [
+      "đèn"
+     ],
+     "description": "Một chiếc đèn nhỏ giữ được ánh sáng ổn định giữa vùng linh lực nhiễu loạn."
+    }
+   },
+   "dien_tan_tinh": {
+    "label": "Location",
+    "props": {
+     "name": "Điện Tàn Tinh",
+     "aliases": [
+      "điện cổ"
+     ],
+     "description": "Tàn tích nằm sâu dưới vết nứt của đảo, nơi những luồng linh lực cổ xưa vẫn chập chờn trong bóng tối."
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "name": "Đoàn Khương",
+     "aliases": [
+      "Đoàn chấp sự"
+     ],
+     "personality": "Nghiêm cẩn, kiêu ngạo, tin rằng trật tự chỉ có thể được dựng lên bằng kỷ luật và sức mạnh.",
+     "backstory": "Là chấp sự của tiên môn Thanh Tiêu, hắn được phái tới thu gom di vật chiến tranh và ngăn các phái nhỏ tranh giành chúng."
+    }
+   },
+   "doan_nguoi_luu_lac": {
+    "label": "Thread",
+    "props": {
+     "description": "Đưa đoàn người của Tào Vân Chi qua vùng đá trôi mà không để họ bị cuốn vào cuộc tranh đoạt.",
+     "planted_chapter": 0,
+     "due_from_chapter": 1,
+     "due_to_chapter": 5
+    }
+   },
+   "fact_dau_gia_bien_mat": {
+    "label": "Fact",
+    "props": {
+     "text": "Những người mua và bán trong cuộc đấu giá kín đã biến mất trước khi tin tức được truyền đi khỏi khu chợ."
+    }
+   },
+   "fact_dien_co_mat": {
+    "label": "Fact",
+    "props": {
+     "text": "Điện Tàn Tinh nằm dưới vết nứt sâu nhất của đảo vỡ."
+    }
+   },
+   "fact_gia_toc_giu_manh": {
+    "label": "Fact",
+    "props": {
+     "text": "Gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo một giao ước với những người dựng nên Điện Tàn Tinh."
+    }
+   },
+   "fact_huyen_kinh_den": {
+    "label": "Fact",
+    "props": {
+     "text": "Tiên môn Huyền Kính đang tìm cách giành quyền kiểm soát các mảnh vỡ thần khí quanh đảo vỡ."
+    }
+   },
+   "fact_luu_tu_nguyet_cuu_dan": {
+    "label": "Fact",
+    "props": {
+     "text": "Lưu Tố Nguyệt đã bí mật đưa một số người sống sót khỏi khu chợ trước khi các tiên môn tới."
+    }
+   },
+   "fact_man_h_la_di_vat": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh Khiếp Tàn Thiên là một phần của thần khí cổ từng bị vỡ trong đại chiến."
+    }
+   },
+   "fact_thanh_tieu_den": {
+    "label": "Fact",
+    "props": {
+     "text": "Tiên môn Thanh Tiêu đã cử Đoàn Khương tới chợ để thu hồi di vật hậu chiến."
+    }
+   },
+   "fact_the_pho_dan_duong": {
+    "label": "Fact",
+    "props": {
+     "text": "Thẻ Định Phong có thể chỉ lối qua những luồng khí đổi chiều ở vùng đá trôi."
+    }
+   },
+   "fact_tran_mac_ban_tin": {
+    "label": "Fact",
+    "props": {
+     "text": "Trần Mặc đã bán cho Huyền Kính tin tức về dấu vết dẫn tới món đồ của gia tộc Phó để đổi lấy sự an toàn cho người của Hội Lưu Dân."
+    }
+   },
+   "giao_uoc_nha_pho": {
+    "label": "Thread",
+    "props": {
+     "description": "Khám phá giao ước của gia tộc Phó và quyết định số phận món đồ gia truyền.",
+     "planted_chapter": 0,
+     "due_from_chapter": 6,
+     "due_to_chapter": 10
+    }
+   },
+   "hoi_luu_dan": {
+    "label": "Faction",
+    "props": {
+     "name": "Hội Lưu Dân",
+     "aliases": [
+      "Hội"
+     ],
+     "description": "Một liên minh lỏng lẻo của người lưu lạc và các phái nhỏ ở chợ dưới đảo vỡ."
+    }
+   },
+   "huyen_kinh": {
+    "label": "Faction",
+    "props": {
+     "name": "Tiên môn Huyền Kính",
+     "aliases": [
+      "Huyền Kính"
+     ],
+     "description": "Một tiên môn giàu thế lực, chuyên thu thập cổ vật và dùng hiệp ước để ràng buộc các phái nhỏ."
+    }
+   },
+   "lac_tinh": {
+    "label": "Location",
+    "props": {
+     "name": "Thành Lạc Tinh",
+     "aliases": [
+      "Lạc Tinh"
+     ],
+     "description": "Thành trì dựng trên phần đảo còn nguyên, nơi các phái nhỏ chen chúc dưới bóng những tiên môn lớn."
+    }
+   },
+   "luu_tu_nguyet": {
+    "label": "Character",
+    "props": {
+     "name": "Lưu Tố Nguyệt",
+     "aliases": [
+      "Nguyệt cô"
+     ],
+     "personality": "Lạnh lùng, kiên nhẫn và giỏi nhận ra những điều người khác cố giấu; lòng trắc ẩn của nàng thường ẩn dưới vẻ thờ ơ.",
+     "backstory": "Nàng chữa trị cho người lưu lạc ở chợ, đồng thời bí mật tìm cách ngăn các tiên môn đưa dân thường vào cuộc tranh đoạt."
+    }
+   },
+   "manh_khiep_tan_thien": {
+    "label": "Item",
+    "props": {
+     "name": "Mảnh Khiếp Tàn Thiên",
+     "aliases": [
+      "mảnh thần khí"
+     ],
+     "description": "Một mảnh kim loại đen có hoa văn như những đường nứt trên trời, được cho là tàn dư của thần khí cổ."
+    }
+   },
+   "mon_no_tran_mac": {
+    "label": "Thread",
+    "props": {
+     "description": "Làm rõ cái giá Trần Mặc đã trả để giữ an toàn cho Hội Lưu Dân và quyết định có thể tiếp tục tin hắn hay không.",
+     "planted_chapter": 0,
+     "due_from_chapter": 4,
+     "due_to_chapter": 8
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "name": "Phó Cảnh Hành",
+     "personality": "Lanh trí, giỏi ứng biến và có tài đọc ra điều người khác cố giấu trong lời nói. Chàng sẵn sàng mặc cả để đạt mục đích, song vẫn giữ một giới hạn riêng mà chính chàng chưa chắc đã muốn thừa nhận.",
+     "backstory": "Phó Cảnh Hành kiếm sống bằng việc tìm lại vật thất lạc cho khách ở khu chợ dưới đảo vỡ, nơi một manh mối đôi khi đáng giá hơn cả pháp bảo. Trong cuộc đấu giá kín vừa bị phá ngang, chàng nhận ra dấu hiệu dẫn tới một món đồ từng thuộc về gia tộc mình. Chàng lần theo dấu vết để tìm hiểu món đồ ấy trước khi các tiên môn kéo quân tới, đồng thời phải cân nhắc xem có thể tin những đồng minh đang ngày một đưa ra cái giá khắc nghiệt hơn hay không.",
+     "is_protagonist": true,
+     "user_authored": true
+    }
+   },
+   "so_phan_cho": {
+    "label": "Thread",
+    "props": {
+     "description": "Ngăn các tiên môn biến khu chợ dưới đảo vỡ thành chiến trường và xác định ai sẽ bảo vệ người lưu lạc.",
+     "planted_chapter": 0,
+     "due_from_chapter": 7,
+     "due_to_chapter": 12
+    }
+   },
+   "tao_van_chi": {
+    "label": "Character",
+    "props": {
+     "name": "Tào Vân Chi",
+     "aliases": [
+      "Vân Chi"
+     ],
+     "personality": "Điềm tĩnh, thực tế, nói năng ít mà thường đặt đúng câu hỏi khiến người khác lúng túng; khi đã hứa thì giữ lời, nhưng không chịu hy sinh người của mình vì một lời thề xa lạ.",
+     "backstory": "Từng là người chép sổ cho một thương đoàn lưu lạc, nàng nay dẫn một đoàn dân chạy nạn qua vùng đá trôi để tìm nơi trú chân an toàn."
+    }
+   },
+   "thanh_tieu": {
+    "label": "Faction",
+    "props": {
+     "name": "Tiên môn Thanh Tiêu",
+     "aliases": [
+      "Thanh Tiêu"
+     ],
+     "description": "Một tiên môn coi việc thu hồi di vật hậu chiến là nền tảng để lập lại trật tự giữa các đảo bay."
+    }
+   },
+   "thep_dinh_phong": {
+    "label": "Item",
+    "props": {
+     "name": "Thẻ Định Phong",
+     "aliases": [
+      "thẻ đồng"
+     ],
+     "description": "Một thẻ đồng cũ khắc dấu hiệu gia tộc Phó, có thể dẫn đường qua những luồng khí dữ quanh đảo vỡ."
+    }
+   },
+   "tran_mac": {
+    "label": "Character",
+    "props": {
+     "name": "Trần Mặc",
+     "aliases": [
+      "Mặc tiên sinh"
+     ],
+     "personality": "Khéo mặc cả, sắc sảo và luôn chừa cho mình một lối lui; coi lòng tin là món nợ phải được tính sổ.",
+     "backstory": "Từng cùng Phó Cảnh Hành dò tìm đồ thất lạc ở khu chợ dưới đảo vỡ, hắn biết nhiều lối đi bí mật và nhiều món nợ chưa trả."
+    }
+   },
+   "vung_da_troi": {
+    "label": "Location",
+    "props": {
+     "name": "Vùng Đá Trôi",
+     "aliases": [
+      "đá trôi"
+     ],
+     "description": "Dải đá lơ lửng quanh đảo vỡ, luôn đổi vị trí theo những luồng khí hỗn loạn còn sót lại từ đại chiến."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:bach_thien_sach>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "bach_thien_sach",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "chưa gặp",
+     "score": 0
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_khuong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "đối địch dè chừng",
+     "score": -15
+    }
+   },
+   {
+    "id": "RELATES_TO:luu_tu_nguyet>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "luu_tu_nguyet",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "quen biết",
+     "score": 25
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>bach_thien_sach@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "bach_thien_sach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "chưa gặp",
+     "score": 0
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "đối địch dè chừng",
+     "score": -20
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>luu_tu_nguyet@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "luu_tu_nguyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "quen biết",
+     "score": 20
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>tao_van_chi@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "tao_van_chi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "đồng minh mong manh",
+     "score": 35
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>tran_mac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "tran_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "bạn cũ",
+     "score": 25
+    }
+   },
+   {
+    "id": "RELATES_TO:tao_van_chi>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "tao_van_chi",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "đồng minh mong manh",
+     "score": 40
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_mac>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "tran_mac",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "kind": "bạn cũ",
+     "score": 10
+    }
+   },
+   {
+    "id": "LOCATED_AT:bach_thien_sach>lac_tinh@0",
+    "type": "LOCATED_AT",
+    "source": "bach_thien_sach",
+    "target": "lac_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:den_luu_quang>cho_duoi_dao_vo@0",
+    "type": "LOCATED_AT",
+    "source": "den_luu_quang",
+    "target": "cho_duoi_dao_vo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>lac_tinh@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "lac_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luu_tu_nguyet>cho_duoi_dao_vo@0",
+    "type": "LOCATED_AT",
+    "source": "luu_tu_nguyet",
+    "target": "cho_duoi_dao_vo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:manh_khiep_tan_thien>dien_tan_tinh@0",
+    "type": "LOCATED_AT",
+    "source": "manh_khiep_tan_thien",
+    "target": "dien_tan_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>dien_tan_tinh@10",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "dien_tan_tinh",
+    "valid_from_chapter": 10,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tao_van_chi>dien_tan_tinh@10",
+    "type": "LOCATED_AT",
+    "source": "tao_van_chi",
+    "target": "dien_tan_tinh",
+    "valid_from_chapter": 10,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_mac>dien_tan_tinh@10",
+    "type": "LOCATED_AT",
+    "source": "tran_mac",
+    "target": "dien_tan_tinh",
+    "valid_from_chapter": 10,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:luu_tu_nguyet>den_luu_quang@0",
+    "type": "HOLDS",
+    "source": "luu_tu_nguyet",
+    "target": "den_luu_quang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>thep_dinh_phong@4",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "thep_dinh_phong",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:bach_thien_sach>huyen_kinh@0",
+    "type": "MEMBER_OF",
+    "source": "bach_thien_sach",
+    "target": "huyen_kinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>thanh_tieu@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luu_tu_nguyet>hoi_luu_dan@0",
+    "type": "MEMBER_OF",
+    "source": "luu_tu_nguyet",
+    "target": "hoi_luu_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tao_van_chi>hoi_luu_dan@0",
+    "type": "MEMBER_OF",
+    "source": "tao_van_chi",
+    "target": "hoi_luu_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tran_mac>hoi_luu_dan@0",
+    "type": "MEMBER_OF",
+    "source": "tran_mac",
+    "target": "hoi_luu_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:bach_thien_sach>fact_dien_co_mat@0",
+    "type": "KNOWS",
+    "source": "bach_thien_sach",
+    "target": "fact_dien_co_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_thien_sach>fact_gia_toc_giu_manh@0",
+    "type": "KNOWS",
+    "source": "bach_thien_sach",
+    "target": "fact_gia_toc_giu_manh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_thien_sach>fact_huyen_kinh_den@0",
+    "type": "KNOWS",
+    "source": "bach_thien_sach",
+    "target": "fact_huyen_kinh_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_thien_sach>fact_man_h_la_di_vat@0",
+    "type": "KNOWS",
+    "source": "bach_thien_sach",
+    "target": "fact_man_h_la_di_vat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_thien_sach>fact_tran_mac_ban_tin@0",
+    "type": "KNOWS",
+    "source": "bach_thien_sach",
+    "target": "fact_tran_mac_ban_tin",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_thanh_tieu_den@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_thanh_tieu_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_tu_nguyet>fact_luu_tu_nguyet_cuu_dan@0",
+    "type": "KNOWS",
+    "source": "luu_tu_nguyet",
+    "target": "fact_luu_tu_nguyet_cuu_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_dau_gia_bien_mat@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_dau_gia_bien_mat",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Kẻ mua, người bán đều đã biến mất."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_gia_toc_giu_manh@8",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_gia_toc_giu_manh",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "suy ra",
+     "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_luu_tu_nguyet_cuu_dan@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_luu_tu_nguyet_cuu_dan",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "told_by": "tao_van_chi",
+     "quote": "Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_the_pho_dan_duong@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_the_pho_dan_duong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Những đường khắc khẽ sáng lên, chỉ ra một khoảng trống giữa hai phiến đá đang chao nghiêng."
+    }
+   },
+   {
+    "id": "KNOWS:tao_van_chi>fact_dau_gia_bien_mat@0",
+    "type": "KNOWS",
+    "source": "tao_van_chi",
+    "target": "fact_dau_gia_bien_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tao_van_chi>fact_luu_tu_nguyet_cuu_dan@0",
+    "type": "KNOWS",
+    "source": "tao_van_chi",
+    "target": "fact_luu_tu_nguyet_cuu_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tao_van_chi>fact_the_pho_dan_duong@0",
+    "type": "KNOWS",
+    "source": "tao_van_chi",
+    "target": "fact_the_pho_dan_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>fact_dau_gia_bien_mat@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "fact_dau_gia_bien_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>fact_the_pho_dan_duong@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "fact_the_pho_dan_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>tao_van_chi@7",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "tao_van_chi",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "áy náy"
+    }
+   },
+   {
+    "id": "ABOUT:fact_dau_gia_bien_mat>cho_duoi_dao_vo@0",
+    "type": "ABOUT",
+    "source": "fact_dau_gia_bien_mat",
+    "target": "cho_duoi_dao_vo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_dien_co_mat>cho_duoi_dao_vo@0",
+    "type": "ABOUT",
+    "source": "fact_dien_co_mat",
+    "target": "cho_duoi_dao_vo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_dien_co_mat>dien_tan_tinh@0",
+    "type": "ABOUT",
+    "source": "fact_dien_co_mat",
+    "target": "dien_tan_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_gia_toc_giu_manh>dien_tan_tinh@0",
+    "type": "ABOUT",
+    "source": "fact_gia_toc_giu_manh",
+    "target": "dien_tan_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_gia_toc_giu_manh>manh_khiep_tan_thien@0",
+    "type": "ABOUT",
+    "source": "fact_gia_toc_giu_manh",
+    "target": "manh_khiep_tan_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_huyen_kinh_den>huyen_kinh@0",
+    "type": "ABOUT",
+    "source": "fact_huyen_kinh_den",
+    "target": "huyen_kinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_huyen_kinh_den>manh_khiep_tan_thien@0",
+    "type": "ABOUT",
+    "source": "fact_huyen_kinh_den",
+    "target": "manh_khiep_tan_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_luu_tu_nguyet_cuu_dan>cho_duoi_dao_vo@0",
+    "type": "ABOUT",
+    "source": "fact_luu_tu_nguyet_cuu_dan",
+    "target": "cho_duoi_dao_vo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_luu_tu_nguyet_cuu_dan>luu_tu_nguyet@0",
+    "type": "ABOUT",
+    "source": "fact_luu_tu_nguyet_cuu_dan",
+    "target": "luu_tu_nguyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_man_h_la_di_vat>manh_khiep_tan_thien@0",
+    "type": "ABOUT",
+    "source": "fact_man_h_la_di_vat",
+    "target": "manh_khiep_tan_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_tieu_den>cho_duoi_dao_vo@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_tieu_den",
+    "target": "cho_duoi_dao_vo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_tieu_den>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_tieu_den",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_tieu_den>thanh_tieu@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_tieu_den",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_the_pho_dan_duong>thep_dinh_phong@0",
+    "type": "ABOUT",
+    "source": "fact_the_pho_dan_duong",
+    "target": "thep_dinh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_the_pho_dan_duong>vung_da_troi@0",
+    "type": "ABOUT",
+    "source": "fact_the_pho_dan_duong",
+    "target": "vung_da_troi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tran_mac_ban_tin>hoi_luu_dan@0",
+    "type": "ABOUT",
+    "source": "fact_tran_mac_ban_tin",
+    "target": "hoi_luu_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tran_mac_ban_tin>huyen_kinh@0",
+    "type": "ABOUT",
+    "source": "fact_tran_mac_ban_tin",
+    "target": "huyen_kinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tran_mac_ban_tin>tran_mac@0",
+    "type": "ABOUT",
+    "source": "fact_tran_mac_ban_tin",
+    "target": "tran_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:dau_vet_dau_gia>ch7@7",
+    "type": "RESOLVED_IN",
+    "source": "dau_vet_dau_gia",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Những người dự đấu giá đã được đưa khỏi khu chợ theo đường này; còn vết giày mới ngoài kia dẫn xuống nhánh khe."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:doan_nguoi_luu_lac>ch1@1",
+    "type": "RESOLVED_IN",
+    "source": "doan_nguoi_luu_lac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Không ai bị cuốn khỏi lối đi."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:giao_uoc_nha_pho>ch10@10",
+    "type": "RESOLVED_IN",
+    "source": "giao_uoc_nha_pho",
+    "target": "ch10",
+    "valid_from_chapter": 10,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta không giao nó cho Huyền Kính."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:mon_no_tran_mac>ch8@8",
+    "type": "RESOLVED_IN",
+    "source": "mon_no_tran_mac",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Huyền Kính hứa bảo vệ người của Hội Lưu Dân. Ta nhận lời, vì họ đang bị dồn vào chân tường.\n\n- Những người Lưu Tố Nguyệt đưa khỏi chợ thì sao?\n\nTrần Mặc im lặng một nhịp.\n\n- Ta không được bảo đảm cho họ.\n\nBàn tay Vân Chi siết lại trên chuôi kiếm. Nàng vẫn đứng nguyên chỗ, nhưng khoảng trống giữa chúng tôi và Trần Mặc dường như đã hẹp đi.\n\n- Dấu cũ xác nhận người dự đấu giá được dẫn đi trước khi tiên môn tới. Vết giày mới của Huyền Kính lại chỉ xuống khe này.\n\nNàng đưa mắt về phía đoạn đường chúng tôi vừa đi qua.\n\n- Ta không biết họ đang ở đâu. Cũng không dám nói họ đã thoát khỏi cuộc truy tìm.\n\nTrần Mặc khẽ cúi đầu, như thể câu ấy đã thay hắn nói nốt điều còn lại. Tôi nhìn xuống nền đá. Một vệt khuyết mảnh chạy ngang vách, đúng hình dáng dấu từng gặp ở hõm đá. Tôi đưa tay chạm gần mép vết, không để da thịt chạm vào mặt đá.\n\nDấu ấy không chỉ về lối người sống sót đã đi. Nó dẫn sâu hơn vào vùng đá trôi, nơi đầu mối món đồ nhà họ Phó còn chưa dứt.\n\nTrần Mặc nhìn theo tay tôi.\n\n- Cho ta đi cùng. Ta đã hứa với Hội, ít nhất phải tìm cách giữ lời.\n\nTôi rút tay về.\n\n- Đi sau ta và Vân Chi. Không chạm vào dấu khắc."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bach_thien_sach>ch9@9",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bach_thien_sach",
+    "target": "ch9",
+    "valid_from_chapter": 9,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Bạch Thiên Sách chỉ cam kết che chở người của Hội",
+     "known_as": "Bạch Thiên Sách"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cho_duoi_dao_vo>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cho_duoi_dao_vo",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tào Vân Chi đứng ở đầu lối chợ, một tay giữ dây buộc túi hành lý.",
+     "known_as": "chợ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dien_tan_tinh>ch8@8",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dien_tan_tinh",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh.",
+     "known_as": "Điện Tàn Tinh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_dau_gia_bien_mat>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_dau_gia_bien_mat",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Kẻ mua, người bán đều đã biến mất."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_dien_co_mat>ch9@9",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_dien_co_mat",
+    "target": "ch9",
+    "valid_from_chapter": 9,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đường này dẫn tới Mảnh Khiếp Tàn Thiên, và Điện Tàn Tinh ở phía dưới."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_gia_toc_giu_manh>ch8@8",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_gia_toc_giu_manh",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_luu_tu_nguyet_cuu_dan>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_luu_tu_nguyet_cuu_dan",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_the_pho_dan_duong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_the_pho_dan_duong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thẻ rung nhẹ trong lòng bàn tay, một nhịp ngắn rồi ngừng."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_tran_mac_ban_tin>ch7@7",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_tran_mac_ban_tin",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta đã trao cho Huyền Kính đầu mối về dấu vết nhà họ Phó. Đổi lấy lời hứa bảo vệ Hội Lưu Dân."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hoi_luu_dan>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hoi_luu_dan",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Huyền Kính hứa để người của Hội Lưu Dân được yên.",
+     "known_as": "Hội Lưu Dân"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:huyen_kinh>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "huyen_kinh",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Huyền Kính đã tới.",
+     "known_as": "Huyền Kính"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luu_tu_nguyet>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luu_tu_nguyet",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lưu Tố Nguyệt đưa họ khỏi khu chợ trước khi tiên môn tới.",
+     "known_as": "Lưu Tố Nguyệt"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:manh_khiep_tan_thien>ch8@8",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "manh_khiep_tan_thien",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bấy giờ, lời kể về gia tộc và đường khắc dưới chân nối vào nhau: gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh.",
+     "known_as": "Mảnh Khiếp Tàn Thiên"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Phó Cảnh Hành",
+     "known_as": "Phó Cảnh Hành"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tao_van_chi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tao_van_chi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tào Vân Chi đứng ở đầu lối chợ, một tay giữ dây buộc túi hành lý.",
+     "known_as": "Tào Vân Chi"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thep_dinh_phong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thep_dinh_phong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi rút Thẻ Định Phong khỏi tay áo.",
+     "known_as": "Thẻ Định Phong"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tran_mac>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tran_mac",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi nhận ra Trần Mặc.",
+     "known_as": "Trần Mặc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:vung_da_troi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "vung_da_troi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Có lối qua đá trôi. Đi được, nếu đừng chen nhau.",
+     "known_as": "đá trôi"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-d522336592bf",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đưa đoàn người của Tào Vân Chi ra khỏi nền chợ nguy hiểm, đồng thời giữ lại manh mối mơ hồ trước khi các tiên môn áp sát.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Giữa những lều quán trống sau cuộc đấu giá kín, ta nhận ra nền chợ vẫn còn dấu giày chồng chéo và vệt bụi bị miết thành một đường gãy; những người mua bán đã biến mất, nhưng không có gì đủ để kết luận họ đi đâu.",
+       "Tào Vân Chi giục đoàn người rời đi trước khi các tiên môn tới, còn ta dùng Thẻ Định Phong dò luồng khí đổi chiều quanh mép đảo; thẻ rung nhẹ, báo trước một lối qua đá trôi nhưng không chỉ ra kẻ nào đã để lại dấu vết.",
+       "Một luồng gió ngang bất ngờ xô lệch đoàn người, ta phải bỏ dở việc xem xét nền chợ để đưa họ men theo lối an toàn; Tào Vân Chi lạnh giọng hỏi ta định bảo vệ người sống hay chạy theo một dấu vết có thể chỉ là mồi nhử.",
+       "Ta đáp rằng người sống phải qua được vùng đá trôi trước, nhưng không hứa sẽ bỏ mặc manh mối; bằng cách đọc hướng gió và chọn lúc các phiến đá chững lại, ta dẫn đoàn vượt qua mà không ai bị cuốn khỏi lối đi.",
+       "Khi đoàn người đã tới bờ an toàn, ta ngoái nhìn thấy vệt bụi dưới nền chợ lại bị gió xóa mất từng đoạn; trong khoảng trống còn lại, một nét cong lạ khiến ta nghĩ tới dấu hiệu cũ của gia tộc, nhưng chưa thể chắc chắn nó có liên quan."
+      ],
+      "ends_at": "Cảnh kết ở rìa vùng đá trôi, nơi đoàn người của Tào Vân Chi tạm an toàn còn ta đứng trước lựa chọn quay lại nền chợ để kiểm tra dấu vết.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Phó Cảnh Hành quay lại nền chợ để giữ lại manh mối mờ nhạt về dấu hiệu gia tộc trước khi gió xóa sạch.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Phó Cảnh Hành nhìn đoàn người đã qua vùng đá trôi rồi quyết định quay lại chợ; Tào Vân Chi nhắc rằng dấu vết có thể là mồi nhử, nhưng không ngăn chàng.",
+       "Hai người trở về nền chợ theo lối đá vừa qua; Phó Cảnh Hành dùng Thẻ Định Phong canh luồng gió, còn Vân Chi đứng gần mép lối để báo nếu đá trôi đổi hướng.",
+       "Ở chỗ vệt bụi từng bị miết thành đường gãy, Phó Cảnh Hành tìm thấy một nét cong bị gió che lấp; hình dáng khiến chàng liên tưởng đến dấu hiệu cũ của gia tộc, nhưng không đủ rõ để xác nhận.",
+       "Tào Vân Chi hỏi chàng định lấy gì làm bằng chứng; Phó Cảnh Hành đáp rằng hiện giờ chỉ có thể giữ lại vị trí và hình dáng của nét cong, rồi nhận ra bụi quanh đó bị xô thành những vệt không giống dấu chân thông thường.",
+       "Một luồng gió mạnh tràn qua, cuốn mất phần lớn dấu tích; Phó Cảnh Hành kịp ghi nhớ hướng của nét cong nhưng chưa thể xác định ai đã để lại nó hay vật gì đã đi qua nền chợ."
+      ],
+      "ends_at": "Cảnh kết tại nền chợ bỏ trống, khi Phó Cảnh Hành và Tào Vân Chi đứng trước dấu vết gần như bị gió xóa sạch.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-7a33e916b0ff",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-2d2f06d5ce9b",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8bfeb1fb8f98",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-3845be23d9d2",
+    "player_action": "[Hành động] Lén quay lại vách đá sau núi khi trời tối.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Phó Cảnh Hành lần theo vệt bụi tới chiếc lều cuối chợ và tìm được manh mối đầu tiên nối cuộc đấu giá kín với dấu hiệu gia tộc mình.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Phó Cảnh Hành đứng dậy, lần theo hướng vệt bụi chếch về chiếc lều cuối chợ; Tào Vân Chi đi sát bên, nhắc rằng gió có thể xóa dấu nhưng cũng có thể để lộ thứ bị che khuất.",
+       "Trước cửa lều, hai người nhận ra bụi trên nền bị quét thành một đường ngắn rồi đột ngột mất hút; Phó Cảnh Hành dùng Thẻ Định Phong dò luồng khí, nhưng thẻ chỉ giúp chàng tránh một vùng gió xoáy chứ không chỉ ra kẻ đã đi qua.",
+       "Tào Vân Chi hỏi chàng có chắc dấu vết liên quan đến gia tộc mình không; Phó Cảnh Hành đáp rằng chàng chỉ chắc nét cong ấy giống một dấu hiệu cũ, còn người cố ý để lại nó thì chưa thể đoán.",
+       "Trong lều, chàng tìm thấy trên nền bụi một vết in mờ gồm nét cong và một đường gãy ngắn, tương tự dấu hiệu gia tộc chàng từng thấy; cạnh đó là những vết kéo lê hướng về mép lều, nhưng không đủ để biết những người dự đấu giá đã đi đâu hay bị ai đưa đi.",
+       "Tào Vân Chi nhận ra dấu in còn mới hơn lớp bụi quanh nó và bảo rằng nếu có kẻ quay lại, họ sẽ không chỉ tìm manh mối; Phó Cảnh Hành hiểu rằng dấu vết vừa xác nhận mối liên hệ, vừa cho thấy ai đó có thể đang theo cùng một đường điều tra."
+      ],
+      "ends_at": "Cảnh kết bên trong chiếc lều cuối chợ, khi Phó Cảnh Hành đứng trước dấu in mờ trên nền và biết manh mối có liên quan đến gia tộc mình nhưng chưa rõ ai đã để lại.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Phó Cảnh Hành xác định được dấu vết đầu tiên nối cuộc đấu giá kín với món đồ từng thuộc gia tộc mình mà chưa vội kết luận nó có ý nghĩa gì.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Tôi lần theo những vệt kéo trên nền lều đến sát mép bạt rách; Vân Chi nhắc rằng dấu bụi chồng lấn cho thấy nhiều người đã qua đây, nhưng không chứng minh họ bị đưa đi hay tự rời chợ.",
+       "Dưới chân chiếc bàn gãy, tôi nhận ra một nét khắc mờ trên nền đá trùng với đoạn gãy cạnh dấu cong; tôi nói nó giống dấu hiệu trên đồ cũ của nhà họ Phó, còn Vân Chi hỏi liệu có thể chỉ là vết nứt tự nhiên.",
+       "Tôi dùng Thẻ Định Phong kiểm tra luồng khí quanh mép lều và nhận ra gió bị hút về phía khe đá ngoài vách; dấu bụi hướng cùng chiều, nhưng thẻ chỉ xác nhận hướng gió chứ không cho biết ai đã đi qua.",
+       "Một luồng gió mạnh làm lớp bụi cuối cùng bay khỏi nền, để lộ nét khắc đủ rõ cho thấy đây không chỉ là vết nứt ngẫu nhiên; tôi giữ kín suy đoán, còn Vân Chi cảnh báo rằng dấu mới như thế có thể kéo những kẻ khác tới.",
+       "Tôi và Vân Chi rời lều đến mép đá, nơi dấu kéo đứt quãng ngay trước khoảng không; phía dưới, những tảng đá trôi che khuất mọi lối đi, khiến manh mối đầu tiên xác nhận mối liên hệ nhưng chưa hé lộ số phận người dự đấu giá."
+      ],
+      "ends_at": "Cảnh kết tại mép đá ngoài chiếc lều cuối chợ, khi tôi nắm Thẻ Định Phong và nhìn xuống vùng đá trôi nơi dấu vết biến mất.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-a8a0f467efef",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-4dd60eafac2e",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-9c485df2cd0b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-268fb387b21d",
+    "player_action": "[Lời thoại, nói thật] Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Phó Cảnh Hành nói rõ với Tào Vân Chi mức độ liên quan giữa dấu khắc ở chợ đấu giá và những món đồ cũ của nhà họ Phó, rồi xác nhận đây là dấu vết đầu tiên nối hai việc.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Đứng bên mép đá, ta nói với Vân Chi rằng nét khắc giống dấu hiệu trên vài món đồ cũ của nhà họ Phó, nhưng sự giống nhau ấy chưa đủ để kết luận; ta không dám biến một nét cong mờ thành câu trả lời chỉ vì muốn nó là thật.",
+       "Vân Chi hỏi ta nhận ra điều gì cụ thể, chứ không hỏi ta tin vào điều gì; ta đáp rằng đường gãy cạnh nét cong là phần khiến ta chú ý, song trong gió và dấu giẫm chồng chất, nó vẫn có thể chỉ là một vết xước ngẫu nhiên.",
+       "Ta lấy Thẻ Định Phong dò luồng khí sát vách đá, không mong nó chỉ ra người đã đi qua mà chỉ muốn biết gió có thể làm lộ phần nào của vết khắc; luồng khí hút ra khe đá, khiến bụi mỏng rời khỏi một đoạn đá ngay dưới chân chúng ta.",
+       "Phần khắc vừa lộ có cùng nét cong khép dở và đường gãy như dấu trên những món đồ cũ ta từng thấy trong nhà họ Phó; vì nó nằm ngay lối ra khỏi chiếc lều nơi cuộc đấu giá kín bị phá ngang, ta có căn cứ đầu tiên để nói rằng dấu vết ở chợ có liên quan đến một món đồ từng thuộc về gia tộc mình, nhưng chưa thể biết món đồ ấy là gì hay ai đã mang nó đi.",
+       "Vân Chi nhận ra kết luận ấy cũng có thể khiến những kẻ khác nhắm vào dấu vết, còn ta hiểu rằng càng chần chừ, nơi này càng dễ bị người tìm đến trước; nàng hỏi ta có định tiếp tục lần theo luồng khí ra vùng đá trôi hay không, và ta giữ Thẻ Định Phong trong tay khi bụi lại bắt đầu bị gió cuốn đi. "
+      ],
+      "ends_at": "Cảnh kết bên khe đá ngoài vách lều cuối chợ, nơi Phó Cảnh Hành và Tào Vân Chi đã xác nhận dấu khắc liên quan đến gia tộc họ Phó nhưng vẫn chưa biết món đồ hay người mang nó đi.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Phó Cảnh Hành xác nhận dấu khắc nối cuộc đấu giá kín với đồ cũ nhà họ Phó, đồng thời chọn cách rời mép đá trước khi người của tiên môn áp sát.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Sau lời thú nhận ở cảnh trước, Vân Chi hỏi liệu dấu khắc có thể bị làm giả; tôi đáp rằng nó chưa chứng minh món đồ nào, nhưng sự trùng khớp giữa nét cong và đường gãy đủ để lần đầu nối dấu vết ở lều đấu giá với những vật cũ của nhà họ Phó.",
+       "Tôi dùng Thẻ Định Phong dò lại luồng khí quanh khe đá, không bước xuống vùng đá trôi; gió hút bụi khỏi một dải nền, để lộ những vết kéo đứt đoạn chạy từ phía lều tới mép nứt, nhưng dấu giẫm chồng lên nhau khiến tôi không thể xác định ai đã đi qua hay có bao nhiêu người.",
+       "Từ vị trí các vết kéo và dấu khắc, tôi suy ra món đồ mang dấu hiệu nhà họ Phó từng được đưa qua khu đấu giá rồi chuyển về phía khe đá; dấu vết không cho biết người dự đấu giá còn sống, đã tự rời đi hay bị đưa đi, càng không xác nhận món đồ ấy là gì.",
+       "Vân Chi nhắc rằng gió sắp phủ kín mọi thứ; tôi chọn ghi nhớ hướng khắc và luồng khí thay vì mạo hiểm xuống khe, nói rõ với nàng rằng ta đã có mối nối đầu tiên nhưng chưa có câu trả lời để đem ra mặc cả.",
+       "Một tiếng động vọng tới từ phía lều cuối chợ, rồi những bóng người xa xa hiện trên nền đá; tôi nhận ra nơi này không còn là chỗ chỉ có hai chúng tôi tìm dấu, nên cùng Vân Chi rời mép nứt trước khi người mới tới có thể nhìn thấy vệt khắc."
+      ],
+      "ends_at": "Cảnh kết khi tôi và Vân Chi rời mép đá, mang theo hướng dấu vết nhưng để lại khu chợ đang có người tiến vào.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d986547be0e5",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-143de770ce8b",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5b6e9002aec3",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-69a0011af2ef",
+    "player_action": "[Lời thoại, nói thật] Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Phó Cảnh Hành phải nhận diện những kẻ đang tiến vào chợ và đổi một cái giá cụ thể lấy manh mối giúp đoàn của Vân Chi vượt vùng đá trôi.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Nghe lời Phó Cảnh Hành, Vân Chi cùng chàng nấp sau vách đá; chàng dùng Thẻ Định Phong dò luồng gió mà không để lộ vị trí, rồi nhận ra một bóng người đang tiến đến là Trần Mặc.",
+       "Trần Mặc không hỏi về dấu khắc, chỉ nói những kẻ mới tới đang lần theo vết kéo ở lều đấu giá; hắn có thể chỉ một lối an toàn cho đoàn Vân Chi, nhưng đòi Phó Cảnh Hành giao Thẻ Định Phong cho hắn mượn đến hết chuyến qua vùng đá trôi.",
+       "Phó Cảnh Hành vặn hỏi vì sao Trần Mặc lại biết họ cần đường qua đá trôi; Trần Mặc đáp rằng người giữ được đường sống thì thường nghe được nhiều chuyện hơn người chỉ biết giữ bí mật.",
+       "Vân Chi cảnh báo chiếc thẻ là thứ duy nhất giúp họ đọc luồng khí đổi chiều, nhưng Phó Cảnh Hành nhận ra Trần Mặc không định lấy nó làm của riêng: hắn cần thẻ để dẫn cả đoàn qua một lối hẹp trước khi những kẻ lạ áp sát.",
+       "Phó Cảnh Hành đồng ý cho Trần Mặc mượn thẻ với điều kiện hắn phải tự dẫn đường; Trần Mặc tiết lộ một dấu khắc phụ gần mép nứt trùng với hướng gió, gợi rằng những người dự đấu giá đã rời chợ qua vùng đá trôi chứ chưa chắc đã chết.",
+       "Trần Mặc cầm Thẻ Định Phong dẫn Vân Chi và đoàn người khuất khỏi chợ; phía sau, những bóng người lạ tới nơi dấu khắc, còn Phó Cảnh Hành buộc phải theo sau mà không còn vật dò đường trong tay."
+      ],
+      "ends_at": "Cảnh kết trên lối đá trôi hẹp, khi Phó Cảnh Hành theo Trần Mặc và Vân Chi vào vùng gió đổi chiều, không còn Thẻ Định Phong để tự dò đường.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Đưa đoàn người của Vân Chi qua vùng đá trôi và lần ra hướng đi của những người dự đấu giá, dù manh mối buộc ta phải đánh đổi cơ hội tiếp tục truy tìm ngay lúc này.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Phiến đá dưới chân chao nghiêng khi gió đổi chiều; Trần Mặc dùng Thẻ Định Phong dẫn đường, còn ta phải bước theo nhịp của hắn mà không thể tự kiểm chứng luồng khí.",
+       "Một luồng khí xoáy bất ngờ hất lệch hàng người; Vân Chi giữ đoàn khỏi tản ra, nhưng Trần Mặc phải đổi lối, đưa chúng ta qua dải đá hẹp thay vì men theo hướng dấu khắc.",
+       "Ở đầu dải đá, sợi tơ bạc trên thẻ chỉ về một khe khuất dưới tầng đá trôi; trên vách khe có nét cong khép dở cùng đường gãy, giống dấu ta đã thấy ở lều đấu giá và trên đồ cũ nhà họ Phó.",
+       "Ta nhận ra vệt kéo mờ trên đá dẫn xuống khe rồi mất hút trong sương: những người dự đấu giá có thể đã rời khu chợ theo lối này, nhưng dấu vết không chứng minh họ còn sống hay món đồ đã đi cùng họ.",
+       "Ta muốn xuống khe ngay, nhưng Trần Mặc cảnh báo luồng khí đang đảo và thẻ chỉ đủ giữ đường cho cả đoàn qua; nếu bỏ đoàn lại, họ sẽ mắc kẹt giữa vùng đá trôi. Ta chấp nhận gác việc truy tìm, để mất dấu trước khi biết ai đã mang món đồ đi.",
+       "Vân Chi đưa đoàn tới một mỏm đá ổn định bên kia vùng nguy hiểm; Trần Mặc trao lại Thẻ Định Phong cho ta, rồi nói rằng lối khe ấy không còn là bí mật nếu những kẻ ở chợ đã kịp nhìn thấy dấu khắc."
+      ],
+      "ends_at": "Cảnh kết trên mỏm đá ổn định bên kia vùng đá trôi, khi đoàn người đã qua được nhưng hướng xuống khe cùng manh mối về món đồ vẫn chưa được xác nhận.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "at_most_one",
+        "block": false,
+        "feedback": "đồ vật thep_dinh_phong vừa có người giữ vừa ở một nơi ở chương 4; đồ vật có người giữ thì ở cùng người đó, đặt xuống thì đóng cạnh HOLDS"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-94938290334a",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-fa00b31b1a4d",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0f21e23e802b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-331c7bc06e46",
+    "player_action": "[Lời thoại, nói thật] Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Phó Cảnh Hành tìm hiểu xem có ai mang món đồ xuống khe hay không, đồng thời nhận ra manh mối mới đòi hỏi phải trả giá.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Trên mỏm đá vững sau khi cả đoàn qua vùng đá trôi, Phó Cảnh Hành hỏi Trần Mặc có thấy ai mang món đồ xuống khe không; Trần đáp rằng hắn không nhìn thấy món đồ, chỉ thấy dấu kéo dừng ở mép nứt rồi bị gió xóa mờ.",
+       "Trần Mặc nói luồng khí ở đó cho thấy có người đã rời khu chợ theo lối xuống thấp, nhưng dấu vết không đủ xác nhận họ còn sống hay mang theo món đồ; Tào Vân Chi nhắc rằng quay lại dò lúc này có thể khiến đoàn lộ hướng đi.",
+       "Phó Cảnh Hành dùng Thẻ Định Phong đối chiếu hướng gió còn sót lại, nhận ra dấu khắc cong khép dở dẫn về một lối khuất dưới mép nứt; thao tác ấy khiến luồng khí đổi chiều, làm dấu hiệu dẫn đường tan mất và không thể truy lại bằng thẻ.",
+       "Trần Mặc thừa nhận manh mối chỉ đáng giá nếu Phó Cảnh Hành chấp nhận giữ kín lối đi để người của hắn có thể rút khỏi vùng đá trôi; hắn không giải thích thêm, còn Vân Chi lạnh lùng hỏi vì sao sự an toàn ấy lại phải đổi bằng việc chôn vùi dấu vết.",
+       "Phó Cảnh Hành không có đủ căn cứ để kết luận Trần Mặc đã thấy món đồ hay biết ai mang nó đi; chàng giữ lại hướng lối khuất trong trí nhớ, nhưng hiểu rằng manh mối đã khiến chàng mất cơ hội kiểm chứng bằng Thẻ Định Phong."
+      ],
+      "ends_at": "Cảnh kết trên mỏm đá vững ở Vùng Đá Trôi, khi Phó Cảnh Hành phải chọn rời đi cùng đoàn với một hướng đi chưa được kiểm chứng.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Xác nhận số phận những người dự đấu giá và nhận được manh mối có giá phải trả, trong khi giữ kín bí mật về món đồ gia truyền.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Tôi hỏi Trần Mặc lần nữa về người mang món đồ xuống khe; hắn nhắc rằng dấu vết chỉ cho thấy có người rời chợ theo lối thấp, rồi đòi tôi giữ kín hướng đi để người của hắn rút an toàn.",
+       "Vân Chi ngắt lời, nói nàng biết một số người sống sót đã được Lưu Tố Nguyệt đưa khỏi khu chợ trước khi tiên môn tới; nàng không biết họ đang ở đâu, nhưng việc ấy cho thấy ít nhất vài người dự đấu giá còn sống sau biến cố.",
+       "Tôi nhận ra Vân Chi đã giấu điều này từ trước, còn nàng đáp rằng im lặng khi ấy là để bảo vệ những người được cứu; Trần Mặc không phủ nhận, chỉ nhắc rằng tung tin về lối xuống có thể khiến kẻ săn dấu vết đuổi theo họ.",
+       "Trần Mặc chỉ cho tôi cách ghi nhớ hướng hõm đá khuất dưới mép nứt qua những mốc gió và vết khắc còn sót, nhưng buộc tôi hứa không lần theo cho tới khi người của hắn rời vùng đá trôi; tôi chấp nhận, đổi lấy manh mối bằng việc để cơ hội truy dấu trôi qua.",
+       "Tôi giữ kín hướng đi, không hỏi thêm về món đồ mà Trần Mặc chưa từng nói đã nhìn thấy; đoàn người tiếp tục rời mỏm đá, còn tôi mang theo xác nhận rằng một phần người dự đấu giá sống sót và một lối tìm kiếm phải chờ đợi."
+      ],
+      "ends_at": "Cảnh kết trên con đường rời vùng đá trôi, khi tôi cùng đoàn người đi tiếp và chấp nhận trì hoãn việc lần theo lối xuống để đổi lấy sự an toàn cho người của Trần Mặc.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-bc8ee35028b4",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-2e9ed957a9f6",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-50fa473538fb",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-59485694e4ad",
+    "player_action": "[Nội tâm] Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Phó Cảnh Hành xác định dấu vết của những người dự đấu giá và buộc Trần Mặc đối diện với cái giá hắn đã trả để bảo vệ Hội Lưu Dân.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Rời mỏm đá theo hướng đã ghi nhớ, ngươi nhận ra dấu vết dưới mép nứt không chỉ dẫn về lối đi mà còn cho thấy một nhóm người đã được đưa khỏi khu chợ; Vân Chi nhận ra cách đánh dấu ấy giống lối hộ tống người sống sót mà Lưu Tố Nguyệt từng dùng.",
+       "Ngươi lần theo dấu đến một khúc đá khuất gió, nơi vết chân của người dự đấu giá tách làm hai: dấu cũ dẫn khỏi vùng đá trôi, còn dấu mới của tu sĩ Huyền Kính đã tìm tới lối xuống; những người mất tích có vẻ đã sống sót và rời chợ, nhưng manh mối về món đồ vẫn theo đường khe nứt.",
+       "Ngươi hỏi Trần Mặc vì sao Huyền Kính biết lối này; hắn thoáng im lặng, rồi thừa nhận đã bán tin về dấu vết dẫn tới món đồ nhà họ Phó để đổi lấy sự an toàn cho người của Hội Lưu Dân.",
+       "Vân Chi chất vấn liệu sự an toàn ấy có còn ý nghĩa nếu Huyền Kính lần theo tin đến tận những người sống sót; Trần Mặc đáp rằng hắn chọn cứu những người mình có thể cứu, còn ngươi nhận ra hắn đã đặt cả ngươi lẫn manh mối gia tộc lên bàn mặc cả.",
+       "Ngươi chưa thể xác nhận món đồ đang ở đâu, nhưng hiểu rằng Huyền Kính có thể sắp tới; Trần Mặc chờ ngươi quyết định có còn cùng hắn giữ kín lối đi hay sẽ tự tách khỏi hắn."
+      ],
+      "ends_at": "Cảnh kết tại khúc đá khuất gió dưới mép nứt, khi lời thú nhận của Trần Mặc đã biến đồng minh mong manh thành một lựa chọn phải đối diện.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Xác nhận lối đi của những người sống sót và buộc Phó Cảnh Hành đối diện với cái giá Trần Mặc đã trả cho manh mối.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Phó Cảnh Hành đối chiếu dấu chân cũ với những nét khắc của Lưu Tố Nguyệt; Vân Chi xác nhận chúng dẫn ra ngoài vùng đá trôi, cho thấy ít nhất một nhóm người sống sót đã được hộ tống khỏi chợ.",
+       "Trần Mặc thừa nhận cuộc trao đổi với Huyền Kính nhằm đổi lấy việc Hội Lưu Dân không bị lục soát hay bắt người khai báo; hắn không thể bảo đảm lời hứa ấy che chở cho những người đã rời chợ.",
+       "Phó Cảnh Hành nhận ra vệt khuyết trên vách không chỉ là dấu đường mà còn khớp với dấu từng thấy trên món đồ nhà họ Phó; dấu chân mới của Huyền Kính men theo nó xuống khe, nhưng chưa chứng minh món đồ đang ở đó.",
+       "Vân Chi cảnh báo nếu tiếp tục giữ kín lối đi, Huyền Kính vẫn có thể lần theo dấu mới tới nhánh đường của người sống sót; Trần Mặc không xin tha thứ, chỉ nói hắn đã chọn phần người mình có thể bảo vệ.",
+       "Phó Cảnh Hành quyết định không giao Thẻ Định Phong cho Trần Mặc và cùng Vân Chi rời khỏi nhánh xuống khe, mang theo hướng dấu khắc để tìm đường chặn bước truy dấu của Huyền Kính trước khi nó chạm tới lối thoát của người sống sót."
+      ],
+      "ends_at": "Cảnh kết tại khúc đá khuất gió, khi Phó Cảnh Hành và Vân Chi rời nhánh xuống khe, còn Trần Mặc ở lại một mình bên dấu chân dẫn tới món đồ nhà họ Phó.",
+      "resolves": [],
+      "unplanned_threads": [
+       "dau_vet_dau_gia"
+      ]
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 6"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER fact_tran_mac_ban_tin→ch6",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "KNOWS protagonist→fact_tran_mac_ban_tin",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 6"
+       },
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch dau_vet_dau_gia (hạn gỡ chương 2–6) đến hết chương 6 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí.»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 6"
+       },
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch dau_vet_dau_gia (hạn gỡ chương 2–6) đến hết chương 6 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí.»"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-60ebbbf091f0",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-34d163161599",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f6719e8b0433",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "7": [
+   {
+    "attempt": 1,
+    "commit_id": "ch7-1a1ee9e0f6e7",
+    "player_action": "[Nội tâm] Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Theo dấu khắc của Lưu Tố Nguyệt để tìm đường bảo vệ những người sống sót, đồng thời xác định dấu vết Huyền Kính đang truy đuổi bắt nguồn từ đâu.",
+      "present": [
+       "protagonist",
+       "tao_van_chi"
+      ],
+      "beats": [
+       "Ta và Vân Chi men theo dấu khắc qua vùng đá trôi; ta giữ Thẻ Định Phong dẫn lối qua luồng khí đổi chiều, nhưng những vệt mới trên đá cho thấy có người đã đi trước.",
+       "Vân Chi nhận ra một dấu khắc bị sửa vội, cùng kiểu ký hiệu nàng từng thấy ở lối người sống sót rời chợ; nàng nói dấu này không chỉ đường cho họ mà còn đánh dấu một nhánh xuống khe.",
+       "Ta đối chiếu dấu vết với điều Trần Mặc đã thú nhận: hắn đổi tin về món đồ nhà họ Phó lấy lời hứa bảo vệ Hội Lưu Dân; những dấu chân mới hướng về nhánh khe khiến ta hiểu tin ấy đã tới tay Huyền Kính.",
+       "Vân Chi suy ra nhóm dự đấu giá kín hẳn đã bị đưa khỏi khu chợ trước khi các tiên môn kịp tới, còn dấu dẫn tới mảnh thần khí vẫn nằm sâu dưới khe; nàng cảnh báo truy dấu lúc này có thể khiến người sống sót bị lộ.",
+       "Ta quyết định không quay lại đối chất Trần Mặc ngay; thay vào đó, ta và Vân Chi theo nhánh vòng để chặn đường lần theo dấu khắc, dù lựa chọn ấy đồng nghĩa để hắn tự xoay xở với hậu quả của cuộc mặc cả."
+      ],
+      "ends_at": "Cảnh kết tại ngã rẽ trên đường xuống khe, nơi ta và Vân Chi chọn nhánh vòng nhằm giữ kín lối đi của những người sống sót.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Phó Cảnh Hành cùng Vân Chi lần ra lối thoát của những người dự đấu giá, đồng thời quyết định đặt sự an toàn của họ lên trên việc đối chất ngay với Trần Mặc.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Theo luồng khí mà Thẻ Định Phong chỉ dẫn, tôi và Vân Chi tới một hõm đá khuất khỏi nhánh xuống khe; dấu kéo lê cùng những vết chân cũ cho thấy nhiều người từng rời nơi đấu giá qua đây trước khi tiên môn tới, dù không đủ căn cứ biết họ hiện ở đâu.",
+       "Vân Chi nhận ra một nét khắc nối với dấu Lưu Tố Nguyệt dùng để đưa người sống sót rời chợ; tôi suy ra những người dự đấu giá đã được dẫn khỏi khu chợ theo lối bí mật ấy, còn dấu chân mới của Huyền Kính chỉ tới nhánh khe và mảnh thần khí, không phải đường người lưu lạc đã đi.",
+       "Trần Mặc xuất hiện ở đầu lối khuất, xác nhận hắn đã trao cho Huyền Kính đầu mối về dấu vết nhà họ Phó để đổi lấy lời hứa bảo vệ Hội Lưu Dân; hắn không thể bảo đảm lời hứa ấy bao gồm những người đã rời chợ.",
+       "Tôi chất vấn Trần Mặc về cái giá hắn tự ý đặt lên người khác; hắn đáp rằng nếu không đổi tin, Hội đã bị nghiền nát ngay tại chợ, còn Vân Chi lạnh lùng nhắc lời hứa của Huyền Kính không ngăn được họ lần theo dấu xuống khe.",
+       "Nghe đá vụn rơi từ nhánh khe và thấy vệt sáng trên Thẻ Định Phong chao về phía ấy, tôi quyết định không quay lại cùng Trần Mặc hay truy dấu món đồ lúc này; tôi cùng Vân Chi rời hõm đá theo lối có thể che khuất đường tới người sống sót, để Trần Mặc tự đối diện với lựa chọn của mình."
+      ],
+      "ends_at": "Cảnh kết trên lối vòng men vách đá, khi tôi và Vân Chi khuất khỏi hõm đá còn Trần Mặc ở lại trước ngã rẽ xuống khe.",
+      "resolves": [],
+      "unplanned_threads": [
+       "dau_vet_dau_gia"
+      ]
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 7"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 7"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 7"
+       },
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch dau_vet_dau_gia (hạn gỡ chương 2–6) đến hết chương 7 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Xác định chuyện gì đã xảy ra với những người dự đấu giá kín và dấu vết nào dẫn tới mảnh thần khí.»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 7"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-e6b40186e5be",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-9c8007a0aa15",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-90f7c11a39b9",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "8": [
+   {
+    "attempt": 1,
+    "commit_id": "ch8-e8bd146ab524",
+    "player_action": "[Hành động] Lén quay lại vách đá sau núi khi trời tối.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Men theo lối vòng để giữ kín đường người sống sót, đồng thời buộc Trần Mặc nói rõ cái giá hắn đã trả cho Huyền Kính.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Ta và Vân Chi men theo lối vòng, giữ hõm đá khuất sau lưng; Thẻ Định Phong giúp ta chọn luồng khí ổn định, nhưng không chỉ ra nơi những người dự đấu giá đang ẩn náu.",
+       "Trần Mặc đuổi kịp ở đoạn khe giao nhau; Vân Chi lập tức chắn lối, còn ta hỏi thẳng hắn đã đưa cho Huyền Kính thứ gì ngoài dấu vết nhà họ Phó.",
+       "Trần Mặc thừa nhận hắn trao đầu mối đủ để Huyền Kính lần theo món đồ, đổi lấy lời hứa chỉ bảo vệ người của Hội Lưu Dân; hắn không được bảo đảm cho những người Lưu Tố Nguyệt đưa khỏi chợ.",
+       "Vân Chi nói những dấu cũ xác nhận người dự đấu giá đã được dẫn đi trước khi tiên môn tới, còn vết giày mới của Huyền Kính chỉ đường xuống khe; nàng không biết người mất tích hiện ở đâu, cũng không thể cam đoan họ đã thoát khỏi cuộc truy tìm.",
+       "Ta nhận ra vệt khuyết trên vách lặp lại dấu từng thấy, nhưng nó chỉ cho biết đầu mối món đồ còn dẫn sâu hơn vào vùng đá trôi; khi Trần Mặc đề nghị cùng đi để giữ lời hứa với Hội, ta buộc hắn đi sau và không được chạm vào dấu khắc."
+      ],
+      "ends_at": "Cảnh kết tại đoạn khe có vệt khuyết dẫn sâu vào vùng đá trôi, khi ba người tiếp tục tiến bước trong một liên minh đã bị đặt điều kiện.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Xác định số phận những người dự đấu giá và dấu dẫn tới mảnh thần khí, đồng thời buộc Trần Mặc nói rõ cái giá của lời hứa với Huyền Kính để Phó Cảnh Hành quyết định có còn tin hắn hay không.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Thẻ Định Phong đưa chúng tôi tới một vách đá khuất gió, nơi dấu khắc cũ nối với vết kéo lê mờ; Vân Chi nhận ra chúng xác nhận người dự đấu giá đã được Lưu Tố Nguyệt bí mật hộ tống khỏi khu chợ trước khi các tiên môn tới, chứ không biến mất trong cuộc truy sát.",
+       "Tôi lần theo nét khắc bị sửa và nhận ra chúng chỉ sâu hơn vào vùng đá trôi, về phía vết nứt; dấu ấy xác nhận đầu mối mảnh thần khí nằm dưới lớp đá này, nhưng không cho biết những người sống sót hiện ở đâu.",
+       "Tôi buộc Trần Mặc nói hết: Huyền Kính hứa bảo vệ người thuộc Hội Lưu Dân, còn hắn đã trao cho họ dấu vết của món đồ nhà họ Phó mà biết lời hứa không bao gồm những người Lưu Tố Nguyệt đưa đi; hắn không nhận đã bán đường đi của họ, nhưng thừa nhận đã đặt họ ngoài sự bảo đảm để giữ Hội an toàn.",
+       "Trần Mặc nói rằng hắn chọn người mình còn có thể bảo vệ; tôi đáp rằng đó không phải lời hứa vô hại mà là cái giá hắn quyết định để người khác gánh, rồi tuyên bố sẽ không còn để hắn tự chọn thay tôi điều gì cần hy sinh.",
+       "Vân Chi chỉ về phía vết nứt khi luồng khí đổi chiều làm dấu khắc hiện rõ hơn; tôi hiểu gia tộc Phó từng cất giữ Mảnh Khiếp Tàn Thiên theo giao ước với những người dựng nên Điện Tàn Tinh, còn tiếng vọng từ xa báo hiệu Huyền Kính đã lần tới vùng đá trôi."
+      ],
+      "ends_at": "Cảnh kết ở lối đá dẫn xuống vết nứt sâu, nơi tôi giữ Thẻ Định Phong và buộc phải chọn có tiếp tục để Trần Mặc đi cùng hay không trước khi Huyền Kính áp sát.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-5be5ccca299f",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f983df6be5a0",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-74355ed7c4db",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "9": [
+   {
+    "attempt": 1,
+    "commit_id": "ch9-f2fb2edb1272",
+    "player_action": "[Lời thoại, nói thật] Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Theo dấu khắc về phía vết nứt để xác định số phận người dự đấu giá và làm rõ cái giá Trần Mặc đã trả cho Hội Lưu Dân.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Phó Cảnh Hành chấp nhận để Trần Mặc đi cùng nhưng giữ hắn phía sau, còn Vân Chi nhắc rằng Thẻ Định Phong chỉ lối qua luồng khí chứ không bảo đảm đường đi an toàn.",
+       "Dọc vùng đá trôi, thẻ dẫn họ tới dấu chân và vết kéo lê đã cũ; Vân Chi đối chiếu chúng với dấu khắc, nhận ra đoàn người dự đấu giá đã được đưa qua đây theo hàng lối, không phải bị bắt đi trong hỗn loạn.",
+       "Trần Mặc thừa nhận hắn đã trao cho Huyền Kính manh mối về món đồ nhà họ Phó và biết lời bảo vệ Hội Lưu Dân không bao gồm những người Lưu Tố Nguyệt đưa khỏi chợ; hắn đã chấp nhận để Huyền Kính lần theo dấu ấy nhằm đổi lấy an toàn cho người trong Hội.",
+       "Phó Cảnh Hành hỏi thẳng liệu Trần Mặc có biết Huyền Kính sẽ truy đuổi những người kia hay không; Trần Mặc đáp rằng hắn không biết họ đang ở đâu, nhưng đã hiểu nguy cơ và vẫn chọn đặt cược mạng họ, khiến Vân Chi lạnh lùng gọi đó là mặc cả bằng người khác.",
+       "Khi một luồng khí đổi chiều làm dấu khắc rung lên, Thẻ Định Phong chỉ về khe đá dẫn xuống phía vết nứt sâu nhất; bên mép đường, một dấu hiệu hộ tống còn nguyên xác nhận đoàn người đã qua nơi này sống sót, còn vệt khắc tiếp theo chỉ về phía mảnh thần khí."
+      ],
+      "ends_at": "Cảnh kết tại lối xuống vết nứt sâu nhất của đảo vỡ, khi ba người đã có bằng chứng đoàn dự đấu giá rời chợ nguyên vẹn nhưng chưa biết họ đang ở đâu.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Xác nhận số phận những người dự đấu giá và dấu đường tới mảnh thần khí, đồng thời buộc Phó Cảnh Hành đặt ra giới hạn mới với Trần Mặc.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Tôi lần theo vệt khắc xuống sâu hơn; những dấu chân cùng vết kéo lê còn liền mạch qua đoạn đá nứt, cho thấy đoàn người đã được đưa đi có trật tự chứ không bị cuộc đấu giá phá ngang bắt giữ.",
+       "Vân Chi nhận ra dấu hộ tống tiếp tục dẫn về phía vết nứt sâu nhất; dấu hiệu trên món đồ của tôi khớp với nét khắc ở cuối lối, đủ để xác định đường này dẫn tới Mảnh Khiếp Tàn Thiên và Điện Tàn Tinh.",
+       "Trần Mặc thú nhận cái giá của lời bảo vệ: hắn trao cho Huyền Kính dấu mối về món đồ nhà họ Phó, biết chúng có thể lần dấu tới những người rời chợ, nhưng chỉ nhận được cam kết che chở Hội Lưu Dân; tôi nói sẽ cho hắn đi cùng, song không giao quyền quyết định hay tin hắn vô điều kiện.",
+       "Từ dấu hộ tống và lối đi không có dấu truy kích, chúng tôi xác nhận những người dự đấu giá đã được đưa nguyên vẹn khỏi khu chợ trước khi tin tức lan ra; dấu khắc cho thấy đoàn người được dẫn về cùng hướng với lối xuống Điện Tàn Tinh, dù chỗ họ dừng chân vẫn chưa rõ.",
+       "Luồng khí đổi chiều khiến Thẻ Định Phong chĩa hẳn xuống khe sâu; phía sau, tiếng đá va nhau vọng từ lối cũ báo hiệu có người đang tiến vào vùng đá trôi, và tôi chọn dẫn hai người xuống trước khi phe tiên môn chặn đường."
+      ],
+      "ends_at": "Cảnh kết ở miệng lối sâu dẫn về phía Điện Tàn Tinh, khi chúng tôi quyết định đi xuống còn tiếng động của người truy đuổi vọng lại phía sau.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 9"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"người dự đấu giá\" xuất hiện 3 lần (tối đa 2); đoạn: «người dự đấu giá»"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 9"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"người dự đấu giá\" xuất hiện 3 lần (tối đa 2); đoạn: «người dự đấu giá»"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tao_van_chi kể về fact_dien_co_mat, nhưng tao_van_chi không biết điều đó ở chương 9"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-c08a03152fe4",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-4850ee4c8c0b",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-b83929dc86d4",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ],
+  "10": [
+   {
+    "attempt": 1,
+    "commit_id": "ch10-8347db4a579c",
+    "player_action": "[Lời thoại, nói thật] Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+    "error_detail": null,
+    "summary": "Tôi bị sư tỷ nhắc chuyện vách đá sau núi, nhận gói đan dược của nàng, nghe tin có kẻ lạ dò hỏi về mình và bị ghi tên vào sổ phạt.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Phó Cảnh Hành buộc Trần Mặc nói rõ giới hạn hiểu biết và cái giá của cuộc mặc cả, rồi dùng dấu vết cùng Thẻ Định Phong để tiến tới Điện Tàn Tinh.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac"
+      ],
+      "beats": [
+       "Nghe câu hỏi của ta, Trần Mặc đáp rằng hắn không biết đoàn người đã rẽ ở đâu; hắn chỉ biết họ được hộ tống rời chợ nguyên vẹn, còn việc Lưu Tố Nguyệt đưa một số người sống sót đi là chuyện hắn không thể xác nhận lộ trình.",
+       "Ta gặng hắn về lời bảo vệ của Huyền Kính, và Trần Mặc thừa nhận hắn đã đổi tin về dấu vết nhà họ Phó lấy lời bảo đảm cho Hội Lưu Dân, dù biết những người Lưu Tố Nguyệt đưa đi không nằm trong lời hứa ấy; hắn không xin ta tha thứ, chỉ nói đó là cái giá hắn đã chọn.",
+       "Vân Chi lạnh lùng chất vấn liệu lời bảo đảm ấy có đáng tin, còn ta nhận ra Trần Mặc đang tránh nói về điều hắn không thể kiểm chứng; ta nói hắn có thể tiếp tục đi cùng, nhưng từ giờ mọi quyết định liên quan đến người khác phải được đưa ra trước mặt ta.",
+       "Thẻ Định Phong rung nhẹ giữa những luồng khí đổi chiều, chỉ hướng theo vết khắc đã dẫn chúng ta xuống sâu; dấu trên món đồ gia truyền của ta khớp với đường khắc, củng cố mối liên hệ với Mảnh Khiếp Tàn Thiên mà chưa giải thích trọn vẹn giao ước xưa.",
+       "Theo dấu chỉ, cả nhóm đến sát Điện Tàn Tinh dưới vết nứt sâu nhất; từ phía trước vọng lại tiếng động của người khác, khiến chúng ta hiểu rằng các phe đã tới gần trước khi kịp xác định tung tích đoàn dự đấu giá."
+      ],
+      "ends_at": "Cảnh kết ở lối vào Điện Tàn Tinh dưới vết nứt sâu nhất, khi Phó Cảnh Hành cùng Vân Chi và Trần Mặc nghe thấy có người ở phía trước.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Xác nhận số phận người dự đấu giá và giao ước nhà họ Phó, đồng thời buộc Cảnh Hành đối diện cái giá của sự phản bội trước khi các phe tranh đoạt Mảnh Khiếp Tàn Thiên.",
+      "present": [
+       "protagonist",
+       "tao_van_chi",
+       "tran_mac",
+       "bach_thien_sach"
+      ],
+      "beats": [
+       "Từ cửa Điện Tàn Tinh, tôi nhận ra Bạch Thiên Sách đứng cùng nhóm người của Huyền Kính; ông ta đòi món đồ gia truyền, còn Vân Chi giữ tay trên chuôi kiếm và Trần Mặc đứng sau tôi đúng khoảng cách đã hứa.",
+       "Bạch nói những người dự đấu giá đã được hộ tống rời chợ nguyên vẹn, nhưng không chịu xác nhận họ đang ở đâu; ông ta xem tin Trần Mặc bán là đủ để Huyền Kính lần tới điện, khiến lời bảo vệ Hội Lưu Dân lộ rõ cái giá: Trần Mặc đã đổi dấu vết nhà họ Phó lấy sự an toàn chỉ cho một nhóm người.",
+       "Tôi hỏi Trần Mặc có biết đoàn người đã rẽ ở đâu không; hắn thừa nhận không biết nơi họ dừng, cũng không có quyền quyết định số phận họ, rồi nhận rằng hắn đã chọn một lời hứa hẹp dù hiểu những người Lưu Tố Nguyệt đưa đi không được bảo vệ.",
+       "Khi tôi đặt món đồ gia truyền gần đường khắc ở lối vào, các nét chìm khớp nhau và mở ra một hàng chữ đã mòn: gia tộc Phó từng giữ Mảnh Khiếp Tàn Thiên theo giao ước, không phải để trao nó cho một tiên môn mà để ngăn bất kỳ phe nào độc chiếm; món đồ là dấu nhận biết giao ước, không phải quyền sở hữu mảnh thần khí.",
+       "Bạch chìa tay yêu cầu tôi giao món đồ để Huyền Kính tiếp quản, còn phía sau ông ta có tiếng người dồn tới; tôi hiểu nếu nhượng bộ, Hội Lưu Dân có thể tạm yên nhưng quyền quyết định sẽ rời khỏi tay những người bị đem ra làm giá, nên tôi giữ món đồ và tuyên bố sẽ không trao nó cho Huyền Kính."
+      ],
+      "ends_at": "Cảnh kết ở cửa Điện Tàn Tinh, khi Bạch Thiên Sách chặn lối vào còn tôi giữ món đồ gia truyền, đứng giữa Vân Chi và Trần Mặc trước cuộc đối đầu không thể trì hoãn.",
+      "resolves": [],
+      "unplanned_threads": [
+       "giao_uoc_nha_pho"
+      ]
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"món đồ gia truyền\" xuất hiện 3 lần (tối đa 2); đoạn: «món đồ gia truyền»"
+       },
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch giao_uoc_nha_pho (hạn gỡ chương 6–10) đến hết chương 10 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Khám phá giao ước của gia tộc Phó và quyết định số phận món đồ gia truyền.»"
+       }
+      ],
+      "rejected": [
+       [
+        "RESOLVED_IN giao_uoc_nha_pho→ch10",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"món đồ gia truyền\" xuất hiện 3 lần (tối đa 2); đoạn: «món đồ gia truyền»"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được tran_mac kể về fact_tran_mac_ban_tin, nhưng tran_mac không biết điều đó ở chương 10"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-14ecf7c5480e",
+      "kind": "action",
+      "tone": null,
+      "text": "Lén quay lại vách đá sau núi khi trời tối.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-57c3defbe980",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Kể thật với sư tỷ về hơi ấm của miếng ngọc bội.",
+      "listeners": [
+       "tao_van_chi"
+      ],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-d27f0ac799cb",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm hứa sẽ không để sư tỷ bị liên luỵ.",
+      "listeners": [],
+      "about": [
+       "tao_van_chi"
+      ],
+      "lie": null,
+      "feeling": "áy náy"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": [],
+ "quotes": []
+}

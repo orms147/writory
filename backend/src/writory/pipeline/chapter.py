@@ -222,12 +222,36 @@ def merge_scene_packages(
                          edges=list(edges.values()), close=list(closes.values()))
 
 
-def _prune(package: ChangePackage, flagged: set[str]) -> ChangePackage:
-    """Bỏ cạnh bị người canh báo: không ghi mâu thuẫn vào đồ thị (D-36)."""
+def _slots(kind: str, source: str, target: str) -> set[tuple[str, ...]]:
+    """Chỗ mà một cạnh chiếm: hai cạnh chung chỗ thì cạnh này thay cạnh kia. Nơi ở là một chỗ cho mỗi
+    nhân vật hay đồ vật, người giữ là một chỗ cho mỗi đồ vật; đồ vật chỉ ở nơi hoặc được giữ (D-90),
+    nên hai chỗ này chung nhau theo đồ vật. Các kiểu khác: theo cả cặp."""
+    if kind == "LOCATED_AT":
+        return {("LOCATED_AT", source), ("item", source)}
+    if kind == "HOLDS":
+        return {("HOLDS", target), ("item", target)}
+    return {(kind, source, target)}
+
+
+def _prune(package: ChangePackage, flagged: set[str],
+           edge_ends: Mapping[str, tuple[str, str, str]]) -> ChangePackage:
+    """Bỏ cạnh bị người canh báo: không ghi mâu thuẫn vào đồ thị (D-36). Cạnh bị bỏ không còn thay
+    cạnh cũ, nên `close` của cạnh cũ đó cũng bỏ, nếu không quan hệ hay chỗ ở biến mất khỏi đồ thị
+    (hồi quy ky-ao-vua-1 chương 9). `edge_ends`: id cạnh đang hiệu lực → (kiểu, từ, tới)."""
     kept = [e for e in package.edges if e.id not in flagged]
     if len(kept) == len(package.edges):
         return package
-    return package.model_copy(update={"edges": kept})
+    cut = {slot for e in package.edges if e.id in flagged
+           for slot in _slots(e.type, e.source, e.target)}
+    still = {slot for e in kept for slot in _slots(e.type, e.source, e.target)}
+    close = []
+    for c in package.close:
+        ends = edge_ends.get(c.id)
+        slots = _slots(*ends) if ends is not None else set()
+        if slots & cut and not slots & still:
+            continue
+        close.append(c)
+    return package.model_copy(update={"edges": kept, "close": close})
 
 
 # --- trạng thái đồ thị LangGraph ----------------------------------------------------------------
@@ -706,7 +730,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
                                 last_scene=scene == d.request.scene_count)
     issues += [ReviewIssue("guard", g.kind.value, g.severity is Severity.BLOCK, g.detail)
                for g in guard]
-    package = _prune(scene_package, {i for g in guard for i in g.ids})
+    package = _prune(scene_package, {i for g in guard for i in g.ids}, _edge_ends(state))
 
     # 5. Dò lộ trên chữ cảnh (G2, D-26, D-61), với player_view gồm cả các hé lộ bộ trích ghi cho
     # chính cảnh này. Hé lộ tự động của cảnh này không tính: câu trích của nó là câu của chính chữ
