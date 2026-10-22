@@ -213,3 +213,19 @@ def test_output_without_new_facts_still_parses():
     out = ExtractOutput.model_validate_json('{"edges": [], "close": []}')
     assert out.new_facts == []
 
+
+
+def test_orphan_facts_are_the_new_facts_no_knows_edge_points_to():
+    from writory.graph import ChangePackage, EdgeSpec, NodeSpec
+    from writory.pipeline.extract import orphan_facts
+
+    def e(kind, a, b):
+        return EdgeSpec.model_validate({"type": kind, "from": a, "to": b, "valid_from_chapter": 4})
+
+    nodes = [NodeSpec(id=i, label="Fact", props={"text": f"Điều {i} trên trang"})
+             for i in ("fact_c4s1_1", "fact_c4s1_2", "fact_c4s1_3")]
+    pkg = ChangePackage(commit_id="c", nodes=nodes, edges=[
+        e("KNOWS", "protagonist", "fact_c4s1_1"),
+        e("ABOUT", "fact_c4s1_2", "tran_mac"),  # ABOUT đi ra khỏi Fact, không tính là có người biết
+        e("ABOUT", "fact_c4s1_1", "fact_c4s1_3")])  # cạnh khác kiểu trỏ tới Fact cũng không tính
+    assert orphan_facts(pkg) == {"fact_c4s1_2", "fact_c4s1_3"}

@@ -169,3 +169,20 @@ async def test_the_writer_context_of_a_chapter_keeps_only_the_latest_page_facts(
     for call in writers:
         text = call[-1].content
         assert "Điều p5" in text and "Điều p4" in text and "Điều p3" not in text
+
+
+async def test_a_new_fact_that_loses_every_knows_to_the_guard_is_dropped(tmp_path):
+    """Replay D-93: Fact mới có ABOUT và REVEALED nhưng không còn KNOWS nào (người canh cắt KNOWS "được kể"
+    của người kể thứ ba) thì không ai biết nó: bỏ cả Fact."""
+    edges = [_edge(type="ABOUT", source="new_1", target="minh"),
+             _edge(type="KNOWS", source="lan", target="new_1", how="được kể", told_by="khai")]
+    told = extract_reply(edges, new_facts=[FACT_RUMOUR])
+    s = [outline_reply(), SCENE_1, told, SCENE_1, told, outline_reply(), SCENE_2, EXTRACT_2,
+         SUMMARY, choices_reply()]
+    _, outcome, _, store = await run(s, tmp_path)
+
+    assert {i.kind for i in outcome.scenes[0].unresolved} == {"teller_does_not_know"}
+    [(_, _, package)] = store.commits
+    assert [n for n in package.nodes if n.label == "Fact"] == []
+    assert not [e for e in package.edges if "fact_c4s1_1" in (e.source, e.target)]
+    assert any("KNOWS" in why for _, why in outcome.scenes[0].rejected)

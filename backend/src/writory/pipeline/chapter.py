@@ -58,6 +58,7 @@ from writory.pipeline.extract import (
     FactRules,
     OpenEdge,
     extract_changes,
+    orphan_facts,
     without_facts,
 )
 from writory.pipeline.pacing import ChapterGoals, chapter_goals
@@ -776,6 +777,11 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     issues += [ReviewIssue("guard", g.kind.value, g.severity is Severity.BLOCK, g.detail)
                for g in guard]
     package = _prune(scene_package, {i for g in guard for i in g.ids}, _edge_ends(state))
+    orphans = orphan_facts(package)  # Fact mới mất hết KNOWS vào tay người canh (D-93)
+    if orphans:
+        package = without_facts(package, orphans)
+        result.rejected.extend((f"Fact mới {i}", "thiếu KNOWS sau khi người canh cắt: bỏ Fact")
+                               for i in sorted(orphans))
 
     # 5. Dò lộ trên chữ cảnh (G2, D-26, D-61), với player_view gồm cả các hé lộ bộ trích ghi cho
     # chính cảnh này. Hé lộ tự động của cảnh này không tính: câu trích của nó là câu của chính chữ

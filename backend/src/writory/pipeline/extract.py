@@ -504,6 +504,13 @@ def without_facts(package: ChangePackage, fact_ids: set[str]) -> ChangePackage:
         "edges": [e for e in package.edges if not {e.source, e.target} & fact_ids]})
 
 
+def orphan_facts(package: ChangePackage) -> set[str]:
+    """Id Fact mới trong gói mà không cạnh KNOWS nào còn trỏ tới (D-93): người canh có thể cắt KNOWS
+    sau bước trích, mà Fact không ai biết thì không nên ghi."""
+    known = {e.target for e in package.edges if e.type == "KNOWS"}
+    return {n.id for n in package.nodes if n.label == "Fact" and n.id not in known}
+
+
 async def extract_changes(
     llm: LLMClient, model: str, *, chapter: int, chapter_id: str, commit_id: str,
     protagonist_id: str, chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
