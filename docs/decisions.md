@@ -600,7 +600,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Người kể (D-65): `remaining` là trần trừ số lượt đã giữ ở `narrator_questions`, ở chương của câu hỏi. `source_chapters` lấy từ `entry_ids` chỉ khi câu trả lời là chữ của model đã qua mọi phép kiểm: `since_chapter` của mục, chương được nói của lời nói dối (`pipeline/narrator.source_chapters`). Thêm `GET /stories/{id}/narrator` trả `{remaining}`.
   - Câu lỗi `COST_LIMIT_SCENE`, `COST_LIMIT_CHAPTER` bỏ "chọn mức model rẻ hơn" (một mức viết, D-33): nói phần đã hiện và đã lưu vẫn còn, rồi bấm thử lại.
   - Không bật CORS: frontend dev gọi API qua proxy của Vite, cùng origin (`docs/runbook.md`).
-- **Hệ quả:** tủ truyện chưa có tên nhân vật chính và thể loại như ảnh mẫu (ngoài hợp đồng). Chọn lựa chọn không đổi `updated_at`, nên không đẩy truyện lên đầu. Câu trích chưa có trần độ dài. Chưa có ước tính chi phí chương tới.
+- **Hệ quả:** tủ truyện chưa có tên nhân vật chính và thể loại như ảnh mẫu (ngoài hợp đồng). Chọn lựa chọn không đổi `updated_at`, nên không đẩy truyện lên đầu. Câu trích chưa có trần độ dài. Ước tính chi phí chương tới: D-87.
 - **Người quyết:** hợp đồng endpoint, tháng theo UTC: điều phối yêu cầu; tên truyện, câu trích, thứ tự, không CORS: Claude (nhánh ui-backend), chờ điều phối duyệt · 21/10/2026
 
 ## D-67 · Mức u tối chọn sẵn lúc khởi tạo, lưu theo truyện (thay một phần D-58)
@@ -759,3 +759,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** cụm `chua_duoc_ke` bỏ "nhắc" khỏi danh sách động từ chung, thêm nhánh riêng: "chưa được nhắc (đến/tới)" chỉ bắt khi liền sau là dấu câu, hết câu, "trong sổ tay" hay "trên trang". Mọi câu giám khảo đánh `goi_y_an` ở `evals/results/2026-10-21-narrator-v2-d77/judge.jsonl` vẫn bị bắt (thêm làm test hồi quy). Bỏ `KNOWN_STORY_FALSE_POSITIVES`: test quét truyện đòi không câu nào bị bắt, không còn ngoại lệ.
 - **Hệ quả:** "chưa được nhắc đến" kèm vế khác ("…trong biên bản") không bị bắt, kể cả khi người kể nói vậy; chỉ đề `narrator-3` chặn trường hợp đó. Câu truyện kết thúc bằng "chưa được nhắc đến." vẫn bị bắt oan. Đo lại bài E (`evals/results/2026-10-22-narrator-v2-hedge-fix/`, không giám khảo): lộ 0, không lượt nào bị lưới đổi, loại b, c, e, f không tụt.
 - **Người quyết:** Claude (nhánh narrator-hedge-gaps), điều phối giao việc, chờ duyệt · 22/10/2026
+
+## D-87 · Ước tính chi phí chương tới: trung vị các chương đã ghi của chính truyện, chưa có thì số mặc định trong config (bổ sung D-66)
+- **Bối cảnh:** design §10 đòi người chơi thấy trước mỗi chương tốn khoảng bao nhiêu; D-66 để thiếu, giao diện ghi "chưa có ước tính". Tiền là của người chơi (key của họ), nên số này là chuyện thật chứ không chỉ trang trí.
+- **Quyết định:**
+  - Ước = **trung vị** chi phí thật của từng chương đã ghi (`committed`, số chương ≥ 1) của chính truyện, từ nhật ký chi phí `llm_costs`: tổng mọi lời gọi gắn chương đó, kể cả lượt viết lại và tạo lại lựa chọn, trừ vai `narrator`, `classify` (việc của người chơi ngoài đường viết chương) và `setup` (`db.chapter_costs`, `NON_CHAPTER_ROLES`). Trung vị, không phải trung bình, để một chương viết lại nhiều lần không kéo cả ước tính. Lần viết bỏ dở của chương chưa ghi và dòng thiếu chi phí (D-10) không tính.
+  - Truyện chưa có chương nào đo được: `chapter_estimate.default_usd` trong `config/limits.yaml` (số tạm, D-47), đặt bằng mức cao nhất của trung vị mỗi chương ở ba lần chạy đã đo; null thì không có số (`usd` null).
+  - API: `GET /stories/{id}/estimate` → `{chapter, usd, source: "story_median" | "default", chapters_used}`; không gọi model, không cần key, chỉ truyện của người đang dùng (404 nếu khác). `GET /config/public` thêm `chapter_estimate_default_usd` cho màn không gắn truyện (khoá và chi phí).
+  - Giao diện: "khoảng $… mỗi chương" kèm "(theo N chương đã viết)" hoặc "(số mặc định)"; không có số hoặc API lỗi thì "chưa có ước tính". Máy chủ giả có cùng endpoint (D-69).
+- **Hệ quả:** chi phí mỗi chương tăng theo truyện (ngữ cảnh dài ra) nhưng trung vị tất cả các chương đã ghi chậm theo kịp; ước tính thấp hơn thật ở truyện dài. Chưa tách chi phí theo mức đậm của chương. Kiểm duyệt ô tự viết mang cùng số chương nên cộng vào chương đó (rất nhỏ). Hai truyện cùng chủ có thể ra hai số khác nhau, đúng ý. Ước tính không phải trần: trần vẫn là `cost_usd` (G8).
+- **Người quyết:** Claude (nhánh next-chapter-estimate), điều phối giao việc, chờ duyệt · 22/10/2026

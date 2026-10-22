@@ -49,6 +49,27 @@ def story_spent_usd(conn: psycopg.Connection, story_id: str) -> float:
     return float(row[0])
 
 
+# Vai là việc của người chơi bên ngoài đường viết chương, hoặc của bước khởi tạo: không tính vào
+# chi phí "một chương" (D-87). `moderate` còn lại gồm cả kiểm duyệt ô tự viết (rất nhỏ).
+NON_CHAPTER_ROLES = ("narrator", "classify", "setup")
+
+
+def chapter_costs(conn: psycopg.Connection, story_id: str) -> list[float]:
+    """Chi phí thật của từng chương đã ghi (số chương >= 1) của truyện, tăng theo số chương: tổng
+    mọi lời gọi gắn chương đó (kể cả lượt viết lại, lượt tạo lại lựa chọn), trừ `NON_CHAPTER_ROLES`.
+    Chỉ chương `committed`. Dòng thiếu chi phí không cộng được (D-10)."""
+    rows = conn.execute(
+        "SELECT c.chapter, SUM(c.cost_usd) FROM llm_costs c "
+        "WHERE c.story_id = %s AND c.chapter >= 1 AND c.cost_usd IS NOT NULL "
+        "AND c.role <> ALL (%s) "
+        "AND EXISTS (SELECT 1 FROM chapters ch WHERE ch.story_id = c.story_id "
+        "AND ch.number = c.chapter AND ch.status = 'committed') "
+        "GROUP BY c.chapter ORDER BY c.chapter",
+        (story_id, list(NON_CHAPTER_ROLES)),
+    ).fetchall()
+    return [float(usd) for _, usd in rows]
+
+
 def setup_spent_usd(conn: psycopg.Connection, setup_id: str) -> float:
     row = conn.execute(
         "SELECT COALESCE(SUM(cost_usd), 0) FROM llm_costs WHERE setup_session_id = %s",

@@ -12,6 +12,7 @@ import { KeyCost } from '../screens/KeyCost';
 import { ChoicePanel } from '../screens/story/ChoicePanel';
 import { NarratorPanel } from '../screens/story/NarratorPanel';
 import { NotebookView } from '../screens/story/NotebookPanel';
+import { setFetch } from '../api/client';
 import { oddConfig, renderApp, withMock } from './render';
 
 const CHOICES: PlayerChoice[] = [
@@ -52,7 +53,6 @@ describe('giới hạn và trần đến từ /config/public, không tự đặt
     expect(screen.getByText('$0,37')).toBeInTheDocument();
     expect(screen.getByText('$1,23')).toBeInTheDocument();
     expect(screen.getByText('$4,56')).toBeInTheDocument();
-    expect(screen.getAllByText('chưa có ước tính').length).toBeGreaterThan(0);
   });
 
   it('component không chứa số giới hạn, trần hay khoảng chương viết cứng', () => {
@@ -83,6 +83,62 @@ describe('giới hạn và trần đến từ /config/public, không tự đặt
       for (const [re, why] of banned) if (re.test(src)) hits.push(`${f}: ${why}`);
     }
     expect(hits).toEqual([]);
+  });
+});
+
+describe('ước tính chi phí chương tới lấy từ máy chủ (D-87)', () => {
+  const answer = (body: object, status = 200) =>
+    setFetch(async () => new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } }));
+
+  it('màn lựa chọn hiện số của API, không số viết cứng', async () => {
+    answer({ chapter: 3, usd: 0.0234, source: 'story_median', chapters_used: 2 });
+    const first = render(choicePanel());
+    expect(await screen.findByText(/khoảng \$0,02 mỗi chương/)).toBeInTheDocument();
+    first.unmount();
+    answer({ chapter: 3, usd: 0.0777, source: 'story_median', chapters_used: 2 });
+    render(choicePanel());
+    expect(await screen.findByText(/khoảng \$0,08 mỗi chương/)).toBeInTheDocument();
+    expect(screen.queryByText(/\$0,02/)).toBeNull();
+  });
+
+  it('nói rõ ước tính theo các chương đã viết hay theo số mặc định', async () => {
+    answer({ chapter: 3, usd: 0.0234, source: 'story_median', chapters_used: 2 });
+    const first = render(choicePanel());
+    expect(await screen.findByText(/theo 2 chương đã viết/)).toBeInTheDocument();
+    first.unmount();
+    answer({ chapter: 1, usd: 0.0234, source: 'default', chapters_used: 0 });
+    render(choicePanel());
+    expect(await screen.findByText(/số mặc định/)).toBeInTheDocument();
+    expect(screen.queryByText(/chương đã viết/)).toBeNull();
+  });
+
+  it('không có số hoặc API lỗi thì ghi "chưa có ước tính", không bịa số', async () => {
+    answer({ chapter: 3, usd: null, source: 'default', chapters_used: 0 });
+    const first = render(choicePanel());
+    expect(await screen.findByText('chưa có ước tính')).toBeInTheDocument();
+    first.unmount();
+    answer({ code: 'STORY_NOT_FOUND', message: 'Không thấy truyện.' }, 404);
+    render(choicePanel());
+    expect(await screen.findByText('chưa có ước tính')).toBeInTheDocument();
+    expect(screen.queryByText(/khoảng/)).toBeNull();
+  });
+
+  it('màn khoá và chi phí lấy số mặc định từ /config/public', async () => {
+    withMock();
+    renderApp(<KeyCost />);
+    expect(await screen.findByText(/khoảng \$0,04 mỗi chương/)).toBeInTheDocument();
+  });
+
+  it('màn khoá ghi "chưa có ước tính" khi config chưa đặt số mặc định', async () => {
+    withMock();
+    renderApp(<KeyCost />, { config: { ...oddConfig(), chapter_estimate_default_usd: null } });
+    expect(await screen.findByText('chưa có ước tính')).toBeInTheDocument();
+  });
+
+  it('máy chủ giả trả ước tính đúng dạng hợp đồng', async () => {
+    const server = withMock();
+    const res = await server.fetch('/api/stories/s-chuong/estimate');
+    expect(res.status).toBeLessThan(500);
   });
 });
 

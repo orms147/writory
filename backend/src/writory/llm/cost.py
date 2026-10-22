@@ -10,8 +10,10 @@ của nó (`CostEstimator`, D-64); `maybe_billed` nói lời gọi lỗi nào c�
 import asyncio
 import json
 import math
+import statistics
 from collections.abc import AsyncIterator, Mapping, Sequence
-from typing import Any
+from dataclasses import dataclass
+from typing import Any, Literal
 
 from pydantic import BaseModel
 
@@ -162,3 +164,23 @@ class MeteredClient(LLMClient):
             if isinstance(event, StreamDone):
                 self.tracker.record(event.usage.cost_usd)
             yield event
+
+
+@dataclass(frozen=True)
+class ChapterEstimate:
+    """Ước tính chi phí chương tới (D-87). `usd` None: không có số nào để nói (không chương nào
+    đo được và config chưa đặt số mặc định). `chapters_used`: số chương đo được dùng để ước."""
+
+    usd: float | None
+    source: Literal["story_median", "default"]
+    chapters_used: int
+
+
+def estimate_chapter_cost(chapter_costs: Sequence[float], *,
+                          default_usd: float | None) -> ChapterEstimate:
+    """Trung vị chi phí thật mỗi chương đã ghi của chính truyện. Trung vị, không phải trung bình:
+    một chương phải viết lại nhiều lần không kéo cả ước tính. Chưa có chương nào thì số mặc định."""
+    if chapter_costs:
+        return ChapterEstimate(float(statistics.median(chapter_costs)), "story_median",
+                               len(chapter_costs))
+    return ChapterEstimate(default_usd, "default", 0)

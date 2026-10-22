@@ -194,8 +194,12 @@ function CostSection() {
       <p className="text-[13px] text-ink-400">Bản 1 dùng một bút cho mọi truyện.</p>
       <dl className="mt-4">
         <div className="flex items-center justify-between gap-4 border-t border-ink-750 py-3.5">
-          <dt className="text-[15px] text-ink-100">Ước tính chương tiếp theo</dt>
-          <dd className="italic text-ink-200">chưa có ước tính</dd>
+          <dt className="text-[15px] text-ink-100">Ước tính mỗi chương</dt>
+          <dd className={config.chapter_estimate_default_usd === null ? 'italic text-ink-200' : 'tabular-nums text-ink-50'}>
+            {config.chapter_estimate_default_usd === null
+              ? 'chưa có ước tính'
+              : `khoảng ${formatUsd(config.chapter_estimate_default_usd)} mỗi chương`}
+          </dd>
         </div>
         {rows.map(([label, value]) => (
           <div key={label} className="flex items-center justify-between gap-4 border-t border-ink-750 py-3.5">
@@ -205,7 +209,7 @@ function CostSection() {
         ))}
       </dl>
       <p className="border-t border-ink-750 pt-4 text-[13px] leading-relaxed text-ink-400">
-        Chạm trần nào thì WriTory dừng viết ở đó và báo cho bạn. Trần do hệ thống đặt, không đổi được ở đây.
+        Số trên là mặc định cho truyện chưa có chương nào; truyện đã viết thì ước tính theo các chương đã viết của chính truyện đó. Chạm trần nào thì WriTory dừng viết ở đó và báo cho bạn. Trần do hệ thống đặt, không đổi được ở đây.
       </p>
 
       <h3 className="mt-7">

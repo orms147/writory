@@ -19,7 +19,7 @@ from cryptography.fernet import Fernet
 from pydantic import SecretStr
 
 from writory.config import Settings
-from writory.db import CostEntry, OwnerCosts
+from writory.db import NON_CHAPTER_ROLES, CostEntry, OwnerCosts
 from writory.llm.base import GenerationCost, LLMClient
 from writory.llm.ledger import PendingEstimate
 
@@ -95,6 +95,16 @@ class MemoryCostLedger:
             if story_id is not None:
                 by_story[story_id] = by_story.get(story_id, 0.0) + (e.cost_usd or 0)
         return OwnerCosts(total, total, tuple(by_story.items()))
+
+    def chapter_costs(self, story_id: str) -> list[float]:
+        """Như bản Postgres, trừ việc chương `committed`: dòng trong bộ nhớ không biết chương nào đã
+        ghi, nên mọi chương >= 1 có dòng đều tính."""
+        by_chapter: dict[int, float] = {}
+        for e, s, _, chapter in self.rows:
+            if (s == story_id and chapter is not None and chapter >= 1
+                    and e.cost_usd is not None and e.role not in NON_CHAPTER_ROLES):
+                by_chapter[chapter] = by_chapter.get(chapter, 0.0) + e.cost_usd
+        return [by_chapter[c] for c in sorted(by_chapter)]
 
 
 class KeyedFactory:

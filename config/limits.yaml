@@ -30,3 +30,8 @@ llm_call:   # mọi lời gọi model trả bằng key người chơi (D-64)
   # Gửi làm max_tokens (gồm token suy luận), như max_tokens_per_call của bench_run (D-43); cũng
   # là chặn trên của chi phí ước tính khi lời gọi không có usage (huỷ, đứt, thiếu usage.cost).
   max_output_tokens: 16000
+chapter_estimate:   # D-87: số hiện cho người chơi khi truyện chưa có chương nào để đo (tạm, D-47)
+  # Bằng mức cao nhất của trung vị chi phí mỗi chương ở ba lần chạy đã đo (0,0076 đến 0,0100 USD:
+  # evals/results/2026-10-21-run-tu-tien-4, -run-ky-ao-vua-2, -run-ky-ao-vua-1), vì lúc chơi còn có
+  # lượt tạo lại lựa chọn.
+  default_usd: 0.01

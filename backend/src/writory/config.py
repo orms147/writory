@@ -130,6 +130,14 @@ class LLMCallLimits(_Section):
     max_output_tokens: PositiveInt | None = None
 
 
+class ChapterEstimateLimits(_Section):
+    """Ước tính chi phí chương tới khi truyện chưa có chương nào đo được (D-87). Số tạm."""
+
+    _path = "chapter_estimate"
+    _file = "limits.yaml"
+    default_usd: NonNegativeFloat | None = None
+
+
 class LimitsConfig(_Strict):
     cost_usd: CostLimits
     retries: RetryLimits
@@ -138,6 +146,7 @@ class LimitsConfig(_Strict):
     narrator_notebook: NarratorNotebookLimits
     context: ContextLimits
     llm_call: LLMCallLimits = LLMCallLimits()
+    chapter_estimate: ChapterEstimateLimits = ChapterEstimateLimits()
 
 
 # --- models.yaml -----------------------------------------------------------------------

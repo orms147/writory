@@ -375,6 +375,7 @@ class PublicConfigOut(_Out):
     writer_tier: WriterTierOut
     darkness_levels: list[DarknessLevelOut]  # theo thứ tự trong config/moderation.yaml
     default_darkness_level: str
+    chapter_estimate_default_usd: float | None  # số cho màn không gắn truyện (D-87)
 
     @classmethod
     def from_config(cls, config: AppConfig, *, writer_label: str) -> "PublicConfigOut":
@@ -402,12 +403,23 @@ class PublicConfigOut(_Out):
             darkness_levels=[DarknessLevelOut(key=k, label=v.label)
                              for k, v in mod.darkness_levels.items()],
             default_darkness_level=mod.default_darkness_level,
+            chapter_estimate_default_usd=lim.chapter_estimate.default_usd,
         )
 
 
 class StoryCostOut(_Out):
     story_id: str
     spent_usd: float
+
+
+class ChapterEstimateOut(_Out):
+    """Ước tính chi phí chương tới, bằng key của người chơi (D-87). `usd` null: không có số nào.
+    Không model, giá, chi phí từng vai hay id (G1)."""
+
+    chapter: int  # chương sẽ viết tiếp
+    usd: float | None
+    source: Literal["story_median", "default"]
+    chapters_used: int  # số chương đã ghi của chính truyện dùng để ước (0 khi dùng số mặc định)
 
 
 class PlayerCostsOut(_Out):
