@@ -1335,9 +1335,10 @@ _DRY_CHARACTERS = [
 ]
 
 
-def _acts(total: int) -> list[dict[str, Any]]:
+def _acts(total: int, parts: int = 4) -> list[dict[str, Any]]:
+    """`parts` hồi (một mốc mỗi hồi, `_milestones`); mức dài cần nhiều mốc hơn 4 hồi."""
     names = ("mở đầu", "phát triển", "cao trào", "kết")
-    parts = min(len(names), total)
+    parts = min(max(parts, len(names)), total)
     bounds = [round(i * total / parts) for i in range(parts + 1)]
     return [{"name": names[i] if parts == len(names) else f"hồi {i + 1}",
              "from_chapter": bounds[i] + 1, "to_chapter": bounds[i + 1]} for i in range(parts)]
@@ -1354,8 +1355,8 @@ def _milestones(acts: list[dict[str, Any]]) -> list[dict[str, Any]]:
              "to_chapter": a["to_chapter"]} for kind, a in zip(kinds, acts, strict=True)]
 
 
-def dry_run_world(total: int) -> dict[str, Any]:
-    """Bản kế hoạch + thế giới chương 0 hợp lệ cho `total` chương (BuildOutput)."""
+def dry_run_world(total: int, milestones: int = 4) -> dict[str, Any]:
+    """Bản kế hoạch + thế giới chương 0 hợp lệ cho `total` chương và `milestones` mốc (BuildOutput)."""
 
     def named(id_, name, aliases, description):
         return {"id": id_, "name": name, "aliases": aliases, "description": description}
@@ -1364,7 +1365,7 @@ def dry_run_world(total: int) -> dict[str, Any]:
         return {"type": t, "source": s, "target": d, "kind": kind, "score": score}
 
     last = total
-    acts = _acts(total)
+    acts = _acts(total, milestones)
     return {
         "acts": acts,
         "milestones": _milestones(acts),
@@ -1416,9 +1417,11 @@ class DryRunLLM(FakeLLM):
     hiện, một tóm tắt chương, 3 lựa chọn dùng mã trong sổ tay.
     Không mạng, không key."""
 
-    def __init__(self, total_chapters: int, *, cost_usd: float | None = DRY_RUN_COST_USD) -> None:
+    def __init__(self, total_chapters: int, *, milestones: int = 4,
+                 cost_usd: float | None = DRY_RUN_COST_USD) -> None:
         super().__init__([], cost_usd=cost_usd)
         self.total = total_chapters
+        self.milestones = milestones
 
     def reply(self, schema_name: str | None, text: str) -> str:
         """`text`: nội dung tin nhắn user cuối của lời gọi."""
@@ -1428,7 +1431,7 @@ class DryRunLLM(FakeLLM):
             SettingsOutput.__name__: lambda: {"options": _DRY_SETTINGS},
             PlotsOutput.__name__: lambda: {"options": _DRY_PLOTS},
             CharactersOutput.__name__: lambda: {"options": _DRY_CHARACTERS},
-            BuildOutput.__name__: lambda: dry_run_world(self.total),
+            BuildOutput.__name__: lambda: dry_run_world(self.total, self.milestones),
             SceneOutline.__name__: lambda: {
                 "goal": "Sư tỷ nhắc nhở hắn và báo tin có người lạ dò hỏi",
                 "present": ["protagonist", DRY_RUN_NPC],
@@ -1568,8 +1571,8 @@ async def _cli(args: argparse.Namespace) -> int:
         raise ConfigError(f"thiếu {', '.join(missing)} (biến môi trường hoặc {env_file})") from None
     http: httpx.AsyncClient | None = None
     if args.dry_run:
-        total = config.story_lengths.levels[scenario.length_level].chapters.min
-        llm: LLMClient = DryRunLLM(total)
+        level = config.story_lengths.levels[scenario.length_level]
+        llm: LLMClient = DryRunLLM(level.chapters.min, milestones=level.milestones.min)
     else:
         http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
         llm = openrouter_client(env_file, http=http)
