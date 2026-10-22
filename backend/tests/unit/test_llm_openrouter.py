@@ -15,6 +15,7 @@ from pydantic import BaseModel, SecretStr
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import GenerationCost, Message, StreamDone, TextDelta, trace_call
 from writory.llm.openrouter import OpenRouterClient
+from writory.llm.retry import RETRY_TRANSIENT, with_retries
 
 FAKE_KEY = "sk-or-v1-" + "0123456789abcdef" * 4
 MSGS = [Message(role="system", content="luật"), Message(role="user", content="viết")]
@@ -114,6 +115,7 @@ async def test_chat_json_sends_json_schema_response_format():
         (402, ErrorCode.LLM_INSUFFICIENT_CREDITS),
         (403, ErrorCode.LLM_CONTENT_BLOCKED),
         (408, ErrorCode.LLM_UNAVAILABLE),
+        (409, ErrorCode.LLM_UNAVAILABLE),  # không có trong docs; hồi quy ky-ao-vua-ab-tat (D-94)
         (429, ErrorCode.LLM_RATE_LIMITED),
         (500, ErrorCode.LLM_UNAVAILABLE),
         (502, ErrorCode.LLM_UNAVAILABLE),
@@ -358,3 +360,38 @@ async def test_generation_lookup_rejects_malformed_id_without_a_request():
     with pytest.raises(ValueError):
         await client.generation_cost("gen-a&id=gen-b")
     assert seen == []
+
+
+# --- HTTP 409 (D-94) --------------------------------------------------------------------------------
+# Lần chạy ky-ao-vua-ab-tat dừng ở chương 8: OpenRouter trả 409, thân `{"error": {"code": 409,
+# "message": ""}}`, sau 0,08 giây. Trang lỗi của OpenRouter không có 409; xử như lỗi tạm.
+
+
+def _conflict(_request: httpx.Request) -> httpx.Response:
+    return httpx.Response(409, json={"error": {"code": 409, "message": ""}})
+
+
+async def test_one_409_is_retried_and_the_second_answer_is_used():
+    answers = iter([_conflict(None), httpx.Response(200, json=completion("Qua rồi"))])
+    client, seen = client_with(lambda r: next(answers))
+    result = await with_retries(lambda: client.chat("x/y", MSGS), max_retries=1,
+                                retry_on=RETRY_TRANSIENT)
+    assert result.text == "Qua rồi" and len(seen) == 2
+
+
+async def test_409_that_never_clears_stops_at_the_retry_limit():
+    client, seen = client_with(_conflict)
+    with pytest.raises(WritoryError) as exc:
+        await with_retries(lambda: client.chat("x/y", MSGS), max_retries=2,
+                           retry_on=RETRY_TRANSIENT)
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED
+    assert len(seen) == 3  # 1 lần đầu + 2 lần thử lại, không hơn (G8)
+    assert "409" in str(exc.value)
+
+
+async def test_409_in_a_stream_before_it_starts_maps_the_same_way():
+    client, _ = client_with(_conflict)
+    with pytest.raises(WritoryError) as exc:
+        async for _ in client.stream("x/y", MSGS):
+            pass
+    assert exc.value.code is ErrorCode.LLM_UNAVAILABLE

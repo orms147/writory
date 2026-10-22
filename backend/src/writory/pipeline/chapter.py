@@ -353,6 +353,7 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.limits.context, "writer_max_neighbors"),
         (config.limits.context, "summary_max_chars"),
         (config.limits.context, "page_quotes_top_k"),
+        (config.limits.context, "forbidden_names_max"),
         (config.quality.repetition, "ngram_words"),
         (config.quality.repetition, "max_repeats"),
         (config.quality.foreign_script, "latin_run_min_words"),
@@ -435,6 +436,7 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
         story_brief=d.request.story_brief, player_action=d.request.player_action,
         earlier=earlier, goals=state["goals"], summaries=tuple(state["summaries"]),
         forbidden=tuple(forbidden),
+        forbidden_max=_require(d.config.limits.context, "forbidden_names_max"),
     )
 
 

@@ -52,6 +52,9 @@ _STATUS_TO_CODE = {
     402: ErrorCode.LLM_INSUFFICIENT_CREDITS,
     403: ErrorCode.LLM_CONTENT_BLOCKED,
     408: ErrorCode.LLM_UNAVAILABLE,
+    # 409 không có trong trang lỗi của OpenRouter (tra 22/10/2026). Thấy một lần, thân rỗng, sau
+    # 0,08 giây, khi lời gọi giống hệt lời gọi trước đó vừa thành công (D-94): xử như lỗi tạm.
+    409: ErrorCode.LLM_UNAVAILABLE,
     429: ErrorCode.LLM_RATE_LIMITED,
 }
 

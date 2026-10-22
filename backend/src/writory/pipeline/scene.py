@@ -146,6 +146,7 @@ class SceneBrief:
     summaries: tuple[tuple[int, str], ...] = ()
     # Tên lớp truth mà trang chưa được viết (D-61), từ cùng hàm với bộ dò lộ (D-91).
     forbidden: tuple[ForbiddenName, ...] = ()
+    forbidden_max: int | None = None  # số nút tối đa trong mục tên cấm; None = không giới hạn (D-94)
 
 
 @dataclass(frozen=True)
@@ -292,6 +293,16 @@ def _quotes(out: _Lines, quotes: Sequence[Chunk]) -> None:
         out.line(f"### Chương {q.chapter}", UserAuthored(q.text, "page_quote"))
 
 
+def _scene_rank(ctx: WriterContext) -> dict[str, int]:
+    """Nút liên quan tới cảnh: 0 = nhân vật có mặt, đồ vật đang liệt kê và người giữ hay nơi của
+    chúng; 1 = nút lân cận trong ngữ cảnh. Nút khác không có trong bảng (xếp sau, D-94)."""
+    rank = {n.id: 1 for n in ctx.neighbors}
+    for i in ctx.items:
+        rank |= {x: 0 for x in (i.id, i.holder_id, i.place_id) if x is not None}
+    rank |= {c.id: 0 for c in ctx.present}
+    return rank
+
+
 def _context(out: _Lines, brief: SceneBrief, ctx: WriterContext) -> None:
     """Ngữ cảnh lớp truth, tên người đọc biết cạnh tên thật, rồi mục tên cấm (D-91)."""
     reader = {f.node_id: ReaderName(f.shown_as, f.user_authored) for f in brief.forbidden}
@@ -301,6 +312,13 @@ def _context(out: _Lines, brief: SceneBrief, ctx: WriterContext) -> None:
     by_node: dict[str, list[ForbiddenName]] = {}
     for f in brief.forbidden:
         by_node.setdefault(f.node_id, []).append(f)
+    omitted = 0
+    if brief.forbidden_max is not None and len(by_node) > brief.forbidden_max:
+        # Trần chỉ cắt đề, không cắt bộ dò lộ (D-94): giữ nút có mặt, rồi nút liên quan tới cảnh.
+        rank = _scene_rank(ctx)
+        kept = sorted(by_node, key=lambda n: rank.get(n, 2))[:brief.forbidden_max]
+        omitted = sum(len(v) for n, v in by_node.items() if n not in kept)
+        by_node = {n: by_node[n] for n in kept}
     out.line("## Tên người đọc chưa được biết (không viết ra trên trang)")
     out.line("Các tên dưới đây là sự thật của thế giới nhưng người đọc chưa được biết. Trang viết ra "
              "tên đó, kể cả viết thường hay không dấu, thì cảnh bị chặn. Gọi bằng tên người đọc "
@@ -315,6 +333,9 @@ def _context(out: _Lines, brief: SceneBrief, ctx: WriterContext) -> None:
         else:
             out.line("- Người đọc biết là «", _name(Named(head.shown_as, head.user_authored)),
                      "»; không viết ", *terms)
+    if omitted:
+        out.line(f"- Và {omitted} tên khác của nhân vật, nơi chốn hay đồ vật ít liên quan tới cảnh "
+                 "này; cũng không được viết nếu chưa chắc người đọc đã biết.")
 
 
 def _goals(out: _Lines, brief: SceneBrief, *, thread_ids: bool = False) -> None:

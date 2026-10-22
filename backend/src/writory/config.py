@@ -122,6 +122,7 @@ class ContextLimits(_Section):
     page_quotes_top_k: NonNegativeInt | None = None  # số đoạn tối đa mỗi lời gọi; 0 = tắt
     page_quotes_chunk_chars: PositiveInt | None = None  # cỡ một đoạn khi chia chương
     page_quotes_max_chars: PositiveInt | None = None  # tổng độ dài chữ tối đa của các đoạn
+    forbidden_names_max: PositiveInt | None = None  # số nút tối đa trong mục tên cấm (D-94)
 
 
 class LLMCallLimits(_Section):

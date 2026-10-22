@@ -284,3 +284,59 @@ def test_present_characters_show_the_name_the_reader_knows_next_to_the_real_one(
     for content in _both(BRIEF):
         line = next(ln for ln in content.split("\n") if ln.startswith("- Phạm Thị Lan"))
         assert "người đọc biết" not in line and "chưa hé lộ" not in line
+
+
+# --- trần số dòng của mục tên cấm (D-94) ---------------------------------------------------------
+
+
+def _many() -> tuple[ForbiddenName, ...]:
+    """Năm nút cấm. Trong ngữ cảnh thử: `lan` có mặt, `ly_that` là nút lân cận, ba nút còn lại không
+    có trong ngữ cảnh."""
+    return (
+        ForbiddenName("zz_xa_1", "Xa Một", None),
+        ForbiddenName("ly_that", "Lý Thất", "gã lái đò mặt sẹo"),
+        ForbiddenName("zz_xa_2", "Xa Hai", None),
+        ForbiddenName("lan", "Phạm Thị Lan", "người đàn bà quán trà"),
+        ForbiddenName("zz_xa_3", "Xa Ba", None),
+    )
+
+
+def _forbidden_lines(content: str) -> list[str]:
+    head = "## Tên người đọc chưa được biết"
+    body = content.split(head, 1)[1].split(chr(10) + "## ", 1)[0].split(chr(10))
+    return [ln for ln in body if ln.startswith("- ")]
+
+
+def test_forbidden_section_keeps_present_then_nearby_nodes_first_under_the_cap():
+    brief = replace(BRIEF, forbidden=_many(), forbidden_max=2)
+    for content in _both(brief):
+        lines = _forbidden_lines(content)
+        assert len(lines) == 3  # hai nút giữ lại và một dòng "và N tên khác"
+        assert "«Phạm Thị Lan»" in lines[0]  # có mặt trước
+        assert "«Lý Thất»" in lines[1]  # lân cận sau
+        assert lines[2].startswith("- Và 3 tên khác")
+        for omitted in ("Xa Một", "Xa Hai", "Xa Ba"):
+            assert omitted not in content
+
+
+def test_forbidden_section_under_the_cap_lists_every_node_and_no_tail():
+    for content in _both(replace(BRIEF, forbidden=_many(), forbidden_max=5)):
+        lines = _forbidden_lines(content)
+        assert len(lines) == 5 and not any("tên khác" in ln for ln in lines)
+    for content in _both(replace(BRIEF, forbidden=_many())):  # không đặt trần: đủ cả
+        assert len(_forbidden_lines(content)) == 5
+
+
+def test_omitted_nodes_still_get_their_reader_name_next_to_the_real_one():
+    """Trần chỉ cắt mục danh sách; tên người đọc biết cạnh tên thật ở các mục khác vẫn đủ."""
+    brief = replace(BRIEF, forbidden=_many(), forbidden_max=1)
+    content = _both(brief)[1]
+    line = next(ln for ln in content.split(chr(10)) if ln.startswith("- Phạm Thị Lan"))
+    assert "người đọc biết là «người đàn bà quán trà»" in line
+
+
+def test_the_cap_counts_terms_in_the_tail_not_nodes():
+    many_terms = (ForbiddenName("zz_a", "A Một", None), ForbiddenName("zz_a", "A Hai", None),
+                  ForbiddenName("zz_b", "B Một", None))
+    content = _both(replace(BRIEF, forbidden=many_terms, forbidden_max=0))[1]
+    assert _forbidden_lines(content)[-1].startswith("- Và 3 tên khác")
