@@ -43,7 +43,7 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "choices-2"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "choices-3"  # đổi chữ prompt thì tăng số (choices-3: STALLED_NOTE, D-98)
 CHOICE_COUNT = 3
 MIN_KINDS = 2  # design §6.2 bước 6: tối thiểu 2 loại khác nhau
 
@@ -188,10 +188,17 @@ Mỗi lựa chọn:
 Trả về JSON đúng schema."""
 
 
+# Khi nhân vật chính ở yên một nơi nhiều chương (D-98; lần chạy long-tu-tien-1: ba lựa chọn cuối
+# chương 10, 14, 15 đều là "giữ yên, dò thêm"). Chữ cố định của code, cờ chỉ đúng/sai: không mang
+# tên nơi chốn hay chữ lớp truth nào (G1).
+STALLED_NOTE = """Ghi chú: mấy chương gần đây nhân vật chính chưa rời nơi hiện tại và tình thế chưa đổi. Ít nhất một trong 3 lựa chọn phải là bước vượt khỏi thế giằng co đó (rời nơi này, đối mặt trực tiếp, hỏi thẳng điều đang bị giấu, hay mạo hiểm), không chỉ giữ yên, chờ hay dò thêm."""
+
+
 def build_choice_messages(
-    view: PlayerView, *, protagonist_id: str, last_scene_text: str
+    view: PlayerView, *, protagonist_id: str, last_scene_text: str, stalled: bool = False,
 ) -> tuple[list[Message], dict[str, str]]:
-    """Tin nhắn cho model tạo lựa chọn và bảng mã công khai → id nút. Chỉ đọc `view` (G1)."""
+    """Tin nhắn cho model tạo lựa chọn và bảng mã công khai → id nút. Chỉ đọc `view` (G1).
+    `stalled`: truyện đang đứng yên (D-98), thêm `STALLED_NOTE`."""
     entries = public_entries(view)
     refs = {ref: e.id for ref, e in entries}
     me = next((f"[{ref}] {e.text}" for ref, e in entries if e.id == protagonist_id),
@@ -204,6 +211,7 @@ def build_choice_messages(
             UserAuthored(notebook, "notebook"),
             "Cảnh người chơi vừa đọc:",
             UserAuthored(last_scene_text, "scene_text"),
+            *([STALLED_NOTE] if stalled else []),
             "Tạo 3 lựa chọn cho nhân vật chính.",
         ),
     ]
@@ -290,13 +298,13 @@ async def make_choices(
     llm: LLMClient, model: str, *, view: PlayerView, protagonist_id: str, last_scene_text: str,
     truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan, story_brief: str,
     retries: RetryLimits, extra: Mapping[str, Any] | None = None,
-    moderate: ChoicesGate | None = None,
+    moderate: ChoicesGate | None = None, stalled: bool = False,
 ) -> list[Choice]:
-    """`view`: player_view ở chương vừa ghi. `truth_names`, `plan`, `story_brief` (thiết lập truyện
+    """`view`: player_view ở chương vừa ghi. `stalled`: truyện đứng yên (D-98). `truth_names`, `plan`, `story_brief` (thiết lập truyện
     người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ bằng code, không bao giờ vào prompt. `moderate`:
     cổng kiểm duyệt nội dung (G9); đường của người chơi phải truyền."""
     messages, refs = build_choice_messages(view, protagonist_id=protagonist_id,
-                                           last_scene_text=last_scene_text)
+                                           last_scene_text=last_scene_text, stalled=stalled)
     kinds = {e.id: e.kind for e in view.entries}
 
     async def call() -> list[Choice]:

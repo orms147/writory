@@ -1576,3 +1576,46 @@ async def test_cap_cuts_only_the_prompt_never_the_leak_check(tmp_path):
 
 def test_forbidden_names_cap_is_in_config():
     assert load_config().limits.context.forbidden_names_max >= 1  # D-94; số tạm, D-47
+
+
+# --- thế giằng co: nhân vật chính ở yên một nơi nhiều chương (D-98) -------------------------------
+
+
+def _store_where_minh_stays_since(chapter: int) -> MemoryStore:
+    store = MemoryStore()
+    store.packages.append(ChangePackage.model_validate({
+        "commit_id": "loc", "edges": [{"type": "LOCATED_AT", "from": "minh", "to": "lo_ren",
+                                       "valid_from_chapter": chapter}]}))
+    return store
+
+
+async def test_standstill_reaches_outline_writer_and_choices(tmp_path):
+    """Minh ở lò rèn từ chương 1, viết chương 4: 3 chương ở yên, ngưỡng 3. Dàn ý và đề viết có mục
+    tiêu "PHẢI đổi tình thế"; đề tạo lựa chọn chỉ có ghi chú cố định, không có tên nơi chốn (G1)."""
+    from writory.pipeline.choices import STALLED_NOTE
+
+    script = full_script()
+    events, _, llm, _ = await run(
+        script, tmp_path, store=_store_where_minh_stays_since(1),
+        limits={"context": {"standstill_chapters": 3}})
+    assert kinds(events)[-2:] == ["chapter_committed", "choices_ready"]
+    for role in ("outline", "writer"):
+        assert all("PHẢI đổi tình thế" in c[-1].content for c in calls_of(llm, role)[:2]), role
+    [choices_call] = calls_of(llm, "choices")
+    assert STALLED_NOTE in choices_call[-1].content
+
+
+async def test_no_standstill_prompt_when_the_story_moved_recently(tmp_path):
+    from writory.pipeline.choices import STALLED_NOTE
+
+    events, _, llm, _ = await run(
+        full_script(), tmp_path, store=_store_where_minh_stays_since(3),
+        limits={"context": {"standstill_chapters": 3}})
+    assert kinds(events)[-1] == "choices_ready"
+    for role in ("outline", "writer"):
+        assert all("PHẢI đổi tình thế" not in c[-1].content for c in calls_of(llm, role))
+    assert STALLED_NOTE not in calls_of(llm, "choices")[0][-1].content
+
+
+def test_standstill_threshold_is_in_config():
+    assert load_config().limits.context.standstill_chapters >= 1  # D-98; số tạm, D-47

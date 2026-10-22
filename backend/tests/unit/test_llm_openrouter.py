@@ -7,6 +7,7 @@ use-cases/usage-accounting), tra ngày 19/10/2026; header `X-Generation-Id` và 
 
 import asyncio
 import json
+import ssl
 
 import httpx
 import pytest
@@ -395,3 +396,93 @@ async def test_409_in_a_stream_before_it_starts_maps_the_same_way():
         async for _ in client.stream("x/y", MSGS):
             pass
     assert exc.value.code is ErrorCode.LLM_UNAVAILABLE
+
+
+# --- lỗi TLS và socket httpx không bọc (D-97) -------------------------------------------------------
+# Lần chạy long-tu-tien-1 chết ở chương 16: `ssl.SSLError` (SSLV3_ALERT_BAD_RECORD_MAC) đi qua anyio,
+# httpx không bọc thành `httpx.HTTPError`, nên rơi xuống INTERNAL_ERROR và không được thử lại.
+
+_LOW_LEVEL_ERRORS = [
+    ssl.SSLError(1, "[SSL: SSLV3_ALERT_BAD_RECORD_MAC] sslv3 alert bad record mac"),
+    ConnectionResetError(10054, "connection reset by peer"),
+    BrokenPipeError(32, "broken pipe"),
+    TimeoutError("timed out"),
+]
+
+
+def _raises(error: BaseException):
+    def boom(_request):
+        raise error
+
+    return boom
+
+
+@pytest.mark.parametrize("error", _LOW_LEVEL_ERRORS, ids=lambda e: type(e).__name__)
+async def test_low_level_network_error_is_unavailable_and_carries_only_its_type(error):
+    client, _ = client_with(_raises(error))
+    with pytest.raises(WritoryError) as exc:
+        await client.chat("x/y", MSGS)
+    assert exc.value.code is ErrorCode.LLM_UNAVAILABLE
+    assert type(error).__name__ in str(exc.value) and "bad record mac" not in str(exc.value)
+
+
+async def test_one_tls_error_is_retried_and_the_second_answer_is_used():
+    calls = []
+
+    def handler(request):
+        calls.append(request)
+        if len(calls) == 1:
+            raise _LOW_LEVEL_ERRORS[0]
+        return httpx.Response(200, json=completion("Qua rồi"))
+
+    client, _ = client_with(handler)
+    result = await with_retries(lambda: client.chat("x/y", MSGS), max_retries=1,
+                                retry_on=RETRY_TRANSIENT)
+    assert result.text == "Qua rồi" and len(calls) == 2
+
+
+async def test_tls_error_that_never_clears_stops_at_the_retry_limit():
+    client, seen = client_with(_raises(_LOW_LEVEL_ERRORS[0]))
+    with pytest.raises(WritoryError) as exc:
+        await with_retries(lambda: client.chat("x/y", MSGS), max_retries=2,
+                           retry_on=RETRY_TRANSIENT)
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED and len(seen) == 3  # G8
+
+
+async def test_tls_error_before_a_stream_starts_is_unavailable():
+    client, _ = client_with(_raises(_LOW_LEVEL_ERRORS[0]))
+    with pytest.raises(WritoryError) as exc:
+        [e async for e in client.stream("x/y", MSGS)]
+    assert exc.value.code is ErrorCode.LLM_UNAVAILABLE
+
+
+async def test_tls_error_after_part_of_a_stream_is_unavailable_too():
+    """Đã nhận một phần: luật hiện có cho lỗi httpx cũng là LLM_UNAVAILABLE (người gọi quyết có dùng
+    phần đã nhận không); lỗi TLS theo đúng luật đó."""
+
+    class Broken(httpx.AsyncByteStream):
+        async def __aiter__(self):
+            yield sse(chunk("Xin "))
+            raise _LOW_LEVEL_ERRORS[0]
+
+    client, _ = client_with(lambda r: httpx.Response(200, stream=Broken()))
+    got = []
+    with pytest.raises(WritoryError) as exc:
+        async for event in client.stream("x/y", MSGS):
+            got.append(event)
+    assert exc.value.code is ErrorCode.LLM_UNAVAILABLE
+    assert got and isinstance(got[0], TextDelta) and got[0].text == "Xin "
+
+
+async def test_tls_error_in_generation_lookup_is_unavailable():
+    client, _ = client_with(_raises(_LOW_LEVEL_ERRORS[0]))
+    with pytest.raises(WritoryError) as exc:
+        await client.generation_cost("gen-1761000000-AbCdEf123")
+    assert exc.value.code is ErrorCode.LLM_UNAVAILABLE
+
+
+async def test_programming_errors_are_not_swallowed_as_network_errors():
+    """Chỉ lỗi mạng (OSError) được coi là tạm; lỗi lập trình vẫn nổi lên."""
+    client, _ = client_with(_raises(ValueError("lỗi lập trình")))
+    with pytest.raises(ValueError):
+        await client.chat("x/y", MSGS)

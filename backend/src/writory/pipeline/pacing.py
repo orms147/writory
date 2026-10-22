@@ -8,7 +8,8 @@ phủ các cảnh trước của chương, nên một bí mật vừa lộ ở c
 
 G1: kết quả có chữ lớp truth (bí mật, mạch, mốc). Chỉ vào đề dàn ý và đề viết, hai vai được thấy
 truth (D-28); riêng mạch phải gỡ và hạn gỡ cũng vào đề bộ trích, vai vốn thấy mọi nút (D-82).
-Không bao giờ vào đề tạo lựa chọn, người kể hay sự kiện cho người chơi.
+Không bao giờ vào đề tạo lựa chọn, người kể hay sự kiện cho người chơi (riêng việc "đã đứng yên",
+`standstill`, chỉ là một cờ đúng/sai khi vào đề tạo lựa chọn, không mang tên nơi chốn, D-98).
 G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đi qua `escape_text`; chữ của nút
 `user_authored` bọc `UserAuthored`.
 """
@@ -67,6 +68,15 @@ class RevealedSecret:
 
 
 @dataclass(frozen=True)
+class Standstill:
+    """Nhân vật chính ở yên một nơi nhiều chương (D-98). `place` là tên nơi chốn lớp truth."""
+
+    place: str
+    user_authored: bool
+    chapters: int
+
+
+@dataclass(frozen=True)
 class ThreadGoal:
     """Mạch phải gỡ, chưa gỡ."""
 
@@ -88,6 +98,8 @@ class ChapterGoals:
     threads: tuple[ThreadGoal, ...]
     # Bí mật đã lộ: để đề nhắc không diễn lại cảnh lộ (D-84). Chỉ vào đề dàn ý và đề viết (G1).
     revealed: tuple[RevealedSecret, ...] = ()
+    # Chỉ khi `chapter_goals(standstill_chapters=N)` và nhân vật chính ở yên từ N chương (D-98).
+    standstill: Standstill | None = None
 
     @property
     def final(self) -> bool:
@@ -112,9 +124,41 @@ def _milestones(plan: StoryPlan, chapter: int, final: bool) -> tuple[MilestoneGo
     return tuple(out)
 
 
-def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState) -> ChapterGoals:
+def standstill(state: GraphState, writing_chapter: int, threshold: int | None) -> Standstill | None:
+    """Nhân vật chính đã ở yên một nơi từ `threshold` chương trở lên khi viết `writing_chapter`
+    (D-98). Nơi ở là cạnh `LOCATED_AT` của nhân vật chính còn hiệu lực ở cuối chương trước; nếu bộ
+    trích để hai cạnh cùng mở thì lấy cạnh mở sau cùng. Không có cạnh nào, chưa có nhân vật chính,
+    hay `threshold` None (tắt) thì None. Lý do dùng nơi ở: độ giống chữ giữa các chương và số cạnh
+    đổi mỗi chương không tách được chương lặp khỏi chương thường (D-98)."""
+    if threshold is None:
+        return None
+    try:
+        protagonist = state.protagonist_id()
+    except LookupError:
+        return None
+    rows = state.edges_at("LOCATED_AT", writing_chapter - 1, source_id=protagonist)
+    if not rows:
+        return None
+    latest = max(rows, key=lambda r: r.valid_from_chapter)
+    stayed = writing_chapter - latest.valid_from_chapter
+    if stayed < threshold:
+        return None
+    node = state.nodes([latest.target]).get(latest.target)
+    name = node.props.get("name") if node is not None else None
+    if not isinstance(name, str) or not name.strip():
+        return None
+    return Standstill(name, node.props.get("user_authored") is True, stayed)
+
+
+def stalled_after(state: GraphState, committed_chapter: int, threshold: int | None) -> bool:
+    """Truyện đứng yên khi viết chương kế tiếp (đề tạo lựa chọn cuối chương `committed_chapter`)."""
+    return standstill(state, committed_chapter + 1, threshold) is not None
+
+
+def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
+                  standstill_chapters: int | None = None) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
-    phủ các gói cảnh trước của chương N)."""
+    phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt."""
     progress = plan_progress(plan, state, chapter)
     final = progress.final
     act = None
@@ -137,8 +181,9 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState) -> ChapterGo
         RevealedSecret(s.fact_id, s.text, s.user_authored, s.revealed_chapter)
         for s in progress.secrets if s.revealed_chapter is not None
     )
+    still = None if final else standstill(state, chapter, standstill_chapters)
     return ChapterGoals(chapter, plan.total_chapters, act, _milestones(plan, chapter, final),
-                        tuple(secrets), threads, revealed)
+                        tuple(secrets), threads, revealed, still)
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -215,6 +260,12 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
     if not goals.final:
         line("- Chương này phải đẩy truyện tới: kết chương ở một tình thế mới, không lặp lại tình "
              "huống hay thế khó của chương trước.")
+    if goals.standstill is not None:
+        st = goals.standstill
+        line("- Nhân vật chính đã ở ", _data(st.place, st.user_authored), f" suốt {st.chapters} "
+             "chương. Chương này PHẢI đổi tình thế: một sự kiện mới buộc nhân vật chính rời nơi này, "
+             "hoặc phá vỡ thế giằng co, hoặc làm lộ điều chưa ai biết. Không lặp lại cảnh dò xét, "
+             "chờ đợi hay thương lượng của các chương trước.")
     if goals.act is not None and goals.act.last_chapter_of_act and not goals.final:
         line(f"- Đây là chương cuối của hồi «{escape_text(goals.act.name)}»: khép lại tình huống "
              "của hồi này để chương sau sang hồi mới.")

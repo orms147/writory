@@ -124,7 +124,12 @@ def _note_generation_id(value: object) -> str | None:
     return gen_id
 
 
-def _unavailable(e: httpx.HTTPError) -> WritoryError:
+# Lỗi mạng: httpx bọc phần lớn, nhưng `ssl.SSLError` và lỗi socket (OSError) từ tầng anyio đi qua
+# không bọc; để lọt thì thành INTERNAL_ERROR, không thử lại (D-97, hồi quy long-tu-tien-1).
+_NETWORK_ERRORS = (httpx.HTTPError, OSError)
+
+
+def _unavailable(e: httpx.HTTPError | OSError) -> WritoryError:
     if isinstance(e, _NOT_SENT):
         _note_sent(False)
     return WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__)
@@ -200,7 +205,7 @@ class OpenRouterClient(LLMClient):
             ) as resp:
                 header_id = _note_generation_id(resp.headers.get("x-generation-id"))
                 raw = await resp.aread()
-        except httpx.HTTPError as e:
+        except _NETWORK_ERRORS as e:
             raise _unavailable(e) from None
         try:
             data = json.loads(raw)
@@ -267,7 +272,7 @@ class OpenRouterClient(LLMClient):
                         content = (choice.get("delta") or {}).get("content")
                         if content:
                             yield TextDelta(content)
-        except httpx.HTTPError as e:
+        except _NETWORK_ERRORS as e:
             raise _unavailable(e) from None
         yield StreamDone(usage or Usage(cost_usd=None), generation_id=gen_id)
 
@@ -279,7 +284,7 @@ class OpenRouterClient(LLMClient):
         try:
             resp = await self._http.get(self._generation_url, params={"id": generation_id},
                                         headers=self._headers())
-        except httpx.HTTPError as e:
+        except _NETWORK_ERRORS as e:
             raise WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__) from None
         if resp.status_code == 404:
             return None
