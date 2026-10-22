@@ -1,0 +1,2076 @@
+{
+ "story_id": "run-20261022-ky-ao-vua-items-1-93d7b566",
+ "plan": {
+  "acts": [
+   {
+    "name": "Bản án dưới vực mây",
+    "from_chapter": 1,
+    "to_chapter": 3
+   },
+   {
+    "name": "Đường bay đứt đoạn",
+    "from_chapter": 4,
+    "to_chapter": 6
+   },
+   {
+    "name": "Những lời khai trái chiều",
+    "from_chapter": 7,
+    "to_chapter": 9
+   },
+   {
+    "name": "Mảnh vỡ cuối đường",
+    "from_chapter": 10,
+    "to_chapter": 12
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_duong_bay_bi_mat",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Đoàn Khương",
+      "đổi lộ trình"
+     ],
+     [
+      "Đoàn Khương",
+      "đường bay không ghi"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_su_gia_con_song",
+    "reveal_from_chapter": 8,
+    "reveal_to_chapter": 8,
+    "leak_terms": [
+     [
+      "Bạch Tùng sứ giả",
+      "còn sống"
+     ],
+     [
+      "sứ giả mất tích",
+      "ẩn náu tại Đảo Tàng Phong"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_phung_phuc_lenh",
+    "reveal_from_chapter": 10,
+    "reveal_to_chapter": 10,
+    "leak_terms": [
+     [
+      "Phùng Tuyết Liên",
+      "lệnh riêng"
+     ],
+     [
+      "Phùng Tuyết Liên",
+      "đưa Mảnh Thần Khí về Huyền Kiếm Môn"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "dau_vet_su_gia",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "ke_sua_con_dau",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 9
+   },
+   {
+    "thread_id": "lo_trinh_bi_doi",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 10
+   },
+   {
+    "thread_id": "quyet_dinh_manh_vo",
+    "resolve_from_chapter": 8,
+    "resolve_to_chapter": 12
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Tạ Vân Chiêu rời thành Vô Trần cùng đoàn truy tìm dấu vết đầu tiên của mảnh vỡ.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Đoàn phát hiện đường bay bí mật không có trong bản đồ chính thức.",
+    "from_chapter": 4,
+    "to_chapter": 4
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Một dấu vết xác nhận sứ giả mất tích đã đi qua Đảo Thiên Môn.",
+    "from_chapter": 5,
+    "to_chapter": 6
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Đoàn tìm được manh mối cho thấy sứ giả còn sống tại một nơi ẩn náu.",
+    "from_chapter": 7,
+    "to_chapter": 8
+   },
+   {
+    "kind": "climax",
+    "goal": "Các đồng hành đối đầu nhau khi lệnh riêng về Mảnh Thần Khí bị phơi bày.",
+    "from_chapter": 10,
+    "to_chapter": 11
+   },
+   {
+    "kind": "ending",
+    "goal": "Tạ Vân Chiêu đưa ra quyết định cuối cùng về số phận Mảnh Thần Khí và khép lại cuộc truy tìm.",
+    "from_chapter": 12,
+    "to_chapter": 12
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 12,
+  "secrets": [
+   {
+    "fact_id": "fact_duong_bay_bi_mat",
+    "text": "Đoàn Khương đã bí mật chuyển lộ trình tìm kiếm sang một đường bay không ghi trong bản đồ của Minh Ước Các.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "fact_su_gia_con_song",
+    "text": "Bạch Tùng sứ giả còn sống và đang ẩn náu tại Đảo Tàng Phong.",
+    "user_authored": false,
+    "from_chapter": 8,
+    "to_chapter": 8,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "fact_phung_phuc_lenh",
+    "text": "Phùng Tuyết Liên nhận lệnh riêng phải đưa Mảnh Thần Khí về Huyền Kiếm Môn nếu đoàn tìm thấy nó.",
+    "user_authored": false,
+    "from_chapter": 10,
+    "to_chapter": 10,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "dau_vet_su_gia",
+    "description": "Sứ giả mất tích đã để lại dấu vết nào trên đường bay?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ke_sua_con_dau",
+    "description": "Ai đã sửa con dấu trên Thư Triệu Kiến?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 9,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "lo_trinh_bi_doi",
+    "description": "Ai đã thay đổi lộ trình chuyến đi cũ của Tạ Vân Chiêu?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 10,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "quyet_dinh_manh_vo",
+    "description": "Ai sẽ nắm quyền quyết định nơi cất giữ Mảnh Thần Khí?",
+    "user_authored": false,
+    "from_chapter": 8,
+    "to_chapter": 12,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-ky-ao-vua-items-1-93d7b566-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Tạ Vân Chiêu",
+      "personality": "Khéo ứng đối, giỏi đọc sắc mặt và thường dùng một câu đùa nhẹ để che đi sự cảnh giác. Nàng sẵn sàng hợp tác, nhưng chỉ khi biết rõ cái giá của mỗi lời hứa.",
+      "backstory": "Là người ghi chép khế ước cho một phái tu hành ở đảo bay Tĩnh Hạc, nàng từng theo các sứ đoàn qua lại giữa những tiên môn sau đại chiến. Trong một chuyến đi, nàng phát hiện lộ trình của đoàn mình bị thay đổi mà không ai chịu nhận trách nhiệm. Nay nàng gia nhập đoàn truy tìm mảnh vỡ để đối chiếu những ghi chép cũ với dấu vết trên các đảo hoang phế, đồng thời tìm ra kẻ đang lợi dụng những lối bay bí mật.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "Đoàn chấp sự"
+      ],
+      "personality": "Điềm đạm, giỏi cân nhắc lợi hại, luôn hỏi giá phải trả trước khi nhận lời.",
+      "backstory": "Chấp sự của Bạch Tùng Môn, được giao dẫn đoàn truy tìm dấu vết các mảnh thần khí sau khi sứ giả của môn phái mất tích."
+     }
+    },
+    {
+     "id": "lao_dao_si",
+     "label": "Character",
+     "props": {
+      "name": "Lão Đạo Sĩ",
+      "aliases": [
+       "Đạo sĩ áo tro"
+      ],
+      "personality": "Lặng lẽ, sắc sảo, tránh nói thẳng nhưng hiếm khi bỏ sót một chi tiết.",
+      "backstory": "Tu sĩ lang bạt từng phục vụ nhiều tiên môn trong đại chiến, nay nhận lời dẫn đường qua các đảo bay hoang phế."
+     }
+    },
+    {
+     "id": "phung_tuyet_lien",
+     "label": "Character",
+     "props": {
+      "name": "Phùng Tuyết Liên",
+      "aliases": [
+       "Phùng kiếm tu"
+      ],
+      "personality": "Cứng cỏi, trọng lời hứa, không kiên nhẫn với những câu trả lời vòng vo.",
+      "backstory": "Đệ tử của Huyền Kiếm Môn, được cử đi bảo vệ đoàn tìm kiếm và giám sát việc phân chia di vật."
+     }
+    },
+    {
+     "id": "tieu_mac",
+     "label": "Character",
+     "props": {
+      "name": "Tiêu Mặc",
+      "aliases": [
+       "Tiêu y sư"
+      ],
+      "personality": "Ôn hòa, thực tế, thường giữ im lặng cho đến khi có đủ chứng cứ.",
+      "backstory": "Tu sĩ chữa thương của Thanh Đăng Viện, từng cứu người ở cả hai phía chiến tuyến và không tin những lời thề dễ dàng."
+     }
+    },
+    {
+     "id": "bach_tung_su_gia",
+     "label": "Character",
+     "props": {
+      "name": "Bạch Tùng sứ giả",
+      "aliases": [
+       "sứ giả mất tích"
+      ],
+      "personality": "Không rõ; những người từng gặp chỉ nhớ ông nói năng thận trọng và không để lộ nhiều cảm xúc.",
+      "backstory": "Sứ giả của Bạch Tùng Môn, mất tích trước phiên nghị sự ở thành Vô Trần."
+     }
+    },
+    {
+     "id": "vo_tran",
+     "label": "Location",
+     "props": {
+      "name": "Thành Vô Trần",
+      "aliases": [
+       "thành trên vực mây"
+      ],
+      "description": "Một thành trì lơ lửng trên vực mây, nơi các tiên môn ký hòa ước và nghị bàn việc phân chia di vật cổ."
+     }
+    },
+    {
+     "id": "tinh_hac",
+     "label": "Location",
+     "props": {
+      "name": "Đảo Tĩnh Hạc",
+      "description": "Đảo bay thanh tĩnh nơi Tạ Vân Chiêu từng ghi chép khế ước cho một phái tu hành."
+     }
+    },
+    {
+     "id": "dao_tan_nguyet",
+     "label": "Location",
+     "props": {
+      "name": "Đảo Tàn Nguyệt",
+      "description": "Đảo bay hoang phế có những lối đi đứt quãng và trận pháp cũ vẫn còn hoạt động."
+     }
+    },
+    {
+     "id": "dao_thien_mon",
+     "label": "Location",
+     "props": {
+      "name": "Đảo Thiên Môn",
+      "description": "Một đảo bay bỏ hoang, nơi từng là trạm trung chuyển của các sứ đoàn."
+     }
+    },
+    {
+     "id": "dao_tang_phong",
+     "label": "Location",
+     "props": {
+      "name": "Đảo Tàng Phong",
+      "description": "Đảo đá kín gió nằm ngoài các đường bay thường dùng, có một điện thờ đã sụp đổ."
+     }
+    },
+    {
+     "id": "bach_tung_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Bạch Tùng Môn",
+      "description": "Tiên môn có sứ giả mất tích và đang thúc giục các bên tìm ra tung tích người của mình."
+     }
+    },
+    {
+     "id": "huyen_kiem_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Kiếm Môn",
+      "description": "Tiên môn giữ lực lượng hộ vệ mạnh, chủ trương kiểm soát chặt các di vật cổ."
+     }
+    },
+    {
+     "id": "thanh_dang_vien",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Đăng Viện",
+      "description": "Một viện tu hành chuyên chữa thương và lưu giữ ghi chép về những người mất tích trong đại chiến."
+     }
+    },
+    {
+     "id": "minh_uoc_cac",
+     "label": "Faction",
+     "props": {
+      "name": "Minh Ước Các",
+      "description": "Tổ chức trung lập ghi nhận hòa ước giữa các tiên môn và bảo quản thư triệu kiến."
+     }
+    },
+    {
+     "id": "manh_than_khi",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh Thần Khí",
+      "aliases": [
+       "mảnh vỡ"
+      ],
+      "description": "Mảnh kim loại cổ đặt giữa đại điện ở thành Vô Trần, phát sáng khi phiên nghị sự bắt đầu."
+     }
+    },
+    {
+     "id": "la_ban_dong",
+     "label": "Item",
+     "props": {
+      "name": "La Bàn Đồng",
+      "description": "Chiếc la bàn cũ có kim dao động gần những đường bay bị che giấu."
+     }
+    },
+    {
+     "id": "thu_trieu_kien",
+     "label": "Item",
+     "props": {
+      "name": "Thư Triệu Kiến",
+      "aliases": [
+       "bức thư"
+      ],
+      "description": "Thư triệu Tạ Vân Chiêu đến thành Vô Trần, mang con dấu có dấu vết bị sửa."
+     }
+    },
+    {
+     "id": "fact_hoa_uoc",
+     "label": "Fact",
+     "props": {
+      "text": "Các tiên môn ký hòa ước tại thành Vô Trần sau đại chiến."
+     }
+    },
+    {
+     "id": "fact_su_gia_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Sứ giả của Bạch Tùng Môn mất tích trước phiên nghị sự."
+     }
+    },
+    {
+     "id": "fact_manh_phat_sang",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh Thần Khí phát sáng khi được đặt giữa đại điện ở thành Vô Trần."
+     }
+    },
+    {
+     "id": "fact_thu_bi_sua",
+     "label": "Fact",
+     "props": {
+      "text": "Con dấu trên Thư Triệu Kiến của Tạ Vân Chiêu đã bị sửa trước khi thư được gửi đi."
+     }
+    },
+    {
+     "id": "fact_lo_trinh_doi",
+     "label": "Fact",
+     "props": {
+      "text": "Một chuyến đi trước đây của Tạ Vân Chiêu đã bị đổi lộ trình mà không ai nhận trách nhiệm."
+     }
+    },
+    {
+     "id": "fact_la_ban",
+     "label": "Fact",
+     "props": {
+      "text": "La Bàn Đồng phản ứng gần một đường bay bí mật dẫn qua Đảo Tàn Nguyệt."
+     }
+    },
+    {
+     "id": "fact_duong_bay_bi_mat",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khương đã bí mật chuyển lộ trình tìm kiếm sang một đường bay không ghi trong bản đồ của Minh Ước Các."
+     }
+    },
+    {
+     "id": "fact_su_gia_con_song",
+     "label": "Fact",
+     "props": {
+      "text": "Bạch Tùng sứ giả còn sống và đang ẩn náu tại Đảo Tàng Phong."
+     }
+    },
+    {
+     "id": "fact_phung_phuc_lenh",
+     "label": "Fact",
+     "props": {
+      "text": "Phùng Tuyết Liên nhận lệnh riêng phải đưa Mảnh Thần Khí về Huyền Kiếm Môn nếu đoàn tìm thấy nó."
+     }
+    },
+    {
+     "id": "dau_vet_su_gia",
+     "label": "Thread",
+     "props": {
+      "description": "Sứ giả mất tích đã để lại dấu vết nào trên đường bay?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ke_sua_con_dau",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã sửa con dấu trên Thư Triệu Kiến?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 9
+     }
+    },
+    {
+     "id": "lo_trinh_bi_doi",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã thay đổi lộ trình chuyến đi cũ của Tạ Vân Chiêu?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 10
+     }
+    },
+    {
+     "id": "quyet_dinh_manh_vo",
+     "label": "Thread",
+     "props": {
+      "description": "Ai sẽ nắm quyền quyết định nơi cất giữ Mảnh Thần Khí?",
+      "planted_chapter": 0,
+      "due_from_chapter": 8,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khuong@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>protagonist@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "lao_dao_si",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>lao_dao_si@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "lao_dao_si",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:lao_dao_si>protagonist@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "phung_tuyet_lien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>phung_tuyet_lien@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "phung_tuyet_lien",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:phung_tuyet_lien>protagonist@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "tieu_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>tieu_mac@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tieu_mac",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tieu_mac>protagonist@0",
+     "props": {
+      "kind": "đồng hành",
+      "score": 10
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_dao_si",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_dao_si>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "phung_tuyet_lien",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:phung_tuyet_lien>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tieu_mac",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tieu_mac>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bach_tung_su_gia",
+     "to": "dao_tang_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bach_tung_su_gia>dao_tang_phong@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "doan_khuong",
+     "to": "manh_than_khi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:doan_khuong>manh_than_khi@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "lao_dao_si",
+     "to": "la_ban_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:lao_dao_si>la_ban_dong@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "thu_trieu_kien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>thu_trieu_kien@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "bach_tung_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>bach_tung_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "phung_tuyet_lien",
+     "to": "huyen_kiem_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:phung_tuyet_lien>huyen_kiem_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tieu_mac",
+     "to": "thanh_dang_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tieu_mac>thanh_dang_vien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hoa_uoc",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hoa_uoc>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hoa_uoc",
+     "to": "bach_tung_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hoa_uoc>bach_tung_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hoa_uoc",
+     "to": "huyen_kiem_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hoa_uoc>huyen_kiem_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hoa_uoc",
+     "to": "thanh_dang_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hoa_uoc>thanh_dang_vien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_hoa_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_hoa_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tuyet_lien",
+     "to": "fact_hoa_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tuyet_lien>fact_hoa_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tieu_mac",
+     "to": "fact_hoa_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tieu_mac>fact_hoa_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_dao_si",
+     "to": "fact_hoa_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_dao_si>fact_hoa_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_su_gia_mat_tich",
+     "to": "bach_tung_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_su_gia_mat_tich>bach_tung_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_su_gia_mat_tich",
+     "to": "bach_tung_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_su_gia_mat_tich>bach_tung_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_su_gia_mat_tich",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_su_gia_mat_tich>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_su_gia_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_su_gia_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tuyet_lien",
+     "to": "fact_su_gia_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tuyet_lien>fact_su_gia_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tieu_mac",
+     "to": "fact_su_gia_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tieu_mac>fact_su_gia_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_manh_phat_sang",
+     "to": "manh_than_khi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_manh_phat_sang>manh_than_khi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_manh_phat_sang",
+     "to": "vo_tran",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_manh_phat_sang>vo_tran@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_manh_phat_sang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_manh_phat_sang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tuyet_lien",
+     "to": "fact_manh_phat_sang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tuyet_lien>fact_manh_phat_sang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tieu_mac",
+     "to": "fact_manh_phat_sang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tieu_mac>fact_manh_phat_sang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_dao_si",
+     "to": "fact_manh_phat_sang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_dao_si>fact_manh_phat_sang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thu_bi_sua",
+     "to": "thu_trieu_kien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thu_bi_sua>thu_trieu_kien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thu_bi_sua",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thu_bi_sua>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lo_trinh_doi",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lo_trinh_doi>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lo_trinh_doi",
+     "to": "tinh_hac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lo_trinh_doi>tinh_hac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_la_ban",
+     "to": "la_ban_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_la_ban>la_ban_dong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_la_ban",
+     "to": "dao_tan_nguyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_la_ban>dao_tan_nguyet@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_dao_si",
+     "to": "fact_la_ban",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_dao_si>fact_la_ban@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_duong_bay_bi_mat",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_duong_bay_bi_mat>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_duong_bay_bi_mat",
+     "to": "minh_uoc_cac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_duong_bay_bi_mat>minh_uoc_cac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_duong_bay_bi_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_duong_bay_bi_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_su_gia_con_song",
+     "to": "bach_tung_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_su_gia_con_song>bach_tung_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_su_gia_con_song",
+     "to": "dao_tang_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_su_gia_con_song>dao_tang_phong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_dao_si",
+     "to": "fact_su_gia_con_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_dao_si>fact_su_gia_con_song@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_phung_phuc_lenh",
+     "to": "phung_tuyet_lien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_phung_phuc_lenh>phung_tuyet_lien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_phung_phuc_lenh",
+     "to": "huyen_kiem_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_phung_phuc_lenh>huyen_kiem_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_phung_phuc_lenh",
+     "to": "manh_than_khi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_phung_phuc_lenh>manh_than_khi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tuyet_lien",
+     "to": "fact_phung_phuc_lenh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tuyet_lien>fact_phung_phuc_lenh@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Tạ Vân Chiêu",
+      "known_as": "Tạ Vân Chiêu"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "bach_tung_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Bạch Tùng Môn",
+     "description": "Tiên môn có sứ giả mất tích và đang thúc giục các bên tìm ra tung tích người của mình."
+    }
+   },
+   "bach_tung_su_gia": {
+    "label": "Character",
+    "props": {
+     "backstory": "Sứ giả của Bạch Tùng Môn, mất tích trước phiên nghị sự ở thành Vô Trần.",
+     "aliases": [
+      "sứ giả mất tích"
+     ],
+     "personality": "Không rõ; những người từng gặp chỉ nhớ ông nói năng thận trọng và không để lộ nhiều cảm xúc.",
+     "name": "Bạch Tùng sứ giả"
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "dao_tan_nguyet": {
+    "label": "Location",
+    "props": {
+     "name": "Đảo Tàn Nguyệt",
+     "description": "Đảo bay hoang phế có những lối đi đứt quãng và trận pháp cũ vẫn còn hoạt động."
+    }
+   },
+   "dao_tang_phong": {
+    "label": "Location",
+    "props": {
+     "name": "Đảo Tàng Phong",
+     "description": "Đảo đá kín gió nằm ngoài các đường bay thường dùng, có một điện thờ đã sụp đổ."
+    }
+   },
+   "dao_thien_mon": {
+    "label": "Location",
+    "props": {
+     "name": "Đảo Thiên Môn",
+     "description": "Một đảo bay bỏ hoang, nơi từng là trạm trung chuyển của các sứ đoàn."
+    }
+   },
+   "dau_vet_su_gia": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Sứ giả mất tích đã để lại dấu vết nào trên đường bay?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 6
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Chấp sự của Bạch Tùng Môn, được giao dẫn đoàn truy tìm dấu vết các mảnh thần khí sau khi sứ giả của môn phái mất tích.",
+     "aliases": [
+      "Đoàn chấp sự"
+     ],
+     "personality": "Điềm đạm, giỏi cân nhắc lợi hại, luôn hỏi giá phải trả trước khi nhận lời.",
+     "name": "Đoàn Khương"
+    }
+   },
+   "fact_duong_bay_bi_mat": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khương đã bí mật chuyển lộ trình tìm kiếm sang một đường bay không ghi trong bản đồ của Minh Ước Các."
+    }
+   },
+   "fact_hoa_uoc": {
+    "label": "Fact",
+    "props": {
+     "text": "Các tiên môn ký hòa ước tại thành Vô Trần sau đại chiến."
+    }
+   },
+   "fact_la_ban": {
+    "label": "Fact",
+    "props": {
+     "text": "La Bàn Đồng phản ứng gần một đường bay bí mật dẫn qua Đảo Tàn Nguyệt."
+    }
+   },
+   "fact_lo_trinh_doi": {
+    "label": "Fact",
+    "props": {
+     "text": "Một chuyến đi trước đây của Tạ Vân Chiêu đã bị đổi lộ trình mà không ai nhận trách nhiệm."
+    }
+   },
+   "fact_manh_phat_sang": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh Thần Khí phát sáng khi được đặt giữa đại điện ở thành Vô Trần."
+    }
+   },
+   "fact_phung_phuc_lenh": {
+    "label": "Fact",
+    "props": {
+     "text": "Phùng Tuyết Liên nhận lệnh riêng phải đưa Mảnh Thần Khí về Huyền Kiếm Môn nếu đoàn tìm thấy nó."
+    }
+   },
+   "fact_su_gia_con_song": {
+    "label": "Fact",
+    "props": {
+     "text": "Bạch Tùng sứ giả còn sống và đang ẩn náu tại Đảo Tàng Phong."
+    }
+   },
+   "fact_su_gia_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Sứ giả của Bạch Tùng Môn mất tích trước phiên nghị sự."
+    }
+   },
+   "fact_thu_bi_sua": {
+    "label": "Fact",
+    "props": {
+     "text": "Con dấu trên Thư Triệu Kiến của Tạ Vân Chiêu đã bị sửa trước khi thư được gửi đi."
+    }
+   },
+   "huyen_kiem_mon": {
+    "label": "Faction",
+    "props": {
+     "name": "Huyền Kiếm Môn",
+     "description": "Tiên môn giữ lực lượng hộ vệ mạnh, chủ trương kiểm soát chặt các di vật cổ."
+    }
+   },
+   "ke_sua_con_dau": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã sửa con dấu trên Thư Triệu Kiến?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 9
+    }
+   },
+   "la_ban_dong": {
+    "label": "Item",
+    "props": {
+     "name": "La Bàn Đồng",
+     "description": "Chiếc la bàn cũ có kim dao động gần những đường bay bị che giấu."
+    }
+   },
+   "lao_dao_si": {
+    "label": "Character",
+    "props": {
+     "backstory": "Tu sĩ lang bạt từng phục vụ nhiều tiên môn trong đại chiến, nay nhận lời dẫn đường qua các đảo bay hoang phế.",
+     "aliases": [
+      "Đạo sĩ áo tro"
+     ],
+     "personality": "Lặng lẽ, sắc sảo, tránh nói thẳng nhưng hiếm khi bỏ sót một chi tiết.",
+     "name": "Lão Đạo Sĩ"
+    }
+   },
+   "lo_trinh_bi_doi": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã thay đổi lộ trình chuyến đi cũ của Tạ Vân Chiêu?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 10
+    }
+   },
+   "manh_than_khi": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "mảnh vỡ"
+     ],
+     "name": "Mảnh Thần Khí",
+     "description": "Mảnh kim loại cổ đặt giữa đại điện ở thành Vô Trần, phát sáng khi phiên nghị sự bắt đầu."
+    }
+   },
+   "minh_uoc_cac": {
+    "label": "Faction",
+    "props": {
+     "name": "Minh Ước Các",
+     "description": "Tổ chức trung lập ghi nhận hòa ước giữa các tiên môn và bảo quản thư triệu kiến."
+    }
+   },
+   "phung_tuyet_lien": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đệ tử của Huyền Kiếm Môn, được cử đi bảo vệ đoàn tìm kiếm và giám sát việc phân chia di vật.",
+     "aliases": [
+      "Phùng kiếm tu"
+     ],
+     "personality": "Cứng cỏi, trọng lời hứa, không kiên nhẫn với những câu trả lời vòng vo.",
+     "name": "Phùng Tuyết Liên"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Là người ghi chép khế ước cho một phái tu hành ở đảo bay Tĩnh Hạc, nàng từng theo các sứ đoàn qua lại giữa những tiên môn sau đại chiến. Trong một chuyến đi, nàng phát hiện lộ trình của đoàn mình bị thay đổi mà không ai chịu nhận trách nhiệm. Nay nàng gia nhập đoàn truy tìm mảnh vỡ để đối chiếu những ghi chép cũ với dấu vết trên các đảo hoang phế, đồng thời tìm ra kẻ đang lợi dụng những lối bay bí mật.",
+     "personality": "Khéo ứng đối, giỏi đọc sắc mặt và thường dùng một câu đùa nhẹ để che đi sự cảnh giác. Nàng sẵn sàng hợp tác, nhưng chỉ khi biết rõ cái giá của mỗi lời hứa.",
+     "name": "Tạ Vân Chiêu",
+     "is_protagonist": true
+    }
+   },
+   "quyet_dinh_manh_vo": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai sẽ nắm quyền quyết định nơi cất giữ Mảnh Thần Khí?",
+     "due_from_chapter": 8,
+     "due_to_chapter": 12
+    }
+   },
+   "thanh_dang_vien": {
+    "label": "Faction",
+    "props": {
+     "name": "Thanh Đăng Viện",
+     "description": "Một viện tu hành chuyên chữa thương và lưu giữ ghi chép về những người mất tích trong đại chiến."
+    }
+   },
+   "thu_trieu_kien": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "bức thư"
+     ],
+     "name": "Thư Triệu Kiến",
+     "description": "Thư triệu Tạ Vân Chiêu đến thành Vô Trần, mang con dấu có dấu vết bị sửa."
+    }
+   },
+   "tieu_mac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Tu sĩ chữa thương của Thanh Đăng Viện, từng cứu người ở cả hai phía chiến tuyến và không tin những lời thề dễ dàng.",
+     "aliases": [
+      "Tiêu y sư"
+     ],
+     "personality": "Ôn hòa, thực tế, thường giữ im lặng cho đến khi có đủ chứng cứ.",
+     "name": "Tiêu Mặc"
+    }
+   },
+   "tinh_hac": {
+    "label": "Location",
+    "props": {
+     "name": "Đảo Tĩnh Hạc",
+     "description": "Đảo bay thanh tĩnh nơi Tạ Vân Chiêu từng ghi chép khế ước cho một phái tu hành."
+    }
+   },
+   "vo_tran": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "thành trên vực mây"
+     ],
+     "name": "Thành Vô Trần",
+     "description": "Một thành trì lơ lửng trên vực mây, nơi các tiên môn ký hòa ước và nghị bàn việc phân chia di vật cổ."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khuong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:lao_dao_si>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "lao_dao_si",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:phung_tuyet_lien>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "phung_tuyet_lien",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>lao_dao_si@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "lao_dao_si",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>phung_tuyet_lien@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "phung_tuyet_lien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>tieu_mac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "tieu_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "RELATES_TO:tieu_mac>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "tieu_mac",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "đồng hành"
+    }
+   },
+   {
+    "id": "LOCATED_AT:bach_tung_su_gia>dao_tang_phong@0",
+    "type": "LOCATED_AT",
+    "source": "bach_tung_su_gia",
+    "target": "dao_tang_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>vo_tran@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lao_dao_si>vo_tran@0",
+    "type": "LOCATED_AT",
+    "source": "lao_dao_si",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:phung_tuyet_lien>vo_tran@0",
+    "type": "LOCATED_AT",
+    "source": "phung_tuyet_lien",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>vo_tran@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tieu_mac>vo_tran@0",
+    "type": "LOCATED_AT",
+    "source": "tieu_mac",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:doan_khuong>manh_than_khi@0",
+    "type": "HOLDS",
+    "source": "doan_khuong",
+    "target": "manh_than_khi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:lao_dao_si>la_ban_dong@0",
+    "type": "HOLDS",
+    "source": "lao_dao_si",
+    "target": "la_ban_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>thu_trieu_kien@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "thu_trieu_kien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>bach_tung_mon@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "bach_tung_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:phung_tuyet_lien>huyen_kiem_mon@0",
+    "type": "MEMBER_OF",
+    "source": "phung_tuyet_lien",
+    "target": "huyen_kiem_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tieu_mac>thanh_dang_vien@0",
+    "type": "MEMBER_OF",
+    "source": "tieu_mac",
+    "target": "thanh_dang_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_duong_bay_bi_mat@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_duong_bay_bi_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_hoa_uoc@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_hoa_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_manh_phat_sang@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_manh_phat_sang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_su_gia_mat_tich@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_su_gia_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_dao_si>fact_hoa_uoc@0",
+    "type": "KNOWS",
+    "source": "lao_dao_si",
+    "target": "fact_hoa_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_dao_si>fact_la_ban@0",
+    "type": "KNOWS",
+    "source": "lao_dao_si",
+    "target": "fact_la_ban",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_dao_si>fact_manh_phat_sang@0",
+    "type": "KNOWS",
+    "source": "lao_dao_si",
+    "target": "fact_manh_phat_sang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_dao_si>fact_su_gia_con_song@0",
+    "type": "KNOWS",
+    "source": "lao_dao_si",
+    "target": "fact_su_gia_con_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tuyet_lien>fact_hoa_uoc@0",
+    "type": "KNOWS",
+    "source": "phung_tuyet_lien",
+    "target": "fact_hoa_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tuyet_lien>fact_manh_phat_sang@0",
+    "type": "KNOWS",
+    "source": "phung_tuyet_lien",
+    "target": "fact_manh_phat_sang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tuyet_lien>fact_phung_phuc_lenh@0",
+    "type": "KNOWS",
+    "source": "phung_tuyet_lien",
+    "target": "fact_phung_phuc_lenh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tuyet_lien>fact_su_gia_mat_tich@0",
+    "type": "KNOWS",
+    "source": "phung_tuyet_lien",
+    "target": "fact_su_gia_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tieu_mac>fact_hoa_uoc@0",
+    "type": "KNOWS",
+    "source": "tieu_mac",
+    "target": "fact_hoa_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tieu_mac>fact_manh_phat_sang@0",
+    "type": "KNOWS",
+    "source": "tieu_mac",
+    "target": "fact_manh_phat_sang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tieu_mac>fact_su_gia_mat_tich@0",
+    "type": "KNOWS",
+    "source": "tieu_mac",
+    "target": "fact_su_gia_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:fact_duong_bay_bi_mat>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_duong_bay_bi_mat",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_duong_bay_bi_mat>minh_uoc_cac@0",
+    "type": "ABOUT",
+    "source": "fact_duong_bay_bi_mat",
+    "target": "minh_uoc_cac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hoa_uoc>bach_tung_mon@0",
+    "type": "ABOUT",
+    "source": "fact_hoa_uoc",
+    "target": "bach_tung_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hoa_uoc>huyen_kiem_mon@0",
+    "type": "ABOUT",
+    "source": "fact_hoa_uoc",
+    "target": "huyen_kiem_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hoa_uoc>thanh_dang_vien@0",
+    "type": "ABOUT",
+    "source": "fact_hoa_uoc",
+    "target": "thanh_dang_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hoa_uoc>vo_tran@0",
+    "type": "ABOUT",
+    "source": "fact_hoa_uoc",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_la_ban>dao_tan_nguyet@0",
+    "type": "ABOUT",
+    "source": "fact_la_ban",
+    "target": "dao_tan_nguyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_la_ban>la_ban_dong@0",
+    "type": "ABOUT",
+    "source": "fact_la_ban",
+    "target": "la_ban_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lo_trinh_doi>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_lo_trinh_doi",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lo_trinh_doi>tinh_hac@0",
+    "type": "ABOUT",
+    "source": "fact_lo_trinh_doi",
+    "target": "tinh_hac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_manh_phat_sang>manh_than_khi@0",
+    "type": "ABOUT",
+    "source": "fact_manh_phat_sang",
+    "target": "manh_than_khi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_manh_phat_sang>vo_tran@0",
+    "type": "ABOUT",
+    "source": "fact_manh_phat_sang",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_phung_phuc_lenh>huyen_kiem_mon@0",
+    "type": "ABOUT",
+    "source": "fact_phung_phuc_lenh",
+    "target": "huyen_kiem_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_phung_phuc_lenh>manh_than_khi@0",
+    "type": "ABOUT",
+    "source": "fact_phung_phuc_lenh",
+    "target": "manh_than_khi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_phung_phuc_lenh>phung_tuyet_lien@0",
+    "type": "ABOUT",
+    "source": "fact_phung_phuc_lenh",
+    "target": "phung_tuyet_lien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_su_gia_con_song>bach_tung_su_gia@0",
+    "type": "ABOUT",
+    "source": "fact_su_gia_con_song",
+    "target": "bach_tung_su_gia",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_su_gia_con_song>dao_tang_phong@0",
+    "type": "ABOUT",
+    "source": "fact_su_gia_con_song",
+    "target": "dao_tang_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_su_gia_mat_tich>bach_tung_mon@0",
+    "type": "ABOUT",
+    "source": "fact_su_gia_mat_tich",
+    "target": "bach_tung_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_su_gia_mat_tich>bach_tung_su_gia@0",
+    "type": "ABOUT",
+    "source": "fact_su_gia_mat_tich",
+    "target": "bach_tung_su_gia",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_su_gia_mat_tich>vo_tran@0",
+    "type": "ABOUT",
+    "source": "fact_su_gia_mat_tich",
+    "target": "vo_tran",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thu_bi_sua>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_thu_bi_sua",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thu_bi_sua>thu_trieu_kien@0",
+    "type": "ABOUT",
+    "source": "fact_thu_bi_sua",
+    "target": "thu_trieu_kien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Tạ Vân Chiêu",
+     "known_as": "Tạ Vân Chiêu"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-864eaa3e7832",
+    "player_action": null,
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Tạ Vân Chiêu tìm được một lý do đáng tin để tham gia đoàn truy dấu sứ giả mất tích, đồng thời giữ kín nghi ngờ về con dấu đã bị sửa.",
+      "present": [
+       "protagonist",
+       "doan_khuong",
+       "lao_dao_si",
+       "phung_tuyet_lien",
+       "tieu_mac"
+      ],
+      "beats": [
+       "Trong đại điện Vô Trần, ta quan sát các tiên môn tranh lời sau khi Mảnh Thần Khí phát sáng; Đoàn Khương giữ nó trong tầm mắt, còn những lời khai về sứ giả mất tích càng lúc càng mâu thuẫn.",
+       "Ta đưa Thư Triệu Kiến ra làm chứng rằng mình được gọi đến vì biết ghi chép lộ trình giữa các tiên môn, nhưng không nói rằng con dấu trên thư có dấu hiệu bị sửa; Đoàn Khương hỏi ta liệu những ghi chép cũ có thể giúp tìm ra dấu vết trên đường bay hay không.",
+       "Ta đáp rằng giấy tờ chỉ đáng tin khi đối chiếu được với thực địa, rồi nhẹ nhàng nhắc chuyến đi trước của mình từng bị đổi lộ trình mà không ai nhận trách nhiệm; Phùng Tuyết Liên lạnh lùng hỏi liệu ta đang đề nghị giúp đỡ hay chỉ đang dò xét đoàn.",
+       "Lão Đạo Sĩ nói La Bàn Đồng có thể chỉ ra nơi cần kiểm tra, nhưng không thể thay cho người biết đọc đường bay; Tiêu Mặc thêm rằng bất cứ dấu vết nào của sứ giả cũng có thể bị xóa nếu các môn phái tiếp tục chậm trễ.",
+       "Đoàn Khương đề nghị ta tham gia đoàn truy tìm và giao cho ta việc đối chiếu các ghi chép với những manh mối họ thu được; ta nhận lời với điều kiện mọi thay đổi lộ trình phải được báo cho mình biết, khiến cuộc thương lượng khép lại bằng một cái gật đầu dè dặt chứ không phải lòng tin."
+      ],
+      "ends_at": "Cảnh kết trong đại điện Vô Trần, khi ta đã nhận lời tham gia đoàn nhưng vẫn giữ Thư Triệu Kiến và nghi ngờ riêng về con dấu bị sửa.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER lao_dao_si→ch1",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "block",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": []
+   },
+   {
+    "attempt": 2,
+    "commit_id": "ch1-8eb653b227fc",
+    "player_action": null,
+    "error_detail": null,
+    "summary": null,
+    "outlines": [],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"hồ sơ đường bay\" xuất hiện 3 lần (tối đa 2); đoạn: «hồ sơ đường bay»"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «đạo sĩ áo tro» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "block",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «lão đạo sĩ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": []
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "chapter 1",
+   "code": "SCENE_LEAK_BLOCKED",
+   "detail": null
+  }
+ ],
+ "setup_repairs": []
+}

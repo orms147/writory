@@ -179,3 +179,38 @@ def test_player_text_from_neo4j_is_wrapped(driver, new_story_id):
                    "[P-lie]", "[P-thread]"]:
         assert not any(marker in p for p in raw), f"{marker} đi ra trần"
         assert any(isinstance(p, UserAuthored) and marker in p.text for p in parts), marker
+
+
+def test_items_show_current_holder_or_place_even_when_the_holder_is_absent(driver, sample_story_id):
+    """D-90: trạng thái đồ vật không phụ thuộc ai có mặt. Chỉ Khải có mặt mà kiếm vẫn ghi do Lan giữ."""
+    ctx = writer_context(driver, sample_story_id, 4, ["khai"], None)
+    by_id = {i.id: i for i in ctx.items}
+    sword = by_id["sword"]
+    assert sword.name.value == "Thanh Sương" and sword.holder.value == "Phạm Thị Lan"
+    assert sword.place is None and sword.since_chapter == 4
+    for item in ctx.items:  # mỗi đồ vật đúng một chỗ
+        assert (item.holder is None) != (item.place is None), item
+    assert not {i.id for i in ctx.items} & {n.id for n in ctx.neighbors}
+    text = "\n\n".join(str(p) for p in render_writer_context(ctx))
+    assert "Thanh Sương — do Phạm Thị Lan giữ (từ chương 4)" in text
+
+
+def test_items_follow_the_chapter(driver, sample_story_id):
+    before = writer_context(driver, sample_story_id, 3, ["minh"], None)
+    assert "sword" not in {i.id for i in before.items if i.holder and i.holder.value == "Phạm Thị Lan"}
+
+
+def test_an_item_with_neither_holder_nor_place_is_not_listed(driver, new_story_id):
+    from writory.graph import ChangePackage, apply_package
+
+    sid = new_story_id()
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [{"id": "hero", "label": "Character",
+                   "props": {"name": "Minh", "is_protagonist": True}},
+                  {"id": "lost", "label": "Item", "props": {"name": "Chìa khoá mất"}},
+                  {"id": "bag", "label": "Item", "props": {"name": "Túi vải"}}],
+        "edges": [{"type": "HOLDS", "from": "hero", "to": "bag", "valid_from_chapter": 0}],
+    }))
+    ctx = writer_context(driver, sid, 0, ["hero"], None)
+    assert [i.id for i in ctx.items] == ["bag"]

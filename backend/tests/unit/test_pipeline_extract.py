@@ -374,3 +374,57 @@ def test_prompt_says_a_multi_part_thread_is_resolved_only_when_every_part_is_ans
     for phrase in ("nhiều vế", "MỌI vế", "mới trả lời một vế", "thoả thuận tạm"):
         assert phrase in SYSTEM_PROMPT, phrase
     assert PROMPT_VERSION == "extract-4"
+
+
+# --- đồ vật chỉ có một chỗ: cạnh đối nghịch tự đóng (D-90) ----------------------------------------
+
+_ITEM_ENTITIES = [
+    Entity(id="protagonist", label="Character", text="Bạn"),
+    Entity(id="lan", label="Character", text="Lan"),
+    Entity(id="box", label="Item", text="Hộp đá"),
+    Entity(id="ben_do", label="Location", text="Bến đò"),
+]
+_ITEM_TEXT = "Lan nhặt hộp đá lên. Sau đó Lan đặt hộp đá xuống bến đò."
+
+
+def _item_package(edges, open_edges, close=()):
+    out = ExtractOutput(edges=edges, close=list(close))
+    return to_package(out, chapter=4, commit_id="c", protagonist_id="protagonist",
+                      chapter_text=_ITEM_TEXT, entities=_ITEM_ENTITIES, open_edges=open_edges)
+
+
+def test_taking_an_item_that_was_at_a_place_closes_its_place_edge():
+    """Hồi quy ky-ao-vua-quotes-1: chương 0 cho mảnh vỡ cả nơi lẫn người giữ, sau đó văn tả lẫn."""
+    placed = OpenEdge("loc_box", "LOCATED_AT", "box", "ben_do")
+    pkg, rejected = _item_package(
+        [_edge(type="HOLDS", source="lan", target="box")], [placed])
+    assert [c.id for c in pkg.close] == ["loc_box"] and pkg.close[0].type == "LOCATED_AT"
+    assert pkg.close[0].valid_to_chapter == 4 and rejected == []
+
+
+def test_putting_an_item_down_closes_its_holder_edge():
+    held = OpenEdge("hold_box", "HOLDS", "lan", "box")
+    pkg, _ = _item_package(
+        [_edge(type="LOCATED_AT", source="box", target="ben_do")], [held])
+    assert [c.id for c in pkg.close] == ["hold_box"] and pkg.close[0].type == "HOLDS"
+
+
+def test_model_closing_the_same_edge_is_not_duplicated():
+    placed = OpenEdge("loc_box", "LOCATED_AT", "box", "ben_do")
+    pkg, _ = _item_package(
+        [_edge(type="HOLDS", source="lan", target="box")], [placed], close=["loc_box"])
+    assert [c.id for c in pkg.close] == ["loc_box"]
+
+
+def test_a_character_taking_a_place_does_not_close_what_they_hold():
+    held = OpenEdge("hold_box", "HOLDS", "lan", "box")
+    pkg, _ = _item_package(
+        [_edge(type="LOCATED_AT", source="lan", target="ben_do")], [held])
+    assert pkg.close == []
+
+
+def test_a_rejected_edge_closes_nothing():
+    placed = OpenEdge("loc_box", "LOCATED_AT", "box", "ben_do")
+    pkg, _ = _item_package(
+        [_edge(type="HOLDS", source="khong_co", target="box")], [placed])
+    assert pkg.close == []

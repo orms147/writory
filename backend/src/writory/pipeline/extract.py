@@ -275,6 +275,22 @@ def to_package(
             rejected.append((f"close {cid}", "không phải cạnh đang hiệu lực"))
             continue
         close.append(CloseSpec(type=open_by_id[cid].type, id=cid, valid_to_chapter=chapter))
+    # Đồ vật chỉ có một chỗ (D-90): có người giữ thì hết "ở nơi", đặt xuống nơi thì hết "được giữ".
+    # Model hay ghi cạnh mới mà quên đóng cạnh kia, nên đóng bằng code.
+    closed = {c.id for c in close}
+    for e in edges:
+        if e.type == "HOLDS":
+            opposite, item = "LOCATED_AT", e.target
+        elif e.type == "LOCATED_AT" and known[e.source].label == "Item":
+            opposite, item = "HOLDS", e.source
+        else:
+            continue
+        for o in open_edges:
+            if o.type != opposite or o.id in closed:
+                continue
+            if (o.source if opposite == "LOCATED_AT" else o.target) == item:
+                close.append(CloseSpec(type=o.type, id=o.id, valid_to_chapter=chapter))
+                closed.add(o.id)
     return ChangePackage(commit_id=commit_id, edges=edges, close=close), rejected
 
 

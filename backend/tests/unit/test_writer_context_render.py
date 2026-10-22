@@ -6,6 +6,7 @@ from writory.config import load_config
 from writory.graph.context import (
     CharacterInfo,
     FactInfo,
+    ItemInfo,
     Knower,
     LieInfo,
     NeighborInfo,
@@ -132,4 +133,46 @@ def test_every_player_text_position_is_wrapped():
     for tag in tags:
         marker = f"[PLAYER-{tag}]"
         assert not any(marker in p for p in raw), f"{marker} đi ra trần"
+        assert any(isinstance(p, UserAuthored) and marker in p.text for p in parts), marker
+
+
+# --- đồ vật quan trọng: ai giữ / ở đâu, từ chương nào (D-90) ---------------------------------------
+
+
+def _with_items(*items: ItemInfo) -> WriterContext:
+    base = _ctx(protagonist_user_authored=False)
+    return WriterContext(**{**base.__dict__, "items": items})
+
+
+def test_items_section_states_holder_or_place_and_since_chapter():
+    """Hồi quy ky-ao-vua-quotes-1: mảnh vỡ do Lục Tinh Uyên giữ từ đầu, nhưng người viết không thấy vì
+    nhân vật đó vắng mặt, nên tả nó nằm dưới nền đài rồi lại trong tay bà."""
+    text = _text(render_writer_context(_with_items(
+        ItemInfo("shard", Text("Mảnh Vỡ Thần Khí", False), Text("Lục Tinh Uyên", False), None, 0),
+        ItemInfo("ledger", Text("Sổ tế cũ", False), None, Text("Đài Tế Cổ", False), 9),
+    )))
+    section = text.split("### Đồ vật quan trọng", 1)[1].split("###", 1)[0]
+    assert "Mảnh Vỡ Thần Khí" in section and "Lục Tinh Uyên giữ" in section
+    assert "từ chương 0" in section
+    assert "Sổ tế cũ" in section and "ở Đài Tế Cổ" in section and "từ chương 9" in section
+    # Nằm trong phần sự thật cần tôn trọng, trước phần gợi ý.
+    assert text.index("Sự thật cần tôn trọng") < text.index("### Đồ vật quan trọng") < text.index(
+        "Gợi ý có thể nhắc tới")
+
+
+def test_no_items_means_no_items_section():
+    assert "Đồ vật quan trọng" not in _text(render_writer_context(_ctx()))
+
+
+def test_items_section_wraps_player_text():
+    def ua(tag):
+        return Text(f"[PLAYER-{tag}]", True)
+
+    parts = render_writer_context(_with_items(
+        ItemInfo("a", ua("item"), ua("holder"), None, 1),
+        ItemInfo("b", ua("item2"), None, ua("place"), 2)))
+    raw = [p for p in parts if isinstance(p, str)]
+    for tag in ("item", "holder", "item2", "place"):
+        marker = f"[PLAYER-{tag}]"
+        assert not any(marker in p for p in raw), marker
         assert any(isinstance(p, UserAuthored) and marker in p.text for p in parts), marker
