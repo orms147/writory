@@ -139,6 +139,17 @@ def _at_most_one(current: ChangePackage, chapter: int, after: GraphState) -> lis
                 GuardKind.AT_MOST_ONE, [r.id for r in rows],
                 f"{what} cùng hiệu lực ở chương {chapter}; cạnh cũ phải được đóng trong gói",
             ))
+    # Đồ vật chỉ có một chỗ: người giữ HOẶC nơi chốn, không cả hai (D-90).
+    touched = items | {e.target for e in current.edges if e.type == "HOLDS"}
+    for item in sorted(touched):
+        held = after.edges_at("HOLDS", chapter, target_id=item)
+        placed = after.edges_at("LOCATED_AT", chapter, source_id=item)
+        if held and placed:
+            issues.append(_issue(
+                GuardKind.AT_MOST_ONE, [r.id for r in (*held, *placed)],
+                f"đồ vật {item} vừa có người giữ vừa ở một nơi ở chương {chapter}; "
+                "đồ vật có người giữ thì ở cùng người đó, đặt xuống thì đóng cạnh HOLDS",
+            ))
     return issues
 
 

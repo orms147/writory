@@ -69,7 +69,8 @@ log = logging.getLogger(__name__)
 # Đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49). setup-4: luật id có dạng và
 # ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54). setup-5: `protects` của bí mật về
 # danh tính (D-61). setup-6: `known_by` chỉ gồm nhân vật khác, kể cả với bối cảnh chung (D-76).
-PROMPT_VERSION = "setup-7"
+# setup-8: đồ vật có người giữ HOẶC nơi chốn, không cả hai (D-90).
+PROMPT_VERSION = "setup-8"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -879,8 +880,9 @@ _LABEL_SECTIONS = {
 _EDGE_NOTES = {
     "RELATES_TO": "`kind` như bạn, thù, thầy trò, người yêu; `score` từ -100 đến 100; có hướng, "
                   "mỗi chiều một cạnh",
-    "LOCATED_AT": "mỗi thứ ở một nơi",
-    "HOLDS": "đồ vật đang giữ; mỗi đồ vật một người giữ",
+    "LOCATED_AT": "mỗi thứ ở một nơi; đồ vật có người giữ thì không khai LOCATED_AT",
+    "HOLDS": "đồ vật đang giữ; mỗi đồ vật một người giữ; mỗi đồ vật chỉ có người giữ HOẶC nơi "
+             "chốn, không cả hai",
     "MEMBER_OF": "nhân vật là thành viên của phe",
 }
 
@@ -1007,6 +1009,8 @@ def _edge_problems(
             places[e.source] += 1
     problems += [f"đồ vật {i} có {n} người giữ" for i, n in holders.items() if n > 1]
     problems += [f"{i} ở {n} nơi cùng lúc" for i, n in places.items() if n > 1]
+    problems += [f"đồ vật {i} vừa có người giữ vừa ở một nơi (chỉ được một trong hai)"
+                 for i in holders if places[i]]
     for pid in protagonists:
         if reveals[pid] != 1:
             problems.append(f"nhân vật chính {pid} phải có đúng một REVEALED_TO_PLAYER ở chương 0 "

@@ -9,6 +9,7 @@ from writory.graph import ChangePackage, read_sample
 from writory.guard import GuardKind, Severity, check_scene_package
 from writory.guard.bench_b import SCENARIOS, load_scenarios, run, run_case
 from writory.guard.state import EmptyState, OverlayState
+from writory.pipeline.story_plan import StoryPlan
 
 SAMPLE = read_sample()
 SCEN = load_scenarios(SCENARIOS)
@@ -133,3 +134,68 @@ def test_item_held_by_character_located_elsewhere_is_not_flagged():
         chapter=4, current=current, earlier=[], committed=committed(3),
         plan=SCEN.plan, config=SCEN.config,
     ) == []
+
+
+# --- đồ vật chỉ có một chỗ: người giữ HOẶC nơi chốn (D-90) --------------------------------------
+
+
+def item_world(*edges: dict) -> OverlayState:
+    """Nền chương 3 của truyện mẫu cộng cạnh thử (ở chương 3). Đồ vật `box` chưa có trong mẫu."""
+    base = pkg(nodes=[{"id": "box", "label": "Item", "name": "Hộp đá"},
+                      {"id": "ben_do", "label": "Location", "name": "Bến đò"}], edges=list(edges))
+    return OverlayState(committed(3), [base])
+
+
+def issues_of(current: ChangePackage, world: OverlayState) -> list:
+    return check_scene_package(chapter=4, current=current, earlier=[], committed=world,
+                               plan=PLAN_NONE, config=load_config().guard)
+
+
+PLAN_NONE = StoryPlan.model_validate({"acts": [{"name": "a", "from_chapter": 1, "to_chapter": 12}]})
+
+
+def test_item_that_gets_a_holder_while_still_at_a_place_is_flagged():
+    """Hồi quy ky-ao-vua-quotes-1: mảnh vỡ vừa nằm dưới nền đài vừa do một người giữ, nên văn tả nó
+    ở hai chỗ lẫn lộn. Đồ vật có người giữ thì ở cùng người đó."""
+    world = item_world({"type": "LOCATED_AT", "from": "box", "to": "ben_do", "valid_from_chapter": 3})
+    take = pkg(edges=[{"type": "HOLDS", "from": "lan", "to": "box", "valid_from_chapter": 4}])
+    [issue] = issues_of(take, world)
+    assert issue.kind is GuardKind.AT_MOST_ONE and issue.severity is Severity.REWRITE
+    assert set(issue.ids) == {"LOCATED_AT:box>ben_do@3", "HOLDS:lan>box@4"}
+    assert "vừa có người giữ vừa ở một nơi" in issue.detail
+
+
+def test_item_put_down_while_still_held_is_flagged():
+    world = item_world({"type": "HOLDS", "from": "lan", "to": "box", "valid_from_chapter": 3})
+    drop = pkg(edges=[{"type": "LOCATED_AT", "from": "box", "to": "ben_do", "valid_from_chapter": 4}])
+    [issue] = issues_of(drop, world)
+    assert issue.kind is GuardKind.AT_MOST_ONE
+    assert set(issue.ids) == {"HOLDS:lan>box@3", "LOCATED_AT:box>ben_do@4"}
+
+
+def test_closing_the_old_position_in_the_same_package_is_fine():
+    world = item_world({"type": "LOCATED_AT", "from": "box", "to": "ben_do", "valid_from_chapter": 3})
+    take = pkg(edges=[{"type": "HOLDS", "from": "lan", "to": "box", "valid_from_chapter": 4}],
+               close=[{"type": "LOCATED_AT", "id": "LOCATED_AT:box>ben_do@3", "valid_to_chapter": 4}])
+    assert issues_of(take, world) == []
+    drop_world = item_world({"type": "HOLDS", "from": "lan", "to": "box", "valid_from_chapter": 3})
+    drop = pkg(edges=[{"type": "LOCATED_AT", "from": "box", "to": "ben_do", "valid_from_chapter": 4}],
+               close=[{"type": "HOLDS", "id": "HOLDS:lan>box@3", "valid_to_chapter": 4}])
+    assert issues_of(drop, drop_world) == []
+
+
+def test_a_character_may_hold_an_item_and_be_at_a_place():
+    """Chỉ đồ vật có một chỗ. Nhân vật vừa ở nơi chốn vừa giữ đồ vật là bình thường."""
+    world = item_world({"type": "LOCATED_AT", "from": "lan", "to": "ben_do", "valid_from_chapter": 3})
+    take = pkg(edges=[{"type": "HOLDS", "from": "lan", "to": "box", "valid_from_chapter": 4}])
+    assert issues_of(take, world) == []
+
+
+def test_sample_story_never_has_an_item_both_held_and_placed():
+    """Truyện mẫu dựng tay là chuẩn: luật mới không được báo gì trên nó."""
+    for chapter in SAMPLE.chapters:
+        state = committed(chapter.number)
+        for item in {e.target for e in chapter.package.edges if e.type == "HOLDS"}:
+            held = state.edges_at("HOLDS", chapter.number, target_id=item)
+            placed = state.edges_at("LOCATED_AT", chapter.number, source_id=item)
+            assert not (held and placed), (chapter.number, item)

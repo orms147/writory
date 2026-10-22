@@ -548,6 +548,11 @@ INVALID_BUILDS = {
     "character_in_two_places": {"edges": lambda e: e + [{"type": "LOCATED_AT", "source": "ha_ba_tung",
                                                          "target": "nui_hac_phong", "kind": None,
                                                          "score": None}]},
+    # Đồ vật chỉ có một chỗ (D-90): đã có người giữ thì không thêm nơi chốn.
+    "item_held_and_placed": {"edges": lambda e: e + [{"type": "LOCATED_AT",
+                                                      "source": "kiem_thiet_van",
+                                                      "target": "lac_ha", "kind": None,
+                                                      "score": None}]},
     "relation_without_score": {"edges": lambda e: [e[2] | {"score": None}] + e[:2] + e[3:]},
     "relation_score_out_of_range": {"edges": lambda e: [e[2] | {"score": 150}] + e[:2] + e[3:]},
     "duplicate_relation": {"edges": lambda e: e + [e[2]]},
@@ -836,7 +841,7 @@ async def test_other_rules_still_get_the_repair_and_the_dropped_knows_is_not_a_p
 def test_build_prompt_says_background_knowledge_is_not_known_by_the_protagonist():
     """Đề nói rõ: kể cả bối cảnh chung nhân vật chính hẳn đã biết, không ghi `protagonist` vào
     `known_by` (setup-6)."""
-    assert PROMPT_VERSION == "setup-7"
+    assert PROMPT_VERSION == "setup-8"
     assert f"`{PROTAGONIST_ID}`" in BUILD_TASK and "`known_by`" in BUILD_TASK
     assert "bối cảnh chung" in BUILD_TASK
     assert "chỉ ghi các nhân vật khác" in BUILD_TASK
@@ -1149,3 +1154,19 @@ def test_build_prompt_asks_for_one_main_question_per_must_resolve_thread():
     một câu hỏi chính. Chỉ có đề, không kiểm bằng code: code không đọc được nghĩa của "vế"."""
     assert "đúng một câu hỏi chính" in BUILD_TASK
     assert "không ghép hai việc" in BUILD_TASK
+
+
+def test_initial_problems_flags_an_item_that_is_both_held_and_placed():
+    """Hồi quy ky-ao-vua-quotes-1 (D-90): mảnh vỡ vừa ở nơi chốn vừa có người giữ ngay từ chương 0,
+    nên văn chương sau tả nó ở hai chỗ."""
+    setup = _valid_setup()
+    pkg = _with(setup.package, edges=[{"type": "LOCATED_AT", "from": "kiem_thiet_van",
+                                       "to": "lac_ha", "valid_from_chapter": 0}])
+    [problem] = [p for p in initial_problems(setup.plan, pkg, level=SHORT_LEVEL)
+                 if "kiem_thiet_van" in p]
+    assert "vừa có người giữ vừa ở một nơi" in problem
+
+
+def test_build_prompt_tells_the_model_an_item_is_held_or_placed_never_both():
+    rules = edge_rules()
+    assert "người giữ HOẶC nơi chốn" in rules and "có người giữ thì không khai LOCATED_AT" in rules

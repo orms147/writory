@@ -1,0 +1,106 @@
+{
+  "bench": "run",
+  "label": "ky-ao-vua-items-2",
+  "started": "2026-10-22T11:02:30+07:00",
+  "finished": "2026-10-22T11:19:04+07:00",
+  "status": "done",
+  "exit_code": 0,
+  "stop": null,
+  "dry_run": false,
+  "git": {
+    "commit": "236705fa32084fa281edb28819a4df6161a2cbfc",
+    "dirty": true
+  },
+  "story_id": "run-20261022-ky-ao-vua-items-2-71244d8c",
+  "seed": 20261021,
+  "budget_usd": 0.13,
+  "chapters_arg": 10,
+  "scenario": {
+    "path": "evals/scenarios/story_run/ky-ao-vua.yaml",
+    "sha256": "6aeab8e2624b443e200f15d3deba8a45bb9e8a0e3c16163e03846c6773bdfb3d",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "kỳ ảo phương Đông, tu tiên",
+        "era": "hậu đại chiến, các tiên môn dựng thành trên những hòn đảo bay, tranh nhau mảnh vỡ của một thần khí cổ",
+        "voice": "hùng tráng mà lạnh, nhiều mưu kế, đối đáp sắc",
+        "darkness": "vừa phải, có phản bội, hy sinh và chết chóc, không tả máu me"
+      },
+      "length_level": "medium",
+      "naming": {
+        "names": "han_viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261021,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "67e9b1cac5722eb56997e0ac9d76579ef7d1a8bf139dc13fbecaf101aad0840c",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "e11e424877f78f9fc8ddc74a4466e5582c99a28ec39d4f6a2889b98c36aa9bbd",
+      "models.yaml": "3a1e3dcc3f1b477cbb2e70532b9587871568deb17cf8a4bde8f741b31b4de81d",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "3d81a344728d4d5514259ed83823ff4eebb156207b5b835046efb8dd994992f4"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "prompt_versions": {
+    "setup": "setup-8",
+    "outline": "outline-6",
+    "writer": "writer-6",
+    "extract": "extract-4",
+    "choices": "choices-2"
+  },
+  "style_guide_sha256": "58292c7ff5fc0db6aa95fa1a31bba158f0838ac7dc7bb9d04d32f3312a7ffffa",
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}

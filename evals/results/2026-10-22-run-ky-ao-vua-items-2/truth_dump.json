@@ -1,0 +1,4194 @@
+{
+ "story_id": "run-20261022-ky-ao-vua-items-2-71244d8c",
+ "plan": {
+  "acts": [
+   {
+    "name": "Trở về đảo hoang",
+    "from_chapter": 1,
+    "to_chapter": 3
+   },
+   {
+    "name": "Dấu vết dưới ruộng đá",
+    "from_chapter": 4,
+    "to_chapter": 6
+   },
+   {
+    "name": "Mưu cục giữa quần đảo",
+    "from_chapter": 7,
+    "to_chapter": 9
+   },
+   {
+    "name": "Thần khí và lựa chọn",
+    "from_chapter": 10,
+    "to_chapter": 12
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_nguon_goc_vat_chung",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 8,
+    "leak_terms": [
+     [
+      "Mảnh Ngọc Khắc",
+      "không phải nơi chôn mảnh vỡ thần khí"
+     ],
+     [
+      "Vân Kiều Môn",
+      "đã biết tàn tích dưới đảo"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_nguoi_danh_chuong",
+    "reveal_from_chapter": 2,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Phùng Tử Nghi",
+      "đánh thức chuông"
+     ],
+     [
+      "người gác tháp",
+      "cảnh báo dân thôn"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "giai_cuu_doan_khuong",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "chuong_thap",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "y_nghia_manh_ngoc",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 8
+   },
+   {
+    "thread_id": "so_phan_dan_thon",
+    "resolve_from_chapter": 8,
+    "resolve_to_chapter": 12
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Tiếng chuông báo động biến cuộc di dời tưởng như đã định thành một cuộc khủng hoảng công khai trong thôn.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Lục Hoài Cẩn tìm được manh mối đủ sức làm lung lay cáo buộc nhằm vào Đoàn Khương.",
+    "from_chapter": 5,
+    "to_chapter": 6
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Các môn phái buộc phải lộ rõ ý định khi manh mối dưới ruộng đá xuất hiện trước nhiều phía.",
+    "from_chapter": 8,
+    "to_chapter": 9
+   },
+   {
+    "kind": "climax",
+    "goal": "Cuộc đối đầu tại tàn tích buộc Lục Hoài Cẩn chọn giữa phơi bày chứng cứ và ngăn dân thôn trở thành vật hy sinh.",
+    "from_chapter": 10,
+    "to_chapter": 11
+   },
+   {
+    "kind": "ending",
+    "goal": "Cuộc khai quật kết thúc với một số phận được định đoạt cho dân Lạc Tinh Thôn và mảnh ngọc.",
+    "from_chapter": 12,
+    "to_chapter": 12
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 10,
+  "total_chapters": 12,
+  "secrets": [
+   {
+    "fact_id": "fact_nguon_goc_vat_chung",
+    "text": "Mảnh Ngọc Khắc ghi lại việc Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 8,
+    "revealed_chapter": 5
+   },
+   {
+    "fact_id": "fact_nguoi_danh_chuong",
+    "text": "Phùng Tử Nghi đã đánh thức chuông ở Tháp Báo Động để cảnh báo dân thôn về một cuộc khám xét sắp tới.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "revealed_chapter": 3
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "giai_cuu_doan_khuong",
+    "description": "Đoàn Khương có được đưa ra khỏi nơi giam giữ hay không?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 4,
+    "resolved_chapter": 2
+   },
+   {
+    "thread_id": "chuong_thap",
+    "description": "Ai đã đánh thức chuông ở Tháp Báo Động?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": 3
+   },
+   {
+    "thread_id": "y_nghia_manh_ngoc",
+    "description": "Mảnh Ngọc Khắc chứng minh điều gì về cuộc khai quật?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 8,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "so_phan_dan_thon",
+    "description": "Dân Lạc Tinh Thôn có giữ được quyền ở lại đảo hay không?",
+    "user_authored": false,
+    "from_chapter": 8,
+    "to_chapter": 12,
+    "resolved_chapter": 8
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-ky-ao-vua-items-2-71244d8c-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "陆怀瑾",
+      "personality": "Lanh trí, giỏi quan sát và luôn giữ vẻ nhã nhặn ngay cả khi đang thăm dò đối thủ. Ngươi thường tỏ ra vô tư, nhưng hiếm khi tin trọn vẹn lời của bất kỳ ai.",
+      "backstory": "Ngươi từng theo chân các đoàn buôn qua những đảo bay, học được cách đọc thái độ và lần dấu tin tức giữa những lời đồn. Khi trở về Lạc Tinh Thôn, ngươi thấy sứ giả đã đặt dân làng trước một cuộc di dời không thể thương lượng. Vụ bắt giữ người bạn cũ kéo ngươi vào cuộc điều tra về vật chứng, nơi mỗi lời khai đều có thể che giấu một cái bẫy.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "Khương"
+      ],
+      "personality": "Cứng cỏi, thẳng thắn và coi trọng người cùng thôn; khi bị dồn ép lại càng ít chịu nhượng bộ.",
+      "backstory": "Lớn lên cùng Lục Hoài Cẩn ở Lạc Tinh Thôn, Đoàn Khương ở lại chăm nom ruộng đá sau khi bạn mình rời đảo. Gần đây, người này bị bắt vì bị cho là cất giấu vật chứng liên quan đến thần khí cổ."
+     }
+    },
+    {
+     "id": "tran_van_tu",
+     "label": "Character",
+     "props": {
+      "name": "Trần Văn Tự",
+      "aliases": [
+       "Trần sứ giả"
+      ],
+      "personality": "Điềm đạm, kín kẽ, luôn dùng lời lẽ nhã nhặn để đặt đối phương vào thế phải giải thích.",
+      "backstory": "Là sứ giả của Vân Kiều Môn, được giao truyền lệnh di dời dân Lạc Tinh Thôn và giám sát việc khai quật tàn tích."
+     }
+    },
+    {
+     "id": "ta_mac",
+     "label": "Character",
+     "props": {
+      "name": "Tạ Mặc",
+      "aliases": [
+       "ông Tạ"
+      ],
+      "personality": "Thận trọng, hay nghi ngờ lời người khác và nhớ dai những món nợ cũ.",
+      "backstory": "Từng giữ miếu cũ trên đảo, Tạ Mặc đã chứng kiến nhiều đoàn người đến dò hỏi tàn tích nhưng chưa từng rời thôn."
+     }
+    },
+    {
+     "id": "luu_nguyet_thanh",
+     "label": "Character",
+     "props": {
+      "name": "Lưu Nguyệt Thanh",
+      "aliases": [
+       "Lưu chấp sự"
+      ],
+      "personality": "Sắc sảo, kiên nhẫn và giỏi che ý định sau những câu hỏi tưởng như vô thưởng vô phạt.",
+      "backstory": "Là chấp sự của Thanh Hư Môn, Lưu Nguyệt Thanh tới quần đảo để giám sát cuộc khai quật và giữ cho lợi ích của môn phái không bị các đối thủ lấn át."
+     }
+    },
+    {
+     "id": "phung_tu_nghi",
+     "label": "Character",
+     "props": {
+      "name": "Phùng Tử Nghi",
+      "aliases": [
+       "người gác tháp"
+      ],
+      "personality": "Lặng lẽ, cẩn trọng và sẵn lòng chịu tiếng xấu để bảo vệ người yếu thế.",
+      "backstory": "Phùng Tử Nghi trông nom ngọn tháp báo động bỏ hoang ở rìa thôn, nơi những dấu tích cũ vẫn còn vận hành theo cách không ai trong làng hiểu rõ."
+     }
+    },
+    {
+     "id": "lac_tinh_thon",
+     "label": "Location",
+     "props": {
+      "name": "Lạc Tinh Thôn",
+      "aliases": [
+       "thôn"
+      ],
+      "description": "Thôn nhỏ nằm trên một đảo bay xa, nơi dân cư sống bằng ruộng đá và việc trao đổi với các tiên môn."
+     }
+    },
+    {
+     "id": "ruong_da",
+     "label": "Location",
+     "props": {
+      "name": "Ruộng Đá",
+      "aliases": [
+       "thửa ruộng"
+      ],
+      "description": "Những thửa canh tác cằn cỗi phủ kín sườn đảo, bên dưới có các lớp đá cổ bị vùi lấp."
+     }
+    },
+    {
+     "id": "mien_cu",
+     "label": "Location",
+     "props": {
+      "name": "Miếu Cũ",
+      "aliases": [
+       "miếu"
+      ],
+      "description": "Ngôi miếu bỏ hoang nằm cạnh đường lên ruộng đá, lưu giữ những dấu khắc đã mòn."
+     }
+    },
+    {
+     "id": "thap_bao_dong",
+     "label": "Location",
+     "props": {
+      "name": "Tháp Báo Động",
+      "aliases": [
+       "tháp"
+      ],
+      "description": "Ngọn tháp cũ ở rìa đảo, có chiếc chuông từng dùng để báo nguy cho cả thôn."
+     }
+    },
+    {
+     "id": "doanh_trai_su_gia",
+     "label": "Location",
+     "props": {
+      "name": "Doanh Trại Sứ Giả",
+      "aliases": [
+       "doanh trại"
+      ],
+      "description": "Khu lều đóng tạm của đoàn sứ giả bên ngoài thôn, được canh phòng suốt ngày đêm."
+     }
+    },
+    {
+     "id": "vinh_phu_van",
+     "label": "Location",
+     "props": {
+      "name": "Vân Phù",
+      "aliases": [
+       "thành Vân Phù"
+      ],
+      "description": "Thành trì của Vân Kiều Môn, dựng trên một đảo bay lớn phía đông quần đảo."
+     }
+    },
+    {
+     "id": "van_kieu_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Vân Kiều Môn",
+      "aliases": [
+       "Vân Kiều"
+      ],
+      "description": "Tiên môn nắm quyền điều động đoàn sứ giả và muốn kiểm soát việc khai quật tàn tích dưới đảo."
+     }
+    },
+    {
+     "id": "thanh_hu_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Hư Môn",
+      "aliases": [
+       "Thanh Hư"
+      ],
+      "description": "Tiên môn đối địch với Vân Kiều Môn trong cuộc tranh giành các mảnh vỡ thần khí cổ."
+     }
+    },
+    {
+     "id": "dan_lac_tinh",
+     "label": "Faction",
+     "props": {
+      "name": "Dân Lạc Tinh",
+      "aliases": [
+       "dân thôn"
+      ],
+      "description": "Những cư dân đảo nhỏ muốn giữ nhà cửa và ruộng đá trước lệnh di dời."
+     }
+    },
+    {
+     "id": "manh_ngoc_khac",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh Ngọc Khắc",
+      "aliases": [
+       "mảnh ngọc"
+      ],
+      "description": "Mảnh ngọc sẫm màu có những đường khắc cổ, được xem là vật chứng trong cuộc tranh đoạt thần khí."
+     }
+    },
+    {
+     "id": "chuong_cu",
+     "label": "Item",
+     "props": {
+      "name": "Chuông Cũ",
+      "aliases": [
+       "chuông tháp"
+      ],
+      "description": "Chiếc chuông đồng trên tháp báo động có thể vang lên dù dây kéo đã mục."
+     }
+    },
+    {
+     "id": "lenh_di_doi",
+     "label": "Item",
+     "props": {
+      "name": "Lệnh Di Dời",
+      "aliases": [
+       "tờ lệnh"
+      ],
+      "description": "Văn thư đóng dấu của Vân Kiều Môn buộc dân thôn rời đảo trước khi khai quật."
+     }
+    },
+    {
+     "id": "fact_hau_chien",
+     "label": "Fact",
+     "props": {
+      "text": "Sau đại chiến, các tiên môn dựng thành trên những đảo bay và tranh giành mảnh vỡ của một thần khí cổ."
+     }
+    },
+    {
+     "id": "fact_lenh_khai_quat",
+     "label": "Fact",
+     "props": {
+      "text": "Vân Kiều Môn đã ra lệnh di dời dân Lạc Tinh Thôn để khai quật tàn tích dưới đảo."
+     }
+    },
+    {
+     "id": "fact_bat_giu",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khương đang bị giữ trong doanh trại sứ giả vì bị cáo buộc cất giấu vật chứng."
+     }
+    },
+    {
+     "id": "fact_vat_chung",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh Ngọc Khắc là vật chứng liên quan đến tranh đoạt thần khí cổ."
+     }
+    },
+    {
+     "id": "fact_nguon_goc_vat_chung",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh Ngọc Khắc ghi lại việc Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí."
+     }
+    },
+    {
+     "id": "fact_nguoi_danh_chuong",
+     "label": "Fact",
+     "props": {
+      "text": "Phùng Tử Nghi đã đánh thức chuông ở Tháp Báo Động để cảnh báo dân thôn về một cuộc khám xét sắp tới."
+     }
+    },
+    {
+     "id": "fact_manh_ngoc_duoi_ruong",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khương đã giấu Mảnh Ngọc Khắc dưới một phiến đá ở Ruộng Đá."
+     }
+    },
+    {
+     "id": "fact_muc_dich_khai_quat",
+     "label": "Fact",
+     "props": {
+      "text": "Lưu Nguyệt Thanh muốn dùng cuộc khai quật để giành quyền kiểm soát những dấu tích cổ trước Vân Kiều Môn."
+     }
+    },
+    {
+     "id": "giai_cuu_doan_khuong",
+     "label": "Thread",
+     "props": {
+      "description": "Đoàn Khương có được đưa ra khỏi nơi giam giữ hay không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "chuong_thap",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã đánh thức chuông ở Tháp Báo Động?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "y_nghia_manh_ngoc",
+     "label": "Thread",
+     "props": {
+      "description": "Mảnh Ngọc Khắc chứng minh điều gì về cuộc khai quật?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 8
+     }
+    },
+    {
+     "id": "so_phan_dan_thon",
+     "label": "Thread",
+     "props": {
+      "description": "Dân Lạc Tinh Thôn có giữ được quyền ở lại đảo hay không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 8,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "ke_gieo_bay",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đang khiến các lời khai về vật chứng mâu thuẫn nhau?",
+      "planted_chapter": 0,
+      "due_from_chapter": 6,
+      "due_to_chapter": 11
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khuong@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 75
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>protagonist@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 75
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "ta_mac",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ta_mac>doan_khuong@0",
+     "props": {
+      "kind": "người quen",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "ta_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>ta_mac@0",
+     "props": {
+      "kind": "người quen",
+      "score": 10
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "lac_tinh_thon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>lac_tinh_thon@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>doanh_trai_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_van_tu",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_van_tu>doanh_trai_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ta_mac",
+     "to": "mien_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ta_mac>mien_cu@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_nguyet_thanh",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_nguyet_thanh>doanh_trai_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "phung_tu_nghi",
+     "to": "thap_bao_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:phung_tu_nghi>thap_bao_dong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "manh_ngoc_khac",
+     "to": "ruong_da",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:manh_ngoc_khac>ruong_da@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "chuong_cu",
+     "to": "thap_bao_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:chuong_cu>thap_bao_dong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lenh_di_doi",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lenh_di_doi>doanh_trai_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "dan_lac_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>dan_lac_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "dan_lac_tinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>dan_lac_tinh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tran_van_tu",
+     "to": "van_kieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tran_van_tu>van_kieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luu_nguyet_thanh",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luu_nguyet_thanh>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hau_chien",
+     "to": "van_kieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hau_chien>van_kieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hau_chien",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hau_chien>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_hau_chien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_hau_chien@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_van_tu",
+     "to": "fact_hau_chien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_van_tu>fact_hau_chien@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ta_mac",
+     "to": "fact_hau_chien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ta_mac>fact_hau_chien@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_nguyet_thanh",
+     "to": "fact_hau_chien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_nguyet_thanh>fact_hau_chien@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tu_nghi",
+     "to": "fact_hau_chien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tu_nghi>fact_hau_chien@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_khai_quat",
+     "to": "van_kieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_khai_quat>van_kieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_khai_quat",
+     "to": "lac_tinh_thon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_khai_quat>lac_tinh_thon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_khai_quat",
+     "to": "lenh_di_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_khai_quat>lenh_di_doi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_lenh_khai_quat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_lenh_khai_quat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_van_tu",
+     "to": "fact_lenh_khai_quat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_van_tu>fact_lenh_khai_quat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ta_mac",
+     "to": "fact_lenh_khai_quat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ta_mac>fact_lenh_khai_quat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_nguyet_thanh",
+     "to": "fact_lenh_khai_quat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_nguyet_thanh>fact_lenh_khai_quat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_bat_giu",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_bat_giu>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_bat_giu",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_bat_giu>doanh_trai_su_gia@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_van_tu",
+     "to": "fact_bat_giu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_van_tu>fact_bat_giu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ta_mac",
+     "to": "fact_bat_giu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ta_mac>fact_bat_giu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_nguyet_thanh",
+     "to": "fact_bat_giu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_nguyet_thanh>fact_bat_giu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tu_nghi",
+     "to": "fact_bat_giu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tu_nghi>fact_bat_giu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vat_chung",
+     "to": "manh_ngoc_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vat_chung>manh_ngoc_khac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vat_chung",
+     "to": "van_kieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vat_chung>van_kieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vat_chung",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vat_chung>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_vat_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_vat_chung@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_nguyet_thanh",
+     "to": "fact_vat_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_nguyet_thanh>fact_vat_chung@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguon_goc_vat_chung",
+     "to": "manh_ngoc_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguon_goc_vat_chung>manh_ngoc_khac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguon_goc_vat_chung",
+     "to": "van_kieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguon_goc_vat_chung>van_kieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguon_goc_vat_chung",
+     "to": "lac_tinh_thon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguon_goc_vat_chung>lac_tinh_thon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_nguon_goc_vat_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_nguon_goc_vat_chung@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguoi_danh_chuong",
+     "to": "phung_tu_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguoi_danh_chuong>phung_tu_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguoi_danh_chuong",
+     "to": "chuong_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguoi_danh_chuong>chuong_cu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguoi_danh_chuong",
+     "to": "thap_bao_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguoi_danh_chuong>thap_bao_dong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nguoi_danh_chuong",
+     "to": "lac_tinh_thon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nguoi_danh_chuong>lac_tinh_thon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_tu_nghi",
+     "to": "fact_nguoi_danh_chuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_tu_nghi>fact_nguoi_danh_chuong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_manh_ngoc_duoi_ruong",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_manh_ngoc_duoi_ruong>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_manh_ngoc_duoi_ruong",
+     "to": "manh_ngoc_khac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_manh_ngoc_duoi_ruong>manh_ngoc_khac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_manh_ngoc_duoi_ruong",
+     "to": "ruong_da",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_manh_ngoc_duoi_ruong>ruong_da@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_manh_ngoc_duoi_ruong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_manh_ngoc_duoi_ruong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_muc_dich_khai_quat",
+     "to": "luu_nguyet_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_muc_dich_khai_quat>luu_nguyet_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_muc_dich_khai_quat",
+     "to": "thanh_hu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_muc_dich_khai_quat>thanh_hu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_muc_dich_khai_quat",
+     "to": "van_kieu_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_muc_dich_khai_quat>van_kieu_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luu_nguyet_thanh",
+     "to": "fact_muc_dich_khai_quat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luu_nguyet_thanh>fact_muc_dich_khai_quat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: 陆怀瑾",
+      "known_as": "陆怀瑾"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-ecc7fa2234d3",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "chuong_cu",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:chuong_cu>ch1@1",
+     "props": {
+      "quote": "Chuông ấy phát ra từ đó.",
+      "known_as": "Chuông ấy"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thap_bao_dong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thap_bao_dong>ch1@1",
+     "props": {
+      "quote": "Một đường men qua ruộng đá, hướng về Tháp Báo Động; đường kia dẫn thẳng tới doanh trại sứ giả.",
+      "known_as": "Tháp Báo Động"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_khuong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_khuong>ch1@1",
+     "props": {
+      "quote": "Đoàn Khương còn bị nhốt trong đó, giờ không đi thì đợi đến bao giờ?",
+      "known_as": "Đoàn Khương"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ruong_da",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ruong_da>ch1@1",
+     "props": {
+      "quote": "Một đường men qua ruộng đá, hướng về Tháp Báo Động; đường kia dẫn thẳng tới doanh trại sứ giả.",
+      "known_as": "ruộng đá"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lac_tinh_thon",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lac_tinh_thon>ch1@1",
+     "props": {
+      "quote": "Cửa nhà bật mở khắp thôn.",
+      "known_as": "thôn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ta_mac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ta_mac>ch1@1",
+     "props": {
+      "quote": "Ông Tạ đứng bên giếng ho khan một tiếng.",
+      "known_as": "Ông Tạ"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "mien_cu",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:mien_cu>ch1@1",
+     "props": {
+      "quote": "Tôi nghe tiếng bước chân phía sau miếu cũ.",
+      "known_as": "miếu cũ"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "ruong_da",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>ruong_da@1",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doanh_trai_su_gia",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doanh_trai_su_gia>ch1@1",
+     "props": {
+      "quote": "Người cầm đèn đi đầu nhìn qua vai tôi về phía doanh trại.",
+      "known_as": "doanh trại"
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>lac_tinh_thon@0",
+     "valid_to_chapter": 1
+    }
+   ]
+  },
+  "2": {
+   "commit_id": "ch2-b8b4359ddae2",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_nguyet_thanh",
+     "to": "ruong_da",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_nguyet_thanh>ruong_da@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_bat_giu",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_bat_giu@2",
+     "props": {
+      "how": "tự biết",
+      "quote": "Cứ đứng đây mãi thì Khương ca còn bị nhốt!"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luu_nguyet_thanh",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luu_nguyet_thanh>ch2@2",
+     "props": {
+      "quote": "Từ phía thôn, Lưu Nguyệt Thanh đi tới.",
+      "known_as": "Lưu Nguyệt Thanh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dan_lac_tinh",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dan_lac_tinh>ch2@2",
+     "props": {
+      "quote": "Người làng đứng chen dưới những bờ đá thấp, vài người còn cầm nguyên cuốc xẻng.",
+      "known_as": "Người làng"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lenh_di_doi",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lenh_di_doi>ch2@2",
+     "props": {
+      "quote": "Lệnh Di Dời vẫn nằm trong doanh trại; tiếng chuông đã vang lên, lính lại im lặng.",
+      "known_as": "Lệnh Di Dời"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_khuong",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_khuong>ch2@2",
+     "props": {
+      "quote": "Cứ đứng đây mãi thì Khương ca còn bị nhốt!",
+      "known_as": "Khương ca"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "ruong_da",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>ruong_da@2",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tran_van_tu",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tran_van_tu>ch2@2",
+     "props": {
+      "quote": "Trần Văn Tự đứng trước, sau lưng ông ta là mấy tên lính mang đao bên hông.",
+      "known_as": "Trần Văn Tự"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_kieu_mon",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_kieu_mon>ch2@2",
+     "props": {
+      "quote": "Chúng ta đến kiểm tra Ruộng Đá. Theo lệnh của Vân Kiều Môn, dân làng không được cản trở.",
+      "known_as": "Vân Kiều Môn"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "giai_cuu_doan_khuong",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:giai_cuu_doan_khuong>ch2@2",
+     "props": {
+      "quote": "Chẳng mấy chốc, bóng họ hiện lại sau khúc đường, kẹp giữa là Đoàn Khương."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:doan_khuong>doanh_trai_su_gia@0",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-44f821ed0351",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_nguoi_danh_chuong",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_nguoi_danh_chuong@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "- Là ta đánh thức chuông."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "chuong_thap",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:chuong_thap>ch3@3",
+     "props": {
+      "quote": "- Là ta đánh thức chuông."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phung_tu_nghi",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phung_tu_nghi>ch3@3",
+     "props": {
+      "quote": "Phùng Tử Nghi bước chậm, vạt áo sẫm màu vướng bụi cỏ.",
+      "known_as": "Phùng Tử Nghi"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_nguoi_danh_chuong",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_nguoi_danh_chuong>ch3@3",
+     "props": {
+      "quote": "- Là ta đánh thức chuông."
+     }
+    }
+   ],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-9b7992d4cd1b",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "phung_tu_nghi",
+     "to": "ruong_da",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:phung_tu_nghi>ruong_da@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_van_tu",
+     "to": "ruong_da",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_van_tu>ruong_da@4",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:phung_tu_nghi>thap_bao_dong@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tran_van_tu>doanh_trai_su_gia@0",
+     "valid_to_chapter": 4
+    }
+   ]
+  },
+  "5": {
+   "commit_id": "ch5-bee03603ba49",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_nguon_goc_vat_chung",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_nguon_goc_vat_chung@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "manh_ngoc_khac",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:manh_ngoc_khac>ch5@5",
+     "props": {
+      "quote": "bụi đất rơi xuống khe, để lộ một mảnh ngọc nằm im trong hõm tối.",
+      "known_as": "mảnh ngọc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_nguon_goc_vat_chung",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_nguon_goc_vat_chung>ch5@5",
+     "props": {
+      "quote": "Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "y_nghia_manh_ngoc",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:y_nghia_manh_ngoc>ch5@5",
+     "props": {
+      "quote": "Mảnh Ngọc Khắc chứng minh cuộc khai quật ở tàn tích ấy không thể được biện minh bằng việc tìm mảnh vỡ thần khí."
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-2dc94667d671",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>doan_khuong@6",
+     "props": {
+      "feeling": "nóng lòng"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_van_tu",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_van_tu>doanh_trai_su_gia@6",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tran_van_tu>ruong_da@4",
+     "valid_to_chapter": 6
+    }
+   ]
+  },
+  "7": {
+   "commit_id": "ch7-db333007ba85",
+   "nodes": [
+    {
+     "id": "ch7",
+     "label": "Chapter",
+     "props": {
+      "number": 7
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>doan_khuong@7",
+     "props": {
+      "feeling": "lo lắng và quyết tâm"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "manh_ngoc_khac",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>manh_ngoc_khac@7",
+     "props": {
+      "feeling": "lo lắng và quyết tâm"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>doanh_trai_su_gia@7",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_nguyet_thanh",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_nguyet_thanh>doanh_trai_su_gia@7",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "doanh_trai_su_gia",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>doanh_trai_su_gia@7",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "FEELS",
+     "id": "FEELS:protagonist>doan_khuong@6",
+     "valid_to_chapter": 7
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>ruong_da@1",
+     "valid_to_chapter": 7
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:luu_nguyet_thanh>ruong_da@2",
+     "valid_to_chapter": 7
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:doan_khuong>ruong_da@2",
+     "valid_to_chapter": 7
+    }
+   ]
+  },
+  "8": {
+   "commit_id": "ch8-18d827a44ba3",
+   "nodes": [
+    {
+     "id": "ch8",
+     "label": "Chapter",
+     "props": {
+      "number": 8
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "ruong_da",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>ruong_da@8",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luu_nguyet_thanh",
+     "to": "ruong_da",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luu_nguyet_thanh>ruong_da@8",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_van_tu",
+     "to": "ruong_da",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_van_tu>ruong_da@8",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lenh_di_doi",
+     "to": "ruong_da",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lenh_di_doi>ruong_da@8",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "so_phan_dan_thon",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:so_phan_dan_thon>ch8@8",
+     "props": {
+      "quote": "Dân Lạc Tinh Thôn được ở lại đảo."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thanh_hu_mon",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thanh_hu_mon>ch8@8",
+     "props": {
+      "quote": "Một đại diện Thanh Hư Môn khẽ vuốt phẳng tay áo.",
+      "known_as": "Thanh Hư Môn"
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>doanh_trai_su_gia@7",
+     "valid_to_chapter": 8
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:luu_nguyet_thanh>doanh_trai_su_gia@0",
+     "valid_to_chapter": 8
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:luu_nguyet_thanh>doanh_trai_su_gia@7",
+     "valid_to_chapter": 8
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tran_van_tu>doanh_trai_su_gia@6",
+     "valid_to_chapter": 8
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:lenh_di_doi>doanh_trai_su_gia@0",
+     "valid_to_chapter": 8
+    }
+   ]
+  },
+  "9": {
+   "commit_id": "ch9-b1f492ffd9d6",
+   "nodes": [
+    {
+     "id": "ch9",
+     "label": "Chapter",
+     "props": {
+      "number": 9
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  },
+  "10": {
+   "commit_id": "ch10-d626ddaae4a8",
+   "nodes": [
+    {
+     "id": "ch10",
+     "label": "Chapter",
+     "props": {
+      "number": 10
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "ke_gieo_bay",
+     "to": "ch10",
+     "valid_from_chapter": 10,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:ke_gieo_bay>ch10@10",
+     "props": {
+      "quote": "Sai lệch nằm ở cách chép của ta."
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 10,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch10": {
+    "label": "Chapter",
+    "props": {
+     "number": 10
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "ch7": {
+    "label": "Chapter",
+    "props": {
+     "number": 7
+    }
+   },
+   "ch8": {
+    "label": "Chapter",
+    "props": {
+     "number": 8
+    }
+   },
+   "ch9": {
+    "label": "Chapter",
+    "props": {
+     "number": 9
+    }
+   },
+   "chuong_cu": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chuông tháp"
+     ],
+     "name": "Chuông Cũ",
+     "description": "Chiếc chuông đồng trên tháp báo động có thể vang lên dù dây kéo đã mục."
+    }
+   },
+   "chuong_thap": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã đánh thức chuông ở Tháp Báo Động?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "dan_lac_tinh": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "dân thôn"
+     ],
+     "name": "Dân Lạc Tinh",
+     "description": "Những cư dân đảo nhỏ muốn giữ nhà cửa và ruộng đá trước lệnh di dời."
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lớn lên cùng Lục Hoài Cẩn ở Lạc Tinh Thôn, Đoàn Khương ở lại chăm nom ruộng đá sau khi bạn mình rời đảo. Gần đây, người này bị bắt vì bị cho là cất giấu vật chứng liên quan đến thần khí cổ.",
+     "aliases": [
+      "Khương"
+     ],
+     "personality": "Cứng cỏi, thẳng thắn và coi trọng người cùng thôn; khi bị dồn ép lại càng ít chịu nhượng bộ.",
+     "name": "Đoàn Khương"
+    }
+   },
+   "doanh_trai_su_gia": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "doanh trại"
+     ],
+     "name": "Doanh Trại Sứ Giả",
+     "description": "Khu lều đóng tạm của đoàn sứ giả bên ngoài thôn, được canh phòng suốt ngày đêm."
+    }
+   },
+   "fact_bat_giu": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khương đang bị giữ trong doanh trại sứ giả vì bị cáo buộc cất giấu vật chứng."
+    }
+   },
+   "fact_hau_chien": {
+    "label": "Fact",
+    "props": {
+     "text": "Sau đại chiến, các tiên môn dựng thành trên những đảo bay và tranh giành mảnh vỡ của một thần khí cổ."
+    }
+   },
+   "fact_lenh_khai_quat": {
+    "label": "Fact",
+    "props": {
+     "text": "Vân Kiều Môn đã ra lệnh di dời dân Lạc Tinh Thôn để khai quật tàn tích dưới đảo."
+    }
+   },
+   "fact_manh_ngoc_duoi_ruong": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khương đã giấu Mảnh Ngọc Khắc dưới một phiến đá ở Ruộng Đá."
+    }
+   },
+   "fact_muc_dich_khai_quat": {
+    "label": "Fact",
+    "props": {
+     "text": "Lưu Nguyệt Thanh muốn dùng cuộc khai quật để giành quyền kiểm soát những dấu tích cổ trước Vân Kiều Môn."
+    }
+   },
+   "fact_nguoi_danh_chuong": {
+    "label": "Fact",
+    "props": {
+     "text": "Phùng Tử Nghi đã đánh thức chuông ở Tháp Báo Động để cảnh báo dân thôn về một cuộc khám xét sắp tới."
+    }
+   },
+   "fact_nguon_goc_vat_chung": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh Ngọc Khắc ghi lại việc Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí."
+    }
+   },
+   "fact_vat_chung": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh Ngọc Khắc là vật chứng liên quan đến tranh đoạt thần khí cổ."
+    }
+   },
+   "giai_cuu_doan_khuong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Đoàn Khương có được đưa ra khỏi nơi giam giữ hay không?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 4
+    }
+   },
+   "ke_gieo_bay": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đang khiến các lời khai về vật chứng mâu thuẫn nhau?",
+     "due_from_chapter": 6,
+     "due_to_chapter": 11
+    }
+   },
+   "lac_tinh_thon": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "thôn"
+     ],
+     "name": "Lạc Tinh Thôn",
+     "description": "Thôn nhỏ nằm trên một đảo bay xa, nơi dân cư sống bằng ruộng đá và việc trao đổi với các tiên môn."
+    }
+   },
+   "lenh_di_doi": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "tờ lệnh"
+     ],
+     "name": "Lệnh Di Dời",
+     "description": "Văn thư đóng dấu của Vân Kiều Môn buộc dân thôn rời đảo trước khi khai quật."
+    }
+   },
+   "luu_nguyet_thanh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là chấp sự của Thanh Hư Môn, Lưu Nguyệt Thanh tới quần đảo để giám sát cuộc khai quật và giữ cho lợi ích của môn phái không bị các đối thủ lấn át.",
+     "aliases": [
+      "Lưu chấp sự"
+     ],
+     "personality": "Sắc sảo, kiên nhẫn và giỏi che ý định sau những câu hỏi tưởng như vô thưởng vô phạt.",
+     "name": "Lưu Nguyệt Thanh"
+    }
+   },
+   "manh_ngoc_khac": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "mảnh ngọc"
+     ],
+     "name": "Mảnh Ngọc Khắc",
+     "description": "Mảnh ngọc sẫm màu có những đường khắc cổ, được xem là vật chứng trong cuộc tranh đoạt thần khí."
+    }
+   },
+   "mien_cu": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "miếu"
+     ],
+     "name": "Miếu Cũ",
+     "description": "Ngôi miếu bỏ hoang nằm cạnh đường lên ruộng đá, lưu giữ những dấu khắc đã mòn."
+    }
+   },
+   "phung_tu_nghi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Phùng Tử Nghi trông nom ngọn tháp báo động bỏ hoang ở rìa thôn, nơi những dấu tích cũ vẫn còn vận hành theo cách không ai trong làng hiểu rõ.",
+     "aliases": [
+      "người gác tháp"
+     ],
+     "personality": "Lặng lẽ, cẩn trọng và sẵn lòng chịu tiếng xấu để bảo vệ người yếu thế.",
+     "name": "Phùng Tử Nghi"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Ngươi từng theo chân các đoàn buôn qua những đảo bay, học được cách đọc thái độ và lần dấu tin tức giữa những lời đồn. Khi trở về Lạc Tinh Thôn, ngươi thấy sứ giả đã đặt dân làng trước một cuộc di dời không thể thương lượng. Vụ bắt giữ người bạn cũ kéo ngươi vào cuộc điều tra về vật chứng, nơi mỗi lời khai đều có thể che giấu một cái bẫy.",
+     "personality": "Lanh trí, giỏi quan sát và luôn giữ vẻ nhã nhặn ngay cả khi đang thăm dò đối thủ. Ngươi thường tỏ ra vô tư, nhưng hiếm khi tin trọn vẹn lời của bất kỳ ai.",
+     "name": "陆怀瑾",
+     "is_protagonist": true
+    }
+   },
+   "ruong_da": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "thửa ruộng"
+     ],
+     "name": "Ruộng Đá",
+     "description": "Những thửa canh tác cằn cỗi phủ kín sườn đảo, bên dưới có các lớp đá cổ bị vùi lấp."
+    }
+   },
+   "so_phan_dan_thon": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Dân Lạc Tinh Thôn có giữ được quyền ở lại đảo hay không?",
+     "due_from_chapter": 8,
+     "due_to_chapter": 12
+    }
+   },
+   "ta_mac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng giữ miếu cũ trên đảo, Tạ Mặc đã chứng kiến nhiều đoàn người đến dò hỏi tàn tích nhưng chưa từng rời thôn.",
+     "aliases": [
+      "ông Tạ"
+     ],
+     "personality": "Thận trọng, hay nghi ngờ lời người khác và nhớ dai những món nợ cũ.",
+     "name": "Tạ Mặc"
+    }
+   },
+   "thanh_hu_mon": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Hư"
+     ],
+     "name": "Thanh Hư Môn",
+     "description": "Tiên môn đối địch với Vân Kiều Môn trong cuộc tranh giành các mảnh vỡ thần khí cổ."
+    }
+   },
+   "thap_bao_dong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "tháp"
+     ],
+     "name": "Tháp Báo Động",
+     "description": "Ngọn tháp cũ ở rìa đảo, có chiếc chuông từng dùng để báo nguy cho cả thôn."
+    }
+   },
+   "tran_van_tu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là sứ giả của Vân Kiều Môn, được giao truyền lệnh di dời dân Lạc Tinh Thôn và giám sát việc khai quật tàn tích.",
+     "aliases": [
+      "Trần sứ giả"
+     ],
+     "personality": "Điềm đạm, kín kẽ, luôn dùng lời lẽ nhã nhặn để đặt đối phương vào thế phải giải thích.",
+     "name": "Trần Văn Tự"
+    }
+   },
+   "van_kieu_mon": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Vân Kiều"
+     ],
+     "name": "Vân Kiều Môn",
+     "description": "Tiên môn nắm quyền điều động đoàn sứ giả và muốn kiểm soát việc khai quật tàn tích dưới đảo."
+    }
+   },
+   "vinh_phu_van": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "thành Vân Phù"
+     ],
+     "name": "Vân Phù",
+     "description": "Thành trì của Vân Kiều Môn, dựng trên một đảo bay lớn phía đông quần đảo."
+    }
+   },
+   "y_nghia_manh_ngoc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mảnh Ngọc Khắc chứng minh điều gì về cuộc khai quật?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 8
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khuong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 75,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_khuong>ta_mac@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "ta_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 75,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:ta_mac>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "ta_mac",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "LOCATED_AT:chuong_cu>thap_bao_dong@0",
+    "type": "LOCATED_AT",
+    "source": "chuong_cu",
+    "target": "thap_bao_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>doanh_trai_su_gia@7",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "doanh_trai_su_gia",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lenh_di_doi>ruong_da@8",
+    "type": "LOCATED_AT",
+    "source": "lenh_di_doi",
+    "target": "ruong_da",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luu_nguyet_thanh>ruong_da@8",
+    "type": "LOCATED_AT",
+    "source": "luu_nguyet_thanh",
+    "target": "ruong_da",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:manh_ngoc_khac>ruong_da@0",
+    "type": "LOCATED_AT",
+    "source": "manh_ngoc_khac",
+    "target": "ruong_da",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:phung_tu_nghi>ruong_da@4",
+    "type": "LOCATED_AT",
+    "source": "phung_tu_nghi",
+    "target": "ruong_da",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>ruong_da@8",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "ruong_da",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ta_mac>mien_cu@0",
+    "type": "LOCATED_AT",
+    "source": "ta_mac",
+    "target": "mien_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_van_tu>ruong_da@8",
+    "type": "LOCATED_AT",
+    "source": "tran_van_tu",
+    "target": "ruong_da",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>dan_lac_tinh@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "dan_lac_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luu_nguyet_thanh>thanh_hu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "luu_nguyet_thanh",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>dan_lac_tinh@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "dan_lac_tinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tran_van_tu>van_kieu_mon@0",
+    "type": "MEMBER_OF",
+    "source": "tran_van_tu",
+    "target": "van_kieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_hau_chien@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_hau_chien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_lenh_khai_quat@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_lenh_khai_quat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_manh_ngoc_duoi_ruong@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_manh_ngoc_duoi_ruong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_nguon_goc_vat_chung@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_nguon_goc_vat_chung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_vat_chung@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_vat_chung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_nguyet_thanh>fact_bat_giu@0",
+    "type": "KNOWS",
+    "source": "luu_nguyet_thanh",
+    "target": "fact_bat_giu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_nguyet_thanh>fact_hau_chien@0",
+    "type": "KNOWS",
+    "source": "luu_nguyet_thanh",
+    "target": "fact_hau_chien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_nguyet_thanh>fact_lenh_khai_quat@0",
+    "type": "KNOWS",
+    "source": "luu_nguyet_thanh",
+    "target": "fact_lenh_khai_quat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_nguyet_thanh>fact_muc_dich_khai_quat@0",
+    "type": "KNOWS",
+    "source": "luu_nguyet_thanh",
+    "target": "fact_muc_dich_khai_quat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luu_nguyet_thanh>fact_vat_chung@0",
+    "type": "KNOWS",
+    "source": "luu_nguyet_thanh",
+    "target": "fact_vat_chung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tu_nghi>fact_bat_giu@0",
+    "type": "KNOWS",
+    "source": "phung_tu_nghi",
+    "target": "fact_bat_giu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tu_nghi>fact_hau_chien@0",
+    "type": "KNOWS",
+    "source": "phung_tu_nghi",
+    "target": "fact_hau_chien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_tu_nghi>fact_nguoi_danh_chuong@0",
+    "type": "KNOWS",
+    "source": "phung_tu_nghi",
+    "target": "fact_nguoi_danh_chuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_bat_giu@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_bat_giu",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Cứ đứng đây mãi thì Khương ca còn bị nhốt!"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_nguoi_danh_chuong@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_nguoi_danh_chuong",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "- Là ta đánh thức chuông."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_nguon_goc_vat_chung@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_nguon_goc_vat_chung",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí."
+    }
+   },
+   {
+    "id": "KNOWS:ta_mac>fact_bat_giu@0",
+    "type": "KNOWS",
+    "source": "ta_mac",
+    "target": "fact_bat_giu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ta_mac>fact_hau_chien@0",
+    "type": "KNOWS",
+    "source": "ta_mac",
+    "target": "fact_hau_chien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ta_mac>fact_lenh_khai_quat@0",
+    "type": "KNOWS",
+    "source": "ta_mac",
+    "target": "fact_lenh_khai_quat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_van_tu>fact_bat_giu@0",
+    "type": "KNOWS",
+    "source": "tran_van_tu",
+    "target": "fact_bat_giu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_van_tu>fact_hau_chien@0",
+    "type": "KNOWS",
+    "source": "tran_van_tu",
+    "target": "fact_hau_chien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_van_tu>fact_lenh_khai_quat@0",
+    "type": "KNOWS",
+    "source": "tran_van_tu",
+    "target": "fact_lenh_khai_quat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>doan_khuong@7",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng và quyết tâm"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>manh_ngoc_khac@7",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "manh_ngoc_khac",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng và quyết tâm"
+    }
+   },
+   {
+    "id": "ABOUT:fact_bat_giu>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_bat_giu",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_bat_giu>doanh_trai_su_gia@0",
+    "type": "ABOUT",
+    "source": "fact_bat_giu",
+    "target": "doanh_trai_su_gia",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hau_chien>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_hau_chien",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hau_chien>van_kieu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_hau_chien",
+    "target": "van_kieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_khai_quat>lac_tinh_thon@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_khai_quat",
+    "target": "lac_tinh_thon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_khai_quat>lenh_di_doi@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_khai_quat",
+    "target": "lenh_di_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_khai_quat>van_kieu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_khai_quat",
+    "target": "van_kieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_manh_ngoc_duoi_ruong>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_manh_ngoc_duoi_ruong",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_manh_ngoc_duoi_ruong>manh_ngoc_khac@0",
+    "type": "ABOUT",
+    "source": "fact_manh_ngoc_duoi_ruong",
+    "target": "manh_ngoc_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_manh_ngoc_duoi_ruong>ruong_da@0",
+    "type": "ABOUT",
+    "source": "fact_manh_ngoc_duoi_ruong",
+    "target": "ruong_da",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_muc_dich_khai_quat>luu_nguyet_thanh@0",
+    "type": "ABOUT",
+    "source": "fact_muc_dich_khai_quat",
+    "target": "luu_nguyet_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_muc_dich_khai_quat>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_muc_dich_khai_quat",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_muc_dich_khai_quat>van_kieu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_muc_dich_khai_quat",
+    "target": "van_kieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguoi_danh_chuong>chuong_cu@0",
+    "type": "ABOUT",
+    "source": "fact_nguoi_danh_chuong",
+    "target": "chuong_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguoi_danh_chuong>lac_tinh_thon@0",
+    "type": "ABOUT",
+    "source": "fact_nguoi_danh_chuong",
+    "target": "lac_tinh_thon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguoi_danh_chuong>phung_tu_nghi@0",
+    "type": "ABOUT",
+    "source": "fact_nguoi_danh_chuong",
+    "target": "phung_tu_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguoi_danh_chuong>thap_bao_dong@0",
+    "type": "ABOUT",
+    "source": "fact_nguoi_danh_chuong",
+    "target": "thap_bao_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguon_goc_vat_chung>lac_tinh_thon@0",
+    "type": "ABOUT",
+    "source": "fact_nguon_goc_vat_chung",
+    "target": "lac_tinh_thon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguon_goc_vat_chung>manh_ngoc_khac@0",
+    "type": "ABOUT",
+    "source": "fact_nguon_goc_vat_chung",
+    "target": "manh_ngoc_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nguon_goc_vat_chung>van_kieu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_nguon_goc_vat_chung",
+    "target": "van_kieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vat_chung>manh_ngoc_khac@0",
+    "type": "ABOUT",
+    "source": "fact_vat_chung",
+    "target": "manh_ngoc_khac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vat_chung>thanh_hu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_vat_chung",
+    "target": "thanh_hu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vat_chung>van_kieu_mon@0",
+    "type": "ABOUT",
+    "source": "fact_vat_chung",
+    "target": "van_kieu_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:chuong_thap>ch3@3",
+    "type": "RESOLVED_IN",
+    "source": "chuong_thap",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Là ta đánh thức chuông."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:giai_cuu_doan_khuong>ch2@2",
+    "type": "RESOLVED_IN",
+    "source": "giai_cuu_doan_khuong",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chẳng mấy chốc, bóng họ hiện lại sau khúc đường, kẹp giữa là Đoàn Khương."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:ke_gieo_bay>ch10@10",
+    "type": "RESOLVED_IN",
+    "source": "ke_gieo_bay",
+    "target": "ch10",
+    "valid_from_chapter": 10,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Sai lệch nằm ở cách chép của ta."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:so_phan_dan_thon>ch8@8",
+    "type": "RESOLVED_IN",
+    "source": "so_phan_dan_thon",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Dân Lạc Tinh Thôn được ở lại đảo."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:y_nghia_manh_ngoc>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "y_nghia_manh_ngoc",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Mảnh Ngọc Khắc chứng minh cuộc khai quật ở tàn tích ấy không thể được biện minh bằng việc tìm mảnh vỡ thần khí."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:chuong_cu>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "chuong_cu",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chuông ấy phát ra từ đó.",
+     "known_as": "Chuông ấy"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dan_lac_tinh>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dan_lac_tinh",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Người làng đứng chen dưới những bờ đá thấp, vài người còn cầm nguyên cuốc xẻng.",
+     "known_as": "Người làng"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_khuong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_khuong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đoàn Khương còn bị nhốt trong đó, giờ không đi thì đợi đến bao giờ?",
+     "known_as": "Đoàn Khương"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_khuong>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_khuong",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cứ đứng đây mãi thì Khương ca còn bị nhốt!",
+     "known_as": "Khương ca"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doanh_trai_su_gia>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doanh_trai_su_gia",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Người cầm đèn đi đầu nhìn qua vai tôi về phía doanh trại.",
+     "known_as": "doanh trại"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_nguoi_danh_chuong>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_nguoi_danh_chuong",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Là ta đánh thức chuông."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_nguon_goc_vat_chung>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_nguon_goc_vat_chung",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lac_tinh_thon>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lac_tinh_thon",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cửa nhà bật mở khắp thôn.",
+     "known_as": "thôn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lenh_di_doi>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lenh_di_doi",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lệnh Di Dời vẫn nằm trong doanh trại; tiếng chuông đã vang lên, lính lại im lặng.",
+     "known_as": "Lệnh Di Dời"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luu_nguyet_thanh>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luu_nguyet_thanh",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Từ phía thôn, Lưu Nguyệt Thanh đi tới.",
+     "known_as": "Lưu Nguyệt Thanh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:manh_ngoc_khac>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "manh_ngoc_khac",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "bụi đất rơi xuống khe, để lộ một mảnh ngọc nằm im trong hõm tối.",
+     "known_as": "mảnh ngọc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:mien_cu>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "mien_cu",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi nghe tiếng bước chân phía sau miếu cũ.",
+     "known_as": "miếu cũ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phung_tu_nghi>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phung_tu_nghi",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Phùng Tử Nghi bước chậm, vạt áo sẫm màu vướng bụi cỏ.",
+     "known_as": "Phùng Tử Nghi"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: 陆怀瑾",
+     "known_as": "陆怀瑾"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ruong_da>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ruong_da",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Một đường men qua ruộng đá, hướng về Tháp Báo Động; đường kia dẫn thẳng tới doanh trại sứ giả.",
+     "known_as": "ruộng đá"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ta_mac>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ta_mac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ông Tạ đứng bên giếng ho khan một tiếng.",
+     "known_as": "Ông Tạ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thanh_hu_mon>ch8@8",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thanh_hu_mon",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Một đại diện Thanh Hư Môn khẽ vuốt phẳng tay áo.",
+     "known_as": "Thanh Hư Môn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thap_bao_dong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thap_bao_dong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Một đường men qua ruộng đá, hướng về Tháp Báo Động; đường kia dẫn thẳng tới doanh trại sứ giả.",
+     "known_as": "Tháp Báo Động"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tran_van_tu>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tran_van_tu",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trần Văn Tự đứng trước, sau lưng ông ta là mấy tên lính mang đao bên hông.",
+     "known_as": "Trần Văn Tự"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_kieu_mon>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_kieu_mon",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chúng ta đến kiểm tra Ruộng Đá. Theo lệnh của Vân Kiều Môn, dân làng không được cản trở.",
+     "known_as": "Vân Kiều Môn"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-ecc7fa2234d3",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Tiếng chuông vang lên từ Tháp Báo Động, khiến dân làng tranh cãi có nên kéo tới doanh trại sứ giả, nơi Đoàn Khương đang bị nhốt. Tôi ngăn họ xông vào, hỏi người quanh thôn nhưng các lời kể mâu thuẫn, không ai có chứng cứ rõ ràng; lính trong doanh trại ra lệnh dân ở yên, nếu rời khu nhà dân sẽ bị coi là chống lệnh. Tôi chọn đi theo đường ruộng đá về phía tháp, rồi khuyên những người theo sau ở lại thành nhóm, không vào doanh trại cũng không về nhà. Tạ Mặc cảnh báo đừng tiến thêm về phía tháp và nói lời đồn chạy nhanh hơn người. Ở lối ruộng đá, tôi phát hiện vài phiến đá xê dịch, nhưng dấu vết chưa đủ để kết luận. Cuối chương, dân làng đứng thành nhóm công khai ở lối vào Ruộng Đá, nhìn về phía tháp; doanh trại vẫn im lặng.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Sau tiếng chuông ở Tháp Báo Động, xác định nguy cơ trước mắt tại Lạc Tinh Thôn mà chưa vội chọn giữa cứu Đoàn Khương và lần theo nguyên do.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Tiếng chuông dội qua mái nhà và ruộng đá; ta nhận ra nó vọng từ Tháp Báo Động, nhưng trong bóng tối không thể biết ai đã chạm vào chuông.",
+       "Dân Lạc Tinh Thôn túa ra khỏi nhà, có người đòi chạy tới doanh trại sứ giả cứu Đoàn Khương, có người nhất quyết không để đoàn khai quật lấy cớ tiếng chuông mà cưỡng ép di dời.",
+       "Ta khuyên họ đừng kéo cả thôn vào một cuộc đối đầu khi chưa rõ chuyện gì xảy ra, rồi hỏi những người gần nhất xem họ có thấy ai rời khỏi hướng tháp hay không; các câu trả lời trái ngược, chẳng ai đưa ra được chứng cứ chắc chắn.",
+       "Từ phía doanh trại vang lên tiếng quát yêu cầu dân làng ở yên, còn tiếng chuông ngừng bặt; sự im lặng sau đó khiến đám đông càng bất an.",
+       "Ta nhận thấy nếu dân làng tự ý xông tới doanh trại, sứ giả có thể vin vào đó để siết chặt việc di dời; nhưng bỏ mặc tiếng chuông cũng đồng nghĩa để người khác định đoạt ý nghĩa của nó."
+      ],
+      "ends_at": "Cảnh kết ở lối ra khỏi khu nhà dân, khi ta đứng trước hai hướng: về phía Tháp Báo Động hoặc theo đường tới doanh trại sứ giả.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Lần theo dấu vết mơ hồ sau tiếng chuông mà không để dân thôn bị kéo vào cuộc đối đầu trực diện với sứ giả.",
+      "present": [
+       "protagonist",
+       "ta_mac"
+      ],
+      "beats": [
+       "Tôi chọn lối men qua ruộng đá, nhưng vừa tới đầu đường đã thấy vài dân làng lặng lẽ theo sau, mỗi người mang một ngọn đèn và vẻ mặt không còn chịu ngồi yên.",
+       "Tạ Mặc bước ra từ bóng tường, khuyên tôi đừng tiến thêm về phía tháp; khi tôi hỏi ông có nghe hay thấy điều gì không, ông chỉ đáp: «Đêm nay, lời đồn chạy nhanh hơn người.»",
+       "Từ phía doanh trại vọng tới lời cảnh cáo rằng ai rời khu nhà dân sẽ bị xem là chống lệnh; một người trong đám đông đáp rằng họ không thể giao cả thôn cho lời hứa của sứ giả.",
+       "Tôi đề nghị dân làng ở lại thành nhóm ngay đầu ruộng đá, không xông vào doanh trại cũng không tản về nhà; dưới ánh đèn chập chờn, tôi nhận ra vài phiến đá gần lối đi có dấu xê dịch, nhưng không đủ căn cứ để kết luận ai đã đi qua.",
+       "Tạ Mặc nhìn về phía tháp tối om rồi bảo: «Nếu họ muốn khám xét, ít nhất lần này cả thôn sẽ biết họ bắt đầu từ đâu.» Đám đông im lặng, nhưng không ai chịu rời đi."
+      ],
+      "ends_at": "Cảnh kết ở lối vào Ruộng Đá, nơi dân làng tụ lại thành một nhóm công khai trong khi phía doanh trại vẫn chưa có động tĩnh.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER doanh_trai_su_gia→ch1",
+        "Value error, `known_as` phải nằm trong `quote` (D-17)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER dan_lac_tinh→ch1",
+        "known_as là tên của nút khác: ['lac_tinh_thon'] (D-62)"
+       ]
+      ]
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-a0ac1f0c6131",
+      "kind": "action",
+      "tone": null,
+      "text": "Giữ mọi người thành nhóm ở lối vào ruộng đá, chờ xem phía doanh trại có động tĩnh gì.",
+      "listeners": [],
+      "about": [
+       "ruong_da",
+       "doanh_trai_su_gia"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-693b622aa63c",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi ông Tạ: “Ông đang cảnh báo tôi điều gì?”",
+      "listeners": [
+       "ta_mac"
+      ],
+      "about": [
+       "ta_mac",
+       "thap_bao_dong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-bfe1aab14689",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình chưa thể kết luận ai đã động vào những phiến đá.",
+      "listeners": [],
+      "about": [
+       "ruong_da"
+      ],
+      "lie": null,
+      "feeling": "thận trọng"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-b8b4359ddae2",
+    "player_action": "[Hành động] Giữ mọi người thành nhóm ở lối vào ruộng đá, chờ xem phía doanh trại có động tĩnh gì.",
+    "error_detail": null,
+    "summary": "Tôi ngăn dân làng rời Ruộng Đá sang doanh trại, rồi cùng Lưu Nguyệt Thanh sắp xếp mọi người thành hàng ôn hòa, không mang vũ khí. Lưu Nguyệt Thanh báo người của sứ giả đang rời doanh trại; dân làng lo cho Đoàn Khương và nghe tin có thể bị khám xét. Khi Trần Văn Tự dẫn lính tới tuyên bố kiểm tra Ruộng Đá theo lệnh Vân Kiều Môn nhưng không nói rõ mục đích, tôi yêu cầu công khai việc khám xét. Lưu Nguyệt Thanh đề nghị đưa Đoàn Khương ra trước mặt dân làng; Trần Văn Tự đồng ý, nhưng khẳng định huynh ấy vẫn bị quản thúc. Đoàn Khương được đưa tới, cảnh báo đừng để việc mình bị giữ thành cớ buộc tội cả thôn. Cuối chương, Đoàn Khương đứng giữa dân làng và sứ giả; cuộc khám xét chưa bắt đầu.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Giữ dân làng thành một nhóm có trật tự trong lúc выяс rõ động tĩnh từ doanh trại và tránh để họ bị cuốn vào cuộc khám xét.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh"
+      ],
+      "beats": [
+       "Tôi giữ mọi người ở lối vào Ruộng Đá, không ai tiến về doanh trại; từ phía thôn, Lưu Nguyệt Thanh bước tới, nhắc rằng sự im lặng của lính không có nghĩa là họ đã rút lệnh.",
+       "Lưu Nguyệt Thanh nói nàng vừa thấy người của sứ giả chuẩn bị rời doanh trại, nhưng không biết họ định đi đâu; tôi hỏi nàng có nghe chuyện khám xét hay không, nàng chỉ đáp rằng dân làng đang bị buộc phải chờ trong thế bị động.",
+       "Tôi quan sát lối đi và những phiến đá xê dịch đã thấy trước đó, nhưng không thể xác định chúng có liên quan đến tiếng chuông; một người trong nhóm đòi tản ra tìm Đoàn Khương, còn tôi nhắc rằng rời nhóm lúc này chỉ khiến sứ giả dễ quy họ thành kẻ chống lệnh.",
+       "Lưu Nguyệt Thanh đề nghị giữ người già và trẻ nhỏ ở phía sau, còn những người khác đứng thành hàng chắn lối ruộng; nàng nói nếu đoàn sứ giả tới, ít nhất họ phải đối diện với cả thôn chứ không thể lặng lẽ bắt từng người.",
+       "Tiếng giày và tiếng lệnh vọng lên từ con đường phía doanh trại; một toán người đang tiến về phía Ruộng Đá, khiến cuộc chờ đợi chuyển thành cuộc đối mặt công khai."
+      ],
+      "ends_at": "Cảnh kết tại lối vào Ruộng Đá, khi toán người rời doanh trại đang tiến tới và dân làng vẫn đứng thành một nhóm.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Giữa sức ép của dân làng và đoàn sứ giả, buộc họ đưa Đoàn Khương ra khỏi nơi giam giữ mà không để đám đông biến thành cuộc chống lệnh.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "doan_khuong",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Toán người từ doanh trại dừng trước hàng dân làng; Trần Văn Tự tuyên bố họ đến kiểm tra Ruộng Đá, còn tôi nhận ra không ai trong đoàn muốn giải thích vì sao họ rời doanh trại đúng lúc này.",
+       "Lưu Nguyệt Thanh yêu cầu Trần Văn Tự nói rõ việc khám xét trước mặt mọi người; ông ta đáp rằng dân làng chỉ cần tuân lệnh di dời, khiến những người sau lưng tôi xôn xao nhưng vẫn giữ hàng.",
+       "Tôi chỉ ra rằng một cuộc khám xét không báo trước giữa đám đông đang bị buộc di dời sẽ khiến bất cứ dấu vết nào cũng bị xem là cái cớ; Trần Văn Tự lạnh lùng hỏi tôi định chịu trách nhiệm nếu có người bỏ trốn hay không.",
+       "Lưu Nguyệt Thanh đề nghị Đoàn Khương được đưa ra khỏi doanh trại và ở lại trong tầm mắt của cả thôn cho tới khi việc khám xét được công bố; Trần Văn Tự cân nhắc trước những ánh mắt đang dõi theo rồi chấp thuận, không nhận rằng mình đã nhượng bộ.",
+       "Đoàn Khương được dẫn tới lối Ruộng Đá, vẻ mệt mỏi nhưng tỉnh táo; khi nhìn thấy tôi, anh chỉ nói: “Đừng để họ biến việc ta bị giữ thành bằng chứng rằng cả thôn có tội.” Tôi đáp rằng từ giờ mọi lời buộc tội sẽ phải nói trước mặt dân làng."
+      ],
+      "ends_at": "Cảnh kết tại lối vào Ruộng Đá, nơi Đoàn Khương đã được đưa khỏi doanh trại và đứng giữa dân làng cùng đoàn sứ giả.",
+      "resolves": [
+       "giai_cuu_doan_khuong"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-0d9457ade891",
+      "kind": "action",
+      "tone": null,
+      "text": "Bước vào Ruộng Đá trước, giữ lối đi thông thoáng.",
+      "listeners": [],
+      "about": [
+       "ruong_da"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-9fbb5971bcd4",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Xin nói rõ trước mặt mọi người các vị đang tìm gì.”",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [
+       "dan_lac_tinh"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0f0b999d06c7",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải bảo vệ dân làng khỏi bị quy tội.",
+      "listeners": [],
+      "about": [
+       "dan_lac_tinh"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm bảo vệ"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-44f821ed0351",
+    "player_action": "[Lời thoại, nói thật] “Xin nói rõ trước mặt mọi người các vị đang tìm gì.”",
+    "error_detail": null,
+    "summary": "Tôi yêu cầu Trần Văn Tự nói rõ mục đích và căn cứ cuộc kiểm tra Ruộng Đá, cũng như cách xử lý lời buộc tội Đoàn Khương nếu không tìm thấy vật chứng. Trần Văn Tự chỉ nói cuộc kiểm tra theo lệnh, không lục soát nhà dân nếu chưa có chứng cứ mới; những việc khác do người có thẩm quyền xem xét. Lưu Nguyệt Thanh yêu cầu thông báo trước khi động vào phiến đá bị xê dịch, và Trần Văn Tự đồng ý với điều kiện không làm chậm việc kiểm tra. Tiếng động từ Tháp Báo Động khiến cuộc kiểm tra tạm dừng; Phùng Tử Nghi xuất hiện, nhận đã đánh chuông để báo dân làng và cho rằng việc kiểm tra vốn định tiến hành kín đáo. Tôi đề nghị mọi người cùng chứng kiến. Trần Văn Tự cho dân làng đứng vòng ngoài, không chạm đá hay cản trở; Đoàn Khương khuyên họ bình tĩnh.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Buộc Trần Văn Tự công khai phạm vi cuộc khám xét trước dân làng, đồng thời khiến cuộc đối đầu chuyển từ lời cáo buộc sang một phép thử có thể làm bùng lên khủng hoảng.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "doan_khuong",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Ta giữ giọng nhã nhặn, nhìn thẳng Trần Văn Tự và nhắc lại trước đám đông: “Xin nói rõ trước mặt mọi người các vị đang tìm gì.”; giữa dân làng, Đoàn Khương vẫn bị quản thúc, còn Lưu Nguyệt Thanh không rời mắt khỏi sứ giả.",
+       "Trần Văn Tự đáp rằng người của Vân Kiều Môn kiểm tra Ruộng Đá để tìm vật chứng bị cáo buộc cất giấu, nhưng không nêu tên vật, vị trí hay căn cứ buộc tội; ông ta nói việc kiểm tra sẽ không biến thành cuộc lục soát nhà dân nếu không có chứng cứ mới.",
+       "Ta hỏi nếu không tìm thấy vật chứng thì lời buộc tội đối với Đoàn Khương sẽ được xử lý ra sao; Trần Văn Tự tránh trả lời thẳng, chỉ khẳng định cuộc kiểm tra vẫn tiến hành theo lệnh, khiến lời công khai của ông ta bộc lộ giới hạn chứ không xóa được sự nghi ngờ.",
+       "Lưu Nguyệt Thanh đề nghị mọi phiến đá bị xê dịch phải được chỉ ra trước mặt dân làng, để không ai có thể âm thầm đặt vật chứng rồi đổ tội; Trần Văn Tự chấp nhận điều kiện ấy, nhưng cảnh cáo rằng cản trở người thi hành lệnh sẽ bị coi là chống đối.",
+       "Ta nhận ra chính lời đáp lửng lơ đã đẩy dân làng tới chỗ phải chọn giữa im lặng và công khai chứng kiến cuộc khám xét; khi Trần Văn Tự ra hiệu chuẩn bị bắt đầu, một tiếng động vọng từ phía tháp khiến mọi ánh mắt cùng hướng về đó, nhưng chưa ai xác định được nguyên do."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi Trần Văn Tự sắp bắt đầu cuộc kiểm tra còn dân làng đứng thành hàng chứng kiến và tiếng động từ phía tháp làm tình thế thêm căng thẳng.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Làm rõ tiếng chuông đã biến cuộc kiểm tra thành khủng hoảng công khai, đồng thời buộc sứ giả và dân làng bước vào một thế đối đầu mới.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "doan_khuong",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Tiếng động từ phía Tháp Báo Động khiến Trần Văn Tự tạm dừng lệnh khám xét; tôi đề nghị ông ta giữ nguyên đội hình và để mọi người cùng chứng kiến điều gì xảy ra.",
+       "Phùng Tử Nghi xuất hiện từ lối dẫn về tháp, thừa nhận chính mình đã đánh thức chuông để cảnh báo dân làng rằng cuộc kiểm tra sắp bắt đầu; ông nói không muốn họ bị bất ngờ giữa lúc sứ giả có thể lục soát Ruộng Đá.",
+       "Trần Văn Tự chất vấn Phùng Tử Nghi vì sao tự ý báo động; Phùng đáp rằng tiếng chuông chỉ khiến việc vốn được tiến hành kín đáo trở thành chuyện mọi người đều có thể nhìn thấy.",
+       "Tôi hỏi Trần Văn Tự liệu ông còn tiến hành kiểm tra khi cả thôn đã biết và đang chứng kiến hay không; ông đáp lệnh vẫn còn hiệu lực, nhưng chấp nhận cho dân làng đứng thành vòng ngoài quan sát, không ai được chạm vào đá.",
+       "Lưu Nguyệt Thanh tuyên bố dân làng sẽ ở lại Ruộng Đá để làm chứng, còn Đoàn Khương nhắc mọi người không được lấy sự phẫn nộ làm cớ cho sứ giả buộc tội cả thôn; cuộc kiểm tra bắt đầu dưới hàng chục ánh mắt."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi dân làng đứng làm chứng quanh khu vực kiểm tra còn Trần Văn Tự ra hiệu cho lính bắt đầu theo lệnh.",
+      "resolves": [
+       "chuong_thap"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"chỉ ra trước mặt\" xuất hiện 3 lần (tối đa 2); đoạn: «Chỉ ra trước mặt mọi người»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-3e93ddf7c956",
+      "kind": "action",
+      "tone": null,
+      "text": "Đứng yên ở vòng ngoài, dõi theo bàn tay người lính khi anh ta kiểm tra phiến đá lệch.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f4e772d9fd5a",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Xin ông nói rõ phiến đá nào đang được kiểm tra, để mọi người cùng chứng kiến.”",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-7fa292248826",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo Đoàn Khương sẽ bị giữ lại lâu hơn nếu cuộc kiểm tra không sớm có kết quả.",
+      "listeners": [],
+      "about": [
+       "doan_khuong"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-9b7992d4cd1b",
+    "player_action": "[Lời thoại, nói thật] “Xin ông nói rõ phiến đá nào đang được kiểm tra, để mọi người cùng chứng kiến.”",
+    "error_detail": null,
+    "summary": "Trần Văn Tự chỉ phiến đá giữa Ruộng Đá, đặt vạch cấm và cho hai thuộc hạ quan sát mà không chạm vào. Người kể ở sau vạch, đề nghị ghi lại vệt đất sẫm bị xáo trộn sát mép đá và việc chưa ai động vào phiến đá; Trần chỉ xác nhận điều có thể thấy tận mắt. Lưu Nguyệt Thanh và Trần bất đồng về vệt đất nằm ở cạnh tây hay phía đông; Đoàn Khương nhắc mọi người chỉ ghi điều quan sát được, còn Phùng Tử Nghi nói ông chỉ thấy vệt đất sẫm, không biết nó xuất hiện khi nào. Trần cho ghi lời khai, yêu cầu người phát biểu có mặt lần sau để đối chiếu và dừng kiểm tra đến khi có lệnh rõ ràng. Phiến đá vẫn nguyên chỗ, dân làng ở sau vạch, Trần giữ lối đi; lời khai chưa được đối chiếu.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Xác định công khai phiến đá đang bị kiểm tra và giữ cho cuộc khám xét không biến thành cớ buộc tội dân làng.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "doan_khuong",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Nghe lời ngươi, Trần Văn Tự chỉ vào phiến đá đã xê dịch giữa Ruộng Đá, nói đó là nơi đoàn kiểm tra muốn xem xét; ông nhấn mạnh chưa ai được phép lật đá.",
+       "Lưu Nguyệt Thanh đề nghị để dân làng đứng đủ gần mà nhìn rõ, nhưng không chạm vào phiến đá; Trần chấp thuận, đồng thời cảnh cáo rằng ai cản trở sẽ bị đưa khỏi vòng chứng kiến.",
+       "Đoàn Khương giữ vẻ bình tĩnh, nhắc mọi người chỉ ghi nhớ điều họ tận mắt thấy; ngươi nhận ra huynh ấy không nhìn phiến đá lâu, mà để ý những người đứng quanh Trần.",
+       "Phùng Tử Nghi lùi khỏi lối vào ruộng, nhường chỗ cho cuộc kiểm tra; Trần ra hiệu cho thuộc hạ quan sát mép đá mà không dịch chuyển nó, rồi chỉ cho mọi người thấy một vệt đất bị miết sát cạnh.",
+       "Ngươi nhận thấy lớp đất ở mép phiến đá có dấu xáo trộn mới hơn phần ruộng xung quanh, nhưng chưa thể biết ai đã động vào hay vì sao; Trần tuyên bố sẽ tạm dừng trước khi cho phép kiểm tra sâu hơn."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi mọi người đã xác định được phiến đá cần kiểm tra nhưng chưa ai được phép lật nó.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ghi nhận công khai những gì cuộc kiểm tra đã thấy, đồng thời khiến lời buộc tội Đoàn Khương trở nên kém chắc chắn mà chưa giải được bí mật của Mảnh Ngọc Khắc.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "doan_khuong",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Tôi nhắc Trần Văn Tự rằng phiến đá đã được chỉ rõ trước dân làng, rồi đề nghị ông ghi lại vệt đất sát mép đá và việc chưa ai chạm vào nó; Trần đáp rằng ông chỉ ghi điều có thể xác nhận tận mắt.",
+       "Lưu Nguyệt Thanh yêu cầu mỗi bên nói riêng điều mình quan sát được, tránh để lời đồn lẫn vào biên bản; Trần đồng ý, nhưng cảnh báo ai cố tình thêm thắt sẽ phải chịu trách nhiệm.",
+       "Tôi lần lượt hỏi Trần và Lưu xem vệt đất nằm ở phía nào của phiến đá; câu trả lời của họ không khớp nhau, còn Đoàn Khương chỉ nhắc mọi người phân biệt điều đã thấy với điều suy đoán.",
+       "Phùng Tử Nghi nói từ vị trí đứng ngoài, ông chỉ nhìn thấy vệt đất sẫm chứ không thể xác định nó hình thành khi nào; Trần ghi nhận lời ấy, không cho phép ai lấy nó làm chứng cứ kết luận.",
+       "Trần tuyên bố cuộc kiểm tra hôm nay dừng lại, phiến đá sẽ không bị động tới trước khi có lệnh rõ ràng; ông yêu cầu những người vừa phát biểu có mặt khi đoàn quay lại đối chiếu lời khai."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi dân làng vẫn đứng sau vạch còn Trần Văn Tự giữ quyền kiểm soát lối tới phiến đá.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-978f20d1ff0d",
+      "kind": "action",
+      "tone": null,
+      "text": "Ở lại sau vạch, chờ xem Trần có rời lối vào phiến đá không.",
+      "listeners": [],
+      "about": [
+       "tran_van_tu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-aa2abf2970b1",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Xin ghi rõ cả hai lời khai: Trần nói phía đông, Lưu nói phía tây.",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-ced8ac06cdd8",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo Đoàn Khương còn phải tiếp tục chờ trong doanh trại.",
+      "listeners": [],
+      "about": [
+       "doan_khuong",
+       "fact_bat_giu"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-bee03603ba49",
+    "player_action": "[Lời thoại, nói thật] Xin ghi rõ cả hai lời khai: Trần nói phía đông, Lưu nói phía tây.",
+    "error_detail": null,
+    "summary": "Tôi yêu cầu Trần Văn Tự ghi riêng hai lời khai trái chiều về hướng vệt đất; khi kiểm tra phiến đá, nhận ra chúng có thể do góc nhìn khác nhau. Phát hiện một khe đất chưa được ghi nhận, Trần cho nhấc đá vừa đủ để thấy Mảnh Ngọc Khắc bên dưới. Tôi đọc dòng khắc cho biết Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí, đồng thời nhấn mạnh chưa thể xác định ai giấu ngọc. Trần ghi lời khắc và phản hồi, xác nhận cáo buộc Đoàn Khương yếu đi nhưng ông không có quyền thả người. Phiến đá được đặt lại, khu vực bị phong tỏa và cuộc khai quật đình chỉ; những người chứng kiến đối chiếu biên bản. Trần sẽ báo doanh trại, còn Đoàn Khương vẫn bị giữ ở đó.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ghi nhận chính xác hai lời khai trái chiều rồi kiểm tra phiến đá có chứng kiến, tìm được manh mối làm lung lay cáo buộc nhằm vào Đoàn Khương.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "doan_khuong",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Tôi nhắc Trần Văn Tự ghi nguyên văn cả hai lời khai: ông xác định vệt đất sẫm ở phía đông, còn Lưu Nguyệt Thanh nói nó nằm phía tây; Trần ghi chép nhưng cảnh báo rằng ghi nhận lời nói không đồng nghĩa xác nhận bên nào đúng.",
+       "Lưu đề nghị tiếp tục kiểm tra phiến đá trước sự chứng kiến của mọi người; tôi đồng ý đứng ngoài vạch cấm, còn Trần cho phép xem xét từng bước với điều kiện không ai tự ý chạm vào vật chứng.",
+       "Sau khi đối chiếu vị trí vệt đất với mép phiến đá, tôi nhận ra lời khai của hai người đều có thể bắt nguồn từ những góc nhìn khác nhau, nhưng lớp đất bị xáo trộn nằm sát một khe khuất mà trước đó không ai ghi nhận.",
+       "Trần cho phép nhấc phiến đá vừa đủ để nhìn xuống, không cho ai lấy vật bên dưới; dưới đó lộ ra Mảnh Ngọc Khắc, trên mặt khắc có hàng chữ nêu rõ Vân Kiều Môn đã biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí.",
+       "Tôi đọc rõ hàng chữ để mọi người cùng nghe, rồi chỉ ra rằng Mảnh Ngọc Khắc chứng minh cuộc khai quật không thể được biện minh bằng việc tìm mảnh vỡ thần khí tại tàn tích ấy; Trần phải thừa nhận lời buộc tội Đoàn Khương chưa thể xem là vững chắc, còn Lưu yêu cầu ghi nguyên văn chứng cứ và lời phản hồi của ông."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi Mảnh Ngọc Khắc vẫn ở dưới phiến đá trong phạm vi kiểm tra và mọi người buộc phải tính đến nội dung vừa được đọc.",
+      "resolves": [
+       "y_nghia_manh_ngoc"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Biến phát hiện dưới phiến đá thành bước ngoặt khiến Trần Văn Tự phải đình chỉ việc khai quật và xác định cách bảo toàn chứng cứ.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Trần Văn Tự cho hạ phiến đá về đúng vị trí, nhưng yêu cầu hai thuộc hạ giữ nguyên phạm vi kiểm tra và không ai được chạm vào Mảnh Ngọc Khắc.",
+       "Lưu Nguyệt Thanh yêu cầu ghi rõ rằng lời khắc khiến lý do khai quật bị lung lay; Trần đáp rằng ông chỉ có thể xác nhận nội dung đã đọc, chưa thể thay cấp trên kết luận về lệnh di dời.",
+       "Tôi đề nghị ghi riêng hai điều: mảnh ngọc được tìm thấy dưới phiến đá, còn người cất giấu nó vẫn chưa thể xác định; Trần đồng ý bổ sung vào biên bản để không biến chứng cứ thành lời buộc tội mới.",
+       "Phùng Tử Nghi hỏi liệu Đoàn Khương có được thả hay không; Trần nói chứng cứ hiện tại làm cáo buộc yếu đi, nhưng ông chưa có quyền tự ý trả tự do và sẽ phải báo cáo việc này.",
+       "Trần ra lệnh dừng mọi động chạm vào phiến đá cho đến khi có lệnh mới, đồng thời yêu cầu những người vừa chứng kiến ở lại để đối chiếu biên bản trước khi ông chuyển tin về doanh trại."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi phiến đá đã được đặt lại và cuộc khai quật bị đình chỉ, còn quyền quyết định số phận Đoàn Khương vẫn nằm ngoài tay những người có mặt.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-aab4fe7f5d38",
+      "kind": "action",
+      "tone": null,
+      "text": "Ở lại đối chiếu biên bản đến hết.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0fdb3f34bace",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Xin ông chuyển tin về doanh trại sớm nhất có thể.",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [
+       "doan_khuong",
+       "doanh_trai_su_gia"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-04e11b6e782d",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tôi nóng lòng muốn Đoàn Khương sớm được thả.",
+      "listeners": [],
+      "about": [
+       "doan_khuong"
+      ],
+      "lie": null,
+      "feeling": "nóng lòng"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-2dc94667d671",
+    "player_action": "[Nội tâm] Tôi nóng lòng muốn Đoàn Khương sớm được thả.",
+    "error_detail": null,
+    "summary": "Tại Ruộng Đá, tôi cùng Trần Văn Tự, Lưu Nguyệt Thanh và Phùng Tử Nghi xem xét hồ sơ về Mảnh Ngọc Khắc dưới phiến đá. Các lời khai chỉ xác nhận nơi phát hiện, không ai thấy Đoàn Khương cất giấu; vệt đất sẫm chưa rõ thời điểm hay hướng xáo trộn. Tôi đề nghị ghi rõ lời khắc làm suy yếu cáo buộc nhưng chưa xác nhận thủ phạm, rồi xin quan sát ngọc mà không chạm vào hay khai quật. Tôi nhận thấy đất trong nét khắc và ở mép ngọc đã khô cứng, khác đất sẫm cạnh phiến đá. Trần ghi nhận dấu vết này, cho rằng giả thiết Khương vừa giấu ngọc kém chắc chắn và hứa chuyển lời khắc cùng dấu đất về doanh trại để yêu cầu xem xét lại việc giữ Khương, nhưng không hứa thả người. Cuối chương, Trần rời Ruộng Đá mang theo báo cáo; tôi ở lại bên dây phong tỏa, còn việc xem xét Khương vẫn chưa ngã ngũ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Dùng nội dung Mảnh Ngọc Khắc và khoảng trống trong chuỗi chứng cứ để buộc Trần Văn Tự xem xét lại cáo buộc nhằm vào Đoàn Khương, dù chưa thể lập tức thả người.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Sau khi phiến đá đã được đặt lại và khu vực vẫn bị phong tỏa, ta không rời Ruộng Đá như ý muốn thúc giục; ta hỏi Trần Văn Tự liệu biên bản đã ghi rõ rằng không ai chứng kiến Đoàn Khương đặt Mảnh Ngọc Khắc dưới đá hay chưa, và Trần đáp rằng lời khai hiện có chỉ xác nhận vị trí phát hiện, không xác định người cất giấu.",
+       "Ta đề nghị đối chiếu điều ấy với dòng khắc vừa được đọc: Mảnh Ngọc Khắc ghi Vân Kiều Môn đã biết tàn tích không phải nơi chôn mảnh vỡ thần khí, khiến món đồ có thể là chứng cứ bất lợi cho môn phái chứ không tự chứng minh Khương là kẻ che giấu; Lưu Nguyệt Thanh lạnh lùng nhận xét rằng động cơ không phải bằng chứng, nhưng cũng không thể giả vờ nội dung ấy không làm cáo buộc lung lay.",
+       "Trần nhắc rằng lời khai về vệt đất sẫm vẫn trái chiều, còn Phùng Tử Nghi xác nhận ông chỉ thấy vệt đất chứ không biết nó xuất hiện từ lúc nào; ta chỉ ra rằng không lời khai nào nối được Khương với phiến đá vào thời điểm trước khi ngọc được phát hiện, nên việc ngọc nằm bên dưới không đủ để kết luận chính Khương đã giấu nó.",
+       "Trần không hứa thả Khương, nhưng thừa nhận hồ sơ hiện tại không chứng minh được ai đặt ngọc xuống đó; ông ghi bổ sung sự khác biệt giữa điều đã quan sát và điều đang bị suy đoán, đồng thời nói sẽ chuyển phần đối chiếu này tới doanh trại cùng báo cáo trước đó.",
+       "Ta yêu cầu bản ghi phải nêu rõ rằng nội dung Mảnh Ngọc Khắc làm suy yếu cáo buộc nhưng chưa xác nhận thủ phạm; Trần chấp thuận ghi nguyên ý, còn Lưu cảnh báo rằng một bản ghi không thể bảo đảm Khương được trả tự do, khiến ta hiểu bước kế tiếp phải là buộc người giữ Khương trả lời trước chứng cứ mới chứ không tiếp tục đào xới nơi này."
+      ],
+      "ends_at": "Cảnh khép lại tại Ruộng Đá, khi Trần Văn Tự hoàn tất phần bổ sung vào biên bản và chuẩn bị đưa báo cáo về doanh trại sứ giả.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Tìm ra dấu vết đủ làm lung lay cáo buộc nhằm vào Đoàn Khương, đồng thời khép lại cuộc điều tra tại Ruộng Đá mà không quyết định quyền ở lại đảo của dân làng.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu",
+       "phung_tu_nghi"
+      ],
+      "beats": [
+       "Khi Trần Văn Tự chuẩn bị rời Ruộng Đá cùng biên bản, tôi xin ông cho kiểm tra Mảnh Ngọc Khắc lần cuối ngay tại chỗ, không động vào phiến đá hay vượt dây phong tỏa; tôi nói nóng lòng muốn Khương được thả, nhưng nóng lòng không thể thay cho chứng cứ.",
+       "Trần cân nhắc rồi cho phép quan sát món ngọc dưới mắt mọi người, nhắc rằng cuộc kiểm tra không được biến thành một cuộc khai quật; Lưu Nguyệt Thanh lạnh lùng đáp rằng nếu dấu vết không phân biệt được thời điểm, nó chỉ làm hồ sơ dài thêm.",
+       "Tôi nhận ra đất nén bám trong những nét khắc và ở mép ngọc đã khô, cứng, khác hẳn lớp đất sẫm vừa bị xáo trộn cạnh phiến đá; tôi không khẳng định nó nằm dưới đá bao lâu, chỉ chỉ ra rằng vẻ ngoài ấy không giống một vật vừa được đặt xuống trong lúc kiểm tra.",
+       "Phùng Tử Nghi xác nhận ông chỉ từng thấy vệt đất sẫm chứ không biết nó xuất hiện khi nào, còn Trần ghi rõ quan sát mới: tình trạng đất bám trên ngọc chưa thể xác định người cất giấu nhưng khiến giả thiết Khương vừa giấu vật chứng trước khi bị bắt kém chắc chắn; Lưu Nguyệt Thanh đồng ý rằng cáo buộc không thể được xem là đã chứng minh.",
+       "Trần khép biên bản bổ sung và tuyên bố sẽ chuyển cả lời khắc lẫn dấu đất bám về doanh trại để xem xét lại việc giữ Khương, nhưng không hứa thả người; tôi chấp nhận rằng đã có căn cứ để đòi đối chiếu lại, chưa có căn cứ để gọi tên kẻ cất ngọc."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá khi dây phong tỏa vẫn giữ nguyên, còn Trần mang biên bản bổ sung rời đi để đưa dấu vết mới về doanh trại.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"biên bản bổ sung\" xuất hiện 3 lần (tối đa 2); đoạn: «biên bản bổ sung»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-29395573d1c2",
+      "kind": "action",
+      "tone": null,
+      "text": "Đi theo Trần Văn Tự về doanh trại, chờ xem việc giữ Khương có được xem xét lại không.",
+      "listeners": [],
+      "about": [
+       "doan_khuong",
+       "doanh_trai_su_gia",
+       "tran_van_tu"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-059dedee5ae6",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Phùng Tử Nghi liệu ông có thể xác nhận mình chỉ từng thấy vệt đất sẫm, không rõ nó xuất hiện khi nào.",
+      "listeners": [
+       "phung_tu_nghi"
+      ],
+      "about": [
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f7271697d049",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải tìm cách đòi đối chiếu lại việc giữ Khương, dù chưa biết ai cất ngọc.",
+      "listeners": [],
+      "about": [
+       "doan_khuong",
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": "lo lắng và quyết tâm"
+     }
+    ]
+   }
+  ],
+  "7": [
+   {
+    "attempt": 1,
+    "commit_id": "ch7-db333007ba85",
+    "player_action": "[Nội tâm] Tự nhủ phải tìm cách đòi đối chiếu lại việc giữ Khương, dù chưa biết ai cất ngọc.",
+    "error_detail": null,
+    "summary": "Tôi cùng Lưu Nguyệt Thanh đến gặp Trần Văn Tự, đề nghị phân biệt cáo buộc với điều nhân chứng thực sự biết và xin cho Khương được đối chiếu lời khai. Trần không thể thả Khương nhưng cho mở buổi đối chiếu vào sáng hôm sau. Tại đó, tôi hỏi Khương và yêu cầu ghi rõ các lời khai về dấu đất không thống nhất, chưa xác định được nguyên nhân nên không chứng minh Khương cất Mảnh Ngọc Khắc. Tôi cũng đề nghị ghi lời đáp của Khương bên cạnh dấu đất đã đối chiếu. Khương nói: “Ta không nói mình không biết gì”, nhưng không tiết lộ nguồn gốc món đồ. Trần đóng dấu biên bản và sẽ chuyển hồ sơ để các bên xem xét; Khương vẫn bị canh giữ và đưa khỏi phòng, còn việc giữ người chưa thay đổi.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đòi Trần Văn Tự đối chiếu lại việc giam giữ Đoàn Khương bằng những chứng cứ đã ghi nhận, trước khi cuộc điều tra bị biến thành một cuộc tranh quyền giữa các tiên môn.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Rời dây phong tỏa ở Ruộng Đá, ta nói với Lưu Nguyệt Thanh rằng lời khắc và dấu đất chưa chỉ ra ai cất ngọc, nhưng đủ để yêu cầu xem xét lại căn cứ giữ Khương; Lưu đáp rằng nàng sẽ đi cùng để lời đề nghị không bị gạt bỏ như lời riêng của ta.",
+       "Tại doanh trại sứ giả, Trần Văn Tự xác nhận đã chuyển báo cáo về Mảnh Ngọc Khắc và dấu đất, nhưng nói việc chuyển báo cáo không đồng nghĩa với thả người; ta nhã nhặn nhắc rằng hồ sơ hiện chỉ xác nhận nơi phát hiện, không có ai nhìn thấy Khương cất ngọc.",
+       "Lưu Nguyệt Thanh yêu cầu Trần ghi rõ sự khác biệt giữa cáo buộc và điều các nhân chứng thực sự biết, rồi nói nếu Vân Kiều Môn vẫn muốn khai quật, họ phải giải thích vì sao tiến hành khi chính lời khắc phủ nhận mục đích tìm mảnh vỡ thần khí; Trần cảnh cáo nàng đừng biến một cuộc đối chiếu thành cớ tranh quyền.",
+       "Ta đề nghị Trần cho Khương được trả lời cáo buộc trước mặt những người đã đối chiếu hồ sơ; Trần không nhận quyền thả Khương, nhưng đồng ý mở buổi đối chiếu lời khai tại doanh trại vào sáng hôm sau và yêu cầu ta cùng Lưu có mặt với tư cách người chứng kiến."
+      ],
+      "ends_at": "Cảnh kết tại doanh trại sứ giả, khi buổi đối chiếu lời khai được ấn định vào sáng hôm sau nhưng Đoàn Khương vẫn bị giữ.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Đối chiếu lời khai trước mặt Đoàn Khương để buộc hồ sơ phân biệt điều đã được chứng thực với điều mới chỉ là cáo buộc.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu",
+       "doan_khuong"
+      ],
+      "beats": [
+       "Sáng hôm sau, Trần Văn Tự đưa tôi và Lưu Nguyệt Thanh vào phòng đối chiếu; Đoàn Khương được dẫn tới nhưng vẫn bị canh giữ, còn Trần nhắc buổi này chỉ bàn về nội dung hồ sơ.",
+       "Tôi hỏi Khương liệu có ai tận mắt thấy hắn cất Mảnh Ngọc Khắc hay không; hắn đáp không lời khai nào chứng minh việc ấy, nhưng né tránh câu hỏi ngọc từ đâu mà có.",
+       "Lưu Nguyệt Thanh yêu cầu Trần đọc tách từng lời khai và ghi rõ phần nào là quan sát, phần nào là suy đoán; khi các lời kể về vệt đất được đặt cạnh nhau, chúng vẫn trái chiều mà không xác định được ai khiến chúng khác nhau.",
+       "Tôi nhắc dấu đất khô cứng trên ngọc không trùng với đất sẫm cạnh phiến đá, rồi đề nghị ghi lời đáp của Khương bên cạnh những chứng cứ đã có, không biến sự im lặng của hắn thành bằng chứng buộc tội.",
+       "Trần chấp thuận ghi biên bản đối chiếu nhưng nói việc giữ Khương chưa thể đổi khi chưa có quyết định cấp trên; ông sẽ chuyển cả lời đáp lẫn các điểm chưa thống nhất để những bên liên quan cùng xem xét."
+      ],
+      "ends_at": "Cảnh kết tại phòng đối chiếu trong Doanh Trại Sứ Giả, khi biên bản mới được ghi nhận nhưng Đoàn Khương vẫn bị giữ.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"hai người tuần tra\" xuất hiện 3 lần (tối đa 2); đoạn: «hai người tuần tra»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-274574a35ae0",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị Lưu Nguyệt Thanh cùng tôi rà lại những điểm đã được ghi trong biên bản.",
+      "listeners": [],
+      "about": [
+       "luu_nguyet_thanh",
+       "fact_bat_giu",
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-322d471de848",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Trần Văn Tự khi nào các bên liên quan sẽ xem xét tập hồ sơ.",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-078004ed7900",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ rằng sự im lặng của Khương không thể thay thế chứng cứ buộc tội.",
+      "listeners": [],
+      "about": [
+       "doan_khuong",
+       "fact_bat_giu"
+      ],
+      "lie": null,
+      "feeling": "lo lắng cho Khương"
+     }
+    ]
+   }
+  ],
+  "8": [
+   {
+    "attempt": 1,
+    "commit_id": "ch8-18d827a44ba3",
+    "player_action": "[Hành động] Đề nghị Lưu Nguyệt Thanh cùng tôi rà lại những điểm đã được ghi trong biên bản.",
+    "error_detail": null,
+    "summary": "Tôi cùng Lưu Nguyệt Thanh đối chiếu biên bản: lời khai chỉ xác nhận Mảnh Ngọc Khắc nằm dưới phiến đá, còn dấu đất sẫm chưa rõ do ai để lại; đất trên ngọc khác dấu đất cạnh đá nên cáo buộc Đoàn Khương yếu đi nhưng chưa xác định được thủ phạm. Trần Văn Tự thông báo sáng hôm sau sẽ kiểm tra công khai tại Ruộng Đá. Trước các môn phái, tôi trình bày giới hạn của chứng cứ; Lưu Nguyệt Thanh công bố Vân Kiều Môn từng biết tàn tích không có mảnh vỡ thần khí và phản đối giao quyền khai quật cho Thanh Hư Môn. Trần tuyên bố đình chỉ tạm thời lệnh di dời, cho dân Lạc Tinh ở lại đảo. Không ai ghi ý kiến phản đối; Mảnh Ngọc Khắc vẫn nằm dưới phiến đá, chưa rõ ai đã đặt nó ở đó.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Cùng Lưu Nguyệt Thanh rà lại biên bản để tìm điểm có thể kiểm chứng, rồi buộc cuộc điều tra bước khỏi thế giằng co kín trong doanh trại.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Ta đề nghị Lưu Nguyệt Thanh cùng đối chiếu từng dòng biên bản; nàng nhắc rằng những lời khai chỉ xác nhận nơi tìm thấy Mảnh Ngọc Khắc, còn không ai tận mắt thấy Đoàn Khương cất nó dưới phiến đá, và dấu đất sẫm vẫn chưa được xác định do ai hay từ lúc nào tạo ra.",
+       "Ta rà lại phần ghi về đất khô cứng trong nét khắc và ở mép ngọc, đối lập với đất sẫm cạnh phiến đá, rồi hỏi liệu có thể dùng khác biệt ấy để loại trừ Khương hay không; Lưu đáp rằng nó chỉ làm cáo buộc yếu đi, không chỉ ra được người đã đặt ngọc xuống đó, nên ghi quá lời sẽ khiến biên bản mất giá trị.",
+       "Trần Văn Tự bước vào khi chúng ta đang đối chiếu; ông xác nhận hồ sơ đã được chuyển xem xét nhưng việc giữ Khương chưa thay đổi, rồi thông báo sáng hôm sau các bên liên quan sẽ được chứng kiến cuộc kiểm tra dấu tích và lời khai tại Ruộng Đá, thay vì tiếp tục tranh luận kín trong doanh trại.",
+       "Ta hỏi ai đã yêu cầu mở cuộc kiểm tra trước nhiều phía; Trần chỉ nói lệnh triệu tập đã được gửi tới các môn phái có quyền lợi trong cuộc khai quật, không nêu ai khởi xướng. Lưu Nguyệt Thanh lạnh giọng nhận xét rằng khi ai cũng có mặt, không ai còn dễ sửa lời khai mà không bị phát hiện; ta hiểu điều đó cũng khiến từng câu hỏi có thể biến thành một phép thử ý định."
+      ],
+      "ends_at": "Cảnh kết trong doanh trại sứ giả, khi ta và Lưu Nguyệt Thanh biết cuộc kiểm tra công khai tại Ruộng Đá sẽ diễn ra vào sáng hôm sau.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Tại cuộc kiểm tra công khai ở Ruộng Đá, buộc các môn phái bộc lộ ý định quanh Mảnh Ngọc Khắc và xác lập quyền ở lại đảo của dân Lạc Tinh.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Tôi đến Ruộng Đá cùng Lưu Nguyệt Thanh và Trần Văn Tự; trước các đại diện môn phái đã được triệu tập, Trần tuyên bố cuộc kiểm tra chỉ căn cứ vào vật chứng và lời khai đã ghi, không ai được tự ý dịch chuyển Mảnh Ngọc Khắc.",
+       "Tôi chỉ ra rằng lời khai chỉ xác nhận nơi tìm thấy ngọc, còn không ai tận mắt thấy Đoàn Khương cất nó; phần đất khô cứng trên ngọc cũng khác vệt đất sẫm cạnh phiến đá, nên cáo buộc chưa đủ chứng cứ để kết luận ai đã đặt nó ở đó.",
+       "Khi tôi đọc rõ dòng khắc cho thấy Vân Kiều Môn từng biết tàn tích dưới đảo không phải nơi chôn mảnh vỡ thần khí, Lưu Nguyệt Thanh đề nghị các bên phải trả lời vì sao lệnh di dời vẫn được thi hành; Trần đáp rằng ông không thể thay mặt môn phái giải thích, nhưng không thể xem nội dung ấy như chưa từng được ghi nhận.",
+       "Lưu Nguyệt Thanh tuyên bố Thanh Hư Môn muốn nắm quyền kiểm soát cuộc khai quật, còn tôi nhận ra lời nàng vừa bảo vệ dân thôn vừa mở đường cho môn phái mình; Trần đáp lại rằng quyền tranh đoạt tàn tích không thể tự động xóa quyền cư trú của người sống trên đảo.",
+       "Trần công bố lệnh di dời bị đình chỉ: dân Lạc Tinh Thôn được ở lại đảo, và không môn phái nào được ép họ rời đi để khai quật nếu chưa có quyết định mới được các bên công khai ghi nhận; các đại diện không ai phản đối tại chỗ, nhưng cuộc kiểm tra vật chứng vẫn để ngỏ ai đã làm các lời khai mâu thuẫn."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi lệnh đình chỉ di dời được ghi nhận trước các môn phái và cuộc kiểm tra Mảnh Ngọc Khắc vẫn chưa tìm ra người gây mâu thuẫn lời khai.",
+      "resolves": [
+       "so_phan_dan_thon"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-e6800a2aee7a",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Đề nghị ghi rõ vào biên bản rằng Mảnh Ngọc Khắc không được dịch chuyển.",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-3ddd97680fd4",
+      "kind": "action",
+      "tone": null,
+      "text": "Quan sát phản ứng của các đại diện quanh dây phong tỏa.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-361ede04a8be",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm nhẹ nhõm vì dân Lạc Tinh được ở lại, nhưng vẫn lo về người đã đặt mảnh ngọc.",
+      "listeners": [],
+      "about": [
+       "dan_lac_tinh",
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": "nhẹ nhõm và lo lắng"
+     }
+    ]
+   }
+  ],
+  "9": [
+   {
+    "attempt": 1,
+    "commit_id": "ch9-b1f492ffd9d6",
+    "player_action": "[Hành động] Quan sát phản ứng của các đại diện quanh dây phong tỏa.",
+    "error_detail": null,
+    "summary": "Tại Ruộng Đá, các môn phái và dân thôn đứng sau dây phong tỏa, không ai dám tới gần phiến đá đang che Mảnh Ngọc Khắc. Lưu Nguyệt Thanh đề nghị kiểm tra vật chứng ngay tại chỗ, có các bên cùng chứng kiến, và khẳng định Vân Kiều Môn không chấp nhận để riêng Thanh Hư Môn quyết định. Trần Văn Tự nói lệnh di dời đã đình chỉ nhưng quyền khai quật, giữ hay xử trí vật chứng chưa được giao cho môn phái nào; ông yêu cầu các bên nêu lập trường. Không ai lên tiếng, nên ông tạm dừng cuộc kiểm tra cho đến khi thống nhất người chứng kiến và cách bảo vệ vật chứng. Lưu Nguyệt Thanh yêu cầu ghi việc trì hoãn vào hồ sơ. Mảnh Ngọc Khắc vẫn nằm dưới phiến đá, quyền kiểm tra chưa thuộc về ai.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Quan sát phản ứng quanh dây phong tỏa để nhận ra các môn phái đang chuyển từ tranh luận chứng cứ sang tranh quyền kiểm soát Mảnh Ngọc Khắc.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Ta nhìn qua những gương mặt sau dây phong tỏa, nhưng chỉ bắt gặp sự dè chừng; không ai bước tới phiến đá nơi Mảnh Ngọc Khắc vẫn nằm.",
+       "Lưu Nguyệt Thanh nhận ra ánh mắt ta, khẽ nói rằng lời khai có thể còn tranh cãi, nhưng quyền quyết định ai được chạm vào vật chứng thì không thể để một phía tự nắm.",
+       "Trần Văn Tự đáp rằng việc đình chỉ lệnh di dời không đồng nghĩa với trao quyền khai quật hay quyền giữ vật chứng cho bất kỳ môn phái nào.",
+       "Lưu Nguyệt Thanh công khai yêu cầu kiểm tra Mảnh Ngọc Khắc trước các bên, viện dẫn việc Vân Kiều Môn từng biết tàn tích không phải nơi chôn mảnh vỡ thần khí; Trần không bác bỏ chứng cứ ấy, nhưng tuyên bố chưa thể cho phép di chuyển vật chứng.",
+       "Ta nhận ra lời phản đối của Trần không còn bảo vệ lệnh di dời, mà đang giữ quyền quyết định trong tay sứ giả; Lưu Nguyệt Thanh thì đã biến sự thật về tàn tích thành đòn buộc các bên phải lộ lập trường."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, bên dây phong tỏa, khi Mảnh Ngọc Khắc vẫn nằm dưới phiến đá nhưng quyền kiểm tra nó đã trở thành cuộc tranh giành công khai.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Quan sát phản ứng quanh dây phong tỏa để buộc các bên bộc lộ ý định về quyền kiểm tra Mảnh Ngọc Khắc và quyền khai quật.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Tôi lần lượt nhìn những người quanh dây phong tỏa: vài đại diện tránh ánh mắt Lưu Nguyệt Thanh, còn những người khác nhìn về phiến đá nhưng vẫn không bước qua ranh giới.",
+       "Lưu Nguyệt Thanh nói Vân Kiều Môn không chấp nhận giao quyền kiểm tra vật chứng cho riêng Thanh Hư Môn, nhưng cũng không đòi được tự tay lấy ngọc; nàng muốn các bên cùng chứng kiến mọi bước.",
+       "Trần Văn Tự đáp rằng ông sẽ không chuyển vật chứng hay quyền khai quật cho bất kỳ môn phái nào khi chưa có thỏa thuận chung; ông yêu cầu các bên nêu rõ lập trường trước khi rời Ruộng Đá.",
+       "Tôi nhận ra sự im lặng không còn che được ý định: các bên đều muốn giữ quyền quyết định, nhưng không ai muốn tự nhận trách nhiệm nếu vật chứng bị động chạm.",
+       "Trần tuyên bố cuộc kiểm tra tại Ruộng Đá tạm dừng cho đến khi các bên thống nhất người chứng kiến và cách bảo vệ vật chứng; Lưu Nguyệt Thanh không phản đối, chỉ nhắc rằng sự trì hoãn cũng sẽ được ghi vào hồ sơ."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi các bên đã công khai lập trường nhưng Mảnh Ngọc Khắc vẫn nằm nguyên dưới phiến đá và quyền kiểm tra chưa được thống nhất.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-f572ed53189f",
+      "kind": "action",
+      "tone": null,
+      "text": "Lùi khỏi dây phong tỏa, tiếp tục quan sát phiến đá.",
+      "listeners": [],
+      "about": [
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-c2d54aacb563",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Đề nghị ghi rõ rằng chưa bên nào được tự ý chạm vào mảnh ngọc.",
+      "listeners": [
+       "tran_van_tu"
+      ],
+      "about": [
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-a9ca98f730dc",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo lắng cho tình trạng của mảnh ngọc khi cuộc kiểm tra bị trì hoãn.",
+      "listeners": [],
+      "about": [
+       "manh_ngoc_khac"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "10": [
+   {
+    "attempt": 1,
+    "commit_id": "ch10-d626ddaae4a8",
+    "player_action": "[Lời thoại, nói thật] Đề nghị ghi rõ rằng chưa bên nào được tự ý chạm vào mảnh ngọc.",
+    "error_detail": null,
+    "summary": "Người kể yêu cầu ghi rõ không ai được tự ý chạm vào Mảnh Ngọc Khắc, đồng thời tách quyền tiếp cận tàn tích khỏi quyền giữ hay xử trí vật chứng. Trần Văn Tự ghi lệnh di dời bị đình chỉ, cuộc kiểm tra vật chứng tạm dừng; Lưu Nguyệt Thanh đề nghị lập danh sách người vào, có người các bên chứng kiến và ghi căn cứ từng người. Trần Văn Tự đính chính rằng lời khai chỉ xác nhận vị trí mảnh ngọc, còn dấu đất sẫm chưa được chứng thực; ông nhận sai do cách chép nhập nhằng và đọc phần sửa trước mọi người. Lưu Nguyệt Thanh nói không được dùng lời khai ấy để buộc tội Đoàn Khương. Cuối chương, việc khảo sát tàn tích được chuẩn bị, dân thôn có quyền biết ai vào; Mảnh Ngọc Khắc vẫn dưới phiến đá, không ai đến gần, Trần Văn Tự mở trang mới chờ ghi tên đầu tiên.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Buộc các bên ghi nhận lệnh cấm tự ý chạm vào Mảnh Ngọc Khắc, đồng thời đẩy cuộc tranh chấp khỏi việc trì hoãn sang đối đầu về quyền tiếp cận tàn tích.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Ngươi đề nghị ghi rõ rằng chưa bên nào được tự ý chạm vào mảnh ngọc; Trần Văn Tự đáp rằng sẽ ghi nguyên văn, nhưng việc ấy không trao quyền giữ vật chứng cho bất cứ ai.",
+       "Lưu Nguyệt Thanh nhấn mạnh rằng nếu lệnh cấm chỉ nằm trên giấy thì Thanh Hư Môn vẫn có thể tìm cách chiếm thế chủ động; nàng yêu cầu ghi cả việc cuộc kiểm tra đang bị đình lại vì chưa thống nhất cách bảo vệ vật chứng.",
+       "Trần Văn Tự chấp thuận ghi nhận hai điểm ấy, rồi lạnh lùng nhắc rằng lệnh di dời đã đình chỉ chứ cuộc khai quật thì chưa bị hủy; ông không để cuộc tranh luận về mảnh ngọc che lấp câu hỏi ai được tới tàn tích.",
+       "Ngươi nhận ra các bên đã thôi tranh luận xem có được chạm vào mảnh ngọc hay không, mà bắt đầu dò xét ai sẽ quyết định việc tiếp cận tàn tích; Lưu Nguyệt Thanh nói Vân Kiều Môn sẽ không để Thanh Hư Môn độc chiếm quyền đó.",
+       "Trần Văn Tự tuyên bố cuộc kiểm tra tại Ruộng Đá vẫn tạm dừng, còn các bên phải nêu rõ lập trường về quyền tiếp cận tàn tích trước khi ông cho phép bước tiếp; lời tuyên bố khiến việc trì hoãn trở thành một cuộc đối đầu công khai."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi Trần Văn Tự giữ nguyên lệnh không ai được tự ý chạm vào Mảnh Ngọc Khắc và buộc các bên chuyển sang tranh chấp quyền tiếp cận tàn tích.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Buộc các bên chốt cách tiếp cận tàn tích, đồng thời xác định vì sao những lời khai về vật chứng trở nên mâu thuẫn.",
+      "present": [
+       "protagonist",
+       "luu_nguyet_thanh",
+       "tran_van_tu"
+      ],
+      "beats": [
+       "Tôi nhắc lại rằng không ai được tự ý chạm vào Mảnh Ngọc Khắc, rồi đề nghị Trần Văn Tự ghi riêng quyền tiếp cận tàn tích khỏi quyền xử trí vật chứng; ông chấp thuận nhưng yêu cầu các bên phải chịu trách nhiệm trước dân thôn.",
+       "Lưu Nguyệt Thanh đòi lập danh sách người vào tàn tích và ghi rõ căn cứ của từng người; nàng nói Vân Kiều Môn sẽ cử người chứng kiến, không giao quyền khai quật riêng cho Thanh Hư Môn.",
+       "Trần Văn Tự mở lại biên bản, thừa nhận những lời khai trái ngược đã bị ông rút gọn thành một bản tóm lược, khiến lời xác nhận về vị trí Mảnh Ngọc Khắc bị nhập nhằng với lời suy đoán về dấu đất; ông ghi rõ sai lệch do cách chép và phân biệt điều đã thấy với điều chưa được chứng thực.",
+       "Tôi yêu cầu ông đọc phần đính chính trước mọi người; Lưu Nguyệt Thanh xác nhận cách ghi ấy không chứng minh ai đã để lại dấu đất, nhưng ngăn các bên dùng lời khai bị nhập nhằng để buộc tội Đoàn Khương.",
+       "Trần Văn Tự tuyên bố cuộc kiểm tra vật chứng vẫn đình lại, còn việc khảo sát tàn tích sẽ bắt đầu với người chứng kiến của các bên và dân thôn được quyền biết ai đi vào; Lưu Nguyệt Thanh đồng ý, nhưng cảnh báo rằng mỗi bước chân đều sẽ được ghi lại."
+      ],
+      "ends_at": "Cảnh kết tại Ruộng Đá, khi Trần Văn Tự chuẩn bị ghi danh sách người được vào tàn tích còn Mảnh Ngọc Khắc vẫn nằm nguyên dưới phiến đá.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-0ef5bf569804",
+      "kind": "action",
+      "tone": null,
+      "text": "Đặt tên mình vào đầu danh sách người vào khảo sát.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-cc8f29b2e3a4",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Tôi xin ghi tên mình; tôi sẽ chịu trách nhiệm trước dân thôn về việc vào đó.",
+      "listeners": [
+       "tran_van_tu",
+       "luu_nguyet_thanh"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-bfd9a2c19e2b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm quyết tâm tìm cách giúp Đoàn Khương thoát khỏi cảnh bị buộc tội.",
+      "listeners": [],
+      "about": [
+       "doan_khuong",
+       "fact_bat_giu"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "setup:characters",
+   "attempt": 1,
+   "code": "STORY_SETUP_INVALID",
+   "detail": "cần đúng 3 lựa chọn, nhận 1; lựa chọn 1 có trường rỗng: ['personality', 'backstory']"
+  }
+ ],
+ "setup_repairs": []
+}

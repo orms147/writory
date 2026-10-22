@@ -127,6 +127,17 @@ class ThreadInfo:
 
 
 @dataclass(frozen=True)
+class ItemInfo:
+    """Trạng thái hiện tại của một đồ vật: một người giữ HOẶC một nơi (D-90)."""
+
+    id: str
+    name: Text
+    holder: Text | None
+    place: Text | None
+    since_chapter: int
+
+
+@dataclass(frozen=True)
 class WriterContext:
     story_id: str
     as_of_chapter: int
@@ -138,7 +149,11 @@ class WriterContext:
     secrets: tuple[SecretInfo, ...]
     neighbors: tuple[NeighborInfo, ...]
     open_threads: tuple[ThreadInfo, ...]
+    items: tuple[ItemInfo, ...] = ()
 
+
+# Số đồ vật tối đa trong mục "Đồ vật quan trọng": đồ vật đổi chỗ gần đây nhất đứng trước (D-90).
+MAX_ITEMS = 12
 
 # Chữ hiện của một nút theo nhãn (lớp truth: dùng `name` thật).
 _TEXT = "coalesce(n.name, n.text, n.description, n.content, n.id)"
@@ -291,7 +306,32 @@ def writer_context(
             for s in plan.secrets
         )
 
-    shown |= {f.id for f in facts} | {lie.id for lie in lies}
+    items = tuple(
+        ItemInfo(r["id"], Text(r["name"], r["ua"]),
+                 Text(r["holder"], r["holder_ua"]) if r["holder"] is not None else None,
+                 Text(r["place"], r["place_ua"]) if r["place"] is not None else None,
+                 r["since"])
+        for r in read(f"""
+            MATCH (i:{ENTITY}:Item {{story_id: $story_id}})
+            OPTIONAL MATCH (h:{ENTITY} {{story_id: $story_id}})-[r:HOLDS]->(i) WHERE {VALID_AT}
+            WITH i, collect({{name: h.name, ua: coalesce(h.user_authored, false),
+                              since: r.valid_from_chapter}})[0] AS hold
+            OPTIONAL MATCH (i)-[r:LOCATED_AT]->(l:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
+            WITH i, hold, collect({{name: l.name, ua: coalesce(l.user_authored, false),
+                                    since: r.valid_from_chapter}})[0] AS loc
+            WITH i, hold, loc, CASE WHEN hold.name IS NULL THEN loc ELSE hold END AS cur
+            WHERE cur.name IS NOT NULL
+            RETURN i.id AS id, i.name AS name, coalesce(i.user_authored, false) AS ua,
+                   hold.name AS holder, hold.ua AS holder_ua,
+                   CASE WHEN hold.name IS NULL THEN loc.name END AS place,
+                   CASE WHEN hold.name IS NULL THEN loc.ua END AS place_ua,
+                   cur.since AS since
+            ORDER BY since DESC, id
+            LIMIT $max_items
+            """, max_items=MAX_ITEMS)
+    )
+
+    shown |= {f.id for f in facts} | {lie.id for lie in lies} | {i.id for i in items}
     limit = "" if max_neighbors is None else "LIMIT $limit"
     neighbors = tuple(
         NeighborInfo(r["id"], r["kind"], r["text"], tuple(r["aliases"]), r["hops"],
@@ -334,7 +374,7 @@ def writer_context(
 
     return WriterContext(
         story_id, as_of_chapter, as_of_chapter + 1, present_info, relations, facts, lies,
-        secrets, neighbors, threads,
+        secrets, neighbors, threads, items,
     )
 
 
@@ -411,6 +451,13 @@ def render_writer_context(ctx: WriterContext) -> list[str | UserAuthored]:
         where = ["; ở: ", _t(c.location)] if c.location else []
         holds = ["; đang giữ: ", *_joined(c.holds)] if c.holds else ["; không giữ đồ vật nào"]
         out.line("- ", *_name(c), f" — {state}", *where, *holds)
+
+    if ctx.items:
+        out.line("### Đồ vật quan trọng (mỗi đồ vật chỉ ở một chỗ: người giữ hoặc nơi chốn; "
+                 "không tả khác)")
+        for i in ctx.items:
+            where = ["do ", _t(i.holder), " giữ"] if i.holder else ["ở ", _t(i.place)]
+            out.line("- ", _t(i.name), " — ", *where, f" (từ chương {i.since_chapter})")
 
     if ctx.relations:
         out.line("### Quan hệ hiện tại giữa người có mặt")
