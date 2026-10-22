@@ -1,0 +1,2960 @@
+{
+ "story_id": "run-20261022-tu-tien-names-2-4a8afef1",
+ "plan": {
+  "acts": [
+   {
+    "name": "Khoang khóa",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Lời hứa chưa gọi tên",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "name": "Mạch khí dưới sương",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "name": "Cái giá của lòng tin",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "doan_mac_lay_hop",
+    "reveal_from_chapter": 2,
+    "reveal_to_chapter": 3,
+    "leak_terms": [
+     [
+      "Đoàn Mặc",
+      "lấy Hộp Linh Thạch"
+     ],
+     [
+      "khách áo xám",
+      "đã lấy chiếc hộp"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "bach_ky_bao_tin_cho_dich",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Bạch Kỳ",
+      "báo lộ trình"
+     ],
+     [
+      "Bạch quản sự",
+      "đầu mối thuộc Huyền Kiếm Tông"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_hop_va_ngan_thanh_trung",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 3
+   },
+   {
+    "thread_id": "loi_hua_voi_doan_mac",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "ke_tan_cong_thuyen",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "lua_chon_ve_mach_linh_khi",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Đội hộ vệ khóa khoang hàng và buộc Ninh Tố Khanh cùng các hành khách khai rõ vị trí của mình trong ca trực.",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Ninh Tố Khanh chấp nhận hoặc từ chối giao ước với Đoàn Mặc sau khi hiểu rằng hộp linh thạch là chìa khóa của cuộc tranh đoạt phía trước.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Cuộc tấn công buộc Ninh Tố Khanh phải chọn ai được giữ quyền kiểm soát mảnh dò trong lúc thuyền mất ổn định.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Ninh Tố Khanh phanh phui được sự phản bội đã đưa kẻ tấn công tới đúng lộ trình của thuyền.",
+    "from_chapter": 4,
+    "to_chapter": 4
+   },
+   {
+    "kind": "ending",
+    "goal": "Ninh Tố Khanh quyết định ai sẽ nhận mảnh dò và chấp nhận món nợ cuối cùng do lựa chọn ấy tạo ra.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 3,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "doan_mac_lay_hop",
+    "text": "Đoàn Mặc đã lấy Hộp Linh Thạch khỏi khoang hàng trước khi cuộc lục soát bắt đầu.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "revealed_chapter": 2
+   },
+   {
+    "fact_id": "bach_ky_bao_tin_cho_dich",
+    "text": "Bạch Kỳ đã bí mật báo lộ trình của thuyền cho một đầu mối thuộc Huyền Kiếm Tông để đổi lấy sự bảo đảm cho bản thân.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_hop_va_ngan_thanh_trung",
+    "description": "Liệu Ninh Tố Khanh có tìm ra hộp linh thạch trước khi đội hộ vệ biến cuộc lục soát thành thanh trừng?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 3,
+    "resolved_chapter": 1
+   },
+   {
+    "thread_id": "loi_hua_voi_doan_mac",
+    "description": "Ninh Tố Khanh sẽ hứa điều gì để đổi lấy sự giúp đỡ của Đoàn Mặc?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "resolved_chapter": 2
+   },
+   {
+    "thread_id": "ke_tan_cong_thuyen",
+    "description": "Ai đã đánh vào thân thuyền giữa màn sương đen?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "lua_chon_ve_mach_linh_khi",
+    "description": "Ninh Tố Khanh sẽ chọn trao mảnh dò cho phe nào?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-tu-tien-names-2-4a8afef1-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Ninh Tố Khanh",
+      "personality": "Khéo ứng đối, kín kẽ và biết dùng im lặng để khiến đối phương tự nói nhiều hơn dự định. Nàng coi trọng sự sống còn, nhưng không dễ quên một món nợ hay một lời thất hứa.",
+      "backstory": "Ninh Tố Khanh từng theo một đoàn vận hàng qua vùng núi xa xôi, cho đến khi một cuộc phục kích khiến đoàn tan tác và nàng phải tự tìm đường sống. Nàng giấu thân phận thật khi nhận việc áp tải tập sự, vì muốn tiếp cận những người đang tranh quyền kiểm soát linh mạch. Trên chuyến thuyền này, nàng nhận ra hành khách kín tiếng đang theo dõi mình, nhưng chưa biết người ấy muốn hợp tác hay buộc nàng trả giá.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "doan_mac",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Mặc",
+      "aliases": [
+       "khách áo xám"
+      ],
+      "personality": "Điềm tĩnh, kín tiếng, giỏi đặt câu hỏi khiến người khác tự để lộ ý định; chỉ đưa ra lời hứa khi đã tính đến cái giá.",
+      "backstory": "Tự nhận là người buôn dược liệu, lên thuyền tại bến nổi Thanh Vụ. Không ai trong số hành khách biết rõ lai lịch của hắn."
+     }
+    },
+    {
+     "id": "ly_anh_suong",
+     "label": "Character",
+     "props": {
+      "name": "Lý Ánh Sương",
+      "aliases": [
+       "đội trưởng Lý"
+      ],
+      "personality": "Quyết đoán, trọng kỷ luật, ít kiên nhẫn với những lời khai vòng vo; không muốn để một vụ mất hàng biến thành cuộc chém giết.",
+      "backstory": "Được giao chỉ huy đội hộ vệ chuyến thuyền này sau nhiều năm bảo vệ các đoàn vận tải của Tĩnh Hà Tông."
+     }
+    },
+    {
+     "id": "bach_ky",
+     "label": "Character",
+     "props": {
+      "name": "Bạch Kỳ",
+      "aliases": [
+       "Bạch quản sự"
+      ],
+      "personality": "Lễ độ trước mặt người trên, sắc sảo khi thương lượng và luôn cân đo lợi ích trước khi chọn phe.",
+      "backstory": "Quản sự chuyến hàng, chịu trách nhiệm bàn giao linh thạch cho tiền tuyến tranh mạch khí."
+     }
+    },
+    {
+     "id": "thieu_tu_han",
+     "label": "Character",
+     "props": {
+      "name": "Thiệu Tử Hàn",
+      "aliases": [
+       "kiếm tu trẻ"
+      ],
+      "personality": "Nóng nảy, tự tin vào kiếm thuật, dễ coi sự dè chừng của người khác là dấu hiệu có tội.",
+      "backstory": "Đệ tử ngoại môn của Huyền Kiếm Tông, được cử đi cùng chuyến thuyền để làm chứng cho việc bàn giao hàng."
+     }
+    },
+    {
+     "id": "thuyen_phu_khong_lien_chau",
+     "label": "Location",
+     "props": {
+      "name": "Thuyền Phù Không Liên Châu",
+      "aliases": [
+       "Liên Châu"
+      ],
+      "description": "Chiếc thuyền vận tải bay qua Lạc Vân Lĩnh, có khoang hàng được khóa từ bên ngoài và đang chao nghiêng giữa màn sương đen."
+     }
+    },
+    {
+     "id": "lac_van_linh",
+     "label": "Location",
+     "props": {
+      "name": "Lạc Vân Lĩnh",
+      "description": "Dãy núi hư cấu phủ mây dày, nơi những mạch linh khí xa xôi khiến các tông môn tranh giành."
+     }
+    },
+    {
+     "id": "khoang_hang",
+     "label": "Location",
+     "props": {
+      "name": "Khoang Hàng",
+      "description": "Khoang chứa linh thạch nằm giữa thân thuyền, hiện bị niêm phong để đội hộ vệ lục soát."
+     }
+    },
+    {
+     "id": "ben_noi_thanh_vu",
+     "label": "Location",
+     "props": {
+      "name": "Bến Nổi Thanh Vụ",
+      "aliases": [
+       "Thanh Vụ"
+      ],
+      "description": "Bến nổi hư cấu giữa vùng trời loạn lạc, nơi hành khách kín tiếng lên thuyền trước chuyến bay."
+     }
+    },
+    {
+     "id": "tinh_ha_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Tĩnh Hà Tông",
+      "description": "Tông môn sở hữu thuyền vận tải này và đang tìm cách giữ quyền tiếp cận các mạch linh khí xa xôi."
+     }
+    },
+    {
+     "id": "huyen_kiem_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Kiếm Tông",
+      "description": "Tông môn đối địch đang cử người theo dõi việc bàn giao linh thạch và tranh quyền kiểm soát linh mạch."
+     }
+    },
+    {
+     "id": "hop_linh_thach",
+     "label": "Item",
+     "props": {
+      "name": "Hộp Linh Thạch",
+      "aliases": [
+       "chiếc hộp"
+      ],
+      "description": "Hộp niêm phong chứa linh thạch dành cho tiền tuyến, biến mất giữa ca trực của Ninh Tố Khanh."
+     }
+    },
+    {
+     "id": "phu_hieu_ap_tai",
+     "label": "Item",
+     "props": {
+      "name": "Phù Hiệu Áp Tải",
+      "aliases": [
+       "phù hiệu"
+      ],
+      "description": "Phù hiệu gỗ nhỏ xác nhận người mang nó là nhân sự tập sự trên chuyến thuyền."
+     }
+    },
+    {
+     "id": "mat_hop_giua_ca_truc",
+     "label": "Fact",
+     "props": {
+      "text": "Hộp Linh Thạch biến mất trong lúc ca trực của Ninh Tố Khanh."
+     }
+    },
+    {
+     "id": "doan_mac_de_nghi_giao_uoc",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Mặc đề nghị giúp Ninh Tố Khanh tìm hộp linh thạch để đổi lấy một lời hứa chưa nói rõ."
+     }
+    },
+    {
+     "id": "chuyen_hang_thuoc_tinh_ha",
+     "label": "Fact",
+     "props": {
+      "text": "Chuyến hàng thuộc quyền quản lý của Tĩnh Hà Tông."
+     }
+    },
+    {
+     "id": "huyen_kiem_cu_nguoi_theo_doi",
+     "label": "Fact",
+     "props": {
+      "text": "Huyền Kiếm Tông cử Thiệu Tử Hàn đi cùng để giám sát việc bàn giao linh thạch."
+     }
+    },
+    {
+     "id": "doan_mac_lay_hop",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Mặc đã lấy Hộp Linh Thạch khỏi khoang hàng trước khi cuộc lục soát bắt đầu."
+     }
+    },
+    {
+     "id": "hop_chua_manh_do_mach",
+     "label": "Fact",
+     "props": {
+      "text": "Hộp Linh Thạch chứa một mảnh dò có thể xác định hướng của mạch linh khí dưới Lạc Vân Lĩnh."
+     }
+    },
+    {
+     "id": "doan_mac_muon_ngan_doc_chiem",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Mặc lấy hộp để ngăn Tĩnh Hà Tông dùng mảnh dò chiếm giữ mạch linh khí trước các tông môn khác."
+     }
+    },
+    {
+     "id": "cu_danh_tu_ben_ngoai",
+     "label": "Fact",
+     "props": {
+      "text": "Một đòn đánh từ bên ngoài đã làm thuyền chao nghiêng sau khi khoang bị khóa."
+     }
+    },
+    {
+     "id": "bach_ky_bao_tin_cho_dich",
+     "label": "Fact",
+     "props": {
+      "text": "Bạch Kỳ đã bí mật báo lộ trình của thuyền cho một đầu mối thuộc Huyền Kiếm Tông để đổi lấy sự bảo đảm cho bản thân."
+     }
+    },
+    {
+     "id": "doan_mac_tung_gap_ninh",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Mặc nhận ra Ninh Tố Khanh từng đi qua vùng núi xa xôi trong đoàn vận hàng bị phục kích."
+     }
+    },
+    {
+     "id": "tim_hop_va_ngan_thanh_trung",
+     "label": "Thread",
+     "props": {
+      "description": "Liệu Ninh Tố Khanh có tìm ra hộp linh thạch trước khi đội hộ vệ biến cuộc lục soát thành thanh trừng?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 3
+     }
+    },
+    {
+     "id": "loi_hua_voi_doan_mac",
+     "label": "Thread",
+     "props": {
+      "description": "Ninh Tố Khanh sẽ hứa điều gì để đổi lấy sự giúp đỡ của Đoàn Mặc?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ke_tan_cong_thuyen",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã đánh vào thân thuyền giữa màn sương đen?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "lua_chon_ve_mach_linh_khi",
+     "label": "Thread",
+     "props": {
+      "description": "Ninh Tố Khanh sẽ chọn trao mảnh dò cho phe nào?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_mac@0",
+     "props": {
+      "kind": "đề phòng lẫn nhau",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_mac",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_mac>protagonist@0",
+     "props": {
+      "kind": "muốn hợp tác",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "ly_anh_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>ly_anh_suong@0",
+     "props": {
+      "kind": "đồng sự",
+      "score": 15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "ly_anh_suong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ly_anh_suong>protagonist@0",
+     "props": {
+      "kind": "cấp trên",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "bach_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>bach_ky@0",
+     "props": {
+      "kind": "nghi kỵ",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "bach_ky",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:bach_ky>protagonist@0",
+     "props": {
+      "kind": "cấp trên",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "thieu_tu_han",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>thieu_tu_han@0",
+     "props": {
+      "kind": "đề phòng",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "thieu_tu_han",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:thieu_tu_han>protagonist@0",
+     "props": {
+      "kind": "nghi kỵ",
+      "score": -10
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_mac",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_mac>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ly_anh_suong",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ly_anh_suong>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bach_ky",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bach_ky>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "thieu_tu_han",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:thieu_tu_han>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "phu_hieu_ap_tai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>phu_hieu_ap_tai@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "doan_mac",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:doan_mac>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ly_anh_suong",
+     "to": "tinh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ly_anh_suong>tinh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "bach_ky",
+     "to": "tinh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:bach_ky>tinh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "thieu_tu_han",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:thieu_tu_han>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mat_hop_giua_ca_truc",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mat_hop_giua_ca_truc>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mat_hop_giua_ca_truc",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mat_hop_giua_ca_truc>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ly_anh_suong",
+     "to": "mat_hop_giua_ca_truc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ly_anh_suong>mat_hop_giua_ca_truc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_ky",
+     "to": "mat_hop_giua_ca_truc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_ky>mat_hop_giua_ca_truc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "thieu_tu_han",
+     "to": "mat_hop_giua_ca_truc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:thieu_tu_han>mat_hop_giua_ca_truc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_de_nghi_giao_uoc",
+     "to": "doan_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_de_nghi_giao_uoc>doan_mac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_de_nghi_giao_uoc",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_de_nghi_giao_uoc>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_de_nghi_giao_uoc",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_de_nghi_giao_uoc>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mac",
+     "to": "doan_mac_de_nghi_giao_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mac>doan_mac_de_nghi_giao_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "chuyen_hang_thuoc_tinh_ha",
+     "to": "tinh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chuyen_hang_thuoc_tinh_ha>tinh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chuyen_hang_thuoc_tinh_ha",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chuyen_hang_thuoc_tinh_ha>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chuyen_hang_thuoc_tinh_ha",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chuyen_hang_thuoc_tinh_ha>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ly_anh_suong",
+     "to": "chuyen_hang_thuoc_tinh_ha",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ly_anh_suong>chuyen_hang_thuoc_tinh_ha@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_ky",
+     "to": "chuyen_hang_thuoc_tinh_ha",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_ky>chuyen_hang_thuoc_tinh_ha@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "huyen_kiem_cu_nguoi_theo_doi",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:huyen_kiem_cu_nguoi_theo_doi>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "huyen_kiem_cu_nguoi_theo_doi",
+     "to": "thieu_tu_han",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:huyen_kiem_cu_nguoi_theo_doi>thieu_tu_han@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "huyen_kiem_cu_nguoi_theo_doi",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:huyen_kiem_cu_nguoi_theo_doi>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "thieu_tu_han",
+     "to": "huyen_kiem_cu_nguoi_theo_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:thieu_tu_han>huyen_kiem_cu_nguoi_theo_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_ky",
+     "to": "huyen_kiem_cu_nguoi_theo_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_ky>huyen_kiem_cu_nguoi_theo_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_lay_hop",
+     "to": "doan_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_lay_hop>doan_mac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_lay_hop",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_lay_hop>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mac",
+     "to": "doan_mac_lay_hop",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mac>doan_mac_lay_hop@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "hop_chua_manh_do_mach",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hop_chua_manh_do_mach>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hop_chua_manh_do_mach",
+     "to": "lac_van_linh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hop_chua_manh_do_mach>lac_van_linh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mac",
+     "to": "hop_chua_manh_do_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mac>hop_chua_manh_do_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_ky",
+     "to": "hop_chua_manh_do_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_ky>hop_chua_manh_do_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_muon_ngan_doc_chiem",
+     "to": "doan_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>doan_mac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_muon_ngan_doc_chiem",
+     "to": "tinh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>tinh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_muon_ngan_doc_chiem",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>hop_linh_thach@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_muon_ngan_doc_chiem",
+     "to": "lac_van_linh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>lac_van_linh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mac",
+     "to": "doan_mac_muon_ngan_doc_chiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mac>doan_mac_muon_ngan_doc_chiem@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "cu_danh_tu_ben_ngoai",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:cu_danh_tu_ben_ngoai>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "cu_danh_tu_ben_ngoai",
+     "to": "lac_van_linh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:cu_danh_tu_ben_ngoai>lac_van_linh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ly_anh_suong",
+     "to": "cu_danh_tu_ben_ngoai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ly_anh_suong>cu_danh_tu_ben_ngoai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_ky",
+     "to": "cu_danh_tu_ben_ngoai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_ky>cu_danh_tu_ben_ngoai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "thieu_tu_han",
+     "to": "cu_danh_tu_ben_ngoai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:thieu_tu_han>cu_danh_tu_ben_ngoai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "bach_ky_bao_tin_cho_dich",
+     "to": "bach_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bach_ky_bao_tin_cho_dich>bach_ky@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "bach_ky_bao_tin_cho_dich",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bach_ky_bao_tin_cho_dich>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "bach_ky_bao_tin_cho_dich",
+     "to": "thuyen_phu_khong_lien_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bach_ky_bao_tin_cho_dich>thuyen_phu_khong_lien_chau@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_ky",
+     "to": "bach_ky_bao_tin_cho_dich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_ky>bach_ky_bao_tin_cho_dich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_tung_gap_ninh",
+     "to": "doan_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_tung_gap_ninh>doan_mac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_mac_tung_gap_ninh",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_mac_tung_gap_ninh>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mac",
+     "to": "doan_mac_tung_gap_ninh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mac>doan_mac_tung_gap_ninh@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Ninh Tố Khanh",
+      "known_as": "Ninh Tố Khanh"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-3ea6e22b1169",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ly_anh_suong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ly_anh_suong>ch1@1",
+     "props": {
+      "quote": "Lý Ánh Sương đứng chắn ngang cửa khoang hàng, một tay giữ chuôi kiếm.",
+      "known_as": "Lý Ánh Sương"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "khoang_hang",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:khoang_hang>ch1@1",
+     "props": {
+      "quote": "Lý Ánh Sương đứng chắn ngang cửa khoang hàng, một tay giữ chuôi kiếm.",
+      "known_as": "khoang hàng"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phu_hieu_ap_tai",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phu_hieu_ap_tai>ch1@1",
+     "props": {
+      "quote": "Tôi đặt phù hiệu áp tải lên bàn gỗ cạnh cửa.",
+      "known_as": "phù hiệu áp tải"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "bach_ky",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:bach_ky>ch1@1",
+     "props": {
+      "quote": "Bạch Kỳ nhíu mày.",
+      "known_as": "Bạch Kỳ"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thieu_tu_han",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thieu_tu_han>ch1@1",
+     "props": {
+      "quote": "Thiệu Tử Hàn bước khỏi hàng hành khách.",
+      "known_as": "Thiệu Tử Hàn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_mac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_mac>ch1@1",
+     "props": {
+      "quote": "Đoàn Mặc đứng gần dãy rương phía trong, từ đầu đến cuối chưa chen vào một câu.",
+      "known_as": "Đoàn Mặc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_mac_de_nghi_giao_uoc",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_mac_de_nghi_giao_uoc>ch1@1",
+     "props": {
+      "quote": "Ta có thể giúp cô tìm hộp linh thạch."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "mat_hop_giua_ca_truc",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:mat_hop_giua_ca_truc>ch1@1",
+     "props": {
+      "quote": "Khi trở về, hộp đã không còn ở chỗ cũ."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "mat_hop_giua_ca_truc",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>mat_hop_giua_ca_truc@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Khi trở về, hộp đã không còn ở chỗ cũ."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "doan_mac_de_nghi_giao_uoc",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>doan_mac_de_nghi_giao_uoc@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Ta có thể giúp cô tìm hộp linh thạch."
+     }
+    },
+    {
+     "type": "HOLDS",
+     "from": "ly_anh_suong",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "HOLDS:ly_anh_suong>hop_linh_thach@1",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hop_linh_thach",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hop_linh_thach>ch1@1",
+     "props": {
+      "quote": "Hộp linh thạch đã tìm thấy.",
+      "known_as": "Hộp linh thạch"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thuyen_phu_khong_lien_chau",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thuyen_phu_khong_lien_chau>ch1@1",
+     "props": {
+      "quote": "Con thuyền vẫn chao nhẹ.",
+      "known_as": "Con thuyền"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "tim_hop_va_ngan_thanh_trung",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:tim_hop_va_ngan_thanh_trung>ch1@1",
+     "props": {
+      "quote": "Hộp linh thạch đã tìm thấy. Dừng lục soát từng người."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:protagonist>phu_hieu_ap_tai@0",
+     "valid_to_chapter": 1
+    },
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:doan_mac>hop_linh_thach@0",
+     "valid_to_chapter": 1
+    }
+   ]
+  },
+  "2": {
+   "commit_id": "ch2-b0f204486183",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    },
+    {
+     "id": "lie:choice-3f889cda553f",
+     "label": "Lie",
+     "props": {
+      "chapter": 2,
+      "content": "Tôi chỉ vừa nhận ra nó ở gần chân rương."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "TOLD",
+     "from": "protagonist",
+     "to": "lie:choice-3f889cda553f",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "TOLD:protagonist>lie:choice-3f889cda553f@2",
+     "props": {}
+    },
+    {
+     "type": "TOLD_TO",
+     "from": "lie:choice-3f889cda553f",
+     "to": "bach_ky",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "TOLD_TO:lie:choice-3f889cda553f>bach_ky@2",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "lie:choice-3f889cda553f",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:lie:choice-3f889cda553f>hop_linh_thach@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "doan_mac_lay_hop",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>doan_mac_lay_hop@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "doan_mac",
+      "quote": "Chính ta lấy hộp khỏi khoang hàng, trước khi cuộc lục soát bắt đầu."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "doan_mac_muon_ngan_doc_chiem",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>doan_mac_muon_ngan_doc_chiem@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "doan_mac",
+      "quote": "Nếu để Tĩnh Hà Tông mang nó tới nơi, những kẻ khác sẽ chẳng còn cơ hội tranh phần."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_mac_lay_hop",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_mac_lay_hop>ch2@2",
+     "props": {
+      "quote": "Chính ta lấy hộp khỏi khoang hàng, trước khi cuộc lục soát bắt đầu."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_mac_muon_ngan_doc_chiem",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_mac_muon_ngan_doc_chiem>ch2@2",
+     "props": {
+      "quote": "Nếu để Tĩnh Hà Tông mang nó tới nơi, những kẻ khác sẽ chẳng còn cơ hội tranh phần."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hop_chua_manh_do_mach",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hop_chua_manh_do_mach>ch2@2",
+     "props": {
+      "quote": "Trong hộp có mảnh dò. Nó lần được hướng mạch linh khí dưới Lạc Vân Lĩnh."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tinh_ha_tong",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tinh_ha_tong>ch2@2",
+     "props": {
+      "quote": "Nếu để Tĩnh Hà Tông mang nó tới nơi, những kẻ khác sẽ chẳng còn cơ hội tranh phần.",
+      "known_as": "Tĩnh Hà Tông"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lac_van_linh",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lac_van_linh>ch2@2",
+     "props": {
+      "quote": "Trong hộp có mảnh dò. Nó lần được hướng mạch linh khí dưới Lạc Vân Lĩnh.",
+      "known_as": "Lạc Vân Lĩnh"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "loi_hua_voi_doan_mac",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:loi_hua_voi_doan_mac>ch2@2",
+     "props": {
+      "quote": "Được. Trước khi quyết định giao mảnh dò cho phe nào, tôi sẽ nghe anh tự trình bày mục đích."
+     }
+    },
+    {
+     "type": "HOLDS",
+     "from": "thieu_tu_han",
+     "to": "hop_linh_thach",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "HOLDS:thieu_tu_han>hop_linh_thach@2",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:ly_anh_suong>hop_linh_thach@1",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-25b3d4aa1097",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "cu_danh_tu_ben_ngoai",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>cu_danh_tu_ben_ngoai@3",
+     "props": {
+      "how": "được kể",
+      "told_by": "ly_anh_suong",
+      "quote": "Chỉ biết cú va chạm đến từ bên ngoài."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cu_danh_tu_ben_ngoai",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cu_danh_tu_ben_ngoai>ch3@3",
+     "props": {
+      "quote": "Chỉ biết cú va chạm đến từ bên ngoài."
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 3,
+  "nodes": {
+   "bach_ky": {
+    "label": "Character",
+    "props": {
+     "backstory": "Quản sự chuyến hàng, chịu trách nhiệm bàn giao linh thạch cho tiền tuyến tranh mạch khí.",
+     "aliases": [
+      "Bạch quản sự"
+     ],
+     "personality": "Lễ độ trước mặt người trên, sắc sảo khi thương lượng và luôn cân đo lợi ích trước khi chọn phe.",
+     "name": "Bạch Kỳ"
+    }
+   },
+   "bach_ky_bao_tin_cho_dich": {
+    "label": "Fact",
+    "props": {
+     "text": "Bạch Kỳ đã bí mật báo lộ trình của thuyền cho một đầu mối thuộc Huyền Kiếm Tông để đổi lấy sự bảo đảm cho bản thân."
+    }
+   },
+   "ben_noi_thanh_vu": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Thanh Vụ"
+     ],
+     "name": "Bến Nổi Thanh Vụ",
+     "description": "Bến nổi hư cấu giữa vùng trời loạn lạc, nơi hành khách kín tiếng lên thuyền trước chuyến bay."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "chuyen_hang_thuoc_tinh_ha": {
+    "label": "Fact",
+    "props": {
+     "text": "Chuyến hàng thuộc quyền quản lý của Tĩnh Hà Tông."
+    }
+   },
+   "cu_danh_tu_ben_ngoai": {
+    "label": "Fact",
+    "props": {
+     "text": "Một đòn đánh từ bên ngoài đã làm thuyền chao nghiêng sau khi khoang bị khóa."
+    }
+   },
+   "doan_mac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Tự nhận là người buôn dược liệu, lên thuyền tại bến nổi Thanh Vụ. Không ai trong số hành khách biết rõ lai lịch của hắn.",
+     "aliases": [
+      "khách áo xám"
+     ],
+     "personality": "Điềm tĩnh, kín tiếng, giỏi đặt câu hỏi khiến người khác tự để lộ ý định; chỉ đưa ra lời hứa khi đã tính đến cái giá.",
+     "name": "Đoàn Mặc"
+    }
+   },
+   "doan_mac_de_nghi_giao_uoc": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Mặc đề nghị giúp Ninh Tố Khanh tìm hộp linh thạch để đổi lấy một lời hứa chưa nói rõ."
+    }
+   },
+   "doan_mac_lay_hop": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Mặc đã lấy Hộp Linh Thạch khỏi khoang hàng trước khi cuộc lục soát bắt đầu."
+    }
+   },
+   "doan_mac_muon_ngan_doc_chiem": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Mặc lấy hộp để ngăn Tĩnh Hà Tông dùng mảnh dò chiếm giữ mạch linh khí trước các tông môn khác."
+    }
+   },
+   "doan_mac_tung_gap_ninh": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Mặc nhận ra Ninh Tố Khanh từng đi qua vùng núi xa xôi trong đoàn vận hàng bị phục kích."
+    }
+   },
+   "hop_chua_manh_do_mach": {
+    "label": "Fact",
+    "props": {
+     "text": "Hộp Linh Thạch chứa một mảnh dò có thể xác định hướng của mạch linh khí dưới Lạc Vân Lĩnh."
+    }
+   },
+   "hop_linh_thach": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc hộp"
+     ],
+     "name": "Hộp Linh Thạch",
+     "description": "Hộp niêm phong chứa linh thạch dành cho tiền tuyến, biến mất giữa ca trực của Ninh Tố Khanh."
+    }
+   },
+   "huyen_kiem_cu_nguoi_theo_doi": {
+    "label": "Fact",
+    "props": {
+     "text": "Huyền Kiếm Tông cử Thiệu Tử Hàn đi cùng để giám sát việc bàn giao linh thạch."
+    }
+   },
+   "huyen_kiem_tong": {
+    "label": "Faction",
+    "props": {
+     "name": "Huyền Kiếm Tông",
+     "description": "Tông môn đối địch đang cử người theo dõi việc bàn giao linh thạch và tranh quyền kiểm soát linh mạch."
+    }
+   },
+   "ke_tan_cong_thuyen": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã đánh vào thân thuyền giữa màn sương đen?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "khoang_hang": {
+    "label": "Location",
+    "props": {
+     "name": "Khoang Hàng",
+     "description": "Khoang chứa linh thạch nằm giữa thân thuyền, hiện bị niêm phong để đội hộ vệ lục soát."
+    }
+   },
+   "lac_van_linh": {
+    "label": "Location",
+    "props": {
+     "name": "Lạc Vân Lĩnh",
+     "description": "Dãy núi hư cấu phủ mây dày, nơi những mạch linh khí xa xôi khiến các tông môn tranh giành."
+    }
+   },
+   "lie:choice-3f889cda553f": {
+    "label": "Lie",
+    "props": {
+     "chapter": 2,
+     "content": "Tôi chỉ vừa nhận ra nó ở gần chân rương."
+    }
+   },
+   "loi_hua_voi_doan_mac": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ninh Tố Khanh sẽ hứa điều gì để đổi lấy sự giúp đỡ của Đoàn Mặc?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "lua_chon_ve_mach_linh_khi": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ninh Tố Khanh sẽ chọn trao mảnh dò cho phe nào?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "ly_anh_suong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Được giao chỉ huy đội hộ vệ chuyến thuyền này sau nhiều năm bảo vệ các đoàn vận tải của Tĩnh Hà Tông.",
+     "aliases": [
+      "đội trưởng Lý"
+     ],
+     "personality": "Quyết đoán, trọng kỷ luật, ít kiên nhẫn với những lời khai vòng vo; không muốn để một vụ mất hàng biến thành cuộc chém giết.",
+     "name": "Lý Ánh Sương"
+    }
+   },
+   "mat_hop_giua_ca_truc": {
+    "label": "Fact",
+    "props": {
+     "text": "Hộp Linh Thạch biến mất trong lúc ca trực của Ninh Tố Khanh."
+    }
+   },
+   "phu_hieu_ap_tai": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "phù hiệu"
+     ],
+     "name": "Phù Hiệu Áp Tải",
+     "description": "Phù hiệu gỗ nhỏ xác nhận người mang nó là nhân sự tập sự trên chuyến thuyền."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Ninh Tố Khanh từng theo một đoàn vận hàng qua vùng núi xa xôi, cho đến khi một cuộc phục kích khiến đoàn tan tác và nàng phải tự tìm đường sống. Nàng giấu thân phận thật khi nhận việc áp tải tập sự, vì muốn tiếp cận những người đang tranh quyền kiểm soát linh mạch. Trên chuyến thuyền này, nàng nhận ra hành khách kín tiếng đang theo dõi mình, nhưng chưa biết người ấy muốn hợp tác hay buộc nàng trả giá.",
+     "personality": "Khéo ứng đối, kín kẽ và biết dùng im lặng để khiến đối phương tự nói nhiều hơn dự định. Nàng coi trọng sự sống còn, nhưng không dễ quên một món nợ hay một lời thất hứa.",
+     "name": "Ninh Tố Khanh",
+     "is_protagonist": true
+    }
+   },
+   "thieu_tu_han": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đệ tử ngoại môn của Huyền Kiếm Tông, được cử đi cùng chuyến thuyền để làm chứng cho việc bàn giao hàng.",
+     "aliases": [
+      "kiếm tu trẻ"
+     ],
+     "personality": "Nóng nảy, tự tin vào kiếm thuật, dễ coi sự dè chừng của người khác là dấu hiệu có tội.",
+     "name": "Thiệu Tử Hàn"
+    }
+   },
+   "thuyen_phu_khong_lien_chau": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Liên Châu"
+     ],
+     "name": "Thuyền Phù Không Liên Châu",
+     "description": "Chiếc thuyền vận tải bay qua Lạc Vân Lĩnh, có khoang hàng được khóa từ bên ngoài và đang chao nghiêng giữa màn sương đen."
+    }
+   },
+   "tim_hop_va_ngan_thanh_trung": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Liệu Ninh Tố Khanh có tìm ra hộp linh thạch trước khi đội hộ vệ biến cuộc lục soát thành thanh trừng?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 3
+    }
+   },
+   "tinh_ha_tong": {
+    "label": "Faction",
+    "props": {
+     "name": "Tĩnh Hà Tông",
+     "description": "Tông môn sở hữu thuyền vận tải này và đang tìm cách giữ quyền tiếp cận các mạch linh khí xa xôi."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:bach_ky>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "bach_ky",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "cấp trên"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_mac>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_mac",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "muốn hợp tác"
+    }
+   },
+   {
+    "id": "RELATES_TO:ly_anh_suong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "ly_anh_suong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "cấp trên"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>bach_ky@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "bach_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "nghi kỵ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_mac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "đề phòng lẫn nhau"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>ly_anh_suong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "ly_anh_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 15,
+     "kind": "đồng sự"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>thieu_tu_han@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "thieu_tu_han",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "đề phòng"
+    }
+   },
+   {
+    "id": "RELATES_TO:thieu_tu_han>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "thieu_tu_han",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -10,
+     "kind": "nghi kỵ"
+    }
+   },
+   {
+    "id": "LOCATED_AT:bach_ky>thuyen_phu_khong_lien_chau@0",
+    "type": "LOCATED_AT",
+    "source": "bach_ky",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_mac>thuyen_phu_khong_lien_chau@0",
+    "type": "LOCATED_AT",
+    "source": "doan_mac",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ly_anh_suong>thuyen_phu_khong_lien_chau@0",
+    "type": "LOCATED_AT",
+    "source": "ly_anh_suong",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>thuyen_phu_khong_lien_chau@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:thieu_tu_han>thuyen_phu_khong_lien_chau@0",
+    "type": "LOCATED_AT",
+    "source": "thieu_tu_han",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:thieu_tu_han>hop_linh_thach@2",
+    "type": "HOLDS",
+    "source": "thieu_tu_han",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:bach_ky>tinh_ha_tong@0",
+    "type": "MEMBER_OF",
+    "source": "bach_ky",
+    "target": "tinh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ly_anh_suong>tinh_ha_tong@0",
+    "type": "MEMBER_OF",
+    "source": "ly_anh_suong",
+    "target": "tinh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:thieu_tu_han>huyen_kiem_tong@0",
+    "type": "MEMBER_OF",
+    "source": "thieu_tu_han",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:bach_ky>bach_ky_bao_tin_cho_dich@0",
+    "type": "KNOWS",
+    "source": "bach_ky",
+    "target": "bach_ky_bao_tin_cho_dich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_ky>chuyen_hang_thuoc_tinh_ha@0",
+    "type": "KNOWS",
+    "source": "bach_ky",
+    "target": "chuyen_hang_thuoc_tinh_ha",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_ky>cu_danh_tu_ben_ngoai@0",
+    "type": "KNOWS",
+    "source": "bach_ky",
+    "target": "cu_danh_tu_ben_ngoai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_ky>hop_chua_manh_do_mach@0",
+    "type": "KNOWS",
+    "source": "bach_ky",
+    "target": "hop_chua_manh_do_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_ky>huyen_kiem_cu_nguoi_theo_doi@0",
+    "type": "KNOWS",
+    "source": "bach_ky",
+    "target": "huyen_kiem_cu_nguoi_theo_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_ky>mat_hop_giua_ca_truc@0",
+    "type": "KNOWS",
+    "source": "bach_ky",
+    "target": "mat_hop_giua_ca_truc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mac>doan_mac_de_nghi_giao_uoc@0",
+    "type": "KNOWS",
+    "source": "doan_mac",
+    "target": "doan_mac_de_nghi_giao_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mac>doan_mac_lay_hop@0",
+    "type": "KNOWS",
+    "source": "doan_mac",
+    "target": "doan_mac_lay_hop",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mac>doan_mac_muon_ngan_doc_chiem@0",
+    "type": "KNOWS",
+    "source": "doan_mac",
+    "target": "doan_mac_muon_ngan_doc_chiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mac>doan_mac_tung_gap_ninh@0",
+    "type": "KNOWS",
+    "source": "doan_mac",
+    "target": "doan_mac_tung_gap_ninh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mac>hop_chua_manh_do_mach@0",
+    "type": "KNOWS",
+    "source": "doan_mac",
+    "target": "hop_chua_manh_do_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ly_anh_suong>chuyen_hang_thuoc_tinh_ha@0",
+    "type": "KNOWS",
+    "source": "ly_anh_suong",
+    "target": "chuyen_hang_thuoc_tinh_ha",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ly_anh_suong>cu_danh_tu_ben_ngoai@0",
+    "type": "KNOWS",
+    "source": "ly_anh_suong",
+    "target": "cu_danh_tu_ben_ngoai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ly_anh_suong>mat_hop_giua_ca_truc@0",
+    "type": "KNOWS",
+    "source": "ly_anh_suong",
+    "target": "mat_hop_giua_ca_truc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>cu_danh_tu_ben_ngoai@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "cu_danh_tu_ben_ngoai",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Chỉ biết cú va chạm đến từ bên ngoài.",
+     "told_by": "ly_anh_suong"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>doan_mac_de_nghi_giao_uoc@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "doan_mac_de_nghi_giao_uoc",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Ta có thể giúp cô tìm hộp linh thạch."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>doan_mac_lay_hop@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "doan_mac_lay_hop",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Chính ta lấy hộp khỏi khoang hàng, trước khi cuộc lục soát bắt đầu.",
+     "told_by": "doan_mac"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>doan_mac_muon_ngan_doc_chiem@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "doan_mac_muon_ngan_doc_chiem",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Nếu để Tĩnh Hà Tông mang nó tới nơi, những kẻ khác sẽ chẳng còn cơ hội tranh phần.",
+     "told_by": "doan_mac"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>mat_hop_giua_ca_truc@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "mat_hop_giua_ca_truc",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Khi trở về, hộp đã không còn ở chỗ cũ."
+    }
+   },
+   {
+    "id": "KNOWS:thieu_tu_han>cu_danh_tu_ben_ngoai@0",
+    "type": "KNOWS",
+    "source": "thieu_tu_han",
+    "target": "cu_danh_tu_ben_ngoai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:thieu_tu_han>huyen_kiem_cu_nguoi_theo_doi@0",
+    "type": "KNOWS",
+    "source": "thieu_tu_han",
+    "target": "huyen_kiem_cu_nguoi_theo_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:thieu_tu_han>mat_hop_giua_ca_truc@0",
+    "type": "KNOWS",
+    "source": "thieu_tu_han",
+    "target": "mat_hop_giua_ca_truc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "TOLD:protagonist>lie:choice-3f889cda553f@2",
+    "type": "TOLD",
+    "source": "protagonist",
+    "target": "lie:choice-3f889cda553f",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "TOLD_TO:lie:choice-3f889cda553f>bach_ky@2",
+    "type": "TOLD_TO",
+    "source": "lie:choice-3f889cda553f",
+    "target": "bach_ky",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bach_ky_bao_tin_cho_dich>bach_ky@0",
+    "type": "ABOUT",
+    "source": "bach_ky_bao_tin_cho_dich",
+    "target": "bach_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bach_ky_bao_tin_cho_dich>huyen_kiem_tong@0",
+    "type": "ABOUT",
+    "source": "bach_ky_bao_tin_cho_dich",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bach_ky_bao_tin_cho_dich>thuyen_phu_khong_lien_chau@0",
+    "type": "ABOUT",
+    "source": "bach_ky_bao_tin_cho_dich",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chuyen_hang_thuoc_tinh_ha>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "chuyen_hang_thuoc_tinh_ha",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chuyen_hang_thuoc_tinh_ha>thuyen_phu_khong_lien_chau@0",
+    "type": "ABOUT",
+    "source": "chuyen_hang_thuoc_tinh_ha",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chuyen_hang_thuoc_tinh_ha>tinh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "chuyen_hang_thuoc_tinh_ha",
+    "target": "tinh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:cu_danh_tu_ben_ngoai>lac_van_linh@0",
+    "type": "ABOUT",
+    "source": "cu_danh_tu_ben_ngoai",
+    "target": "lac_van_linh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:cu_danh_tu_ben_ngoai>thuyen_phu_khong_lien_chau@0",
+    "type": "ABOUT",
+    "source": "cu_danh_tu_ben_ngoai",
+    "target": "thuyen_phu_khong_lien_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_de_nghi_giao_uoc>doan_mac@0",
+    "type": "ABOUT",
+    "source": "doan_mac_de_nghi_giao_uoc",
+    "target": "doan_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_de_nghi_giao_uoc>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "doan_mac_de_nghi_giao_uoc",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_de_nghi_giao_uoc>protagonist@0",
+    "type": "ABOUT",
+    "source": "doan_mac_de_nghi_giao_uoc",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_lay_hop>doan_mac@0",
+    "type": "ABOUT",
+    "source": "doan_mac_lay_hop",
+    "target": "doan_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_lay_hop>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "doan_mac_lay_hop",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>doan_mac@0",
+    "type": "ABOUT",
+    "source": "doan_mac_muon_ngan_doc_chiem",
+    "target": "doan_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "doan_mac_muon_ngan_doc_chiem",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>lac_van_linh@0",
+    "type": "ABOUT",
+    "source": "doan_mac_muon_ngan_doc_chiem",
+    "target": "lac_van_linh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_muon_ngan_doc_chiem>tinh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "doan_mac_muon_ngan_doc_chiem",
+    "target": "tinh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_tung_gap_ninh>doan_mac@0",
+    "type": "ABOUT",
+    "source": "doan_mac_tung_gap_ninh",
+    "target": "doan_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_mac_tung_gap_ninh>protagonist@0",
+    "type": "ABOUT",
+    "source": "doan_mac_tung_gap_ninh",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hop_chua_manh_do_mach>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "hop_chua_manh_do_mach",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hop_chua_manh_do_mach>lac_van_linh@0",
+    "type": "ABOUT",
+    "source": "hop_chua_manh_do_mach",
+    "target": "lac_van_linh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:huyen_kiem_cu_nguoi_theo_doi>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "huyen_kiem_cu_nguoi_theo_doi",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:huyen_kiem_cu_nguoi_theo_doi>huyen_kiem_tong@0",
+    "type": "ABOUT",
+    "source": "huyen_kiem_cu_nguoi_theo_doi",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:huyen_kiem_cu_nguoi_theo_doi>thieu_tu_han@0",
+    "type": "ABOUT",
+    "source": "huyen_kiem_cu_nguoi_theo_doi",
+    "target": "thieu_tu_han",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:lie:choice-3f889cda553f>hop_linh_thach@2",
+    "type": "ABOUT",
+    "source": "lie:choice-3f889cda553f",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mat_hop_giua_ca_truc>hop_linh_thach@0",
+    "type": "ABOUT",
+    "source": "mat_hop_giua_ca_truc",
+    "target": "hop_linh_thach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mat_hop_giua_ca_truc>protagonist@0",
+    "type": "ABOUT",
+    "source": "mat_hop_giua_ca_truc",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:loi_hua_voi_doan_mac>ch2@2",
+    "type": "RESOLVED_IN",
+    "source": "loi_hua_voi_doan_mac",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Được. Trước khi quyết định giao mảnh dò cho phe nào, tôi sẽ nghe anh tự trình bày mục đích."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:tim_hop_va_ngan_thanh_trung>ch1@1",
+    "type": "RESOLVED_IN",
+    "source": "tim_hop_va_ngan_thanh_trung",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hộp linh thạch đã tìm thấy. Dừng lục soát từng người."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:bach_ky>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "bach_ky",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bạch Kỳ nhíu mày.",
+     "known_as": "Bạch Kỳ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cu_danh_tu_ben_ngoai>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cu_danh_tu_ben_ngoai",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chỉ biết cú va chạm đến từ bên ngoài."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_mac>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_mac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đoàn Mặc đứng gần dãy rương phía trong, từ đầu đến cuối chưa chen vào một câu.",
+     "known_as": "Đoàn Mặc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_mac_de_nghi_giao_uoc>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_mac_de_nghi_giao_uoc",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta có thể giúp cô tìm hộp linh thạch."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_mac_lay_hop>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_mac_lay_hop",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chính ta lấy hộp khỏi khoang hàng, trước khi cuộc lục soát bắt đầu."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_mac_muon_ngan_doc_chiem>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_mac_muon_ngan_doc_chiem",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nếu để Tĩnh Hà Tông mang nó tới nơi, những kẻ khác sẽ chẳng còn cơ hội tranh phần."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hop_chua_manh_do_mach>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hop_chua_manh_do_mach",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trong hộp có mảnh dò. Nó lần được hướng mạch linh khí dưới Lạc Vân Lĩnh."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hop_linh_thach>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hop_linh_thach",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hộp linh thạch đã tìm thấy.",
+     "known_as": "Hộp linh thạch"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:khoang_hang>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "khoang_hang",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lý Ánh Sương đứng chắn ngang cửa khoang hàng, một tay giữ chuôi kiếm.",
+     "known_as": "khoang hàng"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lac_van_linh>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lac_van_linh",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trong hộp có mảnh dò. Nó lần được hướng mạch linh khí dưới Lạc Vân Lĩnh.",
+     "known_as": "Lạc Vân Lĩnh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ly_anh_suong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ly_anh_suong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lý Ánh Sương đứng chắn ngang cửa khoang hàng, một tay giữ chuôi kiếm.",
+     "known_as": "Lý Ánh Sương"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:mat_hop_giua_ca_truc>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "mat_hop_giua_ca_truc",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Khi trở về, hộp đã không còn ở chỗ cũ."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phu_hieu_ap_tai>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phu_hieu_ap_tai",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đặt phù hiệu áp tải lên bàn gỗ cạnh cửa.",
+     "known_as": "phù hiệu áp tải"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Ninh Tố Khanh",
+     "known_as": "Ninh Tố Khanh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thieu_tu_han>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thieu_tu_han",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thiệu Tử Hàn bước khỏi hàng hành khách.",
+     "known_as": "Thiệu Tử Hàn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thuyen_phu_khong_lien_chau>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thuyen_phu_khong_lien_chau",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Con thuyền vẫn chao nhẹ.",
+     "known_as": "Con thuyền"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tinh_ha_tong>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tinh_ha_tong",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nếu để Tĩnh Hà Tông mang nó tới nơi, những kẻ khác sẽ chẳng còn cơ hội tranh phần.",
+     "known_as": "Tĩnh Hà Tông"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-3ea6e22b1169",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Lý Ánh Sương khóa cửa khoang hàng, yêu cầu mọi người khai vị trí trong ca trực sau khi hộp linh thạch biến mất. Ninh Tố Khanh kể mình từng rời lối xuống boong dưới khoảng một khắc, thừa nhận không biết ai lấy hộp và ngăn Thiệu Tử Hàn lục soát vội, tránh làm hỏng dấu vết. Đoàn Mặc kín đáo đề nghị giúp cô tìm hộp, đổi lại cô phải hứa một điều chưa được nói rõ. Thuyền chao mạnh khiến hành khách và rương xê dịch, dấu chân trên sàn chồng lấp; các lời khai cũng mâu thuẫn, còn Bạch Kỳ liên tục nghi ngờ Ninh Tố Khanh. Đoàn Mặc lén đặt hộp vào tay cô, cô trao nó cho Lý Ánh Sương, người lập tức dừng việc lục soát. Cuối chương, Lý Ánh Sương giữ hộp trong khoang, Bạch Kỳ vẫn ngờ vực, Thiệu Tử Hàn cho rằng chuyện chưa xong, còn lời hứa với Đoàn Mặc vẫn bỏ ngỏ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Trong khoang hàng bị khóa, Ninh Tố Khanh phải khai rõ ca trực của mình mà vẫn ngăn cuộc thẩm vấn biến thành cuộc thanh trừng.",
+      "present": [
+       "protagonist",
+       "bach_ky",
+       "doan_mac",
+       "ly_anh_suong",
+       "thieu_tu_han"
+      ],
+      "beats": [
+       "Lý Ánh Sương chặn cửa khoang hàng, tuyên bố không ai được rời đi cho đến khi từng người khai rõ mình đã ở đâu trong ca trực hộp linh thạch biến mất; nàng yêu cầu Ninh Tố Khanh bắt đầu.",
+       "Ninh Tố Khanh bình tĩnh kể lại những gì mình đã làm trong ca trực, chỉ ra chỗ ký ức không chắc chắn thay vì nhận bừa hay tự gỡ tội; Bạch Kỳ hỏi dồn về những phút không có người chứng kiến.",
+       "Thiệu Tử Hàn đòi kiểm tra từng hành khách ngay tại chỗ, nhưng Ninh Tố Khanh hỏi liệu một cuộc lục soát vội vã có thể làm hỏng dấu vết; Lý Ánh Sương ngăn kiếm tu trẻ tự ý động thủ và buộc mọi người lần lượt khai báo.",
+       "Đoàn Mặc kín đáo đề nghị giúp Ninh Tố Khanh tìm hộp linh thạch, đổi lại nàng phải hứa với hắn một điều chưa nói rõ; Ninh Tố Khanh không nhận lời, chỉ giữ im lặng để hắn tự bộc lộ thêm ý định.",
+       "Một tiếng va đập dội qua thân thuyền, sàn khoang nghiêng mạnh khiến lời khai bị ngắt quãng; Lý Ánh Sương ra lệnh giữ nguyên vị trí, còn Bạch Kỳ vội nhìn về phía cửa trước khi lập tức quay lại cuộc thẩm vấn."
+      ],
+      "ends_at": "Cảnh kết trong khoang hàng đã khóa, khi mọi người còn bị giữ lại và cuộc khai báo bị tiếng va đập bên ngoài làm gián đoạn.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Khanh phải ngăn cuộc khai báo biến thành thanh trừng và tìm được Hộp Linh Thạch trước khi đội hộ vệ lục soát mọi người.",
+      "present": [
+       "protagonist",
+       "bach_ky",
+       "doan_mac",
+       "ly_anh_suong",
+       "thieu_tu_han"
+      ],
+      "beats": [
+       "Khi con thuyền còn chao nhẹ, Lý Ánh Sương buộc mọi người tiếp tục khai vị trí trong ca trực; Thiệu Tử Hàn đòi lục soát ngay, còn tôi nhắc rằng xáo trộn khoang lúc này chỉ khiến dấu vết bị giẫm mất.",
+       "Bạch Kỳ chất vấn tôi về quãng thời gian rời lối dẫn xuống boong dưới, nhưng tôi không biện hộ quá mức, chỉ hỏi vì sao ông ta sốt ruột muốn kết luận trước khi nghe hết lời khai.",
+       "Tôi yêu cầu từng người nêu vị trí và người có thể xác nhận, rồi im lặng để họ tự bổ sung những chỗ không khớp; Lý Ánh Sương giữ Thiệu Tử Hàn ở lại, không cho hắn tự ý khám xét hành khách.",
+       "Trong lúc mọi ánh mắt dồn về phía lời khai của một hành khách, Đoàn Mặc kín đáo đặt Hộp Linh Thạch vào tay tôi; tôi nhận ra chiếc hộp và giữ kín việc nó vừa đổi chủ, không truy hỏi hắn giữa đám đông.",
+       "Tôi đưa hộp cho Lý Ánh Sương kiểm tra, xác nhận vật thất lạc đã được tìm thấy nhưng không chỉ ra ai đưa nó cho mình; nàng ra lệnh dừng việc lục soát từng người, còn Bạch Kỳ và Thiệu Tử Hàn đều không giấu được vẻ bất mãn."
+      ],
+      "ends_at": "Cảnh kết trong khoang hàng đã khóa, khi Lý Ánh Sương giữ Hộp Linh Thạch còn tôi đứng giữa những ánh mắt nghi ngờ và món nợ chưa gọi tên với Đoàn Mặc.",
+      "resolves": [
+       "tim_hop_va_ngan_thanh_trung"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER hop_linh_thach→ch1",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-eace77c6b73a",
+      "kind": "action",
+      "tone": null,
+      "text": "Theo Đoàn Mặc ra chỗ khuất và hỏi về lời hứa hắn muốn đổi lấy.",
+      "listeners": [],
+      "about": [
+       "doan_mac",
+       "doan_mac_de_nghi_giao_uoc"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-3f889cda553f",
+      "kind": "dialogue",
+      "tone": "lie",
+      "text": "Nói với Bạch Kỳ rằng tôi chỉ vừa nhận ra hộp ở gần chân rương.",
+      "listeners": [
+       "bach_ky"
+      ],
+      "about": [
+       "hop_linh_thach"
+      ],
+      "lie": {
+       "content": "Tôi chỉ vừa nhận ra nó ở gần chân rương.",
+       "told_to": [
+        "bach_ky"
+       ]
+      },
+      "feeling": null
+     },
+     {
+      "id": "choice-d9b21d3598d8",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải làm rõ món nợ với Đoàn Mặc trước khi lời hứa bị đem ra đòi.",
+      "listeners": [],
+      "about": [
+       "doan_mac",
+       "doan_mac_de_nghi_giao_uoc"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-b0f204486183",
+    "player_action": "[Lời thoại, nói dối] Nói với Bạch Kỳ rằng tôi chỉ vừa nhận ra hộp ở gần chân rương.",
+    "error_detail": null,
+    "summary": "Bạch Kỳ chất vấn lời khai của Tố Khanh về chiếc hộp; Lý Ánh Sương mở hộp, xác nhận linh thạch còn đủ nhưng mảnh dò không thấy. Đoàn Mặc thú nhận đã lấy hộp trước cuộc lục soát vì trong đó có mảnh dò chỉ hướng mạch linh khí dưới Lạc Vân Lĩnh, đồng thời xin được trình bày mục đích trước khi Tố Khanh giao nó cho phe nào. Tố Khanh đồng ý nghe nhưng không hứa đứng về phía hắn, rồi đề nghị dừng lục soát và tạm giữ hộp. Lý Ánh Sương quyết định kiểm tra bên ngoài sau cú đánh, để Thiệu Tử Hàn ở lại bảo vệ hộp và đưa Tố Khanh cùng Bạch Kỳ theo. Khi cửa khoang vừa hé, máy phù rung giật; Tố Khanh cùng Lý Ánh Sương bước ra, còn cuộc điều tra dang dở, hộp ở lại dưới tay Thiệu Tử Hàn.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Khanh tìm cách giữ cuộc đối đầu trong khoang khỏi biến thành thanh trừng, đồng thời quyết định lời hứa sẽ đổi lấy sự giúp đỡ của Đoàn Mặc.",
+      "present": [
+       "protagonist",
+       "bach_ky",
+       "doan_mac",
+       "ly_anh_suong",
+       "thieu_tu_han"
+      ],
+      "beats": [
+       "Bạch Kỳ chất vấn Ninh Tố Khanh về hộp linh thạch; nàng nói vừa nhận ra hộp ở gần chân rương, nhưng Lý Ánh Sương lạnh giọng nhắc rằng hộp hiện do mình giữ và lời khai ấy không giải thích được chuyện đã xảy ra.",
+       "Thiệu Tử Hàn đòi kiểm tra hộp ngay, còn Bạch Kỳ muốn giữ mọi người trong khoang để đối chất; Ninh Tố Khanh im lặng quan sát, rồi hỏi ai sẽ chịu trách nhiệm nếu cuộc lục soát làm hỏng manh mối hoặc khiến con thuyền thêm hỗn loạn.",
+       "Khi Lý Ánh Sương đưa hộp ra đối chiếu, Đoàn Mặc nhìn Ninh Tố Khanh và thừa nhận riêng với nàng rằng chính mình đã lấy hộp khỏi khoang hàng trước cuộc lục soát, vì bên trong có mảnh dò có thể lần hướng mạch linh khí dưới Lạc Vân Lĩnh.",
+       "Đoàn Mặc nhắc lại lời đề nghị giúp nàng, đổi lấy một lời hứa; Ninh Tố Khanh hứa sẽ cho hắn cơ hội tự trình bày mục đích của mình trước khi nàng quyết định giao mảnh dò cho bất kỳ phe nào, còn Đoàn Mặc chấp nhận rằng nàng không hứa đứng về phía hắn.",
+       "Ninh Tố Khanh đề nghị Lý Ánh Sương tạm giữ hộp và chấm dứt lục soát; Bạch Kỳ vẫn nghi nàng giấu điều gì, nhưng Lý Ánh Sương ra lệnh mọi người rời khỏi vị trí truy xét và chuẩn bị ứng phó nếu con thuyền lại bị đánh trúng."
+      ],
+      "ends_at": "Cảnh kết trong khoang khóa, khi cuộc lục soát dừng lại nhưng hộp linh thạch vẫn do Lý Ánh Sương giữ.",
+      "resolves": [
+       "loi_hua_voi_doan_mac"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Khép lại cuộc đối chất trong khoang bằng một thỏa thuận dè chừng và chuyển cả nhóm sang ứng phó với mối đe dọa bên ngoài.",
+      "present": [
+       "protagonist",
+       "bach_ky",
+       "doan_mac",
+       "ly_anh_suong",
+       "thieu_tu_han"
+      ],
+      "beats": [
+       "Bạch Kỳ vẫn bám vào lời Ninh Tố Khanh rằng nàng chỉ vừa nhận ra chiếc hộp gần chân rương; nàng im lặng trước vẻ nghi ngờ của ông, không tự ý sửa lời khai.",
+       "Lý Ánh Sương giữ hộp linh thạch bên mình, tuyên bố chưa giao nó cho bất kỳ phe nào và yêu cầu mọi người thôi lục soát để tập trung giữ an toàn cho con thuyền.",
+       "Đoàn Mặc nhắc Ninh Tố Khanh rằng nàng đã hứa sẽ nghe hắn trình bày mục đích trước khi quyết định giao mảnh dò; nàng xác nhận lời hứa, nhưng nói rõ đó không phải lời cam kết đứng về phía hắn.",
+       "Thiệu Tử Hàn đề nghị mở cửa khoang để kiểm tra tình hình sau cú đánh; Lý Ánh Sương bác việc tự ý hành động, rồi phân công hắn ở lại bảo vệ hộp trong khi nàng đưa Ninh Tố Khanh cùng Bạch Kỳ ra khỏi khoang.",
+       "Bạch Kỳ phản đối việc để Ninh Tố Khanh tham gia, nhưng Lý Ánh Sương chấm dứt tranh cãi và mở khóa; khi tiếng máy phù rung bất thường dưới sàn, Ninh Tố Khanh bước ra trước cùng nàng, bỏ lại cuộc lục soát phía sau."
+      ],
+      "ends_at": "Cảnh kết ở ngưỡng cửa khoang vừa được mở, khi Ninh Tố Khanh theo Lý Ánh Sương rời cuộc đối chất để ứng phó với con thuyền đang bất ổn.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-e59b431543ac",
+      "kind": "action",
+      "tone": null,
+      "text": "Bám chắc khung cửa khi thân thuyền rung giật.",
+      "listeners": [],
+      "about": [
+       "thuyen_phu_khong_lien_chau"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-6f556041c006",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Lý Ánh Sương xem nàng muốn tôi làm gì bên ngoài.",
+      "listeners": [
+       "ly_anh_suong"
+      ],
+      "about": [
+       "ly_anh_suong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-ee9d69b446dd",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tập trung vào việc giữ con thuyền an toàn, gác chuyện lời khai sang một bên.",
+      "listeners": [],
+      "about": [
+       "thuyen_phu_khong_lien_chau"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-25b3d4aa1097",
+    "player_action": "[Hành động] Bám chắc khung cửa khi thân thuyền rung giật.",
+    "error_detail": null,
+    "summary": "Thuyền bị một cú đánh từ bên ngoài, chao đảo rồi dần ổn định; Lý Ánh Sương chưa xác định được thủ phạm hay liệu chúng còn quanh thuyền. Đoàn Mặc tiết lộ mảnh dò trong hộp có thể dẫn các tông môn đến linh mạch dưới Lạc Vân Lĩnh, và muốn Ninh Tố Khanh giúp trì hoãn việc giao nó cho bất kỳ phe nào. Ninh Tố Khanh đồng ý ngăn bàn giao vội vàng, nhưng nói rõ cô không tin Đoàn Mặc, không giao mảnh dò cho hắn và yêu cầu hắn nêu mục đích trước khi đòi cô làm thêm việc; Đoàn Mặc chấp thuận. Lý Ánh Sương khẳng định vẫn chỉ huy khoang, cấm mọi người tự ý rời đi hay lấy hộp. Cuối chương, mọi người còn trong khoang; Thiệu Tử Hàn giữ hộp, chưa phe nào có mảnh dò, còn cú đánh và mục đích chuyến hàng vẫn chưa rõ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Khanh ổn định lại sau cú rung giật, rồi quyết định có nhận giao ước của Đoàn Mặc hay không mà vẫn giữ quyền lựa chọn phe cho mình.",
+      "present": [
+       "protagonist",
+       "ly_anh_suong",
+       "doan_mac",
+       "thieu_tu_han",
+       "bach_ky"
+      ],
+      "beats": [
+       "Ninh Tố Khanh bám chặt khung cửa khi thân thuyền chao nghiêng; Lý Ánh Sương giữ nàng khỏi ngã, rồi cả hai quay vào khoang khi cơn rung dịu xuống.",
+       "Thiệu Tử Hàn vẫn giữ hộp linh thạch, không rời mắt khỏi những người trong khoang; Bạch Kỳ đòi đội trưởng giải thích vì sao việc kiểm tra bên ngoài chưa có kết quả.",
+       "Lý Ánh Sương nói nàng chưa xác định được nguyên nhân cú đánh, chỉ biết thân thuyền bị tác động từ bên ngoài; nàng yêu cầu mọi người ngừng buộc tội nhau cho đến khi thuyền ổn định.",
+       "Đoàn Mặc nhắc rằng mảnh dò có thể dẫn các tông môn đến mạch linh khí, rồi nói với Ninh Tố Khanh rằng hắn cần nàng giúp trì hoãn việc giao nó cho bất kỳ phe nào; hắn không lặp lại chuyện đã lấy hộp.",
+       "Ninh Tố Khanh cân nhắc cái giá của việc để một phe nắm mảnh dò, rồi nhận lời giúp Đoàn Mặc trì hoãn bàn giao, nhưng nói rõ nàng chưa hứa trao mảnh dò cho hắn và sẽ đòi nghe điều kiện cụ thể trước khi làm thêm bất cứ việc gì.",
+       "Đoàn Mặc chấp nhận giới hạn ấy; Lý Ánh Sương giữ quyền chỉ huy khoang, còn Bạch Kỳ vẫn không tin Ninh Tố Khanh và Thiệu Tử Hàn tiếp tục canh hộp."
+      ],
+      "ends_at": "Cảnh kết trong khoang hàng, khi Ninh Tố Khanh đã nhận một giao ước có giới hạn nhưng chưa chọn phe nào sẽ giữ mảnh dò.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Khanh buộc Đoàn Mặc nói rõ cái giá của lời hứa rồi quyết định chấp nhận giao ước có giới hạn, mà không trao mảnh dò cho phe nào.",
+      "present": [
+       "protagonist",
+       "ly_anh_suong",
+       "doan_mac",
+       "thieu_tu_han",
+       "bach_ky"
+      ],
+      "beats": [
+       "Khi cơn rung dịu xuống, tôi hỏi Lý Ánh Sương liệu đã xác định được gì về cú đánh; nàng chỉ xác nhận đòn đánh đến từ bên ngoài, chưa thể biết kẻ ra tay là ai, còn Bạch Kỳ thúc giục phải rời khỏi chỗ nguy hiểm.",
+       "Tôi quay sang Đoàn Mặc, nhắc hắn đã hứa trả lời trước khi đòi tôi làm thêm việc khác; hắn nói muốn tôi giúp giữ mảnh dò khỏi tay các phe cho đến khi xác định được mục đích của chuyến hàng, nhưng không yêu cầu tôi giao nó cho hắn.",
+       "Thiệu Tử Hàn phản đối, khẳng định hộp vẫn do hắn giữ và không ai được tự ý động vào; tôi đáp rằng giao ước của tôi không trao quyền quyết định về chiếc hộp, chỉ ngăn việc bàn giao vội vàng.",
+       "Bạch Kỳ chất vấn vì sao tôi lại tin một người từng lấy hộp; tôi nói không tin hắn, nhưng muốn biết hắn định làm gì trước khi để nỗi nghi kỵ của mọi người quyết định thay mình.",
+       "Tôi nhận lời giúp Đoàn Mặc trì hoãn việc giao mảnh dò, với điều kiện hắn phải nói rõ mục đích trước khi yêu cầu tôi hành động thêm; hắn chấp thuận, còn Lý Ánh Sương nhắc rằng quyết định ấy không thay đổi quyền chỉ huy của nàng hay việc Thiệu Tử Hàn giữ hộp."
+      ],
+      "ends_at": "Cảnh kết trong khoang thuyền, khi giao ước có giới hạn giữa tôi và Đoàn Mặc đã được xác lập nhưng hộp linh thạch vẫn nằm trong tay Thiệu Tử Hàn.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-c0e333b0e942",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị Lý Ánh Sương bàn cách trì hoãn việc bàn giao.",
+      "listeners": [],
+      "about": [
+       "ly_anh_suong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-63ccca132337",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Yêu cầu Đoàn Mặc nói rõ mục đích của chuyến hàng.",
+      "listeners": [
+       "doan_mac"
+      ],
+      "about": [
+       "doan_mac"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-d3ff2447a20f",
+      "kind": "inner",
+      "tone": null,
+      "text": "Giữ lòng cảnh giác với Đoàn Mặc dù đã đồng ý giúp hắn.",
+      "listeners": [],
+      "about": [
+       "doan_mac"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "pacing": 1
+   },
+   "problems": [
+    "chương 5 có 4 việc đến hạn, tối đa 3 (trừ chương cuối)"
+   ]
+  }
+ ]
+}

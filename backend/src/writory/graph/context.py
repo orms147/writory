@@ -11,7 +11,7 @@ Nút mang `user_authored: true` có chữ do người chơi viết; khi render, 
 bằng `UserAuthored` (G4).
 """
 
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Literal, Protocol
 
@@ -135,6 +135,18 @@ class ItemInfo:
     holder: Text | None
     place: Text | None
     since_chapter: int
+    holder_id: str | None = None
+    place_id: str | None = None
+
+
+@dataclass(frozen=True)
+class ReaderName:
+    """Tên người đọc đã biết của một nút có tên cấm (D-91). `shown` None: nút chưa hé lộ. Bộ dò lộ
+    cấm tên lớp truth của nút này (`safety.leak.forbidden_names`); render ghi cạnh tên thật để
+    người viết không dùng nhầm."""
+
+    shown: str | None
+    user_authored: bool = False
 
 
 @dataclass(frozen=True)
@@ -310,21 +322,22 @@ def writer_context(
         ItemInfo(r["id"], Text(r["name"], r["ua"]),
                  Text(r["holder"], r["holder_ua"]) if r["holder"] is not None else None,
                  Text(r["place"], r["place_ua"]) if r["place"] is not None else None,
-                 r["since"])
+                 r["since"], r["holder_id"], r["place_id"])
         for r in read(f"""
             MATCH (i:{ENTITY}:Item {{story_id: $story_id}})
             OPTIONAL MATCH (h:{ENTITY} {{story_id: $story_id}})-[r:HOLDS]->(i) WHERE {VALID_AT}
-            WITH i, collect({{name: h.name, ua: coalesce(h.user_authored, false),
+            WITH i, collect({{id: h.id, name: h.name, ua: coalesce(h.user_authored, false),
                               since: r.valid_from_chapter}})[0] AS hold
             OPTIONAL MATCH (i)-[r:LOCATED_AT]->(l:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
-            WITH i, hold, collect({{name: l.name, ua: coalesce(l.user_authored, false),
+            WITH i, hold, collect({{id: l.id, name: l.name, ua: coalesce(l.user_authored, false),
                                     since: r.valid_from_chapter}})[0] AS loc
             WITH i, hold, loc, CASE WHEN hold.name IS NULL THEN loc ELSE hold END AS cur
             WHERE cur.name IS NOT NULL
             RETURN i.id AS id, i.name AS name, coalesce(i.user_authored, false) AS ua,
-                   hold.name AS holder, hold.ua AS holder_ua,
+                   hold.name AS holder, hold.ua AS holder_ua, hold.id AS holder_id,
                    CASE WHEN hold.name IS NULL THEN loc.name END AS place,
                    CASE WHEN hold.name IS NULL THEN loc.ua END AS place_ua,
+                   CASE WHEN hold.name IS NULL THEN loc.id END AS place_id,
                    cur.since AS since
             ORDER BY since DESC, id
             LIMIT $max_items
@@ -437,11 +450,23 @@ def _name(c: CharacterInfo | NeighborInfo) -> list[str | tuple[str, bool]]:
     return pieces
 
 
-def render_writer_context(ctx: WriterContext) -> list[str | UserAuthored]:
+def render_writer_context(
+    ctx: WriterContext, reader_names: Mapping[str, ReaderName] | None = None,
+) -> list[str | UserAuthored]:
     """Chữ cho prompt model viết, hai phần: sự thật cần tôn trọng, rồi gợi ý có thể nhắc tới
-    (design §13). Trả danh sách phần để đưa vào `user_message(*parts)`; không đưa vào system."""
+    (design §13). Trả danh sách phần để đưa vào `user_message(*parts)`; không đưa vào system.
+    `reader_names`: id → tên người đọc biết, cho nút có tên bị cấm (D-91); ghi cạnh tên thật."""
     out = _Parts()
     names = {c.id: c for c in ctx.present}
+    reader = reader_names or {}
+
+    def known(node_id: str | None) -> list[str | tuple[str, bool]]:
+        r = reader.get(node_id) if node_id is not None else None
+        if r is None:
+            return []
+        if r.shown is None:
+            return [" (tên chưa hé lộ: không viết ra)"]
+        return [" (người đọc biết là «", (r.shown, r.user_authored), "»; không viết tên thật)"]
 
     out.line(f"## Sự thật cần tôn trọng (trạng thái cuối chương {ctx.as_of_chapter}, "
              f"đang viết chương {ctx.writing_chapter})")
@@ -450,14 +475,16 @@ def render_writer_context(ctx: WriterContext) -> list[str | UserAuthored]:
         state = "còn sống" if c.alive else "ĐÃ CHẾT"
         where = ["; ở: ", _t(c.location)] if c.location else []
         holds = ["; đang giữ: ", *_joined(c.holds)] if c.holds else ["; không giữ đồ vật nào"]
-        out.line("- ", *_name(c), f" — {state}", *where, *holds)
+        out.line("- ", *_name(c), *known(c.id), f" — {state}", *where, *holds)
 
     if ctx.items:
         out.line("### Đồ vật quan trọng (mỗi đồ vật chỉ ở một chỗ: người giữ hoặc nơi chốn; "
                  "không tả khác)")
         for i in ctx.items:
-            where = ["do ", _t(i.holder), " giữ"] if i.holder else ["ở ", _t(i.place)]
-            out.line("- ", _t(i.name), " — ", *where, f" (từ chương {i.since_chapter})")
+            where = (["do ", _t(i.holder), *known(i.holder_id), " giữ"] if i.holder
+                     else ["ở ", _t(i.place), *known(i.place_id)])
+            out.line("- ", _t(i.name), *known(i.id), " — ", *where,
+                     f" (từ chương {i.since_chapter})")
 
     if ctx.relations:
         out.line("### Quan hệ hiện tại giữa người có mặt")

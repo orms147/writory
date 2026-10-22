@@ -188,6 +188,7 @@ def test_items_show_current_holder_or_place_even_when_the_holder_is_absent(drive
     sword = by_id["sword"]
     assert sword.name.value == "Thanh Sương" and sword.holder.value == "Phạm Thị Lan"
     assert sword.place is None and sword.since_chapter == 4
+    assert sword.holder_id == "lan" and sword.place_id is None  # D-91: để ghi tên người đọc biết
     for item in ctx.items:  # mỗi đồ vật đúng một chỗ
         assert (item.holder is None) != (item.place is None), item
     assert not {i.id for i in ctx.items} & {n.id for n in ctx.neighbors}

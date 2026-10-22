@@ -28,11 +28,12 @@ from pydantic import BaseModel, ConfigDict, model_validator
 
 from writory.config import REPO_ROOT, QualityConfig
 from writory.graph import ChangePackage
-from writory.graph.context import WriterContext, render_writer_context
+from writory.graph.context import ReaderName, WriterContext, render_writer_context
 from writory.llm.base import Message
 from writory.pipeline.pacing import ChapterGoals, render_chapter_goals, resolvable
 from writory.pipeline.passages import Chunk
 from writory.quality import check_foreign_script
+from writory.safety.leak import ForbiddenName
 from writory.safety.wrap import (
     DATA_NOTICE,
     UserAuthored,
@@ -46,8 +47,9 @@ from writory.safety.wrap import (
 # outline-5, writer-5: định nghĩa "gỡ mạch"; dàn ý ghi `resolves`, đề viết hiện mạch cảnh gỡ (D-82).
 # outline-6, writer-6: mục "Bí mật đã lộ" và câu mạch nhiều vế trong mục tiêu của chương (D-84).
 # outline-7, writer-7: đoạn nguyên văn đã hiện trên trang, chọn bằng BM25 (D-85).
-OUTLINE_PROMPT_VERSION = "outline-7"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-7"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-8, writer-8: mục "Tên người đọc chưa được biết", tên người đọc biết cạnh tên thật (D-91).
+OUTLINE_PROMPT_VERSION = "outline-8"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-8"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -142,6 +144,8 @@ class SceneBrief:
     # (chương, tóm tắt) của các chương gần nhất, cũ trước (D-49). Chữ do model tóm tắt viết từ văn
     # có chữ người chơi: luôn bọc như dữ liệu (G4).
     summaries: tuple[tuple[int, str], ...] = ()
+    # Tên lớp truth mà trang chưa được viết (D-61), từ cùng hàm với bộ dò lộ (D-91).
+    forbidden: tuple[ForbiddenName, ...] = ()
 
 
 @dataclass(frozen=True)
@@ -288,6 +292,31 @@ def _quotes(out: _Lines, quotes: Sequence[Chunk]) -> None:
         out.line(f"### Chương {q.chapter}", UserAuthored(q.text, "page_quote"))
 
 
+def _context(out: _Lines, brief: SceneBrief, ctx: WriterContext) -> None:
+    """Ngữ cảnh lớp truth, tên người đọc biết cạnh tên thật, rồi mục tên cấm (D-91)."""
+    reader = {f.node_id: ReaderName(f.shown_as, f.user_authored) for f in brief.forbidden}
+    out.extend(render_writer_context(ctx, reader))
+    if not brief.forbidden:
+        return
+    by_node: dict[str, list[ForbiddenName]] = {}
+    for f in brief.forbidden:
+        by_node.setdefault(f.node_id, []).append(f)
+    out.line("## Tên người đọc chưa được biết (không viết ra trên trang)")
+    out.line("Các tên dưới đây là sự thật của thế giới nhưng người đọc chưa được biết. Trang viết ra "
+             "tên đó, kể cả viết thường hay không dấu, thì cảnh bị chặn. Gọi bằng tên người đọc "
+             "đã biết, hoặc tả bằng vai và dáng vẻ.")
+    for found in by_node.values():
+        head = found[0]
+        terms: list[str | UserAuthored] = []
+        for i, f in enumerate(found):
+            terms += [", " if i else "", "«", _name(Named(f.term, f.user_authored)), "»"]
+        if head.shown_as is None:
+            out.line("- Chưa hé lộ; không viết tên ", *terms)
+        else:
+            out.line("- Người đọc biết là «", _name(Named(head.shown_as, head.user_authored)),
+                     "»; không viết ", *terms)
+
+
 def _goals(out: _Lines, brief: SceneBrief, *, thread_ids: bool = False) -> None:
     """Mục tiêu của chương (D-49). `render_chapter_goals` đã escape chữ của model và bọc chữ
     người chơi, nên các phần đi thẳng vào `line`, không escape lần nữa."""
@@ -320,7 +349,7 @@ def outline_messages(
 ) -> list[Message]:
     out = _Lines()
     _head(out, brief)
-    out.extend(render_writer_context(ctx))
+    _context(out, brief, ctx)
     _quotes(out, quotes)
     out.line("## Nhân vật có thể có mặt (id | tên)")
     for c in candidates:
@@ -339,7 +368,7 @@ def writer_messages(
 ) -> list[Message]:
     out = _Lines()
     _head(out, brief)
-    out.extend(render_writer_context(ctx))
+    _context(out, brief, ctx)
     _quotes(out, quotes)
     _earlier(out, brief, names, edge_ends)
     _goals(out, brief)

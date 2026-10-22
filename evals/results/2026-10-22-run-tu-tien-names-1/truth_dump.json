@@ -1,0 +1,1811 @@
+{
+ "story_id": "run-20261022-tu-tien-names-1-58c5f5ea",
+ "plan": {
+  "acts": [
+   {
+    "name": "Mắc kẹt ở Hàn Sa",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Đổi chác trong sương",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Lối ra cuối cùng",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "phung_khai_giet_lam_tu_khoi",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Phùng Khải",
+      "giết Lâm Tử Khôi"
+     ],
+     [
+      "lão Phùng",
+      "sát hại chủ thuyền"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_loi_thoat",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "truy_tim_ke_sat_hai",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "kiem_du_luong",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Đỗ Minh Viễn phát hiện một manh mối khiến chàng phải chọn giữa hợp tác tạm thời với một phe và tự tìm lối thoát.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Đỗ Minh Viễn lần ra kẻ đã sát hại Lâm Tử Khôi.",
+    "from_chapter": 4,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Đỗ Minh Viễn đối mặt với lựa chọn cuối cùng khi hai phe chuẩn bị biến cuộc giằng co thành giao chiến.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Đỗ Minh Viễn rời Hàn Sa hoặc phải trả giá cho lựa chọn khiến chàng mắc kẹt lại giữa hai tông môn.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "phung_khai_giet_lam_tu_khoi",
+    "text": "Phùng Khải đã giết Lâm Tử Khôi để lấy thẻ bài, tin rằng mình có thể đổi nó lấy một lối thoát an toàn.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_loi_thoat",
+    "description": "Đỗ Minh Viễn có tìm được một lối rời Hàn Sa trước khi hai tông môn giao chiến không?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "truy_tim_ke_sat_hai",
+    "description": "Ai đã sát hại Lâm Tử Khôi?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "kiem_du_luong",
+    "description": "Đỗ Minh Viễn có kiếm đủ lương thực cho chuyến vượt sông không?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-tu-tien-names-1-58c5f5ea-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Đỗ Minh Viễn",
+      "personality": "Khéo ăn nói, biết đọc sắc mặt và thường tìm cách giữ lại đường lui cho mình. Chàng có vẻ dễ thỏa hiệp, nhưng không chịu để kẻ khác quyết định thay vận mệnh của mình.",
+      "backstory": "Đỗ Minh Viễn từng theo một đoàn áp tải lương thực, rồi bỏ việc sau khi đoàn tan tác vì tranh chấp giữa các tông môn. Tại Hàn Sa, chàng nhận việc trên thuyền để kiếm đủ tiền rời khỏi vùng sông mù. Vụ án mạng khiến chàng mắc kẹt giữa hai phe, còn những người từng làm thuê cùng chàng có thể đang tìm cách đổi chác một lối thoát.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "lam_tu_khoi",
+     "label": "Character",
+     "props": {
+      "name": "Lâm Tử Khôi",
+      "aliases": [
+       "chủ thuyền"
+      ],
+      "personality": "Cẩn trọng, thực dụng, ít lời; quen giữ nhiều đường lui và không tin lời hứa nếu chưa thấy cái giá.",
+      "backstory": "Chủ con thuyền chở lương nơi Đỗ Minh Viễn làm thuê. Trước khi bị sát hại, ông ta đã âm thầm thương lượng với các tông môn về quyền qua bến."
+     }
+    },
+    {
+     "id": "tran_mac",
+     "label": "Character",
+     "props": {
+      "name": "Trần Mặc",
+      "aliases": [
+       "Trần đạo trưởng"
+      ],
+      "personality": "Điềm tĩnh, sắc sảo, thường dùng câu hỏi thay cho đe dọa; coi người và vật đều là quân cờ nếu cần.",
+      "backstory": "Tu sĩ của Thanh Huyền Môn, được phái đến Hàn Sa để giành quyền kiểm soát bến và truy tìm thẻ bài thất lạc."
+     }
+    },
+    {
+     "id": "doan_thanh_lien",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Thanh Liên",
+      "aliases": [
+       "Đoàn cô nương"
+      ],
+      "personality": "Gan lì, kín tiếng, luôn tính trước một bước; không dễ tin ai, nhưng đã nhận lời thì khó đổi ý.",
+      "backstory": "Tu sĩ của Xích Vân Tông, từng cùng đoàn áp tải lương với Đỗ Minh Viễn trước khi đoàn tan tác."
+     }
+    },
+    {
+     "id": "phung_khai",
+     "label": "Character",
+     "props": {
+      "name": "Phùng Khải",
+      "aliases": [
+       "lão Phùng"
+      ],
+      "personality": "Khéo luồn lách, sợ chết nhưng không muốn bị xem là hèn; thường dò thái độ người khác trước khi chọn phe.",
+      "backstory": "Người làm thuê trên thuyền cùng Đỗ Minh Viễn, hiểu rõ lối đi quanh bến và đang tìm cơ hội rời Hàn Sa."
+     }
+    },
+    {
+     "id": "ben_han_sa",
+     "label": "Location",
+     "props": {
+      "name": "Bến Hàn Sa",
+      "aliases": [
+       "Hàn Sa"
+      ],
+      "description": "Bến đò phủ sương quanh năm, nơi các tông môn bí mật đổi linh thạch, tin tức và lòng trung thành."
+     }
+    },
+    {
+     "id": "thuyen_tich_luong",
+     "label": "Location",
+     "props": {
+      "name": "Thuyền Tích Lương",
+      "aliases": [
+       "con thuyền chở lương"
+      ],
+      "description": "Con thuyền cũ chuyên chở lương thực, hiện bị phong tỏa sau cái chết của chủ thuyền."
+     }
+    },
+    {
+     "id": "khoang_kin",
+     "label": "Location",
+     "props": {
+      "name": "Khoang Kín",
+      "aliases": [
+       "khoang dưới sàn"
+      ],
+      "description": "Khoang hẹp dưới sàn thuyền, từng dùng để cất những món hàng không ghi trong sổ."
+     }
+    },
+    {
+     "id": "loi_vao_suong",
+     "label": "Location",
+     "props": {
+      "name": "Lối Vào Sương",
+      "aliases": [
+       "lối qua bãi lau"
+      ],
+      "description": "Lối nước hẹp sau bãi lau, có thể đưa một chiếc thuyền nhỏ ra khỏi bến nếu tránh được người canh."
+     }
+    },
+    {
+     "id": "thanh_huyen_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Huyền Môn",
+      "aliases": [
+       "Thanh Huyền"
+      ],
+      "description": "Tông môn đang tìm cách nắm quyền kiểm soát bến Hàn Sa và khẳng định thẻ bài thất lạc thuộc về mình."
+     }
+    },
+    {
+     "id": "xich_van_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Xích Vân Tông",
+      "aliases": [
+       "Xích Vân"
+      ],
+      "description": "Tông môn đối địch với Thanh Huyền Môn, muốn mở lại đường vận lương qua vùng sông mù."
+     }
+    },
+    {
+     "id": "the_bai_thanh_huyen",
+     "label": "Item",
+     "props": {
+      "name": "Thẻ Bài Thanh Huyền",
+      "aliases": [
+       "thẻ bài"
+      ],
+      "description": "Thẻ đồng khắc ấn Thanh Huyền Môn, từng được cất trong khoang kín của thuyền."
+     }
+    },
+    {
+     "id": "thuyen_nho",
+     "label": "Item",
+     "props": {
+      "name": "Thuyền Nhỏ",
+      "aliases": [
+       "chiếc thuyền con"
+      ],
+      "description": "Chiếc thuyền con đủ chở vài người cùng ít lương thực, có thể luồn qua lối nước sau bãi lau."
+     }
+    },
+    {
+     "id": "tui_luong_kho",
+     "label": "Item",
+     "props": {
+      "name": "Túi Lương Khô",
+      "aliases": [
+       "túi lương"
+      ],
+      "description": "Túi lương khô dự trữ cho một chuyến đi ngắn qua vùng sông mù."
+     }
+    },
+    {
+     "id": "hai_phe_phong_toa",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Huyền Môn và Xích Vân Tông đều đã phong tỏa các lối ra chính của bến Hàn Sa."
+     }
+    },
+    {
+     "id": "linh_mach_duoi_long_song",
+     "label": "Fact",
+     "props": {
+      "text": "Hai tông môn đang tranh giành quyền khai thác linh mạch nằm dưới lòng sông quanh Hàn Sa."
+     }
+    },
+    {
+     "id": "chu_thuyen_bi_sat_hai",
+     "label": "Fact",
+     "props": {
+      "text": "Lâm Tử Khôi đã bị sát hại trong khoang kín trước khi bến bị phong tỏa."
+     }
+    },
+    {
+     "id": "the_bai_bien_mat",
+     "label": "Fact",
+     "props": {
+      "text": "Thẻ Bài Thanh Huyền không còn nằm trong khoang kín của Thuyền Tích Lương."
+     }
+    },
+    {
+     "id": "phung_khai_giet_lam_tu_khoi",
+     "label": "Fact",
+     "props": {
+      "text": "Phùng Khải đã giết Lâm Tử Khôi để lấy thẻ bài, tin rằng mình có thể đổi nó lấy một lối thoát an toàn."
+     }
+    },
+    {
+     "id": "thuyen_nho_bi_giau",
+     "label": "Fact",
+     "props": {
+      "text": "Một chiếc thuyền nhỏ được giấu gần Lối Vào Sương."
+     }
+    },
+    {
+     "id": "luong_kho_con_lai",
+     "label": "Fact",
+     "props": {
+      "text": "Túi Lương Khô còn đủ dùng cho một chuyến vượt sông ngắn."
+     }
+    },
+    {
+     "id": "tim_loi_thoat",
+     "label": "Thread",
+     "props": {
+      "description": "Đỗ Minh Viễn có tìm được một lối rời Hàn Sa trước khi hai tông môn giao chiến không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "truy_tim_ke_sat_hai",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã sát hại Lâm Tử Khôi?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "kiem_du_luong",
+     "label": "Thread",
+     "props": {
+      "description": "Đỗ Minh Viễn có kiếm đủ lương thực cho chuyến vượt sông không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "loi_de_nghi_cua_tran_mac",
+     "label": "Thread",
+     "props": {
+      "description": "Đỗ Minh Viễn có chấp nhận lời đề nghị của Trần Mặc không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_thanh_lien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_thanh_lien@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_thanh_lien",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_thanh_lien>protagonist@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "phung_khai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>phung_khai@0",
+     "props": {
+      "kind": "đồng nghiệp",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "phung_khai",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:phung_khai>protagonist@0",
+     "props": {
+      "kind": "đồng nghiệp",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_mac",
+     "to": "doan_thanh_lien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_mac>doan_thanh_lien@0",
+     "props": {
+      "kind": "đối địch",
+      "score": -55
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_thanh_lien",
+     "to": "tran_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_thanh_lien>tran_mac@0",
+     "props": {
+      "kind": "đối địch",
+      "score": -50
+     }
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tran_mac",
+     "to": "thanh_huyen_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tran_mac>thanh_huyen_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_thanh_lien",
+     "to": "xich_van_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_thanh_lien>xich_van_tong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "thuyen_tich_luong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>thuyen_tich_luong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_mac",
+     "to": "ben_han_sa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_mac>ben_han_sa@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_thanh_lien",
+     "to": "ben_han_sa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_thanh_lien>ben_han_sa@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "phung_khai",
+     "to": "thuyen_tich_luong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:phung_khai>thuyen_tich_luong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lam_tu_khoi",
+     "to": "thuyen_tich_luong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lam_tu_khoi>thuyen_tich_luong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "the_bai_thanh_huyen",
+     "to": "khoang_kin",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:the_bai_thanh_huyen>khoang_kin@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "thuyen_nho",
+     "to": "loi_vao_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:thuyen_nho>loi_vao_suong@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "phung_khai",
+     "to": "tui_luong_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:phung_khai>tui_luong_kho@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hai_phe_phong_toa",
+     "to": "thanh_huyen_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hai_phe_phong_toa>thanh_huyen_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hai_phe_phong_toa",
+     "to": "xich_van_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hai_phe_phong_toa>xich_van_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hai_phe_phong_toa",
+     "to": "ben_han_sa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hai_phe_phong_toa>ben_han_sa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "hai_phe_phong_toa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>hai_phe_phong_toa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lien",
+     "to": "hai_phe_phong_toa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lien>hai_phe_phong_toa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_khai",
+     "to": "hai_phe_phong_toa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_khai>hai_phe_phong_toa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "linh_mach_duoi_long_song",
+     "to": "thanh_huyen_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:linh_mach_duoi_long_song>thanh_huyen_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "linh_mach_duoi_long_song",
+     "to": "xich_van_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:linh_mach_duoi_long_song>xich_van_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "linh_mach_duoi_long_song",
+     "to": "ben_han_sa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:linh_mach_duoi_long_song>ben_han_sa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "linh_mach_duoi_long_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>linh_mach_duoi_long_song@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lien",
+     "to": "linh_mach_duoi_long_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lien>linh_mach_duoi_long_song@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "chu_thuyen_bi_sat_hai",
+     "to": "lam_tu_khoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chu_thuyen_bi_sat_hai>lam_tu_khoi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chu_thuyen_bi_sat_hai",
+     "to": "khoang_kin",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chu_thuyen_bi_sat_hai>khoang_kin@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "chu_thuyen_bi_sat_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>chu_thuyen_bi_sat_hai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lien",
+     "to": "chu_thuyen_bi_sat_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lien>chu_thuyen_bi_sat_hai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_khai",
+     "to": "chu_thuyen_bi_sat_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_khai>chu_thuyen_bi_sat_hai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "the_bai_bien_mat",
+     "to": "the_bai_thanh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:the_bai_bien_mat>the_bai_thanh_huyen@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "the_bai_bien_mat",
+     "to": "khoang_kin",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:the_bai_bien_mat>khoang_kin@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "the_bai_bien_mat",
+     "to": "thuyen_tich_luong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:the_bai_bien_mat>thuyen_tich_luong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "the_bai_bien_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>the_bai_bien_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lien",
+     "to": "the_bai_bien_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lien>the_bai_bien_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_khai",
+     "to": "the_bai_bien_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_khai>the_bai_bien_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "phung_khai_giet_lam_tu_khoi",
+     "to": "phung_khai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phung_khai_giet_lam_tu_khoi>phung_khai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "phung_khai_giet_lam_tu_khoi",
+     "to": "lam_tu_khoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phung_khai_giet_lam_tu_khoi>lam_tu_khoi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "phung_khai_giet_lam_tu_khoi",
+     "to": "the_bai_thanh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phung_khai_giet_lam_tu_khoi>the_bai_thanh_huyen@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_khai",
+     "to": "phung_khai_giet_lam_tu_khoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_khai>phung_khai_giet_lam_tu_khoi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "thuyen_nho_bi_giau",
+     "to": "thuyen_nho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thuyen_nho_bi_giau>thuyen_nho@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thuyen_nho_bi_giau",
+     "to": "loi_vao_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thuyen_nho_bi_giau>loi_vao_suong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lien",
+     "to": "thuyen_nho_bi_giau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lien>thuyen_nho_bi_giau@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_khai",
+     "to": "thuyen_nho_bi_giau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_khai>thuyen_nho_bi_giau@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "luong_kho_con_lai",
+     "to": "tui_luong_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:luong_kho_con_lai>tui_luong_kho@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "phung_khai",
+     "to": "luong_kho_con_lai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:phung_khai>luong_kho_con_lai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Đỗ Minh Viễn",
+      "known_as": "Đỗ Minh Viễn"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ben_han_sa": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Hàn Sa"
+     ],
+     "name": "Bến Hàn Sa",
+     "description": "Bến đò phủ sương quanh năm, nơi các tông môn bí mật đổi linh thạch, tin tức và lòng trung thành."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "chu_thuyen_bi_sat_hai": {
+    "label": "Fact",
+    "props": {
+     "text": "Lâm Tử Khôi đã bị sát hại trong khoang kín trước khi bến bị phong tỏa."
+    }
+   },
+   "doan_thanh_lien": {
+    "label": "Character",
+    "props": {
+     "backstory": "Tu sĩ của Xích Vân Tông, từng cùng đoàn áp tải lương với Đỗ Minh Viễn trước khi đoàn tan tác.",
+     "aliases": [
+      "Đoàn cô nương"
+     ],
+     "personality": "Gan lì, kín tiếng, luôn tính trước một bước; không dễ tin ai, nhưng đã nhận lời thì khó đổi ý.",
+     "name": "Đoàn Thanh Liên"
+    }
+   },
+   "hai_phe_phong_toa": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Huyền Môn và Xích Vân Tông đều đã phong tỏa các lối ra chính của bến Hàn Sa."
+    }
+   },
+   "khoang_kin": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "khoang dưới sàn"
+     ],
+     "name": "Khoang Kín",
+     "description": "Khoang hẹp dưới sàn thuyền, từng dùng để cất những món hàng không ghi trong sổ."
+    }
+   },
+   "kiem_du_luong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Đỗ Minh Viễn có kiếm đủ lương thực cho chuyến vượt sông không?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "lam_tu_khoi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Chủ con thuyền chở lương nơi Đỗ Minh Viễn làm thuê. Trước khi bị sát hại, ông ta đã âm thầm thương lượng với các tông môn về quyền qua bến.",
+     "aliases": [
+      "chủ thuyền"
+     ],
+     "personality": "Cẩn trọng, thực dụng, ít lời; quen giữ nhiều đường lui và không tin lời hứa nếu chưa thấy cái giá.",
+     "name": "Lâm Tử Khôi"
+    }
+   },
+   "linh_mach_duoi_long_song": {
+    "label": "Fact",
+    "props": {
+     "text": "Hai tông môn đang tranh giành quyền khai thác linh mạch nằm dưới lòng sông quanh Hàn Sa."
+    }
+   },
+   "loi_de_nghi_cua_tran_mac": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Đỗ Minh Viễn có chấp nhận lời đề nghị của Trần Mặc không?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "loi_vao_suong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "lối qua bãi lau"
+     ],
+     "name": "Lối Vào Sương",
+     "description": "Lối nước hẹp sau bãi lau, có thể đưa một chiếc thuyền nhỏ ra khỏi bến nếu tránh được người canh."
+    }
+   },
+   "luong_kho_con_lai": {
+    "label": "Fact",
+    "props": {
+     "text": "Túi Lương Khô còn đủ dùng cho một chuyến vượt sông ngắn."
+    }
+   },
+   "phung_khai": {
+    "label": "Character",
+    "props": {
+     "backstory": "Người làm thuê trên thuyền cùng Đỗ Minh Viễn, hiểu rõ lối đi quanh bến và đang tìm cơ hội rời Hàn Sa.",
+     "aliases": [
+      "lão Phùng"
+     ],
+     "personality": "Khéo luồn lách, sợ chết nhưng không muốn bị xem là hèn; thường dò thái độ người khác trước khi chọn phe.",
+     "name": "Phùng Khải"
+    }
+   },
+   "phung_khai_giet_lam_tu_khoi": {
+    "label": "Fact",
+    "props": {
+     "text": "Phùng Khải đã giết Lâm Tử Khôi để lấy thẻ bài, tin rằng mình có thể đổi nó lấy một lối thoát an toàn."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Đỗ Minh Viễn từng theo một đoàn áp tải lương thực, rồi bỏ việc sau khi đoàn tan tác vì tranh chấp giữa các tông môn. Tại Hàn Sa, chàng nhận việc trên thuyền để kiếm đủ tiền rời khỏi vùng sông mù. Vụ án mạng khiến chàng mắc kẹt giữa hai phe, còn những người từng làm thuê cùng chàng có thể đang tìm cách đổi chác một lối thoát.",
+     "personality": "Khéo ăn nói, biết đọc sắc mặt và thường tìm cách giữ lại đường lui cho mình. Chàng có vẻ dễ thỏa hiệp, nhưng không chịu để kẻ khác quyết định thay vận mệnh của mình.",
+     "name": "Đỗ Minh Viễn",
+     "is_protagonist": true
+    }
+   },
+   "thanh_huyen_mon": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Huyền"
+     ],
+     "name": "Thanh Huyền Môn",
+     "description": "Tông môn đang tìm cách nắm quyền kiểm soát bến Hàn Sa và khẳng định thẻ bài thất lạc thuộc về mình."
+    }
+   },
+   "the_bai_bien_mat": {
+    "label": "Fact",
+    "props": {
+     "text": "Thẻ Bài Thanh Huyền không còn nằm trong khoang kín của Thuyền Tích Lương."
+    }
+   },
+   "the_bai_thanh_huyen": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "thẻ bài"
+     ],
+     "name": "Thẻ Bài Thanh Huyền",
+     "description": "Thẻ đồng khắc ấn Thanh Huyền Môn, từng được cất trong khoang kín của thuyền."
+    }
+   },
+   "thuyen_nho": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc thuyền con"
+     ],
+     "name": "Thuyền Nhỏ",
+     "description": "Chiếc thuyền con đủ chở vài người cùng ít lương thực, có thể luồn qua lối nước sau bãi lau."
+    }
+   },
+   "thuyen_nho_bi_giau": {
+    "label": "Fact",
+    "props": {
+     "text": "Một chiếc thuyền nhỏ được giấu gần Lối Vào Sương."
+    }
+   },
+   "thuyen_tich_luong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "con thuyền chở lương"
+     ],
+     "name": "Thuyền Tích Lương",
+     "description": "Con thuyền cũ chuyên chở lương thực, hiện bị phong tỏa sau cái chết của chủ thuyền."
+    }
+   },
+   "tim_loi_thoat": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Đỗ Minh Viễn có tìm được một lối rời Hàn Sa trước khi hai tông môn giao chiến không?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "tran_mac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Tu sĩ của Thanh Huyền Môn, được phái đến Hàn Sa để giành quyền kiểm soát bến và truy tìm thẻ bài thất lạc.",
+     "aliases": [
+      "Trần đạo trưởng"
+     ],
+     "personality": "Điềm tĩnh, sắc sảo, thường dùng câu hỏi thay cho đe dọa; coi người và vật đều là quân cờ nếu cần.",
+     "name": "Trần Mặc"
+    }
+   },
+   "truy_tim_ke_sat_hai": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã sát hại Lâm Tử Khôi?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "tui_luong_kho": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "túi lương"
+     ],
+     "name": "Túi Lương Khô",
+     "description": "Túi lương khô dự trữ cho một chuyến đi ngắn qua vùng sông mù."
+    }
+   },
+   "xich_van_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Xích Vân"
+     ],
+     "name": "Xích Vân Tông",
+     "description": "Tông môn đối địch với Thanh Huyền Môn, muốn mở lại đường vận lương qua vùng sông mù."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_thanh_lien>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_thanh_lien",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_thanh_lien>tran_mac@0",
+    "type": "RELATES_TO",
+    "source": "doan_thanh_lien",
+    "target": "tran_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -50,
+     "kind": "đối địch"
+    }
+   },
+   {
+    "id": "RELATES_TO:phung_khai>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "phung_khai",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "đồng nghiệp"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_thanh_lien@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_thanh_lien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>phung_khai@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "phung_khai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng nghiệp"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_mac>doan_thanh_lien@0",
+    "type": "RELATES_TO",
+    "source": "tran_mac",
+    "target": "doan_thanh_lien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -55,
+     "kind": "đối địch"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_thanh_lien>ben_han_sa@0",
+    "type": "LOCATED_AT",
+    "source": "doan_thanh_lien",
+    "target": "ben_han_sa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lam_tu_khoi>thuyen_tich_luong@0",
+    "type": "LOCATED_AT",
+    "source": "lam_tu_khoi",
+    "target": "thuyen_tich_luong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:phung_khai>thuyen_tich_luong@0",
+    "type": "LOCATED_AT",
+    "source": "phung_khai",
+    "target": "thuyen_tich_luong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>thuyen_tich_luong@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "thuyen_tich_luong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:the_bai_thanh_huyen>khoang_kin@0",
+    "type": "LOCATED_AT",
+    "source": "the_bai_thanh_huyen",
+    "target": "khoang_kin",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:thuyen_nho>loi_vao_suong@0",
+    "type": "LOCATED_AT",
+    "source": "thuyen_nho",
+    "target": "loi_vao_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_mac>ben_han_sa@0",
+    "type": "LOCATED_AT",
+    "source": "tran_mac",
+    "target": "ben_han_sa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:phung_khai>tui_luong_kho@0",
+    "type": "HOLDS",
+    "source": "phung_khai",
+    "target": "tui_luong_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_thanh_lien>xich_van_tong@0",
+    "type": "MEMBER_OF",
+    "source": "doan_thanh_lien",
+    "target": "xich_van_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tran_mac>thanh_huyen_mon@0",
+    "type": "MEMBER_OF",
+    "source": "tran_mac",
+    "target": "thanh_huyen_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_thanh_lien>chu_thuyen_bi_sat_hai@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lien",
+    "target": "chu_thuyen_bi_sat_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lien>hai_phe_phong_toa@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lien",
+    "target": "hai_phe_phong_toa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lien>linh_mach_duoi_long_song@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lien",
+    "target": "linh_mach_duoi_long_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lien>the_bai_bien_mat@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lien",
+    "target": "the_bai_bien_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lien>thuyen_nho_bi_giau@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lien",
+    "target": "thuyen_nho_bi_giau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_khai>chu_thuyen_bi_sat_hai@0",
+    "type": "KNOWS",
+    "source": "phung_khai",
+    "target": "chu_thuyen_bi_sat_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_khai>hai_phe_phong_toa@0",
+    "type": "KNOWS",
+    "source": "phung_khai",
+    "target": "hai_phe_phong_toa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_khai>luong_kho_con_lai@0",
+    "type": "KNOWS",
+    "source": "phung_khai",
+    "target": "luong_kho_con_lai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_khai>phung_khai_giet_lam_tu_khoi@0",
+    "type": "KNOWS",
+    "source": "phung_khai",
+    "target": "phung_khai_giet_lam_tu_khoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_khai>the_bai_bien_mat@0",
+    "type": "KNOWS",
+    "source": "phung_khai",
+    "target": "the_bai_bien_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:phung_khai>thuyen_nho_bi_giau@0",
+    "type": "KNOWS",
+    "source": "phung_khai",
+    "target": "thuyen_nho_bi_giau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>chu_thuyen_bi_sat_hai@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "chu_thuyen_bi_sat_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>hai_phe_phong_toa@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "hai_phe_phong_toa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>linh_mach_duoi_long_song@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "linh_mach_duoi_long_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>the_bai_bien_mat@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "the_bai_bien_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:chu_thuyen_bi_sat_hai>khoang_kin@0",
+    "type": "ABOUT",
+    "source": "chu_thuyen_bi_sat_hai",
+    "target": "khoang_kin",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chu_thuyen_bi_sat_hai>lam_tu_khoi@0",
+    "type": "ABOUT",
+    "source": "chu_thuyen_bi_sat_hai",
+    "target": "lam_tu_khoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hai_phe_phong_toa>ben_han_sa@0",
+    "type": "ABOUT",
+    "source": "hai_phe_phong_toa",
+    "target": "ben_han_sa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hai_phe_phong_toa>thanh_huyen_mon@0",
+    "type": "ABOUT",
+    "source": "hai_phe_phong_toa",
+    "target": "thanh_huyen_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hai_phe_phong_toa>xich_van_tong@0",
+    "type": "ABOUT",
+    "source": "hai_phe_phong_toa",
+    "target": "xich_van_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:linh_mach_duoi_long_song>ben_han_sa@0",
+    "type": "ABOUT",
+    "source": "linh_mach_duoi_long_song",
+    "target": "ben_han_sa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:linh_mach_duoi_long_song>thanh_huyen_mon@0",
+    "type": "ABOUT",
+    "source": "linh_mach_duoi_long_song",
+    "target": "thanh_huyen_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:linh_mach_duoi_long_song>xich_van_tong@0",
+    "type": "ABOUT",
+    "source": "linh_mach_duoi_long_song",
+    "target": "xich_van_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:luong_kho_con_lai>tui_luong_kho@0",
+    "type": "ABOUT",
+    "source": "luong_kho_con_lai",
+    "target": "tui_luong_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phung_khai_giet_lam_tu_khoi>lam_tu_khoi@0",
+    "type": "ABOUT",
+    "source": "phung_khai_giet_lam_tu_khoi",
+    "target": "lam_tu_khoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phung_khai_giet_lam_tu_khoi>phung_khai@0",
+    "type": "ABOUT",
+    "source": "phung_khai_giet_lam_tu_khoi",
+    "target": "phung_khai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phung_khai_giet_lam_tu_khoi>the_bai_thanh_huyen@0",
+    "type": "ABOUT",
+    "source": "phung_khai_giet_lam_tu_khoi",
+    "target": "the_bai_thanh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:the_bai_bien_mat>khoang_kin@0",
+    "type": "ABOUT",
+    "source": "the_bai_bien_mat",
+    "target": "khoang_kin",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:the_bai_bien_mat>the_bai_thanh_huyen@0",
+    "type": "ABOUT",
+    "source": "the_bai_bien_mat",
+    "target": "the_bai_thanh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:the_bai_bien_mat>thuyen_tich_luong@0",
+    "type": "ABOUT",
+    "source": "the_bai_bien_mat",
+    "target": "thuyen_tich_luong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thuyen_nho_bi_giau>loi_vao_suong@0",
+    "type": "ABOUT",
+    "source": "thuyen_nho_bi_giau",
+    "target": "loi_vao_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thuyen_nho_bi_giau>thuyen_nho@0",
+    "type": "ABOUT",
+    "source": "thuyen_nho_bi_giau",
+    "target": "thuyen_nho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Đỗ Minh Viễn",
+     "known_as": "Đỗ Minh Viễn"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-5de7c2a98e38",
+    "player_action": null,
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đỗ Minh Viễn tìm cách xoay xở giữa hai toán tu sĩ đang phong tỏa bến, đồng thời dò xem có thể gom lương và tiếp cận lối thoát nào mà chưa phải chọn phe.",
+      "present": [
+       "protagonist",
+       "doan_thanh_lien",
+       "phung_khai"
+      ],
+      "beats": [
+       "Trong khoang Thuyền Tích Lương, Đỗ Minh Viễn nghe tiếng quát tháo vọng từ bến và nhìn thấy bóng tu sĩ canh các lối ra; chàng hiểu rằng rời thuyền lúc này chỉ khiến mình bị giữ lại để tra hỏi.",
+       "Đoàn Thanh Liên ghé tới, hạ giọng bảo rằng cả Thanh Huyền Môn lẫn Xích Vân Tông đều đang truy tìm người đã lên thuyền đêm qua; nàng khuyên Minh Viễn đừng tùy tiện khai một cái tên khi chưa biết phe nào sẽ giữ lời.",
+       "Minh Viễn hỏi Phùng Khải về lương khô cho chuyến vượt sông ngắn; lão Phùng không trao túi lương, chỉ đáp rằng thứ gì cũng có giá, rồi dò xem chàng định dựa vào phe nào để ra khỏi Hàn Sa.",
+       "Chàng lựa lời tránh hứa hẹn, hỏi Đoàn Thanh Liên liệu còn đường nào qua vùng sương mà không phải đi qua các toán canh; nàng chỉ nói lối vào sương khó đoán, rồi ngừng lời khi nghe tiếng chân tuần tra áp sát.",
+       "Khi tiếng chân rời xa, Minh Viễn quyết định chưa khai tên ai và chưa nhận lời theo phe nào; chàng kín đáo nhờ Đoàn Thanh Liên chỉ cho mình hướng tới Lối Vào Sương, đổi lại sẽ cùng nàng tìm cách thoát khỏi cuộc tra hỏi trước mắt."
+      ],
+      "ends_at": "Cảnh kết trên Thuyền Tích Lương, khi Đỗ Minh Viễn và Đoàn Thanh Liên chuẩn bị rời thuyền để dò đường về phía Lối Vào Sương.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «túi lương khô» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc túi lương khô»: dùng «chiếc túi lương khô» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «túi lương khô» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc túi lương khô»: dùng «chiếc túi lương khô» thay vào"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER ben_han_sa→ch1",
+        "Value error, `known_as` phải nằm trong `quote` (D-17)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "block",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «chiếc thuyền nhỏ»: dùng «chiếc thuyền nhỏ» thay vào"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": []
+   },
+   {
+    "attempt": 2,
+    "commit_id": "ch1-d75ab0300b91",
+    "player_action": null,
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Đỗ Minh Viễn tìm cách thoát khỏi sự truy xét ngay trên Thuyền Tích Lương và nhận ra hai phe đã biến chàng thành quân cờ trong cuộc tranh quyền ở bến Hàn Sa.",
+      "present": [
+       "protagonist",
+       "doan_thanh_lien",
+       "phung_khai"
+      ],
+      "beats": [
+       "Từ trên Thuyền Tích Lương, ta nghe tiếng người của Thanh Huyền Môn và Xích Vân Tông chặn các lối ra; không phe nào cho thuyền rời bến, và cả hai đều đòi ta khai kẻ đã lên thuyền đêm qua.",
+       "Đoàn Thanh Liên bước lên mạn thuyền, hỏi ta có nhìn thấy ai vào khoang kín, rồi lạnh giọng nhắc rằng một lời khai sai có thể khiến ta bị giữ lại cùng con thuyền.",
+       "Ta lựa lời đáp rằng trong màn sương đêm, bóng người nào cũng có thể bị nhận nhầm; Thanh Liên không tin hẳn, nhưng bảo ta đừng rời mắt khỏi bến nếu còn muốn có cơ hội tự chọn đường đi.",
+       "Phùng Khải kín đáo kéo ta tránh khỏi đám người đang lục soát, nói túi lương khô của lão đủ cho một chuyến vượt sông ngắn, nhưng lối ra gần đó có người canh và lão chưa muốn giao phần lương ấy cho ai.",
+       "Ta nhìn về phía bến bị phong tỏa, hiểu rằng ở lại trên thuyền cũng không còn an toàn; Thanh Liên muốn giữ ta trong tầm mắt, còn Phùng Khải chỉ hé cho ta thấy rằng vẫn có một cách khác để rời đi."
+      ],
+      "ends_at": "Cảnh kết trên Thuyền Tích Lương, khi Đỗ Minh Viễn biết lối ra chính bị phong tỏa và Phùng Khải vừa gợi ra một đường thoát chưa nói rõ.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «Chiếc thuyền nhỏ»: dùng «Chiếc thuyền nhỏ» thay vào"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «Chiếc thuyền nhỏ»: dùng «Chiếc thuyền nhỏ» thay vào"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "block",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «thuyền nhỏ» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «Chiếc thuyền nhỏ»: dùng «Chiếc thuyền nhỏ» thay vào"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": []
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "chapter 1",
+   "code": "SCENE_LEAK_BLOCKED",
+   "detail": null
+  }
+ ],
+ "setup_repairs": []
+}

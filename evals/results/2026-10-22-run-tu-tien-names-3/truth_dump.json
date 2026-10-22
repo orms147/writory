@@ -1,0 +1,3107 @@
+{
+ "story_id": "run-20261022-tu-tien-names-3-a3dc4aee",
+ "plan": {
+  "acts": [
+   {
+    "name": "Lời buộc tội",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Đêm phá vây",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Đường ra trước bình minh",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "name": "Linh mạch đổi chủ",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "f_giet_pham",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Nghiêm Bất Ly",
+      "ra lệnh giết Phạm Mộc Sinh"
+     ],
+     [
+      "Nghiêm Bất Ly",
+      "siết quyền kiểm soát lò luyện"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "f_ha_thuy_chuan_bi",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Hàn Thủy",
+      "tiến vào Tẫn Lô"
+     ],
+     [
+      "trước bình minh",
+      "mất quyền kiểm soát lò luyện"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "thoat_lenh_giam",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 2
+   },
+   {
+    "thread_id": "tim_duong_ra",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "dua_tin_ra_ngoai",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "ngan_chien_tranh",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Kỷ Trường Khanh nhận ra lệnh giam giữ đã được chuẩn bị từ trước và phải tìm cách rời Nghị Sự Đường.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Kỷ Trường Khanh tìm được chứng cứ nối Nghiêm Bất Ly với cái chết của Phạm Mộc Sinh.",
+    "from_chapter": 4,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Kỷ Trường Khanh vượt qua vòng vây và đặt được tin tức vào tay đồng minh ngoài thành trước khi cuộc tấn công bắt đầu.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Cuộc tấn công trước bình minh được ngăn lại hoặc châm ngòi, qua đó định đoạt số phận của Tẫn Lô và vị thế của Kỷ Trường Khanh.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 3,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "f_giet_pham",
+    "text": "Nghiêm Bất Ly đã ra lệnh giết Phạm Mộc Sinh để có cớ siết quyền kiểm soát lò luyện.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "f_ha_thuy_chuan_bi",
+    "text": "Hàn Thủy đã chuẩn bị tiến vào Tẫn Lô trước bình minh nếu Thanh Tiêu mất quyền kiểm soát lò luyện.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "thoat_lenh_giam",
+    "description": "Kỷ Trường Khanh có thoát được lệnh giam giữ ở Nghị Sự Đường không?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "resolved_chapter": 1
+   },
+   {
+    "thread_id": "tim_duong_ra",
+    "description": "Kỷ Trường Khanh có tìm được lối ra khỏi Tẫn Lô không?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": 3
+   },
+   {
+    "thread_id": "dua_tin_ra_ngoai",
+    "description": "Kỷ Trường Khanh có đưa được tin về cái chết của Phạm Mộc Sinh đến đồng minh ngoài thành không?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ngan_chien_tranh",
+    "description": "Kỷ Trường Khanh có ngăn được cuộc tấn công vào Tẫn Lô trước bình minh không?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-tu-tien-names-3-a3dc4aee-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Kỷ Trường Khanh",
+      "personality": "Gan lì, thực tế và có thói quen quan sát người khác trước khi quyết định hành động. Chàng nói ít, nhưng mỗi khi lên tiếng thường chạm đúng điểm yếu trong lập luận của đối phương.",
+      "backstory": "Kỷ Trường Khanh từng là đệ tử ngoại môn của một tông phái nhỏ đã tan rã giữa thời loạn, từ đó sống bằng những chuyến hộ tống và việc dò đường. Thanh Tiêu thuê chàng làm khách khanh vì chàng thông thuộc lối đi quanh Tẫn Lô. Khi bị gán tội trong cái chết của người giữ chìa khóa, chàng phải thoát khỏi nơi nghị sự và tìm cách đưa tin ra ngoài thành trước bình minh.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "duong_tu_hanh",
+     "label": "Character",
+     "props": {
+      "name": "Dương Tử Hành",
+      "aliases": [
+       "Dương trưởng lão"
+      ],
+      "personality": "Điềm đạm, giỏi dùng lời lẽ ôn hòa để dồn người khác vào thế khó; xem trật tự của tông môn quan trọng hơn sinh mạng từng cá nhân.",
+      "backstory": "Là trưởng lão Thanh Tiêu phụ trách thương lượng với các tông môn lân cận. Ông đã nhiều lần giữ cho cuộc tranh chấp linh mạch chưa biến thành chiến sự."
+     }
+    },
+    {
+     "id": "pham_moc_sinh",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Mộc Sinh",
+      "aliases": [
+       "người giữ chìa khóa"
+      ],
+      "personality": "Cẩn trọng, kín tiếng và ít khi tin vào lời hứa của người có quyền.",
+      "backstory": "Được giao trông coi chìa khóa lò luyện linh khí ở Tẫn Lô. Trước buổi nghị sự, ông đã tìm cách gửi một lời nhắn khẩn cấp ra ngoài thành."
+     }
+    },
+    {
+     "id": "la_thanh_van",
+     "label": "Character",
+     "props": {
+      "name": "La Thanh Vân",
+      "aliases": [
+       "La hộ vệ"
+      ],
+      "personality": "Thẳng thắn, cảnh giác và coi trọng bằng chứng hơn địa vị; khi đã chọn đứng về phía ai thì khó bị lay chuyển.",
+      "backstory": "Từng cùng Kỷ Trường Khanh dò đường qua vùng núi hiểm trở. Nay nàng là hộ vệ của Thanh Tiêu, nhưng không được dự các cuộc nghị sự của trưởng lão."
+     }
+    },
+    {
+     "id": "nghien_bat_ly",
+     "label": "Character",
+     "props": {
+      "name": "Nghiêm Bất Ly",
+      "aliases": [
+       "chấp sự Nghiêm"
+      ],
+      "personality": "Lạnh lùng, kiên nhẫn và giỏi biến mệnh lệnh thành những lựa chọn tưởng như tự nguyện.",
+      "backstory": "Là chấp sự Thanh Tiêu trông coi các cửa thành và việc điều động đệ tử. Ông tin rằng tông môn chỉ sống sót nếu ra tay trước đối thủ."
+     }
+    },
+    {
+     "id": "le_van_ky",
+     "label": "Character",
+     "props": {
+      "name": "Lệ Vân Kỳ",
+      "aliases": [
+       "sứ giả ngoài thành"
+      ],
+      "personality": "Khôn ngoan, kín kẽ và luôn giữ lại một phần ý định cho riêng mình.",
+      "backstory": "Là người liên lạc của một nhóm tu sĩ trung lập đóng ngoài vòng vây. Nàng từng nhận lời giúp Kỷ Trường Khanh tìm đường qua Tẫn Lô, nhưng chưa từng thề trung thành với Thanh Tiêu."
+     }
+    },
+    {
+     "id": "tan_lo",
+     "label": "Location",
+     "props": {
+      "name": "Tẫn Lô",
+      "description": "Tẫn Lô là thành trì hư cấu bao quanh lò luyện linh khí, hiện bị các đội tu sĩ phong tỏa."
+     }
+    },
+    {
+     "id": "nghi_su_duong",
+     "label": "Location",
+     "props": {
+      "name": "Nghị Sự Đường Tẫn Lô",
+      "aliases": [
+       "nghị đường"
+      ],
+      "description": "Nghị Sự Đường là nơi các trưởng lão Thanh Tiêu họp bàn và nơi lời buộc tội Kỷ Trường Khanh bắt đầu."
+     }
+    },
+    {
+     "id": "phong_khach_khanh",
+     "label": "Location",
+     "props": {
+      "name": "Tiểu Viện Khách Khanh",
+      "aliases": [
+       "phòng khách khanh"
+      ],
+      "description": "Tiểu Viện Khách Khanh nằm gần tường phía tây và là nơi Thanh Tiêu bố trí chỗ ở cho khách khanh."
+     }
+    },
+    {
+     "id": "lo_luyen",
+     "label": "Location",
+     "props": {
+      "name": "Lò Luyện Tẫn Tâm",
+      "aliases": [
+       "lò luyện"
+      ],
+      "description": "Lò Luyện Tẫn Tâm là nơi Thanh Tiêu rèn linh khí và cũng là điểm tranh chấp chính giữa các tông môn."
+     }
+    },
+    {
+     "id": "cong_tay",
+     "label": "Location",
+     "props": {
+      "name": "Cửa Tây Tẫn Lô",
+      "aliases": [
+       "cửa tây"
+      ],
+      "description": "Cửa Tây là lối ra hẹp có một đường cống cũ thông về triền đá ngoài thành."
+     }
+    },
+    {
+     "id": "tran_thach_ngoai_thanh",
+     "label": "Location",
+     "props": {
+      "name": "Trạm Thạch Ngoại Thành",
+      "aliases": [
+       "trạm ngoài thành"
+      ],
+      "description": "Trạm Thạch là điểm hẹn kín của những người liên lạc trung lập ở ngoài vòng vây."
+     }
+    },
+    {
+     "id": "thanh_tieu",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Tiêu",
+      "aliases": [
+       "Thanh Tiêu Tông"
+      ],
+      "description": "Thanh Tiêu đang giữ lò luyện linh khí ở Tẫn Lô và phải chống đỡ sức ép từ hai tông môn đối địch."
+     }
+    },
+    {
+     "id": "xich_tieu",
+     "label": "Faction",
+     "props": {
+      "name": "Xích Tiêu",
+      "aliases": [
+       "Xích Tiêu Tông"
+      ],
+      "description": "Xích Tiêu đóng quân ở phía bắc Tẫn Lô và đòi quyền kiểm soát lò luyện."
+     }
+    },
+    {
+     "id": "han_thuy",
+     "label": "Faction",
+     "props": {
+      "name": "Hàn Thủy",
+      "aliases": [
+       "Hàn Thủy Tông"
+      ],
+      "description": "Hàn Thủy vây Tẫn Lô từ phía đông và chờ thời cơ chiếm phần linh mạch dưới thành."
+     }
+    },
+    {
+     "id": "lien_minh_tan_tu",
+     "label": "Faction",
+     "props": {
+      "name": "Liên Minh Tán Tu",
+      "aliases": [
+       "Liên Minh"
+      ],
+      "description": "Liên Minh Tán Tu gồm những tu sĩ không quy phục các đại tông môn và giữ một trạm liên lạc ngoài thành."
+     }
+    },
+    {
+     "id": "chia_khoa_lo",
+     "label": "Item",
+     "props": {
+      "name": "Chìa Khóa Lò Luyện",
+      "aliases": [
+       "chìa khóa"
+      ],
+      "description": "Chìa Khóa Lò Luyện mở được cửa trong của lò và là vật chứng khiến cái chết của Phạm Mộc Sinh trở nên đáng ngờ."
+     }
+    },
+    {
+     "id": "manh_giay_mat",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh Giấy Mật",
+      "aliases": [
+       "mảnh giấy"
+      ],
+      "description": "Mảnh Giấy Mật chứa một dấu vết ngắn có thể chứng minh thời điểm chìa khóa bị đổi chỗ."
+     }
+    },
+    {
+     "id": "f_vay_tan_lo",
+     "label": "Fact",
+     "props": {
+      "text": "Xích Tiêu và Hàn Thủy đang phong tỏa Tẫn Lô từ hai hướng."
+     }
+    },
+    {
+     "id": "f_lo_luyen_tranh_chap",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Tiêu đang giữ lò luyện linh khí duy nhất ở Tẫn Lô."
+     }
+    },
+    {
+     "id": "f_pham_giu_chia_khoa",
+     "label": "Fact",
+     "props": {
+      "text": "Trước khi chết, Phạm Mộc Sinh được giao giữ Chìa Khóa Lò Luyện."
+     }
+    },
+    {
+     "id": "f_thi_the_nghi_su",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm Mộc Sinh chết trong Nghị Sự Đường ngay trước khi cuộc nghị sự kết thúc."
+     }
+    },
+    {
+     "id": "f_dau_vet_phong",
+     "label": "Fact",
+     "props": {
+      "text": "Một dấu vết từ phòng khách khanh khiến Kỷ Trường Khanh bị nghi liên quan đến cái chết."
+     }
+    },
+    {
+     "id": "f_loi_nhan_pham",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm Mộc Sinh đã tìm cách gửi một lời nhắn khẩn cấp ra ngoài thành trước buổi nghị sự."
+     }
+    },
+    {
+     "id": "f_duong_dan_tay",
+     "label": "Fact",
+     "props": {
+      "text": "Một đường cống cũ nối Cửa Tây với triền đá ngoài Tẫn Lô."
+     }
+    },
+    {
+     "id": "f_giet_pham",
+     "label": "Fact",
+     "props": {
+      "text": "Nghiêm Bất Ly đã ra lệnh giết Phạm Mộc Sinh để có cớ siết quyền kiểm soát lò luyện."
+     }
+    },
+    {
+     "id": "f_chia_khoa_bi_doi",
+     "label": "Fact",
+     "props": {
+      "text": "Nghiêm Bất Ly đã bí mật đổi chỗ Chìa Khóa Lò Luyện trước khi Phạm Mộc Sinh bị giết."
+     }
+    },
+    {
+     "id": "f_manh_giay_thoi_diem",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh Giấy Mật ghi lại thời điểm Chìa Khóa Lò Luyện rời khỏi tay Phạm Mộc Sinh."
+     }
+    },
+    {
+     "id": "f_ha_thuy_chuan_bi",
+     "label": "Fact",
+     "props": {
+      "text": "Hàn Thủy đã chuẩn bị tiến vào Tẫn Lô trước bình minh nếu Thanh Tiêu mất quyền kiểm soát lò luyện."
+     }
+    },
+    {
+     "id": "thoat_lenh_giam",
+     "label": "Thread",
+     "props": {
+      "description": "Kỷ Trường Khanh có thoát được lệnh giam giữ ở Nghị Sự Đường không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 2
+     }
+    },
+    {
+     "id": "tim_duong_ra",
+     "label": "Thread",
+     "props": {
+      "description": "Kỷ Trường Khanh có tìm được lối ra khỏi Tẫn Lô không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "dua_tin_ra_ngoai",
+     "label": "Thread",
+     "props": {
+      "description": "Kỷ Trường Khanh có đưa được tin về cái chết của Phạm Mộc Sinh đến đồng minh ngoài thành không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ngan_chien_tranh",
+     "label": "Thread",
+     "props": {
+      "description": "Kỷ Trường Khanh có ngăn được cuộc tấn công vào Tẫn Lô trước bình minh không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "duong_tu_hanh",
+     "to": "nghien_bat_ly",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:duong_tu_hanh>nghien_bat_ly@0",
+     "props": {
+      "kind": "đồng phe",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nghien_bat_ly",
+     "to": "duong_tu_hanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nghien_bat_ly>duong_tu_hanh@0",
+     "props": {
+      "kind": "đồng phe",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "la_thanh_van",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:la_thanh_van>protagonist@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 55
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "la_thanh_van",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>la_thanh_van@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_van_ky",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_van_ky>protagonist@0",
+     "props": {
+      "kind": "đồng minh dè chừng",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "le_van_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>le_van_ky@0",
+     "props": {
+      "kind": "đồng minh dè chừng",
+      "score": 20
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "duong_tu_hanh",
+     "to": "nghi_su_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:duong_tu_hanh>nghi_su_duong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nghien_bat_ly",
+     "to": "nghi_su_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nghien_bat_ly>nghi_su_duong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "la_thanh_van",
+     "to": "tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:la_thanh_van>tan_lo@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "le_van_ky",
+     "to": "tran_thach_ngoai_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:le_van_ky>tran_thach_ngoai_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_moc_sinh",
+     "to": "nghi_su_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_moc_sinh>nghi_su_duong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "nghi_su_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>nghi_su_duong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "chia_khoa_lo",
+     "to": "lo_luyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:chia_khoa_lo>lo_luyen@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "manh_giay_mat",
+     "to": "phong_khach_khanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:manh_giay_mat>phong_khach_khanh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "duong_tu_hanh",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:duong_tu_hanh>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "pham_moc_sinh",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:pham_moc_sinh>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nghien_bat_ly",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nghien_bat_ly>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "la_thanh_van",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:la_thanh_van>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "le_van_ky",
+     "to": "lien_minh_tan_tu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:le_van_ky>lien_minh_tan_tu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_vay_tan_lo",
+     "to": "xich_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_vay_tan_lo>xich_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_vay_tan_lo",
+     "to": "han_thuy",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_vay_tan_lo>han_thuy@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_vay_tan_lo",
+     "to": "tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_vay_tan_lo>tan_lo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_tu_hanh",
+     "to": "f_vay_tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_tu_hanh>f_vay_tan_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_vay_tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_vay_tan_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "la_thanh_van",
+     "to": "f_vay_tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:la_thanh_van>f_vay_tan_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_van_ky",
+     "to": "f_vay_tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_van_ky>f_vay_tan_lo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_lo_luyen_tranh_chap",
+     "to": "thanh_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_lo_luyen_tranh_chap>thanh_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_lo_luyen_tranh_chap",
+     "to": "lo_luyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_lo_luyen_tranh_chap>lo_luyen@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_lo_luyen_tranh_chap",
+     "to": "tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_lo_luyen_tranh_chap>tan_lo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_tu_hanh",
+     "to": "f_lo_luyen_tranh_chap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_tu_hanh>f_lo_luyen_tranh_chap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_lo_luyen_tranh_chap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_lo_luyen_tranh_chap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "la_thanh_van",
+     "to": "f_lo_luyen_tranh_chap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:la_thanh_van>f_lo_luyen_tranh_chap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_van_ky",
+     "to": "f_lo_luyen_tranh_chap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_van_ky>f_lo_luyen_tranh_chap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_pham_giu_chia_khoa",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_pham_giu_chia_khoa>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_pham_giu_chia_khoa",
+     "to": "chia_khoa_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_pham_giu_chia_khoa>chia_khoa_lo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_tu_hanh",
+     "to": "f_pham_giu_chia_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_tu_hanh>f_pham_giu_chia_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_pham_giu_chia_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_pham_giu_chia_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "la_thanh_van",
+     "to": "f_pham_giu_chia_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:la_thanh_van>f_pham_giu_chia_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_thi_the_nghi_su",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_thi_the_nghi_su>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_thi_the_nghi_su",
+     "to": "nghi_su_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_thi_the_nghi_su>nghi_su_duong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_tu_hanh",
+     "to": "f_thi_the_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_tu_hanh>f_thi_the_nghi_su@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_thi_the_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_thi_the_nghi_su@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "la_thanh_van",
+     "to": "f_thi_the_nghi_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:la_thanh_van>f_thi_the_nghi_su@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_dau_vet_phong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_dau_vet_phong>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_dau_vet_phong",
+     "to": "phong_khach_khanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_dau_vet_phong>phong_khach_khanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_dau_vet_phong",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_dau_vet_phong>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "duong_tu_hanh",
+     "to": "f_dau_vet_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:duong_tu_hanh>f_dau_vet_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_dau_vet_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_dau_vet_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_loi_nhan_pham",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_loi_nhan_pham>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_loi_nhan_pham",
+     "to": "tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_loi_nhan_pham>tan_lo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_van_ky",
+     "to": "f_loi_nhan_pham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_van_ky>f_loi_nhan_pham@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_duong_dan_tay",
+     "to": "cong_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_duong_dan_tay>cong_tay@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_duong_dan_tay",
+     "to": "tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_duong_dan_tay>tan_lo@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "la_thanh_van",
+     "to": "f_duong_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:la_thanh_van>f_duong_dan_tay@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_duong_dan_tay",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_duong_dan_tay@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_giet_pham",
+     "to": "nghien_bat_ly",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_giet_pham>nghien_bat_ly@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_giet_pham",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_giet_pham>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_giet_pham",
+     "to": "lo_luyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_giet_pham>lo_luyen@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_chia_khoa_bi_doi",
+     "to": "nghien_bat_ly",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_chia_khoa_bi_doi>nghien_bat_ly@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_chia_khoa_bi_doi",
+     "to": "chia_khoa_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_chia_khoa_bi_doi>chia_khoa_lo@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_chia_khoa_bi_doi",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_chia_khoa_bi_doi>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_chia_khoa_bi_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_chia_khoa_bi_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_manh_giay_thoi_diem",
+     "to": "manh_giay_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_manh_giay_thoi_diem>manh_giay_mat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_manh_giay_thoi_diem",
+     "to": "chia_khoa_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_manh_giay_thoi_diem>chia_khoa_lo@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_manh_giay_thoi_diem",
+     "to": "pham_moc_sinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_manh_giay_thoi_diem>pham_moc_sinh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghien_bat_ly",
+     "to": "f_manh_giay_thoi_diem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghien_bat_ly>f_manh_giay_thoi_diem@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_ha_thuy_chuan_bi",
+     "to": "han_thuy",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_ha_thuy_chuan_bi>han_thuy@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_ha_thuy_chuan_bi",
+     "to": "tan_lo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_ha_thuy_chuan_bi>tan_lo@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_ha_thuy_chuan_bi",
+     "to": "lo_luyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_ha_thuy_chuan_bi>lo_luyen@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_van_ky",
+     "to": "f_ha_thuy_chuan_bi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_van_ky>f_ha_thuy_chuan_bi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Kỷ Trường Khanh",
+      "known_as": "Kỷ Trường Khanh"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-304255c1d985",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "nghi_su_duong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:nghi_su_duong>ch1@1",
+     "props": {
+      "quote": "Ánh đèn trong Nghị Sự Đường Tẫn Lô cháy thấp, khói quẩn dưới xà ngang.",
+      "known_as": "Nghị Sự Đường Tẫn Lô"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "pham_moc_sinh",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:pham_moc_sinh>ch1@1",
+     "props": {
+      "quote": "Nãy giờ các trưởng lão còn tranh luận xem ai đã động vào Phạm Mộc Sinh, ai có lợi nếu lò luyện rơi vào hỗn loạn.",
+      "known_as": "Phạm Mộc Sinh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lo_luyen",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lo_luyen>ch1@1",
+     "props": {
+      "quote": "Nãy giờ các trưởng lão còn tranh luận xem ai đã động vào Phạm Mộc Sinh, ai có lợi nếu lò luyện rơi vào hỗn loạn.",
+      "known_as": "lò luyện"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "chia_khoa_lo",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:chia_khoa_lo>ch1@1",
+     "props": {
+      "quote": "Chìa khóa không ở đó.",
+      "known_as": "Chìa khóa"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "nghien_bat_ly",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:nghien_bat_ly>ch1@1",
+     "props": {
+      "quote": "Nghiêm Bất Ly đặt tay lên thành ghế, giọng đều đều:",
+      "known_as": "Nghiêm Bất Ly"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phong_khach_khanh",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phong_khach_khanh>ch1@1",
+     "props": {
+      "quote": "Trong phòng khách khanh có dấu vết liên quan đến Phạm Mộc Sinh.",
+      "known_as": "phòng khách khanh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_dau_vet_phong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_dau_vet_phong>ch1@1",
+     "props": {
+      "quote": "Trong phòng khách khanh có dấu vết liên quan đến Phạm Mộc Sinh. Đủ để đặt nghi vấn Kỷ đạo hữu có dính líu."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_dau_vet_phong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_dau_vet_phong@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "nghien_bat_ly",
+      "quote": "Trong phòng khách khanh có dấu vết liên quan đến Phạm Mộc Sinh. Đủ để đặt nghi vấn Kỷ đạo hữu có dính líu."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "duong_tu_hanh",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:duong_tu_hanh>ch1@1",
+     "props": {
+      "quote": "Dương Tử Hành đẩy chén trà đã nguội sang bên.",
+      "known_as": "Dương Tử Hành"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "la_thanh_van",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:la_thanh_van>ch1@1",
+     "props": {
+      "quote": "Gần cửa, La Thanh Vân đứng im.",
+      "known_as": "La Thanh Vân"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thanh_tieu",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thanh_tieu>ch1@1",
+     "props": {
+      "quote": "Hai tên lính Thanh Tiêu bước ngang, khép vòng người quanh tôi.",
+      "known_as": "Thanh Tiêu"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tan_lo",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tan_lo>ch1@1",
+     "props": {
+      "quote": "- Nếu các vị thật sự muốn tìm hung thủ, đừng biến người biết đường quanh Tẫn Lô thành kẻ bịt miệng",
+      "known_as": "Tẫn Lô"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "thoat_lenh_giam",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:thoat_lenh_giam>ch1@1",
+     "props": {
+      "quote": "Tôi đã thoát khỏi tay lính áp giải, nhưng lối đi ngoài kia vẫn có người canh."
+     }
+    }
+   ],
+   "close": []
+  },
+  "2": {
+   "commit_id": "ch2-48124fa71e23",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "cong_tay",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>cong_tay@2",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "la_thanh_van",
+     "to": "cong_tay",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:la_thanh_van>cong_tay@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_duong_dan_tay",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_duong_dan_tay@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "la_thanh_van",
+      "quote": "Ta biết một đường cống cũ, nối Cửa Tây với triền đá ngoài Tẫn Lô."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cong_tay",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cong_tay>ch2@2",
+     "props": {
+      "quote": "Gần Cửa Tây, La Thanh Vân dừng lại bên một vòm tường nứt, khuất sau mấy bao cát phủ bụi.",
+      "known_as": "Cửa Tây"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_duong_dan_tay",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_duong_dan_tay>ch2@2",
+     "props": {
+      "quote": "Ta biết một đường cống cũ, nối Cửa Tây với triền đá ngoài Tẫn Lô."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>nghi_su_duong@0",
+     "valid_to_chapter": 2
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:la_thanh_van>tan_lo@0",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-f2e580e1a2ae",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "tim_duong_ra",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:tim_duong_ra>ch3@3",
+     "props": {
+      "quote": "Tôi đã ra khỏi thành."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "f_loi_nhan_pham",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>f_loi_nhan_pham@3",
+     "props": {
+      "how": "suy ra",
+      "quote": "Vậy là tin khẩn cấp Phạm Mộc Sinh tìm cách đưa đi vẫn chưa tới tay người ngoài."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "le_van_ky",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:le_van_ky>ch3@3",
+     "props": {
+      "quote": "Ta là Lệ Vân Kỳ, sứ giả ngoài thành.",
+      "known_as": "Lệ Vân Kỳ"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tran_thach_ngoai_thanh",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tran_thach_ngoai_thanh>ch3@3",
+     "props": {
+      "quote": "Có người chặn đường xuống trạm ngoài thành.",
+      "known_as": "trạm ngoài thành"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "f_loi_nhan_pham",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:f_loi_nhan_pham>ch3@3",
+     "props": {
+      "quote": "Vậy là tin khẩn cấp Phạm Mộc Sinh tìm cách đưa đi vẫn chưa tới tay người ngoài."
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 3,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "chia_khoa_lo": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chìa khóa"
+     ],
+     "name": "Chìa Khóa Lò Luyện",
+     "description": "Chìa Khóa Lò Luyện mở được cửa trong của lò và là vật chứng khiến cái chết của Phạm Mộc Sinh trở nên đáng ngờ."
+    }
+   },
+   "cong_tay": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "cửa tây"
+     ],
+     "name": "Cửa Tây Tẫn Lô",
+     "description": "Cửa Tây là lối ra hẹp có một đường cống cũ thông về triền đá ngoài thành."
+    }
+   },
+   "dua_tin_ra_ngoai": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kỷ Trường Khanh có đưa được tin về cái chết của Phạm Mộc Sinh đến đồng minh ngoài thành không?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "duong_tu_hanh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là trưởng lão Thanh Tiêu phụ trách thương lượng với các tông môn lân cận. Ông đã nhiều lần giữ cho cuộc tranh chấp linh mạch chưa biến thành chiến sự.",
+     "aliases": [
+      "Dương trưởng lão"
+     ],
+     "personality": "Điềm đạm, giỏi dùng lời lẽ ôn hòa để dồn người khác vào thế khó; xem trật tự của tông môn quan trọng hơn sinh mạng từng cá nhân.",
+     "name": "Dương Tử Hành"
+    }
+   },
+   "f_chia_khoa_bi_doi": {
+    "label": "Fact",
+    "props": {
+     "text": "Nghiêm Bất Ly đã bí mật đổi chỗ Chìa Khóa Lò Luyện trước khi Phạm Mộc Sinh bị giết."
+    }
+   },
+   "f_dau_vet_phong": {
+    "label": "Fact",
+    "props": {
+     "text": "Một dấu vết từ phòng khách khanh khiến Kỷ Trường Khanh bị nghi liên quan đến cái chết."
+    }
+   },
+   "f_duong_dan_tay": {
+    "label": "Fact",
+    "props": {
+     "text": "Một đường cống cũ nối Cửa Tây với triền đá ngoài Tẫn Lô."
+    }
+   },
+   "f_giet_pham": {
+    "label": "Fact",
+    "props": {
+     "text": "Nghiêm Bất Ly đã ra lệnh giết Phạm Mộc Sinh để có cớ siết quyền kiểm soát lò luyện."
+    }
+   },
+   "f_ha_thuy_chuan_bi": {
+    "label": "Fact",
+    "props": {
+     "text": "Hàn Thủy đã chuẩn bị tiến vào Tẫn Lô trước bình minh nếu Thanh Tiêu mất quyền kiểm soát lò luyện."
+    }
+   },
+   "f_lo_luyen_tranh_chap": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Tiêu đang giữ lò luyện linh khí duy nhất ở Tẫn Lô."
+    }
+   },
+   "f_loi_nhan_pham": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm Mộc Sinh đã tìm cách gửi một lời nhắn khẩn cấp ra ngoài thành trước buổi nghị sự."
+    }
+   },
+   "f_manh_giay_thoi_diem": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh Giấy Mật ghi lại thời điểm Chìa Khóa Lò Luyện rời khỏi tay Phạm Mộc Sinh."
+    }
+   },
+   "f_pham_giu_chia_khoa": {
+    "label": "Fact",
+    "props": {
+     "text": "Trước khi chết, Phạm Mộc Sinh được giao giữ Chìa Khóa Lò Luyện."
+    }
+   },
+   "f_thi_the_nghi_su": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm Mộc Sinh chết trong Nghị Sự Đường ngay trước khi cuộc nghị sự kết thúc."
+    }
+   },
+   "f_vay_tan_lo": {
+    "label": "Fact",
+    "props": {
+     "text": "Xích Tiêu và Hàn Thủy đang phong tỏa Tẫn Lô từ hai hướng."
+    }
+   },
+   "han_thuy": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Hàn Thủy Tông"
+     ],
+     "name": "Hàn Thủy",
+     "description": "Hàn Thủy vây Tẫn Lô từ phía đông và chờ thời cơ chiếm phần linh mạch dưới thành."
+    }
+   },
+   "la_thanh_van": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng cùng Kỷ Trường Khanh dò đường qua vùng núi hiểm trở. Nay nàng là hộ vệ của Thanh Tiêu, nhưng không được dự các cuộc nghị sự của trưởng lão.",
+     "aliases": [
+      "La hộ vệ"
+     ],
+     "personality": "Thẳng thắn, cảnh giác và coi trọng bằng chứng hơn địa vị; khi đã chọn đứng về phía ai thì khó bị lay chuyển.",
+     "name": "La Thanh Vân"
+    }
+   },
+   "le_van_ky": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là người liên lạc của một nhóm tu sĩ trung lập đóng ngoài vòng vây. Nàng từng nhận lời giúp Kỷ Trường Khanh tìm đường qua Tẫn Lô, nhưng chưa từng thề trung thành với Thanh Tiêu.",
+     "aliases": [
+      "sứ giả ngoài thành"
+     ],
+     "personality": "Khôn ngoan, kín kẽ và luôn giữ lại một phần ý định cho riêng mình.",
+     "name": "Lệ Vân Kỳ"
+    }
+   },
+   "lien_minh_tan_tu": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Liên Minh"
+     ],
+     "name": "Liên Minh Tán Tu",
+     "description": "Liên Minh Tán Tu gồm những tu sĩ không quy phục các đại tông môn và giữ một trạm liên lạc ngoài thành."
+    }
+   },
+   "lo_luyen": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "lò luyện"
+     ],
+     "name": "Lò Luyện Tẫn Tâm",
+     "description": "Lò Luyện Tẫn Tâm là nơi Thanh Tiêu rèn linh khí và cũng là điểm tranh chấp chính giữa các tông môn."
+    }
+   },
+   "manh_giay_mat": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "mảnh giấy"
+     ],
+     "name": "Mảnh Giấy Mật",
+     "description": "Mảnh Giấy Mật chứa một dấu vết ngắn có thể chứng minh thời điểm chìa khóa bị đổi chỗ."
+    }
+   },
+   "ngan_chien_tranh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kỷ Trường Khanh có ngăn được cuộc tấn công vào Tẫn Lô trước bình minh không?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "nghi_su_duong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "nghị đường"
+     ],
+     "name": "Nghị Sự Đường Tẫn Lô",
+     "description": "Nghị Sự Đường là nơi các trưởng lão Thanh Tiêu họp bàn và nơi lời buộc tội Kỷ Trường Khanh bắt đầu."
+    }
+   },
+   "nghien_bat_ly": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là chấp sự Thanh Tiêu trông coi các cửa thành và việc điều động đệ tử. Ông tin rằng tông môn chỉ sống sót nếu ra tay trước đối thủ.",
+     "aliases": [
+      "chấp sự Nghiêm"
+     ],
+     "personality": "Lạnh lùng, kiên nhẫn và giỏi biến mệnh lệnh thành những lựa chọn tưởng như tự nguyện.",
+     "name": "Nghiêm Bất Ly"
+    }
+   },
+   "pham_moc_sinh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Được giao trông coi chìa khóa lò luyện linh khí ở Tẫn Lô. Trước buổi nghị sự, ông đã tìm cách gửi một lời nhắn khẩn cấp ra ngoài thành.",
+     "aliases": [
+      "người giữ chìa khóa"
+     ],
+     "personality": "Cẩn trọng, kín tiếng và ít khi tin vào lời hứa của người có quyền.",
+     "name": "Phạm Mộc Sinh"
+    }
+   },
+   "phong_khach_khanh": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "phòng khách khanh"
+     ],
+     "name": "Tiểu Viện Khách Khanh",
+     "description": "Tiểu Viện Khách Khanh nằm gần tường phía tây và là nơi Thanh Tiêu bố trí chỗ ở cho khách khanh."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Kỷ Trường Khanh từng là đệ tử ngoại môn của một tông phái nhỏ đã tan rã giữa thời loạn, từ đó sống bằng những chuyến hộ tống và việc dò đường. Thanh Tiêu thuê chàng làm khách khanh vì chàng thông thuộc lối đi quanh Tẫn Lô. Khi bị gán tội trong cái chết của người giữ chìa khóa, chàng phải thoát khỏi nơi nghị sự và tìm cách đưa tin ra ngoài thành trước bình minh.",
+     "personality": "Gan lì, thực tế và có thói quen quan sát người khác trước khi quyết định hành động. Chàng nói ít, nhưng mỗi khi lên tiếng thường chạm đúng điểm yếu trong lập luận của đối phương.",
+     "name": "Kỷ Trường Khanh",
+     "is_protagonist": true
+    }
+   },
+   "tan_lo": {
+    "label": "Location",
+    "props": {
+     "name": "Tẫn Lô",
+     "description": "Tẫn Lô là thành trì hư cấu bao quanh lò luyện linh khí, hiện bị các đội tu sĩ phong tỏa."
+    }
+   },
+   "thanh_tieu": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Tiêu Tông"
+     ],
+     "name": "Thanh Tiêu",
+     "description": "Thanh Tiêu đang giữ lò luyện linh khí ở Tẫn Lô và phải chống đỡ sức ép từ hai tông môn đối địch."
+    }
+   },
+   "thoat_lenh_giam": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kỷ Trường Khanh có thoát được lệnh giam giữ ở Nghị Sự Đường không?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 2
+    }
+   },
+   "tim_duong_ra": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kỷ Trường Khanh có tìm được lối ra khỏi Tẫn Lô không?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "tran_thach_ngoai_thanh": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "trạm ngoài thành"
+     ],
+     "name": "Trạm Thạch Ngoại Thành",
+     "description": "Trạm Thạch là điểm hẹn kín của những người liên lạc trung lập ở ngoài vòng vây."
+    }
+   },
+   "xich_tieu": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Xích Tiêu Tông"
+     ],
+     "name": "Xích Tiêu",
+     "description": "Xích Tiêu đóng quân ở phía bắc Tẫn Lô và đòi quyền kiểm soát lò luyện."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:duong_tu_hanh>nghien_bat_ly@0",
+    "type": "RELATES_TO",
+    "source": "duong_tu_hanh",
+    "target": "nghien_bat_ly",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "đồng phe"
+    }
+   },
+   {
+    "id": "RELATES_TO:la_thanh_van>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "la_thanh_van",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 55,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:le_van_ky>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "le_van_ky",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "đồng minh dè chừng"
+    }
+   },
+   {
+    "id": "RELATES_TO:nghien_bat_ly>duong_tu_hanh@0",
+    "type": "RELATES_TO",
+    "source": "nghien_bat_ly",
+    "target": "duong_tu_hanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng phe"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>la_thanh_van@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "la_thanh_van",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 45,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>le_van_ky@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "le_van_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng minh dè chừng"
+    }
+   },
+   {
+    "id": "LOCATED_AT:chia_khoa_lo>lo_luyen@0",
+    "type": "LOCATED_AT",
+    "source": "chia_khoa_lo",
+    "target": "lo_luyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:duong_tu_hanh>nghi_su_duong@0",
+    "type": "LOCATED_AT",
+    "source": "duong_tu_hanh",
+    "target": "nghi_su_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:la_thanh_van>cong_tay@2",
+    "type": "LOCATED_AT",
+    "source": "la_thanh_van",
+    "target": "cong_tay",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:le_van_ky>tran_thach_ngoai_thanh@0",
+    "type": "LOCATED_AT",
+    "source": "le_van_ky",
+    "target": "tran_thach_ngoai_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:manh_giay_mat>phong_khach_khanh@0",
+    "type": "LOCATED_AT",
+    "source": "manh_giay_mat",
+    "target": "phong_khach_khanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nghien_bat_ly>nghi_su_duong@0",
+    "type": "LOCATED_AT",
+    "source": "nghien_bat_ly",
+    "target": "nghi_su_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_moc_sinh>nghi_su_duong@0",
+    "type": "LOCATED_AT",
+    "source": "pham_moc_sinh",
+    "target": "nghi_su_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>cong_tay@2",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "cong_tay",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:duong_tu_hanh>thanh_tieu@0",
+    "type": "MEMBER_OF",
+    "source": "duong_tu_hanh",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:la_thanh_van>thanh_tieu@0",
+    "type": "MEMBER_OF",
+    "source": "la_thanh_van",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:le_van_ky>lien_minh_tan_tu@0",
+    "type": "MEMBER_OF",
+    "source": "le_van_ky",
+    "target": "lien_minh_tan_tu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nghien_bat_ly>thanh_tieu@0",
+    "type": "MEMBER_OF",
+    "source": "nghien_bat_ly",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:pham_moc_sinh>thanh_tieu@0",
+    "type": "MEMBER_OF",
+    "source": "pham_moc_sinh",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:duong_tu_hanh>f_dau_vet_phong@0",
+    "type": "KNOWS",
+    "source": "duong_tu_hanh",
+    "target": "f_dau_vet_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_tu_hanh>f_lo_luyen_tranh_chap@0",
+    "type": "KNOWS",
+    "source": "duong_tu_hanh",
+    "target": "f_lo_luyen_tranh_chap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_tu_hanh>f_pham_giu_chia_khoa@0",
+    "type": "KNOWS",
+    "source": "duong_tu_hanh",
+    "target": "f_pham_giu_chia_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_tu_hanh>f_thi_the_nghi_su@0",
+    "type": "KNOWS",
+    "source": "duong_tu_hanh",
+    "target": "f_thi_the_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:duong_tu_hanh>f_vay_tan_lo@0",
+    "type": "KNOWS",
+    "source": "duong_tu_hanh",
+    "target": "f_vay_tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:la_thanh_van>f_duong_dan_tay@0",
+    "type": "KNOWS",
+    "source": "la_thanh_van",
+    "target": "f_duong_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:la_thanh_van>f_lo_luyen_tranh_chap@0",
+    "type": "KNOWS",
+    "source": "la_thanh_van",
+    "target": "f_lo_luyen_tranh_chap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:la_thanh_van>f_pham_giu_chia_khoa@0",
+    "type": "KNOWS",
+    "source": "la_thanh_van",
+    "target": "f_pham_giu_chia_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:la_thanh_van>f_thi_the_nghi_su@0",
+    "type": "KNOWS",
+    "source": "la_thanh_van",
+    "target": "f_thi_the_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:la_thanh_van>f_vay_tan_lo@0",
+    "type": "KNOWS",
+    "source": "la_thanh_van",
+    "target": "f_vay_tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_van_ky>f_ha_thuy_chuan_bi@0",
+    "type": "KNOWS",
+    "source": "le_van_ky",
+    "target": "f_ha_thuy_chuan_bi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_van_ky>f_lo_luyen_tranh_chap@0",
+    "type": "KNOWS",
+    "source": "le_van_ky",
+    "target": "f_lo_luyen_tranh_chap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_van_ky>f_loi_nhan_pham@0",
+    "type": "KNOWS",
+    "source": "le_van_ky",
+    "target": "f_loi_nhan_pham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_van_ky>f_vay_tan_lo@0",
+    "type": "KNOWS",
+    "source": "le_van_ky",
+    "target": "f_vay_tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_chia_khoa_bi_doi@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_chia_khoa_bi_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_dau_vet_phong@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_dau_vet_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_duong_dan_tay@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_duong_dan_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_lo_luyen_tranh_chap@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_lo_luyen_tranh_chap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_manh_giay_thoi_diem@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_manh_giay_thoi_diem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_pham_giu_chia_khoa@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_pham_giu_chia_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_thi_the_nghi_su@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_thi_the_nghi_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghien_bat_ly>f_vay_tan_lo@0",
+    "type": "KNOWS",
+    "source": "nghien_bat_ly",
+    "target": "f_vay_tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_dau_vet_phong@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_dau_vet_phong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Trong phòng khách khanh có dấu vết liên quan đến Phạm Mộc Sinh. Đủ để đặt nghi vấn Kỷ đạo hữu có dính líu.",
+     "told_by": "nghien_bat_ly"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_duong_dan_tay@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_duong_dan_tay",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Ta biết một đường cống cũ, nối Cửa Tây với triền đá ngoài Tẫn Lô.",
+     "told_by": "la_thanh_van"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>f_loi_nhan_pham@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "f_loi_nhan_pham",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "suy ra",
+     "quote": "Vậy là tin khẩn cấp Phạm Mộc Sinh tìm cách đưa đi vẫn chưa tới tay người ngoài."
+    }
+   },
+   {
+    "id": "ABOUT:f_chia_khoa_bi_doi>chia_khoa_lo@0",
+    "type": "ABOUT",
+    "source": "f_chia_khoa_bi_doi",
+    "target": "chia_khoa_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_chia_khoa_bi_doi>nghien_bat_ly@0",
+    "type": "ABOUT",
+    "source": "f_chia_khoa_bi_doi",
+    "target": "nghien_bat_ly",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_chia_khoa_bi_doi>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_chia_khoa_bi_doi",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_dau_vet_phong>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_dau_vet_phong",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_dau_vet_phong>phong_khach_khanh@0",
+    "type": "ABOUT",
+    "source": "f_dau_vet_phong",
+    "target": "phong_khach_khanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_dau_vet_phong>protagonist@0",
+    "type": "ABOUT",
+    "source": "f_dau_vet_phong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_duong_dan_tay>cong_tay@0",
+    "type": "ABOUT",
+    "source": "f_duong_dan_tay",
+    "target": "cong_tay",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_duong_dan_tay>tan_lo@0",
+    "type": "ABOUT",
+    "source": "f_duong_dan_tay",
+    "target": "tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_giet_pham>lo_luyen@0",
+    "type": "ABOUT",
+    "source": "f_giet_pham",
+    "target": "lo_luyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_giet_pham>nghien_bat_ly@0",
+    "type": "ABOUT",
+    "source": "f_giet_pham",
+    "target": "nghien_bat_ly",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_giet_pham>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_giet_pham",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_ha_thuy_chuan_bi>han_thuy@0",
+    "type": "ABOUT",
+    "source": "f_ha_thuy_chuan_bi",
+    "target": "han_thuy",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_ha_thuy_chuan_bi>lo_luyen@0",
+    "type": "ABOUT",
+    "source": "f_ha_thuy_chuan_bi",
+    "target": "lo_luyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_ha_thuy_chuan_bi>tan_lo@0",
+    "type": "ABOUT",
+    "source": "f_ha_thuy_chuan_bi",
+    "target": "tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_lo_luyen_tranh_chap>lo_luyen@0",
+    "type": "ABOUT",
+    "source": "f_lo_luyen_tranh_chap",
+    "target": "lo_luyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_lo_luyen_tranh_chap>tan_lo@0",
+    "type": "ABOUT",
+    "source": "f_lo_luyen_tranh_chap",
+    "target": "tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_lo_luyen_tranh_chap>thanh_tieu@0",
+    "type": "ABOUT",
+    "source": "f_lo_luyen_tranh_chap",
+    "target": "thanh_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_loi_nhan_pham>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_loi_nhan_pham",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_loi_nhan_pham>tan_lo@0",
+    "type": "ABOUT",
+    "source": "f_loi_nhan_pham",
+    "target": "tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_manh_giay_thoi_diem>chia_khoa_lo@0",
+    "type": "ABOUT",
+    "source": "f_manh_giay_thoi_diem",
+    "target": "chia_khoa_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_manh_giay_thoi_diem>manh_giay_mat@0",
+    "type": "ABOUT",
+    "source": "f_manh_giay_thoi_diem",
+    "target": "manh_giay_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_manh_giay_thoi_diem>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_manh_giay_thoi_diem",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_pham_giu_chia_khoa>chia_khoa_lo@0",
+    "type": "ABOUT",
+    "source": "f_pham_giu_chia_khoa",
+    "target": "chia_khoa_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_pham_giu_chia_khoa>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_pham_giu_chia_khoa",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_thi_the_nghi_su>nghi_su_duong@0",
+    "type": "ABOUT",
+    "source": "f_thi_the_nghi_su",
+    "target": "nghi_su_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_thi_the_nghi_su>pham_moc_sinh@0",
+    "type": "ABOUT",
+    "source": "f_thi_the_nghi_su",
+    "target": "pham_moc_sinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_vay_tan_lo>han_thuy@0",
+    "type": "ABOUT",
+    "source": "f_vay_tan_lo",
+    "target": "han_thuy",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_vay_tan_lo>tan_lo@0",
+    "type": "ABOUT",
+    "source": "f_vay_tan_lo",
+    "target": "tan_lo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_vay_tan_lo>xich_tieu@0",
+    "type": "ABOUT",
+    "source": "f_vay_tan_lo",
+    "target": "xich_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:thoat_lenh_giam>ch1@1",
+    "type": "RESOLVED_IN",
+    "source": "thoat_lenh_giam",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đã thoát khỏi tay lính áp giải, nhưng lối đi ngoài kia vẫn có người canh."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:tim_duong_ra>ch3@3",
+    "type": "RESOLVED_IN",
+    "source": "tim_duong_ra",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đã ra khỏi thành."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:chia_khoa_lo>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "chia_khoa_lo",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chìa khóa không ở đó.",
+     "known_as": "Chìa khóa"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cong_tay>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cong_tay",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Gần Cửa Tây, La Thanh Vân dừng lại bên một vòm tường nứt, khuất sau mấy bao cát phủ bụi.",
+     "known_as": "Cửa Tây"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:duong_tu_hanh>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "duong_tu_hanh",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Dương Tử Hành đẩy chén trà đã nguội sang bên.",
+     "known_as": "Dương Tử Hành"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_dau_vet_phong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_dau_vet_phong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trong phòng khách khanh có dấu vết liên quan đến Phạm Mộc Sinh. Đủ để đặt nghi vấn Kỷ đạo hữu có dính líu."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_duong_dan_tay>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_duong_dan_tay",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta biết một đường cống cũ, nối Cửa Tây với triền đá ngoài Tẫn Lô."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:f_loi_nhan_pham>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "f_loi_nhan_pham",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vậy là tin khẩn cấp Phạm Mộc Sinh tìm cách đưa đi vẫn chưa tới tay người ngoài."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:la_thanh_van>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "la_thanh_van",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Gần cửa, La Thanh Vân đứng im.",
+     "known_as": "La Thanh Vân"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:le_van_ky>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "le_van_ky",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta là Lệ Vân Kỳ, sứ giả ngoài thành.",
+     "known_as": "Lệ Vân Kỳ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lo_luyen>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lo_luyen",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nãy giờ các trưởng lão còn tranh luận xem ai đã động vào Phạm Mộc Sinh, ai có lợi nếu lò luyện rơi vào hỗn loạn.",
+     "known_as": "lò luyện"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:nghi_su_duong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "nghi_su_duong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ánh đèn trong Nghị Sự Đường Tẫn Lô cháy thấp, khói quẩn dưới xà ngang.",
+     "known_as": "Nghị Sự Đường Tẫn Lô"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:nghien_bat_ly>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "nghien_bat_ly",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nghiêm Bất Ly đặt tay lên thành ghế, giọng đều đều:",
+     "known_as": "Nghiêm Bất Ly"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:pham_moc_sinh>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "pham_moc_sinh",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nãy giờ các trưởng lão còn tranh luận xem ai đã động vào Phạm Mộc Sinh, ai có lợi nếu lò luyện rơi vào hỗn loạn.",
+     "known_as": "Phạm Mộc Sinh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phong_khach_khanh>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phong_khach_khanh",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trong phòng khách khanh có dấu vết liên quan đến Phạm Mộc Sinh.",
+     "known_as": "phòng khách khanh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Kỷ Trường Khanh",
+     "known_as": "Kỷ Trường Khanh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tan_lo>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tan_lo",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Nếu các vị thật sự muốn tìm hung thủ, đừng biến người biết đường quanh Tẫn Lô thành kẻ bịt miệng",
+     "known_as": "Tẫn Lô"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thanh_tieu>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thanh_tieu",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hai tên lính Thanh Tiêu bước ngang, khép vòng người quanh tôi.",
+     "known_as": "Thanh Tiêu"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tran_thach_ngoai_thanh>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tran_thach_ngoai_thanh",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Có người chặn đường xuống trạm ngoài thành.",
+     "known_as": "trạm ngoài thành"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-304255c1d985",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Trong Nghị Sự Đường Tẫn Lô, Nghiêm Bất Ly nêu dấu vết trong phòng khách khanh để nghi Kỷ Trường Khanh liên quan đến cái chết của Phạm Mộc Sinh; Dương Tử Hành chất vấn vì sao Kỷ không báo chuyện Phạm muốn gửi lời nhắn khẩn cấp. Kỷ phản bác rằng dấu vết không chứng minh ai ra tay, rồi hỏi ai đã tiết lộ chuyện lời nhắn. Khi lính đưa lệnh áp giải có dấu đỏ sẵn và định trói mình, Kỷ chất vấn thời điểm đóng dấu, chống lại lúc bị bắt nhưng không rút kiếm. La Thanh Vân bước vào ngăn lính làm Kỷ bị thương, rồi buông lối khi Kỷ nhân lúc Nghiêm và Dương tranh lời để thoát ra. Kỷ đã ra khỏi phòng nghị sự, nhưng bên ngoài vẫn có người canh; chưa rõ La Thanh Vân giúp giữ Kỷ làm nhân chứng hay có ý khác.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Kỷ Trường Khanh phải đối mặt với những lời buộc tội được dựng quanh cái chết của Phạm Mộc Sinh mà không để lộ manh mối đang có trong tay.",
+      "present": [
+       "protagonist",
+       "la_thanh_van",
+       "duong_tu_hanh",
+       "nghien_bat_ly"
+      ],
+      "beats": [
+       "Trong Nghị Sự Đường, Kỷ Trường Khanh nhận ra các trưởng lão đã chuyển từ bàn luận về cái chết của Phạm Mộc Sinh sang xét hỏi mình; chỗ ngồi của người giữ chìa khóa vẫn để trống, còn chìa khóa không nằm trong phòng.",
+       "Nghiêm Bất Ly nêu dấu vết từ Tiểu Viện Khách Khanh, nói rằng nó đủ để đặt nghi vấn Kỷ Trường Khanh có liên quan; chàng đáp rằng một dấu vết chỉ xác định được nơi từng có người qua lại, không chứng minh ai đã ra tay.",
+       "Dương Tử Hành chất vấn vì sao chàng không báo trước về việc Phạm Mộc Sinh muốn gửi lời nhắn khẩn cấp ra ngoài; Kỷ Trường Khanh không khẳng định điều mình chưa biết, chỉ hỏi ai đã nghe được chuyện ấy trước khi cuộc nghị sự kết thúc.",
+       "La Thanh Vân đứng gần cửa, không tham gia kết tội nhưng cũng không ngăn lính Thanh Tiêu khép vòng quanh chàng; Kỷ Trường Khanh quan sát thấy họ đã có sẵn dây trói và lệnh áp giải, song chưa thể biết ai đã chuẩn bị chúng.",
+       "Nghiêm Bất Ly tuyên bố Kỷ Trường Khanh phải bị giữ lại cho đến khi làm rõ cái chết; chàng không chống trả giữa vòng người đông, chỉ nói rằng nếu họ thật sự muốn tìm hung thủ thì không nên biến người biết đường quanh Tẫn Lô thành kẻ bịt miệng."
+      ],
+      "ends_at": "Cảnh kết tại Nghị Sự Đường, khi lính Thanh Tiêu tiến đến áp giải Kỷ Trường Khanh theo lệnh giam giữ.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Kỷ Trường Khanh thoát khỏi lệnh giam giữ ở Nghị Sự Đường mà chưa thể rời khỏi vòng vây Tẫn Lô.",
+      "present": [
+       "protagonist",
+       "la_thanh_van",
+       "duong_tu_hanh",
+       "nghien_bat_ly"
+      ],
+      "beats": [
+       "Khi lính chìa dây trói, tôi không chống trả mà chỉ vào lệnh áp giải đã đóng dấu sẵn, hỏi Dương Tử Hành vì sao lệnh lại được chuẩn bị trước khi lời buộc tội được đưa ra; ông ta khựng lại, còn Nghiêm Bất Ly lập tức ra hiệu cho lính áp giải.",
+       "Tôi nghiêng người tránh bàn tay chộp tới, hất chén trà nguội xuống nền khiến lính gần nhất trượt chân; tôi lách qua khoảng hở, không rút kiếm, nhưng bị một cú quật sượt qua vai.",
+       "La Thanh Vân bước chắn giữa tôi và tên lính đang định chặn cửa, lạnh giọng bảo rằng nếu muốn thẩm vấn thì phải giữ nguyên nhân chứng, không thể để người bị thương trước mặt cả đường nghị sự.",
+       "Dương Tử Hành quát La Thanh Vân tránh ra, còn Nghiêm Bất Ly gọi tôi là kẻ bỏ trốn; tôi đáp rằng người muốn tìm hung thủ nên hỏi vì sao lệnh giam đã sẵn trước khi chứng cứ được kiểm tra, rồi tận dụng lúc họ tranh lời để vượt qua cửa.",
+       "La Thanh Vân giữ cửa thêm một nhịp rồi buông lối; tôi bước ra khỏi Nghị Sự Đường, nghe tiếng chân lính đuổi theo phía sau và tiếng cửa khép mạnh sau lưng, nhưng chưa biết nàng giúp tôi vì tình cũ hay vì muốn giữ một nhân chứng sống."
+      ],
+      "ends_at": "Cảnh kết ở lối đi ngay ngoài Nghị Sự Đường Tẫn Lô, khi Kỷ Trường Khanh đã thoát khỏi tay lính áp giải nhưng vẫn ở trong khu vực bị canh giữ.",
+      "resolves": [
+       "thoat_lenh_giam"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-b9c1f6ebb000",
+      "kind": "action",
+      "tone": null,
+      "text": "Rời khỏi cửa, dò bước về phía lối đi đang có người canh.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-b9762092e434",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi La Thanh Vân vì sao nàng buông lối cho tôi.",
+      "listeners": [
+       "la_thanh_van"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-61b5cb2750a6",
+      "kind": "inner",
+      "tone": null,
+      "text": "Giữ sự nghi ngờ về La Thanh Vân trong lòng.",
+      "listeners": [],
+      "about": [
+       "la_thanh_van"
+      ],
+      "lie": null,
+      "feeling": "nghi ngờ"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-48124fa71e23",
+    "player_action": "[Lời thoại, nói thật] Hỏi La Thanh Vân vì sao nàng buông lối cho tôi.",
+    "error_detail": null,
+    "summary": "Sau khi rời Nghị Sự Đường, tôi hỏi La Thanh Vân vì sao giúp mình. Nàng nói không muốn một lệnh áp giải đóng dấu sẵn quyết định số phận tôi trước khi tôi kịp tìm kẻ giăng bẫy; nàng không biết ai ra lệnh và không khẳng định tôi vô tội. Tiếng lính truy tìm dồn tới, nàng dẫn tôi qua lối khuất, tránh các toán canh. Tôi nhận lời đi theo nhưng vẫn giữ khoảng cách đề phòng. La Thanh Vân cho biết đường cống cũ nối Cửa Tây với triền đá ngoài Tẫn Lô có thể tránh cửa, song không an toàn. Cuối chương, cả hai dừng trước khe cống hẹp khi lối ra bị chặn hai hướng, tiếng tù và vang lên và lính lại áp sát; chưa ai xuống cống.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Kỷ Trường Khanh buộc La Thanh Vân trả lời vì sao nàng để chàng thoát khỏi Nghị Sự Đường, đồng thời nhận ra lệnh giam giữ đã được chuẩn bị từ trước và phải rời khỏi khu vực này.",
+      "present": [
+       "protagonist",
+       "la_thanh_van"
+      ],
+      "beats": [
+       "Vừa ra khỏi Nghị Sự Đường, Kỷ Trường Khanh quay sang hỏi thẳng La Thanh Vân vì sao nàng buông lối; nàng đáp rằng không muốn thấy chàng bị trói trước khi có cơ hội tự biện bạch, nhưng không khẳng định mình tin chàng vô tội.",
+       "Tiếng người canh động ở phía sau khiến cả hai phải tránh khỏi tầm nhìn từ cửa; Kỷ nhận thấy La không hề ngạc nhiên trước việc lệnh áp giải đã có dấu đỏ sẵn, như thể nàng đã để ý điều đó từ trước.",
+       "Kỷ hỏi nàng có biết lệnh được đóng dấu khi nào; La chỉ nói dấu đã được chuẩn bị trước lúc lính tiến vào, rồi cảnh giác nhắc rằng Nghiêm Bất Ly và Dương Tử Hành vẫn ở trong nghị sự, còn người bên ngoài đang chờ bắt chàng.",
+       "Kỷ hiểu lời buộc tội không phải phản ứng nhất thời trước cái chết của Phạm Mộc Sinh: lệnh giam giữ đã chờ sẵn, nên chàng không thể quay lại tranh biện mà phải tìm cách rời khỏi khu vực nghị sự ngay.",
+       "La nói nàng có thể chỉ cho chàng một lối tránh người canh, nhưng không hứa sẽ đi cùng; Kỷ phải quyết định có chấp nhận sự giúp đỡ của nàng khi chưa biết nàng muốn gì."
+      ],
+      "ends_at": "Cảnh kết ở lối khuất gần Nghị Sự Đường, khi Kỷ Trường Khanh đã hiểu lệnh giam giữ được chuẩn bị từ trước và đứng trước lựa chọn nhận hay từ chối sự trợ giúp của La Thanh Vân.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Kỷ Trường Khanh xác nhận lệnh giam giữ đã được chuẩn bị từ trước, rồi cùng La Thanh Vân tìm đường rời khỏi khu nghị sự trước khi lính canh khép vòng vây.",
+      "present": [
+       "protagonist",
+       "la_thanh_van"
+      ],
+      "beats": [
+       "Theo lối khuất La Thanh Vân chỉ, tôi nghe tiếng lính lục soát dần xa; nàng nhắc rằng mình buông lối vì không muốn một lệnh đã đóng dấu sẵn quyết định số phận tôi trước khi tôi kịp tìm hiểu ai giăng bẫy.",
+       "Tôi hỏi nàng có biết lệnh được chuẩn bị từ trước hay không; nàng đáp dấu đỏ đã có sẵn trước khi lính bước vào, nhưng nàng không biết ai ra lệnh và cũng không định thay tôi kết luận ai vô tội.",
+       "Tôi chỉ ra rằng nếu nàng muốn bắt tôi, nàng đã có thể để lính trói ngay tại nghị sự; La Thanh Vân đáp nàng cần tôi sống để tự tìm lời giải, nhưng không nói rõ vì sao chuyện ấy quan trọng với nàng.",
+       "Tiếng giày lại vọng tới từ hành lang, buộc chúng tôi rời chỗ nấp; La Thanh Vân dẫn tôi tránh lối chính, nói nàng biết một đường cống cũ nối Cửa Tây với triền đá ngoài Tẫn Lô, nhưng đường ấy không bảo đảm an toàn.",
+       "Tôi nhận ra lựa chọn của nàng chỉ mở ra một lối thoát chứ không chứng minh nàng đứng về phía tôi; tôi quyết định đi theo, giữ khoảng cách đủ để quan sát nàng và không giao cho nàng quyền quyết định thay mình.",
+       "Tới chỗ khuất gần Cửa Tây, chúng tôi nghe tiếng canh gác phía ngoài và nhận ra lối ra bị phong tỏa từ hai hướng; La Thanh Vân nói đường cống vẫn có thể tránh cửa, nhưng nếu bị phát hiện, cả hai sẽ bị xem là kẻ trốn lệnh."
+      ],
+      "ends_at": "Cảnh kết ở chỗ khuất gần Cửa Tây, nơi Kỷ Trường Khanh và La Thanh Vân phải chọn có mạo hiểm tìm đường cống hay không.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-573228f1c5c0",
+      "kind": "action",
+      "tone": null,
+      "text": "Cúi mình chui vào đường cống trước, vẫn giữ khoảng cách với La Thanh Vân.",
+      "listeners": [],
+      "about": [
+       "f_duong_dan_tay"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-60b384e86347",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Ta xuống trước. Nàng đợi một nhịp rồi theo sau.”",
+      "listeners": [
+       "la_thanh_van"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8f3ee41bfdbf",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ không được giao phó đường lui cho La Thanh Vân; nếu có điều bất thường, phải lập tức rút lại.",
+      "listeners": [],
+      "about": [
+       "la_thanh_van",
+       "f_duong_dan_tay"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-f2e580e1a2ae",
+    "player_action": "[Hành động] Cúi mình chui vào đường cống trước, vẫn giữ khoảng cách với La Thanh Vân.",
+    "error_detail": null,
+    "summary": "Tôi cùng La Thanh Vân bò qua cống để trốn khỏi toán canh; tôi tự dò đường, không để nàng dẫn mình đi. Ra khỏi thành Tẫn Lô, tôi vẫn chưa biết Phạm Mộc Sinh chết thế nào, ai gài dấu vết trong phòng mình, hay tin khẩn cấp đã đến được người ngoài thành chưa. Trên đường tới trạm ngoài thành, La Thanh Vân báo có người chặn lối, nhưng tôi tự kiểm tra dấu giày và phát hiện Lệ Vân Kỳ, người tự xưng là sứ giả ngoài thành. Chàng chưa nghe tin về Phạm Mộc Sinh và đang đợi lời nhắn từ trong thành trước buổi nghị sự. Tôi quyết định đưa chàng tới chỗ kín, hỏi cách tránh tuần tra; Lệ Vân Kỳ chọn đường vòng sát vách phía bắc. Cả ba nấp sau một mỏm đá khi tiếng chân toán canh dồn xuống triền, mỗi lúc một gần.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Chui qua đường cống cũ để thoát khỏi vòng vây trong thành mà không giao phó mạng mình cho La Thanh Vân.",
+      "present": [
+       "protagonist",
+       "la_thanh_van"
+      ],
+      "beats": [
+       "Kỷ Trường Khanh cúi mình chui vào đường cống trước, giữ khoảng cách với La Thanh Vân; tiếng tù và và bước chân truy đuổi phía sau khiến chàng không thể quay lại lối cũ.",
+       "Đường cống hẹp và trơn, chàng phải lần từng đoạn trong bóng tối; khi La Thanh Vân đề nghị đi trước để chỉ lối, Kỷ đáp rằng nàng cứ nói hướng, còn chàng tự chọn bước tiếp theo.",
+       "Tiếng động vọng từ phía trước báo có người đang rà soát gần cửa cống; La Thanh Vân khuyên chàng nín thở chờ toán canh đi qua, còn Kỷ nhận ra nàng không thể biết chắc họ đã phát hiện lối này hay chưa.",
+       "Khi tiếng chân xa dần, cả hai tiếp tục bò đến cửa cống thông ra triền đá ngoài Tẫn Lô; Kỷ ra trước, kiểm tra quanh đó rồi xác nhận mình đã ra khỏi thành, nhưng tin về cái chết của Phạm Mộc Sinh vẫn chưa đến được đồng minh. "
+      ],
+      "ends_at": "Kỷ Trường Khanh và La Thanh Vân ở triền đá ngoài Tẫn Lô, đã thoát khỏi thành nhưng vẫn chưa biết có ai đang chặn đường phía trước.",
+      "resolves": [
+       "tim_duong_ra"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Kỷ Trường Khanh phải xác định tiếng động trên triền đá có phải toán truy binh hay không và chọn cách giữ kín tin tức về cái chết của Phạm Mộc Sinh.",
+      "present": [
+       "protagonist",
+       "la_thanh_van",
+       "le_van_ky"
+      ],
+      "beats": [
+       "Tôi men theo triền đá, dừng lại khi tiếng động phía trước vang lên lần nữa; La Thanh Vân khẽ bảo có người đang chặn đường xuống trạm ngoài thành, nhưng tôi yêu cầu nàng đừng đoán thay những gì chưa nhìn thấy.",
+       "Tôi quan sát dấu chân mới in trên đất ẩm và nhận ra có người vừa rời khỏi vị trí khuất sau mỏm đá; thay vì lao xuống dốc, tôi vòng qua một gờ đá thấp để nhìn rõ lối đi.",
+       "Một bóng người bước ra, tự xưng là Lệ Vân Kỳ, sứ giả ngoài thành; chàng ta nói đã nghe tin Thanh Tiêu truy bắt một khách khanh, nhưng chưa biết người ấy là tôi hay chuyện Phạm Mộc Sinh đã chết.",
+       "Tôi không lập tức tiết lộ điều mình biết, mà hỏi Lệ Vân Kỳ vì sao có mặt gần Tẫn Lô giữa lúc hai tông môn phong tỏa thành; chàng đáp rằng đang đợi tin từ trong thành, khiến tôi hiểu người ngoài chưa nhận được lời nhắn khẩn cấp nào.",
+       "Tiếng tù và từ phía sau vọng tới gần hơn; La Thanh Vân thúc giục rời khỏi triền đá trước khi toán canh lần ra cửa cống, còn tôi quyết định đưa Lệ Vân Kỳ tới chỗ kín để nói chuyện, nhưng trước tiên buộc chàng xác nhận có thể giúp chúng tôi tránh tuần tra."
+      ],
+      "ends_at": "Cảnh kết thúc trên triền đá ngoài Tẫn Lô, khi Kỷ Trường Khanh, La Thanh Vân và Lệ Vân Kỳ tạm ẩn sau mỏm đá trong lúc tiếng tù và truy binh dồn lại phía sau.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-3bef8b5ffe49",
+      "kind": "action",
+      "tone": null,
+      "text": "Giữ im lặng sau mỏm đá, chờ toán tuần tra đi qua.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-00336cf3fbc9",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Ra hiệu cho Lệ Vân Kỳ dẫn mọi người men theo lối tránh tuần tra.",
+      "listeners": [
+       "le_van_ky"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-68865d65cc3b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Cảnh giác với Lệ Vân Kỳ, chưa vội tin lời chàng.",
+      "listeners": [],
+      "about": [
+       "le_van_ky"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": []
+}

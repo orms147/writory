@@ -10,6 +10,7 @@ from writory.graph.context import (
     Knower,
     LieInfo,
     NeighborInfo,
+    ReaderName,
     RelationInfo,
     SecretInfo,
     Text,
@@ -148,8 +149,10 @@ def test_items_section_states_holder_or_place_and_since_chapter():
     """Hồi quy ky-ao-vua-quotes-1: mảnh vỡ do Lục Tinh Uyên giữ từ đầu, nhưng người viết không thấy vì
     nhân vật đó vắng mặt, nên tả nó nằm dưới nền đài rồi lại trong tay bà."""
     text = _text(render_writer_context(_with_items(
-        ItemInfo("shard", Text("Mảnh Vỡ Thần Khí", False), Text("Lục Tinh Uyên", False), None, 0),
-        ItemInfo("ledger", Text("Sổ tế cũ", False), None, Text("Đài Tế Cổ", False), 9),
+        ItemInfo("shard", Text("Mảnh Vỡ Thần Khí", False), Text("Lục Tinh Uyên", False), None, 0,
+                 holder_id="luc"),
+        ItemInfo("ledger", Text("Sổ tế cũ", False), None, Text("Đài Tế Cổ", False), 9,
+                 place_id="dai"),
     )))
     section = text.split("### Đồ vật quan trọng", 1)[1].split("###", 1)[0]
     assert "Mảnh Vỡ Thần Khí" in section and "Lục Tinh Uyên giữ" in section
@@ -176,3 +179,34 @@ def test_items_section_wraps_player_text():
         marker = f"[PLAYER-{tag}]"
         assert not any(marker in p for p in raw), marker
         assert any(isinstance(p, UserAuthored) and marker in p.text for p in parts), marker
+
+
+def test_items_section_shows_what_the_reader_knows_next_to_the_real_names():
+    """D-91: tên lớp truth của đồ vật, người giữ và nơi chốn kèm tên người đọc biết (hoặc cảnh báo
+    tên chưa hé lộ), để người viết không dùng nhầm tên thật."""
+    ctx = _with_items(
+        ItemInfo("shard", Text("Mảnh Vỡ Thần Khí", False), Text("Lục Tinh Uyên", False), None, 0,
+                 holder_id="luc"),
+        ItemInfo("ledger", Text("Sổ tế cũ", False), None, Text("Đài Tế Cổ", False), 9,
+                 place_id="dai"),
+    )
+    text = _text(render_writer_context(ctx, reader_names={
+        "luc": ReaderName("bà lão áo xám"), "shard": ReaderName(None),
+        "dai": ReaderName("đài đá")}))
+    shard = next(ln for ln in text.split(chr(10)) if ln.startswith("- Mảnh Vỡ Thần Khí"))
+    assert "tên chưa hé lộ" in shard and "người đọc biết là «bà lão áo xám»" in shard
+    ledger = next(ln for ln in text.split(chr(10)) if ln.startswith("- Sổ tế cũ"))
+    assert "người đọc biết là «đài đá»" in ledger and "tên chưa hé lộ" not in ledger
+
+
+def test_reader_names_default_adds_nothing():
+    assert "người đọc biết là" not in _text(render_writer_context(_ctx()))
+
+
+def test_reader_names_for_player_text_are_wrapped():
+    ctx = _with_items(ItemInfo("a", Text("Vật", False), Text("Người", False), None, 1,
+                               holder_id="h"))
+    parts = render_writer_context(
+        ctx, reader_names={"h": ReaderName("[PLAYER-shown]", user_authored=True)})
+    assert not any(isinstance(p, str) and "[PLAYER-shown]" in p for p in parts)
+    assert any(isinstance(p, UserAuthored) and p.text == "[PLAYER-shown]" for p in parts)
