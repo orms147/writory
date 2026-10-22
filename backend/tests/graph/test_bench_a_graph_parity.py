@@ -15,6 +15,9 @@ from writory.quality.bench_d import Store
 pytestmark = pytest.mark.graph
 
 DATA = load_data()
+# Id riêng của test trên Neo4j: nạp và đóng đều xoá truyện, không được trùng id của lượt đo thật.
+TEST_SAMPLE_ID = "test-bench-a-sample"
+TEST_RUN_ID = "test-bench-a-run"
 
 
 def test_neo4j_and_memory_give_the_same_graph_context_for_every_question(driver, sample_story_id):
@@ -39,7 +42,8 @@ def test_neo4j_and_memory_give_the_same_hybrid_context_for_every_question(driver
 @pytest.mark.parametrize("system", ["graph", "graph_quotes"])
 def test_dry_run_on_the_neo4j_backend_is_perfect_for_the_oracle(tmp_path, system):
     out = tmp_path / "neo4j-run"
-    opts = RunOptions(out=out, dry_run=True, samples=1, systems=[system], graph_backend="neo4j")
+    opts = RunOptions(out=out, dry_run=True, samples=1, systems=[system], graph_backend="neo4j",
+                      graph_story_id=TEST_SAMPLE_ID)
     assert asyncio.run(run_bench(DATA, opts, config=load_config(), log=lambda _: None)) == 0
     rows = Store(out).rows("results.jsonl")
     assert len(rows) == len(DATA.questions.questions) and all(r["correct"] for r in rows)
@@ -47,10 +51,8 @@ def test_dry_run_on_the_neo4j_backend_is_perfect_for_the_oracle(tmp_path, system
 
 
 def test_neo4j_backend_loads_a_private_story_and_removes_it(driver):
-    from writory.pipeline.bench_a import STORY_ID
-
-    probe = Neo4jState(driver, STORY_ID)
-    state_for, close = open_graph_backend("neo4j", DATA)
+    probe = Neo4jState(driver, TEST_SAMPLE_ID)
+    state_for, close = open_graph_backend("neo4j", DATA, story_id=TEST_SAMPLE_ID)
     try:
         assert state_for(3).protagonist_id() == "minh"
         assert probe.node_labels(["minh"]) == {"minh": "Character"}
@@ -64,11 +66,16 @@ def test_neo4j_backend_loads_a_private_story_and_removes_it(driver):
 RUN = load_data(questions_file="questions-ky-ao-vua-1.yaml")
 
 
-def test_neo4j_and_memory_give_the_same_contexts_on_the_pipeline_story(driver):
-    from writory.pipeline.bench_a import RUN_STORY_ID
+def test_tests_never_use_the_story_ids_of_a_real_run():
+    """Hồi quy 22/10/2026: test xoá truyện `bench-a-run` trên Neo4j giữa lượt đo thật."""
+    from writory.pipeline.bench_a import RUN_STORY_ID, STORY_ID
 
-    probe = Neo4jState(driver, RUN_STORY_ID)
-    state_for, close = open_graph_backend("neo4j", RUN)
+    assert {TEST_SAMPLE_ID, TEST_RUN_ID}.isdisjoint({STORY_ID, RUN_STORY_ID})
+
+
+def test_neo4j_and_memory_give_the_same_contexts_on_the_pipeline_story(driver):
+    probe = Neo4jState(driver, TEST_RUN_ID)
+    state_for, close = open_graph_backend("neo4j", RUN, story_id=TEST_RUN_ID)
     try:
         assert probe.protagonist_id() == "protagonist"
         on_neo4j = ContextBuilder(RUN, state_for, {})

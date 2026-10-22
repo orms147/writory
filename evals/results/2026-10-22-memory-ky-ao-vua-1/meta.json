@@ -1,0 +1,110 @@
+{
+  "bench": "A",
+  "created": "2026-10-22T11:44:39+07:00",
+  "versions": {
+    "questions": 1,
+    "run": 2
+  },
+  "status": "CHỦ DỰ ÁN DUYỆT 22/10/2026",
+  "story": "evals/results/2026-10-21-run-ky-ao-vua-1",
+  "fingerprint": {
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions-ky-ao-vua-1.yaml": "717d8004082709545d25446dce0cfe8d872551b22a21e87632f333fa7b2dc54a",
+      "run.yaml": "859ada9d3400f7bbb329e4044384cbc967eb06e4f9602a4b011251e22b98f805",
+      "run/truth_dump.json": "959ddcb9f2bc18fa0210ac450f3626c67f52656abf62a945380031d9d3539b42",
+      "run/chapters/ch01.md": "4560dc0337211aaf1f72d49e447434debc6f568b1f14212bf702f8fd7c5b9b28",
+      "run/chapters/ch02.md": "3c4855a3ed2e59c7211508bc25fb656b3adc3d6f9f00e71ca553194f3fca68ac",
+      "run/chapters/ch03.md": "d3f99e6b58bf157bddf9ae660acf3bb9cb873595b139392c5af276885853b146",
+      "run/chapters/ch04.md": "53f74c4bd41067c10e50a56266f5a1eb46896e61adf18a4f090931510b116330",
+      "run/chapters/ch05.md": "07a75548a19eaa9c9ec7b15e178b65587e3ec6646bdc11de331642ed59bc1208",
+      "run/chapters/ch06.md": "99f0d51da5f4016942d17dc2f1e9f87d5900abbfe5d1bc2a1aee7789c0da4ae7",
+      "run/chapters/ch07.md": "fdd4c193fd67d5114d75abe908a540d27e5774c03c3b30f675ea38d00e34add4",
+      "run/chapters/ch08.md": "011ffd1d331e25291d90232e094491eaa561a1fcbc3c24b3aa8059a5b24d10aa",
+      "run/chapters/ch09.md": "f27ff4dfe83574715ed27cc5d70c8df430d67e3f3ccb70bce6ed9594a9b35006",
+      "run/chapters/ch10.md": "92ede23ac8f5784ea3a819e0a7487a124399801550916de15ee52f73080a0476"
+    },
+    "config_sha256": {
+      "models.yaml": "1b56e7acaaf68f287b93a7cc5c21e37f35b6c784ad626f17bc4796d588600f54",
+      "limits.yaml": "eb90fe9191ee912def1c6b20bc1fe12272d808c5da9a2d3d886a1c967f38e07a"
+    },
+    "answerer": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summarizer": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low",
+      "prompt": "summary-1"
+    },
+    "answer_prompt": "a-answer-1",
+    "answer_prompt_sha256": "aaf69478cfd41c7b47a6db2d70f3a1f4df84bdea22c0d0d55291ce7556bea0be"
+  },
+  "runs": [
+    {
+      "started": "2026-10-22T11:44:39+07:00",
+      "commit": "100fd492afc96fc524c177691fe7395f439c8092",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "ky-ao-vua-1",
+        "--questions-file",
+        "questions-ky-ao-vua-1.yaml",
+        "--budget",
+        "1.00",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "samples": 3,
+      "concurrency": 4,
+      "systems": [
+        "graph",
+        "graph_quotes",
+        "none",
+        "rolling",
+        "rag",
+        "full"
+      ],
+      "graph_backend": "neo4j",
+      "questions": "all",
+      "budget": 1.0,
+      "finished": "2026-10-22T11:49:54+07:00",
+      "wall_s": 314.4,
+      "stopped": null,
+      "spent_usd": 0.206632
+    },
+    {
+      "started": "2026-10-22T11:52:29+07:00",
+      "commit": "100fd492afc96fc524c177691fe7395f439c8092",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--out",
+        "../evals/results/2026-10-22-memory-ky-ao-vua-1",
+        "--questions-file",
+        "questions-ky-ao-vua-1.yaml",
+        "--systems",
+        "graph,graph_quotes",
+        "--budget",
+        "1.00",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env"
+      ],
+      "samples": 3,
+      "concurrency": 4,
+      "systems": [
+        "graph",
+        "graph_quotes"
+      ],
+      "graph_backend": "neo4j",
+      "questions": "all",
+      "budget": 1.0,
+      "finished": "2026-10-22T11:53:29+07:00",
+      "wall_s": 60.3,
+      "stopped": null,
+      "spent_usd": 0.229936
+    }
+  ]
+}
