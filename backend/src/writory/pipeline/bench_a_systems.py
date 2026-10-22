@@ -146,6 +146,13 @@ def context_rag(story: Mapping[int, str], chapter: int, question: str, *, top_k:
 
 # --- đồ thị (đối thủ 0) -----------------------------------------------------------------------------
 
+# Cách trình bày khối đồ thị (D-99): `base` là bản đã đo; ba biến thể thử nghiệm đổi chữ và thứ tự dòng,
+# không đổi sự thật được nêu.
+GRAPH_STYLES = ("base", "natural", "relevance", "no_item_place")
+RELEVANT_KNOWN_LINES = 4  # `relevance`: số dòng "Đã biết" khớp câu hỏi nhất được đưa lên đầu nhóm
+HOW_VERBS = {"tự biết": "vốn đã biết", "chứng kiến": "chứng kiến", "suy ra": "tự suy ra",
+             "tự làm": "tự làm"}
+
 LINKED_ENTITY_CAP = 6
 LINES_PER_ENTITY_CAP = 40
 GRAPH_CHARS_CAP = 6000
@@ -232,13 +239,15 @@ def _sorted(edges: Sequence[EdgeRow]) -> list[EdgeRow]:
 
 def build_graph_context(
     state: GraphState, question: str, chapter: int, *, story: Mapping[int, str] | None = None,
-    recent: bool = True,
+    recent: bool = True, style: str = "base",
 ) -> Context:
     """Ngữ cảnh đồ thị cho một câu hỏi hỏi sau chương `chapter`. `story` chỉ để thêm chương N.
 
     Thứ tự khối: danh sách nhân vật (còn sống/đã chết), mỗi thực thể nêu trong câu hỏi, các lời nói
     dối và sự kiện mà chúng dẫn tới. Quá GRAPH_CHARS_CAP thì bỏ khối cuối; `facts` chỉ gồm khoá của
     những khối còn lại."""
+    if style not in GRAPH_STYLES:
+        raise ValueError(f"style phải là một trong {', '.join(GRAPH_STYLES)}; nhận {style!r}")
     reader = GraphReader(state, chapter)
     index = AliasIndex(reader._names)
     linked = index.find(question)[:LINKED_ENTITY_CAP]
@@ -264,7 +273,8 @@ def build_graph_context(
     events: dict[str, None] = {}
     for entity in linked:
         facts = _Facts()
-        take(_entity_block(reader, entity, facts, lies, events), facts.keys)
+        take(_entity_block(reader, entity, facts, lies, events, style=style, question=question),
+             facts.keys)
     for lie in lies:
         facts = _Facts()
         take(_lie_block(reader, lie, facts), facts.keys)
@@ -285,12 +295,13 @@ QUOTES_HEADING = "[Đoạn trên trang tìm theo câu hỏi]"
 def context_graph_quotes(
     state: GraphState, question: str, chapter: int, *, story: Mapping[int, str], top_k: int,
     chunk_chars: int, recent: bool = True, neighbors: int = 0, max_chars: int | None = None,
+    style: str = "base",
 ) -> Context:
     """Hệ lai (D-81): phần đồ thị của `build_graph_context` (cùng chữ, cùng khoá `facts`), cộng
     `top_k` đoạn chữ trên trang tìm bằng BM25 theo câu hỏi (cùng cách cắt đoạn và chấm điểm như
     hệ `rag`), cộng chương N nếu `recent`. Có chương N thì chỉ tìm trong chương 1..N-1 để không lặp;
     không có thì tìm cả chương N. Không bao giờ đọc chương sau N."""
-    graph = build_graph_context(state, question, chapter, story=story, recent=False)
+    graph = build_graph_context(state, question, chapter, story=story, recent=False, style=style)
     searched = [c for c in story if c < chapter or (c == chapter and not recent)]
     hits, pool = retrieve(story, searched, question, top_k=top_k, chunk_chars=chunk_chars,
                           neighbors=neighbors, max_chars=max_chars)
@@ -320,8 +331,25 @@ def _roster_block(r: GraphReader) -> tuple[str, set[str]]:
     return "\n".join([head, *lines[:LINES_PER_ENTITY_CAP]]), keys
 
 
+def _known_line(r: GraphReader, e: EdgeRow, subject: str, style: str) -> str:
+    """Dòng "đã biết" của một sự thật (không phải lời nói dối). `natural` (D-99): câu thường có chủ
+    ngữ thay cho "Đã biết: …; cách biết: …"."""
+    text = r.title(e.target)
+    how, teller = e.props.get("how"), e.props.get("told_by")
+    if style != "natural":
+        how_part = f"; cách biết: {how}" if how else ""
+        told = f"; người kể: {r.title(teller)}" if teller else ""
+        return f"Đã biết: {text}{how_part}{told}"
+    if how == "được kể":
+        return f"{subject} được {r.title(teller)} kể rằng: {text}" if teller else (
+            f"{subject} được kể rằng: {text}")
+    if how in HOW_VERBS:
+        return f"{subject} {HOW_VERBS[how]}: {text}"
+    return f"{subject} biết: {text}" + (f" (cách biết: {how})" if how else "")
+
+
 def _entity_block(r: GraphReader, entity: str, facts: _Facts, lies: dict[str, None],
-                  events: dict[str, None]) -> str:
+                  events: dict[str, None], *, style: str = "base", question: str = "") -> str:
     names = r._names.get(entity, (entity,))
     kind = {"Character": "nhân vật", "Location": "nơi chốn", "Item": "đồ vật",
             "Faction": "phe nhóm"}.get(r.label_of(entity), "thực thể")
@@ -346,8 +374,12 @@ def _entity_block(r: GraphReader, entity: str, facts: _Facts, lies: dict[str, No
         add(e, f"Giữ {r.title(e.target)}")
     for e in _sorted(r.edges("HOLDS", target=entity)):
         add(e, f"{r.title(e.source)} giữ {names[0]}")
+    # no_item_place (D-99): đồ vật đã có Fact nói về nó thì bỏ dòng vị trí của chính nút đồ vật.
+    skip_place = (style == "no_item_place" and r.label_of(entity) == "Item"
+                  and bool(r.edges("ABOUT", target=entity)))
     for e in _sorted(r.edges("LOCATED_AT", source=entity)):
-        add(e, f"Ở {r.title(e.target)}")
+        if not skip_place:
+            add(e, f"Ở {r.title(e.target)}")
     for e in _sorted(r.edges("LOCATED_AT", target=entity)):
         add(e, f"{r.title(e.source)} ở {names[0]}")
     for e in _sorted(r.edges("MEMBER_OF", source=entity)):
@@ -366,14 +398,24 @@ def _entity_block(r: GraphReader, entity: str, facts: _Facts, lies: dict[str, No
     for e in _sorted(r.edges("DIED_IN", source=entity)):
         add(e, f"Chết trong sự kiện: {r.title(e.target)}")
         events.setdefault(e.target)
+    known: list[tuple[EdgeRow, str]] = []
     for e in _sorted(r.edges("KNOWS", source=entity)):
         how = f"; cách biết: {e.props['how']}" if e.props.get("how") else ""
         told = f"; người kể: {r.title(e.props['told_by'])}" if e.props.get("told_by") else ""
         if r.label_of(e.target) == "Lie":
             add(e, f"Đã biết đó là lời nói dối: «{r.title(e.target)}»{how}{told}")
             lies.setdefault(e.target)
+        elif style == "relevance":
+            known.append((e, _known_line(r, e, names[0], style)))
         else:
-            add(e, f"Đã biết: {r.title(e.target)}{how}{told}")
+            add(e, _known_line(r, e, names[0], style))
+    if known:  # relevance (D-99): vài dòng khớp câu hỏi nhất lên đầu nhóm, còn lại theo thời gian.
+        # Chỉ đổi thứ tự, không thêm chữ: số dòng và độ dài khối giữ nguyên nên không đổi tập
+        # sự thật nằm dưới các trần dòng và ký tự.
+        index = Bm25Index([Chunk(0, i, r.title(e.target)) for i, (e, _) in enumerate(known)])
+        top = [c.index for c in index.top(question, RELEVANT_KNOWN_LINES)]
+        for i in [*top, *(i for i in range(len(known)) if i not in top)]:
+            add(*known[i])
     for e in _sorted(r.edges("TOLD", source=entity)):
         add(e, f"Đã nói một lời dối ở chương {r.chapter_of(e.target) or e.valid_from_chapter}: "
                f"«{r.title(e.target)}»")

@@ -71,6 +71,7 @@ from writory.pipeline.bench_a_data import (
     wrong_answer,
 )
 from writory.pipeline.bench_a_systems import (
+    GRAPH_STYLES,
     SYSTEM_LABELS,
     SYSTEMS,
     Context,
@@ -229,9 +230,10 @@ class ContextBuilder:
 
     def __init__(self, data: BenchData, graph_state: Callable[[int], GraphState],
                  summaries: Mapping[int, str], *, page_neighbors: int = 0,
-                 page_max_chars: int | None = None) -> None:
+                 page_max_chars: int | None = None, graph_style: str = "base") -> None:
         self.data, self._graph_state, self.summaries = data, graph_state, summaries
         self._page_neighbors, self._page_max_chars = page_neighbors, page_max_chars
+        self._graph_style = graph_style
         self._cache: dict[tuple[str, str], Context] = {}
 
     def rolling_text(self, upto: int) -> dict[int, str]:
@@ -257,14 +259,15 @@ class ContextBuilder:
                               chunk_chars=run.rag.chunk_chars)
         elif system == "graph":
             ctx = build_graph_context(self._graph_state(n), q.question, n, story=story,
-                                      recent=run.graph.recent_chapter)
+                                      recent=run.graph.recent_chapter, style=self._graph_style)
         elif system == "graph_quotes":
             ctx = context_graph_quotes(self._graph_state(n), q.question, n, story=story,
                                        top_k=run.graph_quotes.top_k,
                                        chunk_chars=run.rag.chunk_chars,
                                        recent=run.graph.recent_chapter,
                                        neighbors=self._page_neighbors,
-                                       max_chars=self._page_max_chars)
+                                       max_chars=self._page_max_chars,
+                                       style=self._graph_style)
         else:
             raise ValueError(f"hệ không biết: {system}")
         self._cache[key] = ctx
@@ -333,6 +336,7 @@ class RunOptions:
     graph_backend: str | None = None  # None: memory khi --dry-run, neo4j khi chạy thật
     graph_story_id: str | None = None  # None: id mặc định của bộ đo; test truyền id riêng
     page_neighbors: int | None = None  # None: limits.context.page_quotes_neighbors (D-96)
+    graph_style: str = "base"  # cách trình bày khối đồ thị của hai hệ đồ thị (D-99)
 
 
 def page_settings(config: AppConfig, neighbors: int | None = None) -> dict[str, int | None]:
@@ -349,6 +353,9 @@ def check_options(opts: RunOptions) -> None:
     """Trước khi đọc key hay tạo thư mục kết quả."""
     if opts.concurrency < 1 or (opts.samples is not None and opts.samples < 1):
         raise ConfigError("--concurrency, --samples phải >= 1")
+    if opts.graph_style not in GRAPH_STYLES:
+        raise ConfigError(f"--graph-style chọn trong {', '.join(GRAPH_STYLES)}; nhận "
+                          f"{opts.graph_style!r}")
     unknown = sorted(set(opts.systems) - set(SYSTEMS))
     if unknown:
         raise ConfigError(f"--systems chọn trong {', '.join(SYSTEMS)}; không biết: {unknown}")
@@ -431,6 +438,7 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "answer_prompt": ANSWER_PROMPT_VERSION,
         "answer_prompt_sha256": _sha256(f"{ANSWER_SYSTEM}\n{DATA_NOTICE}".encode()),
         "page_quotes": page_settings(config, opts.page_neighbors),
+        "graph_style": opts.graph_style,
     }
 
 
@@ -485,7 +493,8 @@ class Runner:
         page = page_settings(config, opts.page_neighbors)
         self.builder = ContextBuilder(data, graph_state, self.summaries,
                                       page_neighbors=page["neighbors"] or 0,
-                                      page_max_chars=page["max_chars"])
+                                      page_max_chars=page["max_chars"],
+                                      graph_style=opts.graph_style)
         self.stop: tuple[str, str] | None = None
 
     def _halt(self, kind: str, message: str) -> None:
@@ -655,7 +664,8 @@ async def run_bench(
                     "questions": [q.id for q in questions]
                     if (opts.question_ids or opts.groups) else "all",
                     "budget": opts.budget,
-                    "page_quotes": page_settings(config, opts.page_neighbors)}
+                    "page_quotes": page_settings(config, opts.page_neighbors),
+                    "graph_style": opts.graph_style}
         meta_extra = {"versions": {"questions": data.questions.version, "run": data.run.version},
                       "status": data.questions.status, "story": data.source}
         _open_results(store, fingerprint(data, config_dir, opts, config), meta_extra, run_info)
@@ -925,7 +935,7 @@ def _options(args: argparse.Namespace) -> RunOptions:
         systems=_split(args.systems), budget=args.budget, samples=args.samples,
         concurrency=args.concurrency, question_ids=_split(args.questions),
         groups=_split(args.groups), graph_backend=args.graph_backend,
-        page_neighbors=args.page_neighbors)
+        page_neighbors=args.page_neighbors, graph_style=args.graph_style)
 
 
 async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
@@ -1007,6 +1017,9 @@ def _parser() -> argparse.ArgumentParser:
                      help="model giả khi --dry-run: oracle (đúng nếu ngữ cảnh đủ), null (không "
                           "biết), wrong (luôn sai)")
     run.add_argument("--budget", type=float, help="trần OpenRouter, USD; bắt buộc khi chạy thật")
+    run.add_argument("--graph-style", default="base",
+                     help="cách trình bày khối đồ thị của graph và graph_quotes (D-99): "
+                          + ", ".join(GRAPH_STYLES))
     run.add_argument("--page-neighbors", type=int,
                      help="ghi đè limits.context.page_quotes_neighbors cho hệ graph_quotes "
                           "(0 = như trước D-96); có ghi vào meta.json")
