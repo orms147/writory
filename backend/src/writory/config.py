@@ -162,6 +162,8 @@ class FactLimits(_Section):
     max_new_per_chapter: NonNegativeInt | None = None  # trần cả chương, không phải mỗi cảnh
     text_max_chars: PositiveInt | None = None  # một câu ngắn
     duplicate_overlap: float | None = Field(default=None, gt=0, le=1)  # Jaccard âm tiết
+    # Fact gần như nằm trọn trong Fact khác và cùng ABOUT một thực thể (D-95)
+    related_overlap: float | None = Field(default=None, gt=0, le=1)
     grounded_min: float | None = Field(default=None, gt=0, le=1)  # tỉ lệ âm tiết có trên trang
     writer_max_page_facts: PositiveInt | None = None  # Fact từ trang mà ngữ cảnh người viết giữ
 

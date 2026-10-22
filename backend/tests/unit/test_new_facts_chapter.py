@@ -70,15 +70,14 @@ async def test_the_extractor_is_told_how_many_new_facts_it_may_write(tmp_path):
 
 
 async def test_a_new_fact_that_leaks_a_secret_is_dropped_by_the_leak_check(tmp_path, monkeypatch):
-    """G2 trên chữ Fact mới: văn cảnh không vi phạm (hai vế ở hai câu), nhưng Fact gộp cả hai thành
-    một câu "Lan là người của Hội Hắc Kỳ", đúng bí mật chưa tới khoảng lộ."""
-    page = (SCENE_1 + "\n\nLan rót trà. Minh nhắc tới người của Hội Hắc Kỳ. Có kẻ bàn chuyện gián "
-            "điệp ngoài bến.")
-    leak = {"ref": "new_1", "text": "Lan là người của Hội Hắc Kỳ",
-            "quote": "Minh nhắc tới người của Hội Hắc Kỳ."}
-    edges = [_edge(type="ABOUT", source="new_1", target="lan"),
+    """G2 trên chữ Fact mới: văn cảnh không vi phạm (ba vế ở ba câu), nhưng Fact gộp cả ba thành một
+    câu "Lan giết Lão Gù", đúng bí mật chưa tới khoảng lộ. Fact nói về Minh nên không bị coi là bản
+    nói lại của bí mật (chống trùng cần cùng thực thể): chỉ dò lộ mới chặn được nó."""
+    page = SCENE_1 + "\n\nLan rót trà. Minh nhớ Lão Gù. Người ta đồn có kẻ giết người ngoài bến."
+    leak = {"ref": "new_1", "text": "Lan giết Lão Gù", "quote": "Minh nhớ Lão Gù."}
+    edges = [_edge(type="ABOUT", source="new_1", target="minh"),
              _edge(type="KNOWS", source="minh", target="new_1", how="chứng kiến",
-                   quote="Minh nhắc tới người của Hội Hắc Kỳ.")]
+                   quote="Minh nhớ Lão Gù.")]
     s = [outline_reply(), page, extract_reply(edges, new_facts=[leak]), outline_reply(), SCENE_2,
          EXTRACT_2, SUMMARY, choices_reply()]
     _, outcome, _, store = await run(s, tmp_path)
@@ -186,3 +185,11 @@ async def test_a_new_fact_that_loses_every_knows_to_the_guard_is_dropped(tmp_pat
     assert [n for n in package.nodes if n.label == "Fact"] == []
     assert not [e for e in package.edges if "fact_c4s1_1" in (e.source, e.target)]
     assert any("KNOWS" in why for _, why in outcome.scenes[0].rejected)
+
+
+def test_config_ships_the_related_overlap_and_requires_it_when_on():
+    repo = load_config()
+    assert 0 < repo.limits.facts.related_overlap <= 1
+    unset = repo.limits.facts.model_copy(update={"related_overlap": None})
+    config = repo.model_copy(update={"limits": repo.limits.model_copy(update={"facts": unset})})
+    assert [p.code for p in config_problems(config)] == [ErrorCode.CONFIG_LIMIT_NOT_SET]

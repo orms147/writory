@@ -43,6 +43,7 @@ facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; s�
   max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
   text_max_chars: 160          # chữ của Fact: một câu ngắn
   duplicate_overlap: 0.7       # trùng Fact đã có khi tỉ lệ âm tiết chung (Jaccard) từ ngưỡng này
+  related_overlap: 0.65        # hoặc khi phần Fact mới nằm trong Fact kia từ ngưỡng này và cùng ABOUT một thực thể (D-95)
   grounded_min: 0.6            # tỉ lệ âm tiết của Fact phải có trên trang, từ ngưỡng này
   writer_max_page_facts: 12    # Fact sinh từ trang mà ngữ cảnh người viết giữ (mới nhất trước)
 llm_call:   # mọi lời gọi model trả bằng key người chơi (D-64)
