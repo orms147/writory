@@ -758,3 +758,128 @@ def test_dry_run_world_is_a_valid_plan_at_every_level(level_id):
     setup = to_story_setup(world, protagonist=pc, commit_id="c0", level=level)
     assert level.milestones.min <= len(setup.plan.milestones) <= level.milestones.max
     assert setup.plan.total_chapters == level.chapters.min
+
+
+# --- so nhiều model viết trên cùng một thế giới (D-101): cờ ghi đè, giới hạn token, chỉ khởi tạo --
+
+
+def _overrides(**changes):
+    return bench_run.ModelOverrides(**changes)
+
+
+def _call_rows(out: Path) -> list[dict]:
+    return rows(out / "calls.jsonl")
+
+
+def test_overrides_replace_only_the_writer_and_the_outline_role(tmp_path):
+    config = trial_config(tmp_path)
+    scenario = scenario_for(config)
+    changed = bench_run.apply_model_overrides(config, scenario, _overrides(
+        writer_model="w/model", writer_reasoning="omit", outline_model="o/model",
+        outline_reasoning="medium"))
+    used = models_in_use(changed, scenario)
+    assert used["writer"]["model"] == "w/model" and used["writer"]["reasoning"] is None
+    assert used["outline"] == {"model": "o/model", "reasoning": "medium"}
+    before = models_in_use(config, scenario)
+    for role in ("setup", "extract", "choices", "summary", "moderate"):
+        assert used[role] == before[role]
+    assert config.models.writer_tiers[0].model != "w/model"  # bản gốc không bị sửa
+
+
+def test_no_override_leaves_the_config_untouched(tmp_path):
+    config = trial_config(tmp_path)
+    assert bench_run.apply_model_overrides(config, scenario_for(config), _overrides()) == config
+
+
+def test_override_edits_the_tier_the_scenario_uses_not_the_first(tmp_path):
+    config = trial_config(tmp_path)
+    tiers = [*config.models.writer_tiers,
+             config.models.writer_tiers[0].model_copy(update={"id": "alt", "model": "alt/model"})]
+    config = config.model_copy(update={"models": config.models.model_copy(
+        update={"writer_tiers": tiers})})
+    scenario = scenario_for(config, writer_tier="alt")
+    changed = bench_run.apply_model_overrides(config, scenario, _overrides(writer_model="w/model"))
+    assert [t.model for t in changed.models.writer_tiers] == [tiers[0].model, "w/model"]
+
+
+async def test_run_with_overrides_sends_them_and_records_them_in_meta(tmp_path):
+    config = trial_config(tmp_path)
+    overrides = _overrides(writer_model="w/model", writer_reasoning="omit", outline_model="o/model",
+                           outline_reasoning="omit")
+    scenario = scenario_for(config)
+    scenario = scenario.model_copy(update={"prices": {
+        **scenario.prices, "w/model": bench_run.Price(**{"in": 0.1, "out": 0.5}),
+        "o/model": bench_run.Price(**{"in": 0.1, "out": 0.5})}})
+    run, _, _, out = make_run(tmp_path, config=config, scenario=scenario, overrides=overrides)
+    assert await run.run() == bench_run.EXIT_OK
+    calls = [c for c in _call_rows(out) if c["status"] == "ok"]
+    by_role = {r: {c["model"] for c in calls if c["role"] == r} for r in
+               ("writer", "outline", "extract", "choices")}
+    assert by_role["writer"] == {"w/model"} and by_role["outline"] == {"o/model"}
+    assert "w/model" not in by_role["extract"] | by_role["choices"]
+    assert all("reasoning" not in c["extra"] for c in calls if c["role"] in ("writer", "outline"))
+    assert any("reasoning" in c["extra"] for c in calls if c["role"] == "extract")
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["overrides"]["writer_model"] == "w/model"
+    assert meta["models"]["writer"]["model"] == "w/model"
+    assert meta["models"]["outline"]["model"] == "o/model"
+
+
+async def test_override_without_a_price_fails_before_the_first_call(tmp_path):
+    config = trial_config(tmp_path)
+    run, llm, _, out = make_run(tmp_path, config=config,
+                                overrides=_overrides(writer_model="w/khong-gia"))
+    with pytest.raises(ConfigError, match="w/khong-gia"):
+        await run.run()
+    assert llm.calls == [] and not out.exists()
+
+
+async def test_setup_only_stops_after_chapter_0_and_leaves_a_usable_source(tmp_path):
+    first, _, store, source = make_run(tmp_path / "a", out=tmp_path / "a" / "out",
+                                       setup_only=True)
+    assert await first.run() == bench_run.EXIT_OK
+    assert store.committed == 0 and not (source / "chapters").exists()
+    assert {c["role"] for c in _call_rows(source)} <= {"setup"}
+    meta = json.loads((source / "meta.json").read_text(encoding="utf-8"))
+    assert meta["setup_only"] is True
+    config = trial_config(tmp_path / "a")
+    again, _, store2, _ = make_run(tmp_path / "b", llm=DryRunLLM(4), config=config,
+                                   setup_from=source, store=OverlayStore("mem-run-2"),
+                                   out=tmp_path / "b" / "out")
+    assert await again.run() == bench_run.EXIT_OK
+    assert again.plan == first.plan and store2.committed == first.plan.total_chapters
+
+
+def test_cli_parses_the_override_flags():
+    args = bench_run._parser().parse_args([
+        "--writer-model", "w/m", "--writer-reasoning", "omit", "--outline-model", "o/m",
+        "--outline-reasoning", "low", "--setup-only"])
+    overrides = bench_run.overrides_from_args(args)
+    assert overrides == _overrides(writer_model="w/m", writer_reasoning="omit",
+                                   outline_model="o/m", outline_reasoning="low")
+    assert args.setup_only is True
+
+
+def test_cli_rejects_an_unknown_reasoning_level(capsys):
+    with pytest.raises(SystemExit):
+        bench_run._parser().parse_args(["--writer-reasoning", "tuyet-doi"])
+    assert "tuyet-doi" in capsys.readouterr().err
+
+
+def test_model_bakeoff_scenario_prices_the_three_models_and_stays_a_short_story():
+    scenario, _ = load_scenario(SCENARIO_PATH.with_name("model-bakeoff.yaml"))
+    assert set(scenario.prices) >= {"openai/gpt-6-luna", "deepseek/deepseek-v4-flash",
+                                    "tencent/hy3"}
+    # `--setup-from` đòi cùng sha256 và seed, nên đề này không dùng chung file với đề khác.
+    assert scenario.length_level == "short" and scenario.seed != load_scenario(SCENARIO_PATH)[0].seed
+
+
+@pytest.mark.parametrize("model", ["openai/gpt-6-luna", "deepseek/deepseek-v4-flash",
+                                   "tencent/hy3"])
+def test_model_bakeoff_scenario_has_no_gap_for_any_of_the_three_writers(model):
+    """Đủ giá cho mọi vai config đang dùng cộng model ghi đè, để lệnh không dừng ở lời gọi đầu."""
+    scenario, _ = load_scenario(SCENARIO_PATH.with_name("model-bakeoff.yaml"))
+    config = bench_run.apply_model_overrides(
+        load_config(), scenario,
+        bench_run.ModelOverrides(writer_model=model, outline_model=model))
+    assert bench_run.run_problems(config, scenario) == []

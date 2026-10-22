@@ -1,0 +1,667 @@
+{
+ "status": "done",
+ "stop": null,
+ "chapters_planned": 6,
+ "chapters_target": 6,
+ "chapters_clamped": false,
+ "chapters_committed": 6,
+ "story_finished": true,
+ "new_facts": 13,
+ "plan_vs_result": {
+  "chapter": 6,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "n": 1,
+    "window": [
+     4,
+     4
+    ],
+    "revealed_chapter": 4,
+    "status": "on_time"
+   },
+   {
+    "n": 2,
+    "window": [
+     5,
+     5
+    ],
+    "revealed_chapter": 5,
+    "status": "on_time"
+   }
+  ],
+  "threads": [
+   {
+    "n": 1,
+    "window": [
+     1,
+     6
+    ],
+    "resolved_chapter": 5,
+    "status": "on_time"
+   },
+   {
+    "n": 2,
+    "window": [
+     2,
+     5
+    ],
+    "resolved_chapter": 4,
+    "status": "on_time"
+   }
+  ]
+ },
+ "cost": {
+  "total_usd": 0.067161,
+  "estimated_unbilled_usd": 0.0,
+  "by_role": {
+   "choices": 0.003719,
+   "extract": 0.025665,
+   "moderate": 0.007574,
+   "outline": 0.011437,
+   "summary": 0.002386,
+   "writer": 0.016379
+  },
+  "by_chapter": {
+   "1": {
+    "choices": 0.000756,
+    "extract": 0.00542,
+    "moderate": 0.000983,
+    "outline": 0.001711,
+    "summary": 0.000289,
+    "total": 0.012149,
+    "writer": 0.00299
+   },
+   "2": {
+    "choices": 0.000527,
+    "extract": 0.001782,
+    "moderate": 0.000791,
+    "outline": 0.001694,
+    "summary": 0.000409,
+    "total": 0.0071,
+    "writer": 0.001896
+   },
+   "3": {
+    "choices": 0.000423,
+    "extract": 0.004865,
+    "moderate": 0.001135,
+    "outline": 0.001996,
+    "summary": 0.00097,
+    "total": 0.012662,
+    "writer": 0.003273
+   },
+   "4": {
+    "choices": 0.000843,
+    "extract": 0.006541,
+    "moderate": 0.001266,
+    "outline": 0.002029,
+    "summary": 0.000426,
+    "total": 0.014212,
+    "writer": 0.003108
+   },
+   "5": {
+    "choices": 0.00117,
+    "extract": 0.002708,
+    "moderate": 0.002646,
+    "outline": 0.00201,
+    "summary": 0.000292,
+    "total": 0.010847,
+    "writer": 0.002022
+   },
+   "6": {
+    "extract": 0.004349,
+    "moderate": 0.000754,
+    "outline": 0.001997,
+    "total": 0.010189,
+    "writer": 0.003089
+   }
+  },
+  "max_chapter_attempt_usd": 0.014212,
+  "max_scene_usd": 0.006936,
+  "scenes": [
+   {
+    "chapter": 1,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004646
+   },
+   {
+    "chapter": 1,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.005475
+   },
+   {
+    "chapter": 2,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.002686
+   },
+   {
+    "chapter": 2,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.002688
+   },
+   {
+    "chapter": 3,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003199
+   },
+   {
+    "chapter": 3,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.006936
+   },
+   {
+    "chapter": 4,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.005353
+   },
+   {
+    "chapter": 4,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.006325
+   },
+   {
+    "chapter": 5,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003078
+   },
+   {
+    "chapter": 5,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003662
+   },
+   {
+    "chapter": 6,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.00307
+   },
+   {
+    "chapter": 6,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.006365
+   }
+  ],
+  "limits": {
+   "per_scene": 0.02,
+   "per_chapter": 0.08,
+   "per_story": 1.0
+  }
+ },
+ "calls": {
+  "total": 77,
+  "by_role": {
+   "choices": 6,
+   "extract": 16,
+   "moderate": 21,
+   "outline": 12,
+   "summary": 6,
+   "writer": 16
+  },
+  "by_status": {
+   "ok": 77
+  }
+ },
+ "tokens": {
+  "choices": {
+   "prompt": 20454,
+   "completion": 10838
+  },
+  "extract": {
+   "prompt": 123899,
+   "completion": 82959
+  },
+  "moderate": {
+   "prompt": 48003,
+   "completion": 9439
+  },
+  "outline": {
+   "prompt": 54638,
+   "completion": 9217
+  },
+  "summary": {
+   "prompt": 17580,
+   "completion": 5157
+  },
+  "writer": {
+   "prompt": 95611,
+   "completion": 13364
+  }
+ },
+ "issues": {
+  "found": {
+   "guard:sudden_relationship": 3,
+   "guard:teller_does_not_know": 1,
+   "quality:repetition": 2
+  },
+  "blocking_found": {},
+  "left_when_shown": {
+   "quality:repetition": 1
+  }
+ },
+ "rewrites": 4,
+ "fallbacks": 0,
+ "scenes_blocked": 0,
+ "outline_unplanned_threads": 0,
+ "summaries": {
+  "made": 5,
+  "failed": 0,
+  "chapters_missing_previous": 0
+ },
+ "rejected_edges": {
+  "total": 41,
+  "by_reason": {
+   "Fact mới": 13,
+   "câu trích không có nguyên văn trong chương (G3)": 8,
+   "id không có trong danh mục": 1,
+   "ref phải dạng": 1,
+   "sai schema cạnh": 1,
+   "thiếu ABOUT": 13,
+   "thiếu KNOWS": 2,
+   "trùng Fact": 1,
+   "trùng cạnh trong cùng gói": 1
+  }
+ },
+ "player_retries_used": {
+  "setup": 0,
+  "chapter": 0,
+  "choices": 1
+ },
+ "setup_repairs": {
+  "used": 0,
+  "kinds": {}
+ },
+ "chapters": [
+  {
+   "chapter": 1,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3053,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 2,
+     "chars": 2782,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1,
+      "thiếu ABOUT": 2
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:sudden_relationship"
+     ],
+     "blocking": [],
+     "rejected": 6,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 3,
+      "thiếu ABOUT": 3
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 4,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1,
+      "Fact mới": 3
+     }
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.012149,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 2,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3116,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2422,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.0071,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 3,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2585,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 2,
+     "chars": 2868,
+     "left_when_shown": [
+      "quality:repetition"
+     ],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "quality:repetition"
+     ],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [
+      "quality:repetition"
+     ],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.012662,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 4,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2860,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 2,
+     "chars": 1872,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1,
+      "thiếu ABOUT": 2
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:sudden_relationship"
+     ],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "thiếu ABOUT": 3
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "thiếu ABOUT": 3
+     }
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.014212,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 5,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": "CHOICES_LEAK_BLOCKED",
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2042,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2981,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "trùng Fact": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 0,
+   "cost_usd": 0.0104,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 6,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2690,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 2,
+     "chars": 2006,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 5,
+     "rejected_by_reason": {
+      "ref phải dạng": 1,
+      "Fact mới": 4
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:teller_does_not_know",
+      "guard:sudden_relationship"
+     ],
+     "blocking": [],
+     "rejected": 8,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1,
+      "id không có trong danh mục": 1,
+      "Fact mới": 3,
+      "trùng cạnh trong cùng gói": 1,
+      "thiếu KNOWS": 2
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 4,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1,
+      "Fact mới": 3
+     }
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 0,
+   "cost_usd": 0.010189,
+   "summary": "skipped",
+   "summary_error": null,
+   "summaries_missing": []
+  }
+ ]
+}

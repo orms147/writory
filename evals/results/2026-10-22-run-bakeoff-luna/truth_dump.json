@@ -1,0 +1,4304 @@
+{
+ "story_id": "run-20261022-bakeoff-luna-e924afdb",
+ "plan": {
+  "acts": [
+   {
+    "name": "Mở đầu",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Phát triển",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Cao trào",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "name": "Kết",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact3",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Lục Thanh Phong",
+      "Ma Môn"
+     ],
+     [
+      "thư tín",
+      "Lục Thanh Phong",
+      "Ma Môn"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact4",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Lục Thanh Phong",
+      "khống chế",
+      "trận pháp"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "thread_chinh",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "thread_phu",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Trần Huyền Cơ kích động thành công mâu thuẫn giữa ba trưởng lão, khiến họ bắt đầu nghi ngờ lẫn nhau.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Trần Huyền Cơ phát hiện manh mối về âm mưu của Lục Thanh Phong với Ma Môn.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Trần Huyền Cơ đối đầu trực diện với Lục Thanh Phong, phá giải trận pháp và buộc hắn thú tội.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Vụ án phản bội được giải quyết, Trần Huyền Cơ giành lại Tông Chủ Ấn và củng cố quyền lực trong tông.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 6,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "fact3",
+    "text": "Lục Thanh Phong đã bí mật liên lạc với Ma Môn, hứa cắt linh mạch cho chúng để đổi lấy ủng hộ chiếm Tông Chủ Ấn.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "revealed_chapter": 4
+   },
+   {
+    "fact_id": "fact4",
+    "text": "Trận pháp giết người bên ngoài đại điện do Lục Thanh Phong khống chế, hắn có thể kích hoạt bất kỳ lúc nào.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": 5
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "thread_chinh",
+    "description": "Liệu Trần Huyền Cơ có thể chiếm quyền kiểm soát Vạn Đạo Tông trước khi trận pháp giết người hoàn tất?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 6,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "thread_phu",
+    "description": "Ai là kẻ chủ mưu thực sự đứng sau vụ án phản bội?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "resolved_chapter": 4
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-bakeoff-luna-e924afdb-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Trần Huyền Cơ",
+      "personality": "Nóng nảy, bộc trực, giàu tình nghĩa. Hắn không thích âm mưu, thà đấu kiếm hơn đấu miệng.",
+      "backstory": "Con nuôi của tông chủ tiền nhiệm, sau khi tông chủ mất, hắn giữ Tông Chủ ấn. Các trưởng lão nghi ngờ hắn có mưu đồ và vu cho hắn âm mưu hợp tác với Ma Môn để tiêu diệt tông môn.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "luc_thanh_phong",
+     "label": "Character",
+     "props": {
+      "name": "Lục Thanh Phong",
+      "aliases": [
+       "Lục trưởng lão"
+      ],
+      "personality": "Giảo hoạt, thâm trầm, luôn giữ thái độ điềm tĩnh. Là người có dã tâm lớn và không từ thủ đoạn.",
+      "backstory": "Trưởng lão thủ tịch của Vạn Đạo Tông, từng là đại đệ tử của tông chủ tiền nhiệm, luôn khao khát ngôi vị tông chủ. Sau khi tông chủ mất, hắn mưu tính kết hợp với Ma Môn để hạ bệ Trần Huyền Cơ."
+     }
+    },
+    {
+     "id": "trieu_van_son",
+     "label": "Character",
+     "props": {
+      "name": "Triệu Vân Sơn",
+      "aliases": [
+       "Triệu trưởng lão"
+      ],
+      "personality": "Bảo thủ, trung thành với tông môn nhưng dễ bị lung lay bởi lợi ích. Không thích âm mưu nhưng lại bị cuốn vào.",
+      "backstory": "Trưởng lão kỳ cựu, phụ trách tài vụ của tông. Ban đầu tin vào lời Lục Thanh Phong rằng Trần Huyền Cơ có tội, nhưng trong lòng còn nhiều nghi vấn."
+     }
+    },
+    {
+     "id": "vuong_tuyet_nghi",
+     "label": "Character",
+     "props": {
+      "name": "Vương Tuyết Nghi",
+      "aliases": [
+       "Vương trưởng lão"
+      ],
+      "personality": "Trầm tĩnh, sắc sảo, nhạy bén với mưu đồ. Trong lòng vẫn tin vào Trần Huyền Cơ nhưng phải giữ thể diện tông môn.",
+      "backstory": "Nữ trưởng lão duy nhất, từng là đệ tử thân tín của cố tông chủ. Biết nhiều bí mật về cái chết của tông chủ và đang lặng lẽ điều tra."
+     }
+    },
+    {
+     "id": "van_dao_dien",
+     "label": "Location",
+     "props": {
+      "name": "Vạn Đạo Điện",
+      "aliases": [
+       "Đại điện"
+      ],
+      "description": "Phủ chủ điện của Vạn Đạo Tông, rộng lớn và lạnh lẽo, chỉ có vài ngọn đèn dầu leo lét."
+     }
+    },
+    {
+     "id": "hau_dien",
+     "label": "Location",
+     "props": {
+      "name": "Hậu Điện",
+      "aliases": [
+       "Phòng án ngữ"
+      ],
+      "description": "Khu vực phía sau đại điện, nơi đặt trận pháp giết người do Lục Thanh Phong điều khiển."
+     }
+    },
+    {
+     "id": "van_dao_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Vạn Đạo Tông",
+      "aliases": [
+       "Tông môn"
+      ],
+      "description": "Một trong những đại tông môn tu tiên, đang trong thời kỳ hỗn loạn sau khi tông chủ qua đời."
+     }
+    },
+    {
+     "id": "ma_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Ma Môn",
+      "aliases": [
+       "Ma đạo"
+      ],
+      "description": "Thế lực tà ác chuyên săn lùng linh mạch, luôn tìm cách thao túng các tông môn chính đạo."
+     }
+    },
+    {
+     "id": "tong_chu_an",
+     "label": "Item",
+     "props": {
+      "name": "Tông Chủ Ấn",
+      "aliases": [
+       "Ấn ngọc",
+       "Tông ấn"
+      ],
+      "description": "Ấn tỷ bằng ngọc bích, biểu tượng quyền lực tối cao của Vạn Đạo Tông, do Trần Huyền Cơ giữ."
+     }
+    },
+    {
+     "id": "fact1",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Huyền Cơ là con nuôi của tông chủ tiền nhiệm và nắm giữ Tông Chủ Ấn."
+     }
+    },
+    {
+     "id": "fact2",
+     "label": "Fact",
+     "props": {
+      "text": "Tông chủ tiền nhiệm qua đời trong một bí ẩn, không ai rõ nguyên nhân thực sự."
+     }
+    },
+    {
+     "id": "fact3",
+     "label": "Fact",
+     "props": {
+      "text": "Lục Thanh Phong đã bí mật liên lạc với Ma Môn, hứa cắt linh mạch cho chúng để đổi lấy ủng hộ chiếm Tông Chủ Ấn."
+     }
+    },
+    {
+     "id": "fact4",
+     "label": "Fact",
+     "props": {
+      "text": "Trận pháp giết người bên ngoài đại điện do Lục Thanh Phong khống chế, hắn có thể kích hoạt bất kỳ lúc nào."
+     }
+    },
+    {
+     "id": "fact5",
+     "label": "Fact",
+     "props": {
+      "text": "Vương Tuyết Nghi từng là đệ tử thân tín của cố tông chủ, biết nhiều bí mật về cái chết của ông."
+     }
+    },
+    {
+     "id": "thread_chinh",
+     "label": "Thread",
+     "props": {
+      "description": "Liệu Trần Huyền Cơ có thể chiếm quyền kiểm soát Vạn Đạo Tông trước khi trận pháp giết người hoàn tất?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "thread_phu",
+     "label": "Thread",
+     "props": {
+      "description": "Ai là kẻ chủ mưu thực sự đứng sau vụ án phản bội?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "thread_an",
+     "label": "Thread",
+     "props": {
+      "description": "Tông Chủ Ấn có thể bị cướp mất không, và ai sẽ là người nắm giữ nó cuối cùng?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luc_thanh_phong",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luc_thanh_phong>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "trieu_van_son",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:trieu_van_son>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "vuong_tuyet_nghi",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:vuong_tuyet_nghi>van_dao_dien@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>tong_chu_an@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luc_thanh_phong",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luc_thanh_phong>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "trieu_van_son",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:trieu_van_son>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "vuong_tuyet_nghi",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:vuong_tuyet_nghi>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>luc_thanh_phong@0",
+     "props": {
+      "kind": "thù",
+      "score": -80
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>trieu_van_son@0",
+     "props": {
+      "kind": "nghi kỵ",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>vuong_tuyet_nghi@0",
+     "props": {
+      "kind": "mơ hồ",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luc_thanh_phong",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luc_thanh_phong>trieu_van_son@0",
+     "props": {
+      "kind": "đồng minh",
+      "score": 60
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luc_thanh_phong",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luc_thanh_phong>vuong_tuyet_nghi@0",
+     "props": {
+      "kind": "đối địch",
+      "score": -40
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "vuong_tuyet_nghi",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:vuong_tuyet_nghi>protagonist@0",
+     "props": {
+      "kind": "trung thành",
+      "score": 50
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact1",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact1>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact1",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact1>tong_chu_an@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact2",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact2>van_dao_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact3",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact3>luc_thanh_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact3",
+     "to": "ma_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact3>ma_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact3",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact3>tong_chu_an@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact4",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact4>luc_thanh_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact4",
+     "to": "hau_dien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact4>hau_dien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact4",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact4@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact5",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact5>vuong_tuyet_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Trần Huyền Cơ",
+      "known_as": "Trần Huyền Cơ"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-a0531354aad7",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    },
+    {
+     "id": "fact_c1s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Huyền Cơ giữ chức Chấp Pháp trưởng lão của Vạn Đạo Tông.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c1s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Lục Thanh Phong không công nhận mệnh lệnh đình lại của Trần Huyền Cơ.",
+      "user_authored": true
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luc_thanh_phong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luc_thanh_phong>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Lục Thanh Phong cắt ngang, giọng lạnh tanh.",
+      "known_as": "Lục Thanh Phong"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "trieu_van_son",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:trieu_van_son>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Triệu Vân Sơn khép bàn tay sau lưng.",
+      "known_as": "Triệu Vân Sơn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "vuong_tuyet_nghi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:vuong_tuyet_nghi>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Vương Tuyết Nghi đứng bên cột đá, hai tay buông dọc thân.",
+      "known_as": "Vương Tuyết Nghi"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tong_chu_an",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tong_chu_an>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Tôi siết Tông Chủ Ấn trong tay áo, cạnh ấn cấn vào lòng bàn tay.",
+      "known_as": "Tông Chủ Ấn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_dao_tong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_dao_tong>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Triệu trưởng lão, ta vẫn là Chấp Pháp trưởng lão của Vạn Đạo Tông.",
+      "known_as": "Vạn Đạo Tông"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ma_mon",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ma_mon>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Huyền Cơ, ngươi cấu kết Ma Môn, bán đứng tông môn.",
+      "known_as": "Ma Môn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ch1",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ch1>ch1@1",
+     "props": {
+      "kind": "REVEALED_TO_PLAYER",
+      "quote": "Bản án vừa dứt, tiếng vọng còn lẩn quẩn dưới mái điện cao."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_dao_dien",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_dao_dien>ch1@1",
+     "props": {
+      "quote": "Vạn Đạo Điện chìm trong tiếng đèn dầu lép bép",
+      "known_as": "Vạn Đạo Điện"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_1",
+     "to": "protagonist",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_1>protagonist@1",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_1",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_1>van_dao_tong@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s2_1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s2_1@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Với tư cách Chấp Pháp trưởng lão, ta ra lệnh đình lại việc kết án."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_2",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_2>luc_thanh_phong@1",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_2",
+     "to": "protagonist",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_2>protagonist@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s2_2",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s2_2@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Ta không công nhận mệnh lệnh ấy."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s2_1",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s2_1>ch1@1",
+     "props": {
+      "quote": "Với tư cách Chấp Pháp trưởng lão, ta ra lệnh đình lại việc kết án."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s2_2",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s2_2>ch1@1",
+     "props": {
+      "quote": "Ta không công nhận mệnh lệnh ấy."
+     }
+    }
+   ],
+   "close": []
+  },
+  "2": {
+   "commit_id": "ch2-9bedd16b7fc8",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    },
+    {
+     "id": "fact_c2s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Vương Tuyết Nghi yêu cầu đình lại việc kết án cho đến khi chứng cứ được xác minh."
+     }
+    },
+    {
+     "id": "fact_c2s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Triệu Vân Sơn hỏi Lục Thanh Phong về người đã giao bản ghi lời khai cho hắn."
+     }
+    },
+    {
+     "id": "fact_c2s1_3",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Huyền Cơ yêu cầu Lục Thanh Phong trình chứng cứ trước mặt mọi người.",
+      "user_authored": true
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "trieu_van_son",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:trieu_van_son>luc_thanh_phong@2",
+     "props": {
+      "kind": "nghi ngờ",
+      "score": -30,
+      "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s1_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s1_1@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s1_2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s1_2@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s1_3",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s1_3@2",
+     "props": {
+      "how": "tự biết",
+      "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_1",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_1>vuong_tuyet_nghi@2",
+     "props": {
+      "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_1",
+     "to": "protagonist",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_1>protagonist@2",
+     "props": {
+      "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_2",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_2>trieu_van_son@2",
+     "props": {
+      "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_2",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_2>luc_thanh_phong@2",
+     "props": {
+      "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_3",
+     "to": "protagonist",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_3>protagonist@2",
+     "props": {
+      "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_3",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_3>luc_thanh_phong@2",
+     "props": {
+      "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s1_1",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s1_1>ch2@2",
+     "props": {
+      "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s1_2",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s1_2>ch2@2",
+     "props": {
+      "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s1_3",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s1_3>ch2@2",
+     "props": {
+      "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tong_chu_an",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tong_chu_an>van_dao_dien@2",
+     "props": {
+      "quote": "Tông Chủ Ấn nằm giữa chúng tôi."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "RELATES_TO",
+     "id": "RELATES_TO:vuong_tuyet_nghi>protagonist@0",
+     "valid_to_chapter": 2
+    },
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:protagonist>tong_chu_an@0",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-6f4bc9435af9",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    },
+    {
+     "id": "fact_c3s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Triệu Vân Sơn đứng chắn giữa Lục Thanh Phong và Trần Huyền Cơ.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c3s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Huyền Cơ ra lệnh đình chỉ kết án và giữ nguyên hiện trạng tại Vạn Đạo Điện.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c3s1_3",
+     "label": "Fact",
+     "props": {
+      "text": "Vương Tuyết Nghi đề xuất đối chất về nguồn gốc bản ghi lời khai ngay tại đại điện."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "tong_chu_an",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>tong_chu_an@3",
+     "props": {
+      "quote": "Tôi siết Tông Chủ Ấn trong lòng bàn tay."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_1@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Triệu lập tức dịch sang, đứng chắn giữa Lục và tôi."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_2",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_2@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Việc kết án đình chỉ tại đây. Triệu Vân Sơn, Vương Tuyết Nghi, hai vị cùng ta giữ nguyên hiện trạng trong điện. Không ai được tự ý mang bản ghi đi, cũng không ai được sửa lời khai."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_3@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Vậy bắt đầu ngay trong điện. Đối chất về nguồn gốc bản ghi lời khai."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>trieu_van_son@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>luc_thanh_phong@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "protagonist",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>protagonist@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_2",
+     "to": "protagonist",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_2>protagonist@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_2",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_2>van_dao_dien@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_2",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_2>van_dao_tong@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_3",
+     "to": "vuong_tuyet_nghi",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_3>vuong_tuyet_nghi@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_3",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_3>luc_thanh_phong@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_3",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_3>trieu_van_son@3",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_1",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+     "props": {
+      "quote": "Triệu lập tức dịch sang, đứng chắn giữa Lục và tôi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_2",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_2>ch3@3",
+     "props": {
+      "quote": "Việc kết án đình chỉ tại đây. Triệu Vân Sơn, Vương Tuyết Nghi, hai vị cùng ta giữ nguyên hiện trạng trong điện. Không ai được tự ý mang bản ghi đi, cũng không ai được sửa lời khai."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_3",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_3>ch3@3",
+     "props": {
+      "quote": "Vậy bắt đầu ngay trong điện. Đối chất về nguồn gốc bản ghi lời khai."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:tong_chu_an>van_dao_dien@2",
+     "valid_to_chapter": 3
+    }
+   ]
+  },
+  "4": {
+   "commit_id": "ch4-fdd2adc5d898",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact3",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact3@4",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Lục Thanh Phong hứa cắt linh mạch của Vạn Đạo Tông cho Ma Môn, đổi lấy sự ủng hộ để chiếm Tông Chủ Ấn."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact3",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact3@4",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact3",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact3@4",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact3",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact3@4",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact3",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact3>ch4@4",
+     "props": {
+      "quote": "Lục Thanh Phong hứa cắt linh mạch của Vạn Đạo Tông cho Ma Môn, đổi lấy sự ủng hộ để chiếm Tông Chủ Ấn."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hau_dien",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hau_dien>ch4@4",
+     "props": {
+      "quote": "Triệu Vân Sơn áp giải hắn tới Hậu Điện.",
+      "known_as": "Hậu Điện"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "thread_phu",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:thread_phu>ch4@4",
+     "props": {
+      "quote": "Lục Thanh Phong là kẻ chủ mưu dựng vụ án phản bội này để đoạt Tông Chủ Ấn."
+     }
+    }
+   ],
+   "close": []
+  },
+  "5": {
+   "commit_id": "ch5-9f3c77f6e289",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    },
+    {
+     "id": "fact_c5s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Trận pháp sát phạt bên ngoài đại điện chuyển động."
+     }
+    },
+    {
+     "id": "fact_c5s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Lục Thanh Phong thừa nhận trước mọi người rằng hắn điều khiển trận pháp sát phạt."
+     }
+    },
+    {
+     "id": "fact_c5s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Huyền Cơ tước quyền điều hành của Lục Thanh Phong và ra lệnh áp giải hắn chờ xét xử công khai.",
+      "user_authored": true
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>luc_thanh_phong@5",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact3",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact3@5",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_c2s1_2",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_c2s1_2@5",
+     "props": {
+      "feeling": "lo lắng"
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luc_thanh_phong",
+     "to": "protagonist",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luc_thanh_phong>protagonist@5",
+     "props": {
+      "kind": "thù",
+      "score": -80
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact4",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact4@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Lục đã xoay người, phất tay về phía ngoài điện. Mặt đất dưới chân rung lên."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s1_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s1_1@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Vương Tuyết Nghi ngẩng phắt đầu. - Trận pháp sát phạt chuyển động rồi."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>van_dao_dien@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "fact4",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>fact4@5",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s1_1",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s1_1>ch5@5",
+     "props": {
+      "quote": "Vương Tuyết Nghi ngẩng phắt đầu. - Trận pháp sát phạt chuyển động rồi."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact_c5s2_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact_c5s2_1@5",
+     "props": {
+      "how": "tự biết",
+      "quote": "Đúng. Là ta điều khiển trận pháp."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s2_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s2_1@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Đúng. Là ta điều khiển trận pháp."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact_c5s2_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact_c5s2_1@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Đúng. Là ta điều khiển trận pháp."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact_c5s2_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact_c5s2_1@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Đúng. Là ta điều khiển trận pháp."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s2_2",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s2_2@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_van_son",
+     "to": "fact_c5s2_2",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_van_son>fact_c5s2_2@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vuong_tuyet_nghi",
+     "to": "fact_c5s2_2",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vuong_tuyet_nghi>fact_c5s2_2@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luc_thanh_phong",
+     "to": "fact_c5s2_2",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luc_thanh_phong>fact_c5s2_2@5",
+     "props": {
+      "how": "tự biết",
+      "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_1",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_1>luc_thanh_phong@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_1",
+     "to": "fact4",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_1>fact4@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_1",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_1>van_dao_dien@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_2",
+     "to": "protagonist",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_2>protagonist@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_2",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_2>luc_thanh_phong@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_2",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_2>van_dao_dien@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_2",
+     "to": "van_dao_tong",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_2>van_dao_tong@5",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "thread_chinh",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:thread_chinh>ch5@5",
+     "props": {
+      "quote": "Từ giờ, mọi việc trong tông do ta chỉ huy cho đến khi vụ án được xét xử."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s2_1",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s2_1>ch5@5",
+     "props": {
+      "quote": "Đúng. Là ta điều khiển trận pháp."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s2_2",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s2_2>ch5@5",
+     "props": {
+      "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-588d3c7fab6a",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    },
+    {
+     "id": "fact_c6s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Lục Thanh Phong ra lệnh thu trận, trận pháp sát phạt bên ngoài đại điện dừng lại."
+     }
+    },
+    {
+     "id": "fact_c6s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Triệu Vân Sơn tuyên bố không còn đứng về phía Lục Thanh Phong."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "trieu_van_son",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:trieu_van_son>luc_thanh_phong@6",
+     "props": {
+      "kind": "thù",
+      "score": -60
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s2_1",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s2_1@6",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Một lúc sau, Lục nghiến răng, quai hàm nổi rõ. - Thu trận."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s2_2",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s2_2@6",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Triệu cúi mắt nhìn cánh tay mình đang khóa Lục. Hắn không nới lỏng, cũng không nói gì để bênh vực. - Ta sẽ không đứng về phía hắn nữa."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s2_1",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s2_1>luc_thanh_phong@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s2_1",
+     "to": "fact4",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s2_1>fact4@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s2_1",
+     "to": "van_dao_dien",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s2_1>van_dao_dien@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s2_2",
+     "to": "trieu_van_son",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s2_2>trieu_van_son@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s2_2",
+     "to": "luc_thanh_phong",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s2_2>luc_thanh_phong@6",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s2_1",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s2_1>ch6@6",
+     "props": {
+      "quote": "- Thu trận."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s2_2",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s2_2>ch6@6",
+     "props": {
+      "quote": "- Ta sẽ không đứng về phía hắn nữa."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "RELATES_TO",
+     "id": "RELATES_TO:trieu_van_son>luc_thanh_phong@2",
+     "valid_to_chapter": 6
+    }
+   ]
+  }
+ },
+ "final": {
+  "chapter": 6,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "fact1": {
+    "label": "Fact",
+    "props": {
+     "text": "Trần Huyền Cơ là con nuôi của tông chủ tiền nhiệm và nắm giữ Tông Chủ Ấn."
+    }
+   },
+   "fact2": {
+    "label": "Fact",
+    "props": {
+     "text": "Tông chủ tiền nhiệm qua đời trong một bí ẩn, không ai rõ nguyên nhân thực sự."
+    }
+   },
+   "fact3": {
+    "label": "Fact",
+    "props": {
+     "text": "Lục Thanh Phong đã bí mật liên lạc với Ma Môn, hứa cắt linh mạch cho chúng để đổi lấy ủng hộ chiếm Tông Chủ Ấn."
+    }
+   },
+   "fact4": {
+    "label": "Fact",
+    "props": {
+     "text": "Trận pháp giết người bên ngoài đại điện do Lục Thanh Phong khống chế, hắn có thể kích hoạt bất kỳ lúc nào."
+    }
+   },
+   "fact5": {
+    "label": "Fact",
+    "props": {
+     "text": "Vương Tuyết Nghi từng là đệ tử thân tín của cố tông chủ, biết nhiều bí mật về cái chết của ông."
+    }
+   },
+   "fact_c1s2_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Trần Huyền Cơ giữ chức Chấp Pháp trưởng lão của Vạn Đạo Tông."
+    }
+   },
+   "fact_c1s2_2": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Lục Thanh Phong không công nhận mệnh lệnh đình lại của Trần Huyền Cơ."
+    }
+   },
+   "fact_c2s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Vương Tuyết Nghi yêu cầu đình lại việc kết án cho đến khi chứng cứ được xác minh."
+    }
+   },
+   "fact_c2s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Triệu Vân Sơn hỏi Lục Thanh Phong về người đã giao bản ghi lời khai cho hắn."
+    }
+   },
+   "fact_c2s1_3": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Trần Huyền Cơ yêu cầu Lục Thanh Phong trình chứng cứ trước mặt mọi người."
+    }
+   },
+   "fact_c3s1_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Triệu Vân Sơn đứng chắn giữa Lục Thanh Phong và Trần Huyền Cơ."
+    }
+   },
+   "fact_c3s1_2": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Trần Huyền Cơ ra lệnh đình chỉ kết án và giữ nguyên hiện trạng tại Vạn Đạo Điện."
+    }
+   },
+   "fact_c3s1_3": {
+    "label": "Fact",
+    "props": {
+     "text": "Vương Tuyết Nghi đề xuất đối chất về nguồn gốc bản ghi lời khai ngay tại đại điện."
+    }
+   },
+   "fact_c5s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Trận pháp sát phạt bên ngoài đại điện chuyển động."
+    }
+   },
+   "fact_c5s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Lục Thanh Phong thừa nhận trước mọi người rằng hắn điều khiển trận pháp sát phạt."
+    }
+   },
+   "fact_c5s2_2": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Trần Huyền Cơ tước quyền điều hành của Lục Thanh Phong và ra lệnh áp giải hắn chờ xét xử công khai."
+    }
+   },
+   "fact_c6s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Lục Thanh Phong ra lệnh thu trận, trận pháp sát phạt bên ngoài đại điện dừng lại."
+    }
+   },
+   "fact_c6s2_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Triệu Vân Sơn tuyên bố không còn đứng về phía Lục Thanh Phong."
+    }
+   },
+   "hau_dien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Phòng án ngữ"
+     ],
+     "name": "Hậu Điện",
+     "description": "Khu vực phía sau đại điện, nơi đặt trận pháp giết người do Lục Thanh Phong điều khiển."
+    }
+   },
+   "luc_thanh_phong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng lão thủ tịch của Vạn Đạo Tông, từng là đại đệ tử của tông chủ tiền nhiệm, luôn khao khát ngôi vị tông chủ. Sau khi tông chủ mất, hắn mưu tính kết hợp với Ma Môn để hạ bệ Trần Huyền Cơ.",
+     "aliases": [
+      "Lục trưởng lão"
+     ],
+     "personality": "Giảo hoạt, thâm trầm, luôn giữ thái độ điềm tĩnh. Là người có dã tâm lớn và không từ thủ đoạn.",
+     "name": "Lục Thanh Phong"
+    }
+   },
+   "ma_mon": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Ma đạo"
+     ],
+     "name": "Ma Môn",
+     "description": "Thế lực tà ác chuyên săn lùng linh mạch, luôn tìm cách thao túng các tông môn chính đạo."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Con nuôi của tông chủ tiền nhiệm, sau khi tông chủ mất, hắn giữ Tông Chủ ấn. Các trưởng lão nghi ngờ hắn có mưu đồ và vu cho hắn âm mưu hợp tác với Ma Môn để tiêu diệt tông môn.",
+     "personality": "Nóng nảy, bộc trực, giàu tình nghĩa. Hắn không thích âm mưu, thà đấu kiếm hơn đấu miệng.",
+     "name": "Trần Huyền Cơ",
+     "is_protagonist": true
+    }
+   },
+   "thread_an": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tông Chủ Ấn có thể bị cướp mất không, và ai sẽ là người nắm giữ nó cuối cùng?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 4
+    }
+   },
+   "thread_chinh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Liệu Trần Huyền Cơ có thể chiếm quyền kiểm soát Vạn Đạo Tông trước khi trận pháp giết người hoàn tất?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 6
+    }
+   },
+   "thread_phu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai là kẻ chủ mưu thực sự đứng sau vụ án phản bội?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "tong_chu_an": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Ấn ngọc",
+      "Tông ấn"
+     ],
+     "name": "Tông Chủ Ấn",
+     "description": "Ấn tỷ bằng ngọc bích, biểu tượng quyền lực tối cao của Vạn Đạo Tông, do Trần Huyền Cơ giữ."
+    }
+   },
+   "trieu_van_son": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng lão kỳ cựu, phụ trách tài vụ của tông. Ban đầu tin vào lời Lục Thanh Phong rằng Trần Huyền Cơ có tội, nhưng trong lòng còn nhiều nghi vấn.",
+     "aliases": [
+      "Triệu trưởng lão"
+     ],
+     "personality": "Bảo thủ, trung thành với tông môn nhưng dễ bị lung lay bởi lợi ích. Không thích âm mưu nhưng lại bị cuốn vào.",
+     "name": "Triệu Vân Sơn"
+    }
+   },
+   "van_dao_dien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Đại điện"
+     ],
+     "name": "Vạn Đạo Điện",
+     "description": "Phủ chủ điện của Vạn Đạo Tông, rộng lớn và lạnh lẽo, chỉ có vài ngọn đèn dầu leo lét."
+    }
+   },
+   "van_dao_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Tông môn"
+     ],
+     "name": "Vạn Đạo Tông",
+     "description": "Một trong những đại tông môn tu tiên, đang trong thời kỳ hỗn loạn sau khi tông chủ qua đời."
+    }
+   },
+   "vuong_tuyet_nghi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Nữ trưởng lão duy nhất, từng là đệ tử thân tín của cố tông chủ. Biết nhiều bí mật về cái chết của tông chủ và đang lặng lẽ điều tra.",
+     "aliases": [
+      "Vương trưởng lão"
+     ],
+     "personality": "Trầm tĩnh, sắc sảo, nhạy bén với mưu đồ. Trong lòng vẫn tin vào Trần Huyền Cơ nhưng phải giữ thể diện tông môn.",
+     "name": "Vương Tuyết Nghi"
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:luc_thanh_phong>protagonist@5",
+    "type": "RELATES_TO",
+    "source": "luc_thanh_phong",
+    "target": "protagonist",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -80,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:luc_thanh_phong>trieu_van_son@0",
+    "type": "RELATES_TO",
+    "source": "luc_thanh_phong",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 60,
+     "kind": "đồng minh"
+    }
+   },
+   {
+    "id": "RELATES_TO:luc_thanh_phong>vuong_tuyet_nghi@0",
+    "type": "RELATES_TO",
+    "source": "luc_thanh_phong",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -40,
+     "kind": "đối địch"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>luc_thanh_phong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -80,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>trieu_van_son@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "nghi kỵ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>vuong_tuyet_nghi@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "mơ hồ"
+    }
+   },
+   {
+    "id": "RELATES_TO:trieu_van_son>luc_thanh_phong@6",
+    "type": "RELATES_TO",
+    "source": "trieu_van_son",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -60,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "LOCATED_AT:luc_thanh_phong>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "luc_thanh_phong",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:trieu_van_son>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "trieu_van_son",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:vuong_tuyet_nghi>van_dao_dien@0",
+    "type": "LOCATED_AT",
+    "source": "vuong_tuyet_nghi",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>tong_chu_an@3",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "tong_chu_an",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi siết Tông Chủ Ấn trong lòng bàn tay."
+    }
+   },
+   {
+    "id": "MEMBER_OF:luc_thanh_phong>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "luc_thanh_phong",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:trieu_van_son>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "trieu_van_son",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:vuong_tuyet_nghi>van_dao_tong@0",
+    "type": "MEMBER_OF",
+    "source": "vuong_tuyet_nghi",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact1@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact2@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact3@4",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact3",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact4@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact4",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact5@0",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact_c5s2_1@5",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact_c5s2_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Đúng. Là ta điều khiển trận pháp."
+    }
+   },
+   {
+    "id": "KNOWS:luc_thanh_phong>fact_c5s2_2@5",
+    "type": "KNOWS",
+    "source": "luc_thanh_phong",
+    "target": "fact_c5s2_2",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact3@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact3",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Lục Thanh Phong hứa cắt linh mạch của Vạn Đạo Tông cho Ma Môn, đổi lấy sự ủng hộ để chiếm Tông Chủ Ấn."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact4@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact4",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Lục đã xoay người, phất tay về phía ngoài điện. Mặt đất dưới chân rung lên."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s2_1@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s2_1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Với tư cách Chấp Pháp trưởng lão, ta ra lệnh đình lại việc kết án."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s2_2@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s2_2",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Ta không công nhận mệnh lệnh ấy."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s1_1@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s1_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s1_2@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s1_2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s1_3@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s1_3",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_1@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Triệu lập tức dịch sang, đứng chắn giữa Lục và tôi."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_2@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_2",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Việc kết án đình chỉ tại đây. Triệu Vân Sơn, Vương Tuyết Nghi, hai vị cùng ta giữ nguyên hiện trạng trong điện. Không ai được tự ý mang bản ghi đi, cũng không ai được sửa lời khai."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_3@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Vậy bắt đầu ngay trong điện. Đối chất về nguồn gốc bản ghi lời khai."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s1_1@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s1_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Vương Tuyết Nghi ngẩng phắt đầu. - Trận pháp sát phạt chuyển động rồi."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s2_1@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s2_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Đúng. Là ta điều khiển trận pháp."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s2_2@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s2_2",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s2_1@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s2_1",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Một lúc sau, Lục nghiến răng, quai hàm nổi rõ. - Thu trận."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s2_2@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s2_2",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Triệu cúi mắt nhìn cánh tay mình đang khóa Lục. Hắn không nới lỏng, cũng không nói gì để bênh vực. - Ta sẽ không đứng về phía hắn nữa."
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact1@0",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact2@0",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact3@4",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact3",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact5@0",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact_c5s2_1@5",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact_c5s2_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Đúng. Là ta điều khiển trận pháp."
+    }
+   },
+   {
+    "id": "KNOWS:trieu_van_son>fact_c5s2_2@5",
+    "type": "KNOWS",
+    "source": "trieu_van_son",
+    "target": "fact_c5s2_2",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact1@0",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact2@0",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact3@4",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact3",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact5@0",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact_c5s2_1@5",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact_c5s2_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Đúng. Là ta điều khiển trận pháp."
+    }
+   },
+   {
+    "id": "KNOWS:vuong_tuyet_nghi>fact_c5s2_2@5",
+    "type": "KNOWS",
+    "source": "vuong_tuyet_nghi",
+    "target": "fact_c5s2_2",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact3@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact3",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_c2s1_2@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_c2s1_2",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>luc_thanh_phong@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "lo lắng"
+    }
+   },
+   {
+    "id": "ABOUT:fact1>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact1",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact1>tong_chu_an@0",
+    "type": "ABOUT",
+    "source": "fact1",
+    "target": "tong_chu_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact2>van_dao_tong@0",
+    "type": "ABOUT",
+    "source": "fact2",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact3>luc_thanh_phong@0",
+    "type": "ABOUT",
+    "source": "fact3",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact3>ma_mon@0",
+    "type": "ABOUT",
+    "source": "fact3",
+    "target": "ma_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact3>tong_chu_an@0",
+    "type": "ABOUT",
+    "source": "fact3",
+    "target": "tong_chu_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact4>hau_dien@0",
+    "type": "ABOUT",
+    "source": "fact4",
+    "target": "hau_dien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact4>luc_thanh_phong@0",
+    "type": "ABOUT",
+    "source": "fact4",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact5>vuong_tuyet_nghi@0",
+    "type": "ABOUT",
+    "source": "fact5",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_1>protagonist@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_1",
+    "target": "protagonist",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_1>van_dao_tong@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_1",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_2>luc_thanh_phong@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_2",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_2>protagonist@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_2",
+    "target": "protagonist",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s1_1>protagonist@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_1",
+    "target": "protagonist",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+    }
+   },
+   {
+    "id": "ABOUT:fact_c2s1_1>vuong_tuyet_nghi@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_1",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+    }
+   },
+   {
+    "id": "ABOUT:fact_c2s1_2>luc_thanh_phong@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_2",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+    }
+   },
+   {
+    "id": "ABOUT:fact_c2s1_2>trieu_van_son@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_2",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+    }
+   },
+   {
+    "id": "ABOUT:fact_c2s1_3>luc_thanh_phong@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_3",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+    }
+   },
+   {
+    "id": "ABOUT:fact_c2s1_3>protagonist@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_3",
+    "target": "protagonist",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+    }
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>luc_thanh_phong@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>protagonist@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "protagonist",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>trieu_van_son@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_2>protagonist@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_2",
+    "target": "protagonist",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_2>van_dao_dien@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_2",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_2>van_dao_tong@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_2",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_3>luc_thanh_phong@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_3",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_3>trieu_van_son@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_3",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_3>vuong_tuyet_nghi@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_3",
+    "target": "vuong_tuyet_nghi",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>fact4@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "fact4",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>van_dao_dien@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_1>fact4@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_1",
+    "target": "fact4",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_1>luc_thanh_phong@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_1",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_1>van_dao_dien@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_1",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_2>luc_thanh_phong@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_2",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_2>protagonist@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_2",
+    "target": "protagonist",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_2>van_dao_dien@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_2",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_2>van_dao_tong@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_2",
+    "target": "van_dao_tong",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s2_1>fact4@6",
+    "type": "ABOUT",
+    "source": "fact_c6s2_1",
+    "target": "fact4",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s2_1>luc_thanh_phong@6",
+    "type": "ABOUT",
+    "source": "fact_c6s2_1",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s2_1>van_dao_dien@6",
+    "type": "ABOUT",
+    "source": "fact_c6s2_1",
+    "target": "van_dao_dien",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s2_2>luc_thanh_phong@6",
+    "type": "ABOUT",
+    "source": "fact_c6s2_2",
+    "target": "luc_thanh_phong",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s2_2>trieu_van_son@6",
+    "type": "ABOUT",
+    "source": "fact_c6s2_2",
+    "target": "trieu_van_son",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:thread_chinh>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "thread_chinh",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Từ giờ, mọi việc trong tông do ta chỉ huy cho đến khi vụ án được xét xử."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:thread_phu>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "thread_phu",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Thanh Phong là kẻ chủ mưu dựng vụ án phản bội này để đoạt Tông Chủ Ấn."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ch1>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ch1",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bản án vừa dứt, tiếng vọng còn lẩn quẩn dưới mái điện cao.",
+     "kind": "REVEALED_TO_PLAYER"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact3>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact3",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Thanh Phong hứa cắt linh mạch của Vạn Đạo Tông cho Ma Môn, đổi lấy sự ủng hộ để chiếm Tông Chủ Ấn."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s2_1>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s2_1",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Với tư cách Chấp Pháp trưởng lão, ta ra lệnh đình lại việc kết án."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s2_2>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s2_2",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta không công nhận mệnh lệnh ấy."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s1_1>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s1_1",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Việc kết án phải đình lại. Trước khi có người xác nhận chứng cứ, không ai được buộc tội thêm."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s1_2>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s1_2",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bản ghi lời khai do ai giao cho ngươi?"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s1_3>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s1_3",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nếu ngươi có chứng cứ, cứ trình ra trước mặt cả ba người."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_1",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Triệu lập tức dịch sang, đứng chắn giữa Lục và tôi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_2>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_2",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Việc kết án đình chỉ tại đây. Triệu Vân Sơn, Vương Tuyết Nghi, hai vị cùng ta giữ nguyên hiện trạng trong điện. Không ai được tự ý mang bản ghi đi, cũng không ai được sửa lời khai."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_3>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_3",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vậy bắt đầu ngay trong điện. Đối chất về nguồn gốc bản ghi lời khai."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s1_1>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s1_1",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vương Tuyết Nghi ngẩng phắt đầu. - Trận pháp sát phạt chuyển động rồi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s2_1>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s2_1",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đúng. Là ta điều khiển trận pháp."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s2_2>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s2_2",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Với chức Chấp Pháp trưởng lão và Tông Chủ Ấn trong tay, ta tuyên bố Lục Thanh Phong bị tước quyền điều hành. Triệu Vân Sơn áp giải hắn, chờ xét xử công khai."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s2_1>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s2_1",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Thu trận."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s2_2>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s2_2",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Ta sẽ không đứng về phía hắn nữa."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hau_dien>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hau_dien",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Triệu Vân Sơn áp giải hắn tới Hậu Điện.",
+     "known_as": "Hậu Điện"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luc_thanh_phong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luc_thanh_phong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lục Thanh Phong cắt ngang, giọng lạnh tanh.",
+     "kind": "REVEALED_TO_PLAYER",
+     "known_as": "Lục Thanh Phong"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ma_mon>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ma_mon",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Huyền Cơ, ngươi cấu kết Ma Môn, bán đứng tông môn.",
+     "kind": "REVEALED_TO_PLAYER",
+     "known_as": "Ma Môn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Trần Huyền Cơ",
+     "known_as": "Trần Huyền Cơ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tong_chu_an>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tong_chu_an",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi siết Tông Chủ Ấn trong tay áo, cạnh ấn cấn vào lòng bàn tay.",
+     "kind": "REVEALED_TO_PLAYER",
+     "known_as": "Tông Chủ Ấn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:trieu_van_son>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "trieu_van_son",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Triệu Vân Sơn khép bàn tay sau lưng.",
+     "kind": "REVEALED_TO_PLAYER",
+     "known_as": "Triệu Vân Sơn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_dao_dien>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_dao_dien",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vạn Đạo Điện chìm trong tiếng đèn dầu lép bép",
+     "known_as": "Vạn Đạo Điện"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_dao_tong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_dao_tong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Triệu trưởng lão, ta vẫn là Chấp Pháp trưởng lão của Vạn Đạo Tông.",
+     "kind": "REVEALED_TO_PLAYER",
+     "known_as": "Vạn Đạo Tông"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:vuong_tuyet_nghi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "vuong_tuyet_nghi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vương Tuyết Nghi đứng bên cột đá, hai tay buông dọc thân.",
+     "kind": "REVEALED_TO_PLAYER",
+     "known_as": "Vương Tuyết Nghi"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-a0531354aad7",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Chương 1 mở đầu tại Vạn Đạo Điện, Trần Huyền Cơ bị ba trưởng lão Triệu Vân Sơn, Lục Thanh Phong và Vương Tuyết Nghi buộc tội cấu kết Ma Môn. Huyền Cơ dùng Tông Chủ Ấn và chất vấn thủ tục, yêu cầu đọc căn cứ từng chứng cứ. Triệu Vân Sơn đọc lời buộc tội nhưng ngập ngừng; Lục Thanh Phong thúc ép kết án, cản trở đối chiếu. Vương Tuyết Nghi chưa xác nhận chứng cứ và đồng ý đình lại việc kết án. Lục không công nhận mệnh lệnh, đứng chắn bàn án. Cuối chương, Huyền Cơ cầm ấn, ba trưởng lão chia rẽ: Triệu do dự, Vương theo Huyền Cơ, Lục phản đối. Bản án bị đình lại, chưa có phán quyết cuối cùng.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Trần Huyền Cơ dùng chút uy quyền Chấp Pháp còn lại để làm lung lay thế đồng lòng của ba trưởng lão, giành thời gian trước khi trận pháp bên ngoài phát tác.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Bản án phản bội vừa dứt, Trần Huyền Cơ siết Tông Chủ Ấn trong tay áo, nhìn ba trưởng lão và gằn giọng rằng họ đã định tội hắn trước khi cho hắn mở miệng; bên ngoài, ánh trận văn chớp nhạt qua khe cửa, nhắc hắn rằng thời gian không còn nhiều.",
+       "Hắn viện quyền Chấp Pháp, yêu cầu Triệu Vân Sơn đọc rõ căn cứ kết án và ai đã kiểm chứng từng chứng cứ, rồi xoáy vào việc một vụ án liên quan đến Ma Môn lại được khép lại vội vã; Triệu Vân Sơn đáp rằng tội trạng đã đủ rõ, nhưng không đưa ra lời giải thích cụ thể về thủ tục.",
+       "Lục Thanh Phong lập tức cắt ngang, cảnh cáo Trần Huyền Cơ đừng dùng chức quyền cũ để trì hoãn; Trần Huyền Cơ quay sang hỏi vì sao Lục lại sốt ruột đến mức không cho các trưởng lão đối chiếu lời buộc tội, buộc hắn phải tự biện hộ trước mặt Triệu Vân Sơn và Vương Tuyết Nghi.",
+       "Vương Tuyết Nghi không đứng về phía nào, chỉ nói nàng muốn nghe chứng cứ được trình bày đầy đủ trước khi đặt bút xác nhận; Trần Huyền Cơ bám lấy câu ấy, tuyên bố quyết định kết án chưa thể xem là phán quyết hợp lệ nếu thiếu sự xác nhận của cả ba người, còn Lục Thanh Phong lạnh lùng đáp rằng hắn không còn quyền ra lệnh.",
+       "Trần Huyền Cơ bước lên nửa bước, để Tông Chủ Ấn lộ ra vừa đủ và nhắc rằng hắn vẫn là người được cố tông chủ giao giữ ấn; không ai lập tức phục tùng, nhưng Triệu Vân Sơn ngập ngừng trước khi nhắc lại lời buộc tội, còn Lục Thanh Phong dõi sát từng lời hắn nói."
+      ],
+      "ends_at": "Cảnh kết trong Vạn Đạo Điện, khi ba trưởng lão vẫn vây quanh Trần Huyền Cơ nhưng lời buộc tội đã bị chặn lại để chờ đối chiếu căn cứ.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Dùng uy quyền Chấp Pháp và Tông Chủ Ấn để buộc ba trưởng lão rạn nứt, biến việc kết án thành cuộc đối chất chưa ai dám khép lại.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Tôi gõ Tông Chủ Ấn xuống bàn án, yêu cầu Triệu Vân Sơn đọc căn cứ buộc tội trước mặt cả ba người; Triệu đáp rằng cáo trạng đã được lập theo lời khai và chứng vật, nhưng không nêu rõ ai kiểm chứng.",
+       "Tôi quay sang Lục Thanh Phong, nhắc rằng hắn vừa ngăn Triệu đọc tiếp, rồi hỏi vì sao một người vô tội lại phải sợ đối chiếu chứng cứ; Lục lạnh giọng bảo tôi đang dùng chức cũ để câu giờ.",
+       "Tôi hỏi Vương Tuyết Nghi liệu nàng đã xác nhận từng căn cứ hay chưa; nàng đáp chưa, và nói không thể đặt bút vào một bản án chưa được trình bày đầy đủ.",
+       "Triệu Vân Sơn nhìn cáo trạng rồi nhìn Lục, chất vấn vì sao hắn cứ thúc ép kết án; Lục gằn giọng rằng Triệu đã đồng ý với phán quyết, khiến Triệu lập tức phủ nhận mình chưa từng xác nhận chứng cứ.",
+       "Tôi ra lệnh với tư cách Chấp Pháp trưởng lão rằng việc kết án phải đình lại cho đến khi căn cứ được đối chiếu; Vương đứng về phía tôi, Triệu không phản đối, còn Lục tuyên bố không công nhận mệnh lệnh ấy và bước chắn trước bàn án.",
+       "Lục không thể buộc hai người kia tiếp tục đọc án ngay tại điện; tôi giữ Tông Chủ Ấn trong tay, nhưng ba trưởng lão đã thành hai phía, còn Lục vẫn không nhượng bộ."
+      ],
+      "ends_at": "Cảnh khép lại trong Vạn Đạo Điện, khi bản án bị đình lại nhưng quyền kiểm soát tông môn vẫn chưa ngã ngũ.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER van_dao_dien→ch1",
+        "Value error, `known_as` phải nằm trong `quote` (D-17)"
+       ],
+       [
+        "Fact mới fact_c1s1_1",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c1s1_2",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "sudden_relationship",
+        "block": false,
+        "feedback": "quan hệ protagonist→trieu_van_son đổi từ -20 sang 30 (quá 40) mà chương không có sự kiện nào liên quan"
+       }
+      ],
+      "rejected": [
+       [
+        "RELATES_TO luc_thanh_phong→trieu_van_son",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "RELATES_TO protagonist→vuong_tuyet_nghi",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "RELATES_TO vuong_tuyet_nghi→protagonist",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "Fact mới fact_c1s2_1",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c1s2_2",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c1s2_3",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới new_2",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "ABOUT new_2→vuong_tuyet_nghi",
+        "Fact mới bị bỏ: ['new_2']"
+       ],
+       [
+        "ABOUT new_2→protagonist",
+        "Fact mới bị bỏ: ['new_2']"
+       ],
+       [
+        "KNOWS protagonist→new_2",
+        "Fact mới bị bỏ: ['new_2']"
+       ]
+      ]
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-013c5c993a90",
+      "kind": "action",
+      "tone": null,
+      "text": "Tiến tới bàn án, gạt tay Lục để lấy cuộn cáo trạng.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-6912c8ade90a",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Ngươi ngăn ta xem chứng cớ, rốt cuộc là sợ điều gì?",
+      "listeners": [
+       "luc_thanh_phong"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-d73e08daedea",
+      "kind": "inner",
+      "tone": null,
+      "text": "Siết chặt Tông Chủ Ấn, thầm nhủ: Lục Thanh Phong nhất định có bí mật, không thể để hắn khống chế cuộc đối chất.",
+      "listeners": [],
+      "about": [
+       "luc_thanh_phong"
+      ],
+      "lie": null,
+      "feeling": "nghi ngờ và quyết tâm"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-9bedd16b7fc8",
+    "player_action": "[Lời thoại, nói thật] Ngươi ngăn ta xem chứng cớ, rốt cuộc là sợ điều gì?",
+    "error_detail": null,
+    "summary": "Tại đại điện, Huyền Cơ yêu cầu xác minh chứng cứ trước khi kết án. Lục Thanh Phong phản đối nhưng bị Triệu Vân Sơn và Vương Tuyết Nghi chất vấn. Triệu Vân Sơn hỏi Lục ai giao bản ghi lời khai, Lục không trả lời. Vương Tuyết Nghi khẳng định chưa xác minh chứng cứ thì không thể kết án. Huyền Cơ dùng chức Chấp Pháp đình chỉ thi hành bản án, yêu cầu ba người cùng xác minh. Triệu và Vương đồng ý, Lục tuyên bố không phục mệnh lệnh. Cuối chương, Tông Chủ Ấn nằm giữa bàn, không ai đứng cùng chỗ, việc kết án bị đình chỉ trong bế tắc.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Dùng uy quyền Chấp Pháp còn lại để khiến ba trưởng lão nghi ngờ lẫn nhau và giành thế chủ động trong đại điện.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Trần Huyền Cơ nhìn thẳng Lục Thanh Phong, hỏi hắn sợ điều gì mà ngăn đối chiếu chứng cứ, rồi nhắc rằng người vội kết án nhất cũng là người có nhiều điều cần che giấu nhất.",
+       "Lục Thanh Phong lạnh lùng đáp rằng hắn chỉ muốn bảo vệ tông môn, nhưng lời phủ nhận càng khiến Triệu Vân Sơn nhìn hắn dò xét và hỏi vì sao lúc đọc lời buộc tội hắn lại ngập ngừng.",
+       "Vương Tuyết Nghi đứng về phía quyền tra xét của Chấp Pháp, yêu cầu Triệu Vân Sơn nói rõ ai đưa căn cứ buộc tội và vì sao chưa xác minh, khiến Triệu không thể tiếp tục thuận theo Lục mà không tự giải thích.",
+       "Lục Thanh Phong mỉa mai Huyền Cơ đang mượn chức quyền để thoát tội; Huyền Cơ đáp rằng nếu hắn có chứng cứ thì cứ trình ra trước mặt cả ba, còn nếu không thì không ai được lấy lời buộc tội thay cho phán quyết.",
+       "Không ai chịu nhượng bộ, nhưng Triệu Vân Sơn đã công khai chất vấn Lục Thanh Phong, còn Vương Tuyết Nghi yêu cầu tiếp tục đình việc kết án; Huyền Cơ giữ Tông Chủ Ấn trong tay và buộc cả ba phải đối diện với những nghi vấn vừa nảy sinh."
+      ],
+      "ends_at": "Cảnh kết trong Vạn Đạo Điện, khi ba trưởng lão đã bắt đầu nghi ngờ lẫn nhau nhưng chưa ai chịu nhường quyền quyết định.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Dùng uy quyền Chấp Pháp còn lại để khiến ba trưởng lão nghi kỵ lẫn nhau và buộc họ tạm thời ngừng cùng chống đối Trần Huyền Cơ.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Tôi giữ Tông Chủ Ấn trong tay, buộc Lục Thanh Phong trả lời Triệu Vân Sơn: nếu chứng cứ chưa được đối chiếu hết, căn cứ nào cho phép hắn thúc ép kết án ngay trong điện?",
+       "Lục lạnh giọng bảo Triệu đừng để tôi lợi dụng sự do dự của hắn, nhưng Triệu không rời mắt khỏi Lục mà hỏi vì sao bản ghi lời khai lại qua tay hắn trước khi được xác minh.",
+       "Tôi quay sang Vương Tuyết Nghi, yêu cầu nàng xác nhận trước mặt mọi người rằng việc kết án phải đình lại; nàng đáp rằng không ai được dùng chức quyền ép người khác nhận một chứng cứ chưa kiểm chứng.",
+       "Lục mỉa mai rằng Vương đang che chở tôi, khiến nàng đáp rằng nếu hắn tin vào chứng cứ thì cứ để Triệu và nàng cùng xem xét; vẻ sốt ruột của Lục càng khiến Triệu lùi khỏi phe hắn.",
+       "Tôi tuyên bố dùng quyền Chấp Pháp đình chỉ việc thi hành bản án cho đến khi ba người cùng xác minh căn cứ; Triệu đứng về phía việc xem xét, Vương xác nhận, còn Lục tuyên bố không phục nhưng không còn ai lập tức tiếp lời hắn."
+      ],
+      "ends_at": "Cảnh khép lại trong Vạn Đạo Điện, khi ba trưởng lão đã bắt đầu nghi ngờ và chia thành những thế đứng riêng quanh bàn án.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "RELATES_TO vuong_tuyet_nghi→protagonist",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-aa5254af451f",
+      "kind": "action",
+      "tone": null,
+      "text": "Cầm Tông Chủ Ấn lên, ra lệnh cho Lục Thanh Phong rời khỏi điện.",
+      "listeners": [],
+      "about": [
+       "tong_chu_an",
+       "luc_thanh_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-1033245306e6",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nhìn thẳng vào Lục Thanh Phong, hỏi: 'Ngươi dựa vào đâu mà không phục mệnh lệnh của Chấp Pháp trưởng lão?'",
+      "listeners": [
+       "luc_thanh_phong"
+      ],
+      "about": [
+       "fact_c1s2_2",
+       "fact_c1s2_1"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-47a6b6e4ae40",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm nghĩ: 'Hắn có gì đó không đúng. Càng chống đối, càng đáng nghi.'",
+      "listeners": [],
+      "about": [
+       "luc_thanh_phong"
+      ],
+      "lie": null,
+      "feeling": "nghi ngờ"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-6f4bc9435af9",
+    "player_action": "[Hành động] Cầm Tông Chủ Ấn lên, ra lệnh cho Lục Thanh Phong rời khỏi điện.",
+    "error_detail": null,
+    "summary": "Tại Vạn Đạo Điện, tôi siết Tông Chủ Ấn ra lệnh Lục Thanh Phong rời đi, hắn không tuân. Tôi hỏi Triệu Vân Sơn có dám xác nhận bản ghi lời khai không, Triệu nói chưa thể vì nguồn gốc chưa rõ. Vương Tuyết Nghi bảo mình chỉ đình lại để xác minh. Tôi nhấc ấn, đình chỉ kết án, cấm mang bản ghi đi. Lục bước tới, Triệu đứng chắn, hắn khựng lại và nói tôi biến xác minh thành tranh quyền. Vương đề xuất đối chất, Triệu đồng ý hỏi ai giao bản ghi. Lục không đáp. Tôi giơ ấn tuyên bố bản ghi không được dùng cho đến khi xác minh, giao Triệu và Vương giám sát. Lục nói tôi cô lập hắn. Tôi thúc hắn trả lời, hắn im lặng. Cuối chương, tất cả ở lại trong điện: Triệu và Vương hai bên bàn án, Lục đối diện tôi, bản ghi nằm giữa chờ được hỏi.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Dùng Tông Chủ Ấn và chức Chấp Pháp để buộc ba trưởng lão phải chọn phe, giành được quyền chủ động tạm thời mà chưa để lộ kẻ chủ mưu.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Trần Huyền Cơ siết Tông Chủ Ấn trong tay, ra lệnh Lục Thanh Phong rời khỏi Vạn Đạo Điện; Lục không nhúc nhích, lạnh lùng đáp rằng một chiếc ấn không thể biến lời buộc tội thành trò đùa.",
+       "Huyền Cơ gằn giọng nhắc mình vẫn giữ chức Chấp Pháp, rồi hỏi Triệu Vân Sơn liệu ông có dám xác nhận bản ghi lời khai mà Lục đem ra là căn cứ hợp lệ hay không; Triệu tránh nhìn Lục, nói ông chưa thể xác nhận khi người giao bản ghi còn chưa được làm rõ.",
+       "Lục lập tức xoáy vào sự do dự ấy, bảo Triệu đã đồng ý xét tội thì không thể quay đầu; Vương Tuyết Nghi cắt ngang, tuyên bố không ai được ép bà ký vào một bản án chưa kiểm chứng.",
+       "Huyền Cơ tận dụng khoảnh khắc ba người tranh lời, tuyên bố đình chỉ mọi việc kết án và yêu cầu Triệu cùng Vương đứng ra giữ nguyên hiện trạng trong điện; ông nói Lục có thể phản đối, nhưng nếu tiếp tục cản trở sẽ phải trả lời trước chức Chấp Pháp.",
+       "Lục bước lên một bước như định chặn đường, song Triệu dịch sang chắn giữa hắn và bàn án; Lục dừng lại, nhìn Huyền Cơ chằm chằm rồi nói rằng ông ta vừa khiến việc xác minh chứng cứ biến thành cuộc tranh quyền.",
+       "Vương Tuyết Nghi đề nghị mở đầu việc xác minh bằng cách đối chất về nguồn gốc bản ghi ngay trong điện; Triệu đồng ý, còn Lục buộc phải ở lại trước sự chứng kiến của cả ba, dù ánh mắt hắn vẫn ghim vào Tông Chủ Ấn trong tay Huyền Cơ."
+      ],
+      "ends_at": "Cảnh kết tại Vạn Đạo Điện, khi Lục Thanh Phong chưa bị trục xuất nhưng đã bị giữ lại để đối chất, còn Trần Huyền Cơ tạm nắm thế chủ động cùng sự ủng hộ có điều kiện của Triệu Vân Sơn và Vương Tuyết Nghi.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Trần Huyền Cơ dùng Tông Chủ Ấn và chức Chấp Pháp để buộc ba trưởng lão bước vào cuộc đối chất, nhưng chưa thể giành quyền kiểm soát toàn tông môn.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Tôi giữ Tông Chủ Ấn, nhắc Lục Thanh Phong rằng lệnh rời điện đã ban; hắn đáp rằng ta có thể giữ chiếc ấn, nhưng chưa có quyền biến nó thành bằng chứng kết tội hắn.",
+       "Tôi chuyển câu hỏi sang Triệu Vân Sơn: nếu ông không xác nhận nguồn gốc bản ghi, ông có dám công khai rút lời buộc tội không; Triệu thừa nhận chưa thể xác nhận, khiến Lục lạnh giọng trách ông né tránh trách nhiệm.",
+       "Vương Tuyết Nghi yêu cầu Lục trả lời thẳng ai giao bản ghi; Lục gạt đi, nói người giữ chức Chấp Pháp nên tự tìm chứng cứ thay vì dùng uy quyền ép cung.",
+       "Tôi tuyên bố bản ghi không được dùng làm căn cứ kết án cho đến khi xác minh, đồng thời giao Triệu và Vương cùng giám sát việc đối chất; Lục phản đối rằng ta đang dùng chức vụ để cô lập hắn, nhưng không đưa ra được lời xác nhận nào về bản ghi.",
+       "Triệu bước khỏi vị trí chắn trước tôi, song không đứng về phía Lục; Vương giữ nguyên yêu cầu xác minh, còn Lục nhìn chiếc ấn rồi nói cuộc đối chất chưa thể chứng minh ai đứng sau vụ án. Tôi hiểu mình đã nắm được thế chủ động trong điện, nhưng chưa thể buộc họ phục tùng ngoài điện."
+      ],
+      "ends_at": "Cảnh kết tại Vạn Đạo Điện, khi cuộc kết án vẫn bị đình chỉ và ba trưởng lão bị đặt vào thế phải tiếp tục đối chất dưới sự giám sát của Triệu Vân Sơn và Vương Tuyết Nghi.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"nguồn gốc bản ghi\" xuất hiện 3 lần (tối đa 2); đoạn: «Nguồn gốc bản ghi»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"ai giao bản ghi\" xuất hiện 3 lần (tối đa 2); đoạn: «ai giao bản ghi»"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-72b7e67b322a",
+      "kind": "action",
+      "tone": null,
+      "text": "Cầm bản ghi lên, đọc to trước mặt mọi người.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-19241d02773b",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Lục Thanh Phong: 'Ai giao bản ghi cho ngươi? Nếu không trả lời, hôm nay ngươi đừng hòng bước khỏi Vạn Đạo Điện.'",
+      "listeners": [
+       "luc_thanh_phong"
+      ],
+      "about": [
+       "luc_thanh_phong",
+       "fact_c2s1_2"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0f11b6ea8215",
+      "kind": "inner",
+      "tone": null,
+      "text": "Nghi ngờ Triệu Vân Sơn biết nhiều hơn những gì ông ta thể hiện.",
+      "listeners": [],
+      "about": [
+       "trieu_van_son"
+      ],
+      "lie": null,
+      "feeling": "nghi ngờ"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-fdd2adc5d898",
+    "player_action": "[Hành động] Cầm bản ghi lên, đọc to trước mặt mọi người.",
+    "error_detail": null,
+    "summary": "Huyền Cơ đọc bản ghi lời buộc tội trước Lục Thanh Phong, Triệu Vân Sơn và Vương Tuyết Nghi. Đến giữa trang, nét mực đổi, lộ ra đoạn ghi Lục Thanh Phong hứa cắt linh mạch Vạn Đạo Tông cho Ma Môn. Huyền Cơ dừng lại và hỏi Lục về đoạn đó. Lục buộc tội Huyền Cơ bẻ cong chứng cứ. Triệu Vân Sơn và Vương Tuyết Nghi yêu cầu Lục trả lời. Lục không đáp, bước tới định lấy Tông Chủ Ấn. Triệu chắn lại. Huyền Cơ tuyên bố tạm giữ Lục để điều tra mưu thông đồng với Ma Môn. Vương đứng về phía Huyền Cơ, cùng Triệu thi hành lệnh bắt. Lục giằng co nhưng bị Triệu khóa tay. Cuối chương, Huyền Cơ tạm nắm quyền điều hành tông cho đến khi xét xử công khai. Triệu áp giải Lục ra Hậu Điện. Vương ở lại. Tông Chủ Ấn vẫn trong tay Huyền Cơ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Dùng bản ghi để phá thế giằng co, phơi bày mưu đồ của Lục Thanh Phong và buộc các trưởng lão phải chọn phe.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Ta cầm bản ghi lên đọc trước mặt mọi người, nhấn mạnh từng lời buộc tội; giữa những dòng ấy, ta bắt gặp một đoạn chép rằng Lục Thanh Phong hứa cắt linh mạch của Vạn Đạo Tông cho Ma Môn để đổi lấy sự ủng hộ nhằm chiếm Tông Chủ Ấn.",
+       "Ta đọc thẳng đoạn đó thành tiếng rồi hỏi Lục ai đã ghi lời này và vì sao hắn luôn né câu hỏi về người giao bản ghi; Lục lạnh lùng đáp rằng ta đang bẻ cong chứng cứ để thoát tội.",
+       "Triệu Vân Sơn không xác nhận đoạn ghi là thật, nhưng chất vấn Lục vì sao lời khai lại chứa một lời hứa có lợi cho Ma Môn; Lục quay sang Triệu, bảo hắn đừng để ta mượn vài chữ để chia rẽ họ.",
+       "Vương Tuyết Nghi nói đoạn ghi không đủ để kết tội nếu chưa xác minh, nhưng nội dung đã khiến lời buộc tội nhắm vào ta không còn đứng vững; nàng yêu cầu Lục trả lời về lời hứa cắt linh mạch.",
+       "Lục bất ngờ bước về phía Tông Chủ Ấn; Triệu chắn ngang, còn ta siết ấn trong tay và tuyên bố dùng quyền Chấp Pháp tạm giữ Lục để điều tra mưu thông đồng với Ma Môn, khiến cuộc đối chất lập tức biến thành cuộc tranh chấp quyền lực công khai."
+      ],
+      "ends_at": "Cảnh khép lại trong Vạn Đạo Điện, khi Triệu đứng chắn giữa Lục và ta, Vương buộc phải chọn giữa ngăn việc bắt giữ trái thủ tục và để Lục tiếp tục tiến về phía Tông Chủ Ấn.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Biến lời buộc tội vừa lộ thành quyết định bắt giữ dứt khoát, xác định Lục Thanh Phong là kẻ đứng sau vụ án và phá vỡ thế giằng co trong đại điện.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Vương Tuyết Nghi bước chắn trước lối tới bàn án, nói nàng sẽ không để Lục Thanh Phong chạm vào Tông Chủ Ấn; nàng yêu cầu Triệu Vân Sơn cùng thi hành lệnh bắt giữ.",
+       "Lục Thanh Phong lập tức quay sang Triệu, mắng ông ta phản bội đồng minh; Triệu đáp rằng chính việc Lục né tránh nguồn gốc bản ghi, cộng với lời hứa cắt linh mạch, đã khiến ông không thể tiếp tục đứng về phía hắn.",
+       "Tôi giữ Tông Chủ Ấn trong tay, tuyên bố Lục Thanh Phong là kẻ chủ mưu dựng vụ án phản bội để đoạt ấn và đổi linh mạch lấy sự hậu thuẫn của Ma Môn; tôi ra lệnh bắt hắn để thẩm tra, không phải kết án ngay.",
+       "Lục định vượt qua Triệu để lao tới tôi, nhưng Vương chặn đường, còn Triệu khóa tay hắn; tôi yêu cầu Triệu áp giải Lục tới Hậu Điện, Vương ở lại chứng kiến, rồi tuyên bố từ giờ việc điều hành tông môn do tôi tạm nắm cho đến khi vụ án được xét xử công khai."
+      ],
+      "ends_at": "Cảnh kết tại Vạn Đạo Điện, khi Lục Thanh Phong bị khống chế và chuẩn bị áp giải tới Hậu Điện, còn tôi vẫn giữ Tông Chủ Ấn.",
+      "resolves": [
+       "thread_phu"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới new_2",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "Fact mới fact_c4s1_1",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c4s1_2",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "sudden_relationship",
+        "block": false,
+        "feedback": "quan hệ luc_thanh_phong→trieu_van_son đổi từ 60 sang -80 (quá 40) mà chương không có sự kiện nào liên quan"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c4s2_1",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c4s2_2",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c4s2_3",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới fact_c4s2_1",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c4s2_2",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c4s2_3",
+        "thiếu ABOUT và KNOWS hợp lệ: bỏ Fact"
+       ]
+      ]
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-595277562628",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo: Lục đã cấu kết Ma Môn, cần nhanh chóng tìm ra kẻ giao bản ghi lời khai",
+      "listeners": [],
+      "about": [
+       "luc_thanh_phong",
+       "fact3",
+       "fact_c2s1_2"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     },
+     {
+      "id": "choice-2dc42fc6979b",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Bảo Vương Tuyết Nghi giữ bản ghi, ta sẽ ra Hậu Điện thẩm vấn Lục cùng Triệu",
+      "listeners": [
+       "vuong_tuyet_nghi"
+      ],
+      "about": [
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "hau_dien",
+       "fact_c3s1_3"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-2489fc8a8b1a",
+      "kind": "action",
+      "tone": null,
+      "text": "Ra lệnh cho Triệu dừng lại, giữ Lục tại chỗ để hỏi hắn về nguồn gốc bản ghi ngay tại đây",
+      "listeners": [],
+      "about": [
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "fact_c2s1_2"
+      ],
+      "lie": null,
+      "feeling": null
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-9f3c77f6e289",
+    "player_action": "[Nội tâm] Thầm lo: Lục đã cấu kết Ma Môn, cần nhanh chóng tìm ra kẻ giao bản ghi lời khai",
+    "error_detail": "chương 5: kiểm duyệt over_darkness [violence]",
+    "summary": "Trần Huyền Cơ siết Tông Chủ Ấn trong tay. Lục Thanh Phong bị tố thông đồng Ma Môn nhờ bản ghi lời khai có đoạn mực đổi màu. Trần hỏi ai có quyền ra lệnh, Triệu Vân Sơn im lặng, Vương Tuyết Nghi đứng bên án không động. Lục mỉa Trần mượn chức Chấp Pháp đoạt quyền, bị hỏi lại ai giao bản ghi. Lục vùng khỏi khống chế, phất tay ra ngoài điện – trận pháp sát phạt chuyển động. Trần giơ ấn bảo dừng tay, Lục nói hắn nắm trận pháp, có thể kích hoạt bất cứ lúc nào. Trần tuyên bố tự phá trận trước khi kịp giết người. Lục lại phất tay, nền đá rung mạnh, Trần quát Triệu và Vương bắt hắn. Triệu lao lên, đỡ cú đánh, ngã vào cột. Trần chụp cổ tay Lục, đỡ đòn, xoắn xuống, bị hất lùi, vai đập án. Vương rút kiếm chặn lối, Triệu áp tới ghì chặt Lục. Trần buộc Lục thú nhận điều khiển trận pháp.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Trần Huyền Cơ dùng uy quyền Chấp Pháp ép Lục Thanh Phong lộ quyền khống chế trận pháp, biến thế giằng co trong Vạn Đạo Điện thành cuộc đối đầu trực diện.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Ta siết Tông Chủ Ấn, nhắc Triệu Vân Sơn và Vương Tuyết Nghi rằng bản ghi đã chỉ ra Lục Thanh Phong thông đồng với Ma Môn, rồi yêu cầu họ xác nhận ai có quyền ra lệnh trong điện lúc này.",
+       "Lục Thanh Phong cười nhạt, bảo ta chỉ đang mượn chức Chấp Pháp để đoạt quyền; ta đáp rằng hắn vẫn chưa trả lời ai giao bản ghi, khiến Triệu quay sang chất vấn hắn lần nữa.",
+       "Lục bất ngờ giật khỏi thế bị khống chế và hướng tay về phía ngoài điện; mặt đất rung lên, ánh đèn dầu chao đảo, còn Vương Tuyết Nghi nhận ra trận pháp sát phạt đã chuyển động.",
+       "Ta bước chắn trước Lục, giơ Tông Chủ Ấn buộc hắn dừng tay; hắn nói thẳng trận pháp bên ngoài do hắn khống chế và hắn có thể kích hoạt bất cứ lúc nào.",
+       "Triệu Vân Sơn cùng Vương Tuyết Nghi lùi khỏi đường tiến của Lục, còn ta tuyên bố sẽ tự phá trận pháp trước khi hắn kịp giết người, rồi áp sát hắn khi hắn lại đưa tay về phía lối ra."
+      ],
+      "ends_at": "Cảnh kết tại Vạn Đạo Điện, khi Trần Huyền Cơ và Lục Thanh Phong đã đối mặt trực diện, còn trận pháp ngoài điện đang chờ bị kích hoạt.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Trần Huyền Cơ phải khuất phục Lục Thanh Phong, chặn trận pháp sát phạt và giành quyền điều hành Vạn Đạo Tông trước khi có người bị hại.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Lục Thanh Phong vung tay định thúc trận pháp, còn Trần Huyền Cơ siết Tông Chủ Ấn và quát Triệu Vân Sơn, Vương Tuyết Nghi bắt hắn lại thay vì tiếp tục tranh luận.",
+       "Lục gạt Triệu khỏi đường, đánh thẳng vào Huyền Cơ; Huyền Cơ đỡ đòn, áp sát rồi khóa cánh tay đang điều khiển trận pháp, dù bị hắn đánh bật lùi và đau nhói ở vai.",
+       "Vương Tuyết Nghi chặn lối thoát, Triệu Vân Sơn ghìm chặt Lục; Huyền Cơ ép hắn phải nói rõ trước mặt mọi người rằng chính hắn ra lệnh vận chuyển trận pháp và phải lập tức dừng nó.",
+       "Lục nghiến răng thừa nhận đã điều khiển trận pháp sát phạt, rồi buộc phải thu hồi mệnh lệnh; tiếng ngân bên ngoài tắt dần, nền điện ngừng rung, không ai trong điện bị trận pháp làm hại.",
+       "Huyền Cơ dùng uy quyền Chấp Pháp cùng Tông Chủ Ấn tuyên bố Lục bị tước quyền điều hành và sẽ bị áp giải để xét xử; Triệu giữ Lục, còn Vương xác nhận trận pháp đã ngừng, khiến Huyền Cơ dứt khoát nắm quyền chỉ huy tông môn trong lúc nguy cấp."
+      ],
+      "ends_at": "Cảnh kết tại Vạn Đạo Điện, khi Lục Thanh Phong đã bị khống chế, trận pháp sát phạt đã dừng và Trần Huyền Cơ nắm quyền chỉ huy.",
+      "resolves": [
+       "thread_chinh"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới new_1",
+        "trùng Fact fact4, dùng lại id đó"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d2b9bb435362",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi thẳng Lục Thanh Phong: 'Ma Môn đã hứa gì với ngươi? Đã có kẻ trong tông tiếp tay?'",
+      "listeners": [
+       "luc_thanh_phong"
+      ],
+      "about": [
+       "luc_thanh_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-c6b2a12f1101",
+      "kind": "action",
+      "tone": null,
+      "text": "Ra lệnh cho Triệu Vân Sơn áp giải Lục vào Hậu Điện, canh gác nghiêm ngặt, rồi triệu tập các trưởng lão còn lại đến họp khẩn",
+      "listeners": [],
+      "about": [
+       "trieu_van_son"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-6bc202516792",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm nghĩ: Ma Môn sẽ không để mất quân cờ dễ dàng – phải điều tra xem ai trong tông còn dính líu",
+      "listeners": [],
+      "about": [
+       "van_dao_tong",
+       "fact3"
+      ],
+      "lie": null,
+      "feeling": "nghi ngờ Ma Môn đã thâm nhập sâu, cần xác minh nội bộ trước khi Ma Môn hành động"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-588d3c7fab6a",
+    "player_action": "[Lời thoại, nói thật] Hỏi thẳng Lục Thanh Phong: 'Ma Môn đã hứa gì với ngươi? Đã có kẻ trong tông tiếp tay?'",
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Buộc Lục Thanh Phong và hai trưởng lão còn lại đối diện với hậu quả của âm mưu, đồng thời giành cho Trần Huyền Cơ thế chủ động trong Vạn Đạo Điện.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Giữa lúc Triệu Vân Sơn còn ghì chặt Lục Thanh Phong, ta hỏi thẳng hắn Ma Môn đã hứa gì và trong tông còn ai tiếp tay; Lục chỉ cười lạnh, bảo ta đã biết cái giá của lời hứa, còn kẻ tiếp tay thì không phải cứ hỏi là sẽ có câu trả lời.",
+       "Ta siết Tông Chủ Ấn, đáp rằng lời hứa cắt linh mạch đã đủ để kết tội, rồi quay sang Triệu: nếu hắn còn muốn đứng cùng Lục, hãy nói rõ trước mặt mọi người vì sao từng che chắn cho hắn.",
+       "Triệu thoáng khựng lại, thừa nhận từng tin Lục nhưng nói sự im lặng của hắn trước chứng cứ đã khiến niềm tin ấy lung lay; Lục lập tức mắng Triệu phản chủ, còn Vương Tuyết Nghi nhắc rằng hắn đang tự buộc thêm tội bằng cách đe dọa người trong điện.",
+       "Khi Lục bất ngờ giật mạnh khỏi tay Triệu, ta ra lệnh giữ hắn tại chỗ và tuyên bố bằng uy quyền Chấp Pháp rằng không ai được rời điện hay chạm vào Tông Chủ Ấn trước khi vụ án được phân xử; Vương đứng về phía ta, còn Triệu siết lại thế khóa.",
+       "Lục lạnh giọng cảnh cáo rằng trận pháp bên ngoài vẫn có thể đoạt mạng bất cứ ai, nhưng ta không lùi bước, buộc hắn phải chọn: dừng tay và chịu xét xử, hoặc để chính lời đe dọa ấy thành chứng cứ chống lại hắn."
+      ],
+      "ends_at": "Cảnh khép lại trong Vạn Đạo Điện, khi Lục Thanh Phong vẫn bị khống chế, Tông Chủ Ấn còn trong tay ta và ba trưởng lão buộc phải đối diện với quyết định kế tiếp.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Trần Huyền Cơ buộc Lục Thanh Phong chấm dứt hiểm họa, kết luận vụ phản bội và giữ vững Tông Chủ Ấn cùng quyền điều hành Vạn Đạo Tông.",
+      "present": [
+       "protagonist",
+       "luc_thanh_phong",
+       "trieu_van_son",
+       "vuong_tuyet_nghi"
+      ],
+      "beats": [
+       "Tôi không để Lục đánh lạc hướng thêm, chỉ vào hắn và nói: “Ngươi đã bị khống chế; ra lệnh dừng trận pháp, ngay bây giờ.”",
+       "Lục lạnh lùng đáp rằng ta không có quyền ra lệnh cho hắn, nhưng Triệu siết chặt cánh tay hắn còn Vương chắn lối; tôi tuyên bố nếu trận pháp tiếp tục, lời đe dọa ấy sẽ là bằng chứng cuối cùng chống lại hắn.",
+       "Sau một hồi im lặng, Lục nghiến răng ra lệnh thu trận; tiếng ù trầm bên ngoài dần lắng xuống, và Vương xác nhận từ trong điện không còn cảm nhận được sát ý của trận pháp.",
+       "Tôi đặt Tông Chủ Ấn trước mặt cả ba, kết luận lời hứa dâng linh mạch cho Ma Môn cùng việc dùng trận pháp sát phạt để ép buộc tông môn đã đủ chứng cứ kết tội Lục; Triệu không bênh vực hắn nữa, còn Vương xác nhận sẽ làm chứng trong cuộc xét xử công khai.",
+       "Tôi giữ Tông Chủ Ấn trong tay, dùng quyền Chấp Pháp tuyên bố Lục bị giam chờ xét xử và quyền điều hành tông môn tạm thời thuộc về tôi; Triệu cùng Vương chấp nhận mệnh lệnh, còn Lục bị giữ tại chỗ."
+      ],
+      "ends_at": "Cảnh khép lại trong Vạn Đạo Điện, khi trận pháp đã dừng, Lục bị khống chế và Tông Chủ Ấn vẫn nằm trong tay tôi.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới fact6",
+        "ref phải dạng new_<số>, không trùng id có sẵn hay ref khác"
+       ],
+       [
+        "KNOWS protagonist→fact6",
+        "Fact mới bị bỏ: ['fact6']"
+       ],
+       [
+        "ABOUT fact6→protagonist",
+        "Fact mới bị bỏ: ['fact6']"
+       ],
+       [
+        "ABOUT fact6→van_dao_dien",
+        "Fact mới bị bỏ: ['fact6']"
+       ],
+       [
+        "ABOUT fact6→tong_chu_an",
+        "Fact mới bị bỏ: ['fact6']"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được vuong_tuyet_nghi kể về fact_c6s2_2, nhưng vuong_tuyet_nghi không biết điều đó ở chương 6"
+       },
+       {
+        "source": "guard",
+        "kind": "sudden_relationship",
+        "block": false,
+        "feedback": "quan hệ luc_thanh_phong→trieu_van_son đổi từ 60 sang -50 (quá 40) mà chương không có sự kiện nào liên quan"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới new_3",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "KNOWS chứng kiến→new_1",
+        "id không có trong danh mục: ['chứng kiến']"
+       ],
+       [
+        "KNOWS protagonist→new_3",
+        "Fact mới bị bỏ: ['new_3']"
+       ],
+       [
+        "RELATES_TO trieu_van_son→luc_thanh_phong",
+        "trùng cạnh trong cùng gói"
+       ],
+       [
+        "ABOUT new_3→protagonist",
+        "Fact mới bị bỏ: ['new_3']"
+       ],
+       [
+        "ABOUT new_3→van_dao_tong",
+        "Fact mới bị bỏ: ['new_3']"
+       ],
+       [
+        "Fact mới fact_c6s2_1",
+        "thiếu KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c6s2_2",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới new_3",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "KNOWS protagonist→new_3",
+        "Fact mới bị bỏ: ['new_3']"
+       ],
+       [
+        "ABOUT new_3→protagonist",
+        "Fact mới bị bỏ: ['new_3']"
+       ],
+       [
+        "ABOUT new_3→van_dao_tong",
+        "Fact mới bị bỏ: ['new_3']"
+       ]
+      ]
+     }
+    ],
+    "choices": []
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "chapter 5: choices",
+   "attempt": 1,
+   "code": "CHOICES_LEAK_BLOCKED",
+   "detail": "chương 5: kiểm duyệt over_darkness [violence]"
+  }
+ ],
+ "setup_repairs": [],
+ "quotes": []
+}
