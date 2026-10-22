@@ -730,3 +730,31 @@ async def test_new_facts_are_counted_and_their_rejections_are_grouped(tmp_path):
     report = json.loads((out / "report.json").read_text(encoding="utf-8"))
     assert report["new_facts"] == 1
     assert report["rejected_edges"]["by_reason"].get("chữ Fact không bám trang") == 1
+
+
+def test_long_story_scenario_is_a_valid_long_level_scenario():
+    """Đề đo mức Truyện dài (22/10/2026): đọc được, đúng mức, giá đủ cho mọi model config dùng."""
+    path = SCENARIO_PATH.with_name("long-tu-tien.yaml")
+    scenario, _ = load_scenario(path)
+    assert scenario.length_level == "long" and scenario.version == 1
+    assert scenario.scene_count >= 2 and scenario.seed != load_scenario(SCENARIO_PATH)[0].seed
+    config = load_config()
+    assert config.story_lengths.levels["long"].player_selectable is False  # D-88: vẫn chạy được
+    priced = set(scenario.prices)
+    used = {m["model"] for m in bench_run.models_in_use(config, scenario).values() if m["model"]}
+    assert used <= priced
+
+
+@pytest.mark.parametrize("level_id", ["short", "medium", "long", "novel"])
+def test_dry_run_world_is_a_valid_plan_at_every_level(level_id):
+    """Hồi quy (đề long-tu-tien): model giả chỉ dựng 4 mốc nên `--dry-run` ở mức Dài (cần 6–12 mốc)
+    báo STORY_SETUP_INVALID. Thế giới giả phải qua `initial_problems` ở mọi mức."""
+    from writory.pipeline.setup import BuildOutput, CharacterOption, to_story_setup
+
+    level = load_config().story_lengths.levels[level_id]
+    llm = DryRunLLM(level.chapters.min, milestones=level.milestones.min)
+    world = BuildOutput.model_validate(json.loads(llm.reply("BuildOutput", "")))
+    pc = CharacterOption(name="Lục Trầm", personality="Ít nói.", backstory="Mồ côi.")
+    setup = to_story_setup(world, protagonist=pc, commit_id="c0", level=level)
+    assert level.milestones.min <= len(setup.plan.milestones) <= level.milestones.max
+    assert setup.plan.total_chapters == level.chapters.min
