@@ -277,6 +277,19 @@ def _overlap(a: set[str], b: set[str]) -> float:
     return len(a & b) / len(a | b) if a | b else 0.0
 
 
+def _human_protagonist(text: str, protagonist: Entity | None) -> str:
+    """Model hay chép id nội bộ ("protagonist") vào chữ Fact; sổ tay sẽ hiện chữ tiếng Anh. Đổi thành
+    "nhân vật chính", trừ khi id là một phần tên thật (truyện mẫu: id `minh`, tên Trần Minh)."""
+    if protagonist is None:
+        return text
+    pid = protagonist.id
+    names = flat(" ".join((protagonist.text, *protagonist.aliases)))
+    if pid.casefold() in names.split():
+        return text
+    out = re.sub(rf"\b{re.escape(pid)}\b", "nhân vật chính", text, flags=re.IGNORECASE)
+    return out[:1].upper() + out[1:] if out != text and text[:1].isupper() else out
+
+
 def _covered(new: set[str], old: set[str]) -> float:
     """Phần âm tiết của Fact MỚI đã nằm trong Fact cũ. Một chiều có chủ đích: Fact cụ thể hơn, chứa trọn
     Fact cũ cộng thêm chi tiết (điều khoản, nơi chốn), có độ phủ thấp nên được giữ."""
@@ -296,6 +309,7 @@ class _FactPlan:
 def _plan_new_facts(
     facts: Sequence[NewFact], rules: FactRules | None, *, chapter: int,
     known: Mapping[str, Entity], chapter_text: str, about_of: Mapping[str, set[str]],
+    protagonist_id: str = "",
 ) -> _FactPlan:
     """Kiểm từng Fact mới bằng code (D-93): câu trích nguyên văn (G3), một câu ngắn bám trang, không
     trùng Fact đã có, kể cả bí mật đã lộ, hay trùng Fact mới khác trong chương (trùng thì dùng lại id
@@ -346,7 +360,8 @@ def _plan_new_facts(
                     n = 1
                     while (fid := f"fact_c{chapter}s{rules.scene}_{n}") in known or fid in plan.nodes:
                         n += 1
-                    props: dict[str, Any] = {"text": text}
+                    props: dict[str, Any] = {
+                        "text": _human_protagonist(text, known.get(protagonist_id))}
                     if any(name and name in flat(text) for name in player_names):
                         props["user_authored"] = True
                     plan.nodes[fid] = NodeSpec(id=fid, label="Fact", props=props)
@@ -375,7 +390,7 @@ def to_package(
         if x.type == "ABOUT":
             about_of.setdefault(x.source, set()).add(x.target)
     plan = _plan_new_facts(output.new_facts, fact_rules, chapter=chapter, known=known,
-                           chapter_text=chapter_text, about_of=about_of)
+                           chapter_text=chapter_text, about_of=about_of, protagonist_id=protagonist_id)
     for fid, node in plan.nodes.items():
         known[fid] = Entity(fid, "Fact", node.props["text"],
                             user_authored=bool(node.props.get("user_authored")))

@@ -30,5 +30,5 @@ Có đáp án: alive-01 (`c1s1_1`), alive-02 (`c1s1_2`), knows-13 (`c2s1_1`) = *
 - Hai nguyên nhân: biến thiên giữa các lần chạy của model (câu trích, Fact nào được chọn) và ngưỡng trùng cũ; chỉ nguyên nhân thứ hai đã sửa trong mã. Một lần chạy mỗi bên không tách được hai thứ.
 
 ## Chưa kiểm
-- Mã cuối (ngưỡng 0,65 một chiều, `KNOWS` đã mở) chưa phát lại; bài A chưa chạy lại (hết trần).
+- Mã cuối (ngưỡng 0,65 một chiều, `KNOWS` đã mở) đã phát lại hai lần: `../2026-10-22-new-facts-replay-4/notes.md`. Bài A chưa chạy lại.
 - Độ phủ nhóm 13 câu có thể giữ nguyên hay tụt thật vì đề hạn chế hơn: cần một lần phát lại nữa (~0,03 USD), tốt nhất hai lần để thấy biến thiên.

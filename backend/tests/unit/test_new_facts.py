@@ -337,3 +337,26 @@ def test_knows_already_open_is_not_written_again_when_a_duplicate_is_remapped():
     pkg, rejected = run95(facts, edges, open_edges=(ABOUT_OLD, open_knows))
     assert pkg.nodes == [] and pkg.edges == []
     assert "đã có KNOWS" in reasons(rejected)
+
+
+def test_the_internal_protagonist_id_never_reaches_the_fact_text():
+    """Replay D-95 bản cuối: model chép id nội bộ vào chữ Fact ("Protagonist kéo một đứa trẻ…"), sổ tay
+    sẽ hiện chữ tiếng Anh. Code đổi id đó thành "nhân vật chính" (chỉ khi id không phải một phần tên)."""
+    text = "Protagonist mượn Thẻ Định Phong đến hết chuyến qua đá trôi, theo lời Trần Mặc"
+    page = TEXT + " Tôi mượn Thẻ Định Phong đến hết chuyến qua đá trôi, theo lời Trần Mặc."
+    pkg, _ = run([loan(text=text, quote=Q_LOAN)], good_edges(), text=page)
+    assert pkg.nodes[0].props["text"].startswith("Nhân vật chính mượn Thẻ Định Phong")
+    assert "rotagonist" not in pkg.nodes[0].props["text"]
+
+
+def test_an_id_that_is_part_of_the_protagonists_name_is_left_alone():
+    """Truyện mẫu dùng id `minh` cho nhân vật tên Minh: đó là tên thật, không đổi."""
+    ents = [Entity("minh", "Character", "Trần Minh", user_authored=True),
+            Entity("tran_mac", "Character", "Trần Mặc"),
+            Entity("thep_dinh_phong", "Item", "Thẻ Định Phong"), Entity("ch4", "Chapter", "Chương 4")]
+    text = "Minh mượn Thẻ Định Phong đến hết chuyến qua đá trôi cho Trần Mặc"
+    edges = [about("new_1", "tran_mac"), knows("minh", "new_1", Q_LOAN)]
+    out = ExtractOutput(edges=edges, close=[], new_facts=[loan(text=text, quote=Q_LOAN)])
+    pkg, _ = to_package(out, chapter=4, commit_id="c", protagonist_id="minh", chapter_text=TEXT,
+                        entities=ents, open_edges=[], fact_rules=RULES)
+    assert pkg.nodes[0].props["text"].startswith("Minh mượn")

@@ -1,0 +1,112 @@
+{
+  "bench": "run",
+  "label": "2026-10-22-new-facts-replay-3",
+  "started": "2026-10-22T16:21:32+07:00",
+  "finished": "2026-10-22T16:25:19+07:00",
+  "status": "budget",
+  "exit_code": 2,
+  "stop": {
+    "kind": "budget",
+    "where": "chapter 10",
+    "code": "COST_LIMIT_STORY"
+  },
+  "dry_run": false,
+  "git": {
+    "commit": "2c1310ad5ce5a1e0ec7d13a277ff64f857b443a5",
+    "dirty": false
+  },
+  "story_id": "replay-2026-10-22-new-facts-replay-3",
+  "seed": 20261021,
+  "budget_usd": 0.038,
+  "chapters_arg": 10,
+  "scenario": {
+    "path": "evals/scenarios/story_run/ky-ao-vua.yaml",
+    "sha256": "6aeab8e2624b443e200f15d3deba8a45bb9e8a0e3c16163e03846c6773bdfb3d",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "kỳ ảo phương Đông, tu tiên",
+        "era": "hậu đại chiến, các tiên môn dựng thành trên những hòn đảo bay, tranh nhau mảnh vỡ của một thần khí cổ",
+        "voice": "hùng tráng mà lạnh, nhiều mưu kế, đối đáp sắc",
+        "darkness": "vừa phải, có phản bội, hy sinh và chết chóc, không tả máu me"
+      },
+      "length_level": "medium",
+      "naming": {
+        "names": "han_viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261021,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "3852aa7fdd9d7a96ba7b18dfc5cc221141d020ff54c62d04b35239f5da66cd3b",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "d183eb33b5b1feeeb8faadad6134ea27c9d70f9c34d19efddd949be6af55eb39",
+      "models.yaml": "1b56e7acaaf68f287b93a7cc5c21e37f35b6c784ad626f17bc4796d588600f54",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "setup_from": "evals/results/2026-10-21-run-ky-ao-vua-1",
+  "prompt_versions": {
+    "setup": "setup-8",
+    "outline": "outline-8",
+    "writer": "writer-8",
+    "extract": "extract-7",
+    "choices": "choices-2"
+  },
+  "style_guide_sha256": "58292c7ff5fc0db6aa95fa1a31bba158f0838ac7dc7bb9d04d32f3312a7ffffa",
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}
