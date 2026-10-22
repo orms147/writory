@@ -154,9 +154,19 @@ def test_role_extra_carries_the_provider_blacklist_from_config():
     `require_parameters`, kể cả khi vai không đặt mức suy luận."""
     from writory.llm.base import role_extra
 
-    models = load_config().models
-    assert models.provider_ignore  # config thật đang loại ít nhất một nhà cung cấp
+    # Config thật (Luna, D-102) không loại nhà cung cấp nào: đặt một tên để thử cơ chế.
+    models = load_config().models.model_copy(update={"provider_ignore": ["NhaCungCapHong"]})
     got = role_extra(models, "setup")
-    assert got["provider"] == {"require_parameters": True, "ignore": list(models.provider_ignore)}
+    assert got["provider"] == {"require_parameters": True, "ignore": ["NhaCungCapHong"]}
     assert role_extra(models, "extract")["reasoning"] == {"effort": "low"}
     assert role_extra(models, "extract")["provider"] == got["provider"]
+
+
+def test_role_extra_has_no_provider_part_when_nothing_is_ignored():
+    """D-102: Luna không cần loại nhà cung cấp nào; danh sách rỗng thì không gửi `provider`."""
+    from writory.llm.base import provider_extra, role_extra
+
+    models = load_config().models
+    assert models.provider_ignore == []
+    assert provider_extra(models) is None
+    assert "provider" not in role_extra(models, "extract")

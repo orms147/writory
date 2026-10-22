@@ -508,7 +508,7 @@ def test_cli_reports_unset_config_without_touching_services(tmp_path, capsys, mo
     make_config(tmp_path)  # dựng tmp_path/config
     models = config_dir / "models.yaml"
     models.write_text(models.read_text(encoding="utf-8").replace(
-        "setup: deepseek/deepseek-v4-flash", "setup: null"), encoding="utf-8")
+        "setup: openai/gpt-6-luna", "setup: null"), encoding="utf-8")
     for name in ("NEO4J_URI", "POSTGRES_DSN", "OPENROUTER_API_KEY"):
         monkeypatch.delenv(name, raising=False)
     code = bench_run.main(["--dry-run", "--config-dir", str(config_dir), "--out",

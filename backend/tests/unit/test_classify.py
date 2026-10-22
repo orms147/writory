@@ -222,8 +222,11 @@ async def test_classify_call_carries_the_provider_blacklist_but_no_reasoning():
     chưa dùng `role_reasoning.classify` (hành vi đã đo ở bài G5), nên không thêm suy luận."""
     from writory.llm.base import provider_extra
 
+    # Config thật (Luna, D-102) không loại nhà cung cấp nào: đặt một tên để thử cơ chế.
+    config = CFG.model_copy(update={"models": CFG.models.model_copy(
+        update={"provider_ignore": ["NhaCungCapHong"]})})
     llm = FakeLLM.scripted([answer("in_story_action")])
-    await classify_action("Tôi mở cửa.", llm=llm, config=CFG)
-    assert llm.extras == [provider_extra(CFG.models)]
-    assert llm.extras[0]["provider"]["ignore"] == list(CFG.models.provider_ignore)
+    await classify_action("Tôi mở cửa.", llm=llm, config=config)
+    assert llm.extras == [provider_extra(config.models)]
+    assert llm.extras[0]["provider"]["ignore"] == ["NhaCungCapHong"]
     assert "reasoning" not in llm.extras[0]
