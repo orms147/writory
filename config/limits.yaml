@@ -32,6 +32,9 @@ context:
   page_quotes_top_k: 0
   page_quotes_chunk_chars: 500
   page_quotes_max_chars: 2400
+  # Mỗi đoạn trúng kéo theo bấy nhiêu đoạn liền sau nó cùng chương (D-96; tạm, D-47). Bài đo A đọc
+  # cùng số này cho hệ `graph_quotes`. 0 = như cũ. Chọn bằng `bench_a retrieval`.
+  page_quotes_neighbors: 1
   # Số nút tối đa trong mục "Tên người đọc chưa được biết" của đề (D-94; tạm, D-47). Quá trần thì
   # giữ nút có mặt, rồi nút liên quan tới cảnh; còn lại gộp thành "Và N tên khác". Chỉ cắt đề: bộ dò
   # lộ vẫn kiểm đủ mọi tên.

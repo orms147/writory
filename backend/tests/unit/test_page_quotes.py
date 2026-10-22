@@ -64,7 +64,8 @@ TOP_K = 3  # mặc định của config là 0 (tắt, D-85): các test bật ph�
 
 async def run(script, tmp_path, **kw):
     """`run` của test chương, với đoạn trên trang BẬT (top_k = 3) trừ khi test tự đặt."""
-    context = {"page_quotes_top_k": TOP_K, **kw.pop("limits", {}).get("context", {})}
+    context = {"page_quotes_top_k": TOP_K, "page_quotes_neighbors": 0,
+               **kw.pop("limits", {}).get("context", {})}
     return await run_chapter(script, tmp_path, limits={"context": context}, **kw)
 
 
@@ -162,8 +163,9 @@ def test_only_the_chapter_pipeline_uses_the_passage_store():
              if "pipeline.passages" in p.read_text(encoding="utf-8")}
     # extract.py chỉ dùng `flat` và `STOPWORDS` để so chữ Fact mới với trang (D-93): không đưa đoạn
     # nào vào đề của vai nào.
-    assert users == {"pipeline/bench_a_systems.py", "pipeline/chapter.py", "pipeline/extract.py",
-                     "pipeline/scene.py"}
+    # bench_a_retrieval.py là phép kiểm truy hồi không gọi model (D-96).
+    assert users == {"pipeline/bench_a_retrieval.py", "pipeline/bench_a_systems.py",
+                     "pipeline/chapter.py", "pipeline/extract.py", "pipeline/scene.py"}
 
 
 # --- G4: đoạn là dữ liệu --------------------------------------------------------------------------------
@@ -274,7 +276,8 @@ async def test_on_reads_the_page_text_exactly_once_per_chapter(tmp_path):
 
 async def _run_recording(tmp_path, top_k):
     seen: list[dict] = []
-    config = make_config(tmp_path, limits={"context": {"page_quotes_top_k": top_k}})
+    config = make_config(tmp_path, limits={"context": {"page_quotes_top_k": top_k,
+                                                       "page_quotes_neighbors": 0}})
     llm = ScriptedLLM(full_script())
     chapter_run = ChapterRun(request(), llm=llm, store=MemoryStore(), config=config, plan=PLAN,
                              tracker=CostTracker(config.limits.cost_usd), style_guide="Văn phong thử.",
@@ -327,3 +330,31 @@ def test_unset_passage_limits_are_reported_before_any_model_call():
     assert [p.code for p in problems] == [ErrorCode.CONFIG_LIMIT_NOT_SET]
     assert "page_quotes_top_k" in problems[0].detail
 
+
+# --- đoạn kế sau mỗi đoạn trúng (D-96) -----------------------------------------------------------------
+
+
+async def test_neighbors_add_the_chunk_after_each_hit_within_the_same_chapter(tmp_path):
+    _, _, llm_off, _ = await run(full_script(), tmp_path / "off")
+    _, _, llm_on, _ = await run(full_script(), tmp_path / "on",
+                                limits={"context": {"page_quotes_neighbors": 1,
+                                                    "page_quotes_max_chars": 100_000}})
+    off = [quotes_in(c) for c in prompts(llm_off, "outline", "writer")]
+    on = [quotes_in(c) for c in prompts(llm_on, "outline", "writer")]
+    assert all(len(b) > len(a) for a, b in zip(off, on, strict=True))
+    assert all(set(a) <= set(b) for a, b in zip(off, on, strict=True))
+
+
+async def test_neighbors_still_respect_the_total_cap(tmp_path):
+    cap = load_config().limits.context.page_quotes_max_chars
+    _, _, llm, _ = await run(full_script(), tmp_path, limits={"context": {"page_quotes_neighbors": 1}})
+    for call in prompts(llm, "outline", "writer"):
+        found = quotes_in(call)
+        assert len(found) == 1 or sum(len(q) for q in found) <= cap
+
+
+async def test_the_shipped_default_is_off_whatever_the_neighbors_number():
+    from writory.config import load_config as load
+
+    ctx = load().limits.context
+    assert ctx.page_quotes_top_k == 0 and ctx.page_quotes_neighbors >= 0

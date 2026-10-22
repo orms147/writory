@@ -484,7 +484,8 @@ def _quotes(d: _Deps, state: _State, outline: SceneOutline | None = None) -> lis
         return []
     query = page_query(_brief(d, state), state["context"], outline)
     hits = pool.top(query, top_k=_require(limits, "page_quotes_top_k"),
-                    max_chars=_require(limits, "page_quotes_max_chars"))
+                    max_chars=_require(limits, "page_quotes_max_chars"),
+                    neighbors=limits.page_quotes_neighbors)
     if d.on_quotes is not None:
         d.on_quotes({"chapter": state["chapter"], "scene": state["scene"],
                      "attempt": state.get("attempt"), "role": "writer" if outline else "outline",

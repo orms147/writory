@@ -419,3 +419,19 @@ def test_action_choice_must_exist(pg, new_db_story_id):
     create_story(pg, sid, length_level="short", owner_id="dev")
     with pytest.raises(psycopg.errors.ForeignKeyViolation):
         save_action(pg, sid, 5, source="choice", text="x", choice_id="choice-000000000000")
+
+
+def test_cost_row_keeps_cached_tokens_and_distinguishes_zero_from_unknown(pg, new_db_story_id):
+    """D-96: cột `cached_tokens` (migration 0010): NULL là phản hồi không báo, 0 là đã báo không có
+    cache; số âm bị cột từ chối."""
+    sid = new_db_story_id()
+    create_story(pg, sid, length_level="short", owner_id="dev")
+    for cached in (None, 0, 3968):
+        record_cost(pg, owner_id="dev", story_id=sid, chapter=1,
+                    entry=CostEntry("writer", "m", 4000, 30, 0.00005, cached_tokens=cached))
+    rows = pg.execute("SELECT cached_tokens FROM llm_costs WHERE story_id = %s ORDER BY id",
+                      (sid,)).fetchall()
+    assert [r[0] for r in rows] == [None, 0, 3968]
+    with pytest.raises(psycopg.errors.CheckViolation):
+        record_cost(pg, owner_id="dev", story_id=sid, chapter=1,
+                    entry=CostEntry("writer", "m", 1, 1, 0.1, cached_tokens=-1))

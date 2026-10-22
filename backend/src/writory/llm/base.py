@@ -46,6 +46,9 @@ class Usage(BaseModel):
     completion_tokens: int = 0
     # None = phản hồi không cho biết chi phí. CostTracker coi đó là lỗi (D-10).
     cost_usd: float | None
+    # Số token vào được đọc từ cache prompt của nhà cung cấp (usage.prompt_tokens_details.
+    # cached_tokens, D-96). None = phản hồi không báo (khác 0 = đã báo, không có cache).
+    cached_tokens: int | None = None
 
 
 class ChatResult(BaseModel):

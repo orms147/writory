@@ -50,6 +50,7 @@ class CallCost:
     cost_usd: float | None
     estimated: bool = False
     generation_id: str | None = None
+    cached_tokens: int | None = None  # token vào đọc từ cache prompt (D-96); None = không báo
 
 
 CostSink = Callable[[CallCost], None]
@@ -91,7 +92,7 @@ class RecordingClient(LLMClient):
         estimated = usage.cost_usd is None and ceiling is not None
         self._sink(CallCost(role, model, usage.prompt_tokens, usage.completion_tokens,
                             ceiling if estimated else usage.cost_usd, estimated=estimated,
-                            generation_id=generation_id))
+                            generation_id=generation_id, cached_tokens=usage.cached_tokens))
 
     async def chat(
         self,

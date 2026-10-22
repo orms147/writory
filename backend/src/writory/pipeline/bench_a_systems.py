@@ -119,11 +119,13 @@ def context_rolling(story: Mapping[int, str], chapter: int,
 # --- BM25 (đối thủ RAG, D-73) ----------------------------------------------------------------------
 
 def retrieve(story: Mapping[int, str], chapters: Sequence[int], question: str, *, top_k: int,
-             chunk_chars: int) -> tuple[list[Chunk], int]:
+             chunk_chars: int, neighbors: int = 0, max_chars: int | None = None
+             ) -> tuple[list[Chunk], int]:
     """(`top_k` đoạn BM25 của các chương `chapters`, sắp theo thứ tự truyện; số đoạn trong kho).
-    Dùng `passages.PagePool`, cùng code với ngữ cảnh dàn ý và viết của sản phẩm (D-85)."""
+    Dùng `passages.PagePool`, cùng code với ngữ cảnh dàn ý và viết của sản phẩm (D-85). `neighbors`
+    và `max_chars`: đoạn liền sau mỗi đoạn trúng và trần ký tự (D-96); hệ `rag` không dùng."""
     pool = PagePool({ch: story[ch] for ch in chapters}, chunk_chars=chunk_chars)
-    return pool.top(question, top_k=top_k), pool.size
+    return pool.top(question, top_k=top_k, neighbors=neighbors, max_chars=max_chars), pool.size
 
 
 def passages_block(heading: str, hits: Sequence[Chunk]) -> str:
@@ -282,7 +284,7 @@ QUOTES_HEADING = "[Đoạn trên trang tìm theo câu hỏi]"
 
 def context_graph_quotes(
     state: GraphState, question: str, chapter: int, *, story: Mapping[int, str], top_k: int,
-    chunk_chars: int, recent: bool = True,
+    chunk_chars: int, recent: bool = True, neighbors: int = 0, max_chars: int | None = None,
 ) -> Context:
     """Hệ lai (D-81): phần đồ thị của `build_graph_context` (cùng chữ, cùng khoá `facts`), cộng
     `top_k` đoạn chữ trên trang tìm bằng BM25 theo câu hỏi (cùng cách cắt đoạn và chấm điểm như
@@ -290,7 +292,8 @@ def context_graph_quotes(
     không có thì tìm cả chương N. Không bao giờ đọc chương sau N."""
     graph = build_graph_context(state, question, chapter, story=story, recent=False)
     searched = [c for c in story if c < chapter or (c == chapter and not recent)]
-    hits, pool = retrieve(story, searched, question, top_k=top_k, chunk_chars=chunk_chars)
+    hits, pool = retrieve(story, searched, question, top_k=top_k, chunk_chars=chunk_chars,
+                          neighbors=neighbors, max_chars=max_chars)
     parts = [graph.text]
     if hits:
         parts.append(passages_block(QUOTES_HEADING, hits))
