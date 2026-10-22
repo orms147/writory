@@ -153,6 +153,18 @@ class AuthLimits(_Section):
     login_window_seconds: PositiveInt | None = None  # độ dài cửa sổ cố định của bộ đếm trên
 
 
+class FactLimits(_Section):
+    """Fact mới do bộ trích tạo sau chương 0 (D-93). `max_new_per_chapter` 0 = tắt. Số tạm (D-47)."""
+
+    _path = "facts"
+    _file = "limits.yaml"
+    max_new_per_chapter: NonNegativeInt | None = None  # trần cả chương, không phải mỗi cảnh
+    text_max_chars: PositiveInt | None = None  # một câu ngắn
+    duplicate_overlap: float | None = Field(default=None, gt=0, le=1)  # Jaccard âm tiết
+    grounded_min: float | None = Field(default=None, gt=0, le=1)  # tỉ lệ âm tiết có trên trang
+    writer_max_page_facts: PositiveInt | None = None  # Fact từ trang mà ngữ cảnh người viết giữ
+
+
 class LimitsConfig(_Strict):
     cost_usd: CostLimits
     retries: RetryLimits
@@ -160,6 +172,7 @@ class LimitsConfig(_Strict):
     input: InputLimits
     narrator_notebook: NarratorNotebookLimits
     context: ContextLimits
+    facts: FactLimits = FactLimits()
     llm_call: LLMCallLimits = LLMCallLimits()
     chapter_estimate: ChapterEstimateLimits = ChapterEstimateLimits()
     auth: AuthLimits = AuthLimits()

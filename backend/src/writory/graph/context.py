@@ -182,6 +182,23 @@ def _status(secret: PlanSecret, writing: int, revealed: int | None) -> SecretSta
     return "overdue"
 
 
+def cap_page_facts(facts: tuple[FactInfo, ...], keep: int | None) -> tuple[FactInfo, ...]:
+    """Fact của thế giới khởi tạo (có người biết từ chương 0) luôn giữ. Fact sinh từ trang (mọi người
+    biết đều biết từ chương 1 trở đi, D-93) chỉ giữ `keep` cái mới nhất, để đồ thị phình không làm
+    đề của người viết phình theo. `keep` None = không giới hạn."""
+    if keep is None:
+        return facts
+
+    def latest(f: FactInfo) -> int:
+        return max(k.since_chapter for k in f.known_by)
+
+    page = [f for f in facts if f.known_by and min(k.since_chapter for k in f.known_by) > 0]
+    if len(page) <= keep:
+        return facts
+    dropped = {f.id for f in sorted(page, key=lambda f: (-latest(f), f.id))[keep:]}
+    return tuple(f for f in facts if f.id not in dropped)
+
+
 def writer_context(
     driver: Driver,
     story_id: str,

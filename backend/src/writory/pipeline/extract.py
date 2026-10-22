@@ -2,8 +2,8 @@
 
 Đầu vào: danh mục thực thể đang có (id, nhãn, tên/chữ), các cạnh đang hiệu lực, mạch phải gỡ còn
 mở kèm trạng thái hạn (`guard.plan`, như mục tiêu của chương; D-82), văn bản chương.
-Đầu ra: `ChangePackage` của chương N. Model chỉ được tham chiếu id trong danh mục (G11); bản đầu
-chưa tạo nút mới, nên danh mục phải có sẵn mọi nút của chương (bài C v1, docs/eval.md).
+Đầu ra: `ChangePackage` của chương N. Model chỉ được tham chiếu id trong danh mục (G11). Ngoại lệ
+duy nhất: `new_facts`, Fact mới từ trang (D-93), model đặt nhãn tạm `new_<số>`, code kiểm rồi sinh id.
 
 Model trả JSON theo `ExtractOutput`: mọi trường bắt buộc, giá trị trống là null, để dùng được với
 JSON schema strict. Code đổi sang `ChangePackage`, kiểm từng cạnh một: cạnh sai quy tắc bị bỏ và
@@ -13,17 +13,26 @@ của nút kia (D-62, `safety.reveal.known_as_conflicts`). `RESOLVED_IN` phải 
 như hé lộ (D-82). Bộ trích không được biết dàn ý định gỡ mạch nào, để không ghi gỡ theo ý định.
 """
 
+import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict, ValidationError
+from pydantic import BaseModel, ConfigDict, ValidationError, model_validator
 
 from writory.graph.commit import needs_known_as
-from writory.graph.package import KNOWS_HOW, ChangePackage, CloseSpec, EdgeSpec, quote_in_text
+from writory.graph.package import (
+    KNOWS_HOW,
+    ChangePackage,
+    CloseSpec,
+    EdgeSpec,
+    NodeSpec,
+    quote_in_text,
+)
 from writory.graph.schema import NAMED_LABELS
 from writory.llm.base import ChatResult, LLMClient
 from writory.pipeline.pacing import ThreadGoal
+from writory.pipeline.passages import STOPWORDS, flat
 from writory.safety.reveal import known_as_conflicts
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -36,8 +45,8 @@ from writory.safety.wrap import (
 # Đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1. extract-3: mạch phải
 # gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82). extract-4: mạch nhiều vế chỉ
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
-# nhân vật chính biết, không để sang chương sau (D-92).
-PROMPT_VERSION = "extract-5"
+# nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93).
+PROMPT_VERSION = "extract-6"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -65,9 +74,39 @@ class ExtractedEdge(_Out):
     role: str | None  # PARTICIPATED_IN
 
 
+class NewFact(_Out):
+    """Sự thật mới từ trang (D-93). `ref` là nhãn tạm cho các cạnh trong cùng đầu ra; id do code sinh."""
+
+    ref: str
+    text: str
+    quote: str
+
+
 class ExtractOutput(_Out):
     edges: list[ExtractedEdge]
     close: list[str]  # id các cạnh đang hiệu lực không còn đúng ở cuối chương
+    new_facts: list[NewFact]
+
+    @model_validator(mode="before")
+    @classmethod
+    def _old_replies(cls, data: Any) -> Any:
+        """Trường bắt buộc trong schema gửi model, nhưng trả lời cũ (fixture, bài C) chưa có thì coi
+        là rỗng."""
+        if isinstance(data, dict) and "new_facts" not in data:
+            return {**data, "new_facts": []}
+        return data
+
+
+@dataclass(frozen=True)
+class FactRules:
+    """Luật Fact mới (D-93), lấy từ `config/limits.yaml` `facts`. `max_new`: còn được tạo bao nhiêu
+    trong chương này (0 = tắt)."""
+
+    max_new: int
+    max_chars: int
+    scene: int
+    duplicate_overlap: float
+    grounded_min: float
 
 
 @dataclass(frozen=True)
@@ -143,6 +182,12 @@ Câu trích (`quote`):
 - Chép NGUYÊN VĂN một đoạn ngắn liền mạch trong chương (một câu là đủ); không sửa chữ, không ghép hai đoạn, không thêm dấu ba chấm.
 - Hé lộ một nhân vật, nơi chốn, đồ vật hay phe thì `known_as` là cái tên người chơi đọc thấy trên trang, CHÉP Y NGUYÊN từ bên trong `quote` (cùng chữ hoa, cùng dấu). Không dùng tên thật nếu trang chỉ gọi bằng biệt danh.
 
+Sự thật mới (`new_facts`):
+- Chỉ khi trang nêu một điều CỤ THỂ đã xảy ra hay đã được nói ra mà không sự thật nào trong danh mục diễn đạt được: ai cứu ai, ai hứa hay đòi gì, nhân vật phát hiện điều gì ở đâu, ai nói gì. Có sự thật trong danh mục nói đúng điều đó thì dùng id có sẵn, KHÔNG tạo mới. Không tạo sự thật mới cho cảm xúc, suy đoán, hay điều trang chỉ gợi ý.
+- Mỗi sự thật mới có `ref` (new_1, new_2…), `text` và `quote`. `text` là MỘT câu ngắn, trung tính, một dòng, chỉ nêu điều trang đã nói bằng chữ của trang, không thêm suy đoán hay chi tiết. `quote` chép NGUYÊN VĂN từ chương.
+- Dùng `ref` như một id trong các cạnh. Mỗi sự thật mới BẮT BUỘC có ít nhất một cạnh ABOUT (sự thật mới → thực thể trong danh mục mà nó nói về) và một cạnh KNOWS (người biết → sự thật mới; nhân vật chính biết thì KNOWS cần `quote` như mọi KNOWS của nhân vật chính). Thiếu một trong hai thì sự thật mới bị bỏ.
+- Không ghi REVEALED_TO_PLAYER cho sự thật mới: code tự ghi. Số sự thật mới tối đa cho chương này ghi ở cuối đề; có thể để `new_facts` rỗng.
+
 Không ghi trùng: mỗi bộ (kiểu, từ, tới) chỉ một cạnh.
 """
 
@@ -188,6 +233,7 @@ def _thread_lines(threads: Sequence[ThreadGoal]) -> list[str | UserAuthored]:
 def build_messages(
     *, chapter: int, chapter_id: str, protagonist_id: str, chapter_text: str,
     entities: list[Entity], open_edges: list[OpenEdge], threads: Sequence[ThreadGoal] = (),
+    fact_rules: "FactRules | None" = None,
 ):
     parts: list[str | UserAuthored] = [
         f"Chương: {chapter} (id nút chương: {chapter_id}). Nhân vật chính: {protagonist_id}.",
@@ -198,6 +244,11 @@ def build_messages(
     parts.append("Cạnh đang hiệu lực trước chương này (id | kiểu | từ → tới):")
     parts += [f"- {o.id} | {o.type} | {o.source} → {o.target}" for o in open_edges] or ["- (không có)"]
     parts += _thread_lines(threads)
+    if fact_rules is not None and fact_rules.max_new > 0:
+        parts.append(f"Sự thật mới: còn được ghi tối đa {fact_rules.max_new} sự thật mới trong chương "
+                     f"này, mỗi `text` dài tối đa {fact_rules.max_chars} ký tự.")
+    else:
+        parts.append("Sự thật mới: không ghi (new_facts để rỗng).")
     # Văn bản chương có thể chứa chữ người chơi (tên, hành động tự viết): luôn bọc như dữ liệu (G4).
     parts += ["Văn bản chương:", UserAuthored(chapter_text, "chapter_text")]
     return [system_message(SYSTEM_PROMPT, DATA_NOTICE), user_message(*parts)]
@@ -208,27 +259,124 @@ def _node(known: dict[str, Entity], node_id: str, protagonist_id: str) -> dict:
     return {"labels": [known[node_id].label], "protagonist": node_id == protagonist_id}
 
 
+_REF = re.compile(r"^new_\d+$")
+_MIN_FACT_CHARS = 8
+
+
+def _syllables(text: str) -> set[str]:
+    return {t for t in flat(text).split() if t not in STOPWORDS}
+
+
+def _overlap(a: set[str], b: set[str]) -> float:
+    return len(a & b) / len(a | b) if a | b else 0.0
+
+
+@dataclass
+class _FactPlan:
+    nodes: dict[str, NodeSpec] = field(default_factory=dict)  # id sinh ra → nút
+    quotes: dict[str, str] = field(default_factory=dict)  # id sinh ra → câu trích
+    ids: dict[str, str] = field(default_factory=dict)  # ref → id (mới, hoặc Fact cũ nếu trùng)
+    remapped: set[str] = field(default_factory=set)  # ref trùng Fact đã có
+    dropped: set[str] = field(default_factory=set)  # ref bị bỏ
+    rejected: list[tuple[str, str]] = field(default_factory=list)
+
+
+def _plan_new_facts(
+    facts: Sequence[NewFact], rules: FactRules | None, *, chapter: int,
+    known: Mapping[str, Entity], chapter_text: str,
+) -> _FactPlan:
+    """Kiểm từng Fact mới bằng code (D-93): câu trích nguyên văn (G3), một câu ngắn bám trang, không
+    trùng Fact đã có (trùng thì dùng lại id cũ), dưới trần mỗi chương. Id do code sinh. Chữ chép tên
+    người chơi viết thì đánh dấu `user_authored` (G4)."""
+    plan = _FactPlan()
+    page = _syllables(chapter_text)
+    theirs = {e.id: _syllables(e.text) for e in known.values() if e.label == "Fact"}
+    mine: dict[str, set[str]] = {}
+    player_names = [flat(n) for e in known.values() if e.user_authored for n in (e.text, *e.aliases)]
+    refs: set[str] = set()
+    for f in facts:
+        desc = f"Fact mới {f.ref}"
+
+        def drop(why: str, ref: str = f.ref, desc: str = desc) -> None:
+            plan.dropped.add(ref)
+            plan.rejected.append((desc, why))
+
+        if rules is None or rules.max_new <= 0:
+            drop("hết trần Fact mới của chương, hoặc tính năng đang tắt (D-93)")
+        elif not _REF.fullmatch(f.ref) or f.ref in known or f.ref in refs:
+            drop("ref phải dạng new_<số>, không trùng id có sẵn hay ref khác")
+        else:
+            refs.add(f.ref)
+            text = f.text.strip()
+            tokens = _syllables(text)
+            if "\n" in text or not _MIN_FACT_CHARS <= len(text) <= rules.max_chars:
+                drop(f"chữ phải một dòng dài {_MIN_FACT_CHARS}–{rules.max_chars} ký tự")
+            elif not quote_in_text(f.quote, chapter_text):
+                drop("câu trích không có nguyên văn trong chương (G3)")
+            elif (same := next((i for i, t in {**theirs, **mine}.items()
+                                if _overlap(tokens, t) >= rules.duplicate_overlap), None)) is not None:
+                plan.ids[f.ref] = same
+                plan.remapped.add(f.ref)
+                plan.rejected.append((desc, f"trùng Fact {same}, dùng lại id đó"))
+            elif not tokens or len(tokens & page) / len(tokens) < rules.grounded_min:
+                drop("chữ Fact không bám trang (nhiều từ không có trên trang)")
+            else:
+                if len(plan.nodes) >= rules.max_new:
+                    drop("vượt trần Fact mới mỗi chương (config)")
+                else:
+                    n = 1
+                    while (fid := f"fact_c{chapter}s{rules.scene}_{n}") in known or fid in plan.nodes:
+                        n += 1
+                    props: dict[str, Any] = {"text": text}
+                    if any(name and name in flat(text) for name in player_names):
+                        props["user_authored"] = True
+                    plan.nodes[fid] = NodeSpec(id=fid, label="Fact", props=props)
+                    plan.quotes[fid] = f.quote
+                    plan.ids[f.ref] = fid
+                    mine[fid] = tokens
+    return plan
+
+
 def to_package(
     output: ExtractOutput, *, chapter: int, commit_id: str, protagonist_id: str,
     chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
-    threads: Sequence[ThreadGoal] = (),
+    threads: Sequence[ThreadGoal] = (), fact_rules: FactRules | None = None,
 ) -> tuple[ChangePackage, list[tuple[str, str]]]:
     """Đổi đầu ra của model thành `ChangePackage`; cạnh sai quy tắc bị bỏ, kèm lý do.
     `threads`: mạch phải gỡ chưa gỡ kèm trạng thái hạn (`ChapterGoals.threads`). `RESOLVED_IN` của
     mạch trong đó còn `later` (chưa tới khoảng gỡ) bị bỏ (D-84); mạch ngoài danh sách không đổi."""
     known = {e.id: e for e in entities}
+    existing = set(known)  # id có sẵn trước khi thêm Fact mới
+    plan = _plan_new_facts(output.new_facts, fact_rules, chapter=chapter, known=known,
+                           chapter_text=chapter_text)
+    for fid, node in plan.nodes.items():
+        known[fid] = Entity(fid, "Fact", node.props["text"],
+                            user_authored=bool(node.props.get("user_authored")))
     not_yet = {t.thread_id: t for t in threads if t.status == "later"}
     # Tên lớp truth của mọi nút có tên, kể cả tên người chơi viết: để bắt `known_as` của nút khác.
     names = {e.id: (e.text, *e.aliases) for e in entities if e.label in NAMED_LABELS}
     open_by_id = {o.id: o for o in open_edges}
-    rejected: list[tuple[str, str]] = []
+    rejected: list[tuple[str, str]] = list(plan.rejected)
     edges: list[EdgeSpec] = []
     seen: set[str] = set()
     for x in output.edges:
         desc = f"{x.type} {x.source}→{x.target}"
+        refs_used = {i for i in (x.source, x.target, x.told_by) if i in plan.dropped}
+        if refs_used:
+            rejected.append((desc, f"Fact mới bị bỏ: {sorted(refs_used)}"))
+            continue
+        if x.type == "ABOUT" and x.source in plan.remapped:
+            continue  # Fact trùng: dùng lại Fact cũ, nó đã có ABOUT riêng
+        x = x.model_copy(update={
+            "source": plan.ids.get(x.source, x.source), "target": plan.ids.get(x.target, x.target),
+            "told_by": plan.ids.get(x.told_by, x.told_by) if x.told_by else None})
         missing = [i for i in (x.source, x.target, x.told_by) if i is not None and i not in known]
         if missing:
             rejected.append((desc, f"id không có trong danh mục: {missing}"))
+            continue
+        if ((x.source in plan.nodes and x.type != "ABOUT") or x.told_by in plan.nodes
+                or (x.target in plan.nodes and x.type != "KNOWS")):
+            rejected.append((desc, "Fact mới chỉ làm nguồn của ABOUT và đích của KNOWS (D-93)"))
             continue
         if x.quote is not None and not quote_in_text(x.quote, chapter_text):
             rejected.append((desc, "câu trích không có nguyên văn trong chương (G3)"))
@@ -276,6 +424,24 @@ def to_package(
             continue
         seen.add(spec.id)
         edges.append(spec)
+    # Fact mới phải có ABOUT tới thực thể có sẵn và KNOWS; thiếu thì bỏ cả Fact và cạnh của nó (D-93).
+    for fid in list(plan.nodes):
+        lacking = [name for name, ok in (
+            ("ABOUT", any(e.type == "ABOUT" and e.source == fid and e.target in existing
+                          for e in edges)),
+            ("KNOWS", any(e.type == "KNOWS" and e.target == fid for e in edges))) if not ok]
+        if lacking:
+            rejected.append((f"Fact mới {fid}", f"thiếu {' và '.join(lacking)} hợp lệ: bỏ Fact"))
+            del plan.nodes[fid]
+            gone = [e for e in edges if fid in (e.source, e.target)]
+            seen -= {e.id for e in gone}
+            edges = [e for e in edges if e not in gone]
+    # Fact mới lấy từ trang nên mặc định đã hé lộ cho người chơi, kèm chính câu trích của nó. Bí mật chỉ
+    # đến từ khởi tạo: đường này không tạo được (D-93).
+    for fid in plan.nodes:
+        edges.append(EdgeSpec.model_validate({
+            "type": "REVEALED_TO_PLAYER", "from": fid, "to": f"ch{chapter}",
+            "valid_from_chapter": chapter, "props": {"quote": plan.quotes[fid]}}))
     # Người kể tự thú chuyện của chính mình thì chính trang chứng minh họ biết (D-92). Đồ thị chương 0
     # hay thiếu người biết (bí mật "Trần Mặc bán tin" chỉ cho người khác biết), nên người canh báo
     # `teller_does_not_know`, cạnh KNOWS "được kể" bị cắt và cảnh bị viết lại oan. Chỉ khi điều kể
@@ -325,24 +491,37 @@ def to_package(
             if (o.source if opposite == "LOCATED_AT" else o.target) == item:
                 close.append(CloseSpec(type=o.type, id=o.id, valid_to_chapter=chapter))
                 closed.add(o.id)
-    return ChangePackage(commit_id=commit_id, edges=edges, close=close), rejected
+    return (ChangePackage(commit_id=commit_id, nodes=list(plan.nodes.values()), edges=edges,
+                          close=close), rejected)
+
+
+def without_facts(package: ChangePackage, fact_ids: set[str]) -> ChangePackage:
+    """Bỏ các Fact mới này cùng mọi cạnh đi ra hay đi tới chúng (D-93)."""
+    if not fact_ids:
+        return package
+    return package.model_copy(update={
+        "nodes": [n for n in package.nodes if n.id not in fact_ids],
+        "edges": [e for e in package.edges if not {e.source, e.target} & fact_ids]})
 
 
 async def extract_changes(
     llm: LLMClient, model: str, *, chapter: int, chapter_id: str, commit_id: str,
     protagonist_id: str, chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
     threads: Sequence[ThreadGoal] = (), extra: Mapping[str, Any] | None = None,
+    fact_rules: FactRules | None = None,
 ) -> ExtractResult:
     """Một lời gọi model. Lỗi schema để nơi gọi thử lại theo RETRY_SCHEMA (G11, D-14).
-    `threads`: mạch phải gỡ chưa gỡ, kèm trạng thái hạn (`ChapterGoals.threads`, D-82)."""
+    `threads`: mạch phải gỡ chưa gỡ, kèm trạng thái hạn (`ChapterGoals.threads`, D-82).
+    `fact_rules`: luật Fact mới (D-93); None = tắt."""
     messages = build_messages(
         chapter=chapter, chapter_id=chapter_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text, entities=entities, open_edges=open_edges, threads=threads,
+        fact_rules=fact_rules,
     )
     output, chat = await llm.chat_json(model, messages, ExtractOutput, extra=extra)
     package, rejected = to_package(
         output, chapter=chapter, commit_id=commit_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text,
-        entities=entities, open_edges=open_edges, threads=threads,
+        entities=entities, open_edges=open_edges, threads=threads, fact_rules=fact_rules,
     )
     return ExtractResult(package=package, rejected=rejected, chat=chat)

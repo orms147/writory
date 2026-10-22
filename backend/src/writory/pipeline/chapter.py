@@ -35,7 +35,7 @@ from langgraph.runtime import Runtime
 from writory.config import AppConfig, LimitNotSetError, WriterTier
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage, NodeSpec, PlayerView
-from writory.graph.context import WriterContext
+from writory.graph.context import WriterContext, cap_page_facts
 from writory.graph.schema import EDGE_TYPES, NAMED_LABELS
 from writory.guard import Severity, check_scene_package
 from writory.guard.state import GraphState, OverlayState, player_view_of
@@ -53,7 +53,13 @@ from writory.pipeline.events import (
     error_event,
     stage,
 )
-from writory.pipeline.extract import Entity, OpenEdge, extract_changes
+from writory.pipeline.extract import (
+    Entity,
+    FactRules,
+    OpenEdge,
+    extract_changes,
+    without_facts,
+)
 from writory.pipeline.pacing import ChapterGoals, chapter_goals
 from writory.pipeline.passages import Chunk, PagePool
 from writory.pipeline.scene import (
@@ -210,7 +216,10 @@ def merge_scene_packages(
     nó vào gói, cạnh và `close` của nó đi qua cùng phép gộp như một cảnh."""
     edges: dict[str, Any] = {}
     closes: dict[str, Any] = {}
+    nodes: dict[str, Any] = {node.id: node, **{n.id: n for n in (prelude.nodes if prelude else [])}}
     for pkg in [*([prelude] if prelude else []), *scene_packages]:
+        for n in pkg.nodes:  # Fact mới của các cảnh (D-93)
+            nodes.setdefault(n.id, n)
         for c in pkg.close:
             if c.id in edges:
                 del edges[c.id]
@@ -218,7 +227,7 @@ def merge_scene_packages(
                 closes[c.id] = c
         for e in pkg.edges:
             edges[e.id] = e
-    return ChangePackage(commit_id=commit_id, nodes=[node, *(prelude.nodes if prelude else [])],
+    return ChangePackage(commit_id=commit_id, nodes=list(nodes.values()),
                          edges=list(edges.values()), close=list(closes.values()))
 
 
@@ -362,6 +371,11 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         (config.guard.relationship, "max_score_jump_without_event"),
     ):
         check(_require, section, name)
+    check(_require, config.limits.facts, "max_new_per_chapter")
+    if config.limits.facts.max_new_per_chapter:  # 0 = tắt: các giá trị còn lại không cần (D-93)
+        for name in ("text_max_chars", "duplicate_overlap", "grounded_min",
+                     "writer_max_page_facts"):
+            check(_require, config.limits.facts, name)
     if config.limits.context.page_quotes_top_k:  # 0 = tắt: hai giá trị còn lại không cần (D-85)
         for name in ("page_quotes_chunk_chars", "page_quotes_max_chars"):
             check(_require, config.limits.context, name)
@@ -441,10 +455,24 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
 
 
 def _writer_context(d: _Deps, state: _State, present: Sequence[str]) -> WriterContext:
-    return d.store.writer_context(
+    ctx = d.store.writer_context(
         state["chapter"] - 1, present, d.plan,
         max_neighbors=d.config.limits.context.writer_max_neighbors,
     )
+    keep = d.config.limits.facts.writer_max_page_facts  # Fact sinh từ trang có trần (D-93)
+    return replace(ctx, known_facts=cap_page_facts(ctx.known_facts, keep)) if keep else ctx
+
+
+def _fact_rules(d: _Deps, state: _State, scene: int) -> FactRules:
+    """Luật Fact mới cho cảnh này: trần tính cho cả chương, trừ số đã tạo ở các cảnh trước (D-93)."""
+    f = d.config.limits.facts
+    cap = _require(f, "max_new_per_chapter")
+    if cap == 0:
+        return FactRules(0, 1, scene, 1.0, 1.0)
+    made = sum(1 for s in state.get("accepted", []) for n in s.package.nodes if n.label == "Fact")
+    return FactRules(
+        max_new=max(0, cap - made), max_chars=_require(f, "text_max_chars"), scene=scene,
+        duplicate_overlap=_require(f, "duplicate_overlap"), grounded_min=_require(f, "grounded_min"))
 
 
 def _quotes(d: _Deps, state: _State, outline: SceneOutline | None = None) -> list[Chunk]:
@@ -706,14 +734,29 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             chapter_text=text, entities=entities, open_edges=open_edges,
             # Mạch phải gỡ chưa gỡ trước cảnh này, kèm hạn; không kèm dàn ý định gỡ gì (D-82).
             threads=state["goals"].threads, extra=role_extra(cfg.models, "extract"),
+            fact_rules=_fact_rules(d, state, scene),
         ),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
     )
+    base = d.store.state()
+    earlier = _earlier_packages(state)
+
+    # 2b. Chữ của Fact mới cũng tới người chơi (sổ tay, người kể): dò lộ G2 như mọi chữ từ player_view,
+    # với mọi bí mật chưa có trong player_view. Lộ thì bỏ Fact, không chặn cảnh (D-93).
+    new_ids = {n.id for n in result.package.nodes if n.label == "Fact"}
+    if new_ids:
+        rest = OverlayState(base, [*earlier, without_facts(result.package, new_ids)])
+        view_before = player_view_of(rest, chapter)
+        leaking = {n.id for n in result.package.nodes if n.id in new_ids and check_leaks(
+            str(n.props["text"]), view=view_before, truth_names=leak_names(rest), plan=d.plan,
+            story_brief=d.request.story_brief, scope="player_path")}
+        if leaking:
+            result.package = without_facts(result.package, leaking)
+            result.rejected.extend((f"Fact mới {i}", "lộ bí mật hay tên đang giấu (G2)")
+                                   for i in sorted(leaking))
 
     # 3. Tự hé lộ (D-62): nút có tên mà trang nêu, chưa có trong player_view (kể cả hé lộ bộ trích
     # vừa ghi), không phải nhân vật chính hay tên đang được kế hoạch bảo vệ (D-61).
-    base = d.store.state()
-    earlier = _earlier_packages(state)
     extracted = OverlayState(base, [*earlier, result.package])
     seen = player_view_of(extracted, chapter)
     auto = auto_reveals(
@@ -803,7 +846,12 @@ async def _accept(state: _State, runtime: Runtime[_Deps]) -> dict:
     accepted = AcceptedScene(scene, review.text, review.package, state["outline"],
                              state["attempt"], list(review.issues), review.rejected,
                              tuple(state.get("unplanned", [])))
-    return {"accepted": [*state["accepted"], accepted], "scene": scene + 1, "review": None}
+    out: dict = {"accepted": [*state["accepted"], accepted], "scene": scene + 1, "review": None}
+    fresh = [Entity.from_node(n.id, n.label, n.props) for n in review.package.nodes]
+    if fresh:  # Fact mới của cảnh này có trong danh mục và tên của các cảnh sau (D-93)
+        out["catalogue"] = [*state["catalogue"], *fresh]
+        out["names"] = {**state["names"], **{e.id: Named(e.text, e.user_authored) for e in fresh}}
+    return out
 
 
 async def _blocked(state: _State, runtime: Runtime[_Deps]) -> dict:

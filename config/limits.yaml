@@ -36,6 +36,12 @@ context:
   # giữ nút có mặt, rồi nút liên quan tới cảnh; còn lại gộp thành "Và N tên khác". Chỉ cắt đề: bộ dò
   # lộ vẫn kiểm đủ mọi tên.
   forbidden_names_max: 12
+facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; số tạm, D-47). 0 = tắt
+  max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
+  text_max_chars: 160          # chữ của Fact: một câu ngắn
+  duplicate_overlap: 0.7       # trùng Fact đã có khi tỉ lệ âm tiết chung (Jaccard) từ ngưỡng này
+  grounded_min: 0.6            # tỉ lệ âm tiết của Fact phải có trên trang, từ ngưỡng này
+  writer_max_page_facts: 12    # Fact sinh từ trang mà ngữ cảnh người viết giữ (mới nhất trước)
 llm_call:   # mọi lời gọi model trả bằng key người chơi (D-64)
   # Gửi làm max_tokens (gồm token suy luận), như max_tokens_per_call của bench_run (D-43); cũng
   # là chặn trên của chi phí ước tính khi lời gọi không có usage (huỷ, đứt, thiếu usage.cost).
