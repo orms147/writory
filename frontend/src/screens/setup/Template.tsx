@@ -219,7 +219,7 @@ export function Template() {
               options={config.story_lengths}
               value={length}
               onChange={setLength}
-              className="grid gap-3 sm:grid-cols-2 lg:grid-cols-4"
+              className={cx('grid gap-3 sm:grid-cols-2', config.story_lengths.length > 2 && 'lg:grid-cols-4')}
               optionClassName={(_, c) =>
                 cx('wt-card flex min-h-[120px] flex-col justify-end rounded-[16px] border p-5', c ? 'border-cinnabar-400 bg-[#201D1A]' : 'border-ink-750 bg-[#181715]')
               }

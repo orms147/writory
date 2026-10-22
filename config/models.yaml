@@ -2,10 +2,10 @@
 # null = chưa chọn. D-47: các vai chưa có bài đo riêng dùng tạm GPT-6 Luna, đo lại sau lần chạy thật đầu.
 
 # Vai giữ trí nhớ: cố định, người chơi không đổi được.
+# Người canh bản 1 chỉ kiểm bằng code nên không có vai ở đây; phần LLM để bản sau (D-88).
 roles:
   outline: openai/gpt-6-luna    # dàn ý cảnh (tạm, D-47)
   extract: openai/gpt-6-luna   # trích thay đổi -> JSON (D-35, bài C v2)
-  guard: openai/gpt-6-luna      # người canh, phần LLM (tạm, D-47)
   choices: openai/gpt-6-luna    # tạo 3 lựa chọn (tạm, D-47)
   narrator: openai/gpt-6-luna   # hỏi người kể (tạm, D-47)
   classify: openai/gpt-6-luna   # phân loại ô tự viết, G5 (tạm, D-47)
@@ -17,7 +17,6 @@ roles:
 role_reasoning:
   extract: low   # D-35: bài C v2, suy luận thấp tăng F1 lớp người chơi biết 0,63 → 0,78
   outline: low   # D-47: các vai trả JSON dùng suy luận thấp như vai trích
-  guard: low
   choices: low
   narrator: low
   classify: low

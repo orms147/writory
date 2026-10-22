@@ -61,6 +61,8 @@ Quy đổi: 1 trang Word A4, chữ 12–13, giãn dòng đơn ≈ 3.000 ký tự
 
 Mức độ dài quyết định nhịp truyện (xem §6.1): khi nào mở mạch, khi nào lộ twist, khi nào cao trào và kết. Truyện ngắn phải có kết tử tế, không cắt ngang.
 
+Bản 1 người chơi chỉ chọn được Truyện ngắn và Truyện vừa. Truyện dài và Tiểu thuyết mỏng mở sau khi đã chạy đo thật ở mức đó; lệnh đo vẫn chạy được mọi mức. Mức nào mở: `config/story_lengths.yaml`, `player_selectable` (D-88).
+
 Lưu ý: 300.000 ký tự tiếng Việt ước khoảng 100.000 token (chưa đo, tuỳ tokenizer). Một số model nhét vừa cả truyện vào prompt, nên "nhét cả truyện" là một đối thủ bắt buộc trong bộ đo (§9).
 
 ## 4. Người dùng trải qua gì
@@ -97,12 +99,12 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 **Bản 1 — chơi được với bạn bè (6 tuần)** [Quyết định thiết kế]
 | Tính năng | Ghi chú |
 |---|---|
-| Khởi tạo: tag, độ dài, góc nhìn chỉ nhân vật chính, 3 bối cảnh / 3 hướng / 3 nhân vật | |
+| Khởi tạo: tag, độ dài, góc nhìn chỉ nhân vật chính, 3 bối cảnh / 3 hướng / 3 nhân vật | độ dài chỉ Ngắn và Vừa (§3, D-88) |
 | Chương hiện theo từng cảnh đã kiểm, 3 lựa chọn ba kiểu + ô tự viết | |
 | Người chơi dùng key OpenRouter của chính mình (§10) | |
 | Lớp chất lượng: chọn mức model, tách vai, dàn ý trước, kiểm văn bằng code (§6.5) | chưa có lượt biên tập |
 | Đồ thị hai lớp (§7) | lõi |
-| Người canh: mâu thuẫn + lộ sớm, viết lại tối đa 1 lần (§8) | lõi |
+| Người canh: mâu thuẫn + lộ sớm, viết lại tối đa 1 lần (§8) | lõi; chỉ kiểm bằng code, phần LLM để bản sau (D-88) |
 | Sổ tay (chỉ lớp người chơi biết) | chỉ xem |
 | Hỏi người kể chuyện (chỉ trả lời từ lớp người chơi biết) | không mất lượt |
 | Đăng nhập đơn giản, lưu truyện, mở lại chơi tiếp | |
@@ -173,7 +175,7 @@ Hết cảnh cuối: **ghi thay đổi của cả chương vào đồ thị** �
 Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ ý**, vì một model yếu viết hỏng truyện, rồi người chơi nghĩ là app dở.
 
 1. **Danh sách model đã thử.** Người chơi chọn một trong vài mức (ví dụ Tiết kiệm / Cân bằng / Cao cấp). Mỗi mức hiện giá ước tính mỗi chương và điểm chất lượng đã đo ở bài D (§9). Chỉ model đã qua bài D mới vào danh sách (danh sách nằm trong `config/`).
-2. **Tách vai.** Mức người chơi chọn chỉ đổi model **viết**. Các vai giữ trí nhớ (trích thay đổi, người canh, tóm tắt chương, tạo lựa chọn, hỏi người kể) luôn dùng model đã chọn sẵn, vẫn trả bằng key người chơi. Nhờ vậy truyện ở mức rẻ có thể văn kém hơn, nhưng không quên nhiều hơn.
+2. **Tách vai.** Mức người chơi chọn chỉ đổi model **viết**. Các vai giữ trí nhớ (dàn ý, trích thay đổi, tóm tắt chương, tạo lựa chọn, hỏi người kể; phần LLM của người canh khi có, §8) luôn dùng model đã chọn sẵn, vẫn trả bằng key người chơi. Nhờ vậy truyện ở mức rẻ có thể văn kém hơn, nhưng không quên nhiều hơn.
 3. **Dàn ý trước, văn sau.** Trước mỗi cảnh, model đáng tin viết dàn ý ngắn (các nhịp: chuyện gì xảy ra, ai nói gì, kết cảnh ở đâu). Model viết chỉ mở rộng dàn ý thành văn. Model yếu viết tốt hơn hẳn khi có nhịp rõ. Dàn ý viết tiếng Việt; dàn ý lẫn chữ khác hệ coi như sai schema và được thử lại (D-51).
 4. **Hướng dẫn văn phong tiếng Việt** dùng chung cho mọi model: xưng hô đúng quan hệ, tránh văn dịch, tránh sáo ngữ hay gặp ở văn AI, nhịp câu theo giọng văn đã chọn, kèm vài đoạn mẫu. Lời thoại theo kiểu gạch đầu dòng (D-18): mỗi lượt một dòng, mở bằng "- "; backend chuẩn hoá mọi "—"/"–" thành "-" trước khi kiểm và trước khi hiện (D-31). Bản hiện hành: `evals/scenarios/quality/style_guide_vi.md`.
 5. **Kiểm chất lượng bằng code** trên mỗi cảnh, không tốn lời gọi model (ngưỡng và danh sách sáo ngữ: `config/quality.yaml`, D-19):
@@ -244,7 +246,9 @@ Chạy sau mỗi chương, trên kết quả trích thay đổi và văn bản c
 
 Kiểm tra gồm phần quy tắc bằng code (truy vấn đồ thị) và phần LLM (đọc văn bản tìm điểm nghi). Phần nào kiểm được bằng code thì phải kiểm bằng code. Phần code kiểm gói thay đổi của từng cảnh trước khi ghi (D-23).
 
-Mọi điểm nghi do LLM báo phải kèm **câu trích nguyên văn** từ cảnh; code kiểm câu trích có thật trong văn bản, không có thì bỏ điểm nghi đó. Việc đánh dấu một bí mật là "đã hé lộ cho người chơi" cũng phải kèm câu trích, vì đánh dấu sai sẽ làm sổ tay lộ bí mật. Chi tiết guardrail: `docs/security.md`.
+**Bản 1 chỉ có phần code** (D-88). Người canh chỉ thấy điều bộ trích đã ghi vào gói thay đổi: điều văn viết ra mà bộ trích không ghi thì không bị kiểm, và hành động vượt luật được chiều theo (G6) chưa có ai kiểm. Phần LLM để bản sau, khi đã có bài B cho nó; config chưa có vai model cho người canh.
+
+Khi có phần LLM, mọi điểm nghi do LLM báo phải kèm **câu trích nguyên văn** từ cảnh; code kiểm câu trích có thật trong văn bản, không có thì bỏ điểm nghi đó. Việc đánh dấu một bí mật là "đã hé lộ cho người chơi" cũng phải kèm câu trích, vì đánh dấu sai sẽ làm sổ tay lộ bí mật. Chi tiết guardrail: `docs/security.md`.
 
 ## 9. Bộ đo
 

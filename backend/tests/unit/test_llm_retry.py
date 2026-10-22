@@ -128,12 +128,12 @@ def test_require_model_returns_role_model_or_model_not_set():
     from writory.llm.base import require_model
 
     cfg = load_config()
-    roles = cfg.models.roles.model_copy(update={"extract": "x/extract", "guard": None})
+    roles = cfg.models.roles.model_copy(update={"extract": "x/extract", "narrator": None})
     assert require_model(roles, "extract") == "x/extract"
     with pytest.raises(WritoryError) as exc:
-        require_model(roles, "guard")
+        require_model(roles, "narrator")
     assert exc.value.code is ErrorCode.CONFIG_MODEL_NOT_SET
-    assert "roles.guard" in str(exc.value)
+    assert "roles.narrator" in str(exc.value)
 
 
 def test_role_extra_carries_reasoning_effort_from_config():

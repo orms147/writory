@@ -18,6 +18,7 @@ import {
   END_SCENE,
   FINISHED_SCENES,
   MOCK_CONFIG,
+  MOCK_LENGTH_LEVELS,
   PLOTS,
   SCENES,
   SETTINGS,
@@ -146,7 +147,8 @@ export function createMockServer(options: MockOptions = {}) {
   }
 
   function summary(s: MockStory): StorySummary {
-    const level = MOCK_CONFIG.story_lengths.find((l) => l.key === s.length_level);
+    // Như máy chủ thật: nhãn lấy từ mọi mức, kể cả mức đã đóng (truyện cũ vẫn có nhãn, D-88).
+    const level = MOCK_LENGTH_LEVELS.find((l) => l.key === s.length_level);
     return {
       story_id: s.id, title: s.title, length_level: s.length_level, length_label: level?.label ?? s.length_level,
       chapter: s.chapter, finished: s.chapter >= s.total, last_excerpt: lastExcerpt(s), updated_at: s.updated_at,
@@ -403,9 +405,9 @@ export function createMockServer(options: MockOptions = {}) {
     if (path === '/setup' && method === 'POST') {
       const start = body as unknown as SetupStartIn;
       if (!start.tags?.genre) return errorResponse('REQUEST_INVALID', ['tags.genre']);
-      if (!MOCK_CONFIG.story_lengths.some((l) => l.key === start.length_level)) {
-        return errorResponse('REQUEST_INVALID', ['length_level']);
-      }
+      const length = MOCK_LENGTH_LEVELS.find((l) => l.key === start.length_level);
+      if (!length) return errorResponse('REQUEST_INVALID', ['length_level']);
+      if (!length.player_selectable) return errorResponse('STORY_LENGTH_NOT_OPEN', ['length_level']);
       const out = newSetup(start);
       setups.set(out.session_id, { out });
       return jsonResponse(out);

@@ -88,6 +88,24 @@ def test_start_body_is_checked(client, body, fields):
     assert_request_invalid(client.post("/setup", json=body), fields)
 
 
+CLOSED_LENGTHS = [k for k, v in CFG.story_lengths.levels.items() if not v.player_selectable]
+
+
+def test_some_story_length_is_closed_in_repo_config():
+    assert CLOSED_LENGTHS, "test dưới đây cần ít nhất một mức đóng (D-88)"
+
+
+@pytest.mark.parametrize("level", CLOSED_LENGTHS)
+def test_start_refuses_a_length_not_open_to_players(client, level):
+    """D-88: mức có trong config nhưng chưa mở cho người chơi → mã riêng, câu tiếng Việt, chỉ đúng
+    trường (G12). Bị từ chối trước khi chạm Postgres (conn là None)."""
+    resp = client.post("/setup", json={"tags": {"genre": "kiếm hiệp"}, "length_level": level})
+    assert resp.status_code == 422
+    expected = WritoryError(ErrorCode.STORY_LENGTH_NOT_OPEN).player_payload()
+    assert resp.json() == {**expected, "fields": ["length_level"]}
+    assert level not in resp.text
+
+
 def test_setup_routes_not_mounted_when_dev_flag_off():
     app = create_app(dev_settings(dev=False), health_checks={"neo4j": ok}, config=CFG)
     assert not any(p.startswith("/setup") for p in app.openapi()["paths"])
