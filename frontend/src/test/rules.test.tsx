@@ -5,6 +5,8 @@ import { readFileSync, readdirSync, statSync } from 'node:fs';
 import { join } from 'node:path';
 import { MemoryRouter } from 'react-router';
 import { describe, expect, it, vi } from 'vitest';
+import { api, setFetch } from '../api/client';
+import { ApiError } from '../api/errors';
 import type { NotebookOut, PlayerChoice } from '../api/types';
 import { InkText } from '../components/InkText';
 import { ConfigValue } from '../config/PublicConfig';
@@ -12,7 +14,7 @@ import { KeyCost } from '../screens/KeyCost';
 import { ChoicePanel } from '../screens/story/ChoicePanel';
 import { NarratorPanel } from '../screens/story/NarratorPanel';
 import { NotebookView } from '../screens/story/NotebookPanel';
-import { setFetch } from '../api/client';
+import { Template } from '../screens/setup/Template';
 import { oddConfig, renderApp, withMock } from './render';
 
 const CHOICES: PlayerChoice[] = [
@@ -270,5 +272,31 @@ describe('chữ máy chủ hiện nguyên văn', () => {
     expect(screen.getAllByText('Bạn chưa biết điều này.').length).toBe(2);
     expect(await screen.findByText(/Lượt mới mở ở chương sau/)).toBeInTheDocument();
     expect(screen.queryByLabelText('Câu hỏi của bạn')).toBeNull();
+  });
+});
+
+describe('độ dài truyện chỉ gồm mức đang mở (D-88)', () => {
+  it('màn khởi tạo hiện đúng các mức /config/public trả về, không mức nào khác', async () => {
+    withMock();
+    const config = { ...oddConfig(), story_lengths: [{ key: 'thu', label: 'Truyện thử', chapters_min: 3, chapters_max: 5 }] };
+    renderApp(<Template />, { config });
+    const radios = within(screen.getByRole('radiogroup', { name: 'D · Độ dài' })).getAllByRole('radio');
+    expect(radios).toHaveLength(1);
+    expect(radios[0]).toHaveTextContent('Truyện thử');
+    for (const closed of ['Truyện ngắn', 'Truyện vừa', 'Truyện dài', 'Tiểu thuyết mỏng']) {
+      expect(screen.queryByText(closed)).toBeNull();
+    }
+  });
+
+  it('máy chủ giả: /config/public chỉ trả mức mở; mức đóng bị /setup từ chối bằng mã riêng', async () => {
+    withMock();
+    const config = await api.publicConfig();
+    expect(config.story_lengths.map((l) => l.key)).toEqual(['short', 'medium']);
+    const err = await api.startSetup({ tags: { genre: 'kiếm hiệp', voice: null }, length_level: 'long', naming: null }).catch((e: unknown) => e);
+    expect(err).toBeInstanceOf(ApiError);
+    expect((err as ApiError).code).toBe('STORY_LENGTH_NOT_OPEN');
+    expect((err as ApiError).fields).toEqual(['length_level']);
+    const unknown = await api.startSetup({ tags: { genre: 'kiếm hiệp', voice: null }, length_level: 'khong-co', naming: null }).catch((e: unknown) => e);
+    expect((unknown as ApiError).code).toBe('REQUEST_INVALID');
   });
 });

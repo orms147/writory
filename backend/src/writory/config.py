@@ -157,7 +157,6 @@ class RoleModels(_Section):
     _file = "models.yaml"
     outline: str | None
     extract: str | None
-    guard: str | None
     choices: str | None
     narrator: str | None
     classify: str | None
@@ -174,7 +173,6 @@ class RoleReasoning(_Strict):
 
     outline: ReasoningEffort | None = None
     extract: ReasoningEffort | None = None
-    guard: ReasoningEffort | None = None
     choices: ReasoningEffort | None = None
     narrator: ReasoningEffort | None = None
     classify: ReasoningEffort | None = None
@@ -232,6 +230,9 @@ class LengthLevel(_Strict):
     # không tính (D-54).
     milestones: IntRange
     max_due_per_chapter: PositiveInt
+    # Người chơi được chọn mức này lúc khởi tạo (D-88). Bắt buộc ghi rõ ở từng mức. Mức đóng vẫn
+    # chạy được bằng lệnh đo (`pipeline/bench_run.py`), để đo trước khi mở.
+    player_selectable: bool
 
 
 class StoryLengthsConfig(_Strict):
@@ -239,6 +240,16 @@ class StoryLengthsConfig(_Strict):
     chapter_chars: IntRange
     scenes_per_chapter: IntRange
     levels: dict[str, LengthLevel] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _some_level_open(self) -> Self:
+        if not any(level.player_selectable for level in self.levels.values()):
+            raise ValueError("levels: cần ít nhất một mức player_selectable: true (D-88)")
+        return self
+
+    def player_levels(self) -> dict[str, LengthLevel]:
+        """Các mức người chơi được chọn, theo thứ tự trong config (D-88)."""
+        return {k: v for k, v in self.levels.items() if v.player_selectable}
 
 
 # --- quality.yaml ----------------------------------------------------------------------

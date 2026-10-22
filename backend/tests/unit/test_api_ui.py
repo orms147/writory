@@ -195,7 +195,7 @@ def expected_public(cfg) -> dict:
         "story_lengths": [
             {"key": k, "label": v.label, "chapters_min": v.chapters.min,
              "chapters_max": v.chapters.max}
-            for k, v in cfg.story_lengths.levels.items()
+            for k, v in cfg.story_lengths.levels.items() if v.player_selectable
         ],
         "writer_tier": {"label": cfg.models.writer_tiers[0].label},
         "darkness_levels": [{"key": k, "label": v.label}
@@ -210,7 +210,20 @@ def test_public_config_is_exactly_the_numbers_from_config():
         resp = client.get("/config/public")
     assert resp.status_code == 200
     assert resp.json() == expected_public(CFG)
-    assert [s["key"] for s in resp.json()["story_lengths"]] == list(CFG.story_lengths.levels)
+    open_levels = [k for k, v in CFG.story_lengths.levels.items() if v.player_selectable]
+    assert [s["key"] for s in resp.json()["story_lengths"]] == open_levels
+
+
+def test_public_config_lists_only_story_lengths_open_to_players():
+    """D-88: giao diện chỉ thấy mức mở; mức đóng không có cả khoá lẫn nhãn."""
+    closed = {k: v for k, v in CFG.story_lengths.levels.items() if not v.player_selectable}
+    assert closed, "test cần ít nhất một mức đóng trong config thật"
+    with TestClient(build()) as client:
+        body = client.get("/config/public").json()
+    keys = {s["key"] for s in body["story_lengths"]}
+    assert keys and not keys & set(closed)
+    labels = {s["label"] for s in body["story_lengths"]}
+    assert not labels & {v.label for v in closed.values()}
 
 
 def test_public_config_has_no_model_ids_prices_ceilings_or_internal_thresholds():

@@ -46,6 +46,7 @@ class ErrorCode(StrEnum):
     NARRATOR_LIMIT_REACHED = "NARRATOR_LIMIT_REACHED"
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
     STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
+    STORY_LENGTH_NOT_OPEN = "STORY_LENGTH_NOT_OPEN"
     CHOICES_LEAK_BLOCKED = "CHOICES_LEAK_BLOCKED"
     INPUT_BLOCKED = "INPUT_BLOCKED"
     SETUP_NOT_FOUND = "SETUP_NOT_FOUND"
@@ -224,6 +225,12 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Bước khởi tạo truyện vừa rồi cho ra kết quả không hợp lệ nên hệ thống chưa dùng và chưa "
         "lưu gì. Lỗi ở phía hệ thống, không phải do bạn.",
         "Bấm thử lại bước này. " + _REPORT,
+    ),
+    # Mức độ dài có trong config nhưng chưa mở cho người chơi (D-88). Không nêu tên mức: danh sách
+    # mức mở nằm ở config, giao diện lấy từ /config/public.
+    ErrorCode.STORY_LENGTH_NOT_OPEN: PlayerMessage(
+        "Độ dài truyện bạn chọn chưa mở cho người chơi ở bản này.",
+        "Tải lại trang rồi chọn một độ dài trong danh sách đang có.",
     ),
     # Cùng lý do trung tính như SCENE_LEAK_BLOCKED (D-37). Chương đã ghi xong trước bước này.
     # Kiểm duyệt đầu vào (G9, D-57). Một câu cho mọi loại: không nêu loại nội dung, không nhắc

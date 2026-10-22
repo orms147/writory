@@ -8,7 +8,17 @@ import type {
   PlotOption,
   PublicConfig,
   SettingOption,
+  StoryLengthOption,
 } from '../api/types';
+
+/** Mọi mức độ dài của máy chủ giả, như `config/story_lengths.yaml`. `/config/public` chỉ trả mức
+ *  `player_selectable`; `/setup` từ chối mức đóng bằng `STORY_LENGTH_NOT_OPEN` (D-88). */
+export const MOCK_LENGTH_LEVELS: (StoryLengthOption & { player_selectable: boolean })[] = [
+  { key: 'short', label: 'Truyện ngắn', chapters_min: 4, chapters_max: 8, player_selectable: true },
+  { key: 'medium', label: 'Truyện vừa', chapters_min: 10, chapters_max: 20, player_selectable: true },
+  { key: 'long', label: 'Truyện dài', chapters_min: 20, chapters_max: 35, player_selectable: false },
+  { key: 'novel', label: 'Tiểu thuyết mỏng', chapters_min: 30, chapters_max: 60, player_selectable: false },
+];
 
 export const MOCK_CONFIG: PublicConfig = {
   input: {
@@ -21,12 +31,12 @@ export const MOCK_CONFIG: PublicConfig = {
   narrator_questions_per_chapter: 3,
   rewrite_per_scene: 1,
   cost_usd: { per_scene: 0.02, per_chapter: 0.08, per_story: 1 },
-  story_lengths: [
-    { key: 'short', label: 'Truyện ngắn', chapters_min: 4, chapters_max: 8 },
-    { key: 'medium', label: 'Truyện vừa', chapters_min: 10, chapters_max: 20 },
-    { key: 'long', label: 'Truyện dài', chapters_min: 20, chapters_max: 35 },
-    { key: 'novel', label: 'Tiểu thuyết mỏng', chapters_min: 30, chapters_max: 60 },
-  ],
+  story_lengths: MOCK_LENGTH_LEVELS.filter((l) => l.player_selectable).map(({ key, label, chapters_min, chapters_max }) => ({
+    key,
+    label,
+    chapters_min,
+    chapters_max,
+  })),
   darkness_levels: [
     { key: 'light', label: 'Nhẹ' },
     { key: 'medium', label: 'Vừa' },

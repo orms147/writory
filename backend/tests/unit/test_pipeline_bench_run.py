@@ -628,3 +628,12 @@ async def test_unknown_scenario_darkness_level_fails_before_the_first_call(tmp_p
     with pytest.raises(ConfigError, match="darkness_level"):
         await run.run()
     assert llm.calls == [] and store.created is None and not out.exists()
+
+
+@pytest.mark.parametrize("level", ["long", "novel"])
+def test_bench_run_accepts_story_lengths_closed_to_players(tmp_path, level):
+    """D-88: mức chưa mở cho người chơi vẫn chạy được bằng lệnh đo, để đo trước khi mở."""
+    config = trial_config(tmp_path)
+    assert not config.story_lengths.levels[level].player_selectable
+    problems = bench_run.run_problems(config, scenario_for(config, length_level=level))
+    assert not [p for p in problems if "độ dài" in p], problems

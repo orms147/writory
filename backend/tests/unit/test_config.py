@@ -172,7 +172,7 @@ def test_narrator_limits_exist_in_config():
 def test_provisional_roles_use_luna_with_low_reasoning():
     """D-47: các vai chưa có bài đo riêng dùng tạm GPT-6 Luna; vai trả JSON suy luận thấp."""
     models = load_config().models
-    for role in ("outline", "guard", "choices", "narrator", "classify", "setup"):
+    for role in ("outline", "choices", "narrator", "classify", "setup"):
         assert models.roles.require(role) == "openai/gpt-6-luna"
         assert getattr(models.role_reasoning, role) == "low"
 
@@ -206,3 +206,51 @@ def test_writer_tier_reasoning_is_optional_and_checked(config_dir):
     with pytest.raises(ConfigError) as exc:
         load_config(config_dir)
     assert "writer_tiers" in str(exc.value)
+
+
+def test_every_configured_role_is_used_and_guard_has_no_model_role():
+    """D-88: người canh bản 1 chỉ kiểm bằng code, nên config không có vai `guard`. Mọi vai trong
+    `roles` phải có code gọi `require_model(..., "<vai>")` (hoặc `ROLE = "<vai>"`): không vai chết."""
+    import re
+
+    from writory.config import RoleModels, RoleReasoning
+
+    assert "guard" not in RoleModels.model_fields
+    assert "guard" not in RoleReasoning.model_fields
+    text = (REPO_CONFIG_DIR / "models.yaml").read_text(encoding="utf-8")
+    assert not re.search(r"^\s+guard:", text, re.MULTILINE)
+
+    src = Path(__file__).resolve().parents[2] / "src" / "writory"
+    code = "\n".join(p.read_text(encoding="utf-8") for p in src.rglob("*.py"))
+    for role in RoleModels.model_fields:
+        used = (re.search(rf'require_model\([^)]*"{role}"\)', code)
+                or re.search(rf'^ROLE = "{role}"', code, re.MULTILINE))
+        assert used, f"vai {role!r} trong config/models.yaml không có code nào dùng"
+
+
+def test_story_lengths_open_to_players_are_short_and_medium():
+    """D-88 (chủ dự án, 22/10/2026): bản 1 mở Ngắn và Vừa; Dài, Tiểu thuyết mở sau khi đo thật.
+    Mỗi mức phải ghi rõ `player_selectable` (test dưới: thiếu là sai schema)."""
+    lengths = load_config().story_lengths
+    assert list(lengths.player_levels()) == ["short", "medium"]
+    assert {k for k, v in lengths.levels.items() if not v.player_selectable} == {"long", "novel"}
+
+
+def test_story_length_without_player_selectable_is_a_schema_error(config_dir):
+    path = config_dir / "story_lengths.yaml"
+    text = path.read_text(encoding="utf-8")
+    old = "max_due_per_chapter: 3, player_selectable: false}"
+    assert old in text, "test hỏng: config thật đã đổi"
+    path.write_text(text.replace(old, "max_due_per_chapter: 3}", 1), encoding="utf-8")
+    with pytest.raises(ConfigError, match="player_selectable"):
+        load_config(config_dir)
+
+
+def test_story_lengths_need_at_least_one_open_level(config_dir):
+    path = config_dir / "story_lengths.yaml"
+    text = path.read_text(encoding="utf-8")
+    assert "player_selectable: true" in text, "test hỏng: config thật đã đổi"
+    path.write_text(text.replace("player_selectable: true", "player_selectable: false"),
+                    encoding="utf-8")
+    with pytest.raises(ConfigError, match="player_selectable"):
+        load_config(config_dir)

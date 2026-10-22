@@ -371,7 +371,7 @@ class PublicConfigOut(_Out):
     narrator_questions_per_chapter: int | None
     rewrite_per_scene: int
     cost_usd: CostCapsOut
-    story_lengths: list[StoryLengthOut]  # theo thứ tự trong config
+    story_lengths: list[StoryLengthOut]  # chỉ mức người chơi được chọn, theo thứ tự config (D-88)
     writer_tier: WriterTierOut
     darkness_levels: list[DarknessLevelOut]  # theo thứ tự trong config/moderation.yaml
     default_darkness_level: str
@@ -397,7 +397,7 @@ class PublicConfigOut(_Out):
             story_lengths=[
                 StoryLengthOut(key=k, label=v.label, chapters_min=v.chapters.min,
                                chapters_max=v.chapters.max)
-                for k, v in config.story_lengths.levels.items()
+                for k, v in config.story_lengths.player_levels().items()
             ],
             writer_tier=WriterTierOut(label=writer_label),
             darkness_levels=[DarknessLevelOut(key=k, label=v.label)

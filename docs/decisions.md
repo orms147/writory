@@ -778,3 +778,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Giao diện: "khoảng $… mỗi chương" kèm "(theo N chương đã viết)" hoặc "(số mặc định)"; không có số hoặc API lỗi thì "chưa có ước tính". Máy chủ giả có cùng endpoint (D-69).
 - **Hệ quả:** chi phí mỗi chương tăng theo truyện (ngữ cảnh dài ra) nhưng trung vị tất cả các chương đã ghi chậm theo kịp; ước tính thấp hơn thật ở truyện dài. Chưa tách chi phí theo mức đậm của chương. Kiểm duyệt ô tự viết mang cùng số chương nên cộng vào chương đó (rất nhỏ). Hai truyện cùng chủ có thể ra hai số khác nhau, đúng ý. Ước tính không phải trần: trần vẫn là `cost_usd` (G8).
 - **Người quyết:** Claude (nhánh next-chapter-estimate), điều phối giao việc, chờ duyệt · 22/10/2026
+
+## D-88 · Phạm vi bản 1: người canh chỉ kiểm bằng code; người chơi chỉ chọn độ dài Ngắn và Vừa
+- **Bối cảnh:** design §8 mô tả người canh có phần LLM, và `config/models.yaml` có vai `guard` mà không code nào gọi. Design §3 có bốn mức độ dài, nhưng mới đo thật truyện ngắn và truyện vừa (CLAUDE.md §9); truyện dài chưa chạy lần nào.
+- **Quyết định:**
+  - Người canh bản 1 chỉ kiểm bằng code (`guard/`). Phần LLM để bản sau. Bỏ vai `guard` khỏi `config/models.yaml` và khỏi `RoleModels`/`RoleReasoning` (config `extra="forbid"`, nên file cũ còn vai này thì báo lỗi, không âm thầm bỏ qua). Test: mọi vai trong `roles` phải có code gọi `require_model` với tên vai đó.
+  - Mỗi mức trong `config/story_lengths.yaml` bắt buộc có `player_selectable` (cần ít nhất một mức mở). Bản 1: `short`, `medium` mở; `long`, `novel` đóng, mở sau khi đã chạy đo thật ở mức đó.
+  - `POST /setup` với mức có trong config mà đóng: `STORY_LENGTH_NOT_OPEN` (422, `fields: ["length_level"]`, câu tiếng Việt không nêu tên mức); mức không có trong config vẫn là `REQUEST_INVALID`. `GET /config/public` chỉ trả mức mở (`StoryLengthsConfig.player_levels`). Giao diện vốn lấy danh sách từ API; máy chủ giả trả cùng mã.
+  - Lệnh đo (`pipeline/bench_run.py`) vẫn nhận mọi mức trong config.
+- **Hệ quả:** phiên khởi tạo đã mở trước thay đổi này ở mức đóng vẫn chốt được (chỉ kiểm ở bước bắt đầu). Truyện cũ ở mức đóng vẫn chơi tiếp; tủ truyện lấy nhãn độ dài từ config đầy đủ. G6 (chiều theo hành động vượt luật) chưa có ai kiểm, chỉ đề viết dặn (docs/security.md, Chưa giải quyết). Người canh chỉ thấy điều bộ trích đã ghi vào gói thay đổi.
+- **Người quyết:** Chủ dự án (22/10/2026); cài đặt: Claude (nhánh docs/v1-scope)

@@ -33,6 +33,7 @@ export const MOCK_ERRORS: Record<string, { message: string; status: number }> = 
   NARRATOR_QUESTION_TOO_LONG: { message: "Câu hỏi bạn viết dài hơn mức cho phép. Rút gọn câu hỏi rồi gửi lại.", status: 422 },
   NARRATOR_LIMIT_REACHED: { message: "Bạn đã dùng hết số câu hỏi người kể chuyện cho chương này. Đọc tiếp sang chương sau để hỏi thêm.", status: 429 },
   WRITORY_RATE_LIMITED: { message: "Bạn đang gửi yêu cầu nhanh hơn mức WriTory cho phép. Đợi khoảng một phút rồi thử lại.", status: 429 },
+  STORY_LENGTH_NOT_OPEN: { message: "Độ dài truyện bạn chọn chưa mở cho người chơi ở bản này. Tải lại trang rồi chọn một độ dài trong danh sách đang có.", status: 422 },
   STORY_SETUP_INVALID: { message: "Bước khởi tạo truyện vừa rồi cho ra kết quả không hợp lệ nên hệ thống chưa dùng và chưa lưu gì. Lỗi ở phía hệ thống, không phải do bạn. Bấm thử lại bước này. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 502 },
   INPUT_BLOCKED: { message: "Nội dung bạn vừa nhập thuộc loại WriTory không hỗ trợ nên hệ thống không dùng nó. Sửa lại nội dung rồi gửi lại.", status: 422 },
   CHOICES_LEAK_BLOCKED: { message: "Các lựa chọn vừa tạo không qua được bước kiểm tra cuối nên hệ thống không hiện chúng. Chương bạn vừa đọc đã được lưu. Bấm thử lại để tạo lựa chọn mới.", status: 502 },
