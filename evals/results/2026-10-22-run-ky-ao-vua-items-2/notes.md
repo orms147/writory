@@ -16,4 +16,4 @@ Người đọc: Claude, 22/10/2026. Nguồn: `report.json`, `truth_dump.json`, 
 ## Chưa kiểm
 - Lỗi lật trạng thái đồ vật (đồ vật vừa ở nơi vừa trong tay) chỉ kiểm bằng test, chưa thấy lại ở lần chạy thật nào sau D-90.
 - Lỗi cửa mở/khoá: đồ thị không biểu diễn được, nên lần chạy này không đo.
-- Mục "Đồ vật quan trọng" có phải nguyên nhân của `leak:name` ở `items-1` không (xem notes của lần đó): cần thêm lần chạy.
+- Mục "Đồ vật quan trọng" có làm `leak:name` ở `items-1` nhiều hơn không: cần lần chạy đối chứng cùng khởi tạo (`bench_run --setup-from` mới có ở nhánh `feature/page-quotes-writer`, chưa vào `main`).
