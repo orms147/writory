@@ -69,7 +69,7 @@ log = logging.getLogger(__name__)
 # Đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49). setup-4: luật id có dạng và
 # ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54). setup-5: `protects` của bí mật về
 # danh tính (D-61). setup-6: `known_by` chỉ gồm nhân vật khác, kể cả với bối cảnh chung (D-76).
-PROMPT_VERSION = "setup-6"
+PROMPT_VERSION = "setup-7"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -507,7 +507,9 @@ trên trang khi truyện kể tới. Fact chỉ nhân vật chính biết thì �
 - `edges`: tình trạng lúc truyện bắt đầu, theo bảng "Cạnh trong `edges`" ở cuối đề.
 - `threads`: các mạch chính và phụ: `description`, khoảng chương dự kiến gỡ (`due_from_chapter`, \
 `due_to_chapter`) trong số chương của truyện, `must_resolve` là true nếu mạch phải gỡ trước khi \
-kết. Mạch phải gỡ thì phải gỡ xong trong đúng khoảng này.
+kết. Mạch phải gỡ thì phải gỡ xong trong đúng khoảng này. Mỗi mạch phải gỡ hỏi đúng một câu hỏi \
+chính (một việc phải xảy ra hoặc một điều phải biết): mô tả không ghép hai việc bằng "và" hay dấu \
+chấm phẩy, việc thứ hai thì làm thành mạch khác. Mạch xong khi câu hỏi chính ấy có câu trả lời.
 - `milestones`: các mốc chính của cốt truyện, ẩn với người chơi: `kind` là `turning_point` (bước \
 ngoặt), `climax` (cao trào) hoặc `ending` (kết); `goal`: một câu, điều phải xảy ra ở mốc đó; \
 `from_chapter`, `to_chapter`: khoảng chương mốc phải xảy ra. Mỗi hồi có ít nhất một mốc có \

@@ -57,6 +57,16 @@ class SecretGoal:
 
 
 @dataclass(frozen=True)
+class RevealedSecret:
+    """Bí mật đã lộ cho người chơi (ở chương trước hoặc cảnh trước của chương này)."""
+
+    fact_id: str
+    text: str
+    user_authored: bool
+    revealed_chapter: int
+
+
+@dataclass(frozen=True)
 class ThreadGoal:
     """Mạch phải gỡ, chưa gỡ."""
 
@@ -76,6 +86,8 @@ class ChapterGoals:
     milestones: tuple[MilestoneGoal, ...]
     secrets: tuple[SecretGoal, ...]
     threads: tuple[ThreadGoal, ...]
+    # Bí mật đã lộ: để đề nhắc không diễn lại cảnh lộ (D-84). Chỉ vào đề dàn ý và đề viết (G1).
+    revealed: tuple[RevealedSecret, ...] = ()
 
     @property
     def final(self) -> bool:
@@ -121,8 +133,12 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState) -> ChapterGo
                    deadline(chapter, t.from_chapter, t.to_chapter, final=final))
         for t in progress.threads if t.resolved_chapter is None
     )
+    revealed = tuple(
+        RevealedSecret(s.fact_id, s.text, s.user_authored, s.revealed_chapter)
+        for s in progress.secrets if s.revealed_chapter is not None
+    )
     return ChapterGoals(chapter, plan.total_chapters, act, _milestones(plan, chapter, final),
-                        tuple(secrets), threads)
+                        tuple(secrets), threads, revealed)
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -214,6 +230,12 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
                  _data(s.text, s.user_authored))
         line("Hé lộ nghĩa là trên trang có câu nói thẳng điều đó (lời nhân vật, chứng cứ, điều nhân "
              "vật chính tận mắt thấy), không chỉ gợi ý.")
+    if goals.revealed:
+        line("### Bí mật đã lộ (người đọc đã biết)")
+        for r in goals.revealed:
+            line(f"- Đã lộ ở chương {r.revealed_chapter}: ", _data(r.text, r.user_authored))
+        line("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân vật phản "
+             "ứng với điều đã biết và đi một bước mới.")
     if goals.threads:
         line("### Mạch phải gỡ trước khi kết truyện")
         for t in goals.threads:
@@ -222,7 +244,8 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
             line(f"- {_THREAD_TEXT[t.status]} ({ident}hạn gỡ "
                  f"{_window(t.from_chapter, t.to_chapter)}): ", _data(t.description, t.user_authored))
         line("Gỡ mạch nghĩa là trên trang có câu trả lời rõ cho câu hỏi chính của mạch, hoặc nhân "
-             "vật đưa ra quyết định dứt khoát mà mạch đòi, nói thẳng ra. Gỡ phải là một bước mới: "
+             "vật đưa ra quyết định dứt khoát mà mạch đòi, nói thẳng ra. Mạch hỏi nhiều vế thì chỉ "
+             "gỡ khi mọi vế đã có câu trả lời. Gỡ phải là một bước mới: "
              "không diễn lại nhịp đã xảy ra ở chương trước (lời thú nhận, phát hiện cũ), không chỉ "
              "nhắc lại điều người đọc đã biết.")
     last_scene = scene >= scene_count

@@ -836,7 +836,7 @@ async def test_other_rules_still_get_the_repair_and_the_dropped_knows_is_not_a_p
 def test_build_prompt_says_background_knowledge_is_not_known_by_the_protagonist():
     """Đề nói rõ: kể cả bối cảnh chung nhân vật chính hẳn đã biết, không ghi `protagonist` vào
     `known_by` (setup-6)."""
-    assert PROMPT_VERSION == "setup-6"
+    assert PROMPT_VERSION == "setup-7"
     assert f"`{PROTAGONIST_ID}`" in BUILD_TASK and "`known_by`" in BUILD_TASK
     assert "bối cảnh chung" in BUILD_TASK
     assert "chỉ ghi các nhân vật khác" in BUILD_TASK
@@ -1141,3 +1141,11 @@ def test_story_brief_carries_the_darkness_level(level):
     choices = CHOICES.model_copy(update={"darkness_level": level})
     brief = story_brief(choices, SETTING, PLOT, PC, moderation=CFG.moderation)
     assert darkness_brief(CFG.moderation, level) in brief
+
+
+def test_build_prompt_asks_for_one_main_question_per_must_resolve_thread():
+    """Hồi quy ky-ao-vua-2: mạch hai vế ("xác định A và tìm ra B", "ngăn A và tìm ra phương thức B")
+    bị bộ trích ghi gỡ khi mới trả lời vế đầu (D-84). Đề bản kế hoạch đòi mỗi mạch phải gỡ hỏi đúng
+    một câu hỏi chính. Chỉ có đề, không kiểm bằng code: code không đọc được nghĩa của "vế"."""
+    assert "đúng một câu hỏi chính" in BUILD_TASK
+    assert "không ghép hai việc" in BUILD_TASK

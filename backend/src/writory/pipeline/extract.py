@@ -34,8 +34,9 @@ from writory.safety.wrap import (
 )
 
 # Đổi chữ prompt thì tăng số. extract-2: luật rút từ lý do bị bỏ ở bài C v1. extract-3: mạch phải
-# gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82).
-PROMPT_VERSION = "extract-3"
+# gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82). extract-4: mạch nhiều vế chỉ
+# gỡ khi mọi vế có trả lời (D-84).
+PROMPT_VERSION = "extract-4"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -125,6 +126,7 @@ Hé lộ cho người chơi:
 
 Gỡ mạch (RESOLVED_IN):
 - Một mạch được gỡ khi trang trả lời rõ câu hỏi chính của mạch, hoặc khi nhân vật đưa ra quyết định mà mạch đòi. Chi tiết phụ còn bỏ ngỏ không giữ mạch mở: câu hỏi chính đã có câu trả lời, hay quyết định đã được nói ra, thì ghi gỡ.
+- Mạch có nhiều vế (mô tả nối bằng "và", hay đòi cả tìm hiểu lẫn quyết định) chỉ gỡ khi trang trả lời MỌI vế. Một vế của mạch không phải chi tiết phụ: mới trả lời một vế, mới có thoả thuận tạm, hay quyết định còn để ngỏ phần lâu dài thì CHƯA gỡ.
 - Chỉ nhắc lại điều đã biết từ chương trước, chỉ gợi ý, hay hứa sẽ làm rõ sau thì KHÔNG phải gỡ.
 - Mục "Mạch phải gỡ đang mở" (nếu có) liệt kê các mạch truyện phải gỡ, kèm hạn: soát từng mạch trong đó với văn bản chương. Trạng thái hạn chỉ để biết mạch nào cần soát kỹ, không phải lý do để ghi gỡ.
 - RESOLVED_IN bắt buộc có `quote`: câu trên trang trả lời câu hỏi chính hay nói ra quyết định đó.
@@ -202,9 +204,13 @@ def _node(known: dict[str, Entity], node_id: str, protagonist_id: str) -> dict:
 def to_package(
     output: ExtractOutput, *, chapter: int, commit_id: str, protagonist_id: str,
     chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
+    threads: Sequence[ThreadGoal] = (),
 ) -> tuple[ChangePackage, list[tuple[str, str]]]:
-    """Đổi đầu ra của model thành `ChangePackage`; cạnh sai quy tắc bị bỏ, kèm lý do."""
+    """Đổi đầu ra của model thành `ChangePackage`; cạnh sai quy tắc bị bỏ, kèm lý do.
+    `threads`: mạch phải gỡ chưa gỡ kèm trạng thái hạn (`ChapterGoals.threads`). `RESOLVED_IN` của
+    mạch trong đó còn `later` (chưa tới khoảng gỡ) bị bỏ (D-84); mạch ngoài danh sách không đổi."""
     known = {e.id: e for e in entities}
+    not_yet = {t.thread_id: t for t in threads if t.status == "later"}
     # Tên lớp truth của mọi nút có tên, kể cả tên người chơi viết: để bắt `known_as` của nút khác.
     names = {e.id: (e.text, *e.aliases) for e in entities if e.label in NAMED_LABELS}
     open_by_id = {o.id: o for o in open_edges}
@@ -227,6 +233,12 @@ def to_package(
         if x.type == "RESOLVED_IN" and not x.quote:
             # Gỡ mạch phải có bằng chứng trên trang, để không ghi gỡ giả (D-82).
             rejected.append((desc, "gỡ mạch mà không có câu trích (D-82)"))
+            continue
+        if x.type == "RESOLVED_IN" and x.source in not_yet:
+            # Bộ trích lấy mạch từ danh mục dù mạch không có trong mục "đang mở" (D-84).
+            t = not_yet[x.source]
+            window = _window(t.from_chapter, t.to_chapter)
+            rejected.append((desc, f"mạch phải gỡ chưa tới khoảng gỡ, {window} (D-84)"))
             continue
         props = {
             k: v for k, v in (("kind", x.kind), ("score", x.score), ("how", x.how),
@@ -281,6 +293,6 @@ async def extract_changes(
     package, rejected = to_package(
         output, chapter=chapter, commit_id=commit_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text,
-        entities=entities, open_edges=open_edges,
+        entities=entities, open_edges=open_edges, threads=threads,
     )
     return ExtractResult(package=package, rejected=rejected, chat=chat)

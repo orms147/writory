@@ -1,0 +1,4014 @@
+{
+ "story_id": "run-20261022-ky-ao-vua-3-8a76c3d5",
+ "plan": {
+  "acts": [
+   {
+    "name": "Lệnh dưới tháp",
+    "from_chapter": 1,
+    "to_chapter": 3
+   },
+   {
+    "name": "Đường qua trạm canh",
+    "from_chapter": 4,
+    "to_chapter": 6
+   },
+   {
+    "name": "Lời thề trong đại điện",
+    "from_chapter": 7,
+    "to_chapter": 9
+   },
+   {
+    "name": "Mảnh thần khí",
+    "from_chapter": 10,
+    "to_chapter": 12
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_lenh_thu_hai_bi_gia",
+    "reveal_from_chapter": 7,
+    "reveal_to_chapter": 8,
+    "leak_terms": [
+     [
+      "Lý Vân Thư",
+      "làm giả"
+     ],
+     [
+      "Lý Vân Thư",
+      "Lệnh Gọi Thứ Hai"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_loi_qua_thap",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 3
+   },
+   {
+    "thread_id": "giu_vat_khoi_tram",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "lenh_nao_that",
+    "resolve_from_chapter": 6,
+    "resolve_to_chapter": 8
+   },
+   {
+    "thread_id": "buoc_vao_dai_dien",
+    "resolve_from_chapter": 8,
+    "resolve_to_chapter": 10
+   },
+   {
+    "thread_id": "so_phan_manh_than_khi",
+    "resolve_from_chapter": 10,
+    "resolve_to_chapter": 12
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Người hộ tống gục xuống và Ninh Tố Hành buộc phải tự chọn đường đi.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Ninh Tố Hành nhận ra các trạm canh đang tìm cách tách nàng khỏi Mảnh Thiên Khuyết.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Ninh Tố Hành biết Lệnh Gọi Thứ Hai là giả.",
+    "from_chapter": 7,
+    "to_chapter": 8
+   },
+   {
+    "kind": "climax",
+    "goal": "Ninh Tố Hành đối mặt với các phe trong Đại Điện Hàn Phong về quyền định đoạt Mảnh Thiên Khuyết.",
+    "from_chapter": 10,
+    "to_chapter": 11
+   },
+   {
+    "kind": "ending",
+    "goal": "Ninh Tố Hành quyết định số phận Mảnh Thiên Khuyết và chấp nhận cái giá của lựa chọn ấy.",
+    "from_chapter": 12,
+    "to_chapter": 12
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 10,
+  "total_chapters": 12,
+  "secrets": [
+   {
+    "fact_id": "fact_lenh_thu_hai_bi_gia",
+    "text": "Lệnh Gọi Thứ Hai được Lý Vân Thư làm giả để đưa Mảnh Thiên Khuyết khỏi hội nghị.",
+    "user_authored": false,
+    "from_chapter": 7,
+    "to_chapter": 8,
+    "revealed_chapter": 7
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_loi_qua_thap",
+    "description": "Ninh Tố Hành có tìm được lối qua các tháp nghiêng để tới trạm canh kế tiếp không?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 3,
+    "resolved_chapter": 1
+   },
+   {
+    "thread_id": "giu_vat_khoi_tram",
+    "description": "Ninh Tố Hành có đưa được Mảnh Thiên Khuyết qua Trạm Canh Sương không?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": 4
+   },
+   {
+    "thread_id": "lenh_nao_that",
+    "description": "Lệnh triệu hồi nào thật sự được ban theo thủ tục của tiên môn?",
+    "user_authored": false,
+    "from_chapter": 6,
+    "to_chapter": 8,
+    "resolved_chapter": 6
+   },
+   {
+    "thread_id": "buoc_vao_dai_dien",
+    "description": "Ninh Tố Hành có được bước vào Đại Điện Hàn Phong trước khi hội nghị kết thúc không?",
+    "user_authored": false,
+    "from_chapter": 8,
+    "to_chapter": 10,
+    "resolved_chapter": 8
+   },
+   {
+    "thread_id": "so_phan_manh_than_khi",
+    "description": "Mảnh Thiên Khuyết sẽ được giao cho ai sau hội nghị?",
+    "user_authored": false,
+    "from_chapter": 10,
+    "to_chapter": 12,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261022-ky-ao-vua-3-8a76c3d5-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Ninh Tố Hành",
+      "personality": "Lanh lợi, kiên nhẫn và giỏi biến sự nhún nhường thành lợi thế. Nàng thích dò xét người khác bằng những câu nói nửa thật nửa đùa, nhưng không xem nhẹ hậu quả của một lời thề.",
+      "backstory": "Nàng lớn lên trong khu xưởng dưới chân các tháp nghiêng, nơi môn đồ thấp cấp sửa pháp khí và hiếm khi được nghe chuyện trong đại điện. Sau khi được gọi bất ngờ đến hội nghị, nàng nhận một vật cần giao nộp cùng hai lệnh triệu hồi trái ngược, đều mang con dấu của mình. Người hộ tống ngã xuống giữa đường, buộc nàng phải tìm lối qua những trạm canh đang siết chặt và quyết định lời gọi nào có thể đưa mình tới nơi an toàn.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "Đoàn hộ vệ"
+      ],
+      "personality": "Điềm đạm, trọng lời thề, không dễ để lộ điều mình nghĩ.",
+      "backstory": "Từng giữ một trạm canh trong đại chiến, sau đó được giao hộ tống môn đồ và vật chứng tới hội nghị."
+     }
+    },
+    {
+     "id": "lao_dao_si",
+     "label": "Character",
+     "props": {
+      "name": "Lão Đạo Sĩ",
+      "aliases": [
+       "Đạo sĩ coi tháp"
+      ],
+      "personality": "Khô khan, hay hỏi ngược, xem sự im lặng cũng là một lời đáp.",
+      "backstory": "Trông nom những tháp đá nghiêng và ghi lại các vết nứt xuất hiện sau đại chiến."
+     }
+    },
+    {
+     "id": "doan_ngoc_ky",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Ngọc Kỳ",
+      "aliases": [
+       "Chấp sự Đoàn"
+      ],
+      "personality": "Lễ độ nhưng sắc lạnh, giỏi biến thủ tục thành lưỡi dao.",
+      "backstory": "Là chấp sự của tiên môn, phụ trách truyền lệnh và kiểm soát việc ra vào đại điện."
+     }
+    },
+    {
+     "id": "bach_tu_ngan",
+     "label": "Character",
+     "props": {
+      "name": "Bạch Tử Ngạn",
+      "aliases": [
+       "Kiếm chủ Bạch"
+      ],
+      "personality": "Cứng rắn, kiệm lời, tin rằng trật tự mong manh chỉ tồn tại khi người ta giữ đúng giới hạn.",
+      "backstory": "Một kiếm tu từng chỉ huy phòng tuyến trên đảo trong những ngày cuối đại chiến."
+     }
+    },
+    {
+     "id": "ly_van_thu",
+     "label": "Character",
+     "props": {
+      "name": "Lý Vân Thư",
+      "aliases": [
+       "Sứ giả Lý"
+      ],
+      "personality": "Khéo léo, thực dụng, luôn cân nhắc cái giá của mỗi lời hứa.",
+      "backstory": "Đại diện cho một tiên môn đồng minh tại hội nghị phân chia thần khí."
+     }
+    },
+    {
+     "id": "dao_han_phong",
+     "label": "Location",
+     "props": {
+      "name": "Đảo Hàn Phong",
+      "description": "Hòn đảo bay mang tên Hàn Phong, nơi các tiên môn dựng thành sau đại chiến."
+     }
+    },
+    {
+     "id": "xuong_chan_thap",
+     "label": "Location",
+     "props": {
+      "name": "Xưởng Chân Tháp",
+      "aliases": [
+       "Khu xưởng"
+      ],
+      "description": "Dãy xưởng thấp dưới chân các tháp nghiêng, nơi môn đồ sửa chữa pháp khí."
+     }
+    },
+    {
+     "id": "duong_thap_nghieng",
+     "label": "Location",
+     "props": {
+      "name": "Đường Tháp Nghiêng",
+      "description": "Lối đá quanh co luồn giữa những tháp nghiêng và các cầu nối trên đảo."
+     }
+    },
+    {
+     "id": "tram_can_song",
+     "label": "Location",
+     "props": {
+      "name": "Trạm Canh Sương",
+      "description": "Trạm gác trên cầu đá, nơi người qua đường bị kiểm tra lệnh bài và hành trang."
+     }
+    },
+    {
+     "id": "dai_dien_han_phong",
+     "label": "Location",
+     "props": {
+      "name": "Đại Điện Hàn Phong",
+      "aliases": [
+       "Đại điện"
+      ],
+      "description": "Điện nghị sự dựng trên nền đá cao, nơi các tiên môn bàn việc phân chia thần khí."
+     }
+    },
+    {
+     "id": "that_thap_am",
+     "label": "Location",
+     "props": {
+      "name": "Thất Tháp Âm",
+      "description": "Cụm tháp đá bỏ trống, nơi tiếng gió bị các khe nứt làm méo đi."
+     }
+    },
+    {
+     "id": "tien_mon_han_phong",
+     "label": "Faction",
+     "props": {
+      "name": "Tiên Môn Hàn Phong",
+      "aliases": [
+       "Hàn Phong"
+      ],
+      "description": "Tiên môn cai quản đảo Hàn Phong bằng lời thề, giới luật và những cuộc luận kiếm."
+     }
+    },
+    {
+     "id": "minh_uoc_bach_ngoc",
+     "label": "Faction",
+     "props": {
+      "name": "Minh Ước Bạch Ngọc",
+      "aliases": [
+       "Minh Ước"
+      ],
+      "description": "Liên minh các tiên môn muốn duy trì thỏa thuận phân chia di vật sau đại chiến."
+     }
+    },
+    {
+     "id": "hoi_kiem_tuan_thap",
+     "label": "Faction",
+     "props": {
+      "name": "Hội Kiếm Tuần Tháp",
+      "aliases": [
+       "Hội Tuần Tháp"
+      ],
+      "description": "Đội tuần tra giữ các cầu nối và tháp canh trên đảo."
+     }
+    },
+    {
+     "id": "manh_thien_khuyet",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh Thiên Khuyết",
+      "aliases": [
+       "Mảnh thần khí"
+      ],
+      "description": "Mảnh vỡ lạnh buốt của một thần khí cổ, được niêm trong hộp đá có khóa."
+     }
+    },
+    {
+     "id": "lenh_goi_thu_nhat",
+     "label": "Item",
+     "props": {
+      "name": "Lệnh Gọi Thứ Nhất",
+      "description": "Tờ lệnh yêu cầu mang Mảnh Thiên Khuyết tới Đại Điện Hàn Phong."
+     }
+    },
+    {
+     "id": "lenh_goi_thu_hai",
+     "label": "Item",
+     "props": {
+      "name": "Lệnh Gọi Thứ Hai",
+      "description": "Tờ lệnh mang cùng con dấu, cũng yêu cầu giao Mảnh Thiên Khuyết nhưng chỉ đường tới Thất Tháp Âm."
+     }
+    },
+    {
+     "id": "fact_dai_chien_ket_thuc",
+     "label": "Fact",
+     "props": {
+      "text": "Đại chiến giữa các tiên môn đã kết thúc trước khi hội nghị phân chia thần khí được triệu tập."
+     }
+    },
+    {
+     "id": "fact_hoi_nghi_dang_dien_ra",
+     "label": "Fact",
+     "props": {
+      "text": "Hội nghị phân chia các mảnh thần khí cổ đã bắt đầu tại Đại Điện Hàn Phong."
+     }
+    },
+    {
+     "id": "fact_hai_lenh_cung_dau",
+     "label": "Fact",
+     "props": {
+      "text": "Hai lệnh triệu hồi cùng mang con dấu của Ninh Tố Hành."
+     }
+    },
+    {
+     "id": "fact_cung_mot_vat",
+     "label": "Fact",
+     "props": {
+      "text": "Cả hai lệnh triệu hồi đều yêu cầu giao nộp Mảnh Thiên Khuyết."
+     }
+    },
+    {
+     "id": "fact_lenh_thu_nhat_dau_that",
+     "label": "Fact",
+     "props": {
+      "text": "Lệnh Gọi Thứ Nhất được Đoàn Ngọc Kỳ đóng dấu theo thủ tục của tiên môn."
+     }
+    },
+    {
+     "id": "fact_lenh_thu_hai_bi_gia",
+     "label": "Fact",
+     "props": {
+      "text": "Lệnh Gọi Thứ Hai được Lý Vân Thư làm giả để đưa Mảnh Thiên Khuyết khỏi hội nghị."
+     }
+    },
+    {
+     "id": "fact_doan_khuong_bi_thuong",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khương bị thương trên đường hộ tống Mảnh Thiên Khuyết."
+     }
+    },
+    {
+     "id": "fact_tram_can_siet_chat",
+     "label": "Fact",
+     "props": {
+      "text": "Các trạm canh trên đảo đang siết việc kiểm tra người và vật ra vào sau đại chiến."
+     }
+    },
+    {
+     "id": "fact_manh_thien_khuyet_bi_niem",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh Thiên Khuyết đang được cất trong hộp đá có khóa."
+     }
+    },
+    {
+     "id": "tim_loi_qua_thap",
+     "label": "Thread",
+     "props": {
+      "description": "Ninh Tố Hành có tìm được lối qua các tháp nghiêng để tới trạm canh kế tiếp không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 3
+     }
+    },
+    {
+     "id": "giu_vat_khoi_tram",
+     "label": "Thread",
+     "props": {
+      "description": "Ninh Tố Hành có đưa được Mảnh Thiên Khuyết qua Trạm Canh Sương không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "lenh_nao_that",
+     "label": "Thread",
+     "props": {
+      "description": "Lệnh triệu hồi nào thật sự được ban theo thủ tục của tiên môn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 6,
+      "due_to_chapter": 8
+     }
+    },
+    {
+     "id": "buoc_vao_dai_dien",
+     "label": "Thread",
+     "props": {
+      "description": "Ninh Tố Hành có được bước vào Đại Điện Hàn Phong trước khi hội nghị kết thúc không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 8,
+      "due_to_chapter": 10
+     }
+    },
+    {
+     "id": "so_phan_manh_than_khi",
+     "label": "Thread",
+     "props": {
+      "description": "Mảnh Thiên Khuyết sẽ được giao cho ai sau hội nghị?",
+      "planted_chapter": 0,
+      "due_from_chapter": 10,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>duong_thap_nghieng@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>duong_thap_nghieng@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_dao_si",
+     "to": "that_thap_am",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_dao_si>that_thap_am@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_ngoc_ky",
+     "to": "dai_dien_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_ngoc_ky>dai_dien_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bach_tu_ngan",
+     "to": "tram_can_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bach_tu_ngan>tram_can_song@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ly_van_thu",
+     "to": "dai_dien_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ly_van_thu>dai_dien_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "manh_thien_khuyet",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:manh_thien_khuyet>duong_thap_nghieng@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lenh_goi_thu_nhat",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lenh_goi_thu_nhat>duong_thap_nghieng@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lenh_goi_thu_hai",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lenh_goi_thu_hai>duong_thap_nghieng@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>manh_thien_khuyet@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "lenh_goi_thu_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>lenh_goi_thu_nhat@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "lenh_goi_thu_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>lenh_goi_thu_hai@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "tien_mon_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>tien_mon_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "tien_mon_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>tien_mon_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "lao_dao_si",
+     "to": "tien_mon_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:lao_dao_si>tien_mon_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_ngoc_ky",
+     "to": "tien_mon_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_ngoc_ky>tien_mon_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "bach_tu_ngan",
+     "to": "hoi_kiem_tuan_thap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:bach_tu_ngan>hoi_kiem_tuan_thap@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ly_van_thu",
+     "to": "minh_uoc_bach_ngoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ly_van_thu>minh_uoc_bach_ngoc@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khuong@0",
+     "props": {
+      "kind": "người hộ tống",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>protagonist@0",
+     "props": {
+      "kind": "người được hộ tống",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_ngoc_ky",
+     "to": "ly_van_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_ngoc_ky>ly_van_thu@0",
+     "props": {
+      "kind": "đối thủ ngoại giao",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "ly_van_thu",
+     "to": "doan_ngoc_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ly_van_thu>doan_ngoc_ky@0",
+     "props": {
+      "kind": "đối thủ ngoại giao",
+      "score": -20
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_dai_chien_ket_thuc",
+     "to": "dao_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_dai_chien_ket_thuc>dao_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_dai_chien_ket_thuc",
+     "to": "minh_uoc_bach_ngoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_dai_chien_ket_thuc>minh_uoc_bach_ngoc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_dai_chien_ket_thuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_dai_chien_ket_thuc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_dao_si",
+     "to": "fact_dai_chien_ket_thuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_dao_si>fact_dai_chien_ket_thuc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_ngoc_ky",
+     "to": "fact_dai_chien_ket_thuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_ngoc_ky>fact_dai_chien_ket_thuc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_tu_ngan",
+     "to": "fact_dai_chien_ket_thuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_tu_ngan>fact_dai_chien_ket_thuc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ly_van_thu",
+     "to": "fact_dai_chien_ket_thuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ly_van_thu>fact_dai_chien_ket_thuc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hoi_nghi_dang_dien_ra",
+     "to": "dai_dien_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hoi_nghi_dang_dien_ra>dai_dien_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hoi_nghi_dang_dien_ra",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hoi_nghi_dang_dien_ra>manh_thien_khuyet@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_hoi_nghi_dang_dien_ra",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_hoi_nghi_dang_dien_ra@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_ngoc_ky",
+     "to": "fact_hoi_nghi_dang_dien_ra",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_ngoc_ky>fact_hoi_nghi_dang_dien_ra@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_tu_ngan",
+     "to": "fact_hoi_nghi_dang_dien_ra",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_tu_ngan>fact_hoi_nghi_dang_dien_ra@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ly_van_thu",
+     "to": "fact_hoi_nghi_dang_dien_ra",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ly_van_thu>fact_hoi_nghi_dang_dien_ra@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hai_lenh_cung_dau",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hai_lenh_cung_dau>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hai_lenh_cung_dau",
+     "to": "lenh_goi_thu_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hai_lenh_cung_dau>lenh_goi_thu_nhat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_hai_lenh_cung_dau",
+     "to": "lenh_goi_thu_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_hai_lenh_cung_dau>lenh_goi_thu_hai@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_hai_lenh_cung_dau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_hai_lenh_cung_dau@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_cung_mot_vat",
+     "to": "lenh_goi_thu_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_cung_mot_vat>lenh_goi_thu_nhat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_cung_mot_vat",
+     "to": "lenh_goi_thu_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_cung_mot_vat>lenh_goi_thu_hai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_cung_mot_vat",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_cung_mot_vat>manh_thien_khuyet@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_cung_mot_vat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_cung_mot_vat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_thu_nhat_dau_that",
+     "to": "lenh_goi_thu_nhat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_thu_nhat_dau_that>lenh_goi_thu_nhat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_thu_nhat_dau_that",
+     "to": "doan_ngoc_ky",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_thu_nhat_dau_that>doan_ngoc_ky@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_thu_nhat_dau_that",
+     "to": "tien_mon_han_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_thu_nhat_dau_that>tien_mon_han_phong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_ngoc_ky",
+     "to": "fact_lenh_thu_nhat_dau_that",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_ngoc_ky>fact_lenh_thu_nhat_dau_that@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_thu_hai_bi_gia",
+     "to": "lenh_goi_thu_hai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_thu_hai_bi_gia>lenh_goi_thu_hai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_thu_hai_bi_gia",
+     "to": "ly_van_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_thu_hai_bi_gia>ly_van_thu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_thu_hai_bi_gia",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_thu_hai_bi_gia>manh_thien_khuyet@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ly_van_thu",
+     "to": "fact_lenh_thu_hai_bi_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ly_van_thu>fact_lenh_thu_hai_bi_gia@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_khuong_bi_thuong",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_khuong_bi_thuong>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_khuong_bi_thuong",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_khuong_bi_thuong>manh_thien_khuyet@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_khuong_bi_thuong",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_khuong_bi_thuong>duong_thap_nghieng@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_doan_khuong_bi_thuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_doan_khuong_bi_thuong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tram_can_siet_chat",
+     "to": "tram_can_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tram_can_siet_chat>tram_can_song@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tram_can_siet_chat",
+     "to": "hoi_kiem_tuan_thap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tram_can_siet_chat>hoi_kiem_tuan_thap@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_tram_can_siet_chat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_tram_can_siet_chat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_dao_si",
+     "to": "fact_tram_can_siet_chat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_dao_si>fact_tram_can_siet_chat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_ngoc_ky",
+     "to": "fact_tram_can_siet_chat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_ngoc_ky>fact_tram_can_siet_chat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bach_tu_ngan",
+     "to": "fact_tram_can_siet_chat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bach_tu_ngan>fact_tram_can_siet_chat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_manh_thien_khuyet_bi_niem",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_manh_thien_khuyet_bi_niem>manh_thien_khuyet@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_manh_thien_khuyet_bi_niem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_manh_thien_khuyet_bi_niem@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Ninh Tố Hành",
+      "known_as": "Ninh Tố Hành"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-a7247296723f",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_khuong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_khuong>ch1@1",
+     "props": {
+      "quote": "Đoàn Khương khuỵu xuống giữa đường.",
+      "known_as": "Đoàn Khương"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dai_dien_han_phong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dai_dien_han_phong>ch1@1",
+     "props": {
+      "quote": "Xa hơn, đường dẫn tới Đại Điện Hàn Phong khuất sau màn sương xám.",
+      "known_as": "Đại Điện Hàn Phong"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "manh_thien_khuyet",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:manh_thien_khuyet>ch1@1",
+     "props": {
+      "quote": "Cả hai cùng yêu cầu giao nộp Mảnh Thiên Khuyết.",
+      "known_as": "Mảnh Thiên Khuyết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tram_can_song",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tram_can_song>ch1@1",
+     "props": {
+      "quote": "Trạm Canh Sương hiện ra phía trước, dựng trên mỏm đá nối sang con đường lớn.",
+      "known_as": "Trạm Canh Sương"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_doan_khuong_bi_thuong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_doan_khuong_bi_thuong@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Dưới lớp áo sẫm màu, vết thương đã thấm qua một mảng rộng."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_hai_lenh_cung_dau",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_hai_lenh_cung_dau@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Trên mỗi tờ đều có con dấu mang tên tôi; nét đóng giống nhau đến mức người đứng xa hẳn sẽ chẳng phân biệt nổi."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_cung_mot_vat",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_cung_mot_vat@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Cả hai cùng yêu cầu giao nộp Mảnh Thiên Khuyết."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_hoi_nghi_dang_dien_ra",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_hoi_nghi_dang_dien_ra@1",
+     "props": {
+      "how": "suy ra",
+      "quote": "Hội nghị đã bắt đầu. Không ai chờ tôi."
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "tram_can_song",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>tram_can_song@1",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "tim_loi_qua_thap",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:tim_loi_qua_thap>ch1@1",
+     "props": {
+      "quote": "Tôi đã tìm được đường tới trạm."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lenh_goi_thu_nhat",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lenh_goi_thu_nhat>ch1@1",
+     "props": {
+      "quote": "Tôi rút hai tờ lệnh khỏi áo, giữ chúng giữa hai ngón tay, không buông hộp.",
+      "known_as": "hai tờ lệnh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lenh_goi_thu_hai",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lenh_goi_thu_hai>ch1@1",
+     "props": {
+      "quote": "Tôi rút hai tờ lệnh khỏi áo, giữ chúng giữa hai ngón tay, không buông hộp.",
+      "known_as": "hai tờ lệnh"
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>duong_thap_nghieng@0",
+     "valid_to_chapter": 1
+    }
+   ]
+  },
+  "2": {
+   "commit_id": "ch2-88982c021cd0",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_manh_thien_khuyet_bi_niem",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_manh_thien_khuyet_bi_niem@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Lớp niêm còn nguyên."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_tram_can_siet_chat",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_tram_can_siet_chat@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Tấm bảng treo trên rào ghi lối qua đã đổi; bên cạnh, một lính canh đang xem xét từng người."
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "duong_thap_nghieng",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>duong_thap_nghieng@2",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>tram_can_song@1",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-1306a9b6a9d8",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-707b1943cb55",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "giu_vat_khoi_tram",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:giu_vat_khoi_tram>ch4@4",
+     "props": {
+      "quote": "Mảnh Thiên Khuyết còn nguyên bên trong, và tôi đã đưa nó qua khỏi Trạm Canh Sương mà không giao cho lính canh."
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "dai_dien_han_phong",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>dai_dien_han_phong@4",
+     "props": {}
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>duong_thap_nghieng@2",
+     "valid_to_chapter": 4
+    }
+   ]
+  },
+  "5": {
+   "commit_id": "ch5-3dddbcc5fa57",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tien_mon_han_phong",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tien_mon_han_phong>ch5@5",
+     "props": {
+      "quote": "- Ninh Tố Hành, môn đồ Hàn Phong",
+      "known_as": "Hàn Phong"
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-1a2142395c74",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_hoi_nghi_dang_dien_ra",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_hoi_nghi_dang_dien_ra@6",
+     "props": {
+      "feeling": "quyết tâm"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "manh_thien_khuyet",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>manh_thien_khuyet@6",
+     "props": {
+      "feeling": "quyết tâm"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_lenh_thu_nhat_dau_that",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_lenh_thu_nhat_dau_that@6",
+     "props": {
+      "how": "được kể",
+      "told_by": "doan_ngoc_ky",
+      "quote": "Dấu này đúng quy thức. Lệnh đã được đóng theo thủ tục của tiên môn."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_ngoc_ky",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_ngoc_ky>ch6@6",
+     "props": {
+      "quote": "Đoàn Ngọc Kỳ bước ra, tay áo quét qua ngưỡng cửa.",
+      "known_as": "Đoàn Ngọc Kỳ"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_lenh_thu_nhat_dau_that",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_lenh_thu_nhat_dau_that>ch6@6",
+     "props": {
+      "quote": "Dấu này đúng quy thức. Lệnh đã được đóng theo thủ tục của tiên môn."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "lenh_nao_that",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:lenh_nao_that>ch6@6",
+     "props": {
+      "quote": "Trong hai lệnh, đây là lệnh duy nhất đã được xác nhận hợp lệ."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:manh_thien_khuyet>duong_thap_nghieng@0",
+     "valid_to_chapter": 6
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:lenh_goi_thu_nhat>duong_thap_nghieng@0",
+     "valid_to_chapter": 6
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:lenh_goi_thu_hai>duong_thap_nghieng@0",
+     "valid_to_chapter": 6
+    }
+   ]
+  },
+  "7": {
+   "commit_id": "ch7-baad866b6512",
+   "nodes": [
+    {
+     "id": "ch7",
+     "label": "Chapter",
+     "props": {
+      "number": 7
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "doan_ngoc_ky",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>doan_ngoc_ky@7",
+     "props": {
+      "feeling": "cảnh giác với Đoàn Ngọc Kỳ"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_lenh_thu_hai_bi_gia",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_lenh_thu_hai_bi_gia@7",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Ta làm giả lệnh ấy để đưa Mảnh Thiên Khuyết khỏi hội nghị."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ly_van_thu",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ly_van_thu>ch7@7",
+     "props": {
+      "quote": "Lý Vân Thư dừng lại khi nghe câu cuối.",
+      "known_as": "Lý Vân Thư"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_lenh_thu_hai_bi_gia",
+     "to": "ch7",
+     "valid_from_chapter": 7,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_lenh_thu_hai_bi_gia>ch7@7",
+     "props": {
+      "quote": "Ta làm giả lệnh ấy để đưa Mảnh Thiên Khuyết khỏi hội nghị."
+     }
+    }
+   ],
+   "close": []
+  },
+  "8": {
+   "commit_id": "ch8-c8db1e5cc682",
+   "nodes": [
+    {
+     "id": "ch8",
+     "label": "Chapter",
+     "props": {
+      "number": 8
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "buoc_vao_dai_dien",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:buoc_vao_dai_dien>ch8@8",
+     "props": {
+      "quote": "Khi qua ngưỡng, tôi nghe sau lưng vang lên tiếng cửa nặng nề khép dần."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "minh_uoc_bach_ngoc",
+     "to": "ch8",
+     "valid_from_chapter": 8,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:minh_uoc_bach_ngoc>ch8@8",
+     "props": {
+      "quote": "Một trưởng lão viện điều lệ của Minh Ước Bạch Ngọc; người ngồi đối diện nhắc rằng Mảnh Thiên Khuyết đang ở đất Hàn Phong",
+      "known_as": "Minh Ước Bạch Ngọc"
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:protagonist>manh_thien_khuyet@0",
+     "valid_to_chapter": 8
+    }
+   ]
+  },
+  "9": {
+   "commit_id": "ch9-852c49b00d17",
+   "nodes": [
+    {
+     "id": "ch9",
+     "label": "Chapter",
+     "props": {
+      "number": 9
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  },
+  "10": {
+   "commit_id": "ch10-7a3597decc19",
+   "nodes": [
+    {
+     "id": "ch10",
+     "label": "Chapter",
+     "props": {
+      "number": 10
+     }
+    }
+   ],
+   "edges": [],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 10,
+  "nodes": {
+   "bach_tu_ngan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Một kiếm tu từng chỉ huy phòng tuyến trên đảo trong những ngày cuối đại chiến.",
+     "aliases": [
+      "Kiếm chủ Bạch"
+     ],
+     "personality": "Cứng rắn, kiệm lời, tin rằng trật tự mong manh chỉ tồn tại khi người ta giữ đúng giới hạn.",
+     "name": "Bạch Tử Ngạn"
+    }
+   },
+   "buoc_vao_dai_dien": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ninh Tố Hành có được bước vào Đại Điện Hàn Phong trước khi hội nghị kết thúc không?",
+     "due_from_chapter": 8,
+     "due_to_chapter": 10
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch10": {
+    "label": "Chapter",
+    "props": {
+     "number": 10
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "ch7": {
+    "label": "Chapter",
+    "props": {
+     "number": 7
+    }
+   },
+   "ch8": {
+    "label": "Chapter",
+    "props": {
+     "number": 8
+    }
+   },
+   "ch9": {
+    "label": "Chapter",
+    "props": {
+     "number": 9
+    }
+   },
+   "dai_dien_han_phong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Đại điện"
+     ],
+     "name": "Đại Điện Hàn Phong",
+     "description": "Điện nghị sự dựng trên nền đá cao, nơi các tiên môn bàn việc phân chia thần khí."
+    }
+   },
+   "dao_han_phong": {
+    "label": "Location",
+    "props": {
+     "name": "Đảo Hàn Phong",
+     "description": "Hòn đảo bay mang tên Hàn Phong, nơi các tiên môn dựng thành sau đại chiến."
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng giữ một trạm canh trong đại chiến, sau đó được giao hộ tống môn đồ và vật chứng tới hội nghị.",
+     "aliases": [
+      "Đoàn hộ vệ"
+     ],
+     "personality": "Điềm đạm, trọng lời thề, không dễ để lộ điều mình nghĩ.",
+     "name": "Đoàn Khương"
+    }
+   },
+   "doan_ngoc_ky": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là chấp sự của tiên môn, phụ trách truyền lệnh và kiểm soát việc ra vào đại điện.",
+     "aliases": [
+      "Chấp sự Đoàn"
+     ],
+     "personality": "Lễ độ nhưng sắc lạnh, giỏi biến thủ tục thành lưỡi dao.",
+     "name": "Đoàn Ngọc Kỳ"
+    }
+   },
+   "duong_thap_nghieng": {
+    "label": "Location",
+    "props": {
+     "name": "Đường Tháp Nghiêng",
+     "description": "Lối đá quanh co luồn giữa những tháp nghiêng và các cầu nối trên đảo."
+    }
+   },
+   "fact_cung_mot_vat": {
+    "label": "Fact",
+    "props": {
+     "text": "Cả hai lệnh triệu hồi đều yêu cầu giao nộp Mảnh Thiên Khuyết."
+    }
+   },
+   "fact_dai_chien_ket_thuc": {
+    "label": "Fact",
+    "props": {
+     "text": "Đại chiến giữa các tiên môn đã kết thúc trước khi hội nghị phân chia thần khí được triệu tập."
+    }
+   },
+   "fact_doan_khuong_bi_thuong": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khương bị thương trên đường hộ tống Mảnh Thiên Khuyết."
+    }
+   },
+   "fact_hai_lenh_cung_dau": {
+    "label": "Fact",
+    "props": {
+     "text": "Hai lệnh triệu hồi cùng mang con dấu của Ninh Tố Hành."
+    }
+   },
+   "fact_hoi_nghi_dang_dien_ra": {
+    "label": "Fact",
+    "props": {
+     "text": "Hội nghị phân chia các mảnh thần khí cổ đã bắt đầu tại Đại Điện Hàn Phong."
+    }
+   },
+   "fact_lenh_thu_hai_bi_gia": {
+    "label": "Fact",
+    "props": {
+     "text": "Lệnh Gọi Thứ Hai được Lý Vân Thư làm giả để đưa Mảnh Thiên Khuyết khỏi hội nghị."
+    }
+   },
+   "fact_lenh_thu_nhat_dau_that": {
+    "label": "Fact",
+    "props": {
+     "text": "Lệnh Gọi Thứ Nhất được Đoàn Ngọc Kỳ đóng dấu theo thủ tục của tiên môn."
+    }
+   },
+   "fact_manh_thien_khuyet_bi_niem": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh Thiên Khuyết đang được cất trong hộp đá có khóa."
+    }
+   },
+   "fact_tram_can_siet_chat": {
+    "label": "Fact",
+    "props": {
+     "text": "Các trạm canh trên đảo đang siết việc kiểm tra người và vật ra vào sau đại chiến."
+    }
+   },
+   "giu_vat_khoi_tram": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ninh Tố Hành có đưa được Mảnh Thiên Khuyết qua Trạm Canh Sương không?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "hoi_kiem_tuan_thap": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Hội Tuần Tháp"
+     ],
+     "name": "Hội Kiếm Tuần Tháp",
+     "description": "Đội tuần tra giữ các cầu nối và tháp canh trên đảo."
+    }
+   },
+   "lao_dao_si": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trông nom những tháp đá nghiêng và ghi lại các vết nứt xuất hiện sau đại chiến.",
+     "aliases": [
+      "Đạo sĩ coi tháp"
+     ],
+     "personality": "Khô khan, hay hỏi ngược, xem sự im lặng cũng là một lời đáp.",
+     "name": "Lão Đạo Sĩ"
+    }
+   },
+   "lenh_goi_thu_hai": {
+    "label": "Item",
+    "props": {
+     "name": "Lệnh Gọi Thứ Hai",
+     "description": "Tờ lệnh mang cùng con dấu, cũng yêu cầu giao Mảnh Thiên Khuyết nhưng chỉ đường tới Thất Tháp Âm."
+    }
+   },
+   "lenh_goi_thu_nhat": {
+    "label": "Item",
+    "props": {
+     "name": "Lệnh Gọi Thứ Nhất",
+     "description": "Tờ lệnh yêu cầu mang Mảnh Thiên Khuyết tới Đại Điện Hàn Phong."
+    }
+   },
+   "lenh_nao_that": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Lệnh triệu hồi nào thật sự được ban theo thủ tục của tiên môn?",
+     "due_from_chapter": 6,
+     "due_to_chapter": 8
+    }
+   },
+   "ly_van_thu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đại diện cho một tiên môn đồng minh tại hội nghị phân chia thần khí.",
+     "aliases": [
+      "Sứ giả Lý"
+     ],
+     "personality": "Khéo léo, thực dụng, luôn cân nhắc cái giá của mỗi lời hứa.",
+     "name": "Lý Vân Thư"
+    }
+   },
+   "manh_thien_khuyet": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Mảnh thần khí"
+     ],
+     "name": "Mảnh Thiên Khuyết",
+     "description": "Mảnh vỡ lạnh buốt của một thần khí cổ, được niêm trong hộp đá có khóa."
+    }
+   },
+   "minh_uoc_bach_ngoc": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Minh Ước"
+     ],
+     "name": "Minh Ước Bạch Ngọc",
+     "description": "Liên minh các tiên môn muốn duy trì thỏa thuận phân chia di vật sau đại chiến."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Nàng lớn lên trong khu xưởng dưới chân các tháp nghiêng, nơi môn đồ thấp cấp sửa pháp khí và hiếm khi được nghe chuyện trong đại điện. Sau khi được gọi bất ngờ đến hội nghị, nàng nhận một vật cần giao nộp cùng hai lệnh triệu hồi trái ngược, đều mang con dấu của mình. Người hộ tống ngã xuống giữa đường, buộc nàng phải tìm lối qua những trạm canh đang siết chặt và quyết định lời gọi nào có thể đưa mình tới nơi an toàn.",
+     "personality": "Lanh lợi, kiên nhẫn và giỏi biến sự nhún nhường thành lợi thế. Nàng thích dò xét người khác bằng những câu nói nửa thật nửa đùa, nhưng không xem nhẹ hậu quả của một lời thề.",
+     "name": "Ninh Tố Hành",
+     "is_protagonist": true
+    }
+   },
+   "so_phan_manh_than_khi": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mảnh Thiên Khuyết sẽ được giao cho ai sau hội nghị?",
+     "due_from_chapter": 10,
+     "due_to_chapter": 12
+    }
+   },
+   "that_thap_am": {
+    "label": "Location",
+    "props": {
+     "name": "Thất Tháp Âm",
+     "description": "Cụm tháp đá bỏ trống, nơi tiếng gió bị các khe nứt làm méo đi."
+    }
+   },
+   "tien_mon_han_phong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Hàn Phong"
+     ],
+     "name": "Tiên Môn Hàn Phong",
+     "description": "Tiên môn cai quản đảo Hàn Phong bằng lời thề, giới luật và những cuộc luận kiếm."
+    }
+   },
+   "tim_loi_qua_thap": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ninh Tố Hành có tìm được lối qua các tháp nghiêng để tới trạm canh kế tiếp không?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 3
+    }
+   },
+   "tram_can_song": {
+    "label": "Location",
+    "props": {
+     "name": "Trạm Canh Sương",
+     "description": "Trạm gác trên cầu đá, nơi người qua đường bị kiểm tra lệnh bài và hành trang."
+    }
+   },
+   "xuong_chan_thap": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Khu xưởng"
+     ],
+     "name": "Xưởng Chân Tháp",
+     "description": "Dãy xưởng thấp dưới chân các tháp nghiêng, nơi môn đồ sửa chữa pháp khí."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khuong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người được hộ tống"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_ngoc_ky>ly_van_thu@0",
+    "type": "RELATES_TO",
+    "source": "doan_ngoc_ky",
+    "target": "ly_van_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "đối thủ ngoại giao"
+    }
+   },
+   {
+    "id": "RELATES_TO:ly_van_thu>doan_ngoc_ky@0",
+    "type": "RELATES_TO",
+    "source": "ly_van_thu",
+    "target": "doan_ngoc_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "đối thủ ngoại giao"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người hộ tống"
+    }
+   },
+   {
+    "id": "LOCATED_AT:bach_tu_ngan>tram_can_song@0",
+    "type": "LOCATED_AT",
+    "source": "bach_tu_ngan",
+    "target": "tram_can_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>duong_thap_nghieng@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "duong_thap_nghieng",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_ngoc_ky>dai_dien_han_phong@0",
+    "type": "LOCATED_AT",
+    "source": "doan_ngoc_ky",
+    "target": "dai_dien_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lao_dao_si>that_thap_am@0",
+    "type": "LOCATED_AT",
+    "source": "lao_dao_si",
+    "target": "that_thap_am",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ly_van_thu>dai_dien_han_phong@0",
+    "type": "LOCATED_AT",
+    "source": "ly_van_thu",
+    "target": "dai_dien_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>dai_dien_han_phong@4",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "dai_dien_han_phong",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>lenh_goi_thu_hai@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "lenh_goi_thu_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>lenh_goi_thu_nhat@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "lenh_goi_thu_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:bach_tu_ngan>hoi_kiem_tuan_thap@0",
+    "type": "MEMBER_OF",
+    "source": "bach_tu_ngan",
+    "target": "hoi_kiem_tuan_thap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>tien_mon_han_phong@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "tien_mon_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_ngoc_ky>tien_mon_han_phong@0",
+    "type": "MEMBER_OF",
+    "source": "doan_ngoc_ky",
+    "target": "tien_mon_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:lao_dao_si>tien_mon_han_phong@0",
+    "type": "MEMBER_OF",
+    "source": "lao_dao_si",
+    "target": "tien_mon_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ly_van_thu>minh_uoc_bach_ngoc@0",
+    "type": "MEMBER_OF",
+    "source": "ly_van_thu",
+    "target": "minh_uoc_bach_ngoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>tien_mon_han_phong@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "tien_mon_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:bach_tu_ngan>fact_dai_chien_ket_thuc@0",
+    "type": "KNOWS",
+    "source": "bach_tu_ngan",
+    "target": "fact_dai_chien_ket_thuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_tu_ngan>fact_hoi_nghi_dang_dien_ra@0",
+    "type": "KNOWS",
+    "source": "bach_tu_ngan",
+    "target": "fact_hoi_nghi_dang_dien_ra",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bach_tu_ngan>fact_tram_can_siet_chat@0",
+    "type": "KNOWS",
+    "source": "bach_tu_ngan",
+    "target": "fact_tram_can_siet_chat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_cung_mot_vat@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_cung_mot_vat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_dai_chien_ket_thuc@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_dai_chien_ket_thuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_doan_khuong_bi_thuong@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_doan_khuong_bi_thuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_hai_lenh_cung_dau@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_hai_lenh_cung_dau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_hoi_nghi_dang_dien_ra@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_hoi_nghi_dang_dien_ra",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_manh_thien_khuyet_bi_niem@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_manh_thien_khuyet_bi_niem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_tram_can_siet_chat@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_tram_can_siet_chat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_ngoc_ky>fact_dai_chien_ket_thuc@0",
+    "type": "KNOWS",
+    "source": "doan_ngoc_ky",
+    "target": "fact_dai_chien_ket_thuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_ngoc_ky>fact_hoi_nghi_dang_dien_ra@0",
+    "type": "KNOWS",
+    "source": "doan_ngoc_ky",
+    "target": "fact_hoi_nghi_dang_dien_ra",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_ngoc_ky>fact_lenh_thu_nhat_dau_that@0",
+    "type": "KNOWS",
+    "source": "doan_ngoc_ky",
+    "target": "fact_lenh_thu_nhat_dau_that",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_ngoc_ky>fact_tram_can_siet_chat@0",
+    "type": "KNOWS",
+    "source": "doan_ngoc_ky",
+    "target": "fact_tram_can_siet_chat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_dao_si>fact_dai_chien_ket_thuc@0",
+    "type": "KNOWS",
+    "source": "lao_dao_si",
+    "target": "fact_dai_chien_ket_thuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_dao_si>fact_tram_can_siet_chat@0",
+    "type": "KNOWS",
+    "source": "lao_dao_si",
+    "target": "fact_tram_can_siet_chat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ly_van_thu>fact_dai_chien_ket_thuc@0",
+    "type": "KNOWS",
+    "source": "ly_van_thu",
+    "target": "fact_dai_chien_ket_thuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ly_van_thu>fact_hoi_nghi_dang_dien_ra@0",
+    "type": "KNOWS",
+    "source": "ly_van_thu",
+    "target": "fact_hoi_nghi_dang_dien_ra",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ly_van_thu>fact_lenh_thu_hai_bi_gia@0",
+    "type": "KNOWS",
+    "source": "ly_van_thu",
+    "target": "fact_lenh_thu_hai_bi_gia",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_cung_mot_vat@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_cung_mot_vat",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Cả hai cùng yêu cầu giao nộp Mảnh Thiên Khuyết."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_doan_khuong_bi_thuong@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_doan_khuong_bi_thuong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Dưới lớp áo sẫm màu, vết thương đã thấm qua một mảng rộng."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_hai_lenh_cung_dau@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_hai_lenh_cung_dau",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Trên mỗi tờ đều có con dấu mang tên tôi; nét đóng giống nhau đến mức người đứng xa hẳn sẽ chẳng phân biệt nổi."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_hoi_nghi_dang_dien_ra@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_hoi_nghi_dang_dien_ra",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "suy ra",
+     "quote": "Hội nghị đã bắt đầu. Không ai chờ tôi."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_lenh_thu_hai_bi_gia@7",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_lenh_thu_hai_bi_gia",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Ta làm giả lệnh ấy để đưa Mảnh Thiên Khuyết khỏi hội nghị."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_lenh_thu_nhat_dau_that@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_lenh_thu_nhat_dau_that",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Dấu này đúng quy thức. Lệnh đã được đóng theo thủ tục của tiên môn.",
+     "told_by": "doan_ngoc_ky"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_manh_thien_khuyet_bi_niem@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_manh_thien_khuyet_bi_niem",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Lớp niêm còn nguyên."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_tram_can_siet_chat@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_tram_can_siet_chat",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Tấm bảng treo trên rào ghi lối qua đã đổi; bên cạnh, một lính canh đang xem xét từng người."
+    }
+   },
+   {
+    "id": "FEELS:protagonist>doan_ngoc_ky@7",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "doan_ngoc_ky",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "cảnh giác với Đoàn Ngọc Kỳ"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_hoi_nghi_dang_dien_ra@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_hoi_nghi_dang_dien_ra",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "quyết tâm"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>manh_thien_khuyet@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "manh_thien_khuyet",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "quyết tâm"
+    }
+   },
+   {
+    "id": "ABOUT:fact_cung_mot_vat>lenh_goi_thu_hai@0",
+    "type": "ABOUT",
+    "source": "fact_cung_mot_vat",
+    "target": "lenh_goi_thu_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_cung_mot_vat>lenh_goi_thu_nhat@0",
+    "type": "ABOUT",
+    "source": "fact_cung_mot_vat",
+    "target": "lenh_goi_thu_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_cung_mot_vat>manh_thien_khuyet@0",
+    "type": "ABOUT",
+    "source": "fact_cung_mot_vat",
+    "target": "manh_thien_khuyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_dai_chien_ket_thuc>dao_han_phong@0",
+    "type": "ABOUT",
+    "source": "fact_dai_chien_ket_thuc",
+    "target": "dao_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_dai_chien_ket_thuc>minh_uoc_bach_ngoc@0",
+    "type": "ABOUT",
+    "source": "fact_dai_chien_ket_thuc",
+    "target": "minh_uoc_bach_ngoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_khuong_bi_thuong>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_doan_khuong_bi_thuong",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_khuong_bi_thuong>duong_thap_nghieng@0",
+    "type": "ABOUT",
+    "source": "fact_doan_khuong_bi_thuong",
+    "target": "duong_thap_nghieng",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_khuong_bi_thuong>manh_thien_khuyet@0",
+    "type": "ABOUT",
+    "source": "fact_doan_khuong_bi_thuong",
+    "target": "manh_thien_khuyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hai_lenh_cung_dau>lenh_goi_thu_hai@0",
+    "type": "ABOUT",
+    "source": "fact_hai_lenh_cung_dau",
+    "target": "lenh_goi_thu_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hai_lenh_cung_dau>lenh_goi_thu_nhat@0",
+    "type": "ABOUT",
+    "source": "fact_hai_lenh_cung_dau",
+    "target": "lenh_goi_thu_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hai_lenh_cung_dau>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_hai_lenh_cung_dau",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hoi_nghi_dang_dien_ra>dai_dien_han_phong@0",
+    "type": "ABOUT",
+    "source": "fact_hoi_nghi_dang_dien_ra",
+    "target": "dai_dien_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_hoi_nghi_dang_dien_ra>manh_thien_khuyet@0",
+    "type": "ABOUT",
+    "source": "fact_hoi_nghi_dang_dien_ra",
+    "target": "manh_thien_khuyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_thu_hai_bi_gia>lenh_goi_thu_hai@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_thu_hai_bi_gia",
+    "target": "lenh_goi_thu_hai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_thu_hai_bi_gia>ly_van_thu@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_thu_hai_bi_gia",
+    "target": "ly_van_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_thu_hai_bi_gia>manh_thien_khuyet@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_thu_hai_bi_gia",
+    "target": "manh_thien_khuyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_thu_nhat_dau_that>doan_ngoc_ky@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_thu_nhat_dau_that",
+    "target": "doan_ngoc_ky",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_thu_nhat_dau_that>lenh_goi_thu_nhat@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_thu_nhat_dau_that",
+    "target": "lenh_goi_thu_nhat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_thu_nhat_dau_that>tien_mon_han_phong@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_thu_nhat_dau_that",
+    "target": "tien_mon_han_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_manh_thien_khuyet_bi_niem>manh_thien_khuyet@0",
+    "type": "ABOUT",
+    "source": "fact_manh_thien_khuyet_bi_niem",
+    "target": "manh_thien_khuyet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tram_can_siet_chat>hoi_kiem_tuan_thap@0",
+    "type": "ABOUT",
+    "source": "fact_tram_can_siet_chat",
+    "target": "hoi_kiem_tuan_thap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tram_can_siet_chat>tram_can_song@0",
+    "type": "ABOUT",
+    "source": "fact_tram_can_siet_chat",
+    "target": "tram_can_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:buoc_vao_dai_dien>ch8@8",
+    "type": "RESOLVED_IN",
+    "source": "buoc_vao_dai_dien",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Khi qua ngưỡng, tôi nghe sau lưng vang lên tiếng cửa nặng nề khép dần."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:giu_vat_khoi_tram>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "giu_vat_khoi_tram",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Mảnh Thiên Khuyết còn nguyên bên trong, và tôi đã đưa nó qua khỏi Trạm Canh Sương mà không giao cho lính canh."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:lenh_nao_that>ch6@6",
+    "type": "RESOLVED_IN",
+    "source": "lenh_nao_that",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trong hai lệnh, đây là lệnh duy nhất đã được xác nhận hợp lệ."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:tim_loi_qua_thap>ch1@1",
+    "type": "RESOLVED_IN",
+    "source": "tim_loi_qua_thap",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đã tìm được đường tới trạm."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dai_dien_han_phong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dai_dien_han_phong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Xa hơn, đường dẫn tới Đại Điện Hàn Phong khuất sau màn sương xám.",
+     "known_as": "Đại Điện Hàn Phong"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_khuong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_khuong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đoàn Khương khuỵu xuống giữa đường.",
+     "known_as": "Đoàn Khương"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_ngoc_ky>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_ngoc_ky",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đoàn Ngọc Kỳ bước ra, tay áo quét qua ngưỡng cửa.",
+     "known_as": "Đoàn Ngọc Kỳ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_lenh_thu_hai_bi_gia>ch7@7",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_lenh_thu_hai_bi_gia",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ta làm giả lệnh ấy để đưa Mảnh Thiên Khuyết khỏi hội nghị."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_lenh_thu_nhat_dau_that>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_lenh_thu_nhat_dau_that",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Dấu này đúng quy thức. Lệnh đã được đóng theo thủ tục của tiên môn."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lenh_goi_thu_hai>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lenh_goi_thu_hai",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi rút hai tờ lệnh khỏi áo, giữ chúng giữa hai ngón tay, không buông hộp.",
+     "known_as": "hai tờ lệnh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lenh_goi_thu_nhat>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lenh_goi_thu_nhat",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi rút hai tờ lệnh khỏi áo, giữ chúng giữa hai ngón tay, không buông hộp.",
+     "known_as": "hai tờ lệnh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ly_van_thu>ch7@7",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ly_van_thu",
+    "target": "ch7",
+    "valid_from_chapter": 7,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lý Vân Thư dừng lại khi nghe câu cuối.",
+     "known_as": "Lý Vân Thư"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:manh_thien_khuyet>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "manh_thien_khuyet",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cả hai cùng yêu cầu giao nộp Mảnh Thiên Khuyết.",
+     "known_as": "Mảnh Thiên Khuyết"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:minh_uoc_bach_ngoc>ch8@8",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "minh_uoc_bach_ngoc",
+    "target": "ch8",
+    "valid_from_chapter": 8,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Một trưởng lão viện điều lệ của Minh Ước Bạch Ngọc; người ngồi đối diện nhắc rằng Mảnh Thiên Khuyết đang ở đất Hàn Phong",
+     "known_as": "Minh Ước Bạch Ngọc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Ninh Tố Hành",
+     "known_as": "Ninh Tố Hành"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tien_mon_han_phong>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tien_mon_han_phong",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Ninh Tố Hành, môn đồ Hàn Phong",
+     "known_as": "Hàn Phong"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tram_can_song>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tram_can_song",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trạm Canh Sương hiện ra phía trước, dựng trên mỏm đá nối sang con đường lớn.",
+     "known_as": "Trạm Canh Sương"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-a7247296723f",
+    "player_action": null,
+    "error_detail": "2 lần thử đều lỗi; lỗi cuối: LLM_BAD_RESPONSE: ChoicesOutput: choices.1: value_error",
+    "summary": "Đoàn Khương bị thương, khuỵu xuống giữa đường và không thể đi tiếp; người kể nhận lấy chiếc hộp đá ông đang giữ, bên trong là Mảnh Thiên Khuyết. Người kể có hai tờ lệnh cùng mang dấu tên mình nhưng gọi đến hai nơi khác nhau, nên cất riêng cả hai và chọn lối bảo trì men qua các tháp đá để tới Trạm Canh Sương, bỏ Đoàn Khương lại nghỉ bên đường. Hội nghị ở Đại Điện Hàn Phong đã bắt đầu. Tại trạm, người kể không chịu giao hộp cho lính canh, yêu cầu chuyển lời để người có quyền xác minh lệnh. Lính canh đưa người kể vào gian chờ, khóa cửa và giữ lại; người kể vẫn mang hộp cùng hai tờ lệnh, chờ quyết định.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành phải tự tìm được lối qua những tháp đá nghiêng để tới trạm canh kế tiếp, sau khi người hộ tống không thể tiếp tục dẫn đường.",
+      "present": [
+       "protagonist",
+       "doan_khuong"
+      ],
+      "beats": [
+       "Đoàn Khương khuỵu xuống giữa đường, bàn tay còn cố giữ hộp đá khóa chứa Mảnh Thiên Khuyết; Ninh Tố Hành đỡ ông, nhưng vết thương khiến ông không thể đứng vững hay tiếp tục hộ tống nàng.",
+       "Ninh Tố Hành kiểm tra hai lệnh triệu hồi vẫn mang con dấu của mình, mỗi lệnh đều đòi giao nộp cùng một vật; nàng không chọn tin lệnh nào, chỉ cất cả hai đi và giữ chặt hộp đá, bởi lời thề của tiên môn không phải thứ có thể đem ra thử vận may.",
+       "Từ chỗ đường chính bị một tháp nghiêng chắn ngang, nàng dò những vết khắc cũ trên chân đá và nhận ra các tháp gần nhau đủ để đi vòng qua lối bảo trì hẹp; nàng nói với Đoàn Khương rằng nếu đường này là bẫy, ít nhất nó không bắt nàng tự nhận mình đã chọn phe.",
+       "Ninh Tố Hành luồn qua lối giữa hai tháp, dùng các gờ đá làm điểm tựa và tránh một đoạn cầu đá đã rạn; phía sau, Đoàn Khương chỉ có thể tựa vào chân tháp, không theo kịp nàng, còn tiếng chuông báo giờ từ Đại Điện Hàn Phong nhắc nàng rằng hội nghị đã bắt đầu mà không chờ mình.",
+       "Cuối lối vòng, nàng nhìn thấy trạm canh kế tiếp và những bóng người đang kiểm tra đường vào; Ninh Tố Hành đã tìm được đường tới đó, nhưng chưa bước qua trạm, cũng chưa biết hai lệnh trái ngược sẽ dẫn nàng đến đâu."
+      ],
+      "ends_at": "Cảnh kết tại lối ra khỏi cụm tháp nghiêng, nơi Ninh Tố Hành nhìn thấy Trạm Canh Sương ở phía trước nhưng vẫn còn ở ngoài tầm kiểm tra của lính canh.",
+      "resolves": [
+       "tim_loi_qua_thap"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành tìm cách qua Trạm Canh Sương mà không giao Mảnh Thiên Khuyết cho một mệnh lệnh chưa được xác thực.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Tôi bước ra khỏi màn sương trước lối vào trạm, giữ hộp đá sát người; lính canh lập tức chặn đường và yêu cầu kiểm tra vật mang theo.",
+       "Tôi đưa cả hai lệnh triệu hồi ra nhưng không trao hộp, nói rằng hai tờ lệnh cùng mang dấu của mình mà lại gọi đến hai nơi khác nhau, nên giao vật trước khi xác minh chỉ khiến trạm canh phải gánh thêm một món nợ.",
+       "Lính canh không chịu phân xử và yêu cầu tôi chờ người có quyền đối chiếu lệnh; tôi nhận ra hội nghị vẫn đang diễn ra, còn việc đứng đây lâu chỉ khiến mình mất thêm thời gian.",
+       "Tôi cất lại hai lệnh, từ chối đặt hộp đá lên bàn kiểm tra, rồi đề nghị họ chuyển nguyên yêu cầu của tôi vào trong thay vì tự ý tách vật khỏi người giữ.",
+       "Cánh cửa trạm khép lại sau lưng lính canh được sai đi truyền lời; tôi bị giữ ở gian chờ bên ngoài, hộp đá vẫn trong tay nhưng chưa được phép đi tiếp."
+      ],
+      "ends_at": "Cảnh kết trong gian chờ của Trạm Canh Sương, nơi Ninh Tố Hành bị giữ lại cùng Mảnh Thiên Khuyết trong lúc chờ người có quyền xử lý hai lệnh trái ngược.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER duong_thap_nghieng→ch1",
+        "hé lộ nút có tên mà thiếu known_as (D-17)"
+       ],
+       [
+        "REVEALED_TO_PLAYER lenh_goi_thu_nhat→ch1",
+        "hé lộ nút có tên mà thiếu known_as (D-17)"
+       ],
+       [
+        "REVEALED_TO_PLAYER lenh_goi_thu_hai→ch1",
+        "hé lộ nút có tên mà thiếu known_as (D-17)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-cb774f96dfc3",
+      "kind": "action",
+      "tone": null,
+      "text": "Giữ hộp bên mình và chờ người có quyền đến đối chiếu.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "lenh_goi_thu_hai"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-97e1dc1fd8df",
+      "kind": "action",
+      "tone": null,
+      "text": "Gõ cửa, nhắc lính canh chuyển nguyên lời nhắn của tôi vào trong.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-2040bee188e5",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình chưa thể tin vào tờ lệnh nào khi cả hai đều mang cùng con dấu.",
+      "listeners": [],
+      "about": [
+       "fact_cung_mot_vat",
+       "fact_hai_lenh_cung_dau"
+      ],
+      "lie": null,
+      "feeling": "nghi ngờ"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-88982c021cd0",
+    "player_action": "[Hành động] Giữ hộp bên mình và chờ người có quyền đến đối chiếu.",
+    "error_detail": null,
+    "summary": "Người kể chuyện bị yêu cầu giao chiếc hộp đá để kiểm tra tại Trạm Canh Sương, trong khi hai tờ lệnh mang tên cô chỉ cô đến những nơi khác nhau. Cô từ chối ký xác nhận đã giao hộp, chỉ ký nhận thẻ cho phép rời trạm theo lối bảo trì và mang hộp còn nguyên niêm đến cổng ngoài Đại Điện Hàn Phong trước khi hội nghị kết thúc. Cô cất riêng hai tờ lệnh, ôm hộp rời trạm, rồi chọn lối vòng thay vì đối diện lính canh ở hàng rào; cô móc thẻ lên cột chống và tiếp tục đi một mình. Đến cửa đá thấp, cô thấy dấu kiểm tra mới nhưng không có người gác hay chỗ giao vật phẩm. Cuối chương, cô dừng trước cửa, hộp vẫn bên mình, còn con đường tối dốc xuống phía Đại Điện Hàn Phong.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành biến việc bị giữ ở Trạm Canh Sương thành cơ hội buộc tiên môn xác nhận trách nhiệm đối với hai lệnh triệu hồi.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Trong gian chờ khóa kín, Ninh Tố Hành đặt chiếc hộp đá lên đầu gối, giữ hai tờ lệnh tách biệt và hiểu rằng Đoàn Khương không thể tiếp tục hộ tống mình; con đường qua các tháp nghiêng giờ chỉ còn nàng tự chọn.",
+       "Tiếng người ngoài cửa đòi nàng giao hộp để kiểm tra, nhưng nàng đáp rằng chỉ trao vật khi người có quyền đối chiếu cả hai lệnh cùng lúc; nếu họ chỉ lấy hộp, nàng sẽ ghi rõ ai đã nhận và theo lệnh nào.",
+       "Sau một hồi im lặng, lính canh chuyển vào một thẻ thông hành tạm thời: nàng được ra khỏi trạm theo lối bảo trì dưới tháp, nhưng phải mang hộp nguyên niêm và trình diện tại cổng ngoài Đại Điện trước khi hội nghị kết thúc.",
+       "Ninh Tố Hành không ký vào dòng xác nhận giao nộp, chỉ ghi nhận mình nhận thẻ trong tình trạng hộp vẫn ở bên người; nàng nhận ra lựa chọn rời trạm đã biến thành một món nợ có thể bị dùng để buộc tội mình.",
+       "Khi cửa mở, nàng bước ra hành lang canh gác với hộp đá và cả hai lệnh còn nguyên; phía trước, lối bảo trì đã bị chắn một phần bằng rào kiểm tra mới, buộc nàng tìm cách vượt qua mà không để chiếc hộp rời tay."
+      ],
+      "ends_at": "Cảnh kết ở hành lang trong Trạm Canh Sương, ngay trước lối bảo trì bị rào kiểm tra.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành tự chọn cách vượt trạm kiểm soát trên lối bảo trì mà vẫn giữ Mảnh Thiên Khuyết bên mình.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Tôi nhìn hàng rào chắn lối bảo trì, rồi đối chiếu thẻ gỗ của trạm với tấm bảng đổi đường; lối vòng hẹp men dưới chân tháp là con đường duy nhất không buộc tôi giao chiếc hộp.",
+       "Tôi chọn lối vòng, cài thẻ gỗ ở chỗ dễ thấy và ôm hộp sát người; những bậc đá nghiêng khiến mỗi bước đều chậm, nhưng tôi không quay lại tìm Đoàn Khương hay chờ thêm người hộ tống.",
+       "Ở đoạn đường khuất gió, tôi kiểm tra niêm hộp và hai tờ lệnh vẫn nằm riêng trong áo; dấu niêm chưa động, còn hai lời gọi trái ngược vẫn chưa cho tôi biết phải tin bên nào.",
+       "Lối vòng đưa tôi tới phía ngoài hàng rào, nơi con đường bảo trì chui xuống một cửa đá thấp; trên cửa có dấu kiểm tra mới, nhưng không có người nào đứng đó để đối chiếu thẻ.",
+       "Tôi dừng trước cửa đá, chọn giữ hộp và thẻ bên mình thay vì đặt chúng xuống để thử mở lối; phía sau, tiếng trạm canh đã xa, còn trước mặt là đoạn đường tối dẫn về phía Đại Điện."
+      ],
+      "ends_at": "Cảnh kết ở trước cửa đá thấp trên lối bảo trì, sau khi Ninh Tố Hành vượt khỏi hàng rào kiểm soát mà vẫn giữ chiếc hộp nguyên niêm.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lệnh Gọi Thứ Nhất» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       },
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «Lệnh Gọi Thứ Hai» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó"
+       }
+      ],
+      "rejected": [
+       [
+        "RESOLVED_IN giu_vat_khoi_tram→ch2",
+        "mạch phải gỡ chưa tới khoảng gỡ, chương 4–6 (D-84)"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "RESOLVED_IN giu_vat_khoi_tram→ch2",
+        "mạch phải gỡ chưa tới khoảng gỡ, chương 4–6 (D-84)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-15d953350f31",
+      "kind": "action",
+      "tone": null,
+      "text": "Quan sát dấu kiểm tra và khe cửa, tìm xem có thể mở cửa mà không làm hỏng niêm hộp.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "fact_manh_thien_khuyet_bi_niem"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-98fa77bdaa1c",
+      "kind": "action",
+      "tone": null,
+      "text": "Quay lại lấy thẻ gỗ khỏi cột chống rồi tìm đường khác tới Đại Điện Hàn Phong.",
+      "listeners": [],
+      "about": [
+       "dai_dien_han_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-e84b1dbdc167",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải đưa Mảnh Thiên Khuyết tới Đại Điện Hàn Phong, nhưng không giao hộp cho người khác khi chưa rõ hai tờ lệnh mâu thuẫn thế nào.",
+      "listeners": [],
+      "about": [
+       "fact_cung_mot_vat",
+       "fact_hai_lenh_cung_dau",
+       "manh_thien_khuyet",
+       "dai_dien_han_phong"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm nhưng dè chừng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-1306a9b6a9d8",
+    "player_action": "[Hành động] Quay lại lấy thẻ gỗ khỏi cột chống rồi tìm đường khác tới Đại Điện Hàn Phong.",
+    "error_detail": null,
+    "summary": "Nhân vật tôi lấy thẻ gỗ khỏi cột chống, giữ nguyên hai tờ lệnh ở hai ngăn áo và chiếc hộp đá còn khóa chặt. Không chọn cửa đá thấp có dấu kiểm tra, tôi dùng thẻ mở lối bảo trì, mang hộp vượt qua các khe và cầu thang nguy hiểm. Khi nghe tiếng va mạnh và tiếng giày trên lối cũ, tôi tiếp tục đi đường vòng; thẻ giúp nạy mở khe đá, rồi được cất lại. Tiếng chuông báo hội nghị sắp chuyển sang lượt nghị quyết, nhưng tôi chưa biết có thể vào đại điện hay không. Cuối chương, tôi đứng trước cánh cửa bảo trì khép kín dưới mái đá, giữ hộp bên mình và lắng nghe phía sau cửa; hai tờ lệnh vẫn chưa được chọn.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành lấy lại thẻ gỗ, rời cửa đá thấp bằng một lối bảo trì khác và tìm được đường tiếp tục xuống Đại Điện mà không giao Mảnh Thiên Khuyết.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Ninh Tố Hành quay lại cột chống lấy thẻ gỗ, kiểm tra xem hai tờ lệnh vẫn được cất riêng và chiếc hộp đá còn nguyên bên mình.",
+       "Nàng không thử mở cửa đá thấp có dấu kiểm tra mới; lần theo khe bảo trì men dưới chân tháp, nhưng lối hẹp buộc nàng phải hạ chiếc hộp xuống từng đoạn, chậm hơn dự tính.",
+       "Ở chỗ đường đá nghiêng gãy khúc, thẻ gỗ khớp với rãnh mở dành cho người sửa tháp; Ninh Tố Hành dùng nó để lách qua, rồi cất lại thẻ thay vì để lại dấu vết.",
+       "Từ khe đá phía dưới, nàng nghe tiếng động vọng lên từ con đường cũ và hiểu rằng quay lại sẽ dễ bị chặn hơn; nàng tự nhủ: “Đường này không đưa ta vào đại điện, nhưng ít nhất chưa ai bắt ta chọn lệnh nào.”",
+       "Ninh Tố Hành tiếp tục xuống dốc, ôm hộp đá, đến một gờ hẹp dưới tháp nơi lối bảo trì tách khỏi đường cũ và nhìn thấy bậc thang ngoài dẫn sâu hơn về phía Đại Điện Hàn Phong."
+      ],
+      "ends_at": "Cảnh kết trên gờ hẹp dưới tháp nghiêng, nơi Ninh Tố Hành còn giữ thẻ gỗ, hai tờ lệnh và chiếc hộp đá, trước khi quyết định đi tiếp xuống bậc thang ngoài.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành men theo cầu thang ngoài để tìm một lối tiếp cận Đại Điện mà không giao Mảnh Thiên Khuyết cho bất kỳ ai.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Tôi đặt chiếc hộp sát ngực rồi dò từng bậc cầu thang; thẻ gỗ trong tay áo cọ nhẹ vào cổ tay mỗi khi gió quật qua vách đá.",
+       "Một bậc đá nghiêng bật khỏi mép thang, buộc tôi dừng lại và chuyển hộp qua trước từng chút một; tiếng va khẽ vang xuống khoảng không bên dưới.",
+       "Tôi dùng thẻ gỗ giữ một khe đá hẹp vừa đủ cho mình lách qua, nhưng không để nó lại, rồi tiếp tục men theo vách về phía Đại Điện.",
+       "Cầu thang dẫn tới một chiếu nghỉ khuất dưới mái đá; từ phía trên vọng xuống tiếng chuông báo hiệu hội nghị sắp chuyển sang lượt nghị quyết.",
+       "Tôi tìm thấy cửa bảo trì khép kín ở chiếu nghỉ, không có dấu hiệu cho biết ai đang ở phía bên kia; giữ nguyên hộp cùng hai tờ lệnh, tôi chọn dừng lại để nghe ngóng thay vì gõ cửa."
+      ],
+      "ends_at": "Cảnh kết thúc tại chiếu nghỉ dưới Đại Điện Hàn Phong, trước cánh cửa bảo trì đóng kín.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-15c50d7ed861",
+      "kind": "action",
+      "tone": null,
+      "text": "Gõ nhẹ lên cánh cửa bảo trì rồi chờ nghe động tĩnh.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-dbf7a053e427",
+      "kind": "action",
+      "tone": null,
+      "text": "Rời chiếu nghỉ, tiếp tục men theo cầu thang về phía Đại Điện Hàn Phong.",
+      "listeners": [],
+      "about": [
+       "dai_dien_han_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-57ba0b9ad2f0",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải đến gần đại điện trước khi hội nghị chuyển sang lượt nghị quyết.",
+      "listeners": [],
+      "about": [
+       "fact_hoi_nghi_dang_dien_ra",
+       "dai_dien_han_phong"
+      ],
+      "lie": null,
+      "feeling": "sốt ruột"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-707b1943cb55",
+    "player_action": "[Hành động] Rời chiếu nghỉ, tiếp tục men theo cầu thang về phía Đại Điện Hàn Phong.",
+    "error_detail": null,
+    "summary": "Tôi xuống cầu thang, mang theo chiếc hộp đá chứa Mảnh Thiên Khuyết còn nguyên niêm. Trước rào chắn của Trạm Canh Sương, tôi không thả hộp vào khe nhận mà dùng thẻ gỗ mở khóa bảo trì, lách qua rồi rút thẻ để rào sập lại. Ở đoạn tiếp theo, tôi phát hiện thêm một khe chuyển vật dẫn hộp đi riêng; tôi từ chối giao hộp vào đó và tiếp tục theo cầu thang chính. Tình thế có vẻ cho thấy các lối chuyển vật nhằm tách người mang khỏi chiếc hộp, nhưng không ai lên tiếng xác nhận. Cuối chương, tôi đến lối vào Đại Điện Hàn Phong; hội nghị đã sang lượt nghị quyết, còn tôi vẫn ôm hộp đá trước cửa điện.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành đưa nguyên chiếc hộp đá chứa Mảnh Thiên Khuyết vượt khỏi Trạm Canh Sương mà không giao vật cho lính canh.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Ta rời cánh cửa bảo trì khép kín, men theo cầu thang xuống dốc; chiếc hộp đá ghì nặng trong tay, còn hai tờ lệnh vẫn nằm riêng trong áo.",
+       "Ở đầu lối, một rào chắn mới chặn ngang đường, bên cạnh là dấu kiểm tra của Trạm Canh Sương; khe nhận vật phẩm vừa khít chiếc hộp, nhưng không có lối nào buộc ta phải đặt nó xuống.",
+       "Ta hiểu trạm canh muốn để người được đi tiếp còn Mảnh Thiên Khuyết bị giữ lại; ta không chọn lệnh nào, chỉ đưa thẻ gỗ vào khe khóa bảo trì và xoay đến khi rào chắn nhích ra.",
+       "Tiếng chuông hội nghị vọng tới từ phía Đại Điện Hàn Phong; ta luồn qua khe hở, kéo hộp theo sát người, rồi thu lại thẻ trước khi rào chắn sập xuống sau lưng.",
+       "Qua khỏi ranh kiểm tra, ta xác nhận niêm hộp còn nguyên và không giao Mảnh Thiên Khuyết cho trạm; trước mặt, cầu thang tiếp tục hướng về Đại Điện Hàn Phong."
+      ],
+      "ends_at": "Cảnh kết ở phía bên kia ranh kiểm tra của Trạm Canh Sương, khi ta vẫn giữ chiếc hộp đá và tiếp tục hướng về Đại Điện Hàn Phong.",
+      "resolves": [
+       "giu_vat_khoi_tram"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành đưa Mảnh Thiên Khuyết qua Trạm Canh Sương nguyên vẹn và nhận ra trạm canh đang tìm cách tách nàng khỏi chiếc hộp.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Tôi men tiếp xuống cầu thang, ôm chiếc hộp đá sát người; sau lưng, rào chắn vừa vượt qua đóng sập, còn phía trước tiếng chuông Đại Điện báo hội nghị vẫn đang tiến hành.",
+       "Ở đoạn dốc kế tiếp, tôi thấy một khe chuyển vật nằm sát chân tường, nối với lối đi phía trước nhưng không đủ chỗ cho người lọt qua; dấu kiểm tra trên đá cho thấy đây không phải lối riêng của một trạm.",
+       "Tôi thử đặt hộp gần khe để nhìn rõ cơ cấu, nhưng then giữ lập tức khép lại; chỉ cần đưa hộp vào đó, người mang nó sẽ phải tiếp tục đường khác, không thể đi cùng vật.",
+       "Tôi nhấc hộp lên, không giao nộp, rồi lần theo cầu thang chính; niêm sáp vẫn nguyên và Mảnh Thiên Khuyết còn bên mình, nên tôi đã đưa nó qua Trạm Canh Sương mà không để trạm giữ lại.",
+       "Tiếng chuông chuyển nhịp vọng xuống khi tôi tới đoạn cuối cầu thang; trước mặt là lối tiếp cận Đại Điện, nhưng âm thanh từ bên trong cho biết hội nghị đã sang lượt nghị quyết."
+      ],
+      "ends_at": "Cảnh kết ở chân cầu thang dẫn tới lối tiếp cận Đại Điện Hàn Phong, Ninh Tố Hành vẫn giữ chiếc hộp đá còn niêm kín.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d37908b44ea8",
+      "kind": "action",
+      "tone": null,
+      "text": "Ôm hộp đá, bước thẳng vào Đại Điện Hàn Phong.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "dai_dien_han_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-9cc55c36ce12",
+      "kind": "action",
+      "tone": null,
+      "text": "Quay lại khe chuyển vật, xem xét cơ cấu trước khi quyết định có đặt hộp xuống hay không.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-3a3b4d52ccbe",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải giữ Mảnh Thiên Khuyết bên mình và tìm cách trình bày sự việc tại hội nghị.",
+      "listeners": [],
+      "about": [
+       "fact_hoi_nghi_dang_dien_ra",
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-3dddbcc5fa57",
+    "player_action": "[Hành động] Quay lại khe chuyển vật, xem xét cơ cấu trước khi quyết định có đặt hộp xuống hay không.",
+    "error_detail": "2 lần thử đều lỗi; lỗi cuối: LLM_BAD_RESPONSE: ChoicesOutput: choices.1: value_error",
+    "summary": "Ninh Tố Hành khảo sát khe chuyển vật ở Đại Điện Hàn Phong, phát hiện thẻ gỗ chỉ mở một phần cơ cấu: hộp có thể trượt qua tường, còn người mang phải vòng qua rào chắn. Nhớ lại các trạm canh và khe đã bỏ qua, anh nhận ra chúng có thể lấy Mảnh Thiên Khuyết khỏi tay mình rồi để anh ở lại phía bên kia. Anh rút thẻ, không gửi hộp qua khe, ôm nó cùng hai tờ lệnh trở lại cầu thang chính. Trước cửa đại điện, anh tự xưng, báo đang giữ Mảnh Thiên Khuyết và nói mang theo cả hai tờ lệnh để việc giao nhận được rõ ràng. Từ trong điện, có người bảo chờ nghị quyết kết thúc rồi hãy trình lệnh; cửa vẫn đóng, hội nghị tiếp tục. Ninh Tố Hành đứng ngoài ngưỡng cửa, giữ hộp và chờ trả lời.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành quay lại khe chuyển vật để hiểu cơ cấu mà không giao Mảnh Thiên Khuyết, rồi nhận ra các trạm canh đang tìm cách tách nàng khỏi chiếc hộp.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Rời lối vào Đại Điện Hàn Phong, ta lần ngược cầu thang chính về khe chuyển vật, vẫn ôm chiếc hộp đá khóa kín và giữ cả hai lệnh triệu hồi trong áo; tiếng chuông từ đại điện nhắc rằng hội nghị vẫn đang tiếp tục.",
+       "Ta quan sát khe nhận và các khớp đá quanh nó, dùng thẻ gỗ thử một chốt bên ngoài nhưng không đặt hộp xuống; cơ cấu chỉ động nhẹ, để lộ một rãnh dẫn vật khuất khỏi lối đi của người đứng bên này.",
+       "Ta ghé mắt nhìn theo rãnh: nó hướng vào lòng tường, còn khe trả lại nằm ở phía khác của rào chắn; một người giao hộp tại đây sẽ không thể theo sát nó qua lối chuyển.",
+       "Ta nhớ lại rào chắn ở Trạm Canh Sương và khe tương tự đã bỏ qua, rồi nối các dấu hiệu thành một kết luận lạnh người: những lối kiểm tra này không chỉ giữ vật lại mà còn có thể tách người mang khỏi Mảnh Thiên Khuyết.",
+       "Ta rút thẻ khỏi chốt, không cho cơ cấu chạy hết hành trình, rồi siết hộp vào người và chọn quay về đại điện bằng cầu thang chính; sau lưng, khe nhận vẫn mở, như chờ một quyết định mà ta chưa trao cho nó."
+      ],
+      "ends_at": "Cảnh kết tại cầu thang chính trên đường trở lại Đại Điện Hàn Phong, khi Ninh Tố Hành đã hiểu nguy cơ của khe chuyển vật nhưng vẫn giữ nguyên chiếc hộp và cả hai lệnh.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành giữ Mảnh Thiên Khuyết bên mình và buộc hội nghị phải biết nàng đã tới, dù chưa thể bước vào đại điện.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Tôi rời khe chuyển vật còn hé mở, trở lại cầu thang chính và nhận ra mình không thể vừa giữ hộp trong tay vừa để các trạm canh quyết định nó đi đâu.",
+       "Tiếng chuông từ đại điện dồn xuống cầu thang; lượt nghị quyết sắp khép lại, còn chiếc hộp đá vẫn khóa kín dưới cánh tay tôi.",
+       "Trước cửa điện, tôi không đặt hộp vào khe chuyển vật hay giấu nó đi, mà gõ lên cánh cửa và nói rõ tên mình cùng việc đang giữ Mảnh Thiên Khuyết.",
+       "Bên trong vang lên tiếng người xôn xao rồi lặng xuống; tôi nghe một giọng yêu cầu chờ nghị quyết kết thúc, nhưng không ai xác nhận lệnh nào đã triệu tôi đến.",
+       "Tôi đáp rằng mình sẽ chờ ngay ngoài cửa, mang theo chiếc hộp và cả hai tờ lệnh, để không ai có thể nói rằng vật đã được giao mà người giữ nó biến mất."
+      ],
+      "ends_at": "Cảnh kết ở ngưỡng cửa Đại Điện Hàn Phong, khi Ninh Tố Hành đứng ngoài chờ hội nghị trả lời, vẫn giữ Mảnh Thiên Khuyết bên mình.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-62f41e329d2a",
+      "kind": "action",
+      "tone": null,
+      "text": "Tiếp tục đứng ngoài cửa, giữ chặt chiếc hộp và chờ bên trong trả lời.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "dai_dien_han_phong"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-24b02c5c2fad",
+      "kind": "action",
+      "tone": null,
+      "text": "Gõ cửa lần nữa, nhắc rằng tôi vẫn đang chờ cùng chiếc hộp và hai tờ lệnh.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "lenh_goi_thu_hai"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f75b73670809",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải giữ lấy chiếc hộp, dù hội nghị có thể kết thúc mà không gọi tôi vào.",
+      "listeners": [],
+      "about": [
+       "fact_hoi_nghi_dang_dien_ra",
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-1a2142395c74",
+    "player_action": "[Nội tâm] Tự nhủ phải giữ lấy chiếc hộp, dù hội nghị có thể kết thúc mà không gọi tôi vào.",
+    "error_detail": null,
+    "summary": "Người kể chờ ngoài Đại Điện Hàn Phong, ôm hộp đá chứa Mảnh Thiên Khuyết và giữ cả hai Lệnh Gọi. Đoàn Ngọc Kỳ xác nhận Lệnh Gọi Thứ Nhất hợp lệ, yêu cầu giao nộp Mảnh Thiên Khuyết; căn cứ của Lệnh Gọi Thứ Hai chưa được xác nhận. Người kể quyết định chỉ chấp hành lệnh đã xác nhận khi có biên nhận công khai trước hội nghị, không giao hộp ở ngưỡng cửa. Đoàn Ngọc Kỳ ghi người kể vào lượt trình kế tiếp và bảo đứng chờ trong hành lang. Cuối chương, người kể ngồi tại điểm chờ, hộp trên đùi, tay giữ nắp; hai lệnh ở sát ngực, cửa đại điện vẫn đóng.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành giữ chắc Mảnh Thiên Khuyết và xác định lệnh nào được ban theo thủ tục của tiên môn.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky"
+      ],
+      "beats": [
+       "Tôi ghì chiếc hộp đá trước cửa điện, tự nhắc mình rằng hội nghị có thể kết thúc mà tôi vẫn không được gọi vào; bên trong, tiếng nghị luận dồn dập vọng ra.",
+       "Cửa hé mở, Đoàn Ngọc Kỳ bước ra và hỏi vì sao tôi vẫn mang cả hai lệnh; tôi đáp rằng hai tờ đều đòi cùng một vật, nên tôi không thể giao hộp theo một lời gọi chưa rõ căn cứ.",
+       "Đoàn Ngọc Kỳ xem dấu trên Lệnh Gọi Thứ Nhất rồi nói đó là lệnh đã được đóng dấu theo thủ tục của tiên môn; ông xác nhận lệnh này yêu cầu tôi giao Mảnh Thiên Khuyết.",
+       "Tôi hỏi còn Lệnh Gọi Thứ Hai thì sao; Đoàn Ngọc Kỳ chỉ đáp rằng ông chưa thể xác nhận căn cứ của nó ngay tại ngưỡng cửa, rồi gọi tôi chờ lượt trình lệnh sau khi nghị quyết kết thúc.",
+       "Tôi giữ nguyên hộp đá và cả hai tờ lệnh, hiểu rằng ít nhất một lời gọi đã có căn cứ chính thức, nhưng chưa chịu giao vật cho ai khi hội nghị còn chưa phân xử."
+      ],
+      "ends_at": "Cảnh kết ở ngưỡng Đại Điện Hàn Phong, khi Đoàn Ngọc Kỳ trở vào còn tôi vẫn đứng ngoài giữ hộp đá.",
+      "resolves": [
+       "lenh_nao_that"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành buộc hội nghị xác định lệnh nào được ban đúng thủ tục mà vẫn giữ Mảnh Thiên Khuyết trong tay.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky"
+      ],
+      "beats": [
+       "Tiếng nghị luận trong điện lắng xuống; Đoàn Ngọc Kỳ mở cửa gọi Ninh Tố Hành trình cả hai lệnh tại ngưỡng, còn nàng giữ chiếc hộp sát người.",
+       "Đoàn Ngọc Kỳ đối chiếu Lệnh Gọi Thứ Nhất với thủ tục của tiên môn và tuyên bố đây là lệnh duy nhất đã được ban hợp lệ; ông chưa thể xác nhận căn cứ của Lệnh Gọi Thứ Hai.",
+       "Ninh Tố Hành hỏi thẳng liệu nàng phải giao hộp ngay không; Đoàn Ngọc Kỳ đáp lệnh hợp lệ yêu cầu giao nộp, nhưng việc tiếp nhận phải được ghi nhận trước hội nghị, không thể giải quyết riêng ở cửa điện.",
+       "Nàng tuyên bố sẽ chấp hành lệnh đã được xác nhận khi có biên nhận công khai, nhưng không trao hộp cho bất kỳ ai ở ngưỡng cửa; Đoàn Ngọc Kỳ chấp thuận ghi nàng vào lượt trình kế tiếp.",
+       "Đoàn Ngọc Kỳ khép cửa để báo lại quyết định; Ninh Tố Hành rời bậc cửa theo lối hành lang dưới sự giám sát, mang theo chiếc hộp và cả hai lệnh, nay là người được gọi vào phiên trình chính thức chứ không còn chỉ đứng chờ."
+      ],
+      "ends_at": "Cảnh kết ở hành lang ngoài Đại Điện Hàn Phong, khi Ninh Tố Hành mang hộp đá đi tới điểm chờ dành cho lượt trình chính thức.",
+      "resolves": [
+       "lenh_nao_that"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-ec028a6d1f67",
+      "kind": "action",
+      "tone": null,
+      "text": "Ngồi tại điểm chờ, giữ hộp đá trong tầm tay và đợi đến lượt trình.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "fact_manh_thien_khuyet_bi_niem"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-37d5640220b1",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Gọi qua cánh cửa, nhắc Đoàn Ngọc Kỳ rằng tôi sẽ chờ biên nhận công khai trước khi giao hộp.",
+      "listeners": [
+       "doan_ngoc_ky"
+      ],
+      "about": [
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-6225c61359ef",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình không được lơ là với lệnh thứ hai chưa được xác nhận.",
+      "listeners": [],
+      "about": [
+       "doan_ngoc_ky"
+      ],
+      "lie": null,
+      "feeling": "cảnh giác với Đoàn Ngọc Kỳ"
+     }
+    ]
+   }
+  ],
+  "7": [
+   {
+    "attempt": 1,
+    "commit_id": "ch7-baad866b6512",
+    "player_action": "[Nội tâm] Tự nhắc mình không được lơ là với lệnh thứ hai chưa được xác nhận.",
+    "error_detail": null,
+    "summary": "Ninh Tố Hành giữ hộp đá chứa Mảnh Thiên Khuyết cùng hai tờ lệnh, không giao vật cho Đoàn Ngọc Kỳ hay Lý Vân Thư. Lý Vân Thư thú nhận đã làm giả lệnh thứ hai để đưa Mảnh Thiên Khuyết khỏi hội nghị; Đoàn Ngọc Kỳ xác nhận lệnh không có giá trị theo thủ tục và cho ghi lời nhận vào biên nghị. Ninh Tố Hành đưa sự việc ra trước hội nghị, yêu cầu ghi rõ trách nhiệm, rồi trả lời rằng chỉ giữ vật cho đến khi có quyết định công khai về việc giao nhận. Lý Vân Thư nhận sẽ chịu xét hỏi nhưng nói việc bỏ lệnh sai không khiến mọi quyết định của hội nghị trở nên công bằng. Cuối chương, Ninh Tố Hành vẫn đứng ngoài ngưỡng Đại Điện Hàn Phong, chờ phán nghị tiếp theo; tên cô được ghi cạnh lời nhận của Lý Vân Thư.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành xác nhận Lệnh Gọi Thứ Hai là giả mà không giao Mảnh Thiên Khuyết khỏi tay mình.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Ngồi chờ ngoài đại điện, Ninh Tố Hành tự nhắc mình không được xem nhẹ lệnh chưa xác nhận; nàng giữ hộp đá trên đùi và hai tờ lệnh sát bên người.",
+       "Đoàn Ngọc Kỳ bước ra báo lượt trình của nàng sắp đến, rồi hỏi vì sao nàng vẫn giữ cả hai lệnh; Ninh Tố Hành đáp rằng một con dấu hợp lệ không thể khiến con dấu còn lại tự nhiên đáng tin.",
+       "Lý Vân Thư từ trong đại điện đi ra, nghe được câu cuối liền nhìn tờ lệnh thứ hai và nói dấu ấy không thuộc thủ tục triệu hồi của hội nghị.",
+       "Ninh Tố Hành hỏi thẳng ai đã làm ra lệnh giả; Lý Vân Thư đáp chính mình đã làm giả nó để đưa Mảnh Thiên Khuyết khỏi hội nghị, còn Đoàn Ngọc Kỳ xác nhận lời ấy khiến lệnh thứ hai mất giá trị.",
+       "Ninh Tố Hành không trao hộp cho Lý Vân Thư, cũng không để Đoàn Ngọc Kỳ nhận hộ thay; nàng yêu cầu chuyện làm giả được nói trước hội nghị, khiến cả ba phải bước tới ngưỡng cửa khi bên trong vẫn đang nghị sự."
+      ],
+      "ends_at": "Cảnh kết ở ngưỡng Đại Điện Hàn Phong, khi Ninh Tố Hành giữ Mảnh Thiên Khuyết và chuẩn bị đưa lời thú nhận ra trước hội nghị.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Buộc hội nghị phải ghi nhận việc làm giả lệnh và đặt Ninh Tố Hành vào thế chịu trách nhiệm công khai về Mảnh Thiên Khuyết.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Từ ngưỡng cửa, tôi nhắc hội nghị rằng Lý Vân Thư đã nhận làm giả lệnh thứ hai, còn Đoàn Ngọc Kỳ xác nhận lệnh ấy không có giá trị theo thủ tục.",
+       "Đoàn Ngọc Kỳ yêu cầu ghi lời nhận đó vào biên nghị, nhưng một giọng nói trong điện chất vấn vì sao một môn đồ cấp thấp lại được quyền giữ Mảnh Thiên Khuyết.",
+       "Tôi đáp rằng mình chỉ giữ vật cho tới khi hội nghị công khai quyết định cách giao nhận, rồi hỏi liệu người trong điện có dám ghi cả trách nhiệm của những kẻ ra lệnh hay không.",
+       "Lý Vân Thư không xin miễn trách; nàng nói mình sẽ chịu xét hỏi, nhưng phản bác rằng việc gạt bỏ lệnh giả không tự động khiến mọi quyết định của hội nghị trở nên công bằng.",
+       "Đoàn Ngọc Kỳ ra lệnh ghi Ninh Tố Hành là người giữ vật và nhân chứng trong vụ lệnh giả, đồng thời bảo nàng chờ phán nghị tiếp theo ở ngoài ngưỡng cửa."
+      ],
+      "ends_at": "Cảnh kết ở ngưỡng Đại Điện Hàn Phong, nơi tôi vẫn giữ hộp đá nhưng giờ đã bị ghi tên vào biên nghị trước sự chứng kiến của hội nghị.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-bf830f0ac45b",
+      "kind": "action",
+      "tone": null,
+      "text": "Tiếp tục đứng ngoài ngưỡng, giữ chắc hộp đá và chờ phán nghị.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "fact_manh_thien_khuyet_bi_niem"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5f2516a58115",
+      "kind": "dialogue",
+      "tone": "silence",
+      "text": "Không đáp lại câu hỏi trong điện, chỉ nhìn về phía Đoàn Ngọc Kỳ.",
+      "listeners": [
+       "doan_ngoc_ky"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-eecb7e64c43b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo rằng lời nhận của Lý Vân Thư sẽ không khiến hội nghị trở nên công bằng.",
+      "listeners": [],
+      "about": [
+       "ly_van_thu"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "8": [
+   {
+    "attempt": 1,
+    "commit_id": "ch8-c8db1e5cc682",
+    "player_action": "[Hành động] Tiếp tục đứng ngoài ngưỡng, giữ chắc hộp đá và chờ phán nghị.",
+    "error_detail": null,
+    "summary": "Tôi yêu cầu ghi vào biên nghị rằng Lệnh Gọi Thứ Hai là giả, mình vào hội nghị với tư cách người giữ Mảnh Thiên Khuyết và chiếc hộp vẫn khóa, chưa ai nhận vật. Đoàn Ngọc Kỳ xác nhận điều kiện, còn Lý Vân Thư nói lời nhận lỗi không thay được phán quyết công bằng; cô đề nghị xét cả trách nhiệm làm giả lệnh lẫn lý do muốn đưa mảnh thần khí đi. Trước hội nghị, tôi đặt hộp lên bàn, yêu cầu ghi nguyên trạng và không cho ai nhận Mảnh Thiên Khuyết trước quyết định công khai. Đoàn Ngọc Kỳ nói Lệnh Gọi Thứ Nhất chỉ cho phép triệu hồi và tiếp nhận theo thủ tục, không trao riêng cho ông quyền định đoạt. Hội nghị bắt đầu tranh luận về quyền quyết định: một bên viện điều lệ Minh Ước Bạch Ngọc, bên kia nhắc mảnh thần khí đang ở đất Hàn Phong.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành buộc hội nghị công khai xác nhận quyền bước vào đại điện mà không giao Mảnh Thiên Khuyết trước khi có biên nhận.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Ta vẫn đứng ngoài ngưỡng, giữ hộp đá trong tay; Đoàn Ngọc Kỳ báo rằng hội nghị sắp chuyển sang nghị quyết cuối, còn lượt trình của ta đã đến.",
+       "Ta nhắc rằng Lệnh Gọi Thứ Hai đã được ghi nhận là giả, rồi yêu cầu biên nghị ghi rõ ta bước vào với tư cách người giữ vật, không phải người tự ý giao nộp.",
+       "Lý Vân Thư lạnh giọng nói lời nhận lỗi của mình không thể thay cho một phán quyết công bằng; Đoàn Ngọc Kỳ đáp rằng thủ tục công khai ít nhất sẽ buộc mọi phe cùng chịu trách nhiệm.",
+       "Ta đặt hộp đá xuống giữa ngưỡng cửa, không rời tay khỏi khóa, và yêu cầu ghi nhận nguyên trạng trước mặt hội nghị; Đoàn Ngọc Kỳ xác nhận điều kiện ấy rồi ra hiệu mở đường.",
+       "Ta bước qua ngưỡng cùng chiếc hộp còn khóa, nghe cửa đại điện khép lại sau lưng; những ánh mắt trong hội nghị dồn về phía ta, nhưng chưa ai được quyền nhận Mảnh Thiên Khuyết."
+      ],
+      "ends_at": "Cảnh kết bên trong Đại Điện Hàn Phong, khi Ninh Tố Hành đứng trước hội nghị với hộp đá còn khóa trong tay.",
+      "resolves": [
+       "buoc_vao_dai_dien"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành bước vào hội nghị để buộc các phe ghi nhận tình trạng Mảnh Thiên Khuyết và mở một cuộc tranh luận công khai về quyền định đoạt nó.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Tôi đặt hộp đá khóa kín lên bàn nghị sự, nhắc rằng biên nghị đã ghi nhận tôi là người giữ vật và không ai được nhận nó trước khi có quyết định công khai.",
+       "Đoàn Ngọc Kỳ xác nhận Lệnh Gọi Thứ Nhất hợp lệ, nhưng nói rõ con dấu chỉ cho phép triệu hồi và tiếp nhận vật theo thủ tục, không tự trao quyền định đoạt cho riêng ông.",
+       "Lý Vân Thư không nhắc lại lời thú nhận trước đó; cô yêu cầu hội nghị xét cả trách nhiệm của người làm giả lệnh lẫn lý do khiến người ta muốn đưa Mảnh Thiên Khuyết khỏi đây.",
+       "Tôi đáp rằng lời thề có thể buộc người ta chịu trách nhiệm, nhưng không thể thay cho câu trả lời về ai được quyền giữ mảnh thần khí; tôi yêu cầu ghi nguyên trạng hộp và mọi ý kiến vào biên nghị.",
+       "Đoàn Ngọc Kỳ ra hiệu ghi nhận yêu cầu, còn hội nghị chuyển sang tranh luận về quyền định đoạt; không ai được nhận hộp trong lúc các phe chưa đưa ra phán quyết."
+      ],
+      "ends_at": "Cảnh kết trong Đại Điện Hàn Phong, khi tôi đứng cạnh hộp đá đã được ghi nhận nguyên trạng và hội nghị bắt đầu tranh luận về quyền định đoạt Mảnh Thiên Khuyết.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"người ghi biên nghị\" xuất hiện 4 lần (tối đa 2); đoạn: «người ghi biên nghị»"
+       },
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"người ghi biên nghị\" xuất hiện 4 lần (tối đa 2); đoạn: «người ghi biên nghị»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-02e2436b6a1e",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị vị chấp bút ghi rõ các ý kiến về quyền định đoạt vào biên nghị.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-784188d80173",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Đoàn Ngọc Kỳ thủ tục nào sẽ được dùng để quyết định quyền định đoạt.",
+      "listeners": [
+       "doan_ngoc_ky"
+      ],
+      "about": [
+       "fact_lenh_thu_nhat_dau_that"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-e0e9a0c9c64f",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo Mảnh Thiên Khuyết sẽ trở thành tâm điểm tranh giành.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": "lo lắng"
+     }
+    ]
+   }
+  ],
+  "9": [
+   {
+    "attempt": 1,
+    "commit_id": "ch9-852c49b00d17",
+    "player_action": "[Lời thoại, nói thật] Hỏi Đoàn Ngọc Kỳ thủ tục nào sẽ được dùng để quyết định quyền định đoạt.",
+    "error_detail": null,
+    "summary": "Trong hội nghị, các phe tranh luận về quyền định đoạt Mảnh Thiên Khuyết. Tôi yêu cầu ghi rõ thủ tục xét xử và giới hạn của lệnh triệu hồi; Đoàn Ngọc Kỳ xác nhận hội nghị sẽ ghi nhận căn cứ, đối chiếu Minh Ước Bạch Ngọc cùng quyền quản lý của Hàn Phong rồi công khai phán nghị. Tôi giữ hộp đá nguyên trạng, từ chối giao riêng cho phe nào và yêu cầu ghi điều kiện bàn giao, trách nhiệm vào biên nghị. Theo yêu cầu, tôi lập lời thề giữ hộp, không mở hay giao vật trước phán nghị; tôi chỉ nhận trách nhiệm với tình trạng hộp, không nhận thay quyền quyết định của hội nghị. Lý Vân Thư phản đối việc Hàn Phong vừa giữ vật vừa tham gia xét quyền định đoạt. Cuối chương, hộp đá vẫn ở trước hội nghị, khóa và niêm phong nguyên vẹn; các bên đang trình căn cứ, phán nghị chưa có.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành buộc Đoàn Ngọc Kỳ công khai thủ tục quyết định quyền định đoạt Mảnh Thiên Khuyết mà chưa để hội nghị kết luận ai sẽ nhận nó.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Giữa lúc hội nghị còn tranh luận, Ninh Tố Hành hỏi Đoàn Ngọc Kỳ thủ tục nào sẽ được dùng để quyết định quyền định đoạt, đồng thời yêu cầu lời đáp được ghi vào biên nghị.",
+       "Đoàn Ngọc Kỳ đáp rằng hội nghị sẽ lần lượt ghi nhận căn cứ của các bên, đối chiếu với Minh Ước Bạch Ngọc và quyền quản lý của Hàn Phong, rồi mới đưa ra phán nghị công khai; ông nhấn mạnh lệnh triệu hồi không tự trao cho mình quyền định đoạt.",
+       "Lý Vân Thư nói thủ tục ấy chỉ có ý nghĩa nếu các bên được trình bày ngang nhau, rồi yêu cầu biên nghị ghi cả sự phản đối của nàng đối với việc Hàn Phong vừa giữ vật vừa tham gia quyết định.",
+       "Ninh Tố Hành đáp rằng nàng sẽ giữ hộp đá nguyên trạng cho đến khi có phán nghị, nhưng không nhận lời giao vật riêng cho bất cứ ai; nàng yêu cầu điều kiện giữ hộp và trách nhiệm nếu có người tự ý lấy vật phải được ghi rõ.",
+       "Đoàn Ngọc Kỳ chấp thuận ghi điều kiện ấy, rồi tuyên bố hội nghị sẽ lấy lời thề giữ nguyên trạng làm bước kế tiếp trước khi chuyển sang xét căn cứ của các phe."
+      ],
+      "ends_at": "Cảnh kết tại bàn nghị sự trong Đại Điện Hàn Phong, khi lời thề giữ nguyên trạng được đặt ra nhưng quyền định đoạt Mảnh Thiên Khuyết vẫn chưa được quyết định.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Ninh Tố Hành lập lời thề giữ nguyên trạng hộp đá theo thủ tục vừa được công bố, đồng thời buộc hội nghị ghi rõ giới hạn của lời thề ấy.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Theo hiệu lệnh của Đoàn Ngọc Kỳ, tôi đứng trước bàn nghị sự, đặt tay bên hộp đá còn khóa và tuyên thệ sẽ không mở, không giao riêng Mảnh Thiên Khuyết cho bất cứ phe nào trước khi có phán nghị công khai.",
+       "Đoàn Ngọc Kỳ yêu cầu người chấp bút ghi lời thề cùng điều kiện rằng việc giữ hộp không trao cho tôi quyền định đoạt; tôi nhắc lại rằng mọi lần bàn giao sau này cũng phải được ghi nhận trước hội nghị.",
+       "Lý Vân Thư chất vấn liệu lời thề có thể bị dùng để buộc tôi chịu trách nhiệm cho quyết định của Hàn Phong; tôi đáp rằng mình chỉ nhận trách nhiệm với hộp đá nguyên trạng, không nhận thay quyền của hội nghị.",
+       "Đoàn Ngọc Kỳ xác nhận lời phản đối của Lý Vân Thư sẽ được ghi vào biên nghị, rồi tuyên bố hội nghị chuyển sang ghi nhận căn cứ của các bên; không ai được lấy hộp đá trong lúc ấy.",
+       "Tôi nhìn người chấp bút khắc xong lời thề lên thẻ ngọc, rồi lùi khỏi bàn mà vẫn giữ hai tờ lệnh trong tay; chiếc hộp ở lại trước mặt hội nghị, chưa thuộc về phe nào."
+      ],
+      "ends_at": "Cảnh kết tại bàn nghị sự trong Đại Điện Hàn Phong, khi lời thề giữ hộp đã được ghi nhận nhưng hội nghị chưa quyết định ai sẽ nhận Mảnh Thiên Khuyết.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-3994a2166d55",
+      "kind": "action",
+      "tone": null,
+      "text": "Đưa hai tờ lệnh ra trước hội nghị để đối chiếu.",
+      "listeners": [],
+      "about": [
+       "lenh_goi_thu_hai",
+       "lenh_goi_thu_nhat"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-54c56d81557a",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Xin ghi nhận rằng cả hai lệnh đều mang con dấu của ta.",
+      "listeners": [
+       "doan_ngoc_ky"
+      ],
+      "about": [
+       "fact_hai_lenh_cung_dau"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0d77b9fe834f",
+      "kind": "inner",
+      "tone": null,
+      "text": "Ta sẽ giữ hộp nguyên trạng, không để mình thay hội nghị quyết định.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet",
+       "minh_uoc_bach_ngoc"
+      ],
+      "lie": null,
+      "feeling": "kiên định"
+     }
+    ]
+   }
+  ],
+  "10": [
+   {
+    "attempt": 1,
+    "commit_id": "ch10-7a3597decc19",
+    "player_action": "[Lời thoại, nói thật] Xin ghi nhận rằng cả hai lệnh đều mang con dấu của ta.",
+    "error_detail": null,
+    "summary": "Tại hội nghị, Ninh Tố Hành yêu cầu ghi rõ hai lệnh đều mang con dấu của mình nhưng điều đó không chứng minh nàng đã ban hành hay chấp thuận chúng; lời thề của nàng chỉ ràng buộc việc giữ nguyên hộp, không trao quyền định đoạt Mảnh Thiên Khuyết. Đoàn Ngọc Kỳ và Lý Vân Thư tranh luận về thẩm quyền, thủ tục và tính công bằng trong việc Hàn Phong vừa trông giữ vừa tham gia xét xử. Hội nghị phán nghị tạm thời không bên nào được nhận riêng Mảnh Thiên Khuyết; hộp vẫn khóa, Ninh Tố Hành tiếp tục trông giữ đến phiên quyết định cuối. Lý Vân Thư bảo lưu phản đối, còn mọi hành vi can thiệp vào hộp sẽ bị xem xét là vi phạm. Ninh Tố Hành ở lại làm chứng; người nhận vật vẫn chưa được xác định.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Ninh Tố Hành buộc hội nghị ghi nhận hai lệnh cùng mang con dấu của nàng và khiến tranh luận chuyển sang trách nhiệm đối với việc sử dụng con dấu.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Ninh Tố Hành nói rõ cả hai lệnh đều mang con dấu của mình, yêu cầu ghi nguyên lời ấy vào biên nghị thay vì coi dấu ấn là bằng chứng nàng đã chấp thuận cả hai mệnh lệnh.",
+       "Đoàn Ngọc Kỳ xác nhận lời khai sẽ được ghi, rồi phân biệt con dấu trên giấy với quyền định đoạt Mảnh Thiên Khuyết: hội nghị phải xét ai có thẩm quyền dùng dấu và theo thủ tục nào.",
+       "Lý Vân Thư đáp rằng việc ghi nhận con dấu không thể thay cho việc xác định ai đã dùng nó; nàng yêu cầu hội nghị không biến lời khai của Ninh thành sự nhận tội hay sự ủy quyền.",
+       "Ninh nhắc rằng nàng đang chịu lời thề giữ hộp nguyên trạng, không phải lời thề giao vật cho bất kỳ phe nào; Đoàn Ngọc Kỳ chấp thuận ghi rõ giới hạn ấy bên cạnh lời khai.",
+       "Hội nghị tạm dừng việc bàn giao để đối chiếu thẩm quyền của hai lệnh, còn hộp đá vẫn khóa trước mặt mọi người; Ninh được yêu cầu ở lại làm chứng về con dấu của mình."
+      ],
+      "ends_at": "Cảnh kết tại Đại Điện Hàn Phong, khi Ninh Tố Hành vẫn giữ lời thề bảo toàn chiếc hộp nhưng phải đối diện với việc hai lệnh mang dấu nàng sẽ được xét về thẩm quyền.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Đưa hội nghị từ tranh cãi về hai con dấu sang một phán nghị tạm thời về quyền giữ Mảnh Thiên Khuyết, mở ra thế đối đầu mới trước quyết định cuối cùng.",
+      "present": [
+       "protagonist",
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "beats": [
+       "Sau khi thư lại đọc lại lời khai ở cảnh trước, tôi yêu cầu hội nghị ghi rõ rằng việc cả hai lệnh mang dấu của tôi không chứng minh tôi đã ban hành hay chấp thuận chúng; Đoàn Ngọc Kỳ cho ghi nguyên văn.",
+       "Đoàn Ngọc Kỳ viện thủ tục Hàn Phong để đề nghị tôi tiếp tục giữ hộp dưới lời thề, còn Lý Vân Thư phản bác rằng người đang giữ vật không thể đồng thời được xem là người bảo đảm tính công bằng của việc phân định.",
+       "Tôi nhắc cả hai bên rằng lời thề của tôi chỉ ràng buộc tình trạng chiếc hộp, không trao quyền định đoạt; tôi đề nghị hội nghị ghi riêng trách nhiệm giữ vật và quyền quyết định số phận nó.",
+       "Sau khi đối chiếu căn cứ của Minh Ước Bạch Ngọc với quyền quản lý của Hàn Phong, hội nghị công bố phán nghị tạm thời: không bên nào được nhận Mảnh Thiên Khuyết riêng, hộp tiếp tục khóa và ở dưới sự trông coi của tôi cho đến phiên quyết định cuối.",
+       "Lý Vân Thư yêu cầu ghi rõ nàng bảo lưu phản đối việc Hàn Phong tham gia xét quyền định đoạt; Đoàn Ngọc Kỳ chấp thuận ghi phản đối ấy, đồng thời tuyên bố từ đây mọi hành vi can thiệp vào hộp sẽ bị xét như vi phạm phán nghị."
+      ],
+      "ends_at": "Cảnh kết tại Đại Điện Hàn Phong, khi phán nghị tạm thời đã được công bố nhưng quyền định đoạt cuối cùng và người nhận Mảnh Thiên Khuyết vẫn chưa được quyết định.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"xét quyền định đoạt\" xuất hiện 3 lần (tối đa 2); đoạn: «xét quyền định đoạt»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-c8b2e8f84abd",
+      "kind": "action",
+      "tone": null,
+      "text": "Tiếp tục trông giữ hộp đá theo phán nghị tạm thời.",
+      "listeners": [],
+      "about": [
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-1a18eafb4126",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói rằng ta sẽ giữ hộp theo lời thề, nhưng không nhận quyền quyết định số phận Mảnh Thiên Khuyết.",
+      "listeners": [
+       "doan_ngoc_ky",
+       "ly_van_thu"
+      ],
+      "about": [
+       "manh_thien_khuyet"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-2381b4134640",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo ngại rằng lời phản đối của Lý Vân Thư sẽ khiến việc trông giữ trở nên căng thẳng hơn.",
+      "listeners": [],
+      "about": [
+       "ly_van_thu"
+      ],
+      "lie": null,
+      "feeling": "lo ngại"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [
+  {
+   "where": "chapter 1: choices",
+   "attempt": 1,
+   "code": "RETRY_LIMIT_REACHED",
+   "detail": "2 lần thử đều lỗi; lỗi cuối: LLM_BAD_RESPONSE: ChoicesOutput: choices.1: value_error"
+  },
+  {
+   "where": "chapter 5: choices",
+   "attempt": 1,
+   "code": "RETRY_LIMIT_REACHED",
+   "detail": "2 lần thử đều lỗi; lỗi cuối: LLM_BAD_RESPONSE: ChoicesOutput: choices.1: value_error"
+  }
+ ],
+ "setup_repairs": []
+}
