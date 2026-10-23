@@ -1,6 +1,7 @@
 """Router `auth`: đăng nhập bằng mã mời (D-89).
 
-- `POST /auth/login` `{code}`: đếm lần nhập mã của máy (`config/limits.yaml` `auth`), rồi kiểm mã;
+- `POST /auth/login` `{code}`: đếm lần nhập mã của máy (`config/limits.yaml` `auth`; sau proxy là
+  địa chỉ proxy tin cậy báo, `deps.client_address`, D-103), rồi kiểm mã;
   đúng thì đặt cookie phiên `HttpOnly`, `SameSite=Lax`, `Secure` khi không phải localhost.
 - `POST /auth/logout`: xoá phiên phía máy chủ và cookie.
 - `GET /auth/session`: chế độ, đã đăng nhập chưa, tên người được mời. Không cần đăng nhập.
@@ -57,7 +58,10 @@ def _limit(limits: AuthLimits, name: str) -> int:
 
 
 def _secure(request: Request) -> bool:
-    return (request.url.hostname or "") not in _LOCAL_HOSTS
+    """`Secure` trừ khi trình duyệt mở bằng http trên localhost (máy dev, thử chồng prod). Theo
+    `Host` mà proxy giữ nguyên, nên sau proxy https trên tên miền thật luôn `Secure`, kể cả khi
+    header scheme bị giả; trên localhost thì theo scheme tin được (D-103)."""
+    return (request.url.hostname or "") not in _LOCAL_HOSTS or deps.forwarded_https(request)
 
 
 Session = Annotated[SessionInfo | None, Depends(deps.current_session)]
@@ -74,7 +78,8 @@ def login(body: LoginIn, request: Request, response: Response, conn: deps.PgConn
     per_window = _limit(limits, "login_attempts_per_window")
     window = _limit(limits, "login_window_seconds")
     now = clock()
-    client = request.client.host if request.client else "unknown"
+    # Sau proxy: chỉ tin header từ proxy tin cậy; IPv6 đếm theo /64 (D-103).
+    client = deps.rate_limit_key(deps.client_address(request))
     if not take_login_attempt(conn, client, per_window, window_seconds=window, now=now):
         raise WritoryError(ErrorCode.LOGIN_RATE_LIMITED, detail="hết lượt nhập mã của máy này")
     result = login_with_code(conn, body.code, ttl=timedelta(hours=ttl_hours),

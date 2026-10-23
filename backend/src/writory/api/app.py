@@ -6,6 +6,11 @@ công khai cho giao diện, đăng nhập) mount khi `AUTH_MODE=invite` (có đ�
 hoặc khi `enable_dev_routes` bật ở chế độ `dev` (mọi người là người chơi dev, D-41, D-66). Không
 bật CORS: giao diện gọi API qua proxy của Vite, cùng origin (D-66, docs/runbook.md); chống CSRF
 dựa vào điều đó (`deps.api_guard`).
+
+`APP_ENV=prod` (máy chủ cho người chơi thật, D-103): cấu hình nguy hiểm thì không tạo app
+(`config.prod_problems`); lúc khởi động chạy migration Postgres, tạo ràng buộc Neo4j và đọc thử
+file app cần (`prepare_storage`) trước khi nhận yêu cầu đầu; không có trang OpenAPI. Sau reverse
+proxy, chỉ tin header địa chỉ máy và scheme từ `TRUSTED_PROXIES` (`deps.client_address`).
 """
 
 import asyncio
@@ -26,7 +31,14 @@ from writory.api.play import router as play_router
 from writory.api.public_config import router as public_config_router
 from writory.api.setup import router as setup_router
 from writory.api.stories import router as stories_router
-from writory.config import AppConfig, Settings, load_config
+from writory.config import (
+    AppConfig,
+    ConfigError,
+    Settings,
+    load_config,
+    parse_trusted_proxies,
+    prod_problems,
+)
 from writory.llm.openrouter import DEFAULT_TIMEOUT
 from writory.safety.crypto import KeyCipher
 from writory.safety.redact import install_log_redaction, redact
@@ -42,6 +54,31 @@ UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")
 _HEALTH_TIMEOUT_S = 3.0
 
 HealthCheck = Callable[[], Awaitable[bool]]
+StorageSetup = Callable[[Settings], None]
+
+
+def prepare_storage(settings: Settings) -> None:
+    """Chuẩn bị kho lúc khởi động ở prod (D-103): migration Postgres (D-20, có khoá advisory),
+    ràng buộc và index Neo4j (`graph.ensure_schema`, chạy lại an toàn), và đọc thử hướng dẫn văn
+    phong (system prompt của model viết), để thiếu file thì app không lên thay vì hỏng ở chương
+    đầu. Lỗi nào cũng làm app không khởi động; compose khởi động lại sau."""
+    from writory.db import connect, migrate
+    from writory.graph import ensure_schema
+    from writory.pipeline.scene import load_style_guide
+
+    load_style_guide()
+    with connect(settings) as conn:
+        applied = migrate(conn)
+    log.info("migration Postgres: %s", ", ".join(applied) if applied else "đã đủ")
+    driver = GraphDatabase.driver(
+        settings.neo4j_uri,
+        auth=(settings.neo4j_user, settings.neo4j_password.get_secret_value()),
+    )
+    try:
+        ensure_schema(driver)
+    finally:
+        driver.close()
+    log.info("ràng buộc Neo4j: đã đủ")
 
 
 def _default_health_checks(app: FastAPI, settings: Settings) -> dict[str, HealthCheck]:
@@ -75,15 +112,24 @@ def create_app(
     *,
     health_checks: dict[str, HealthCheck] | None = None,
     config: AppConfig | None = None,
+    storage_setup: StorageSetup = prepare_storage,
 ) -> FastAPI:
     # Đọc biến môi trường và config/ lúc gọi factory (uvicorn --factory), không lúc import.
     settings = settings if settings is not None else Settings()
     config = config if config is not None else load_config()
+    prod = settings.app_env == "prod"
+    if prod:
+        problems = prod_problems(settings)
+        if problems:
+            raise ConfigError("APP_ENV=prod nhưng cấu hình chưa an toàn: " + "; ".join(problems)
+                              + ". Xem docs/runbook.md, mục Deploy.")
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
         for name in ("", *UVICORN_LOGGERS):
             install_log_redaction(logging.getLogger(name or None))
+        if prod:
+            await asyncio.to_thread(storage_setup, settings)
         # TODO(D-6, docs/graph-schema.md "Ghi theo commit_id"): gọi reconcile_pending lúc khởi
         # động. writory.db đã có hàm này; chưa nối vì chưa có quyết định.
         app.state.health_checks = (
@@ -104,10 +150,13 @@ def create_app(
             if http is not None:
                 await http.aclose()
 
-    app = FastAPI(title="WriTory", lifespan=lifespan)
+    # Prod không có trang OpenAPI (D-103): repo công khai, nhưng không cần mở thêm cửa.
+    docs = {"docs_url": None, "redoc_url": None, "openapi_url": None} if prod else {}
+    app = FastAPI(title="WriTory", lifespan=lifespan, **docs)
     install_error_handlers(app)
     app.state.settings = settings
     app.state.config = config
+    app.state.trusted_proxies = parse_trusted_proxies(settings.trusted_proxies)
     # D-41, D-89: chế độ `dev` (không đăng nhập) chỉ mount khi bật cờ dev, mặc định tắt (fail
     # closed); chế độ `invite` luôn mount, vì mọi route đọc người chơi từ phiên đăng nhập.
     app.state.player_routes_enabled = (settings.auth_mode == "invite"

@@ -4,6 +4,7 @@ Trong YAML, `null` nghĩa là "chưa đặt". Code cần một trần chưa đ�
 hàm đó báo lỗi rõ ràng chứ không coi là vô hạn.
 """
 
+from ipaddress import IPv4Network, IPv6Network, ip_network
 from pathlib import Path
 from typing import Annotated, Literal, Self
 
@@ -18,6 +19,7 @@ from pydantic import (
     PositiveInt,
     SecretStr,
     ValidationError,
+    field_validator,
     model_validator,
 )
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -493,3 +495,67 @@ class Settings(BaseSettings):
     # `enable_dev_routes` (như D-41). `invite`: đăng nhập bằng mã mời, router luôn mount, thiếu hay
     # sai phiên thì AUTH_REQUIRED. Mặc định `dev` để app đang chạy trên máy dev không đổi.
     auth_mode: Literal["dev", "invite"] = "dev"
+    # `prod`: máy chủ cho người chơi thật (D-103). App từ chối khởi động nếu cấu hình nguy hiểm
+    # (`prod_problems`), tự chạy migration và tạo ràng buộc Neo4j lúc khởi động, tắt trang OpenAPI.
+    app_env: Literal["dev", "prod"] = "dev"
+    # Proxy tin cậy (D-103): danh sách IP hoặc mạng, cách nhau dấu phẩy. Chỉ yêu cầu đến từ các địa
+    # chỉ này mới được đọc `X-Real-IP`/`X-Forwarded-For` (địa chỉ máy cho bộ đếm lần nhập mã) và
+    # `X-Forwarded-Proto`. Rỗng: không tin header nào.
+    trusted_proxies: str = ""
+
+    @field_validator("trusted_proxies")
+    @classmethod
+    def _proxies_parse(cls, value: str) -> str:
+        parse_trusted_proxies(value)
+        return value
+
+
+ProxyNetwork = IPv4Network | IPv6Network
+
+# Độ dài tối thiểu của mật khẩu Neo4j và Postgres ở `APP_ENV=prod` (D-103).
+MIN_PROD_SECRET_CHARS = 16
+# Mật khẩu mẫu của `.env.example` và docker-compose.yml: không bao giờ dùng ở prod.
+_EXAMPLE_SECRET_MARK = "change-me"
+
+
+def parse_trusted_proxies(value: str) -> tuple[ProxyNetwork, ...]:
+    """`TRUSTED_PROXIES` → các mạng. Chỉ nhận IP hoặc mạng viết đúng (không tên máy, không `*`,
+    không bit máy thừa như `172.30.80.10/24`), để lỗi gõ không thành tin cả Internet."""
+    nets: list[ProxyNetwork] = []
+    for part in value.split(","):
+        item = part.strip()
+        if not item:
+            continue
+        try:
+            nets.append(ip_network(item, strict=True))
+        except ValueError:
+            raise ValueError(
+                f"TRUSTED_PROXIES: {item[:40]!r} không phải IP hay mạng (vd 172.30.80.10, "
+                "10.0.0.0/8)") from None
+    return tuple(nets)
+
+
+def _weak_secret(value: str) -> bool:
+    return len(value) < MIN_PROD_SECRET_CHARS or _EXAMPLE_SECRET_MARK in value.lower()
+
+
+def prod_problems(settings: Settings) -> list[str]:
+    """Lý do không được chạy `APP_ENV=prod` (D-103); rỗng là được. Chỉ nêu tên biến, không bao
+    giờ chép giá trị (G7)."""
+    from psycopg.conninfo import conninfo_to_dict
+
+    problems: list[str] = []
+    if settings.auth_mode != "invite":
+        problems.append("AUTH_MODE phải là invite ở APP_ENV=prod (D-89, D-103)")
+    if _weak_secret(settings.neo4j_password.get_secret_value()):
+        problems.append(f"NEO4J_PASSWORD yếu hoặc là mật khẩu mẫu: cần ít nhất "
+                        f"{MIN_PROD_SECRET_CHARS} ký tự ngẫu nhiên")
+    try:
+        pg_password = conninfo_to_dict(settings.postgres_dsn.get_secret_value()).get("password")
+    except Exception:  # noqa: BLE001 — DSN sai dạng; lỗi của psycopg có thể chép lại DSN
+        problems.append("POSTGRES_DSN sai dạng")
+    else:
+        if not pg_password or _weak_secret(pg_password):
+            problems.append(f"POSTGRES_DSN không có mật khẩu, hoặc mật khẩu yếu hay là mật khẩu "
+                            f"mẫu: cần ít nhất {MIN_PROD_SECRET_CHARS} ký tự ngẫu nhiên")
+    return problems
