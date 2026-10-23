@@ -1,6 +1,6 @@
 # WriTory
 
-> **In short:** WriTory is an interactive fiction engine for Vietnamese. You live a story as its protagonist and shape it with choices (action, dialogue, inner thought). The world is remembered in a two-layer knowledge graph: a `truth` layer that only the AI sees, and a `player_view` layer with only what the page has revealed to you. Secrets and plot twists are enforced by code, not by prompts. It is a learning project about graph-based memory (GraphRAG); players bring their own OpenRouter key. Status: work in progress; playable through the web UI on a developer machine or with invite codes, not deployed yet.
+> **In short:** WriTory is an interactive fiction engine for Vietnamese. You live a story as its protagonist and shape it with choices (action, dialogue, inner thought). The world is remembered in a two-layer knowledge graph: a `truth` layer that only the AI sees, and a `player_view` layer with only what the page has revealed to you. Secrets and plot twists are enforced by code, not by prompts. It is a learning project about graph-based memory (GraphRAG); players bring their own OpenRouter key. Status: work in progress; playable through the web UI on a developer machine or with invite codes; a production stack (Docker Compose behind Cloudflare Tunnel) exists but is not live yet.
 
 Truyện tương tác tiếng Việt. Bạn sống đời nhân vật chính qua từng lựa chọn: hành động, lời thoại, nội tâm. Truyện dài tới khoảng 100 trang; bản 1 mở cho người chơi truyện ngắn và truyện vừa, các mức dài hơn mở sau khi đã đo.
 
@@ -36,7 +36,7 @@ Bộ đo khai câu hỏi và cách chấm **trước** khi chạy ([docs/eval.md
 
 ## Trạng thái
 
-**Bản 1, đang làm** (kế hoạch: [docs/design.md](docs/design.md) mục 12). Đã chạy thử app đầu cuối qua API và giao diện dev với model thật (CLAUDE.md mục 9). Đăng nhập bằng mã mời cho bạn bè đã có (D-89, cách tạo mã: [docs/runbook.md](docs/runbook.md)); chưa mở cho người khác vì chưa có deploy. Hiện trạng chi tiết: [CLAUDE.md](CLAUDE.md) mục 9; các quyết định và người quyết: [docs/decisions.md](docs/decisions.md).
+**Bản 1, đang làm** (kế hoạch: [docs/design.md](docs/design.md) mục 12). Đã chạy thử app đầu cuối qua API và giao diện dev với model thật (CLAUDE.md mục 9). Đăng nhập bằng mã mời cho bạn bè đã có (D-89, cách tạo mã: [docs/runbook.md](docs/runbook.md)); chồng prod chạy trên máy nhà qua Cloudflare Tunnel đã có, chưa mở cho người chơi ([docs/runbook.md](docs/runbook.md), mục Deploy; D-103). Hiện trạng chi tiết: [CLAUDE.md](CLAUDE.md) mục 9; các quyết định và người quyết: [docs/decisions.md](docs/decisions.md).
 
 ## Tài liệu
 

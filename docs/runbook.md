@@ -105,9 +105,9 @@ Chạy backend ở chế độ này:
 ```bash
 AUTH_MODE=invite uv run uvicorn writory.api:create_app --factory --host 127.0.0.1 --port 8000
 ```
-- Cookie phiên `writory_session`: `HttpOnly`, `SameSite=Lax`, `Secure` trừ khi truy cập qua `localhost`/`127.0.0.1`. Sau HTTPS proxy thì proxy phải giữ nguyên header `Host`.
+- Cookie phiên `writory_session`: `HttpOnly`, `SameSite=Lax`, `Secure` trừ khi truy cập bằng http qua `localhost`/`127.0.0.1`. Sau proxy thì proxy phải giữ nguyên header `Host` (Caddy và cloudflared giữ, mục Deploy).
 - Gọi bằng `curl` ở chế độ này thì ngoài `-H 'content-type: application/json'` (mọi chế độ, mục trên) còn phải gửi cookie phiên (`-b`).
-- Giới hạn lần nhập mã tính theo địa chỉ máy mà uvicorn thấy. Sau proxy, mọi người chung một địa chỉ (chưa đọc `X-Forwarded-For`).
+- Giới hạn lần nhập mã tính theo địa chỉ máy: chạy thẳng uvicorn là địa chỉ uvicorn thấy; sau proxy là địa chỉ proxy tin cậy báo (`TRUSTED_PROXIES`, mục Deploy, D-103).
 - Dữ liệu cũ của người chơi dev `dev` không thuộc mã nào, nên không thấy được ở chế độ `invite`.
 
 ## CI
@@ -155,7 +155,79 @@ Danh sách đầy đủ: `.env.example`. Không commit `.env`.
   Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại. Khi `ENABLE_DEV_ROUTES=true`, khoá sai định dạng thì app không khởi động (D-11, D-45).
 - `ENABLE_DEV_ROUTES` (mặc định `false`): ở `AUTH_MODE=dev`, gắn router của người chơi (truyện, khởi tạo, key và chi phí người chơi, cấu hình công khai, đăng nhập; D-41, D-66), mọi người là người chơi dev. Chỉ bật trên máy dev.
 - `AUTH_MODE` (mặc định `dev`): `dev` hoặc `invite` (D-89). `invite`: đăng nhập bằng mã mời, router luôn được gắn. Thời hạn phiên và số lần nhập mã mỗi máy: `config/limits.yaml`, mục `auth`.
+- `APP_ENV` (mặc định `dev`): `prod` cho chồng prod (D-103): bắt buộc `AUTH_MODE=invite` và mật khẩu Neo4j, Postgres mạnh, tự chạy migration lúc khởi động, không có trang OpenAPI. Biến của chồng prod: `.env.prod.example`, mục Deploy.
+- `TRUSTED_PROXIES` (mặc định rỗng): IP hoặc mạng của reverse proxy, cách nhau dấu phẩy; chỉ yêu cầu từ đó mới được đọc `X-Real-IP`, `X-Forwarded-For`, `X-Forwarded-Proto` (D-103). Chạy thẳng uvicorn thì để trống.
 - Cấu hình runtime nằm trong `config/*.yaml`, được nạp và kiểm schema bằng `writory.config.load_config()`. Giá trị `null` nghĩa là chưa đặt; code nào cần giá trị đó sẽ báo lỗi.
 
 ## Deploy
-*(chưa có. Lưu ý: AuraDB Free tự tạm dừng sau 3 ngày không dùng, nên không hợp cho người chơi thật. Xem design §11.)*
+Bản 1 chạy trên máy nhà của chủ dự án (Windows 11 + Docker Desktop), ra ngoài qua Cloudflare Tunnel; chủ dự án tự bật khi có người chơi và tắt khi xong (D-103). Chồng prod chạy được trên mọi máy có Docker; script bật, tắt viết cho PowerShell.
+
+**Chồng prod** (`docker-compose.prod.yml`, project `writory-prod`): `cloudflared` → `proxy` (Caddy, `deploy/Caddyfile`: bản build tĩnh của frontend và `/api/*` tới backend, bỏ tiền tố `/api` như proxy Vite; SSE không đệm) → `backend` (`deploy/backend.Dockerfile`, uvicorn một tiến trình, user không phải root) → `neo4j`, `postgres`. Không service nào mở cổng ra máy: đường vào duy nhất là tunnel, HTTPS kết thúc ở Cloudflare. Neo4j và Postgres nằm trong mạng `data` nội bộ, proxy và cloudflared không tới được. Dữ liệu nằm trong volume của project (`writory-prod_neo4j-data`, `writory-prod_postgres-data`, `writory-prod_caddy-*`).
+
+**Chạy chung máy với chồng dev.** Hai chồng không dùng chung project, mạng, volume hay cổng: chồng dev (`docker-compose.yml`) giữ 7474, 7687, 5432, app dev giữ 8000, 5173; chồng prod không mở cổng nào. RAM: hai Neo4j có thể chạy cùng lúc. Neo4j prod có heap và pagecache nhỏ hơn Neo4j dev (mặc định trong `docker-compose.prod.yml`, đổi bằng `NEO4J_HEAP`, `NEO4J_PAGECACHE` trong `.env.prod`), vì đồ thị của vài người bạn chỉ vài nghìn nút; Neo4j dev giữ số của `docker-compose.yml`. Không đặt `.wslconfig` thì Docker Desktop cấp cho máy ảo WSL tối đa một nửa RAM của máy. Không cần bật chồng dev lúc mở server.
+
+### Chuẩn bị một lần
+1. **Cloudflare:** tài khoản Cloudflare và một tên miền đã thêm vào Cloudflare (nameserver trỏ về Cloudflare). Bảng Zero Trust → Networks → Tunnels → Create a tunnel → Cloudflared, đặt tên (ví dụ `writory`), chép **token** ở bước cài đặt (chuỗi sau `--token`; không cần cài cloudflared lên máy, container dùng token). Thêm Public Hostname: tên miền con (ví dụ `writory.<tên miền>`), Service `HTTP`, URL `proxy:80`. Chưa có tên miền thì xem phụ lục "Thử nhanh bằng trycloudflare".
+2. **`.env.prod`** ở gốc repo (không commit; `.gitignore` đã chặn): chép `.env.prod.example` thành `.env.prod`, rồi điền
+   - `CLOUDFLARE_TUNNEL_TOKEN`: token ở bước 1;
+   - `NEO4J_PASSWORD`, `POSTGRES_PASSWORD`: mỗi cái một chuỗi chữ và số ngẫu nhiên, tạo bằng `cd backend && uv run python -c "import secrets; print(secrets.token_hex(24))"`. Mật khẩu Postgres nằm trong URL kết nối nên chỉ dùng chữ và số;
+   - `PLAYER_KEY_ENCRYPTION_KEY`: cách tạo ở mục Biến môi trường. Lưu thêm một bản `.env.prod` ở chỗ an toàn ngoài máy: mất khoá thì key người chơi đã lưu không đọc được;
+   - `PUBLIC_URL` (tuỳ chọn): `https://writory.<tên miền>`, để `prod-up` in ra.
+
+   Backend ở `APP_ENV=prod` không khởi động nếu `AUTH_MODE` khác `invite`, hoặc mật khẩu Neo4j, Postgres ngắn hay là mật khẩu mẫu (`config.prod_problems`); compose dừng ngay nếu thiếu biến bắt buộc.
+3. Script PowerShell chạy bằng `powershell -ExecutionPolicy Bypass -File deploy\<tên>.ps1` từ gốc repo (không cần đổi chính sách của máy).
+
+### Bật server khi có người chơi, tắt khi xong
+1. Mở Docker Desktop, đợi nó báo "Engine running".
+2. Bật: `powershell -ExecutionPolicy Bypass -File deploy\prod-up.ps1`. Script kiểm Docker, kiểm `.env.prod` đủ biến, bật các container, chờ `/api/health` qua proxy trong mạng docker, báo tunnel đã nối chưa và in link. Lần đầu, và sau khi kéo code mới, thêm `-Build` để dựng lại image.
+3. Gửi link và mã mời cho bạn (mục Mã mời dưới đây).
+4. Xem: `powershell -ExecutionPolicy Bypass -File deploy\prod-status.ps1`: trạng thái container, app có trả lời không, số việc đang gọi model (khoá chạy đôi D-46 trong Postgres: viết chương, hỏi người kể, khởi tạo...), log gần nhất (`-Lines 100` để xem nhiều hơn).
+5. Tắt: `powershell -ExecutionPolicy Bypass -File deploy\prod-down.ps1`. Đang có việc gọi model thì script hỏi lại (chương đang viết sẽ không được ghi, người chơi bấm viết lại); `-Force` để tắt luôn. Script dùng `docker compose stop`: dữ liệu giữ nguyên. Không bao giờ dùng `down -v` với project `writory-prod`: lệnh đó xoá dữ liệu.
+
+**Khi nào server tự lên lại.** Mọi container có `restart: unless-stopped`. Đã kiểm trên máy này (Docker Desktop, engine 29.6.2, project thử): backend chết giữa chừng thì Docker tự bật lại; sau `prod-down` rồi khởi động lại Docker Desktop thì không container nào tự lên. Container còn chạy lúc `docker desktop restart` cũng không tự lên lại. Chưa kiểm khi Windows tắt đột ngột (mất điện, tự khởi động lại để cập nhật): khi đó chồng prod có thể tự lên lúc Docker Desktop mở lần sau. Muốn chắc thì chạy `prod-down` trước khi tắt máy, và sau khi mở máy chạy `prod-status` để xem.
+
+### Mã mời
+Chạy khi server đang bật. Mã in một lần (mục Đăng nhập bằng mã mời):
+```bash
+docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod exec backend python -m writory.db.invites create --name "Tên bạn"
+docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod exec backend python -m writory.db.invites list
+docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod exec backend python -m writory.db.invites revoke inv-...
+```
+Luôn kèm `--env-file .env.prod`: thiếu thì compose đọc `.env` của máy dev và dừng vì thiếu biến.
+
+### Khởi động, migration, chi phí
+- Lúc khởi động ở `APP_ENV=prod`, backend chạy migration Postgres, tạo ràng buộc Neo4j (`graph.ensure_schema`) và đọc thử hướng dẫn văn phong (`api/app.prepare_storage`); lỗi thì backend không lên và compose thử lại, xem log bằng `prod-status`. Chồng dev vẫn chạy migration bằng tay (mục Migration Postgres).
+- Ở prod không có trang OpenAPI (`/docs`).
+- Chi phí (G8): người chơi dùng key OpenRouter của chính họ (D-2). Trần mỗi cảnh, chương, truyện và số lời gọi mỗi phút của từng người chơi (`config/limits.yaml`) chạy như ở dev: tính theo `owner_id` của phiên đăng nhập, không phụ thuộc chế độ chạy. Không có trần tổng theo người chơi (mỗi truyện có trần riêng), nên khuyên bạn bè đặt hạn mức chi tiêu cho key ở trang OpenRouter.
+- Chương kẹt `pending` (mục trên): chạy đúng câu lệnh reconcile ở mục đó bằng `docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod exec backend python -c "..."`.
+
+### Địa chỉ người dùng sau tunnel
+Bộ đếm lần nhập mã (D-89) tính theo địa chỉ người dùng. Chuỗi tin: Cloudflare → `cloudflared` (IP cố định `TUNNEL_IP`) → Caddy (`PROXY_IP`) → backend. Caddy chỉ đọc `CF-Connecting-IP` khi yêu cầu đến từ `cloudflared` (`trusted_proxies`), rồi đặt lại `X-Real-IP`. Backend chỉ đọc `X-Real-IP` (không có thì phần tử cuối của `X-Forwarded-For`) và `X-Forwarded-Proto` khi yêu cầu đến từ proxy (`TRUSTED_PROXIES`; `api/deps.client_address`, `forwarded_https`). Header giả từ nơi khác bị bỏ qua. Cookie phiên `Secure` vì `Host` là tên miền thật; trên `localhost`/`127.0.0.1` thì theo `X-Forwarded-Proto` tin được. Mạng `edge` có subnet cố định (`EDGE_SUBNET`); trùng mạng khác trên máy thì đổi `EDGE_SUBNET`, `PROXY_IP`, `TUNNEL_IP` cùng lúc.
+
+### Sao lưu và khôi phục
+- Sao lưu: `powershell -ExecutionPolicy Bypass -File deploy\prod-backup.ps1` (`-OutDir D:\writory-backups` để ghi chỗ khác; `-Force` để không hỏi khi đang có việc chạy). Ghi `backups\<ngày-giờ>\postgres.dump` (`pg_dump -Fc`) và `neo4j.dump` (`neo4j-admin database dump`; Neo4j Community chỉ dump được khi database dừng). Server tắt khoảng một phút để hai kho khớp nhau (một chương ghi vào cả hai, D-6); đang bật thì bật lại sau. Chép thư mục `backups\` ra ổ khác hoặc lên mây; giữ `.env.prod` ở chỗ riêng.
+- Khôi phục: `powershell -ExecutionPolicy Bypass -File deploy\prod-restore.ps1 -From backups\<ngày-giờ>`: **xoá** dữ liệu Postgres và Neo4j hiện có của `writory-prod` rồi nạp bản sao lưu (gõ `khoi-phuc` để xác nhận, hoặc `-Force`). Cần đúng `PLAYER_KEY_ENCRYPTION_KEY` lúc sao lưu; khác thì người chơi nhập lại key, truyện vẫn còn.
+- Không có PowerShell: làm tay đúng các bước trong hai script (dừng `cloudflared proxy backend neo4j`; `pg_dump`/`pg_restore` qua `exec postgres`; `run --rm --no-deps -v <thư mục>:/backups neo4j neo4j-admin database dump|load neo4j ...`).
+
+### Cập nhật phiên bản
+```bash
+git pull
+powershell -ExecutionPolicy Bypass -File deploy\prod-backup.ps1     # trước mỗi lần cập nhật
+powershell -ExecutionPolicy Bypass -File deploy\prod-up.ps1 -Build  # dựng lại image; migration tự chạy
+```
+Đọc log: `prod-status.ps1`, hoặc `docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod logs -f backend`.
+
+### Thử chồng prod trên máy, không tunnel
+`deploy/docker-compose.localtest.yml` tắt `cloudflared` và mở proxy chỉ ở `127.0.0.1:<LOCALTEST_PORT>` (cổng không trùng chồng dev). Dùng project và file env thử riêng, xong thì xoá đúng project đó:
+```bash
+docker compose -p writory-prodtest -f docker-compose.prod.yml -f deploy/docker-compose.localtest.yml --env-file <env thử> up -d --build
+curl http://127.0.0.1:<cổng>/api/health
+docker compose -p writory-prodtest -f docker-compose.prod.yml -f deploy/docker-compose.localtest.yml --env-file <env thử> down -v
+```
+File env thử cần đủ biến bắt buộc (token để chữ bất kỳ, vì cloudflared không chạy), và nên đổi `EDGE_SUBNET`, `PROXY_IP`, `TUNNEL_IP` để không trùng mạng của `writory-prod`. Các script đọc `WRITORY_PROD_PROJECT`, `WRITORY_PROD_ENV_FILE`, `WRITORY_PROD_EXTRA_COMPOSE` để chạy trên project thử; đừng đặt các biến này khi chạy thật. Trên Windows, gọi `127.0.0.1` thay vì `localhost`: cổng chỉ mở trên IPv4, và `localhost` có thể thử `::1` trước rồi treo.
+
+### Phụ lục: thử nhanh bằng trycloudflare
+Chưa có tên miền: khi chồng prod đang bật, `docker run --rm --network writory-prod_edge cloudflare/cloudflared:2025.10.0 tunnel --no-autoupdate --url http://proxy:80` in ra một URL `https://<ngẫu nhiên>.trycloudflare.com`. URL đổi mỗi lần chạy và không có bảo đảm hoạt động, chỉ để thử. Tunnel tạm này không có IP cố định nên Caddy không tin `CF-Connecting-IP` của nó: mọi người chung một bộ đếm lần nhập mã. Chưa kiểm.
+
+### Phụ lục: máy có IP công khai (VPS), không dùng tunnel
+Đặt `SITE_ADDRESS=<tên miền>` trong `.env.prod` để Caddy tự lấy chứng chỉ HTTPS, mở cổng `80:80`, `443:443` cho `proxy` bằng một file override như `deploy/docker-compose.localtest.yml` (không kèm `127.0.0.1`), trỏ bản ghi DNS A của tên miền về IP máy, và tắt `cloudflared` (`profiles`). Khi đó Caddy không tin header của ai, `{client_ip}` là địa chỉ nối tới. Chưa kiểm.

@@ -1,0 +1,15 @@
+# Ngữ cảnh build của deploy/*.Dockerfile là gốc repo (D-103). Không đưa bí mật và rác vào image.
+.env
+.env.*
+.git
+.data
+.claude
+**/__pycache__
+**/.venv
+**/.pytest_cache
+**/.ruff_cache
+**/node_modules
+frontend/dist
+frontend/design-handoff
+evals/results
+backups

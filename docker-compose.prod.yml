@@ -1,0 +1,136 @@
+# Chồng prod (D-103): cloudflared → proxy (Caddy: giao diện tĩnh + /api) → backend → Neo4j, Postgres.
+# Không service nào mở cổng ra máy: đường vào duy nhất là Cloudflare Tunnel. Chạy song song được với
+# chồng dev (docker-compose.yml): project, mạng, volume riêng, không dùng cổng nào của máy.
+# Lệnh (luôn kèm --env-file, để không đọc .env của máy dev):
+#   docker compose -f docker-compose.prod.yml --env-file .env.prod up -d --build
+# Biến: .env.prod.example. Cách chạy, sao lưu, cập nhật: docs/runbook.md, mục Deploy.
+name: writory-prod
+
+services:
+  cloudflared:
+    image: cloudflare/cloudflared:2025.10.0
+    # Token đọc từ biến môi trường TUNNEL_TOKEN, không nằm trên dòng lệnh của tiến trình.
+    command: ["tunnel", "--no-autoupdate", "run"]
+    environment:
+      TUNNEL_TOKEN: ${CLOUDFLARE_TUNNEL_TOKEN:?đặt CLOUDFLARE_TUNNEL_TOKEN trong .env.prod}
+    depends_on:
+      proxy:
+        condition: service_healthy
+    networks:
+      edge:
+        ipv4_address: ${TUNNEL_IP:-10.89.103.20}
+    restart: unless-stopped
+    # Image không có shell để chạy healthcheck; trạng thái tunnel xem ở bảng Cloudflare và log.
+
+  proxy:
+    build:
+      context: .
+      dockerfile: deploy/proxy.Dockerfile
+    environment:
+      # Chỉ tin CF-Connecting-IP từ cloudflared (deploy/Caddyfile).
+      CADDY_TRUSTED_PROXIES: ${TUNNEL_IP:-10.89.103.20}
+      SITE_ADDRESS: ${SITE_ADDRESS:-:80}
+    volumes:
+      - caddy-data:/data
+      - caddy-config:/config
+    depends_on:
+      backend:
+        condition: service_healthy
+    networks:
+      edge:
+        ipv4_address: ${PROXY_IP:-10.89.103.10}
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:80/"]
+      interval: 15s
+      timeout: 5s
+      retries: 5
+    restart: unless-stopped
+
+  backend:
+    build:
+      context: .
+      dockerfile: deploy/backend.Dockerfile
+    environment:
+      APP_ENV: prod
+      AUTH_MODE: invite
+      NEO4J_URI: bolt://neo4j:7687
+      NEO4J_USER: neo4j
+      NEO4J_PASSWORD: ${NEO4J_PASSWORD:?đặt NEO4J_PASSWORD trong .env.prod}
+      # Mật khẩu Postgres phải an toàn trong URL: dùng chữ và số (lệnh tạo: docs/runbook.md).
+      POSTGRES_DSN: postgresql://writory:${POSTGRES_PASSWORD:?đặt POSTGRES_PASSWORD trong .env.prod}@postgres:5432/writory
+      PLAYER_KEY_ENCRYPTION_KEY: ${PLAYER_KEY_ENCRYPTION_KEY:?đặt PLAYER_KEY_ENCRYPTION_KEY trong .env.prod}
+      # Chỉ proxy được tin header địa chỉ máy và scheme (api/deps.client_address).
+      TRUSTED_PROXIES: ${PROXY_IP:-10.89.103.10}
+    depends_on:
+      neo4j:
+        condition: service_healthy
+      postgres:
+        condition: service_healthy
+    networks:
+      - edge   # tới proxy, và ra Internet để gọi OpenRouter
+      - data
+    healthcheck:
+      test: ["CMD", "python", "-c",
+             "import urllib.request; urllib.request.urlopen('http://127.0.0.1:8000/health', timeout=5)"]
+      interval: 15s
+      timeout: 10s
+      retries: 5
+      start_period: 30s
+    restart: unless-stopped
+    # Chờ chương đang viết (SSE) kết thúc gọn khi dừng; quá thì bị giết, chương không ghi (D-63).
+    stop_grace_period: 40s
+
+  neo4j:
+    image: neo4j:5.26-community
+    environment:
+      NEO4J_AUTH: neo4j/${NEO4J_PASSWORD:?đặt NEO4J_PASSWORD trong .env.prod}
+      # Bộ nhớ của Neo4j prod: docs/runbook.md, mục Deploy (chạy chung máy với Neo4j dev).
+      NEO4J_server_memory_heap_initial__size: ${NEO4J_HEAP:-512m}
+      NEO4J_server_memory_heap_max__size: ${NEO4J_HEAP:-512m}
+      NEO4J_server_memory_pagecache_size: ${NEO4J_PAGECACHE:-256m}
+    volumes:
+      - neo4j-data:/data
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD", "wget", "-q", "-O", "/dev/null", "http://127.0.0.1:7474/"]
+      interval: 10s
+      timeout: 5s
+      retries: 30
+      start_period: 30s
+    restart: unless-stopped
+    # Neo4j cần quá 10 giây mặc định để tắt gọn; bị giết giữa chừng thì lần sau phải tự phục hồi.
+    stop_grace_period: 60s
+
+  postgres:
+    image: postgres:16
+    environment:
+      POSTGRES_USER: writory
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD:?đặt POSTGRES_PASSWORD trong .env.prod}
+      POSTGRES_DB: writory
+    volumes:
+      - postgres-data:/var/lib/postgresql/data
+    networks:
+      - data
+    healthcheck:
+      test: ["CMD", "pg_isready", "-U", "writory", "-d", "writory"]
+      interval: 5s
+      timeout: 5s
+      retries: 30
+    restart: unless-stopped
+
+networks:
+  edge:
+    # Mạng có IP cố định để backend và proxy biết ai là proxy tin cậy. Trùng mạng khác trên máy thì
+    # đổi EDGE_SUBNET, PROXY_IP, TUNNEL_IP cùng lúc.
+    ipam:
+      config:
+        - subnet: ${EDGE_SUBNET:-10.89.103.0/24}
+  data:
+    internal: true   # Neo4j, Postgres: không ra Internet, proxy và cloudflared không tới được
+
+volumes:
+  neo4j-data:
+  postgres-data:
+  caddy-data:
+  caddy-config:

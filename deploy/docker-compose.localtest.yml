@@ -1,0 +1,13 @@
+# Thử chồng prod trên máy, không tunnel (D-103): cloudflared tắt, proxy chỉ nghe 127.0.0.1 ở cổng
+# không trùng chồng dev. Dùng project và volume riêng cho lần thử, rồi xoá đúng project đó:
+#   docker compose -p writory-prodtest -f docker-compose.prod.yml -f deploy/docker-compose.localtest.yml \
+#     --env-file <file env thử> up -d --build
+#   docker compose -p writory-prodtest -f docker-compose.prod.yml -f deploy/docker-compose.localtest.yml \
+#     --env-file <file env thử> down -v
+# Cách thử từng bước: docs/runbook.md, mục Deploy.
+services:
+  cloudflared:
+    profiles: ["tunnel"]
+  proxy:
+    ports:
+      - "127.0.0.1:${LOCALTEST_PORT:-8080}:80"

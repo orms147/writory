@@ -18,6 +18,7 @@ import time
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
+from ipaddress import ip_address
 from typing import Annotated, Protocol
 from urllib.parse import urlsplit
 
@@ -114,6 +115,52 @@ def api_guard(request: Request) -> None:
         raise HTTPException(status_code=404)
     if request.method not in _SAFE_METHODS:
         _same_origin_json(request)
+
+
+def _peer_is_trusted_proxy(request: Request) -> bool:
+    """Máy vừa nối tới là proxy trong `TRUSTED_PROXIES` (D-103). Không phải IP (vd `testclient`)
+    hay danh sách rỗng: không tin."""
+    trusted = getattr(request.app.state, "trusted_proxies", ())
+    peer = request.client.host if request.client else ""
+    try:
+        addr = ip_address(peer)
+    except ValueError:
+        return False
+    return any(addr in net for net in trusted)
+
+
+def _valid_ip(value: str | None) -> str | None:
+    if not value:
+        return None
+    try:
+        return str(ip_address(value.strip()))
+    except ValueError:
+        return None
+
+
+def client_address(request: Request) -> str:
+    """Địa chỉ máy của người dùng, cho bộ đếm lần nhập mã (D-89, D-103). Yêu cầu từ proxy tin
+    cậy: `X-Real-IP` (proxy đặt lại, `deploy/Caddyfile`), không có thì phần tử cuối của
+    `X-Forwarded-For` (phần do proxy tự thêm; các phần trước là chữ máy khách gửi, giả được).
+    Header sai dạng thì dùng địa chỉ của proxy. Yêu cầu không qua proxy tin cậy: bỏ mọi header,
+    dùng địa chỉ máy nối tới."""
+    peer = request.client.host if request.client else "unknown"
+    if not _peer_is_trusted_proxy(request):
+        return peer
+    real = _valid_ip(request.headers.get("x-real-ip"))
+    if real is None:
+        forwarded = request.headers.get("x-forwarded-for", "")
+        real = _valid_ip(forwarded.rsplit(",", 1)[-1]) if forwarded else None
+    return real or peer
+
+
+def forwarded_https(request: Request) -> bool:
+    """Trình duyệt dùng https: scheme của chính yêu cầu, hoặc `X-Forwarded-Proto: https` từ proxy
+    tin cậy (proxy nói chuyện với backend bằng http, D-103)."""
+    if request.url.scheme == "https":
+        return True
+    proto = request.headers.get("x-forwarded-proto", "")
+    return _peer_is_trusted_proxy(request) and proto.split(",", 1)[0].strip().lower() == "https"
 
 
 def get_app_config(request: Request) -> AppConfig:

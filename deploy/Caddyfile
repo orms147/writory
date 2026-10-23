@@ -1,0 +1,54 @@
+# Proxy của chồng prod (D-103). Cách chạy: docs/runbook.md, mục Deploy.
+# Một origin cho giao diện và API (cookie SameSite=Lax và kiểm CSRF cùng origin, D-89):
+#   /api/*  → backend:8000, bỏ tiền tố /api như proxy Vite dev (frontend/vite.config.ts)
+#   còn lại → bản build tĩnh của frontend; đường của trang (/truyen/..., /moi) trả index.html
+# Mặc định nghe HTTP ở :80 trong mạng docker: HTTPS kết thúc ở Cloudflare, cloudflared gọi vào đây.
+# SITE_ADDRESS là tên miền thì Caddy tự lấy chứng chỉ (phụ lục "IP công khai" của runbook).
+{
+	admin off
+	servers {
+		# Chỉ tin header địa chỉ máy từ cloudflared (IP cố định trong mạng edge). Yêu cầu từ máy
+		# khác thì {client_ip} là địa chỉ nối tới, CF-Connecting-IP giả bị bỏ qua.
+		trusted_proxies static {$CADDY_TRUSTED_PROXIES}
+		client_ip_headers Cf-Connecting-Ip
+	}
+}
+
+{$SITE_ADDRESS::80} {
+	request_body {
+		max_size 1MB
+	}
+
+	# Healthcheck của chính container (docker-compose.prod.yml) gọi mỗi 15 giây: không ghi log.
+	@selfcheck remote_ip 127.0.0.1
+	log_skip @selfcheck
+
+	handle_path /api/* {
+		reverse_proxy backend:8000 {
+			# Backend chỉ đọc header này khi yêu cầu đến từ proxy (TRUSTED_PROXIES, D-103).
+			header_up X-Real-IP {client_ip}
+			# SSE (viết chương, D-46): gửi từng sự kiện ngay, không đệm.
+			flush_interval -1
+		}
+	}
+
+	handle {
+		root * /srv
+		encode zstd gzip
+		header /assets/* Cache-Control "public, max-age=31536000, immutable"
+		try_files {path} /index.html
+		file_server
+	}
+
+	header {
+		X-Content-Type-Options nosniff
+		Referrer-Policy same-origin
+		X-Frame-Options DENY
+		-Server
+	}
+
+	log {
+		output stdout
+		format console
+	}
+}

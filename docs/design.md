@@ -296,7 +296,7 @@ Bản 1 chạy đối thủ 2, 4, 5, bài B, bài D (tuần 2, để chọn mode
 ## 11. Công nghệ [Quyết định thiết kế]
 - **Backend:** Python, FastAPI, streaming SSE.
 - **Frontend:** React + TypeScript + Tailwind, web hiển thị tốt trên điện thoại.
-- **Đồ thị:** Neo4j, truy vấn bằng Cypher, **tự viết lớp truy cập** (không dùng thư viện bộ nhớ có sẵn như Graphiti; lý do: `docs/decisions.md`). Phát triển bằng Docker trên máy. Gói AuraDB Free tự tạm dừng sau 3 ngày không dùng và chỉ dành cho dùng thử, nên khi có người chơi thật thì tự chạy Neo4j Community trên VPS hoặc trả tiền.
+- **Đồ thị:** Neo4j, truy vấn bằng Cypher, **tự viết lớp truy cập** (không dùng thư viện bộ nhớ có sẵn như Graphiti; lý do: `docs/decisions.md`). Phát triển bằng Docker trên máy. Gói AuraDB Free tự tạm dừng sau 3 ngày không dùng và chỉ dành cho dùng thử, nên khi có người chơi thật thì tự chạy Neo4j Community. Bản 1: chồng prod tự chạy trên máy nhà, ra ngoài qua Cloudflare Tunnel (D-103).
 - **Dữ liệu khác:** PostgreSQL — tài khoản, truyện, văn bản chương, lựa chọn, nhật ký chi phí, nhật ký người canh.
 - **Điều phối chương:** LangGraph (các bước §6.2).
 - **LLM:** qua OpenRouter. Model viết chọn bằng bài D (§9): xem `config/models.yaml` và D-33.

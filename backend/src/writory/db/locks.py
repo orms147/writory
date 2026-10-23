@@ -53,3 +53,32 @@ def job_lock(conn: psycopg.Connection, scope: LockScope, key: str) -> Iterator[N
             conn.execute("SELECT pg_advisory_unlock(hashtextextended(%s, 0))", (name,))
         except Exception as exc:  # noqa: BLE001 — kết nối hỏng: đóng nó là Postgres tự nhả
             log.warning("nhả khoá %s không được: %s", name, redact(f"{type(exc).__name__}: {exc}"))
+
+
+def held_job_locks(conn: psycopg.Connection) -> int:
+    """Số khoá chạy đôi đang được kết nối khác giữ: mỗi khoá là một việc đang gọi model (viết
+    chương, tạo lại lựa chọn, ô tự viết, hỏi người kể, khởi tạo). Lệnh tắt server dùng để cảnh báo
+    trước khi cắt ngang (`deploy/prod-down.ps1`, D-103). Chỉ đếm, không đọc tên truyện hay người."""
+    row = conn.execute(
+        "SELECT count(*) FROM pg_locks WHERE locktype = 'advisory' AND granted "
+        "AND pid <> pg_backend_pid()").fetchone()
+    return int(row[0])
+
+
+def main(*, conn: psycopg.Connection | None = None) -> int:
+    """`python -m writory.db.locks`: in số việc đang chạy (một số nguyên), đọc `POSTGRES_DSN`."""
+    if conn is not None:
+        print(held_job_locks(conn))
+        return 0
+    from writory.config import Settings
+    from writory.db.connection import connect
+
+    with connect(Settings()) as own:
+        print(held_job_locks(own))
+    return 0
+
+
+if __name__ == "__main__":
+    import sys
+
+    sys.exit(main())
