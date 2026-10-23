@@ -406,3 +406,15 @@ def test_backend_image_carries_every_file_the_app_reads_at_runtime():
     lines = [ln for ln in dockerfile.splitlines() if not ln.lstrip().startswith("#")]
     assert any(ln.startswith("USER ") and "root" not in ln for ln in lines)
     assert not any("--reload" in ln for ln in lines)
+
+
+def test_ipv6_addresses_in_one_64_share_one_login_counter(monkeypatch):
+    """Hồi quy (rà bảo mật 23/10/2026): một máy IPv6 thường có cả dải /64, đổi địa chỉ trong dải
+    là có bộ đếm mới. Bộ đếm lần nhập mã tính IPv6 theo /64, IPv4 giữ nguyên địa chỉ."""
+    app, seen = login_app(prod_settings(), monkeypatch)
+    for addr in ("2001:db8:1:2::1", "2001:db8:1:2:ffff::9"):
+        with TestClient(app, client=(addr, 40000), raise_server_exceptions=False) as c:
+            post_login(c, {})
+    with TestClient(app, client=(FRIEND, 40000), raise_server_exceptions=False) as c:
+        post_login(c, {})
+    assert seen == ["2001:db8:1:2::/64", "2001:db8:1:2::/64", FRIEND]

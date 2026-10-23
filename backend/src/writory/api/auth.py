@@ -78,7 +78,8 @@ def login(body: LoginIn, request: Request, response: Response, conn: deps.PgConn
     per_window = _limit(limits, "login_attempts_per_window")
     window = _limit(limits, "login_window_seconds")
     now = clock()
-    client = deps.client_address(request)  # sau proxy: chỉ tin header từ proxy tin cậy (D-103)
+    # Sau proxy: chỉ tin header từ proxy tin cậy; IPv6 đếm theo /64 (D-103).
+    client = deps.rate_limit_key(deps.client_address(request))
     if not take_login_attempt(conn, client, per_window, window_seconds=window, now=now):
         raise WritoryError(ErrorCode.LOGIN_RATE_LIMITED, detail="hết lượt nhập mã của máy này")
     result = login_with_code(conn, body.code, ttl=timedelta(hours=ttl_hours),

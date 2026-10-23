@@ -18,7 +18,7 @@ import time
 from collections.abc import Callable, Iterator, Mapping
 from dataclasses import dataclass
 from datetime import UTC, datetime
-from ipaddress import ip_address
+from ipaddress import IPv6Address, ip_address, ip_network
 from typing import Annotated, Protocol
 from urllib.parse import urlsplit
 
@@ -152,6 +152,20 @@ def client_address(request: Request) -> str:
         forwarded = request.headers.get("x-forwarded-for", "")
         real = _valid_ip(forwarded.rsplit(",", 1)[-1]) if forwarded else None
     return real or peer
+
+
+def rate_limit_key(address: str) -> str:
+    """Khoá của bộ đếm lần nhập mã: IPv6 tính theo dải /64 (một máy thường có cả dải, đổi địa chỉ
+    trong dải không được bộ đếm mới), IPv4 và chữ không phải IP giữ nguyên (D-103)."""
+    try:
+        addr = ip_address(address)
+    except ValueError:
+        return address
+    if not isinstance(addr, IPv6Address):
+        return str(addr)
+    if addr.ipv4_mapped is not None:  # ::ffff:a.b.c.d là một máy IPv4
+        return str(addr.ipv4_mapped)
+    return str(ip_network(f"{addr}/64", strict=False))
 
 
 def forwarded_https(request: Request) -> bool:
