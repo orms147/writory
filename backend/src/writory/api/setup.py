@@ -118,10 +118,12 @@ def get_session(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> SetupO
 # --- tạo lựa chọn (gọi model) --------------------------------------------------------------------
 
 
-def lock_setup(session_id: str, conn: deps.PgConn) -> Iterator[None]:
+def lock_setup(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> Iterator[None]:
     """Một phiên chỉ một lần gọi model cùng lúc, cho tạo lựa chọn từng bước lẫn chốt (G8, D-46,
     D-56): lần thứ hai báo STORY_BUSY, không gọi model. Khoá nhả khi yêu cầu kết thúc, kể cả khi
-    lỗi."""
+    lỗi. Kiểm chủ phiên trước khi giữ khoá (D-105), như `deps.lock_story`: phiên của người khác
+    là 404 dù phiên đang bận, và người khác không giữ được khoá của phiên này."""
+    get_setup(conn, session_id, owner_id=owner)
     with job_lock(conn, "setup", session_id):
         yield
 

@@ -12,6 +12,7 @@ import re
 import uuid
 from pathlib import Path
 
+import psycopg
 import pytest
 from fastapi.testclient import TestClient
 from pydantic import SecretStr
@@ -39,6 +40,7 @@ from writory.db import (
     delete_player_key,
     delete_story_record,
     get_story,
+    job_lock,
     load_story_brief,
     load_story_plan,
     record_cost,
@@ -306,6 +308,43 @@ def test_session_of_another_owner_is_not_found(pg, driver, created):
         for resp in (client.get(f"/setup/{sid}"), client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)):
             assert resp.status_code == 404
             assert resp.json() == WritoryError(ErrorCode.SETUP_NOT_FOUND).player_payload()
+
+
+@pytest.mark.parametrize("step", ["settings", "plots", "characters", "finalize"])
+def test_another_owner_is_not_found_before_the_setup_lock(pg, driver, created, isolated_postgres,
+                                                         step):
+    """D-105: chủ phiên được kiểm trước khi giữ khoá khởi tạo. Người khác gọi khi phiên đang chạy
+    thì vẫn 404 như mọi route (không phải 409, vốn cho biết phiên có tồn tại và đang bận), và không
+    giữ được khoá của phiên người khác."""
+    with TestClient(make_app(pg, driver, FakeLLM.scripted([]))) as client:
+        sid = start(client, created)["session_id"]
+    other = make_app(pg, driver, FakeLLM.scripted([]), owner="someone-else", own_conns=True)
+    with (psycopg.connect(isolated_postgres, autocommit=True) as owner_conn,
+          job_lock(owner_conn, "setup", sid),
+          TestClient(other, raise_server_exceptions=False) as client):
+        resp = client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS)
+    assert resp.status_code == 404
+    assert resp.json() == WritoryError(ErrorCode.SETUP_NOT_FOUND).player_payload()
+
+
+def test_another_owner_never_takes_the_setup_lock(pg, driver, created, monkeypatch):
+    import writory.api.setup as setup_mod
+
+    taken: list[str] = []
+    real = setup_mod.job_lock
+
+    def recording(conn, scope, key):
+        taken.append(key)
+        return real(conn, scope, key)
+
+    monkeypatch.setattr(setup_mod, "job_lock", recording)
+    with TestClient(make_app(pg, driver, FakeLLM.scripted([]))) as client:
+        sid = start(client, created)["session_id"]
+    other = make_app(pg, driver, FakeLLM.scripted([]), owner="someone-else")
+    with TestClient(other, raise_server_exceptions=False) as client:
+        for step in ("settings", "plots", "characters", "finalize"):
+            assert client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS).status_code == 404
+    assert taken == []
 
 
 # --- sửa nhân vật chính --------------------------------------------------------------------------
