@@ -137,7 +137,7 @@ sequenceDiagram
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
 - `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
-- Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`). Ở `api/setup.py`, `_propose` bọc mỗi `propose_*` và `finalize` bọc cả `build_story` trong một vòng thử lại mạng nữa (mục 13).
+- Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`), kể cả từng lượt sửa (D-54). `api/setup.py` không bọc thêm lớp nào, nên lỗi mạng chỉ gọi lại đúng lời gọi hỏng (D-105).
 
 ## 5. Đường đi một chương
 
@@ -476,6 +476,5 @@ Các mục dưới đây đọc được trong code. Tài liệu chỉ liệt k�
 - **Ở dev, chương kẹt `pending` vẫn phải áp lại bằng tay.** Áp lại lúc khởi động chỉ chạy ở `APP_ENV=prod`, cùng migration (D-105). Lệnh tay: `docs/runbook.md`, mục "Ghi chương bị kẹt `pending`". Lệnh chạy cả truyện (`pipeline/bench_run.py`) ghi chương không qua khoá `story`; nó chạy trên kho dev, không chung kho với chồng prod (suy luận).
 - **G6 chỉ nằm trong đề.** Hậu quả của hành động vượt luật chỉ được dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
 - **Model viết không đi qua `role_extra`.** `_write` (`pipeline/chapter.py`) dựng `extra` bằng `reasoning_extra(tier.reasoning)`, nên `provider_ignore` (D-100) không áp cho model viết; mọi vai trong `roles` thì có (D-106). Hiện `provider_ignore` rỗng (D-102) nên không có tác động. Chưa rõ có cố ý không.
-- **Thử lại mạng hai lớp ở khởi tạo.** `finalize` bọc cả `build_story`, và `_propose` bọc mỗi `propose_*`, trong một vòng thử lại mạng (`api/setup.py`), trong khi mỗi `_ask` bên trong đã có lớp thử lại mạng riêng. (suy luận) Số lời gọi tối đa có thể nhân lên, và lỗi mạng ở một lượt sửa sẽ chạy lại `build_story` từ đầu. Trần chi phí của phiên vẫn chặn.
 - **Không có migration `0006`.** Thư mục `db/migrations/` nhảy từ `0005` sang `0007`, và lịch sử git không có file `0006` nào. `migrate` chạy theo thứ tự tên nên không hỏng (suy luận).
 - Các điểm chưa làm của lớp đồ thị (lời người chơi đã nghe, quan hệ trong sổ tay, `writer_context` trên `GraphState`): `docs/graph-schema.md`, mục "Chưa làm". Các điểm bảo mật còn mở: `docs/security.md`, mục "Chưa giải quyết".

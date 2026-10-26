@@ -414,6 +414,55 @@ def test_finalize_can_be_retried_after_a_failed_attempt(pg, driver, created):
     assert resp.json()["step"] == "done"
 
 
+# --- thử lại mạng: chỉ lời gọi hỏng được gọi lại (D-14, D-105) ------------------------------------
+
+TRANSIENT = load_config().limits.retries.llm_transient
+
+
+def _down() -> WritoryError:
+    return WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="giả lập")
+
+
+def test_network_error_while_proposing_retries_only_that_call(pg, driver, created):
+    fake = FakeLLM.scripted([_down(), options("settings")])
+    with TestClient(make_app(pg, driver, fake)) as client:
+        sid = start(client, created)["session_id"]
+        resp = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
+    assert resp.status_code == 200, resp.text
+    assert len(fake.calls) == 2 and fake.calls[0] == fake.calls[1]
+
+
+def test_network_error_in_the_repair_call_does_not_rerun_build_story(pg, driver, created):
+    """Lời gọi dựng đầu tiên sai quy tắc, lượt sửa (D-54) gặp lỗi mạng một lần: chỉ lượt sửa được
+    gọi lại, lời gọi dựng đầu không chạy lại."""
+    bad = build_reply(secrets=[])
+    fake = FakeLLM.scripted([*script()[:3], bad, _down(), build_reply()])
+    with TestClient(make_app(pg, driver, fake)) as client:
+        sid = to_finalize(client, created)
+        resp = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS)
+    assert resp.status_code == 200, resp.text
+    created[1].append(resp.json()["story_id"])
+    first_build, repair, repair_again = fake.calls[3:]
+    assert repair == repair_again and repair != first_build
+    assert len(fake.calls) == 3 + 3
+
+
+def test_network_down_in_the_repair_call_stops_and_changes_nothing(pg, driver, created):
+    """Lỗi mạng hết lượt ở lượt sửa: dừng bằng RETRY_LIMIT_REACHED sau đúng 1 + llm_transient lần
+    gọi lượt sửa; lời gọi dựng đầu không chạy lại; phiên không đổi, không có truyện (G11)."""
+    bad = build_reply(secrets=[])
+    fake = FakeLLM.scripted([*script()[:3], bad, *[_down()] * (TRANSIENT + 1), build_reply()])
+    before = _dev_story_count(pg)
+    with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
+        sid = to_finalize(client, created)
+        resp = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS)
+        assert resp.status_code == 503
+        assert resp.json() == WritoryError(ErrorCode.RETRY_LIMIT_REACHED).player_payload()
+        assert client.get(f"/setup/{sid}").json()["step"] == "finalize"
+    assert _dev_story_count(pg) == before
+    assert len(fake.calls) == 3 + 1 + (TRANSIENT + 1)
+
+
 class GatedFakeLLM(FakeLLM):
     """Lời gọi đầu tiên báo `entered` rồi chờ `gate` mở."""
 

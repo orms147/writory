@@ -716,6 +716,24 @@ async def test_still_wrong_after_the_repair_is_story_setup_invalid():
     assert REPAIRS == 1 and len(llm.calls) == 2
 
 
+async def test_network_error_in_the_repair_call_retries_only_that_call():
+    """D-105: lỗi mạng ở lượt sửa chỉ gọi lại lượt sửa, không gọi lại lời gọi dựng đầu."""
+    llm = FakeLLM.scripted([BAD_SECRET, _down(), _build()])
+    result = await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG,
+                               commit_id="setup-c0")
+    assert result == _valid_setup()
+    first, repair, repair_again = llm.calls
+    assert repair == repair_again and repair != first
+
+
+async def test_network_down_in_the_repair_call_stops_after_transient_limit():
+    llm = FakeLLM.scripted([BAD_SECRET, *[_down()] * (TRANSIENT + 1), _build()])
+    err = await _error(build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG,
+                                   commit_id="c0"))
+    assert err.code is ErrorCode.RETRY_LIMIT_REACHED
+    assert len(llm.calls) == 1 + TRANSIENT + 1
+
+
 async def test_no_repair_call_when_setup_repair_is_zero():
     llm = FakeLLM.scripted([BAD_SECRET, _build()])
     err = await _error(build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=_with_repairs(0),
