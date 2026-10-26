@@ -27,7 +27,7 @@ from writory.graph.context import (
     Text,
     WriterContext,
 )
-from writory.graph.package import chapter_rule_problems
+from writory.graph.package import chapter_rule_problems, quote_problems
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import Message
 from writory.llm.fake import FakeLLM
@@ -348,6 +348,8 @@ class MemoryStore:
     def commit(self, number: int, scenes: list[str], package: ChangePackage) -> None:
         assert number == self.committed + 1, (number, self.committed)
         assert chapter_rule_problems(package, number) == []
+        # G3 ở bước ghi, như commit_chapter (D-106)
+        assert quote_problems(package, scenes, protagonist=self.state().protagonist_id()) == []
         known = {n.id for p in [*self.packages, package] for n in p.nodes}
         missing = {x for e in package.edges for x in (e.source, e.target)} - known
         assert not missing, missing
@@ -464,6 +466,9 @@ class OverlayStore:
         expected = 0 if self.committed is None else self.committed + 1
         assert number == expected, (number, expected)
         assert chapter_rule_problems(package, number) == []
+        if number >= 1:  # G3 ở bước ghi, như commit_chapter; chương 0 dùng story_brief (D-74, D-106)
+            assert quote_problems(package, scenes,
+                                  protagonist=self.state().protagonist_id()) == []
         self.packages.append(package)
         self.committed = number
         self.commits.append((number, scenes))

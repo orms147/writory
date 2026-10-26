@@ -19,6 +19,7 @@ from writory.graph.package import (
     NodeSpec,
     chapter_rule_problems,
     quote_in_text,
+    quote_problems,
 )
 from writory.graph.player_view import (
     KnownRecord,
@@ -103,6 +104,7 @@ __all__ = [
     "public_entries",
     "public_lies",
     "quote_in_text",
+    "quote_problems",
     "read_sample",
     "relationship",
     "story_nodes",

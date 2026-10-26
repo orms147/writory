@@ -9,6 +9,7 @@ from writory.db import (
     ChapterCommitError,
     ChapterOrderError,
     ChapterPackageError,
+    ChapterQuoteError,
     PendingChapterError,
     chapter_records,
     commit_chapter,
@@ -93,6 +94,40 @@ def test_package_breaking_chapter_rule_rejected_before_any_write(pg, driver, new
     })
     with pytest.raises(ChapterPackageError):
         commit_chapter(pg, driver, sid, 2, ["..."], bad)
+    assert _state(pg, driver, sid) == before
+
+
+def test_quote_not_in_chapter_text_rejected_before_any_write(pg, driver, new_db_story_id):
+    """G3 ở bước ghi (D-106, hồi quy): gói đúng của chương 3 truyện mẫu, nhưng văn đi kèm không có
+    các câu trích của nó, thì không ghi gì: Postgres không có chương 3, đồ thị giữ nguyên."""
+    sid = new_db_story_id()
+    _story_with(pg, driver, sid, 2)
+    package = SAMPLE.chapters[3].package
+    assert any(e.type == "REVEALED_TO_PLAYER" for e in package.edges)
+    before = _state(pg, driver, sid)
+    with pytest.raises(ChapterQuoteError):
+        commit_chapter(pg, driver, sid, 3, ["Trời mưa suốt đêm, không ai nói gì."], package)
+    assert _state(pg, driver, sid) == before
+    assert [r.number for r in chapter_records(pg, sid)] == [0, 1, 2]
+
+    # Cùng gói, đúng văn của chương: ghi được.
+    _commit(pg, driver, sid, 3)
+    assert current_chapter(pg, sid) == 3
+
+
+def test_protagonist_knows_without_quote_rejected(pg, driver, new_db_story_id):
+    """Nhân vật chính biết điều gì thì phải có câu trích trên trang (G3); nhân vật chính lấy từ đồ thị."""
+    sid = new_db_story_id()
+    _story_with(pg, driver, sid, 1)
+    before = _state(pg, driver, sid)
+    bad = ChangePackage.model_validate({
+        "commit_id": "knows-no-quote",
+        "nodes": [{"id": "ch2", "label": "Chapter", "props": {"number": 2}}],
+        "edges": [{"type": "KNOWS", "from": SAMPLE.protagonist, "to": "f_lan_spy",
+                   "valid_from_chapter": 2, "how": "suy ra"}],
+    })
+    with pytest.raises(ChapterQuoteError):
+        commit_chapter(pg, driver, sid, 2, [SAMPLE.chapters[2].text], bad)
     assert _state(pg, driver, sid) == before
 
 

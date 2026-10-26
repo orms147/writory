@@ -10,6 +10,7 @@ from writory.graph import (
     NodeSpec,
     chapter_rule_problems,
     quote_in_text,
+    quote_problems,
     read_sample,
 )
 
@@ -175,3 +176,56 @@ def test_by_choice_must_be_an_id_on_reveal_edges():
             {"type": "HOLDS", "from": "minh", "to": "sword", "valid_from_chapter": 2,
              "by_choice": "c1"}
         )
+
+
+# --- G3 ở bước ghi: câu trích đối chiếu với văn của chương (D-106) -------------------------------
+
+_SCENES = ["Lan đứng ở bến. Nàng nói: “Thanh kiếm là của cha anh.”", "Minh lặng im rất lâu."]
+
+
+def _pkg(*edges: dict) -> ChangePackage:
+    return ChangePackage.model_validate({"commit_id": "c5", "edges": list(edges)})
+
+
+def _edge(kind: str, source: str, target: str, **props) -> dict:
+    return {"type": kind, "from": source, "to": target, "valid_from_chapter": 5, **props}
+
+
+def test_quote_problems_accepts_quotes_found_in_a_scene():
+    pkg = _pkg(
+        _edge("REVEALED_TO_PLAYER", "f_sword", "ch5", quote="Thanh kiếm là của cha anh."),
+        _edge("KNOWS", "minh", "f_sword", how="được kể", told_by="lan",
+              quote="Thanh   kiếm là của cha anh."),  # khoảng trắng chuẩn hoá như quote_in_text
+        _edge("RESOLVED_IN", "t_sword", "ch5", quote="Minh lặng im rất lâu."),
+        _edge("RESOLVED_IN", "t_other", "ch5"),  # gói dựng tay có thể không có quote
+        _edge("KNOWS", "lan", "f_sword", how="tự biết"),  # nhân vật khác: không cần quote
+    )
+    assert quote_problems(pkg, _SCENES, protagonist="minh") == []
+
+
+@pytest.mark.parametrize("edge", [
+    _edge("REVEALED_TO_PLAYER", "f_sword", "ch5", quote="Thanh kiếm là của mẹ anh."),
+    _edge("KNOWS", "minh", "f_sword", how="suy ra", quote="Câu này không có trên trang."),
+    _edge("KNOWS", "minh", "f_sword", how="suy ra"),  # nhân vật chính biết: bắt buộc quote
+    _edge("RESOLVED_IN", "t_sword", "ch5", quote="Minh bỏ đi."),
+])
+def test_quote_problems_rejects_quotes_not_on_the_page(edge):
+    problems = quote_problems(_pkg(edge), _SCENES, protagonist="minh")
+    assert len(problems) == 1
+    assert edge["type"] in problems[0]
+
+
+def test_quote_must_sit_inside_one_scene_not_across_two():
+    """Câu trích lấy từ một cảnh (bộ trích, tự hé lộ, Fact mới đều làm trên chữ một cảnh)."""
+    pkg = _pkg(_edge("REVEALED_TO_PLAYER", "f_sword", "ch5",
+                     quote="của cha anh.” Minh lặng im"))
+    assert quote_problems(pkg, _SCENES, protagonist="minh") != []
+
+
+def test_quote_problems_on_every_sample_chapter_after_zero_is_clean():
+    """Truyện mẫu (gói dựng tay, văn viết tay) qua được kiểm cuối ở bước ghi."""
+    sample = read_sample()
+    for ch in sample.chapters:
+        if ch.number >= 1:
+            assert quote_problems(ch.package, [ch.text], protagonist=sample.protagonist) == [], (
+                ch.number)

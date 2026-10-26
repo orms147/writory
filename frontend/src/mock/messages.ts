@@ -22,6 +22,7 @@ export const MOCK_ERRORS: Record<string, { message: string; status: number }> = 
   CHAPTER_PENDING: { message: "Chương trước vẫn đang được lưu dở nên chưa viết tiếp được. Đợi một lát rồi bấm thử lại; hệ thống sẽ hoàn tất việc lưu chương trước.", status: 409 },
   CHAPTER_OUT_OF_ORDER: { message: "Truyện đã sang chương khác so với trang bạn đang xem (có thể truyện đang mở ở hai nơi). Tải lại trang để thấy chương mới nhất.", status: 409 },
   CHAPTER_PACKAGE_INVALID: { message: "Hệ thống tạo ra thay đổi không hợp lệ cho chương này nên chưa lưu gì. Lỗi ở phía hệ thống, không phải do bạn. Bấm thử lại. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 500 },
+  CHAPTER_QUOTE_NOT_IN_TEXT: { message: "Chương vừa viết ghi lại một điều không có trên trang nên chưa lưu gì. Truyện vẫn ở chương trước, không mất gì. Lỗi ở phía hệ thống, không phải do bạn. Bấm thử lại để viết lại chương này. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 500 },
   ACTION_EMPTY: { message: "Bạn chưa viết hành động nào. Viết điều nhân vật của bạn làm, nói hoặc nghĩ rồi gửi.", status: 422 },
   ACTION_TOO_LONG: { message: "Hành động bạn viết dài hơn mức cho phép. Rút gọn lại rồi gửi.", status: 422 },
   ACTION_OUT_OF_STORY: { message: "Ô này chỉ nhận hành động của nhân vật trong truyện. Viết lại điều nhân vật của bạn làm, nói hoặc nghĩ.", status: 422 },

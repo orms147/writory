@@ -2,6 +2,7 @@
 
 import re
 import unicodedata
+from collections.abc import Sequence
 from typing import Any, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -181,3 +182,32 @@ def quote_in_text(quote: str, text: str) -> bool:
     """Câu trích có nằm nguyên văn trong văn bản không (G3). So sau khi chuẩn hoá NFC và khoảng trắng."""
     q = _normalize(quote)
     return bool(q) and q in _normalize(text)
+
+
+_QUOTE_SHOWN_CHARS = 80
+
+
+def quote_problems(package: ChangePackage, scenes: Sequence[str], *, protagonist: str) -> list[str]:
+    """Kiểm cuối của G3 ở bước ghi chương N >= 1 (D-106): câu trích phải có nguyên văn trong văn
+    đã hiện của chính chương đó, trong một cảnh (`quote_in_text`).
+
+    - `REVEALED_TO_PLAYER` và `KNOWS` từ nhân vật chính: bắt buộc có `quote`, và `quote` ở trên trang.
+    - `RESOLVED_IN` có `quote`: `quote` ở trên trang (gói dựng tay có thể không có quote).
+
+    Mọi câu trích của đường pipeline đều lấy từ chữ một cảnh: bộ trích (`to_package`), tự hé lộ
+    (D-62, câu chứa tên), Fact mới (D-93). Chương 0 không qua đây: câu trích của nó là dòng của
+    thiết lập truyện (`story_brief`, D-74), không phải văn chương. Trả danh sách lỗi cho log."""
+    problems = []
+    for e in package.edges:
+        required = e.type == "REVEALED_TO_PLAYER" or (e.type == "KNOWS" and e.source == protagonist)
+        if not required and e.type != "RESOLVED_IN":
+            continue
+        quote = e.props.get("quote")
+        if quote is None and not required:
+            continue
+        if not isinstance(quote, str) or not quote.strip():
+            problems.append(f"cạnh {e.type} {e.id} thiếu câu trích (G3)")
+        elif not any(quote_in_text(quote, s) for s in scenes):
+            shown = _normalize(quote)[:_QUOTE_SHOWN_CHARS]
+            problems.append(f"cạnh {e.type} {e.id}: câu trích không có trong văn chương: {shown!r}")
+    return problems

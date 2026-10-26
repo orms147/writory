@@ -1,5 +1,7 @@
 """Truyện và chương trong Postgres, và luồng ghi một chương theo D-6.
 
+0. Trước mọi lần ghi: gói đúng quy tắc theo chương (D-21), và từ chương 1, câu trích G3 của gói có
+   nguyên văn trong văn các cảnh (`quote_problems`, D-106). Sai thì báo lỗi, không ghi gì.
 1. Một transaction Postgres: kiểm thứ tự, ghi chương `pending` kèm gói thay đổi (outbox).
 2. `apply_package` sang Neo4j (một transaction bên đó).
 3. Thành công: đặt `committed` và tăng `stories.committed_chapter` trong một transaction.
@@ -12,6 +14,7 @@ pipeline dùng `current_chapter`, nên dữ liệu của chương còn `pending`
 Các hàm nhận kết nối psycopg ở chế độ autocommit; mỗi bước tự mở transaction của nó.
 """
 
+import logging
 from dataclasses import dataclass
 
 import psycopg
@@ -28,9 +31,13 @@ from writory.graph import (
     chapter_rule_problems,
     delete_commit,
     player_view,
+    protagonist_id,
+    quote_problems,
 )
 from writory.graph.story import require_story_id
 from writory.safety.redact import redact
+
+log = logging.getLogger(__name__)
 
 
 class ChapterError(WritoryError):
@@ -50,6 +57,12 @@ class ChapterPackageError(ChapterError):
     """Gói sai quy tắc theo chương hoặc trùng commit_id. Chưa ghi gì."""
 
     code = ErrorCode.CHAPTER_PACKAGE_INVALID
+
+
+class ChapterQuoteError(ChapterError):
+    """Câu trích G3 của gói không có nguyên văn trong văn chương (D-106). Chưa ghi gì."""
+
+    code = ErrorCode.CHAPTER_QUOTE_NOT_IN_TEXT
 
 
 class ChapterOrderError(ChapterError):
@@ -177,10 +190,27 @@ def commit_chapter(
     problems = chapter_rule_problems(package, number)
     if problems:
         raise ChapterPackageError("; ".join(problems))
+    if number >= 1:  # chương 0: câu trích là dòng của thiết lập truyện (D-74), không phải văn
+        problems = quote_problems(package, scenes, protagonist=_protagonist(driver, story_id, package))
+        if problems:
+            detail = f"truyện {story_id} chương {number}: " + "; ".join(problems)
+            log.warning("không ghi chương: câu trích không có trong văn (G3): %s", redact(detail))
+            raise ChapterQuoteError(detail)
     _record_pending(conn, story_id, number, scenes, package)
     _apply(conn, driver, story_id, package)
     _mark_committed(conn, story_id, number, package.commit_id)
     return ChapterRecord(number, package.commit_id, "committed", None)
+
+
+def _protagonist(driver: Driver, story_id: str, package: ChangePackage) -> str:
+    """Id nhân vật chính cho kiểm G3: nút của chính gói (truyện mẫu khai nhân vật chính ở chương 1),
+    không thì đọc đồ thị. Gói không có KNOWS thì không cần (không đọc Neo4j)."""
+    if not any(e.type == "KNOWS" for e in package.edges):
+        return ""
+    for n in package.nodes:
+        if n.label == "Character" and n.props.get("is_protagonist") is True:
+            return n.id
+    return protagonist_id(driver, story_id)
 
 
 def reconcile_pending(

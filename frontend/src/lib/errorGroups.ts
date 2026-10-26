@@ -56,6 +56,7 @@ const GROUP_OF: Record<string, ErrorGroup> = {
   CHAPTER_PENDING: 'pending',
   CHAPTER_SAVE_FAILED: 'pending',
   CHAPTER_PACKAGE_INVALID: 'pending',
+  CHAPTER_QUOTE_NOT_IN_TEXT: 'pending',
   CLIENT_NETWORK: 'network',
   CLIENT_STREAM_CUT: 'network',
 };

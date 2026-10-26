@@ -40,7 +40,7 @@ def role_extra(models: ModelsConfig, role: str) -> dict[str, Any] | None:
 
 def provider_extra(models: ModelsConfig) -> dict[str, Any] | None:
     """Chỉ phần nhà cung cấp của `extra` (D-100): `provider_ignore` trong config/models.yaml, kèm
-    `require_parameters`. Cho lời gọi chưa có mức suy luận riêng (phân loại ô tự viết)."""
+    `require_parameters`. Mọi vai lấy phần này qua `role_extra` (D-106)."""
     if not models.provider_ignore:
         return None
     return {"provider": {"require_parameters": True, "ignore": list(models.provider_ignore)}}

@@ -34,6 +34,7 @@ class ErrorCode(StrEnum):
     CHAPTER_PENDING = "CHAPTER_PENDING"
     CHAPTER_OUT_OF_ORDER = "CHAPTER_OUT_OF_ORDER"
     CHAPTER_PACKAGE_INVALID = "CHAPTER_PACKAGE_INVALID"
+    CHAPTER_QUOTE_NOT_IN_TEXT = "CHAPTER_QUOTE_NOT_IN_TEXT"
     ACTION_EMPTY = "ACTION_EMPTY"
     ACTION_TOO_LONG = "ACTION_TOO_LONG"
     ACTION_OUT_OF_STORY = "ACTION_OUT_OF_STORY"
@@ -170,6 +171,12 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Hệ thống tạo ra thay đổi không hợp lệ cho chương này nên chưa lưu gì. "
         "Lỗi ở phía hệ thống, không phải do bạn.",
         "Bấm thử lại. " + _REPORT,
+    ),
+    # G3 ở bước ghi (D-106). Câu trung tính: không nói điều gì được ghi là đã hé lộ.
+    ErrorCode.CHAPTER_QUOTE_NOT_IN_TEXT: PlayerMessage(
+        "Chương vừa viết ghi lại một điều không có trên trang nên chưa lưu gì. "
+        "Truyện vẫn ở chương trước, không mất gì. Lỗi ở phía hệ thống, không phải do bạn.",
+        "Bấm thử lại để viết lại chương này. " + _REPORT,
     ),
     # Ô tự viết hành động (G5, D-27). Câu trung tính: không nhắc lại chữ người chơi, không kể lý do
     # của bộ phân loại.

@@ -90,7 +90,7 @@ flowchart TD
   m_db --> pg
 ```
 
-- **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` đọc hay ghi dữ liệu truyện đều kiểm `story_id` bằng `require_story_id` (`graph/story.py`), trực tiếp hoặc qua hàm chung (ví dụ `_read` trong `graph/queries.py`, hay `apply_package`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Grep `MATCH (`, `execute_query`, `execute_write`, `driver.session` trên `src/writory` ngoài `graph/` không ra kết quả nào. Chưa có test quét cả `src/` cho luật này (mục 13).
+- **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` đọc hay ghi dữ liệu truyện đều kiểm `story_id` bằng `require_story_id` (`graph/story.py`), trực tiếp hoặc qua hàm chung (ví dụ `_read` trong `graph/queries.py`, hay `apply_package`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Test nhanh `tests/unit/test_cypher_boundary.py` quét mọi file `.py` của `src/writory` ngoài `graph/`, tìm mệnh đề Cypher và lời gọi chạy truy vấn của driver (D-106). Hiện không có ngoại lệ.
 - **Phụ thuộc vào kiểu dữ liệu.** `pipeline/story_plan.py` (`StoryPlan`) chỉ là kiểu dữ liệu, nên `guard/`, `safety/leak.py` và `db/` đều nhập nó. `graph/context.py` nhập `safety/wrap.py` (`UserAuthored`) để bọc chữ người chơi viết khi đọc lại từ đồ thị (G4). Hai mũi tên này không vẽ trên sơ đồ.
 - **Gốc gói.** `config.py` (nạp và kiểm `config/*.yaml` bằng pydantic) và `errors.py` (mã lỗi, câu cho người chơi) được mọi module dùng (D-13). Hai file này không vẽ trên sơ đồ.
 - **Bộ đo** nằm trong chính module được đo (D-24), ví dụ `guard/bench_b.py`, `pipeline/bench_a*.py`. Xem mục 12.
@@ -214,6 +214,7 @@ sequenceDiagram
   P->>P: merge_scene_packages
   P->>D: store.commit, tức commit_chapter
   D->>D: chapter_rule_problems, sai thì dừng, chưa ghi gì
+  D->>D: từ chương 1, quote_problems trên văn các cảnh, sai thì dừng, chưa ghi gì
   D->>PG: một transaction, khoá dòng stories, ghi chapters pending và change_packages
   D->>N: apply_package, một transaction
   alt Neo4j từ chối gói
@@ -474,9 +475,7 @@ Các mục dưới đây đọc được trong code. Tài liệu chỉ liệt k�
 
 - **Chưa gọi `reconcile_pending` lúc khởi động.** Trong `lifespan` của `create_app` (`api/app.py`) có `TODO(D-6)` ghi "chưa có quyết định". Chương ở lại `pending` sẽ chặn truyện bằng `CHAPTER_PENDING` cho tới khi có người chạy tay (`docs/runbook.md`, mục "Ghi chương bị kẹt `pending`").
 - **G6 chỉ nằm trong đề.** Hậu quả của hành động vượt luật chỉ được dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
-- **`role_reasoning.classify` không được áp dụng.** `config/models.yaml` có đặt mức suy luận cho `classify`, nhưng `safety/classify.py` `classify_action` gửi `provider_extra` chứ không gửi `role_extra`, nên mức này không tới model. Config và code đang lệch; chưa rõ bên nào đúng.
+- **Model viết không đi qua `role_extra`.** `_write` (`pipeline/chapter.py`) dựng `extra` bằng `reasoning_extra(tier.reasoning)`, nên `provider_ignore` (D-100) không áp cho model viết; mọi vai trong `roles` thì có (D-106). Hiện `provider_ignore` rỗng (D-102) nên không có tác động. Chưa rõ có cố ý không.
 - **Thử lại mạng hai lớp ở khởi tạo.** `finalize` bọc cả `build_story`, và `_propose` bọc mỗi `propose_*`, trong một vòng thử lại mạng (`api/setup.py`), trong khi mỗi `_ask` bên trong đã có lớp thử lại mạng riêng. (suy luận) Số lời gọi tối đa có thể nhân lên, và lỗi mạng ở một lượt sửa sẽ chạy lại `build_story` từ đầu. Trần chi phí của phiên vẫn chặn.
-- **`apply_package` không đối chiếu `quote` với văn.** `graph/package.py` `EdgeSpec` chỉ đòi `REVEALED_TO_PLAYER` có `quote`, và `known_as` nằm trong `quote`. Đối chiếu câu trích với chữ cảnh chỉ có ở bộ trích (`pipeline/extract.py` `to_package`, gọi `quote_in_text`), ở tự hé lộ (câu trích lấy từ chính trang) và ở truyện mẫu (`graph/sample.py` `validate_sample`). Gói dựng ở nơi khác thì chưa được đối chiếu. Vì vậy câu G3 trong CLAUDE.md §5 ("phải kèm câu trích có thật trong cảnh") hiện chỉ được code bảo đảm trên các đường đó. `docs/graph-schema.md`, mục "Chưa làm", cũng ghi điều này.
-- **Không có test quét Cypher ngoài `graph/`.** Luật G10 hiện dựa vào quy ước và review. Test duy nhất có quét là cho các module của bài A (`tests/unit/test_bench_a_systems.py`, `test_graph_system_modules_contain_no_cypher_or_driver_code`).
 - **Không có migration `0006`.** Thư mục `db/migrations/` nhảy từ `0005` sang `0007`, và lịch sử git không có file `0006` nào. `migrate` chạy theo thứ tự tên nên không hỏng (suy luận).
 - Các điểm chưa làm của lớp đồ thị (lời người chơi đã nghe, quan hệ trong sổ tay, `writer_context` trên `GraphState`): `docs/graph-schema.md`, mục "Chưa làm". Các điểm bảo mật còn mở: `docs/security.md`, mục "Chưa giải quyết".
