@@ -16,7 +16,7 @@ flowchart LR
   owner -.->|gửi mã mời| player
 ```
 
-- **BYOK (D-2).** Người chơi dán key OpenRouter của mình (`PUT /player/key`, `api/keys.py`). Key được mã hoá Fernet trước khi lưu (`safety/crypto.py` `KeyCipher`, `db/keys.py`), và chỉ được giải mã khi thật sự gọi model (`api/deps.py` `PlayerLLM.open`). Key `OPENROUTER_API_KEY` của chủ dự án chỉ dùng cho bộ đo (`config.py` `Settings`).
+- **BYOK (D-2).** Người chơi dán key OpenRouter của mình (`PUT /player/key`, `api/keys.py`). Key được mã hoá Fernet trước khi lưu (`safety/crypto.py` `KeyCipher`, `db/keys.py`), và chỉ được giải mã ở hai chỗ: khi gọi model (`api/deps.py` `PlayerLLM.open`), và khi `GET /player/key` tính bốn ký tự cuối để hiện (`api/keys.py` `key_status`). Key `OPENROUTER_API_KEY` của chủ dự án chỉ dùng cho bộ đo (`config.py` `Settings`).
 - **Mã mời (D-89).** Chủ dự án tạo và thu hồi mã bằng lệnh `python -m writory.db.invites` (`db/invites.py`). Người chơi nhập mã ở màn đăng nhập để có phiên (mục 10).
 - **Bật, tắt (D-103).** Chủ dự án tự bật chồng prod khi có người chơi và tắt khi xong, bằng script `deploy/prod-up.ps1` và `deploy/prod-down.ps1`. Cách chạy: `docs/runbook.md`, mục Deploy.
 
@@ -75,12 +75,13 @@ flowchart TD
   m_api --> m_llm
   m_api --> m_db
   m_api --> m_graph
+  m_api -->|guard/state.py Neo4jState| m_guard
   m_pipeline --> m_guard
   m_pipeline --> m_quality
   m_pipeline --> m_safety
   m_pipeline --> m_llm
   m_pipeline --> m_graph
-  m_pipeline -->|chỉ qua pipeline/store.py| m_db
+  m_pipeline -->|qua pipeline/store.py, riêng bộ đo bench_run.py gọi thẳng| m_db
   m_guard --> m_graph
   m_safety --> m_graph
   m_safety --> m_llm
@@ -89,7 +90,7 @@ flowchart TD
   m_db --> pg
 ```
 
-- **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` gọi `require_story_id` (`graph/story.py`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Grep `MATCH (`, `execute_query`, `execute_write`, `driver.session` trên `src/writory` ngoài `graph/` không ra kết quả nào. Chưa có test quét cả `src/` cho luật này (mục 13).
+- **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` đọc hay ghi dữ liệu truyện đều kiểm `story_id` bằng `require_story_id` (`graph/story.py`), trực tiếp hoặc qua hàm chung (ví dụ `_read` trong `graph/queries.py`, hay `apply_package`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Grep `MATCH (`, `execute_query`, `execute_write`, `driver.session` trên `src/writory` ngoài `graph/` không ra kết quả nào. Chưa có test quét cả `src/` cho luật này (mục 13).
 - **Phụ thuộc vào kiểu dữ liệu.** `pipeline/story_plan.py` (`StoryPlan`) chỉ là kiểu dữ liệu, nên `guard/`, `safety/leak.py` và `db/` đều nhập nó. `graph/context.py` nhập `safety/wrap.py` (`UserAuthored`) để bọc chữ người chơi viết khi đọc lại từ đồ thị (G4). Hai mũi tên này không vẽ trên sơ đồ.
 - **Gốc gói.** `config.py` (nạp và kiểm `config/*.yaml` bằng pydantic) và `errors.py` (mã lỗi, câu cho người chơi) được mọi module dùng (D-13). Hai file này không vẽ trên sơ đồ.
 - **Bộ đo** nằm trong chính module được đo (D-24), ví dụ `guard/bench_b.py`, `pipeline/bench_a*.py`. Xem mục 12.
@@ -136,7 +137,7 @@ sequenceDiagram
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
 - `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
-- Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`). `finalize` còn bọc cả `build_story` trong một vòng thử lại mạng nữa (mục 13).
+- Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`). Ở `api/setup.py`, `_propose` bọc mỗi `propose_*` và `finalize` bọc cả `build_story` trong một vòng thử lại mạng nữa (mục 13).
 
 ## 5. Đường đi một chương
 
@@ -161,8 +162,8 @@ stateDiagram-v2
   choices --> [*]
   finish --> [*]
   note right of review
-    WritoryError ở bất kỳ node nào
-    thì phát sự kiện error rồi dừng
+    Lỗi ở bất kỳ node nào thì phát sự kiện error
+    rồi dừng; lỗi lạ thành INTERNAL_ERROR
   end note
 ```
 
@@ -262,6 +263,7 @@ flowchart LR
   neo --> v_extract
   plan --> v_outline
   plan --> v_writer
+  plan -->|mạch phải gỡ kèm hạn| v_extract
   neo -->|build_player_view, chương đã commit| pv["player_view"]
   pv -->|mã công khai m1, l1| v_choices
   pv -->|select_notebook| v_narrator
@@ -280,7 +282,7 @@ flowchart LR
 - **Một định nghĩa `player_view`:** hàm thuần `build_player_view` (`graph/player_view.py`). Có hai nơi gom bản ghi cho hàm này: `player_view` đọc từ Neo4j, và `guard/state.py` `player_view_of` đọc trên nền đã commit cộng gói chưa ghi. Hai đường được test so với nhau. Định nghĩa: `docs/graph-schema.md`, mục `player_view`.
 - **Đường người chơi luôn đọc ở chương đã commit:** `db.committed_player_view`, `api/deps.py` `get_player_view`. Phản hồi API dùng schema danh sách trắng, `extra="forbid"` (`api/schemas.py` `NotebookOut`). Id lớp `truth` không ra ngoài; người chơi và model phục vụ người chơi chỉ thấy mã công khai (`public_entries`, `public_lies`, D-40).
 - `choices` và `narrator` có nhận tên lớp `truth` và `story_plan`, nhưng chỉ để chạy bộ dò lộ bằng code sau khi model trả lời. Hai thứ này không vào prompt.
-- Test cho G1 kiểm context mà model nhận được (`FakeLLM.calls`). Danh sách test theo từng đường: `docs/security.md`, cột Test của G1.
+- Test cho G1 kiểm context mà model nhận được (`FakeLLM.calls`). Cách test từng đường: `docs/security.md`, cột Test của G1.
 
 | Vai | Đầu vào | Thấy `truth` | Schema đầu ra | Nơi gọi |
 |---|---|---|---|---|
@@ -380,6 +382,7 @@ sequenceDiagram
   P-->>B: chapter_committed
   alt chương thường
     Note over P: tóm tắt chạy ở đây, không phát sự kiện
+    P-->>B: stage choices
     P-->>A: choices_ready
     A->>A: save_choices, giữ choices_ready tới khi đã lưu
     A-->>B: choices_ready dựng từ bản đã lưu
@@ -391,7 +394,7 @@ sequenceDiagram
 
 Schema sự kiện: `pipeline/events.py`. Sự kiện chỉ mang chữ đã qua kiểm. Lỗi ở bước lựa chọn đến sau `chapter_committed`: chương đã được ghi, và bộ lựa chọn tạo lại được bằng `POST /stories/{id}/choices`. Giao diện đọc SSE bằng `fetch`, không dùng `EventSource` (`frontend/src/api/sse.ts`, D-69). Người chơi ngắt kết nối thì đồ thị bị huỷ và khoá được nhả sau khi đồ thị dừng hẳn (D-63).
 
-**Đăng nhập, CSRF, chủ sở hữu.** Ở `AUTH_MODE=invite`, người chơi đổi mã mời lấy phiên. Token phiên nằm trong cookie HttpOnly; Postgres chỉ giữ băm của mã và của token (`db/auth.py`). Mọi method ghi phải là `application/json` và cùng origin (`api/deps.py` `api_guard`, `_same_origin_json`). Truyện, phiên khởi tạo, key và chi phí đều khoá theo `owner_id` của phiên; truyện của người khác báo như không có (`STORY_NOT_FOUND`). Bộ đếm lần nhập mã tính theo địa chỉ máy, lấy qua proxy tin cậy. Mối đe doạ, chi tiết và test: `docs/security.md`, mục "Đăng nhập bằng mã mời (D-89)"; lệnh tạo mã: `docs/runbook.md`.
+**Đăng nhập, CSRF, chủ sở hữu.** Ở `AUTH_MODE=invite`, người chơi đổi mã mời lấy phiên. Token phiên nằm trong cookie HttpOnly; Postgres chỉ giữ phần tra của mã (`selector`, không bí mật), băm của phần bí mật, và băm của token (`db/auth.py`, `0009_invite_login.sql`). Mọi method ghi phải là `application/json` và cùng origin (`api/deps.py` `api_guard`, `_same_origin_json`). Truyện, phiên khởi tạo, key và chi phí đều khoá theo `owner_id` của phiên; truyện của người khác báo như không có (`STORY_NOT_FOUND`). Bộ đếm lần nhập mã tính theo địa chỉ máy, lấy qua proxy tin cậy. Mối đe doạ, chi tiết và test: `docs/security.md`, mục "Đăng nhập bằng mã mời (D-89)"; lệnh tạo mã: `docs/runbook.md`.
 
 ## 11. Postgres
 
@@ -406,8 +409,8 @@ erDiagram
   stories ||--o{ player_actions : "hành động"
   chapter_choices |o--o{ player_actions : "được chọn"
   setup_sessions |o--o| stories : "chốt thành"
-  stories ||--o{ llm_costs : "chi phí"
-  setup_sessions ||--o{ llm_costs : "chi phí"
+  stories |o--o{ llm_costs : "chi phí"
+  setup_sessions |o--o{ llm_costs : "chi phí"
   invites ||--o{ auth_sessions : "phiên"
   stories {
     text id PK
@@ -472,7 +475,7 @@ Các mục dưới đây đọc được trong code. Tài liệu chỉ liệt k�
 - **Chưa gọi `reconcile_pending` lúc khởi động.** Trong `lifespan` của `create_app` (`api/app.py`) có `TODO(D-6)` ghi "chưa có quyết định". Chương ở lại `pending` sẽ chặn truyện bằng `CHAPTER_PENDING` cho tới khi có người chạy tay (`docs/runbook.md`, mục "Ghi chương bị kẹt `pending`").
 - **G6 chỉ nằm trong đề.** Hậu quả của hành động vượt luật chỉ được dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
 - **`role_reasoning.classify` không được áp dụng.** `config/models.yaml` có đặt mức suy luận cho `classify`, nhưng `safety/classify.py` `classify_action` gửi `provider_extra` chứ không gửi `role_extra`, nên mức này không tới model. Config và code đang lệch; chưa rõ bên nào đúng.
-- **`finalize` bọc cả `build_story` trong một vòng thử lại mạng** (`api/setup.py` `finalize`), trong khi mỗi `_ask` bên trong đã có lớp thử lại mạng riêng. (suy luận) Số lời gọi tối đa có thể nhân lên, và lỗi mạng ở một lượt sửa sẽ chạy lại `build_story` từ đầu. Trần chi phí của phiên vẫn chặn.
+- **Thử lại mạng hai lớp ở khởi tạo.** `finalize` bọc cả `build_story`, và `_propose` bọc mỗi `propose_*`, trong một vòng thử lại mạng (`api/setup.py`), trong khi mỗi `_ask` bên trong đã có lớp thử lại mạng riêng. (suy luận) Số lời gọi tối đa có thể nhân lên, và lỗi mạng ở một lượt sửa sẽ chạy lại `build_story` từ đầu. Trần chi phí của phiên vẫn chặn.
 - **`apply_package` không đối chiếu `quote` với văn.** `graph/package.py` `EdgeSpec` chỉ đòi `REVEALED_TO_PLAYER` có `quote`, và `known_as` nằm trong `quote`. Đối chiếu câu trích với chữ cảnh chỉ có ở bộ trích (`pipeline/extract.py` `to_package`, gọi `quote_in_text`), ở tự hé lộ (câu trích lấy từ chính trang) và ở truyện mẫu (`graph/sample.py` `validate_sample`). Gói dựng ở nơi khác thì chưa được đối chiếu. Vì vậy câu G3 trong CLAUDE.md §5 ("phải kèm câu trích có thật trong cảnh") hiện chỉ được code bảo đảm trên các đường đó. `docs/graph-schema.md`, mục "Chưa làm", cũng ghi điều này.
 - **Không có test quét Cypher ngoài `graph/`.** Luật G10 hiện dựa vào quy ước và review. Test duy nhất có quét là cho các module của bài A (`tests/unit/test_bench_a_systems.py`, `test_graph_system_modules_contain_no_cypher_or_driver_code`).
 - **Không có migration `0006`.** Thư mục `db/migrations/` nhảy từ `0005` sang `0007`, và lịch sử git không có file `0006` nào. `migrate` chạy theo thứ tự tên nên không hỏng (suy luận).
