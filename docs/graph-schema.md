@@ -92,7 +92,7 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 
 ## Chương 1 trở đi (pipeline, D-36)
 Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:
-- **Nút:** chỉ nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Ngoài ra bộ trích được tạo nút `Fact` mới từ trang (D-93, mục dưới). Không có nút mới loại khác: bộ trích chỉ tham chiếu id có sẵn (D-34).
+- **Nút:** nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Bộ trích được tạo nút `Fact` mới từ trang (D-93, mục dưới); ngoài đó bộ trích không tạo nút nào, chỉ tham chiếu id có sẵn (D-34). Lựa chọn nói dối ở cuối chương N−1, khi có người nghe, thêm nút `Lie` vào đầu gói chương N (mục "Tác động của lựa chọn", D-55).
 - **Cạnh:** của bộ trích, từng cảnh một, cộng cạnh tự hé lộ, đã qua người canh. Cạnh người canh báo sai không vào gói, kèm `close` của cạnh cũ mà nó thay (cùng chỗ), nếu không cạnh cũ biến mất mà không có cạnh mới (D-92). `KNOWS` "được kể" mà người kể là nhân vật chưa `KNOWS` tới đích và điều kể nói về chính họ (có `ABOUT` tới họ, hay họ tham gia sự kiện đó) thì code thêm `KNOWS` người kể, `how` "tự biết": tự thú trên trang thì trang chứng minh họ biết. Người thứ ba kể bí mật của người khác thì người canh vẫn bắt `teller_does_not_know` (D-92). Gộp các cảnh theo trạng thái cuối chương: cùng id thì lấy cảnh sau; cạnh cảnh trước mở mà cảnh sau đóng thì không vào gói.
 - **Tự hé lộ (D-62):** sau bước trích, code thêm `REVEALED_TO_PLAYER` (tới `ch<N>`, `valid_from_chapter: N`) cho nút có tên mà tên hay biệt danh lớp truth có nguyên văn trong chữ cảnh, chưa có trong `player_view` (kể cả hé lộ bộ trích vừa ghi), không phải nhân vật chính, không nằm trong `protects` của bí mật còn hiệu lực. `quote` là câu chứa tên, `known_as` là chuỗi khớp trên trang. So khớp nghiêm (giữ dấu, trọn từ, chỉ chữ cái đầu tên nhiều từ được lệch hoa thường, tên phải có từ viết hoa); bỏ lần khớp nằm trong tên dài hơn của nút khác và chuỗi cũng là tên của nút khác (`safety/reveal.py`).
 
@@ -119,17 +119,18 @@ Người canh, bộ trích và lớp phủ `OverlayState` thấy các cạnh nà
 - `Fact` mà người có mặt biết, kèm danh sách mọi người biết;
 - lời nói dối chưa bị phát hiện, mà người nói hoặc người nghe đang có mặt;
 - bí mật trong `story_plan`, kèm trạng thái `not_yet` / `in_window` / `overdue` / `revealed` so với chương đang viết;
+- đồ vật quan trọng: người đang giữ hoặc nơi đang ở (mỗi đồ vật một chỗ), đồ vật đổi chỗ gần nhất đứng trước, có trần số đồ vật trong `graph/context.py` (D-90);
 - nút cách người có mặt 1–2 bước, theo cạnh còn hiệu lực. Không đi qua `REVEALED_TO_PLAYER` hay nút `Chapter`, không lặp lại nút đã nằm ở các mục trên, và giới hạn số nút bằng `limits.context.writer_max_neighbors`;
 - mạch đang mở, kèm cờ quá hạn.
 
-`render_writer_context` trả các phần để đưa vào `user_message`, chia hai mục: "Sự thật cần tôn trọng" (gồm cả người liên quan đã chết) và "Gợi ý có thể nhắc tới". Mọi chữ lấy từ một nút mang `user_authored: true` đều được bọc bằng `UserAuthored` (G4), ở bất kỳ vị trí nào: tên, biệt danh, nơi ở, đồ vật, người biết, người nói, người nghe, bí mật, mạch. Mỗi vị trí có test hồi quy. Ngữ cảnh này chứa bí mật, nên không bao giờ được đi ra đường của người chơi.
+`render_writer_context` trả các phần để đưa vào `user_message`, chia hai mục: "Sự thật cần tôn trọng" (gồm cả người liên quan đã chết) và "Gợi ý có thể nhắc tới". Mọi chữ lấy từ một nút mang `user_authored: true` đều được bọc bằng `UserAuthored` (G4), ở bất kỳ vị trí nào: tên, biệt danh, nơi ở, đồ vật, người biết, người nói, người nghe, bí mật, mạch. Mỗi vị trí có test hồi quy. `render_writer_context` nhận thêm `reader_names` (id → tên người đọc biết, `ReaderName`) cho nút có tên đang bị cấm: cạnh tên thật ghi "người đọc biết là «…»; không viết tên thật", hoặc "tên chưa hé lộ" nếu nút chưa được hé lộ (D-91). Ngữ cảnh này chứa bí mật, nên không bao giờ được đi ra đường của người chơi.
 
 ## Ràng buộc và index
 Tạo bằng `ensure_schema(driver)` (chạy lại an toàn). Câu lệnh đầy đủ: `schema_statements()` trong `schema.py`.
 - `entity_key`: `(n:Entity)` `REQUIRE (n.story_id, n.id) IS UNIQUE`.
 - `entity_story`, `entity_commit`: index trên `Entity(story_id)` và `Entity(story_id, commit_id)`.
 - `rel_<kiểu>_key`: mỗi kiểu cạnh `REQUIRE (r.story_id, r.id) IS UNIQUE` (Neo4j 5.26 Community có hỗ trợ).
-- Neo4j Community không có ràng buộc NOT NULL, nên thuộc tính bắt buộc được kiểm bằng pydantic (`graph/package.py`) trước khi ghi.
+- Neo4j Community không có ràng buộc NOT NULL. Pydantic (`graph/package.py`) kiểm dạng id, nhãn, kiểu cạnh, thuộc tính dành riêng và luật của cạnh (`quote`, `known_as`, `how`), nhưng không kiểm thuộc tính bắt buộc của nút theo nhãn ở bảng Nút. Kiểm đó chỉ có ở chương 0 (`pipeline/setup.py`, `_node_problems` trong `initial_problems`). Ở chương sau, nút mới chỉ có `Chapter`, `Fact` từ trang và `Lie` từ lựa chọn, đều do code dựng.
 
 ## Truy vấn mẫu phải trả lời được
 Câu hỏi design §7.3, mỗi câu một hàm trong `graph/queries.py` hoặc `graph/player_view.py`, nhận tham số chương:
@@ -159,5 +160,5 @@ Truyện mẫu có chương 0 (gói khởi tạo, không có văn bản) và ch�
 - **Lời người chơi đã nghe.** Người chơi đã nghe lời nói dối của nhân vật khác (ví dụ `l_lan_cover`, `TOLD_TO` nhân vật chính), nhưng `player_view` chưa có gì về chuyện đó. Vì vậy sổ tay thiếu "Lan kể rằng cô trốn hôn nhân". Cần hiện dưới dạng **lời kể** ("Lan kể: …") và **không** được gắn nhãn `Lie`, vì gắn nhãn là lộ. Làm cùng sổ tay ở tuần 5, kèm test G1.
 - `player_view` chưa có quan hệ và người giữ đồ vật cho sổ tay (D-16).
 - G3 ở `apply_package` chỉ kiểm có `quote` và `known_as` nằm trong `quote`. Đối chiếu câu trích với văn bản nằm ở `validate_sample` (truyện mẫu) và ở bộ trích (`to_package` gọi `quote_in_text` trên đúng chữ cảnh sẽ hiện, D-36; với `RESOLVED_IN` thì bắt buộc có câu trích, D-82); gói do nơi khác dựng thì chưa được đối chiếu. `apply_package` chưa đòi `quote` ở `RESOLVED_IN`.
-- **Tự reconcile lúc khởi động app.** Hiện `reconcile_pending` chỉ chạy tay (lệnh trong `docs/runbook.md`). App FastAPI đã có nhưng chưa gọi nó lúc khởi động (TODO ở `backend/src/writory/api/app.py:81`); cần nối để truyện không kẹt `pending` sau khi máy chủ chết giữa chừng.
+- **Tự reconcile lúc khởi động app.** Hiện `reconcile_pending` chỉ chạy tay (lệnh trong `docs/runbook.md`). App FastAPI đã có nhưng chưa gọi nó lúc khởi động (`TODO(D-6)` trong `lifespan` của `create_app`, `backend/src/writory/api/app.py`); cần nối để truyện không kẹt `pending` sau khi máy chủ chết giữa chừng.
 - **`writer_context` chạy trên `GraphState`.** Hiện chỉ đọc từ Neo4j ở chương đã commit. Pipeline (D-36) bù bằng cách đưa thêm văn và thay đổi đã trích của các cảnh trước vào đề, nhưng các mục của ngữ cảnh (người có mặt đang ở đâu, giữ gì, biết gì) chưa tính các gói chưa ghi đó.

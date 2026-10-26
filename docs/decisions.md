@@ -965,3 +965,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Thư mục mới `deploy/` (CLAUDE.md §3): Dockerfile, Caddyfile, override thử trên máy, và script PowerShell `prod-up`, `prod-down`, `prod-status`, `prod-backup`, `prod-restore` cho người không quen docker; `prod-down` và sao lưu hỏi lại khi còn khoá chạy đôi (`db.locks.held_job_locks`). Sao lưu dừng server để Postgres và Neo4j khớp nhau (D-6).
 - **Hệ quả:** server chỉ chạy khi máy và Docker Desktop đang mở. Chưa thử qua Cloudflare thật (chưa có token); chưa kiểm Windows tắt đột ngột khi chồng prod đang chạy. Mạng `edge` cố định subnet, trùng mạng khác thì phải đổi ba biến. Bộ đếm lần nhập mã vẫn chung khi thử bằng trycloudflare. Cách chạy: docs/runbook.md, mục Deploy; bảo mật: docs/security.md.
 - **Người quyết:** Chủ dự án (23/10/2026) chọn deploy trước, giữ độ dài Ngắn và Vừa, chạy máy nhà qua Cloudflare Tunnel và tự bật tắt; thiết kế: Claude (nhánh feature/deploy)
+
+## D-104 · Thêm `docs/architecture.md`: bản đồ kiến trúc bằng sơ đồ Mermaid
+- **Bối cảnh:** repo public; người ngoài và agent mới phải đọc nhiều file mới thấy được thành phần nào nối với thành phần nào. Bản đồ tài liệu (CLAUDE.md §2) chưa có chỗ cho cái nhìn tổng thể.
+- **Quyết định:**
+  - Thêm `docs/architecture.md` vào bản đồ tài liệu. File chứa ngữ cảnh hệ thống, thành phần runtime dev và prod, module backend, khởi tạo, đường đi một chương, đường ghi, ranh giới G1 theo vai, truy hồi, LLM client và chi phí, API và SSE, Postgres, bộ đo, hạn chế đã biết. Mỗi mục có một sơ đồ Mermaid, để GitHub vẽ thẳng từ markdown.
+  - File không chép chi tiết của tài liệu khác: schema đồ thị trỏ `docs/graph-schema.md`, guardrail trỏ `docs/security.md`, lệnh trỏ `docs/runbook.md`, bộ đo trỏ `docs/eval.md`, lý do trỏ `D-n`. Không chép số của `config/`. Nguồn dẫn bằng file và tên hàm, không dẫn số dòng.
+  - Mục "Hạn chế" chỉ liệt kê điều đọc được trong code. Sửa chúng cần quyết định riêng.
+- **Hệ quả:** sửa luồng, module hay router thì phải sửa sơ đồ trong cùng commit (CLAUDE.md §2.5). Viết file này đã làm lộ vài chỗ `docs/graph-schema.md` lệch code; các chỗ đó được sửa cùng commit.
+- **Người quyết:** Chủ dự án (26/10/2026) duyệt thêm file; nội dung: Claude
