@@ -217,16 +217,35 @@ async def test_logged_reason_never_contains_key_like_string(caplog):
     assert fake_key not in caplog.text
 
 
-async def test_classify_call_carries_the_provider_blacklist_but_no_reasoning():
-    """D-100: nhà cung cấp bị loại đi vào mọi lời gọi có schema, kể cả phân loại ô tự viết. Phân loại
-    chưa dùng `role_reasoning.classify` (hành vi đã đo ở bài G5), nên không thêm suy luận."""
-    from writory.llm.base import provider_extra
+async def test_classify_call_carries_role_reasoning_and_provider_blacklist():
+    """D-106 (hồi quy): phân loại ô tự viết đi cùng đường `role_extra` như mọi vai khác, nên
+    `role_reasoning.classify` của config/models.yaml tới model. Trước đó `classify_action` gửi
+    `provider_extra`, mức suy luận bị bỏ. Phần nhà cung cấp bị loại (D-100) vẫn đi kèm."""
+    from writory.llm.base import role_extra
 
     # Config thật (Luna, D-102) không loại nhà cung cấp nào: đặt một tên để thử cơ chế.
     config = CFG.model_copy(update={"models": CFG.models.model_copy(
         update={"provider_ignore": ["NhaCungCapHong"]})})
     llm = FakeLLM.scripted([answer("in_story_action")])
     await classify_action("Tôi mở cửa.", llm=llm, config=config)
-    assert llm.extras == [provider_extra(config.models)]
-    assert llm.extras[0]["provider"]["ignore"] == ["NhaCungCapHong"]
-    assert "reasoning" not in llm.extras[0]
+    assert len(llm.calls) == 1
+    assert llm.extras == [role_extra(config.models, "classify")]
+    effort = config.models.role_reasoning.classify
+    assert effort is not None  # config thật đặt mức cho vai này
+    assert llm.extras[0]["reasoning"] == {"effort": effort}
+    assert llm.extras[0]["provider"] == {"require_parameters": True,
+                                         "ignore": ["NhaCungCapHong"]}
+
+
+async def test_classify_reasoning_follows_config():
+    """Đổi mức trong config thì lời gọi đổi theo; null thì không gửi gì (config Luna không loại
+    nhà cung cấp nào)."""
+    models = CFG.models
+    for effort, expected in (("high", {"reasoning": {"effort": "high"}}), (None, None)):
+        config = CFG.model_copy(update={"models": models.model_copy(update={
+            "role_reasoning": models.role_reasoning.model_copy(update={"classify": effort}),
+            "provider_ignore": [],
+        })})
+        llm = FakeLLM.scripted([answer("in_story_action")])
+        await classify_action("Tôi mở cửa.", llm=llm, config=config)
+        assert llm.extras == [expected]

@@ -46,6 +46,7 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.CHAPTER_PENDING: 409,
     ErrorCode.CHAPTER_OUT_OF_ORDER: 409,
     ErrorCode.CHAPTER_PACKAGE_INVALID: 500,  # gói do hệ thống tạo sai, không do người chơi
+    ErrorCode.CHAPTER_QUOTE_NOT_IN_TEXT: 500,  # G3, D-106: câu trích của gói không có trong văn
     # Ô tự viết hành động (G5, D-27): chữ người chơi không xử lý được
     ErrorCode.ACTION_EMPTY: 422,
     ErrorCode.ACTION_TOO_LONG: 422,

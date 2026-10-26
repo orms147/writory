@@ -974,3 +974,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Mục "Hạn chế" chỉ liệt kê điều đọc được trong code. Sửa chúng cần quyết định riêng.
 - **Hệ quả:** sửa luồng, module hay router thì phải sửa sơ đồ trong cùng commit (CLAUDE.md §2.5). Viết file này đã làm lộ vài chỗ `docs/graph-schema.md` lệch code; các chỗ đó được sửa cùng commit.
 - **Người quyết:** Chủ dự án (26/10/2026) duyệt thêm file; nội dung: Claude
+
+## D-106 · Sửa ba chỗ lệch: mức suy luận của vai phân loại, G3 ở bước ghi, test quét Cypher (G10)
+- **Bối cảnh:** `docs/architecture.md` mục 13 (D-104) ghi ba chỗ code lệch luật: `classify_action` gửi `provider_extra` nên `role_reasoning.classify` không tới model; `apply_package` không đối chiếu `quote` với văn, nên G3 chỉ được bảo đảm ở bộ trích, tự hé lộ và truyện mẫu; G10 không có test quét Cypher ngoài `graph/`.
+- **Quyết định:**
+  - Phân loại ô tự viết dùng `role_extra(models, "classify")` như mọi vai. Đã rà các vai khác: người kể, kiểm duyệt, khởi tạo, dàn ý, trích, tóm tắt, lựa chọn đều qua `role_extra`. Model viết (`_write`) dựng `extra` riêng, không mang `provider_ignore`; không phải vai trong `roles` nên chưa sửa, ghi ở mục 13.
+  - `commit_chapter` từ chương 1 gọi `graph.quote_problems` trước mọi lần ghi: câu trích của `REVEALED_TO_PLAYER`, của `KNOWS` từ nhân vật chính (bắt buộc có) và của `RESOLVED_IN` có `quote` phải nằm trọn trong văn một cảnh. Sai thì lỗi mới `CHAPTER_QUOTE_NOT_IN_TEXT` (G12), chi tiết vào log, không ghi gì. Chương 0 bỏ qua (câu trích là dòng của `story_brief`, D-74). Tự hé lộ (D-62) và Fact mới (D-93) lấy câu trích từ chữ cảnh nên qua được. Nhân vật chính lấy từ nút của gói (truyện mẫu khai ở chương 1), không có thì đọc đồ thị. Kho trong bộ nhớ của test chạy cùng phép kiểm.
+  - `tests/unit/test_cypher_boundary.py` quét `src/writory/**/*.py` ngoài `graph/`. Mẫu chọn để ít báo oan; lý do ghi trong file. Hiện không có chỗ nào phải chuyển, nên danh sách ngoại lệ rỗng.
+- **Hệ quả:** phân loại giờ chạy với mức suy luận của config (`low`), chưa đo lại bằng `writory.safety.bench_g5`; `evals/results/` chưa có kết quả G5 nào. Gọi thẳng `apply_package` (nạp truyện mẫu, bài A) vẫn không qua kiểm G3 ở bước ghi.
+- **Người quyết:** Chủ dự án (26/10/2026) đồng ý sửa; cách sửa: Claude (nhánh fix/guards-and-tests)

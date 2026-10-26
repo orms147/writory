@@ -16,7 +16,7 @@ from pydantic import BaseModel, ConfigDict, Field
 
 from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
-from writory.llm.base import LLMClient, provider_extra, require_model
+from writory.llm.base import LLMClient, require_model, role_extra
 from writory.llm.retry import RETRY_SCHEMA, with_retries
 from writory.safety.redact import redact
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
@@ -86,8 +86,9 @@ async def classify_action(text: str, *, llm: LLMClient, config: AppConfig) -> Cl
         user_message("Phân loại đoạn chữ sau:", UserAuthored(text, "custom_action")),
     ]
     result, _ = await with_retries(
+        # Mức suy luận `role_reasoning.classify` + nhà cung cấp bị loại, như mọi vai (D-106).
         lambda: llm.chat_json(model, messages, Classification,
-                              extra=provider_extra(config.models)),
+                              extra=role_extra(config.models, "classify")),
         max_retries=config.limits.retries.extract_schema_retry,
         retry_on=RETRY_SCHEMA,
     )
