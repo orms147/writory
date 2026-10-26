@@ -49,14 +49,15 @@ def _story_with(pg, driver, sid, up_to):
 
 
 def _stuck_pending(pg, driver, sid, number, package, monkeypatch):
-    """Ghi chương `pending` kèm gói trong outbox, như khi Neo4j không trả lời giữa chừng."""
+    """Ghi chương `pending` kèm gói trong outbox, như khi Neo4j không trả lời giữa chừng. Văn là
+    văn chương mẫu, để câu trích của gói qua kiểm G3 ở bước ghi (D-106)."""
 
     def down(*_args, **_kwargs):
         raise ServiceUnavailable("neo4j tắt (giả lập)")
 
     monkeypatch.setattr(chapters_mod, "apply_package", down)
     with pytest.raises(ServiceUnavailable):
-        commit_chapter(pg, driver, sid, number, ["..."], package)
+        commit_chapter(pg, driver, sid, number, _scenes(number), package)
     monkeypatch.undo()
     assert chapter_records(pg, sid)[-1].status == "pending"
 
