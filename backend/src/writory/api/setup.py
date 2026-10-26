@@ -12,6 +12,7 @@ bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau
   phiên), và phần người chơi sửa của nhân vật chính được kiểm duyệt trước khi lưu. Bị chặn thì
   không lưu và không gọi model nào khác.
 - Gọi model bằng key người chơi (`deps.PlayerLLM`), ghi nhật ký theo phiên rồi gắn vào truyện (G8).
+  Thử lại lỗi mạng theo từng lời gọi model, trong pipeline (D-14, D-105), không bọc cả bước.
 - Mức u tối (D-67): một khoá của `moderation.darkness_levels`, chọn lúc tạo phiên (bỏ trống thì mức
   mặc định, ghi hẳn khoá vào phiên); lưu theo truyện lúc chốt, làm trần kiểm duyệt mỗi chương.
 Mount theo chế độ đăng nhập (`deps.api_guard`, D-41, D-89).
@@ -39,7 +40,6 @@ from writory.db import (
     start_story,
 )
 from writory.errors import ErrorCode, WritoryError
-from writory.llm.retry import RETRY_TRANSIENT, with_retries
 from writory.pipeline.setup import (
     CharacterOption,
     Naming,
@@ -118,10 +118,12 @@ def get_session(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> SetupO
 # --- tạo lựa chọn (gọi model) --------------------------------------------------------------------
 
 
-def lock_setup(session_id: str, conn: deps.PgConn) -> Iterator[None]:
+def lock_setup(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> Iterator[None]:
     """Một phiên chỉ một lần gọi model cùng lúc, cho tạo lựa chọn từng bước lẫn chốt (G8, D-46,
     D-56): lần thứ hai báo STORY_BUSY, không gọi model. Khoá nhả khi yêu cầu kết thúc, kể cả khi
-    lỗi."""
+    lỗi. Kiểm chủ phiên trước khi giữ khoá (D-105), như `deps.lock_story`: phiên của người khác
+    là 404 dù phiên đang bận, và người khác không giữ được khoá của phiên này."""
+    get_setup(conn, session_id, owner_id=owner)
     with job_lock(conn, "setup", session_id):
         yield
 
@@ -140,17 +142,16 @@ async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: A
         # Lời gọi model đầu tiên của phiên: tag tự gõ qua kiểm duyệt trước (G9, D-57).
         await ensure_input_allowed(_tags_text(choices.tags), llm=client, config=config)
 
-    async def call():
-        if step == "settings":
-            return await propose_settings(choices, llm=client, config=config)
+    # Thử lại mạng nằm ở từng lời gọi model trong pipeline (`pipeline.setup._ask`, D-14, D-105).
+    if step == "settings":
+        options = await propose_settings(choices, llm=client, config=config)
+    else:
         setting = SettingOption.model_validate(rec.chosen("settings"))
         if step == "plots":
-            return await propose_plots(choices, setting, llm=client, config=config)
-        plot = PlotOption.model_validate(rec.chosen("plots"))
-        return await propose_characters(choices, setting, plot, llm=client, config=config)
-
-    options = await with_retries(call, max_retries=config.limits.retries.llm_transient,
-                                 retry_on=RETRY_TRANSIENT)
+            options = await propose_plots(choices, setting, llm=client, config=config)
+        else:
+            plot = PlotOption.model_validate(rec.chosen("plots"))
+            options = await propose_characters(choices, setting, plot, llm=client, config=config)
     rec = save_setup_options(conn, rec.id, step, [o.model_dump() for o in options])
     return SetupOut.from_record(rec)
 
@@ -255,11 +256,11 @@ async def finalize(session_id: str, conn: deps.PgConn, driver: deps.Neo4jDriver,
     choices, setting, plot, pc = _parts(rec)
     story_id = _new_id("story")
     client = llm.metered(setup_id=rec.id)
-    built = await with_retries(
-        lambda: build_story(choices, setting, plot, pc, llm=client, config=config,
-                            commit_id=f"{story_id}-ch0"),
-        max_retries=config.limits.retries.llm_transient, retry_on=RETRY_TRANSIENT,
-    )
+    # Mỗi lời gọi model bên trong (lời gọi dựng, từng lượt sửa D-54) tự thử lại lỗi mạng
+    # (`pipeline.setup._ask`, D-14). Không bọc cả `build_story` (D-105): lớp ngoài chỉ chạy lại
+    # được từ đầu, tức gọi lại cả các lời gọi đã xong.
+    built = await build_story(choices, setting, plot, pc, llm=client, config=config,
+                              commit_id=f"{story_id}-ch0")
     darkness = choices.darkness_level or config.moderation.default_darkness_level
     start_story(conn, driver, story_id, owner_id=owner, length_level=choices.length_level,
                 brief=story_brief(choices, setting, plot, pc, moderation=config.moderation),

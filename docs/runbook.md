@@ -137,10 +137,11 @@ Test `-m graph` tự chạy migration trên database trong `POSTGRES_DSN`.
 Sau khi kéo code có migration mới thì chạy lệnh trên trước khi mở app. Ví dụ `0004_chapter_summaries` thêm bảng `chapter_summaries` (tóm tắt chương, D-49); chưa chạy thì viết chương báo `INTERNAL_ERROR` vì không đọc được bảng này. `0005_llm_call_windows` thêm bảng đếm lời gọi model mỗi phút (D-56); chưa chạy thì mọi lời gọi model của API báo `INTERNAL_ERROR`. `0008_story_darkness_level` thêm cột `stories.darkness_level` (mức u tối theo truyện, D-67); chưa chạy thì mọi route đọc truyện báo `INTERNAL_ERROR`. `0009_invite_login` thêm bảng mã mời, phiên đăng nhập và bộ đếm lần nhập mã (D-89); chưa chạy thì ở `AUTH_MODE=invite` đăng nhập và mọi route cần đăng nhập báo `INTERNAL_ERROR`, ở `AUTH_MODE=dev` không ảnh hưởng. `bench_run` tự chạy migration.
 
 ## Ghi chương bị kẹt `pending`
-Chương ở lại `pending` khi Neo4j không trả lời hoặc tiến trình chết giữa chừng (D-6). Truyện đó không ghi được chương mới cho tới khi reconcile:
+Chương ở lại `pending` khi Neo4j không trả lời hoặc tiến trình chết giữa chừng (D-6). Truyện đó không ghi được chương mới cho tới khi reconcile. Ở `APP_ENV=prod`, backend tự làm việc này mỗi lần khởi động (D-105); kết quả từng chương nằm trong log (`áp lại chương pending: ...`). Ở dev, hoặc khi log báo lỗi, chạy tay:
 ```bash
-uv run python -c "from neo4j import GraphDatabase; from writory.config import Settings; from writory.db import connect, reconcile_pending; s = Settings(); d = GraphDatabase.driver(s.neo4j_uri, auth=(s.neo4j_user, s.neo4j_password.get_secret_value())); print(reconcile_pending(connect(s), d))"
+uv run python -c "from neo4j import GraphDatabase; from writory.config import Settings; from writory.db import connect, reconcile_idle_stories; s = Settings(); d = GraphDatabase.driver(s.neo4j_uri, auth=(s.neo4j_user, s.neo4j_password.get_secret_value())); print(reconcile_idle_stories(connect(s), d))"
 ```
+Lệnh này bỏ qua truyện đang có người viết (khoá chạy đôi D-46, kết quả `busy`), nên chạy khi app đang mở cũng được. `failed`: Neo4j từ chối gói, truyện giữ nguyên chương trước và viết lại được. `pending`: Neo4j vẫn chưa trả lời, hoặc lỗi khác (tên lỗi kèm theo).
 
 ## Biến môi trường
 Danh sách đầy đủ: `.env.example`. Không commit `.env`.
@@ -196,10 +197,10 @@ docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod e
 Luôn kèm `--env-file .env.prod`: thiếu thì compose đọc `.env` của máy dev và dừng vì thiếu biến.
 
 ### Khởi động, migration, chi phí
-- Lúc khởi động ở `APP_ENV=prod`, backend chạy migration Postgres, tạo ràng buộc Neo4j (`graph.ensure_schema`) và đọc thử hướng dẫn văn phong (`api/app.prepare_storage`); lỗi thì backend không lên và compose thử lại, xem log bằng `prod-status`. Chồng dev vẫn chạy migration bằng tay (mục Migration Postgres).
+- Lúc khởi động ở `APP_ENV=prod`, backend chạy migration Postgres, tạo ràng buộc Neo4j (`graph.ensure_schema`) và đọc thử hướng dẫn văn phong (`api/app.prepare_storage`); lỗi thì backend không lên và compose thử lại, xem log bằng `prod-status`. Sau đó backend áp lại chương kẹt `pending` (D-105); bước này lỗi thì chỉ ghi log, backend vẫn lên. Chồng dev vẫn chạy migration và áp lại bằng tay (mục Migration Postgres, mục Ghi chương bị kẹt `pending`).
 - Ở prod không có trang OpenAPI (`/docs`).
 - Chi phí (G8): người chơi dùng key OpenRouter của chính họ (D-2). Trần mỗi cảnh, chương, truyện và số lời gọi mỗi phút của từng người chơi (`config/limits.yaml`) chạy như ở dev: tính theo `owner_id` của phiên đăng nhập, không phụ thuộc chế độ chạy. Không có trần tổng theo người chơi (mỗi truyện có trần riêng), nên khuyên bạn bè đặt hạn mức chi tiêu cho key ở trang OpenRouter.
-- Chương kẹt `pending` (mục trên): chạy đúng câu lệnh reconcile ở mục đó bằng `docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod exec backend python -c "..."`.
+- Chương kẹt `pending` mà lần khởi động chưa áp được (log báo `pending` hoặc lỗi): chạy đúng câu lệnh reconcile ở mục trên bằng `docker compose -p writory-prod -f docker-compose.prod.yml --env-file .env.prod exec backend python -c "..."`.
 
 ### Địa chỉ người dùng sau tunnel
 Bộ đếm lần nhập mã (D-89) tính theo địa chỉ người dùng. Chuỗi tin: Cloudflare → `cloudflared` (IP cố định `TUNNEL_IP`) → Caddy (`PROXY_IP`) → backend. Caddy chỉ đọc `CF-Connecting-IP` khi yêu cầu đến từ `cloudflared` (`trusted_proxies`), rồi đặt lại `X-Real-IP`. Backend chỉ đọc `X-Real-IP` (không có thì phần tử cuối của `X-Forwarded-For`) và `X-Forwarded-Proto` khi yêu cầu đến từ proxy (`TRUSTED_PROXIES`; `api/deps.client_address`, `forwarded_https`). Header giả từ nơi khác bị bỏ qua. Cookie phiên `Secure` vì `Host` là tên miền thật; trên `localhost`/`127.0.0.1` thì theo `X-Forwarded-Proto` tin được. Mạng `edge` có subnet cố định (`EDGE_SUBNET`); trùng mạng khác trên máy thì đổi `EDGE_SUBNET`, `PROXY_IP`, `TUNNEL_IP` cùng lúc.

@@ -54,7 +54,7 @@ flowchart LR
 
 **Prod (D-103).** `docker-compose.prod.yml`: không service nào mở cổng ra máy, đường vào duy nhất là tunnel. Mạng `data` là `internal`, nên Neo4j và Postgres không ra Internet; `cloudflared` và Caddy không tới được hai kho này. Backend nằm ở cả hai mạng: mạng `edge` để nhận yêu cầu từ Caddy và gọi OpenRouter, mạng `data` để tới hai kho. Caddy (`deploy/Caddyfile`) phục vụ bản build của giao diện và chuyển `/api/*` tới backend, không đệm SSE. Backend chỉ tin header địa chỉ máy khi yêu cầu đến từ IP của proxy (`TRUSTED_PROXIES`, `api/deps.py` `client_address`).
 
-**`create_app`** (`api/app.py`) đọc biến môi trường và `config/` lúc gọi factory. Router của người chơi chỉ được gắn khi `AUTH_MODE=invite`, hoặc khi `ENABLE_DEV_ROUTES` bật ở chế độ `dev` (D-41, D-89). `/health` luôn có. Với `APP_ENV=prod`: `config.prod_problems` chặn cấu hình nguy hiểm ngay lúc khởi động; lifespan chạy migration Postgres và `ensure_schema` của Neo4j (`prepare_storage`); trang OpenAPI bị tắt.
+**`create_app`** (`api/app.py`) đọc biến môi trường và `config/` lúc gọi factory. Router của người chơi chỉ được gắn khi `AUTH_MODE=invite`, hoặc khi `ENABLE_DEV_ROUTES` bật ở chế độ `dev` (D-41, D-89). `/health` luôn có. Với `APP_ENV=prod`: `config.prod_problems` chặn cấu hình nguy hiểm ngay lúc khởi động; lifespan chạy migration Postgres, `ensure_schema` của Neo4j, rồi áp lại chương kẹt `pending` (`prepare_storage`, `reconcile_at_startup`, D-105); trang OpenAPI bị tắt.
 
 ## 3. Module backend
 
@@ -137,7 +137,7 @@ sequenceDiagram
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
 - `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
-- Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`). Ở `api/setup.py`, `_propose` bọc mỗi `propose_*` và `finalize` bọc cả `build_story` trong một vòng thử lại mạng nữa (mục 13).
+- Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`), kể cả từng lượt sửa (D-54). `api/setup.py` không bọc thêm lớp nào, nên lỗi mạng chỉ gọi lại đúng lời gọi hỏng (D-105).
 
 ## 5. Đường đi một chương
 
@@ -228,15 +228,15 @@ sequenceDiagram
     D->>PG: một transaction, chapters committed, tăng stories.committed_chapter
     P-->>U: chapter_committed
   end
-  Note over D,N: reconcile_pending đọc chương pending và gói trong outbox, áp lại, đặt committed
+  Note over D,N: lúc khởi động, reconcile_idle_stories giữ khoá story rồi reconcile_pending đọc chương pending và gói trong outbox, áp lại, đặt committed
 ```
 
 - **Postgres là nguồn gốc (D-6).** `commit_chapter` (`db/chapters.py`) ghi chương `pending` kèm gói vào bảng `change_packages` (outbox), rồi gọi `apply_package` (`graph/commit.py`), rồi mới đặt `committed`. `stories.committed_chapter` chỉ đổi ở `_mark_committed`. Mọi lần đọc lấy số chương từ `db.current_chapter`, nên chỉ thấy chương đã commit. Luật của gói: `docs/graph-schema.md`, mục "Ghi theo `commit_id`".
 - **`apply_package`** chạy cả gói trong một `execute_write`. Nút và cạnh được `MERGE` theo `(story_id, id)` và mang `commit_id`, nên áp lại cùng gói là an toàn. Lỗi ở bất kỳ bước nào làm Neo4j rollback cả gói.
 - **`delete_commit`** gỡ mọi thứ một commit tạo ra và mở lại các cạnh nó đã đóng. Nó từ chối nếu có commit khác dựa vào commit này. Hàm này được gọi khi Neo4j từ chối gói.
-- **`reconcile_pending`** áp lại các chương còn `pending`. Hiện chỉ chạy tay (`docs/runbook.md`, mục "Ghi chương bị kẹt `pending`"); app chưa gọi nó lúc khởi động (mục 13).
+- **`reconcile_pending`** áp lại các chương còn `pending`. Lúc app khởi động ở prod, `db.reconcile_idle_stories` gọi nó cho từng truyện, sau khi giữ được khoá `story` của truyện đó (D-46). Mọi đường ghi chương giữ khoá này, kể cả chương 0 (`start_story`), nên truyện đang có việc ở tiến trình khác bị bỏ qua (`busy`), còn khoá của tiến trình đã chết thì Postgres đã nhả. Lỗi khi áp lại chỉ vào log, app vẫn lên (D-105). Ở dev và khi cần chạy tay: `docs/runbook.md`, mục "Ghi chương bị kẹt `pending`".
 - **Chữ cảnh hiện trước khi chương được ghi.** `_accept` phát `scene_ready` ngay sau khi cảnh qua kiểm, trước `_commit`. Đây là thiết kế của D-1: cảnh sau được viết trong lúc người chơi đọc cảnh trước, và đồ thị chỉ ghi một lần sau cảnh cuối. Hệ quả đọc được trong code: nếu bước ghi lỗi, người chơi đã đọc các cảnh mà đồ thị và Postgres không đổi. Khi đó lần viết sau tạo lại chương với `commit_id` mới (suy luận).
-- Khởi tạo đi cùng đường này với chương 0 (`db/plans.py` `start_story`). Lỗi ở chương 0 thì `discard_story` gỡ cả truyện.
+- Khởi tạo đi cùng đường này với chương 0 (`db/plans.py` `start_story`), dưới khoá `story` của truyện mới (D-105). Lỗi ở chương 0 thì `discard_story` gỡ cả truyện.
 
 ## 7. Hai lớp và ranh giới G1
 
@@ -473,9 +473,8 @@ Migration: SQL thuần trong `db/migrations/`, chạy theo thứ tự tên file 
 
 Các mục dưới đây đọc được trong code. Tài liệu chỉ liệt kê; sửa thì cần quyết định riêng.
 
-- **Chưa gọi `reconcile_pending` lúc khởi động.** Trong `lifespan` của `create_app` (`api/app.py`) có `TODO(D-6)` ghi "chưa có quyết định". Chương ở lại `pending` sẽ chặn truyện bằng `CHAPTER_PENDING` cho tới khi có người chạy tay (`docs/runbook.md`, mục "Ghi chương bị kẹt `pending`").
+- **Ở dev, chương kẹt `pending` vẫn phải áp lại bằng tay.** Áp lại lúc khởi động chỉ chạy ở `APP_ENV=prod`, cùng migration (D-105). Lệnh tay: `docs/runbook.md`, mục "Ghi chương bị kẹt `pending`". Lệnh chạy cả truyện (`pipeline/bench_run.py`) ghi chương không qua khoá `story`; nó chạy trên kho dev, không chung kho với chồng prod (suy luận).
 - **G6 chỉ nằm trong đề.** Hậu quả của hành động vượt luật chỉ được dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
 - **Model viết không đi qua `role_extra`.** `_write` (`pipeline/chapter.py`) dựng `extra` bằng `reasoning_extra(tier.reasoning)`, nên `provider_ignore` (D-100) không áp cho model viết; mọi vai trong `roles` thì có (D-106). Hiện `provider_ignore` rỗng (D-102) nên không có tác động. Chưa rõ có cố ý không.
-- **Thử lại mạng hai lớp ở khởi tạo.** `finalize` bọc cả `build_story`, và `_propose` bọc mỗi `propose_*`, trong một vòng thử lại mạng (`api/setup.py`), trong khi mỗi `_ask` bên trong đã có lớp thử lại mạng riêng. (suy luận) Số lời gọi tối đa có thể nhân lên, và lỗi mạng ở một lượt sửa sẽ chạy lại `build_story` từ đầu. Trần chi phí của phiên vẫn chặn.
 - **Không có migration `0006`.** Thư mục `db/migrations/` nhảy từ `0005` sang `0007`, và lịch sử git không có file `0006` nào. `migrate` chạy theo thứ tự tên nên không hỏng (suy luận).
 - Các điểm chưa làm của lớp đồ thị (lời người chơi đã nghe, quan hệ trong sổ tay, `writer_context` trên `GraphState`): `docs/graph-schema.md`, mục "Chưa làm". Các điểm bảo mật còn mở: `docs/security.md`, mục "Chưa giải quyết".
