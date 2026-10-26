@@ -63,6 +63,7 @@ from writory.db.plans import (
     start_story,
 )
 from writory.db.rate_limit import take_llm_call
+from writory.db.reconcile import reconcile_idle_stories
 from writory.db.setup import (
     STEPS,
     SetupNotFoundError,
@@ -130,6 +131,7 @@ __all__ = [
     "owned_story_summaries",
     "owner_costs",
     "pending_cost_estimates",
+    "reconcile_idle_stories",
     "reconcile_pending",
     "record_cost",
     "save_action",

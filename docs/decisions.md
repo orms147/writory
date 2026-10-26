@@ -975,6 +975,11 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** sửa luồng, module hay router thì phải sửa sơ đồ trong cùng commit (CLAUDE.md §2.5). Viết file này đã làm lộ vài chỗ `docs/graph-schema.md` lệch code; các chỗ đó được sửa cùng commit.
 - **Người quyết:** Chủ dự án (26/10/2026) duyệt thêm file; nội dung: Claude
 
+## D-105 · Áp lại chương `pending` lúc khởi động; thử lại mạng ở khởi tạo; khoá khởi tạo sau khi kiểm chủ
+- **Bối cảnh:** ba mục trong `docs/architecture.md`, mục 13: `TODO(D-6)` trong `lifespan`; thử lại mạng hai lớp ở `api/setup.py`; `lock_setup` giữ khoá trước khi kiểm chủ phiên (D-89).
+- **Áp lại lúc khởi động (D-6):** ở `APP_ENV=prod`, `prepare_storage` gọi `reconcile_at_startup` sau migration và `ensure_schema`. Hàm `db.reconcile_idle_stories` giữ khoá `story` (D-46) của từng truyện rồi mới gọi `reconcile_pending`; không giữ được thì bỏ qua (`busy`). Mọi đường ghi chương giữ khoá này, nên `start_story` nay cũng giữ khoá của truyện mới khi ghi chương 0. Khoá của tiến trình đã chết được Postgres nhả, nên chương kẹt thật luôn áp được. Lỗi khi áp lại chỉ vào log (đã `redact`), app vẫn lên: kho đã qua migration và ràng buộc, lỗi chỉ để vài truyện còn `CHAPTER_PENDING`; làm app chết thì chặn mọi người chơi và compose khởi động lại mãi. Dev không tự áp lại, như migration; lệnh tay đổi sang `reconcile_idle_stories` (`docs/runbook.md`).
+- **Người quyết:** Chủ dự án (26/10/2026) đồng ý sửa; cách sửa: Claude (nhánh fix/startup-and-setup)
+
 ## D-106 · Sửa ba chỗ lệch: mức suy luận của vai phân loại, G3 ở bước ghi, test quét Cypher (G10)
 - **Bối cảnh:** `docs/architecture.md` mục 13 (D-104) ghi ba chỗ code lệch luật: `classify_action` gửi `provider_extra` nên `role_reasoning.classify` không tới model; `apply_package` không đối chiếu `quote` với văn, nên G3 chỉ được bảo đảm ở bộ trích, tự hé lộ và truyện mẫu; G10 không có test quét Cypher ngoài `graph/`.
 - **Quyết định:**

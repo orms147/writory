@@ -134,6 +134,40 @@ def test_prod_does_not_start_when_storage_setup_fails():
         pass
 
 
+def test_reconcile_at_startup_logs_errors_and_never_raises(monkeypatch, caplog):
+    """D-105: áp lại chương pending lỗi thì chỉ ghi log (đã redact), không làm app chết. Phần
+    chạy thật trên kho: tests/graph/test_startup_reconcile.py."""
+    from writory import db
+    from writory.api.app import reconcile_at_startup
+
+    secret = "sk-or-v1-" + "ab" * 32
+
+    def broken(_conn, _driver):
+        raise RuntimeError(f"Postgres mất kết nối {secret}")
+
+    monkeypatch.setattr(db, "reconcile_idle_stories", broken)
+    with caplog.at_level("ERROR"):
+        reconcile_at_startup(object(), object())
+    assert "áp lại chương pending" in caplog.text and "RuntimeError" in caplog.text
+    assert secret not in caplog.text
+
+
+def test_reconcile_at_startup_logs_every_result(monkeypatch, caplog):
+    from writory import db
+    from writory.api.app import reconcile_at_startup
+    from writory.db import ReconcileResult
+
+    monkeypatch.setattr(db, "reconcile_idle_stories", lambda _c, _d: [
+        ReconcileResult("s1", 2, "s1-ch2", "committed", None),
+        ReconcileResult("s2", 3, "s2-ch3", "failed", "id không có"),
+        ReconcileResult("s3", 1, "s3-ch1", "busy", None),
+    ])
+    with caplog.at_level("INFO"):
+        reconcile_at_startup(object(), object())
+    seen = {(r.levelname, r.args[0]) for r in caplog.records if r.args and len(r.args) == 5}
+    assert seen == {("INFO", "s1"), ("WARNING", "s2"), ("INFO", "s3")}
+
+
 # --- proxy tin cậy ---------------------------------------------------------------------------------
 
 

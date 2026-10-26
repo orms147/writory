@@ -8,8 +8,9 @@ bật CORS: giao diện gọi API qua proxy của Vite, cùng origin (D-66, docs
 dựa vào điều đó (`deps.api_guard`).
 
 `APP_ENV=prod` (máy chủ cho người chơi thật, D-103): cấu hình nguy hiểm thì không tạo app
-(`config.prod_problems`); lúc khởi động chạy migration Postgres, tạo ràng buộc Neo4j và đọc thử
-file app cần (`prepare_storage`) trước khi nhận yêu cầu đầu; không có trang OpenAPI. Sau reverse
+(`config.prod_problems`); lúc khởi động chạy migration Postgres, tạo ràng buộc Neo4j, đọc thử
+file app cần và áp lại chương kẹt `pending` (`prepare_storage`, D-105) trước khi nhận yêu cầu đầu;
+không có trang OpenAPI. Sau reverse
 proxy, chỉ tin header địa chỉ máy và scheme từ `TRUSTED_PROXIES` (`deps.client_address`).
 """
 
@@ -22,7 +23,7 @@ import httpx
 import psycopg
 from fastapi import FastAPI
 from fastapi.responses import JSONResponse
-from neo4j import GraphDatabase
+from neo4j import Driver, GraphDatabase
 
 from writory.api.auth import router as auth_router
 from writory.api.errors import install_error_handlers
@@ -61,7 +62,10 @@ def prepare_storage(settings: Settings) -> None:
     """Chuẩn bị kho lúc khởi động ở prod (D-103): migration Postgres (D-20, có khoá advisory),
     ràng buộc và index Neo4j (`graph.ensure_schema`, chạy lại an toàn), và đọc thử hướng dẫn văn
     phong (system prompt của model viết), để thiếu file thì app không lên thay vì hỏng ở chương
-    đầu. Lỗi nào cũng làm app không khởi động; compose khởi động lại sau."""
+    đầu. Lỗi ở các bước đó làm app không khởi động; compose khởi động lại sau.
+
+    Cuối cùng áp lại chương kẹt `pending` (`reconcile_at_startup`, D-6, D-105). Bước này không
+    làm app chết: lỗi chỉ vào log."""
     from writory.db import connect, migrate
     from writory.graph import ensure_schema
     from writory.pipeline.scene import load_style_guide
@@ -69,16 +73,38 @@ def prepare_storage(settings: Settings) -> None:
     load_style_guide()
     with connect(settings) as conn:
         applied = migrate(conn)
-    log.info("migration Postgres: %s", ", ".join(applied) if applied else "đã đủ")
-    driver = GraphDatabase.driver(
-        settings.neo4j_uri,
-        auth=(settings.neo4j_user, settings.neo4j_password.get_secret_value()),
-    )
+        log.info("migration Postgres: %s", ", ".join(applied) if applied else "đã đủ")
+        driver = GraphDatabase.driver(
+            settings.neo4j_uri,
+            auth=(settings.neo4j_user, settings.neo4j_password.get_secret_value()),
+        )
+        try:
+            ensure_schema(driver)
+            log.info("ràng buộc Neo4j: đã đủ")
+            reconcile_at_startup(conn, driver)
+        finally:
+            driver.close()
+
+
+def reconcile_at_startup(conn: psycopg.Connection, driver: Driver) -> None:
+    """Áp lại chương kẹt `pending` của truyện không có việc đang chạy (`db.reconcile_idle_stories`,
+    D-105). Không ném lỗi: kho đã qua migration và ràng buộc, nên lỗi ở đây chỉ để các truyện đó
+    còn kẹt (`CHAPTER_PENDING`), không đáng chặn mọi người chơi khác; lệnh chạy tay ở
+    docs/runbook.md."""
+    from writory.db import reconcile_idle_stories
+
     try:
-        ensure_schema(driver)
-    finally:
-        driver.close()
-    log.info("ràng buộc Neo4j: đã đủ")
+        results = reconcile_idle_stories(conn, driver)
+    except Exception as exc:  # noqa: BLE001 — xem docstring
+        log.error("áp lại chương pending lúc khởi động không được: %s",
+                  redact(f"{type(exc).__name__}: {exc}"))
+        return
+    for r in results:
+        level = logging.INFO if r.status in ("committed", "busy") else logging.WARNING
+        log.log(level, "áp lại chương pending: truyện %s chương %d (%s): %s%s", r.story_id,
+                r.number, r.commit_id, r.status, f" ({redact(r.error)})" if r.error else "")
+    if not results:
+        log.info("áp lại chương pending: không có")
 
 
 def _default_health_checks(app: FastAPI, settings: Settings) -> dict[str, HealthCheck]:
@@ -130,8 +156,6 @@ def create_app(
             install_log_redaction(logging.getLogger(name or None))
         if prod:
             await asyncio.to_thread(storage_setup, settings)
-        # TODO(D-6, docs/graph-schema.md "Ghi theo commit_id"): gọi reconcile_pending lúc khởi
-        # động. writory.db đã có hàm này; chưa nối vì chưa có quyết định.
         app.state.health_checks = (
             health_checks
             if health_checks is not None
