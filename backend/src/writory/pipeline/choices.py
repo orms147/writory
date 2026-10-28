@@ -196,16 +196,18 @@ STALLED_NOTE = """Ghi chú: mấy chương gần đây nhân vật chính chưa 
 
 def build_choice_messages(
     view: PlayerView, *, protagonist_id: str, last_scene_text: str, stalled: bool = False,
+    system_prompt: str | None = None,
 ) -> tuple[list[Message], dict[str, str]]:
     """Tin nhắn cho model tạo lựa chọn và bảng mã công khai → id nút. Chỉ đọc `view` (G1).
-    `stalled`: truyện đang đứng yên (D-98), thêm `STALLED_NOTE`."""
+    `stalled`: truyện đang đứng yên (D-98), thêm `STALLED_NOTE`. `system_prompt`: chỉ bộ đo (D-109),
+    thay `SYSTEM_PROMPT`."""
     entries = public_entries(view)
     refs = {ref: e.id for ref, e in entries}
     me = next((f"[{ref}] {e.text}" for ref, e in entries if e.id == protagonist_id),
               "(chưa có tên trên trang)")
     notebook = f"Nhân vật chính: {me}\n\n{render_notebook(view)}"
     messages = [
-        system_message(SYSTEM_PROMPT, DATA_NOTICE),
+        system_message(system_prompt or SYSTEM_PROMPT, DATA_NOTICE),
         user_message(
             f"Sổ tay của người chơi (tới hết chương {view.chapter}):",
             UserAuthored(notebook, "notebook"),
@@ -298,13 +300,14 @@ async def make_choices(
     llm: LLMClient, model: str, *, view: PlayerView, protagonist_id: str, last_scene_text: str,
     truth_names: Mapping[str, tuple[str, ...]], plan: StoryPlan, story_brief: str,
     retries: RetryLimits, extra: Mapping[str, Any] | None = None,
-    moderate: ChoicesGate | None = None, stalled: bool = False,
+    moderate: ChoicesGate | None = None, stalled: bool = False, system_prompt: str | None = None,
 ) -> list[Choice]:
     """`view`: player_view ở chương vừa ghi. `stalled`: truyện đứng yên (D-98). `truth_names`, `plan`, `story_brief` (thiết lập truyện
     người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ bằng code, không bao giờ vào prompt. `moderate`:
     cổng kiểm duyệt nội dung (G9); đường của người chơi phải truyền."""
     messages, refs = build_choice_messages(view, protagonist_id=protagonist_id,
-                                           last_scene_text=last_scene_text, stalled=stalled)
+                                           last_scene_text=last_scene_text, stalled=stalled,
+                                           system_prompt=system_prompt)
     kinds = {e.id: e.kind for e in view.entries}
 
     async def call() -> list[Choice]:

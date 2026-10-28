@@ -327,3 +327,37 @@ def test_standstill_place_from_the_player_is_wrapped():
     parts = render_chapter_goals(goals, scene=1, scene_count=2)
     assert not any(isinstance(p, str) and "[PLAYER-place]" in p for p in parts)
     assert any(isinstance(p, UserAuthored) and p.text == "[PLAYER-place]" for p in parts)
+
+
+# --- chữ mục tiêu chương ghi đè được cho bộ đo (D-109) ---------------------------------------------
+
+
+def test_default_goal_texts_are_what_the_render_prints():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    goals = chapter_goals(PLAN, 2, through(1))
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    assert GOAL_DEFAULTS["push_forward"] in text
+    assert _text(render_chapter_goals(goals, scene=1, scene_count=2, texts={})) == text
+    assert _text(render_chapter_goals(goals, scene=1, scene_count=2, texts=None)) == text
+
+
+def test_an_override_replaces_exactly_its_sentence_and_nothing_else():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    goals = chapter_goals(PLAN, 2, through(1))
+    base = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    new = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                     texts={"push_forward": "MỚI: lật trang."}))
+    assert new == base.replace(GOAL_DEFAULTS["push_forward"], "MỚI: lật trang.")
+
+
+def test_the_standstill_override_fills_place_and_chapters_and_still_wraps_the_place():
+    goals = chapter_goals(PLAN, 5, through(4, at("cho_cua_toi", 1, name="[PLAYER-place]",
+                                                   authored=True)), standstill_chapters=THRESHOLD)
+    texts = {"standstill": "Ở {place} đã {chapters} chương; phá thế giằng co."}
+    parts = render_chapter_goals(goals, scene=1, scene_count=2, texts=texts)
+    assert not any(isinstance(p, str) and "[PLAYER-place]" in p for p in parts)
+    assert any(isinstance(p, UserAuthored) and p.text == "[PLAYER-place]" for p in parts)
+    text = _text(parts)
+    assert "đã 4 chương; phá thế giằng co." in text and "PHẢI đổi tình thế" not in text

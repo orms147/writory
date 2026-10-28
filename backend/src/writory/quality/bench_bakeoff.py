@@ -212,6 +212,15 @@ class RunInfo:
     def writer_model(self) -> str:
         return self.meta["models"]["writer"]["model"]
 
+    @property
+    def identity(self) -> tuple[Any, ...]:
+        """Cái làm hai lần chạy khác nhau (D-109): model viết và dàn ý, hướng dẫn văn phong, các file
+        của biến thể đề. Hash, không phải tên: hai tên cùng nội dung là một lần chạy. Meta cũ chưa
+        ghi hai trường sau thì coi như đề mặc định."""
+        variant = self.meta.get("prompt_variant") or {}
+        return (self.writer_model, self.meta["models"]["outline"]["model"],
+                self.meta.get("style_guide_sha256"), tuple(sorted((variant.get("files") or {}).items())))
+
 
 def _read_json(path: Path) -> Any:
     try:
@@ -239,9 +248,27 @@ def _same_world(runs: Sequence[RunInfo]) -> None:
         if len(values) != 1 or (field_name == "--setup-from" and values == {"null"}):
             raise ConfigError(f"các lần chạy không cùng thế giới: {field_name} khác nhau hoặc "
                               f"trống ({sorted(values)})")
-    models = [r.writer_model for r in runs]
-    if len(set(models)) != len(models):
-        raise ConfigError(f"hai lần chạy cùng model viết: {models}")
+    if len({r.identity for r in runs}) != len(runs):
+        raise ConfigError("hai lần chạy cùng model viết và cùng đề (hướng dẫn văn phong, biến thể "
+                          f"đề): {[r.writer_model for r in runs]}")
+
+
+def display_names(runs: Sequence[RunInfo]) -> list[str]:
+    """Tên hiện ở `key.json` và bảng tổng hợp. Model nào chỉ có một lần chạy thì giữ tên model; nhiều
+    lần chạy cùng model (khác đề viết, D-109) thì thêm hướng dẫn văn phong và biến thể để phân biệt."""
+    names = []
+    for r in runs:
+        if sum(o.writer_model == r.writer_model for o in runs) == 1:
+            names.append(r.writer_model)
+            continue
+        parts = []
+        if r.meta.get("style_guide_sha256"):
+            parts.append(f"style:{r.meta['style_guide_sha256'][:8]}")
+        variant = r.meta.get("prompt_variant") or {}
+        if variant.get("name"):
+            parts.append(f"variant:{variant['name']}")
+        names.append(f"{r.writer_model} [{'; '.join(parts) or 'đề mặc định'}]")
+    return names
 
 
 def common_brief(run: RunInfo) -> str:
@@ -321,11 +348,12 @@ def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str,
     key: dict[str, Any] = {}
     metrics: dict[str, Any] = {}
     (out / "stories").mkdir(parents=True, exist_ok=True)
+    shown = display_names(runs)
     for label, index in zip(labels, order, strict=True):
         run = runs[index]
         text = story_text(run)
         (out / "stories" / f"{label}.md").write_text(text + "\n", encoding="utf-8", newline="\n")
-        key[label] = {"model": run.writer_model, "run": _rel(run.dir),
+        key[label] = {"model": shown[index], "writer_model": run.writer_model, "run": _rel(run.dir),
                       "story_sha256": _sha256(text.encode()), "costs": cost_table(run)}
         metrics[label] = code_metrics(run)
     brief = common_brief(runs[0])

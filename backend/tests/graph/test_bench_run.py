@@ -86,3 +86,23 @@ def test_dry_run_cli_removes_its_story_by_default(tmp_path, services_env, pg, dr
     with pytest.raises(StoryNotFoundError):
         get_story(pg, sid)
     assert story_snapshot(driver, sid).node_count == 0
+
+
+def test_dry_run_cli_with_a_style_guide_and_a_prompt_variant_records_both(
+        tmp_path, services_env, monkeypatch):
+    """D-109: `--style-guide` và `--prompt-variant` đi từ dòng lệnh tới `meta.json` (hash file, đề bị
+    thay), chạy trên kho thật; mặc định không thay gì."""
+    variants = tmp_path / "prompts"
+    (variants / "moi").mkdir(parents=True)
+    (variants / "moi" / "choices_system.md").write_text("ĐỀ LỰA CHỌN BIẾN THỂ", encoding="utf-8")
+    monkeypatch.setattr(bench_run, "PROMPTS_DIR", variants)
+    guide = tmp_path / "van-phong.md"
+    guide.write_text("VĂN PHONG MỚI\n", encoding="utf-8")
+    code, meta = _cli(tmp_path, "--chapters", "1", "--style-guide", str(guide),
+                      "--prompt-variant", "moi")
+    assert code == bench_run.EXIT_OK
+    assert meta["prompt_variant"]["name"] == "moi"
+    assert meta["prompt_variant"]["overrides"] == ["choices_system"]
+    assert meta["prompt_versions_overridden"] == ["writer", "choices"]
+    assert meta["style_guide_path"] == "van-phong.md"  # repo công khai: không đường dẫn tuyệt đối
+    assert meta["style_guide_sha256"] == bench_run._sha256("VĂN PHONG MỚI".encode())

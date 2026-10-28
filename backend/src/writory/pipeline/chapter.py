@@ -67,6 +67,7 @@ from writory.pipeline.scene import (
     Candidate,
     EarlierScene,
     Named,
+    PromptTexts,
     Rewrite,
     SceneBrief,
     SceneOutline,
@@ -279,6 +280,7 @@ class _Deps:
     style_guide: str
     # Chỉ cho bộ đo (evals): nhận câu hỏi và id đoạn của mỗi lần lấy đoạn trên trang (D-85).
     on_quotes: Callable[[dict[str, Any]], None] | None = None
+    prompts: PromptTexts | None = None  # chỉ bộ đo: đề ghi đè (D-109)
 
 
 class _State(TypedDict, total=False):
@@ -453,6 +455,7 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
         earlier=earlier, goals=state["goals"], summaries=tuple(state["summaries"]),
         forbidden=tuple(forbidden),
         forbidden_max=_require(d.config.limits.context, "forbidden_names_max"),
+        prompts=d.prompts,
     )
 
 
@@ -926,6 +929,7 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
                          darkness_level=d.request.darkness_level),
         stalled=stalled_after(d.store.state(), chapter,
                               _require(d.config.limits.context, "standstill_chapters")),
+        system_prompt=d.prompts.choices_system if d.prompts is not None else None,
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,
                                        choices=[c.for_player() for c in choices]))
@@ -990,6 +994,7 @@ class ChapterRun:
         self, request: ChapterRequest, *, llm: LLMClient, store: ChapterStore,
         config: AppConfig, plan: StoryPlan, tracker: CostTracker, style_guide: str | None = None,
         on_quotes: Callable[[dict[str, Any]], None] | None = None,
+        prompts: PromptTexts | None = None,
     ) -> None:
         allowed = config.story_lengths.scenes_per_chapter
         if not allowed.min <= request.scene_count <= allowed.max:
@@ -999,7 +1004,8 @@ class ChapterRun:
         guide = style_guide if style_guide is not None else load_style_guide()
         # Câu ngôi kể lấy từ cùng config mà kiểm văn dùng để bắt lệch ngôi (D-51).
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,
-                           f"{guide}\n\n{narration_instruction(config.quality)}", on_quotes)
+                           f"{guide}\n\n{narration_instruction(config.quality)}", on_quotes,
+                           prompts)
         self.outcome = ChapterOutcome()
         self._task: asyncio.Task[None] | None = None
         self._cancel_sent = False
