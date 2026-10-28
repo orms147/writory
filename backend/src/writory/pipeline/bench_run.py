@@ -485,20 +485,9 @@ class RunPrompts:
     variant: PromptVariant | None = None
 
 
-# Ba cờ ngữ cảnh của biến thể đề "v3" (D-110), giá trị khi bật bằng `--prose-v3`. Ngoài bộ đo, cờ
-# nằm ở `limits.context` và mặc định tắt. Số tạm (D-47): 240 ký tự đủ 1–2 câu tính cách; hai chương
-# gần nhất là hai câu mở gần nhất mà model không thấy trong tóm tắt.
-PROSE_V3_CONTEXT = {"character_personality_max_chars": 240, "previous_openings": 2,
-                    "unplanned_chapter_goal": True}
-
-
-def apply_prose_v3(config: AppConfig) -> AppConfig:
-    """Config với ba cờ của biến thể v3 bật; độ dài câu mở lấy của config nếu có, không thì 160."""
-    ctx = config.limits.context
-    update = {**PROSE_V3_CONTEXT,
-              "previous_opening_max_chars": ctx.previous_opening_max_chars or 160}
-    return config.model_copy(update={"limits": config.limits.model_copy(
-        update={"context": ctx.model_copy(update=update)})})
+# Ba cờ ngữ cảnh của đề "v3" (D-110, bật mặc định ở D-111): nằm ở `limits.context`, `meta.json` ghi
+# giá trị đã dùng để hai lượt A/B so được.
+CONTEXT_FLAGS = ("character_personality_max_chars", "previous_openings", "unplanned_chapter_goal")
 
 
 def prompts_from_args(args: argparse.Namespace, *,
@@ -1119,8 +1108,8 @@ class StoryRun:
             "models": models_in_use(self.config, self.scenario),
             "max_tokens_per_call": self.scenario.max_tokens_per_call,
             "page_quotes_top_k": self.config.limits.context.page_quotes_top_k,  # 0 = tắt (D-85)
-            "context_flags": {  # ba cờ của biến thể v3 (D-110)
-                k: getattr(self.config.limits.context, k) for k in PROSE_V3_CONTEXT},
+            "context_flags": {  # ba cờ của đề v3 (D-110, D-111)
+                k: getattr(self.config.limits.context, k) for k in CONTEXT_FLAGS},
             "setup_from": repo_path(self.options.setup_from) if self.options.setup_from else None,
             "setup_only": self.options.setup_only,
             "overrides": self.options.overrides.as_meta(),
@@ -1692,8 +1681,6 @@ async def _cli(args: argparse.Namespace) -> int:
             update={"context": context})})
     overrides = overrides_from_args(args)
     prompts = prompts_from_args(args)
-    if args.prose_v3:
-        config = apply_prose_v3(config)
     config = apply_model_overrides(config, scenario, overrides)
     problems = run_problems(config, scenario)
     if problems:  # trước khi kết nối kho hay đọc key
@@ -1789,9 +1776,6 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--prompt-variant", help="tên thư mục trong evals/scenarios/prompts/: đề dàn ý, "
                    "đề lựa chọn và chữ mục tiêu chương thay cho đề của mã; thiếu file nào dùng mặc "
                    "định (D-109)")
-    p.add_argument("--prose-v3", action="store_true",
-                   help="bật ba cờ ngữ cảnh của biến thể v3: tính cách nhân vật vào đề dàn ý và "
-                   "viết, câu mở của hai chương gần nhất, chương không mốc đòi tình thế mới (D-110)")
     p.add_argument("--page-quotes-top-k", type=int,
                    help="ghi đè limits.context.page_quotes_top_k (0 = tắt đoạn trên trang, D-85)")
     p.add_argument("--dry-run", action="store_true", help="model giả, không key, không gọi model")

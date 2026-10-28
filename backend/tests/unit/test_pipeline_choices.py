@@ -179,7 +179,7 @@ def test_prompt_asks_to_vary_dialogue_tone_when_the_scene_fits():
     khích nói dối hoặc im lặng khi hợp cảnh; code không ép (design §6.2 chỉ đòi tối thiểu 2 loại)."""
     [system, _], _ = build_choice_messages(VIEW, protagonist_id="minh", last_scene_text=SCENE)
     assert TONE_GUIDANCE in system.content
-    for word in ('"lie"', '"silence"', '"truth"', "hợp cảnh"):
+    for word in ('"lie"', '"silence"', "nói thật không phải mặc định", "hợp cảnh"):
         assert word in TONE_GUIDANCE
     lan = _refs_by_text()["Phạm Thị Lan"]
     honest = _reply(_refs_by_text(), **{"1": {"tone": "truth", "lie_content": None,

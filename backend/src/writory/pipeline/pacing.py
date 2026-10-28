@@ -230,13 +230,16 @@ def resolvable(goals: ChapterGoals) -> tuple[ThreadGoal, ...]:
 
 
 # Câu cố định của mục tiêu chương mà bộ đo được thay để so hai bản đề trên cùng một thế giới (D-109).
-# Sản phẩm không bao giờ truyền `texts`: luôn dùng các câu này. `standstill` có chỗ điền {place} và
-# {chapters}; tên nơi chốn vẫn đi qua `_data` (G4).
+# Sản phẩm không bao giờ truyền `texts`: luôn dùng các câu này (`push_forward`, `milestone_next` là
+# chữ của đề v3, D-111). `standstill` có chỗ điền {place} và {chapters}; tên nơi chốn vẫn đi qua
+# `_data` (G4).
 GOAL_DEFAULTS: dict[str, str] = {
     "push_forward": ("Chương này phải đẩy truyện tới: kết chương ở một tình thế mới, không lặp lại "
-                     "tình huống hay thế khó của chương trước."),
+                     "tình huống hay thế khó của chương trước. Ký, ghi, đặt xuống hay hẹn để sau "
+                     "không tính là tình thế mới."),
     # Mốc kế tiếp (chưa tới khoảng của nó).
-    "milestone_next": "Mốc kế tiếp, chuẩn bị dần",
+    "milestone_next": ("Mốc kế tiếp, chương này đưa vào một sự kiện hay áp lực cụ thể đẩy nhân vật "
+                       "chính về phía đó"),
     # Chỉ in khi `ChapterGoals.gap` (cờ `unplanned_chapter_goal`, D-110): chương không có mốc nào.
     "milestone_gap": ("Chương này không có mốc cốt truyện riêng, nên tự nó phải đổi tình thế: cuối "
                       "chương có một điều mà đầu chương chưa xảy ra hoặc chưa ai biết (người bị "

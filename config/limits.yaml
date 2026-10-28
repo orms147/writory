@@ -42,16 +42,16 @@ context:
   # Nhân vật chính ở yên một nơi từng ấy chương trở lên thì mục tiêu chương và đề tạo lựa chọn đòi đổi
   # tình thế (D-98; tạm, D-47). long-tu-tien-1: ở Cốc Đèn từ chương 6, lặp cảnh từ chương 10.
   standstill_chapters: 4
-  # Ba cờ của biến thể đề "v3" (D-110). Mặc định TẮT cho tới khi A/B xong; bộ đo bật cả ba bằng
-  # `bench_run --prose-v3`. Số là tạm (D-47).
+  # Ba cờ của đề "v3" (D-110), BẬT làm mặc định theo D-111. Số là tạm (D-47): 240 ký tự đủ 1–2 câu
+  # tính cách; hai chương gần nhất là hai câu mở gần nhất mà model không thấy trong tóm tắt.
   # Tính cách (personality) của nhân vật có mặt và nhân vật lân cận còn sống vào đề dàn ý và đề
   # viết, cắt ở từng ấy ký tự mỗi người. Không bao giờ đưa backstory (có thể chứa bí mật). 0 = tắt.
-  character_personality_max_chars: 0
+  character_personality_max_chars: 240
   # Câu mở của từng ấy chương gần nhất (chữ đã hiện trên trang) vào đề viết, để không mở trùng. 0 = tắt.
-  previous_openings: 0
+  previous_openings: 2
   previous_opening_max_chars: 160
   # true: chương không có mốc nào đang diễn ra phải kết ở một tình thế mới cụ thể. false = như cũ.
-  unplanned_chapter_goal: false
+  unplanned_chapter_goal: true
 facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; số tạm, D-47). 0 = tắt
   max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
   text_max_chars: 160          # chữ của Fact: một câu ngắn
