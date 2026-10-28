@@ -991,3 +991,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `tests/unit/test_cypher_boundary.py` quét `src/writory/**/*.py` ngoài `graph/`. Mẫu chọn để ít báo oan; lý do ghi trong file. Hiện không có chỗ nào phải chuyển, nên danh sách ngoại lệ rỗng.
 - **Hệ quả:** phân loại giờ chạy với mức suy luận của config (`low`), chưa đo lại bằng `writory.safety.bench_g5`; `evals/results/` chưa có kết quả G5 nào. Gọi thẳng `apply_package` (nạp truyện mẫu, bài A) vẫn không qua kiểm G3 ở bước ghi.
 - **Người quyết:** Chủ dự án (26/10/2026) đồng ý sửa; cách sửa: Claude (nhánh fix/guards-and-tests)
+
+## D-107 · Xuất kịch bản để làm video AI xếp vào bản 3
+- **Bối cảnh:** chủ dự án muốn sau khi app hoàn thành có tính năng gửi kịch bản từ truyện sang app tạo video (Seedance hoặc tương tự), kèm sơ đồ tuyến nhân vật.
+- **Quyết định:** ghi vào design §5 bản 3. Bản 1 chưa làm. Việc nền (ngoại hình nhân vật, cảnh sắc nơi chốn, thời điểm cảnh lúc khởi tạo) có thể làm sớm hơn nếu chủ dự án yêu cầu.
+- **Hệ quả:** khi làm cần quyết bản xuất có dùng lớp `truth` hay chỉ `player_view` (G1).
+- **Người quyết:** Chủ dự án (28/10/2026)
