@@ -26,6 +26,36 @@ def flat(text: str) -> str:
     return " ".join(re.findall(r"\w+", unicodedata.normalize("NFC", text).casefold()))
 
 
+# --- câu mở chương (D-110) -----------------------------------------------------------------------
+
+_SENTENCE_GAP = re.compile(r"(?<=[.!?…])" + r"\s+")
+
+
+def opening_of(text: str, max_chars: int) -> str | None:
+    """Những câu đầu của đoạn văn đầu tiên trong chương (bỏ dòng tiêu đề `#`, dòng ngăn cảnh
+    `* * *`, dòng trống), lấy đủ câu nguyên vẹn trong `max_chars`. Câu đầu dài hơn thì cắt ở ranh
+    giới từ, thêm "…". Dùng để đề viết nhắc "đừng mở lại như vậy" (D-110). Không có chữ thì None."""
+    for paragraph in text.split("\n\n"):
+        para = " ".join(paragraph.split())
+        if not para or para.startswith("#") or not set(para) - set("* "):
+            continue
+        out = ""
+        sentences = _SENTENCE_GAP.split(para)
+        for sentence in sentences:
+            candidate = f"{out} {sentence}".strip()
+            if len(candidate) > max_chars:
+                break
+            out = candidate
+        if out:
+            return out
+        first = sentences[0]
+        cut = first[:max_chars - 1]
+        if first[max_chars - 1] != " " and " " in cut:
+            cut = cut.rsplit(" ", 1)[0]
+        return cut.rstrip() + "…"
+    return None
+
+
 # --- BM25 ------------------------------------------------------------------------------------------
 
 # Âm tiết chức năng rất thường gặp, không giúp phân biệt đoạn.

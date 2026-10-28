@@ -127,6 +127,11 @@ class ContextLimits(_Section):
     page_quotes_neighbors: NonNegativeInt = 0  # đoạn liền sau mỗi đoạn trúng cũng lấy (D-96)
     forbidden_names_max: PositiveInt | None = None  # số nút tối đa trong mục tên cấm (D-94)
     standstill_chapters: PositiveInt | None = None  # nhân vật chính ở yên từng ấy chương (D-98)
+    # Ba cờ của biến thể "v3" (D-110), mặc định TẮT: app không đổi cho tới khi A/B xong.
+    character_personality_max_chars: NonNegativeInt = 0  # tính cách NPC vào đề dàn ý và viết; 0 = tắt
+    previous_openings: NonNegativeInt = 0  # số chương gần nhất có câu mở đưa vào đề viết; 0 = tắt
+    previous_opening_max_chars: PositiveInt | None = None  # độ dài tối đa một câu mở
+    unplanned_chapter_goal: bool = False  # chương không có mốc vẫn phải đổi tình thế cụ thể
 
 
 class LLMCallLimits(_Section):

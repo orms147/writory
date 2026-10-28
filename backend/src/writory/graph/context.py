@@ -55,6 +55,9 @@ class CharacterInfo:
     location: Text | None
     holds: tuple[Text, ...]
     user_authored: bool
+    # Tính cách do khởi tạo viết (hoặc người chơi viết, nếu `user_authored`), đã cắt theo trần;
+    # None khi tắt (`limits.context.character_personality_max_chars` = 0, D-110).
+    personality: str | None = None
 
 
 @dataclass(frozen=True)
@@ -113,6 +116,7 @@ class NeighborInfo:
     hops: int
     alive: bool | None  # chỉ cho Character
     user_authored: bool
+    personality: str | None = None  # chỉ cho Character, như `CharacterInfo.personality` (D-110)
 
 
 @dataclass(frozen=True)
@@ -199,6 +203,22 @@ def cap_page_facts(facts: tuple[FactInfo, ...], keep: int | None) -> tuple[FactI
     return tuple(f for f in facts if f.id not in dropped)
 
 
+def clip_personality(text: str | None, max_chars: int) -> str | None:
+    """Tính cách đưa vào đề: một dòng, cắt ở ranh giới từ với dấu "…" sao cho không quá `max_chars`.
+    `max_chars` <= 0 (tắt) hoặc không có chữ thì None (D-110)."""
+    if text is None or max_chars <= 0:
+        return None
+    flat = " ".join(text.split())
+    if not flat:
+        return None
+    if len(flat) <= max_chars:
+        return flat
+    cut = flat[:max_chars - 1]
+    if flat[max_chars - 1] != " " and " " in cut:
+        cut = cut.rsplit(" ", 1)[0]
+    return cut.rstrip() + "…"
+
+
 def writer_context(
     driver: Driver,
     story_id: str,
@@ -207,8 +227,11 @@ def writer_context(
     plan: PlanLike | None,
     *,
     max_neighbors: int | None = None,
+    personality_max_chars: int = 0,
 ) -> WriterContext:
-    """`max_neighbors`: lấy từ `limits.context.writer_max_neighbors` (None = không giới hạn)."""
+    """`max_neighbors`: lấy từ `limits.context.writer_max_neighbors` (None = không giới hạn).
+    `personality_max_chars`: `limits.context.character_personality_max_chars`; 0 = tắt, không nhân
+    vật nào có tính cách trong kết quả (D-110). Không bao giờ đọc `backstory`: có thể chứa bí mật."""
     require_story_id(story_id)
     require_chapter(as_of_chapter)
     present = list(dict.fromkeys(present_ids))
@@ -226,6 +249,7 @@ def writer_context(
         OPTIONAL MATCH (n)-[r:HOLDS]->(item:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
         WITH n, locs, collect(item) AS items
         RETURN n.id AS id, n.name AS name, coalesce(n.aliases, []) AS aliases,
+               n.personality AS personality,
                [x IN locs | {{id: x.id, name: x.name, ua: coalesce(x.user_authored, false)}}]
                  AS locs,
                [x IN items | {{id: x.id, name: x.name, ua: coalesce(x.user_authored, false)}}]
@@ -246,7 +270,8 @@ def writer_context(
                        Text(r["locs"][0]["name"], r["locs"][0]["ua"]) if r["locs"] else None,
                        tuple(sorted((Text(x["name"], x["ua"]) for x in r["items"]),
                                     key=lambda t: t.value)),
-                       r["ua"]) for r in chars),
+                       r["ua"], clip_personality(r["personality"], personality_max_chars))
+         for r in chars),
         key=lambda c: order[c.id],
     ))
     # Nút đã nằm ở phần sự thật thì không lặp lại trong phần gợi ý.
@@ -365,7 +390,8 @@ def writer_context(
     limit = "" if max_neighbors is None else "LIMIT $limit"
     neighbors = tuple(
         NeighborInfo(r["id"], r["kind"], r["text"], tuple(r["aliases"]), r["hops"],
-                     r["alive"], r["ua"])
+                     r["alive"], r["ua"],
+                     clip_personality(r["personality"], personality_max_chars))
         for r in read(f"""
             MATCH (p:{ENTITY} {{story_id: $story_id}}) WHERE p.id IN $present
             MATCH path = (p)-[rels*1..2]-(n:{ENTITY} {{story_id: $story_id}})
@@ -376,6 +402,7 @@ def writer_context(
             RETURN n.id AS id, {_KIND} AS kind, {_TEXT} AS text,
                    coalesce(n.aliases, []) AS aliases, hops,
                    coalesce(n.user_authored, false) AS ua,
+                   CASE WHEN n:Character THEN n.personality END AS personality,
                    CASE WHEN n:Character THEN NOT EXISTS {{
                      MATCH (n)-[d:DIED_IN]->(:{ENTITY} {{story_id: $story_id}})
                      WHERE d.valid_from_chapter <= $chapter
@@ -492,7 +519,8 @@ def render_writer_context(
         state = "còn sống" if c.alive else "ĐÃ CHẾT"
         where = ["; ở: ", _t(c.location)] if c.location else []
         holds = ["; đang giữ: ", *_joined(c.holds)] if c.holds else ["; không giữ đồ vật nào"]
-        out.line("- ", *_name(c), *known(c.id), f" — {state}", *where, *holds)
+        trait = ["; tính cách: ", (c.personality, c.user_authored)] if c.personality else []
+        out.line("- ", *_name(c), *known(c.id), f" — {state}", *where, *holds, *trait)
 
     if ctx.items:
         out.line("### Đồ vật quan trọng (mỗi đồ vật chỉ ở một chỗ: người giữ hoặc nơi chốn; "
@@ -553,7 +581,9 @@ def render_writer_context(
     if alive_neighbors:
         out.line("### Người, vật, sự việc liên quan")
         for n in alive_neighbors:
-            out.line("- ", *_name(n), f" [{n.kind}, cách {n.hops} bước]")
+            who = n.personality if n.kind == "Character" else None
+            trait = [" — tính cách: ", (who, n.user_authored)] if who else []
+            out.line("- ", *_name(n), f" [{n.kind}, cách {n.hops} bước]", *trait)
     if ctx.open_threads:
         out.line("### Mạch đang mở")
         for t in ctx.open_threads:

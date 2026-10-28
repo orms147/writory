@@ -966,3 +966,39 @@ async def test_a_default_run_records_no_override(tmp_path):
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     assert meta["prompt_variant"] is None and meta["style_guide_path"] is None
     assert meta["prompt_versions_overridden"] == []
+
+
+# --- cờ --prose-v3: bật cùng lúc ba cờ ngữ cảnh của biến thể v3 (D-110) ------------------------
+
+
+def test_prose_v3_flag_turns_the_three_context_flags_on_and_nothing_else(tmp_path):
+    config = make_config(tmp_path)
+    assert not config.limits.context.character_personality_max_chars
+    args = bench_run._parser().parse_args(["--prose-v3"])
+    assert args.prose_v3 is True and bench_run._parser().parse_args([]).prose_v3 is False
+    on = bench_run.apply_prose_v3(config)
+    ctx = on.limits.context
+    assert ctx.character_personality_max_chars > 0 and ctx.previous_openings > 0
+    assert ctx.previous_opening_max_chars and ctx.unplanned_chapter_goal is True
+    # Chỉ ba cờ đổi: phần còn lại của config giữ nguyên, và bản gốc không bị sửa tại chỗ.
+    changed = {k for k in type(ctx).model_fields
+               if getattr(ctx, k) != getattr(config.limits.context, k)}
+    assert changed <= {"character_personality_max_chars", "previous_openings",
+                       "previous_opening_max_chars", "unplanned_chapter_goal"}
+    assert on.limits.cost_usd == config.limits.cost_usd and on.models == config.models
+    assert not config.limits.context.unplanned_chapter_goal
+    from writory.pipeline.chapter import config_problems
+    assert config_problems(on) == config_problems(config)
+
+
+async def test_meta_records_the_three_context_flags(tmp_path):
+    run, _, _, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["context_flags"] == {"character_personality_max_chars": 0,
+                                     "previous_openings": 0, "unplanned_chapter_goal": False}
+    on = bench_run.apply_prose_v3(make_config(tmp_path / "on", **FIRST_PERSON))
+    run2, _, _, out2 = make_run(tmp_path / "on", config=on)
+    assert await run2.run() == bench_run.EXIT_OK
+    flags = json.loads((out2 / "meta.json").read_text(encoding="utf-8"))["context_flags"]
+    assert flags["character_personality_max_chars"] > 0 and flags["unplanned_chapter_goal"] is True

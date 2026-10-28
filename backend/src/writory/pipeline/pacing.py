@@ -101,6 +101,8 @@ class ChapterGoals:
     revealed: tuple[RevealedSecret, ...] = ()
     # Chỉ khi `chapter_goals(standstill_chapters=N)` và nhân vật chính ở yên từ N chương (D-98).
     standstill: Standstill | None = None
+    # Chương này không có mốc nào đang diễn ra và cờ `unplanned_chapter_goal` bật (D-110).
+    gap: bool = False
 
     @property
     def final(self) -> bool:
@@ -157,7 +159,8 @@ def stalled_after(state: GraphState, committed_chapter: int, threshold: int | No
 
 
 def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
-                  standstill_chapters: int | None = None) -> ChapterGoals:
+                  standstill_chapters: int | None = None,
+                  unplanned_goal: bool = False) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
     phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt."""
     progress = plan_progress(plan, state, chapter)
@@ -183,8 +186,10 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
         for s in progress.secrets if s.revealed_chapter is not None
     )
     still = None if final else standstill(state, chapter, standstill_chapters)
-    return ChapterGoals(chapter, plan.total_chapters, act, _milestones(plan, chapter, final),
-                        tuple(secrets), threads, revealed, still)
+    milestones = _milestones(plan, chapter, final)
+    gap = unplanned_goal and not final and all(m.status == "next" for m in milestones)
+    return ChapterGoals(chapter, plan.total_chapters, act, milestones,
+                        tuple(secrets), threads, revealed, still, gap)
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -205,7 +210,6 @@ _THREAD_TEXT = {
 _MILESTONE_TEXT = {
     "due": "ĐẾN HẠN ở chương này",
     "open": "Đang diễn ra",
-    "next": "Mốc kế tiếp, chuẩn bị dần",
 }
 
 
@@ -231,6 +235,13 @@ def resolvable(goals: ChapterGoals) -> tuple[ThreadGoal, ...]:
 GOAL_DEFAULTS: dict[str, str] = {
     "push_forward": ("Chương này phải đẩy truyện tới: kết chương ở một tình thế mới, không lặp lại "
                      "tình huống hay thế khó của chương trước."),
+    # Mốc kế tiếp (chưa tới khoảng của nó).
+    "milestone_next": "Mốc kế tiếp, chuẩn bị dần",
+    # Chỉ in khi `ChapterGoals.gap` (cờ `unplanned_chapter_goal`, D-110): chương không có mốc nào.
+    "milestone_gap": ("Chương này không có mốc cốt truyện riêng, nên tự nó phải đổi tình thế: cuối "
+                      "chương có một điều mà đầu chương chưa xảy ra hoặc chưa ai biết (người bị "
+                      "thương hay bị bắt, vật đổi chủ, bí mật lộ, người đổi phe, thời hạn bắt đầu, "
+                      "nơi chốn đổi). Ký, ghi, đặt xuống hay hẹn để sau không tính."),
     "standstill": ("Nhân vật chính đã ở {place} suốt {chapters} chương. Chương này PHẢI đổi tình "
                    "thế: một sự kiện mới buộc nhân vật chính rời nơi này, hoặc phá vỡ thế giằng co, "
                    "hoặc làm lộ điều chưa ai biết. Không lặp lại cảnh dò xét, chờ đợi hay thương "
@@ -295,6 +306,8 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
     line(f"- Vị trí: {where}.")
     if not goals.final:
         line("- " + say["push_forward"])
+    if goals.gap:
+        line("- " + say["milestone_gap"])
     if goals.standstill is not None:
         line("- ", *_fill_standstill(say["standstill"], goals.standstill))
     if goals.act is not None and goals.act.last_chapter_of_act and not goals.final:
@@ -303,7 +316,8 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
     if goals.milestones:
         line("### Mốc cốt truyện")
         for m in goals.milestones:
-            line(f"- {_MILESTONE_TEXT[m.status]} ({_KIND_TEXT[m.kind]}, "
+            status_text = say["milestone_next"] if m.status == "next" else _MILESTONE_TEXT[m.status]
+            line(f"- {status_text} ({_KIND_TEXT[m.kind]}, "
                  f"{_window(m.from_chapter, m.to_chapter)}): {escape_text(m.goal)}")
     if goals.secrets:
         line("### Bí mật đã tới khoảng lộ")

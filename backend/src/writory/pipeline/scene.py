@@ -161,6 +161,9 @@ class SceneBrief:
     forbidden: tuple[ForbiddenName, ...] = ()
     forbidden_max: int | None = None  # số nút tối đa trong mục tên cấm; None = không giới hạn (D-94)
     prompts: PromptTexts | None = None  # chỉ bộ đo (D-109)
+    # (chương, câu mở) của các chương gần nhất, cũ trước: chữ đã hiện trên trang, nên luôn bọc như
+    # dữ liệu (G4). Chỉ vào đề viết, cảnh 1 (D-110). Rỗng = tắt.
+    openings: tuple[tuple[int, str], ...] = ()
 
 
 @dataclass(frozen=True)
@@ -307,6 +310,15 @@ def _quotes(out: _Lines, quotes: Sequence[Chunk]) -> None:
         out.line(f"### Chương {q.chapter}", UserAuthored(q.text, "page_quote"))
 
 
+def _openings(out: _Lines, brief: SceneBrief) -> None:
+    if not brief.openings or brief.scene != 1:
+        return
+    out.line("## Câu mở của các chương trước (đã hiện trên trang; chỉ để KHÔNG lặp lại: câu mở và "
+             "động tác mở chương này phải khác)")
+    for number, text in brief.openings:
+        out.line(f"### Chương {number}", UserAuthored(text, "page_quote"))
+
+
 def _scene_rank(ctx: WriterContext) -> dict[str, int]:
     """Nút liên quan tới cảnh: 0 = nhân vật có mặt, đồ vật đang liệt kê và người giữ hay nơi của
     chúng; 1 = nút lân cận trong ngữ cảnh. Nút khác không có trong bảng (xếp sau, D-94)."""
@@ -409,6 +421,7 @@ def writer_messages(
     _head(out, brief)
     _context(out, brief, ctx)
     _quotes(out, quotes)
+    _openings(out, brief)
     _earlier(out, brief, names, edge_ends)
     _goals(out, brief)
     out.line("## Dàn ý cảnh này (các nhịp, theo thứ tự)")
