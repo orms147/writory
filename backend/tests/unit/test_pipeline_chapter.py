@@ -1620,3 +1620,42 @@ async def test_no_standstill_prompt_when_the_story_moved_recently(tmp_path):
 
 def test_standstill_threshold_is_in_config():
     assert load_config().limits.context.standstill_chapters >= 1  # D-98; số tạm, D-47
+
+
+# --- đề ghi đè cho bộ đo (D-109) -----------------------------------------------------------------
+
+
+async def _run_with_prompts(tmp_path, prompts):
+    config = make_config(tmp_path)
+    llm = ScriptedLLM(full_script())
+    chapter_run = ChapterRun(
+        request(), llm=llm, store=MemoryStore(), config=config, plan=PLAN,
+        tracker=CostTracker(config.limits.cost_usd), style_guide="PHONG CÁCH GỐC", prompts=prompts)
+    events = [e async for e in chapter_run.events()]
+    return events, llm
+
+
+async def test_prompt_texts_reach_outline_choices_and_goals_but_the_default_run_is_unchanged(
+        tmp_path):
+    from writory.pipeline.choices import SYSTEM_PROMPT as CHOICES_SYSTEM
+    from writory.pipeline.scene import OUTLINE_SYSTEM_PROMPT, PromptTexts
+
+    texts = PromptTexts(outline_system="ĐỀ DÀN Ý BIẾN THỂ", choices_system="ĐỀ LỰA CHỌN BIẾN THỂ",
+                        goal_texts={"push_forward": "MỤC TIÊU BIẾN THỂ."})
+    events, llm = await _run_with_prompts(tmp_path / "moi", texts)
+    assert kinds(events)[-1] == "choices_ready"
+
+    def by_system(prefix):  # `role_of` nhận vai qua đề mặc định, nên ở đây nhận qua đề ghi đè
+        return [c for c in llm.calls if c[0].content.startswith(prefix)]
+
+    outline, writer = by_system("ĐỀ DÀN Ý BIẾN THỂ"), by_system("PHONG CÁCH GỐC")
+    choices = by_system("ĐỀ LỰA CHỌN BIẾN THỂ")
+    assert len(outline) == 2 and len(writer) == 2 and len(choices) == 1
+    for call in (*outline, *writer):
+        assert "MỤC TIÊU BIẾN THỂ." in call[-1].content
+    assert not any(OUTLINE_SYSTEM_PROMPT[:60] in c[0].content for c in llm.calls)
+
+    _, base = await _run_with_prompts(tmp_path / "goc", None)
+    assert calls_of(base, "outline")[0][0].content.startswith(OUTLINE_SYSTEM_PROMPT[:60])
+    assert calls_of(base, "choices")[0][0].content.startswith(CHOICES_SYSTEM[:60])
+    assert "MỤC TIÊU BIẾN THỂ." not in calls_of(base, "outline")[0][-1].content

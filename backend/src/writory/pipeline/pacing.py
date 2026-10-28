@@ -14,6 +14,7 @@ G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đ
 `user_authored` bọc `UserAuthored`.
 """
 
+from collections.abc import Mapping
 from dataclasses import dataclass
 from typing import Literal
 
@@ -224,11 +225,46 @@ def resolvable(goals: ChapterGoals) -> tuple[ThreadGoal, ...]:
     return tuple(t for t in goals.threads if t.status != "later")
 
 
+# Câu cố định của mục tiêu chương mà bộ đo được thay để so hai bản đề trên cùng một thế giới (D-109).
+# Sản phẩm không bao giờ truyền `texts`: luôn dùng các câu này. `standstill` có chỗ điền {place} và
+# {chapters}; tên nơi chốn vẫn đi qua `_data` (G4).
+GOAL_DEFAULTS: dict[str, str] = {
+    "push_forward": ("Chương này phải đẩy truyện tới: kết chương ở một tình thế mới, không lặp lại "
+                     "tình huống hay thế khó của chương trước."),
+    "standstill": ("Nhân vật chính đã ở {place} suốt {chapters} chương. Chương này PHẢI đổi tình "
+                   "thế: một sự kiện mới buộc nhân vật chính rời nơi này, hoặc phá vỡ thế giằng co, "
+                   "hoặc làm lộ điều chưa ai biết. Không lặp lại cảnh dò xét, chờ đợi hay thương "
+                   "lượng của các chương trước."),
+    "secret_note": ("Hé lộ nghĩa là trên trang có câu nói thẳng điều đó (lời nhân vật, chứng cứ, "
+                    "điều nhân vật chính tận mắt thấy), không chỉ gợi ý."),
+    "revealed_note": ("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân "
+                      "vật phản ứng với điều đã biết và đi một bước mới."),
+    "thread_note": ("Gỡ mạch nghĩa là trên trang có câu trả lời rõ cho câu hỏi chính của mạch, "
+                    "hoặc nhân vật đưa ra quyết định dứt khoát mà mạch đòi, nói thẳng ra. Mạch hỏi "
+                    "nhiều vế thì chỉ gỡ khi mọi vế đã có câu trả lời. Gỡ phải là một bước mới: "
+                    "không diễn lại nhịp đã xảy ra ở chương trước (lời thú nhận, phát hiện cũ), "
+                    "không chỉ nhắc lại điều người đọc đã biết."),
+}
+
+
+def _fill_standstill(template: str, st: "Standstill") -> list[str | UserAuthored]:
+    """Điền {place} và {chapters} vào câu `standstill`; tên nơi chốn qua `_data` (escape hoặc bọc)."""
+    pieces: list[str | UserAuthored] = []
+    for i, part in enumerate(template.split("{place}")):
+        if i:
+            pieces.append(_data(st.place, st.user_authored))
+        pieces.append(part.replace("{chapters}", str(st.chapters)))
+    return pieces
+
+
 def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
-                         thread_ids: bool = False) -> list[str | UserAuthored]:
+                         thread_ids: bool = False,
+                         texts: Mapping[str, str] | None = None) -> list[str | UserAuthored]:
     """Mục "Mục tiêu của chương" cho đề dàn ý và đề viết. Trả các phần để nối vào `user_message`;
     không bao giờ đưa vào đề của vai phục vụ người chơi (G1). `thread_ids`: ghi id của mạch được
-    gỡ ở chương này, để dàn ý chép vào `resolves` (D-82); đề viết không cần."""
+    gỡ ở chương này, để dàn ý chép vào `resolves` (D-82); đề viết không cần. `texts`: chỉ bộ đo
+    (D-109), thay các câu trong `GOAL_DEFAULTS` theo khoá; None hay thiếu khoá thì dùng câu mặc định."""
+    say = {**GOAL_DEFAULTS, **(texts or {})}
     parts: list[str | UserAuthored] = []
     buf: list[str] = []
 
@@ -258,14 +294,9 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
                   f"{a.chapter_in_act}/{a.chapters_in_act} của hồi")
     line(f"- Vị trí: {where}.")
     if not goals.final:
-        line("- Chương này phải đẩy truyện tới: kết chương ở một tình thế mới, không lặp lại tình "
-             "huống hay thế khó của chương trước.")
+        line("- " + say["push_forward"])
     if goals.standstill is not None:
-        st = goals.standstill
-        line("- Nhân vật chính đã ở ", _data(st.place, st.user_authored), f" suốt {st.chapters} "
-             "chương. Chương này PHẢI đổi tình thế: một sự kiện mới buộc nhân vật chính rời nơi này, "
-             "hoặc phá vỡ thế giằng co, hoặc làm lộ điều chưa ai biết. Không lặp lại cảnh dò xét, "
-             "chờ đợi hay thương lượng của các chương trước.")
+        line("- ", *_fill_standstill(say["standstill"], goals.standstill))
     if goals.act is not None and goals.act.last_chapter_of_act and not goals.final:
         line(f"- Đây là chương cuối của hồi «{escape_text(goals.act.name)}»: khép lại tình huống "
              "của hồi này để chương sau sang hồi mới.")
@@ -279,14 +310,12 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
         for s in goals.secrets:
             line(f"- {_SECRET_TEXT[s.status]} (khoảng lộ {_window(s.from_chapter, s.to_chapter)}): ",
                  _data(s.text, s.user_authored))
-        line("Hé lộ nghĩa là trên trang có câu nói thẳng điều đó (lời nhân vật, chứng cứ, điều nhân "
-             "vật chính tận mắt thấy), không chỉ gợi ý.")
+        line(say["secret_note"])
     if goals.revealed:
         line("### Bí mật đã lộ (người đọc đã biết)")
         for r in goals.revealed:
             line(f"- Đã lộ ở chương {r.revealed_chapter}: ", _data(r.text, r.user_authored))
-        line("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân vật phản "
-             "ứng với điều đã biết và đi một bước mới.")
+        line(say["revealed_note"])
     if goals.threads:
         line("### Mạch phải gỡ trước khi kết truyện")
         for t in goals.threads:
@@ -294,11 +323,7 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
             ident = f"id {t.thread_id}, " if thread_ids and t.status != "later" else ""
             line(f"- {_THREAD_TEXT[t.status]} ({ident}hạn gỡ "
                  f"{_window(t.from_chapter, t.to_chapter)}): ", _data(t.description, t.user_authored))
-        line("Gỡ mạch nghĩa là trên trang có câu trả lời rõ cho câu hỏi chính của mạch, hoặc nhân "
-             "vật đưa ra quyết định dứt khoát mà mạch đòi, nói thẳng ra. Mạch hỏi nhiều vế thì chỉ "
-             "gỡ khi mọi vế đã có câu trả lời. Gỡ phải là một bước mới: "
-             "không diễn lại nhịp đã xảy ra ở chương trước (lời thú nhận, phát hiện cũ), không chỉ "
-             "nhắc lại điều người đọc đã biết.")
+        line(say["thread_note"])
     last_scene = scene >= scene_count
     if goals.final:
         line("### Chương cuối")

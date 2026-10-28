@@ -883,3 +883,86 @@ def test_model_bakeoff_scenario_has_no_gap_for_any_of_the_three_writers(model):
         load_config(), scenario,
         bench_run.ModelOverrides(writer_model=model, outline_model=model))
     assert bench_run.run_problems(config, scenario) == []
+
+
+# --- A/B đề viết trên cùng một thế giới (D-109) -----------------------------------------------------
+
+
+def _variant_dir(root: Path, name: str = "moi") -> Path:
+    folder = root / name
+    folder.mkdir(parents=True)
+    (folder / "outline_system.md").write_text("ĐỀ DÀN Ý BIẾN THỂ", encoding="utf-8")
+    (folder / "goals.yaml").write_text("push_forward: MỤC TIÊU BIẾN THỂ.\n", encoding="utf-8")
+    return folder
+
+
+def test_cli_parses_the_style_guide_and_prompt_variant_flags():
+    args = bench_run._parser().parse_args(["--style-guide", "x.md", "--prompt-variant", "moi"])
+    assert (args.style_guide, args.prompt_variant) == ("x.md", "moi")
+    none = bench_run._parser().parse_args([])
+    assert none.style_guide is None and none.prompt_variant is None
+
+
+def test_prompts_from_args_reads_the_files_and_names_what_it_overrides(tmp_path):
+    guide = tmp_path / "van-phong.md"
+    guide.write_text("VĂN PHONG MỚI\n", encoding="utf-8")
+    _variant_dir(tmp_path / "bien-the")
+    args = bench_run._parser().parse_args(["--style-guide", str(guide), "--prompt-variant", "moi"])
+    got = bench_run.prompts_from_args(args, variants_root=tmp_path / "bien-the")
+    assert got.style_guide == "VĂN PHONG MỚI" and got.style_guide_path == guide
+    assert got.variant.name == "moi" and got.variant.outline_system == "ĐỀ DÀN Ý BIẾN THỂ"
+    plain = bench_run.prompts_from_args(bench_run._parser().parse_args([]))
+    assert (plain.style_guide, plain.style_guide_path, plain.variant) == (None, None, None)
+
+
+@pytest.mark.parametrize("content", ["", "  \n"])
+def test_an_empty_style_guide_file_is_refused(tmp_path, content):
+    guide = tmp_path / "rong.md"
+    guide.write_text(content, encoding="utf-8")
+    args = bench_run._parser().parse_args(["--style-guide", str(guide)])
+    with pytest.raises(ConfigError, match="rỗng"):
+        bench_run.prompts_from_args(args)
+
+
+def test_a_missing_style_guide_file_is_refused(tmp_path):
+    args = bench_run._parser().parse_args(["--style-guide", str(tmp_path / "khong-co.md")])
+    with pytest.raises(ConfigError, match="không đọc được"):
+        bench_run.prompts_from_args(args)
+
+
+async def test_dry_run_with_a_variant_and_style_guide_sends_them_and_records_them_in_meta(tmp_path):
+    from writory.pipeline.prompt_variants import load_prompt_variant
+
+    _variant_dir(tmp_path / "bien-the")
+    variant = load_prompt_variant("moi", root=tmp_path / "bien-the")
+    guide = tmp_path / "van-phong.md"
+    guide.write_text("VĂN PHONG MỚI", encoding="utf-8")
+    config = trial_config(tmp_path)
+    scenario = scenario_for(config)
+    llm = DryRunLLM(config.story_lengths.levels[scenario.length_level].chapters.min)
+    run = StoryRun(scenario, "sha-test", config, llm=llm, store=OverlayStore(),
+                   options=RunOptions(out=tmp_path / "out", dry_run=True, prompt_variant=variant,
+                                      style_guide_path=guide),
+                   style_guide="VĂN PHONG MỚI", log=lambda _: None)
+    assert await run.run() == bench_run.EXIT_OK
+    outline_calls = [c for c in llm.calls if c[0].content.startswith("ĐỀ DÀN Ý BIẾN THỂ")]
+    assert outline_calls, "lời gọi dàn ý phải mang đề biến thể"
+    # câu "đẩy truyện tới" không có ở chương cuối, nên không phải lời gọi nào cũng mang nó
+    assert sum("MỤC TIÊU BIẾN THỂ." in c[-1].content for c in outline_calls) >= len(outline_calls) - 2
+    assert [c for c in llm.calls if c[0].content.startswith("VĂN PHONG MỚI")]
+    meta = json.loads((tmp_path / "out" / "meta.json").read_text(encoding="utf-8"))
+    assert meta["prompt_variant"]["name"] == "moi"
+    assert meta["prompt_variant"]["overrides"] == ["outline_system", "goals:push_forward"]
+    assert set(meta["prompt_variant"]["files"]) == {"outline_system.md", "goals.yaml"}
+    assert meta["style_guide_path"].endswith("van-phong.md")
+    assert meta["style_guide_sha256"] == bench_run._sha256("VĂN PHONG MỚI".encode())
+    assert meta["prompt_versions"]["outline"] == bench_run.scene_mod.OUTLINE_PROMPT_VERSION
+    assert meta["prompt_versions_overridden"] == ["outline", "writer"]
+
+
+async def test_a_default_run_records_no_override(tmp_path):
+    run, _, _, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
+    assert meta["prompt_variant"] is None and meta["style_guide_path"] is None
+    assert meta["prompt_versions_overridden"] == []

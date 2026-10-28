@@ -20,7 +20,7 @@ nhắc lại chữ người chơi, nên luôn bọc `UserAuthored` (G4). Chỉ h
 
 import re
 from collections.abc import Iterable, Mapping, Sequence
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Self
 
@@ -129,6 +129,18 @@ class Named:
 
 
 @dataclass(frozen=True)
+class PromptTexts:
+    """Chữ đề ghi đè, CHỈ cho bộ đo (D-109): đề dàn ý, đề tạo lựa chọn và các câu của mục tiêu chương
+    (`pacing.GOAL_DEFAULTS`). Sản phẩm không bao giờ tạo đối tượng này. Là chữ của nhà phát triển,
+    nên chỉ vào vai system (hai đề) hoặc là câu cố định của mục tiêu chương; chữ người chơi vẫn chỉ vào
+    vai user và được bọc như cũ (G4). None / rỗng = dùng đề mặc định."""
+
+    outline_system: str | None = None
+    choices_system: str | None = None
+    goal_texts: Mapping[str, str] = field(default_factory=dict)
+
+
+@dataclass(frozen=True)
 class SceneBrief:
     """Phần đề chung cho dàn ý và model viết."""
 
@@ -148,6 +160,7 @@ class SceneBrief:
     # Tên lớp truth mà trang chưa được viết (D-61), từ cùng hàm với bộ dò lộ (D-91).
     forbidden: tuple[ForbiddenName, ...] = ()
     forbidden_max: int | None = None  # số nút tối đa trong mục tên cấm; None = không giới hạn (D-94)
+    prompts: PromptTexts | None = None  # chỉ bộ đo (D-109)
 
 
 @dataclass(frozen=True)
@@ -343,8 +356,10 @@ def _goals(out: _Lines, brief: SceneBrief, *, thread_ids: bool = False) -> None:
     """Mục tiêu của chương (D-49). `render_chapter_goals` đã escape chữ của model và bọc chữ
     người chơi, nên các phần đi thẳng vào `line`, không escape lần nữa."""
     if brief.goals is not None:
+        texts = brief.prompts.goal_texts if brief.prompts is not None else None
         out.line(*render_chapter_goals(brief.goals, scene=brief.scene,
-                                       scene_count=brief.scene_count, thread_ids=thread_ids))
+                                       scene_count=brief.scene_count, thread_ids=thread_ids,
+                                       texts=texts))
 
 
 OUTLINE_SYSTEM_PROMPT = """Bạn lập dàn ý cho MỘT cảnh của một truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính; truyện kể theo góc nhìn nhân vật chính. Bạn được biết sự thật của thế giới, kể cả bí mật, để dàn ý nhất quán; dàn ý không được làm lộ bí mật trước khoảng lộ.
@@ -380,7 +395,9 @@ def outline_messages(
         out.line(f"- {c.id} | ", _name(c.name), mark)
     _earlier(out, brief, names, edge_ends)
     _goals(out, brief, thread_ids=True)
-    return [system_message(OUTLINE_SYSTEM_PROMPT, DATA_NOTICE), user_message(*out.done())]
+    system = (brief.prompts.outline_system if brief.prompts is not None else None)
+    return [system_message(system or OUTLINE_SYSTEM_PROMPT, DATA_NOTICE),
+            user_message(*out.done())]
 
 
 def writer_messages(

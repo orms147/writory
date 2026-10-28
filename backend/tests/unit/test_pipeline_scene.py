@@ -21,9 +21,11 @@ from writory.graph.context import FactInfo
 from writory.pipeline.extract import Entity, build_messages
 from writory.pipeline.pacing import ChapterGoals, ThreadGoal
 from writory.pipeline.scene import (
+    OUTLINE_SYSTEM_PROMPT,
     Candidate,
     EarlierScene,
     Named,
+    PromptTexts,
     SceneBrief,
     SceneOutline,
     keep_resolves,
@@ -340,3 +342,52 @@ def test_the_cap_counts_terms_in_the_tail_not_nodes():
                   ForbiddenName("zz_b", "B Một", None))
     content = _both(replace(BRIEF, forbidden=many_terms, forbidden_max=0))[1]
     assert _forbidden_lines(content)[-1].startswith("- Và 3 tên khác")
+
+
+# --- đề ghi đè cho bộ đo (D-109) -----------------------------------------------------------------
+# Đề ghi đè là chữ của nhà phát triển, vào vai system; chữ người chơi vẫn chỉ vào vai user, bọc như cũ.
+
+
+def test_outline_system_prompt_can_be_replaced_and_the_user_message_is_untouched():
+    candidates = [Candidate("minh", Named("Trần Minh"), True)]
+    base_sys, base_user = outline_messages(BRIEF, _ctx(), candidates, NAMES, {})
+    texts = PromptTexts(outline_system="ĐỀ DÀN Ý BIẾN THỂ")
+    new_sys, new_user = outline_messages(replace(BRIEF, prompts=texts), _ctx(), candidates, NAMES, {})
+    assert new_sys.content.startswith("ĐỀ DÀN Ý BIẾN THỂ") and OUTLINE_SYSTEM_PROMPT[:40] not in new_sys.content
+    assert new_sys.content.endswith(base_sys.content.split("\n\n")[-1])  # vẫn kèm DATA_NOTICE
+    assert new_user.content == base_user.content and new_user.role == "user"
+
+
+def test_the_replaced_prompts_never_carry_player_text_and_the_story_stays_wrapped():
+    brief = replace(BRIEF, story_brief="[PLAYER-brief]", player_action="[PLAYER-action]",
+                    prompts=PromptTexts(outline_system="ĐỀ BIẾN THỂ"))
+    candidates = [Candidate("minh", Named("Trần Minh"), True)]
+    system, user = outline_messages(brief, _ctx(), candidates, NAMES, {})
+    assert "[PLAYER-" not in system.content
+    for marker in ("[PLAYER-brief]", "[PLAYER-action]"):
+        assert re.search(rf'<player_data source="[a-z_]+">\n{re.escape(marker)}', user.content)
+    assert user.content.count(OPEN_TAG_START) == user.content.count(CLOSE_TAG)
+
+
+def test_a_replaced_system_prompt_with_a_data_block_is_refused():
+    brief = replace(BRIEF, prompts=PromptTexts(outline_system='<player_data source="x">a</player_data>'))
+    with pytest.raises(ValueError, match="player_data"):
+        outline_messages(brief, _ctx(), [Candidate("minh", Named("Trần Minh"), True)], NAMES, {})
+
+
+def test_goal_texts_reach_both_prompts_through_the_brief():
+    from writory.pipeline.pacing import ActPosition, ChapterGoals
+
+    goals = ChapterGoals(4, 12, ActPosition("a", 1, 2, 1, 6), (), (), ())
+    brief = replace(BRIEF, goals=goals,
+                    prompts=PromptTexts(goal_texts={"push_forward": "CÂU MỤC TIÊU MỚI."}))
+    outline = outline_messages(brief, _ctx(), [Candidate("minh", Named("Trần Minh"), True)],
+                               NAMES, {})[1].content
+    writer = writer_messages(load_style_guide(), brief, _ctx(), OUTLINE, NAMES, {})[1].content
+    for content in (outline, writer):
+        assert "CÂU MỤC TIÊU MỚI." in content and "phải đẩy truyện tới" not in content
+
+
+def test_the_writer_system_prompt_is_the_style_guide_passed_in():
+    system, _ = writer_messages("HƯỚNG DẪN VĂN PHONG MỚI", BRIEF, _ctx(), OUTLINE, NAMES, {})
+    assert system.content.startswith("HƯỚNG DẪN VĂN PHONG MỚI")

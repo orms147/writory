@@ -222,3 +222,27 @@ async def test_make_choices_passes_the_flag_into_the_prompt():
     llm = ScriptedLLM([_reply(_refs_by_text())])
     await _make(llm, stalled=True)
     assert "thế giằng co" in llm.calls[0][-1].content
+
+
+# --- đề lựa chọn ghi đè cho bộ đo (D-109) -------------------------------------------------------
+
+
+def test_choices_system_prompt_can_be_replaced_without_touching_the_user_message():
+    base, _ = build_choice_messages(VIEW, protagonist_id="minh", last_scene_text=SCENE)
+    new, _ = build_choice_messages(VIEW, protagonist_id="minh", last_scene_text=SCENE,
+                                   system_prompt="ĐỀ LỰA CHỌN BIẾN THỂ")
+    assert new[0].content.startswith("ĐỀ LỰA CHỌN BIẾN THỂ") and SYSTEM_PROMPT[:40] not in new[0].content
+    assert new[1].content == base[1].content  # sổ tay và cảnh vẫn bọc như cũ (G4)
+    assert OPEN_TAG_START in new[1].content
+
+
+async def test_make_choices_sends_the_replaced_system_prompt_and_g1_still_holds():
+    llm = ScriptedLLM([_reply(_refs_by_text())])
+    await make_choices(
+        llm, "m", view=VIEW, protagonist_id="minh", last_scene_text=SCENE,
+        truth_names=STATE.named_nodes(), plan=PLAN, retries=RETRIES, story_brief="",
+        system_prompt="ĐỀ LỰA CHỌN BIẾN THỂ")
+    sent = "\n".join(m.content for m in llm.calls[0])
+    assert llm.calls[0][0].content.startswith("ĐỀ LỰA CHỌN BIẾN THỂ")
+    for secret in TRUTH_AT_4:  # lớp truth vẫn không vào đề tạo lựa chọn
+        assert secret not in sent

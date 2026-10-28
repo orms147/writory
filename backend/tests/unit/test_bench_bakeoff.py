@@ -34,7 +34,8 @@ def make_setup_source(root: Path) -> str:
 
 def make_run_dir(root: Path, name: str, model: str, *, setup_from: str, chapters: int = 3,
                  writer_usd: float = 0.01, sha: str = "sha-de", seed: int = 7,
-                 failed: int = 0) -> Path:
+                 failed: int = 0, style_sha: str | None = None,
+                 prompt_variant: dict | None = None) -> Path:
     scenario, _ = bench_run.load_scenario(SCENARIO)
     run = root / "evals" / "results" / name
     (run / "chapters").mkdir(parents=True)
@@ -46,6 +47,10 @@ def make_run_dir(root: Path, name: str, model: str, *, setup_from: str, chapters
     meta = {"models": {"writer": {"model": model}, "outline": {"model": "common/outline"}},
             "scenario": {"sha256": sha, "content": scenario.model_dump(mode="json", by_alias=True)},
             "seed": seed, "setup_from": setup_from}
+    if style_sha is not None:
+        meta["style_guide_sha256"] = style_sha
+    if prompt_variant is not None:
+        meta["prompt_variant"] = prompt_variant
     report = {"cost": {"total_usd": writer_usd + 0.02, "by_role": {
         "writer": writer_usd, "outline": 0.005, "extract": 0.015}},
         "chapters_committed": chapters, "chapters_target": 6, "status": "ok", "stop": None,
@@ -1225,3 +1230,63 @@ async def test_meta_empty_content_after_reasoning_is_an_error_with_its_cost_not_
     errors = rows(meta_pack, bb.ERRORS_FILE)
     assert rows(meta_pack) == [] and {e["error_type"] for e in errors} == {error}
     assert all(e["cost_usd"] > 0 for e in errors)
+
+
+# --- cùng model, khác đề viết (D-109) --------------------------------------------------------------
+
+
+def _ab(root, **second):
+    setup = "evals/results/setup-src"
+    first = make_run_dir(root, "run-cu", MODELS[0], setup_from=setup, style_sha="a" * 64)
+    other = make_run_dir(root, "run-moi", MODELS[0], setup_from=setup, **second)
+    return [first, other]
+
+
+def test_same_model_with_a_different_style_guide_can_be_packed(world, tmp_path):
+    root, _ = world
+    runs = _ab(root, style_sha="b" * 64)
+    _, sha = bb.load_data()
+    bb.build_pack(runs, 3, tmp_path / "ab", sha)
+    key = json.loads((tmp_path / "ab" / "key.json").read_text(encoding="utf-8"))
+    assert sorted(key) == ["A", "B"]
+    names = {v["model"] for v in key.values()}
+    assert len(names) == 2 and all(n.startswith(MODELS[0]) for n in names)  # nhãn phân biệt được
+    assert {v["writer_model"] for v in key.values()} == {MODELS[0]}
+    assert any("style:bbbbbbbb" in n for n in names)
+
+
+def test_same_model_with_a_different_prompt_variant_can_be_packed(world, tmp_path):
+    root, _ = world
+    variant = {"name": "moi", "files": {"outline_system.md": "c" * 64},
+               "overrides": ["outline_system"]}
+    runs = _ab(root, style_sha="a" * 64, prompt_variant=variant)
+    _, sha = bb.load_data()
+    bb.build_pack(runs, 3, tmp_path / "ab", sha)
+    key = json.loads((tmp_path / "ab" / "key.json").read_text(encoding="utf-8"))
+    assert any("variant:moi" in v["model"] for v in key.values())
+
+
+def test_two_identical_runs_are_still_refused(world, tmp_path):
+    root, _ = world
+    runs = _ab(root, style_sha="a" * 64)
+    _, sha = bb.load_data()
+    with pytest.raises(ConfigError, match="cùng model viết"):
+        bb.build_pack(runs, 3, tmp_path / "ab", sha)
+
+
+def test_variants_with_the_same_files_but_another_name_are_still_the_same_run(world, tmp_path):
+    root, _ = world
+    files = {"outline_system.md": "c" * 64}
+    setup = "evals/results/setup-src"
+    one = make_run_dir(root, "run-x", MODELS[0], setup_from=setup, style_sha="a" * 64,
+                       prompt_variant={"name": "x", "files": files, "overrides": []})
+    two = make_run_dir(root, "run-y", MODELS[0], setup_from=setup, style_sha="a" * 64,
+                       prompt_variant={"name": "y", "files": files, "overrides": []})
+    _, sha = bb.load_data()
+    with pytest.raises(ConfigError, match="cùng model viết"):
+        bb.build_pack([one, two], 3, tmp_path / "ab", sha)
+
+
+def test_different_models_keep_their_plain_names_in_the_key(pack):
+    key = json.loads((pack / "key.json").read_text(encoding="utf-8"))
+    assert {v["model"] for v in key.values()} == set(MODELS)

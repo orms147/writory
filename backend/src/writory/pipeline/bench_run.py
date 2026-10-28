@@ -101,6 +101,7 @@ from writory.pipeline.choices import Choice, ChoicesOutput, make_choices
 from writory.pipeline.events import ChoicesReady, PlayerChoice, error_event
 from writory.pipeline.extract import ExtractOutput
 from writory.pipeline.pacing import stalled_after
+from writory.pipeline.prompt_variants import PROMPTS_DIR, PromptVariant, load_prompt_variant
 from writory.pipeline.scene import SceneOutline, load_style_guide
 from writory.pipeline.setup import (
     BuildOutput,
@@ -471,6 +472,51 @@ class GraphRunStore(GraphStore):
         delete_story(self._driver, self.story_id)
 
 
+# --- ghi đè đề (D-109) -------------------------------------------------------------------------
+
+
+@dataclass(frozen=True)
+class RunPrompts:
+    """Đề ghi đè của một lần chạy: hướng dẫn văn phong (file) và biến thể đề (thư mục). Rỗng hết thì
+    lần chạy dùng đề của mã."""
+
+    style_guide: str | None = None
+    style_guide_path: Path | None = None
+    variant: PromptVariant | None = None
+
+
+def prompts_from_args(args: argparse.Namespace, *,
+                     variants_root: Path | None = None) -> RunPrompts:
+    """Đọc `--style-guide` và `--prompt-variant` trước khi kết nối kho hay gọi model."""
+    guide_text = guide_path = None
+    if args.style_guide:
+        guide_path = Path(args.style_guide)
+        try:
+            guide_text = guide_path.read_text(encoding="utf-8").strip()
+        except (OSError, UnicodeDecodeError) as e:
+            raise ConfigError(f"không đọc được hướng dẫn văn phong {guide_path}: {e}") from e
+        if not guide_text:
+            raise ConfigError(f"hướng dẫn văn phong {guide_path} rỗng")
+    variant = (load_prompt_variant(args.prompt_variant, root=variants_root or PROMPTS_DIR)
+               if args.prompt_variant else None)
+    return RunPrompts(guide_text, guide_path, variant)
+
+
+def prompt_versions_overridden(options_variant: PromptVariant | None,
+                               style_guide_path: Path | None) -> list[str]:
+    """Đề nào của lần chạy KHÁC đề của mã, theo tên trong `prompt_versions` (outline, writer,
+    choices). Mục tiêu chương nằm trong cả đề dàn ý lẫn đề viết."""
+    out = []
+    goals = bool(options_variant and options_variant.goal_texts)
+    if goals or (options_variant and options_variant.outline_system is not None):
+        out.append("outline")
+    if goals or style_guide_path is not None:
+        out.append("writer")
+    if options_variant and options_variant.choices_system is not None:
+        out.append("choices")
+    return out
+
+
 # --- lần chạy --------------------------------------------------------------------------------
 
 
@@ -488,6 +534,9 @@ class RunOptions:
     setup_from: Path | None = None  # dùng lại khởi tạo của lần chạy này (không gọi model khởi tạo)
     setup_only: bool = False  # dừng sau khởi tạo (chương 0): thư mục kết quả làm nguồn --setup-from
     overrides: ModelOverrides = field(default_factory=ModelOverrides)  # D-101
+    # Đề ghi đè để so hai bản đề trên cùng một thế giới (D-109). Chỉ bộ đo; sản phẩm không có cờ này.
+    prompt_variant: PromptVariant | None = None
+    style_guide_path: Path | None = None  # file thay hướng dẫn văn phong; chữ nằm ở `style_guide`
 
 
 def player_action_text(choice: PlayerChoice) -> str:
@@ -803,7 +852,8 @@ class StoryRun:
             )
             run = ChapterRun(request, llm=self.budgeted, store=self.store, config=self.config,
                              plan=self.plan, tracker=self.tracker, style_guide=self.style_guide,
-                             on_quotes=partial(self._record_quotes, attempt))
+                             on_quotes=partial(self._record_quotes, attempt),
+                             prompts=self._prompt_texts())
             shown: list[str] = []
             async for event in run.events():
                 self._event({"chapter": number, "attempt": attempt,
@@ -882,6 +932,10 @@ class StoryRun:
             self.truth_chapters[str(number)][-1]["choices"] = [_choice_truth(c) for c in choices]
         return choices
 
+    def _prompt_texts(self):
+        variant = self.options.prompt_variant
+        return variant.texts() if variant is not None else None
+
     async def _regenerate_choices(self, number: int, out: ChapterOutcome) -> list[Choice]:
         assert self.metered is not None and self.plan is not None
         self.tracker.start_scene()  # như bước lựa chọn trong ChapterRun
@@ -893,6 +947,8 @@ class StoryRun:
             story_brief=self.brief,
             retries=self.config.limits.retries, extra=role_extra(self.config.models, "choices"),
             stalled=stalled_after(state, number, self.config.limits.context.standstill_chapters),
+            system_prompt=(self.options.prompt_variant.choices_system
+                           if self.options.prompt_variant is not None else None),
         )
 
     def _pick_choice(self, number: int, choices: Sequence[Choice]) -> int:
@@ -1056,6 +1112,13 @@ class StoryRun:
                 "choices": choices_mod.PROMPT_VERSION,
             },
             "style_guide_sha256": _sha256(self.style_guide.encode()),
+            # Đề ghi đè (D-109): bộ chấm lấy danh tính của lần chạy từ đây (hash file, không phải tên).
+            "style_guide_path": (repo_path(self.options.style_guide_path)
+                                 if self.options.style_guide_path else None),
+            "prompt_variant": (self.options.prompt_variant.as_meta()
+                               if self.options.prompt_variant else None),
+            "prompt_versions_overridden": prompt_versions_overridden(
+                self.options.prompt_variant, self.options.style_guide_path),
             "cost_limits": self.config.limits.cost_usd.model_dump(),
         }
 
@@ -1610,6 +1673,7 @@ async def _cli(args: argparse.Namespace) -> int:
         config = config.model_copy(update={"limits": config.limits.model_copy(
             update={"context": context})})
     overrides = overrides_from_args(args)
+    prompts = prompts_from_args(args)
     config = apply_model_overrides(config, scenario, overrides)
     problems = run_problems(config, scenario)
     if problems:  # trước khi kết nối kho hay đọc key
@@ -1662,7 +1726,10 @@ async def _cli(args: argparse.Namespace) -> int:
                                keep_story=args.keep_story or not args.dry_run, label=label,
                                config_dir=config_dir, scenario_path=scenario_path,
                                setup_from=Path(args.setup_from) if args.setup_from else None,
-                               setup_only=args.setup_only, overrides=overrides),
+                               setup_only=args.setup_only, overrides=overrides,
+                               prompt_variant=prompts.variant,
+                               style_guide_path=prompts.style_guide_path),
+            style_guide=prompts.style_guide,
         )
         return await run.run()
     finally:
@@ -1697,6 +1764,11 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--outline-model", help="ghi đè model vai dàn ý (D-101)")
     p.add_argument("--outline-reasoning", choices=OVERRIDE_REASONING,
                    help="ghi đè mức suy luận vai dàn ý; omit = không gửi `reasoning`")
+    p.add_argument("--style-guide", help="file hướng dẫn văn phong thay file mặc định (system "
+                   "prompt của model viết), để so hai bản đề trên cùng một thế giới (D-109)")
+    p.add_argument("--prompt-variant", help="tên thư mục trong evals/scenarios/prompts/: đề dàn ý, "
+                   "đề lựa chọn và chữ mục tiêu chương thay cho đề của mã; thiếu file nào dùng mặc "
+                   "định (D-109)")
     p.add_argument("--page-quotes-top-k", type=int,
                    help="ghi đè limits.context.page_quotes_top_k (0 = tắt đoạn trên trang, D-85)")
     p.add_argument("--dry-run", action="store_true", help="model giả, không key, không gọi model")
