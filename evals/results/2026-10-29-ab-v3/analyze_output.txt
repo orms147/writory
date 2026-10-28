@@ -1,0 +1,41 @@
+
+######## sonnet  (ngưỡng tổng đã khai T = 0.5)
+  tu-tien cặp 1: cũ 2.571  v3 3.000  chênh +0.429   chi phí 0.3569   so sánh: v3/cu -> nhất cu; cu/v3 -> nhất cu
+  tu-tien cặp 2: cũ 3.000  v3 2.714  chênh -0.286   chi phí 0.3648   so sánh: v3/cu -> nhất cu; cu/v3 -> nhất cu
+  ky-ao cặp 1: cũ 3.000  v3 3.143  chênh +0.143   chi phí 0.3478   so sánh: v3/cu -> nhất cu; cu/v3 -> nhất cu
+  ky-ao cặp 2: cũ 3.143  v3 3.429  chênh +0.286   chi phí 0.2935   so sánh: v3/cu -> nhất cu; cu/v3 -> nhất cu
+  trinh-tham cặp 1: cũ 2.857  v3 2.857  chênh +0.000   chi phí 0.3283   so sánh: v3/cu -> nhất v3; cu/v3 -> nhất v3
+  trinh-tham cặp 2: cũ 2.857  v3 2.857  chênh +0.000   chi phí 0.3240   so sánh: v3/cu -> nhất cu; cu/v3 -> nhất v3
+  chênh_sonnet = trung bình 6 cặp của (v3 − cũ) = +0.095   (ngưỡng 0.5)
+  chênh trung bình của thế giới theo tiêu chí (v3 − cũ):
+    tieng_viet_tu_nhien      {tu-tien: +0.0, ky-ao: +0.0, trinh-tham: +0.0}  tụt quá 1 điểm ở 0 thế giới
+    giong_sang_tao           {tu-tien: +0.0, ky-ao: +1.0, trinh-tham: +0.0}  tụt quá 1 điểm ở 0 thế giới
+    bam_nhan_vat_boi_canh    {tu-tien: +0.0, ky-ao: +0.0, trinh-tham: +0.5}  tụt quá 1 điểm ở 0 thế giới
+    lien_mach                {tu-tien: -0.5, ky-ao: +0.0, trinh-tham: -1.0}  tụt quá 1 điểm ở 0 thế giới
+    nhip_day_truyen          {tu-tien: +0.5, ky-ao: +0.5, trinh-tham: +0.5}  tụt quá 1 điểm ở 0 thế giới
+    lua_chon_y_nghia         {tu-tien: +0.5, ky-ao: +0.0, trinh-tham: +0.5}  tụt quá 1 điểm ở 0 thế giới
+    loi                      {tu-tien: +0.0, ky-ao: +0.0, trinh-tham: -0.5}  tụt quá 1 điểm ở 0 thế giới
+  tiêu chí tụt quá 1 điểm ở ≥ 2 thế giới: không
+
+######## muse  (ngưỡng tổng đã khai T = 0.71)
+  tu-tien cặp 1: cũ 2.571  v3 3.000  chênh +0.429   chi phí 0.1996
+  tu-tien cặp 2: cũ 2.857  v3 2.571  chênh -0.286   chi phí 0.2167
+  ky-ao cặp 1: cũ 3.143  v3 3.286  chênh +0.143   chi phí 0.2033
+  ky-ao cặp 2: cũ 3.571  v3 3.571  chênh +0.000   chi phí 0.1772
+  trinh-tham cặp 1: cũ 2.571  v3 3.143  chênh +0.571   chi phí 0.1734
+  trinh-tham cặp 2: cũ 3.000  v3 3.571  chênh +0.571   chi phí 0.1894
+  chênh_muse = trung bình 6 cặp của (v3 − cũ) = +0.238   (ngưỡng 0.71)
+  chênh trung bình của thế giới theo tiêu chí (v3 − cũ):
+    tieng_viet_tu_nhien      {tu-tien: +0.0, ky-ao: +0.0, trinh-tham: +0.0}  tụt quá 1 điểm ở 0 thế giới
+    giong_sang_tao           {tu-tien: +0.0, ky-ao: +0.0, trinh-tham: +1.0}  tụt quá 1 điểm ở 0 thế giới
+    bam_nhan_vat_boi_canh    {tu-tien: +0.0, ky-ao: -0.5, trinh-tham: +0.0}  tụt quá 1 điểm ở 0 thế giới
+    lien_mach                {tu-tien: +0.0, ky-ao: +0.0, trinh-tham: +0.5}  tụt quá 1 điểm ở 0 thế giới
+    nhip_day_truyen          {tu-tien: +0.5, ky-ao: +0.0, trinh-tham: +1.5}  tụt quá 1 điểm ở 0 thế giới
+    lua_chon_y_nghia         {tu-tien: +0.5, ky-ao: +1.5, trinh-tham: +1.0}  tụt quá 1 điểm ở 0 thế giới
+    loi                      {tu-tien: -0.5, ky-ao: -0.5, trinh-tham: +0.0}  tụt quá 1 điểm ở 0 thế giới
+  tiêu chí tụt quá 1 điểm ở ≥ 2 thế giới: không
+
+######## kết luận theo luật đã khai
+  chênh_Sonnet +0.095 (cần ≥ +0,50), chênh_Muse +0.238 (cần ≥ +0,71), không tiêu chí tụt quá 1 điểm ở ≥ 2 thế giới: True
+  => CHƯA PHÂN BIỆT ĐƯỢC
+chi phí giám khảo: {'sonnet': 2.0154, 'muse': 1.1595}

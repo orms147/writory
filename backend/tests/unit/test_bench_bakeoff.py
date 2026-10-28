@@ -1053,13 +1053,15 @@ def test_pack_refuses_an_unknown_judge(world, tmp_path):
 # --- đồng thuận và điểm gộp giữa hai giám khảo ---------------------------------------------------
 
 
-def graded_dir(world, tmp_path, name, judge_id, solo_scores, rankings):
+def graded_dir(world, tmp_path, name, judge_id, solo_scores, rankings, *, runs=None,
+               replicates=False):
     """Thư mục kết quả đã chấm xong với điểm cho trước theo MODEL (không theo nhãn), để thử
     `agreement` mà không cần gọi giám khảo."""
-    _root, runs = world
+    _root, world_runs = world
+    runs = runs or world_runs[:2]
     out = tmp_path / name
     _, sha = bb.load_data()
-    bb.build_pack(runs[:2], 11, out, sha, judge_id=judge_id)
+    bb.build_pack(runs, 11, out, sha, judge_id=judge_id, replicates=replicates)
     key = json.loads((out / "key.json").read_text(encoding="utf-8"))
     data, _ = bb.load_data()
     store = Store(out)
@@ -1290,3 +1292,134 @@ def test_variants_with_the_same_files_but_another_name_are_still_the_same_run(wo
 def test_different_models_keep_their_plain_names_in_the_key(pack):
     key = json.loads((pack / "key.json").read_text(encoding="utf-8"))
     assert {v["model"] for v in key.values()} == set(MODELS)
+
+
+# --- hai lượt cùng cấu hình khác thư mục: đo nhiễu giữa các lần viết ---------------------------------
+
+
+def _replicates(root, tag="", **second):
+    setup = "evals/results/setup-src"
+    first = make_run_dir(root, f"run-cu-1{tag}", MODELS[0], setup_from=setup, style_sha="a" * 64)
+    other = make_run_dir(root, f"run-cu-2{tag}", MODELS[0], setup_from=setup, style_sha="a" * 64,
+                         **second)
+    return [first, other]
+
+
+def test_replicates_of_one_configuration_are_packed_only_when_asked(world, tmp_path):
+    root, _ = world
+    runs = _replicates(root)
+    _, sha = bb.load_data()
+    with pytest.raises(ConfigError, match="--replicates"):
+        bb.build_pack(runs, 3, tmp_path / "no", sha)
+    meta = bb.build_pack(runs, 3, tmp_path / "yes", sha, replicates=True)
+    assert meta["replicates"] is True
+    plain = bb.build_pack(_ab(root, style_sha="b" * 64), 3, tmp_path / "plain", sha)
+    assert plain["replicates"] is False
+
+
+def test_replicates_get_distinct_names_from_their_directories(world, tmp_path):
+    root, _ = world
+    runs = _replicates(root)
+    _, sha = bb.load_data()
+    bb.build_pack(runs, 3, tmp_path / "rep", sha, replicates=True)
+    key = json.loads((tmp_path / "rep" / "key.json").read_text(encoding="utf-8"))
+    names = sorted(v["model"] for v in key.values())
+    assert len(set(names)) == 2 and all(n.startswith(MODELS[0]) for n in names)
+    assert any("run:run-cu-1" in n for n in names) and any("run:run-cu-2" in n for n in names)
+    assert {v["writer_model"] for v in key.values()} == {MODELS[0]}
+    assert {v["run"].rsplit("/", 1)[-1] for v in key.values()} == {"run-cu-1", "run-cu-2"}
+
+
+def test_replicates_flag_never_relaxes_the_same_world_rule(world, tmp_path):
+    root, _ = world
+    _, sha = bb.load_data()
+    for change in ({"seed": 99}, {"sha": "sha-khac"}):
+        runs = _replicates(root, tag=next(iter(change)), **change)
+        with pytest.raises(ConfigError, match="không cùng thế giới"):
+            bb.build_pack(runs, 3, tmp_path / f"w-{next(iter(change))}", sha, replicates=True)
+
+
+def test_replicates_need_two_different_directories(world, tmp_path):
+    root, _ = world
+    run = _replicates(root)[0]
+    _, sha = bb.load_data()
+    with pytest.raises(ConfigError, match="thư mục"):
+        bb.build_pack([run, run], 3, tmp_path / "same", sha, replicates=True)
+
+
+def test_cli_pack_takes_the_replicates_flag(world, tmp_path):
+    root, _ = world
+    runs = _replicates(root)
+    out = tmp_path / "cli"
+    argv = ["pack", "--seed", "5", "--replicates", "--out", str(out)]
+    for r in runs:
+        argv += ["--run", str(r)]
+    assert bb.main(argv) == bb.EXIT_OK
+    assert json.loads((out / "pack_meta.json").read_text(encoding="utf-8"))["replicates"] is True
+    assert bb.main(argv[:1] + ["--seed", "5", "--out", str(tmp_path / "x"),
+                               *argv[argv.index("--run"):]]) == bb.EXIT_CONFIG
+
+
+def test_two_judges_can_still_be_compared_on_replicates(world, tmp_path):
+    root, _ = world
+    runs = _replicates(root)
+    one_name = f"{MODELS[0]} [style:aaaaaaaa; run:run-cu-1]"
+    two_name = f"{MODELS[0]} [style:aaaaaaaa; run:run-cu-2]"
+    one = graded_dir(world, tmp_path, "j1", "sonnet", {one_name: [4], two_name: [3]},
+                     [one_name, two_name], runs=runs, replicates=True)
+    two = graded_dir(world, tmp_path, "j2", "muse", {one_name: [5], two_name: [3]},
+                     [one_name, two_name], runs=runs, replicates=True)
+    data, _ = bb.load_data()
+    report = bb.agreement(data, [one, two])
+    assert sorted(report["models"]) == sorted([one_name, two_name])
+    assert report["solo_mean"]["sonnet"][one_name] == 4.0
+    assert report["solo_mean"]["muse"][two_name] == 3.0
+
+
+# --- chấm chỉ solo (giữ trong trần chi phí) ----------------------------------------------------------
+
+
+async def test_judge_can_run_only_the_solo_units(pack2):
+    requests: list = []
+    bake, _ = make_bake(pack2, requests=requests)
+    assert await bake.run_units((bb.SOLO,)) == bb.EXIT_OK
+    assert [r["unit"] for r in rows(pack2)] == ["solo:A", "solo:B"] and len(requests) == 2
+
+
+async def test_a_later_full_run_only_adds_the_missing_compare_units(pack2):
+    first, _ = make_bake(pack2)
+    await first.run_units((bb.SOLO,))
+    seen: list = []
+    again, _ = make_bake(pack2, requests=seen)
+    assert await again.run_units() == bb.EXIT_OK
+    assert [r["unit"] for r in rows(pack2)] == ["solo:A", "solo:B", "compare:AB", "compare:BA"]
+    assert len(seen) == 2
+
+
+def test_cli_kinds_flag_limits_the_units_and_rejects_nonsense(world, tmp_path, capsys):
+    _root, runs = world
+    out = tmp_path / "solo-only"
+    argv = ["pack", "--seed", "5", "--out", str(out)]
+    for r in runs[:2]:
+        argv += ["--run", str(r)]
+    assert bb.main(argv) == bb.EXIT_OK
+    assert bb.main(["judge", "--dir", str(out), "--dry-run", "--kinds", "solo"]) == bb.EXIT_OK
+    assert [r["unit"] for r in rows(out)] == ["solo:A", "solo:B"]
+    for bad in ("value", "solo,ranking", ""):
+        assert bb.main(["judge", "--dir", str(out), "--dry-run", "--kinds", bad]
+                       ) == bb.EXIT_CONFIG
+    assert "--kinds" in capsys.readouterr().err
+
+
+def test_summary_of_a_solo_only_pack_does_not_claim_the_judge_disagrees_with_itself(
+        world, tmp_path):
+    _root, runs = world
+    out = tmp_path / "solo-summary"
+    argv = ["pack", "--seed", "5", "--out", str(out)]
+    for r in runs[:2]:
+        argv += ["--run", str(r)]
+    assert bb.main(argv) == bb.EXIT_OK
+    assert bb.main(["judge", "--dir", str(out), "--dry-run", "--kinds", "solo"]) == bb.EXIT_OK
+    assert bb.main(["summary", "--dir", str(out)]) == bb.EXIT_OK
+    text = (out / "summary.md").read_text(encoding="utf-8")
+    assert "KHÔNG đồng ý" not in text and "chưa chạy so sánh trực tiếp" in text

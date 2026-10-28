@@ -1,0 +1,28 @@
+# Đề cho nhánh A của phép so đề viết (D-109): thế giới 3/3, trinh thám hiện thực, địa danh có thật. Cùng
+# một khởi tạo (`--setup-only`), hai lượt viết với đề hiện tại (`--setup-from`) để đo nhiễu giữa các
+# lần VIẾT, rồi các biến thể đề chạy trên đúng khởi tạo đó. `--setup-from` đòi cùng sha256 đề và seed.
+# Khai TRƯỚC mọi lần chạy thật; chạy rồi thì không sửa đè: tăng `version` hoặc thêm file đề mới.
+# Hướng đề: điều phối giao 28/10/2026: ba thế giới khác nhau; thế giới thứ ba khác hẳn thể loại để
+# phép so không chỉ đúng với truyện giả tưởng. Truyện ngắn; seed riêng. Soạn: Claude (nhánh
+# eval/ab-baseline).
+
+version: 1
+
+tags:
+  genre: trinh thám hiện thực
+  era: Hà Nội cuối thập niên 1980, thời bao cấp; một vụ mất tích ở khu tập thể cũ
+  voice: trầm, hoài nghi, nhiều chi tiết đời thường, đối thoại ngắn
+  darkness: vừa phải, có tội ác và nghi kỵ, không tả máu me
+length_level: short                         # config/story_lengths.yaml
+naming: {names: viet, places: that}
+pov: protagonist
+writer_tier: null                           # null = mức đầu của config/models.yaml
+
+seed: 20261030
+scene_count: 2
+player_retries: 1
+
+max_tokens_per_call: 16000
+# USD / 1 triệu token, chỉ để giữ chỗ ngân sách (config/models.yaml: Luna cho mọi vai, D-102).
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}
