@@ -1207,3 +1207,21 @@ def test_env_example_names_the_meta_key_without_a_value():
 
     lines = (REPO_ROOT / ".env.example").read_text(encoding="utf-8").splitlines()
     assert "META_API_KEY=" in [ln.strip() for ln in lines]
+
+
+@pytest.mark.parametrize("finish,error", [("stop", "JUDGE_BAD_JSON"), ("length", "JUDGE_TRUNCATED")])
+async def test_meta_empty_content_after_reasoning_is_an_error_with_its_cost_not_a_score(
+        meta_pack, finish, error):
+    """Hồi quy (kinh nghiệm session khác): `max_tokens` thấp thì Muse đốt hết vào suy luận và
+    không trả chữ; lượt đó vẫn tốn tiền, phải ghi lỗi chứ không thành điểm (G11)."""
+    def handler(body, request):
+        reply = bb.fake_meta_reply(body)
+        reply["choices"][0]["message"]["content"] = ""
+        reply["choices"][0]["finish_reason"] = finish
+        return reply
+
+    bake, _ = make_meta_bake(meta_pack, handler)
+    await bake.run_units()
+    errors = rows(meta_pack, bb.ERRORS_FILE)
+    assert rows(meta_pack) == [] and {e["error_type"] for e in errors} == {error}
+    assert all(e["cost_usd"] > 0 for e in errors)
