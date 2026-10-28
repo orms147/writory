@@ -208,6 +208,8 @@ uv run python -m writory.quality.bench_bakeoff summary --dir <out-muse> --with <
 ```
 Giới hạn: một thế giới, vài chương, một hay hai giám khảo (hai giám khảo chưa có đa số); điểm giám khảo chưa hiệu chuẩn với người đọc; hai thứ tự `compare` chỉ phát hiện thiên lệch vị trí.
 
+**Nhiễu của giám khảo và ngưỡng A/B:** chấm lại cùng gói truyện thêm ít nhất hai lần (`pack` cùng `--seed` và cùng thứ tự `--run`, thư mục mới mỗi lần, chỉ `judge`). σ là độ lệch chuẩn gộp của điểm trung bình solo mỗi truyện qua các lần; chênh tối thiểu giữa hai hệ là t(0,975; df) × σ × √(2/k), với df = số truyện × (số lần − 1) và k = số lần chấm lấy trung bình mỗi truyện. Đo này chỉ là nhiễu chấm lại cùng văn, chưa gồm nhiễu giữa các lần viết. Kết quả và ngưỡng đề xuất: `evals/results/2026-10-28-judge-noise-sonnet-2/notes.md`.
+
 ## Chạy cả truyện
 Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đi hết đường người chơi trên một truyện để đo chi phí theo vai, đếm lỗi, và để đọc tay. Cách làm: D-42, D-43. Code: `writory.pipeline.bench_run`.
 - **Đề** (khai trước, `evals/scenarios/story_run/`; đã chạy thật thì không sửa đè, tăng `version` hoặc thêm file đề): tag, độ dài, quy ước tên, seed, số cảnh mỗi chương, số lần tự bấm thử lại, `max_tokens_per_call`, giá USD/1M token của mọi model config đang dùng (chỉ để giữ chỗ ngân sách). Đề mặc định: `tu-tien-ngan.yaml`. Đề Truyện vừa cho mốc chạy liền 10 chương: `ky-ao-vua.yaml`. Đề Truyện dài (mức chưa mở cho người chơi, D-88): `long-tu-tien.yaml`; `--dry-run` dựng kế hoạch giả đủ số mốc của mức đề chọn.
