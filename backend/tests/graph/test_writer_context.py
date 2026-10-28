@@ -215,3 +215,52 @@ def test_an_item_with_neither_holder_nor_place_is_not_listed(driver, new_story_i
     }))
     ctx = writer_context(driver, sid, 0, ["hero"], None)
     assert [i.id for i in ctx.items] == ["bag"]
+
+
+def _apply_people(driver, sid):
+    from writory.graph import ChangePackage, apply_package
+
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character",
+             "props": {"name": "Minh", "is_protagonist": True, "user_authored": True,
+                       "personality": "Điềm tĩnh, hay ghi nhớ.", "backstory": "BÍ MẬT-HERO"}},
+            {"id": "npc", "label": "Character",
+             "props": {"name": "Lan", "personality": "Kín đáo, nói ít, hay hỏi ngược lại.",
+                       "backstory": "BÍ MẬT-NPC giết Lão Gù"}},
+            {"id": "far", "label": "Character",
+             "props": {"name": "Khải", "personality": "Nóng nảy, thẳng ruột ngựa."}},
+            {"id": "club", "label": "Faction", "props": {"name": "Hội", "personality": "X"}}],
+        "edges": [{"type": "RELATES_TO", "from": "hero", "to": "npc", "valid_from_chapter": 0,
+                   "props": {"kind": "bạn", "score": 50}},
+                  {"type": "MEMBER_OF", "from": "far", "to": "club", "valid_from_chapter": 0},
+                  {"type": "RELATES_TO", "from": "npc", "to": "far", "valid_from_chapter": 0,
+                   "props": {"kind": "bạn", "score": 50}}],
+    }))
+
+
+def test_personality_is_off_by_default(driver, new_story_id):
+    sid = new_story_id()
+    _apply_people(driver, sid)
+    ctx = writer_context(driver, sid, 0, ["hero", "npc"], None)
+    assert all(c.personality is None for c in ctx.present)
+    assert all(n.personality is None for n in ctx.neighbors)
+
+
+def test_personality_of_present_and_neighbor_characters_is_read_clipped_and_never_the_backstory(
+        driver, new_story_id):
+    sid = new_story_id()
+    _apply_people(driver, sid)
+    ctx = writer_context(driver, sid, 0, ["hero", "npc"], None, personality_max_chars=200)
+    by_id = {c.id: c for c in ctx.present}
+    assert by_id["npc"].personality == "Kín đáo, nói ít, hay hỏi ngược lại."
+    assert by_id["hero"].personality == "Điềm tĩnh, hay ghi nhớ." and by_id["hero"].user_authored
+    far = next(n for n in ctx.neighbors if n.id == "far")
+    assert far.personality == "Nóng nảy, thẳng ruột ngựa."
+    club = next(n for n in ctx.neighbors if n.id == "club")
+    assert club.personality is None  # không phải nhân vật
+    text = " ".join(str(p) for p in render_writer_context(ctx))
+    assert "BÍ MẬT" not in text  # backstory không bao giờ vào ngữ cảnh viết
+    short = writer_context(driver, sid, 0, ["npc"], None, personality_max_chars=12)
+    assert len(short.present[0].personality) <= 12 and short.present[0].personality.endswith("…")

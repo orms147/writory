@@ -361,3 +361,63 @@ def test_the_standstill_override_fills_place_and_chapters_and_still_wraps_the_pl
     assert any(isinstance(p, UserAuthored) and p.text == "[PLAYER-place]" for p in parts)
     text = _text(parts)
     assert "đã 4 chương; phá thế giằng co." in text and "PHẢI đổi tình thế" not in text
+
+
+# --- chương không có mốc nào đang diễn ra (D-110, sau cờ `unplanned_chapter_goal`) ---------------
+
+GAP_PLAN = PLAN.model_copy(update={"milestones": [
+    PLAN.milestones[0].model_copy(update={"from_chapter": 1, "to_chapter": 1}),
+    PLAN.milestones[1].model_copy(update={"from_chapter": 4, "to_chapter": 4}),
+    PLAN.milestones[3],
+]})  # chương 2, 3 và 5 không có mốc nào đang diễn ra
+
+
+def test_the_flag_is_off_by_default_and_a_chapter_without_a_milestone_is_unchanged():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    off = chapter_goals(GAP_PLAN, 2, through(1))
+    assert off.gap is False
+    assert GOAL_DEFAULTS["milestone_gap"] not in _text(render_chapter_goals(off, scene=1,
+                                                                           scene_count=2))
+
+
+def test_a_chapter_without_an_active_milestone_asks_for_a_concrete_new_situation_when_on():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    goals = chapter_goals(GAP_PLAN, 2, through(1), unplanned_goal=True)
+    assert goals.gap is True and all(m.status == "next" for m in goals.milestones)
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    assert GOAL_DEFAULTS["milestone_gap"] in text
+    base = _text(render_chapter_goals(chapter_goals(GAP_PLAN, 2, through(1)), scene=1,
+                                      scene_count=2))
+    assert text == base.replace(
+        "- " + GOAL_DEFAULTS["push_forward"],
+        "- " + GOAL_DEFAULTS["push_forward"] + chr(10) + "- " + GOAL_DEFAULTS["milestone_gap"])
+
+
+def test_the_gap_sentence_does_not_appear_when_a_milestone_is_running_or_in_the_last_chapter():
+    for chapter in (1, 4):  # mốc đang diễn ra
+        assert chapter_goals(GAP_PLAN, chapter, through(chapter - 1), unplanned_goal=True
+                             ).gap is False
+    final = chapter_goals(GAP_PLAN, 6, through(5), unplanned_goal=True)
+    assert final.final and final.gap is False
+
+
+def test_the_gap_and_next_sentences_can_be_replaced_each_without_touching_the_rest():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    goals = chapter_goals(GAP_PLAN, 2, through(1), unplanned_goal=True)
+    base = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    new = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                     texts={"milestone_gap": "MỚI-GAP", "milestone_next": "MỚI-NEXT"}))
+    assert new == (base.replace(GOAL_DEFAULTS["milestone_gap"], "MỚI-GAP")
+                   .replace(GOAL_DEFAULTS["milestone_next"], "MỚI-NEXT"))
+    assert "MỚI-NEXT" in new and "MỚI-GAP" in new
+
+
+def test_the_default_next_milestone_sentence_is_the_one_printed_before_the_variant_existed():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    assert GOAL_DEFAULTS["milestone_next"] == "Mốc kế tiếp, chuẩn bị dần"
+    text = _text(render_chapter_goals(chapter_goals(PLAN, 1, through(0)), scene=1, scene_count=2))
+    assert "- Mốc kế tiếp, chuẩn bị dần (bước ngoặt, chương 3–4)" in text

@@ -154,8 +154,10 @@ def test_config_ships_the_limits_and_requires_them_when_on():
 class _FactsStore(MemoryStore):
     """Kho trả ngữ cảnh người viết có 5 Fact sinh từ trang (biết từ chương 1 tới 5)."""
 
-    def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors):
-        ctx = super().writer_context(as_of_chapter, present_ids, plan, max_neighbors=max_neighbors)
+    def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors,
+                       personality_max_chars=0):
+        ctx = super().writer_context(as_of_chapter, present_ids, plan, max_neighbors=max_neighbors,
+                                     personality_max_chars=personality_max_chars)
         page = tuple(_fact(f"p{i}", i) for i in range(1, 6))
         return replace(ctx, known_facts=(*ctx.known_facts, *page))
 

@@ -22,6 +22,7 @@ from tests.pipeline_fixtures import (
     EXTRACT_2,
     EXTRACT_DEAD_HOLDS,
     LEAK_SENTENCE,
+    PERSONALITIES,
     PLAN,
     SCENE_1,
     SCENE_1_CLICHE,
@@ -1659,3 +1660,103 @@ async def test_prompt_texts_reach_outline_choices_and_goals_but_the_default_run_
     assert calls_of(base, "outline")[0][0].content.startswith(OUTLINE_SYSTEM_PROMPT[:60])
     assert calls_of(base, "choices")[0][0].content.startswith(CHOICES_SYSTEM[:60])
     assert "MỤC TIÊU BIẾN THỂ." not in calls_of(base, "outline")[0][-1].content
+
+
+# --- tính cách nhân vật vào đề dàn ý và đề viết, sau cờ config (D-110) ---------------------------
+
+
+async def test_personality_is_off_by_default_and_the_store_is_asked_for_none(tmp_path):
+    _, _, llm, store = await run(full_script(), tmp_path)
+    assert set(store.personality_args) == {0}
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            assert "tính cách:" not in call[-1].content
+
+
+async def test_personality_reaches_outline_and_writer_but_never_the_other_roles(tmp_path):
+    """G1: tính cách là chữ lớp truth; chỉ hai vai được thấy truth (dàn ý, viết) nhận nó."""
+    _, _, llm, store = await run(
+        full_script(), tmp_path, limits={"context": {"character_personality_max_chars": 80}})
+    assert set(store.personality_args) == {80}
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            body = call[-1].content
+            assert f"tính cách: {PERSONALITIES['lan']}" in body
+            assert f"tính cách: {PERSONALITIES['ly_that']}" in body  # nhân vật lân cận
+    for role in ("choices", "extract", "summary", "moderate"):
+        for call in calls_of(llm, role):
+            seen = " ".join(m.content for m in call)
+            assert not any(t in seen for t in PERSONALITIES.values())
+
+
+async def test_personality_ceiling_is_the_configured_number(tmp_path):
+    _, _, _, store = await run(
+        full_script(), tmp_path, limits={"context": {"character_personality_max_chars": 12}})
+    assert set(store.personality_args) == {12}
+
+
+async def _goal_calls(tmp_path, flag: bool):
+    plan = plan_with(milestones=[])
+    script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY,
+              choices_reply()]
+    folder = tmp_path / str(flag)
+    folder.mkdir()
+    config = make_config(folder, limits={"context": {"unplanned_chapter_goal": flag}})
+    llm = ScriptedLLM(script)
+    chapter_run = ChapterRun(request(), llm=llm, store=MemoryStore(), config=config, plan=plan,
+                             tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE)
+    [_ async for _ in chapter_run.events()]
+    return llm
+
+
+async def test_chapter_without_a_milestone_asks_for_a_new_situation_only_when_the_flag_is_on(
+        tmp_path):
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    sentence = GOAL_DEFAULTS["milestone_gap"]
+    off = await _goal_calls(tmp_path, False)
+    assert all(sentence not in c[-1].content for r in ("outline", "writer")
+               for c in calls_of(off, r))
+    on = await _goal_calls(tmp_path, True)
+    for role in ("outline", "writer"):
+        assert all(sentence in c[-1].content for c in calls_of(on, role))
+    [choices_call] = calls_of(on, "choices")  # G1: chữ mục tiêu không tới vai lựa chọn
+    assert sentence not in " ".join(m.content for m in choices_call)
+
+
+async def test_previous_openings_come_from_the_last_chapters_and_reach_only_the_writer(tmp_path):
+    store = MemoryStore()
+    store.texts[2] = "Tôi siết ấn trong lòng bàn tay. Cạnh ấn cấn vào da.\n\n- Ngươi là ai?"
+    store.texts[3] = "# Chương 3\n\nĐoàn Khương khuỵu xuống giữa đường."
+    store.texts[1] = "Câu mở chương một không được lấy."
+    limits = {"context": {"previous_openings": 2, "previous_opening_max_chars": 80}}
+    _, _, llm, store = await run(full_script(), tmp_path, store=store, limits=limits)
+    assert (2, 3) in [tuple(r) for r in store.text_requests]
+    [first, second] = calls_of(llm, "writer")
+    assert "Tôi siết ấn trong lòng bàn tay. Cạnh ấn cấn vào da." in first[-1].content
+    assert "Đoàn Khương khuỵu xuống giữa đường." in first[-1].content
+    assert "Câu mở chương một" not in first[-1].content
+    assert "Tôi siết ấn trong lòng bàn tay." not in second[-1].content  # chỉ cảnh 1
+    for role in ("outline", "choices", "extract", "summary"):
+        for call in calls_of(llm, role):
+            assert "Đoàn Khương khuỵu" not in " ".join(m.content for m in call)
+
+
+async def test_previous_openings_are_off_by_default_and_ask_the_store_for_no_text(tmp_path):
+    _, _, llm, store = await run(full_script(), tmp_path)
+    assert store.text_requests == []
+    for call in calls_of(llm, "writer"):
+        assert "Câu mở của các chương trước" not in call[-1].content
+
+
+def test_the_three_prose_v3_flags_are_off_in_the_repo_config():
+    """D-110: cho tới khi A/B xong, app chạy như cũ."""
+    c = load_config().limits.context
+    assert (c.character_personality_max_chars, c.previous_openings, c.unplanned_chapter_goal) == (
+        0, 0, False)
+
+
+def test_previous_openings_on_without_a_length_is_a_config_problem(tmp_path):
+    config = make_config(tmp_path, limits={"context": {"previous_openings": 2,
+                                                        "previous_opening_max_chars": None}})
+    assert any("previous_opening_max_chars" in str(p) for p in config_problems(config))

@@ -62,7 +62,7 @@ from writory.pipeline.extract import (
     without_facts,
 )
 from writory.pipeline.pacing import ChapterGoals, chapter_goals, stalled_after
-from writory.pipeline.passages import Chunk, PagePool
+from writory.pipeline.passages import Chunk, PagePool, opening_of
 from writory.pipeline.scene import (
     Candidate,
     EarlierScene,
@@ -316,6 +316,7 @@ class _State(TypedDict, total=False):
     final: bool  # chương này là chương cuối của bản kế hoạch
     finished: bool
     summaries: list[tuple[int, str]]  # tóm tắt chương N-2, N-1 có được (D-49)
+    openings: list[tuple[int, str]]  # câu mở của các chương gần nhất, nếu cờ bật (D-110)
     summaries_missing: list[int]
     summary: str | None
     summary_error: ErrorCode | None
@@ -380,6 +381,8 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
         for name in ("text_max_chars", "duplicate_overlap", "related_overlap", "grounded_min",
                      "writer_max_page_facts"):
             check(_require, config.limits.facts, name)
+    if config.limits.context.previous_openings:  # 0 = tắt: độ dài không cần (D-110)
+        check(_require, config.limits.context, "previous_opening_max_chars")
     if config.limits.context.page_quotes_top_k:  # 0 = tắt: hai giá trị còn lại không cần (D-85)
         for name in ("page_quotes_chunk_chars", "page_quotes_max_chars"):
             check(_require, config.limits.context, name)
@@ -453,6 +456,7 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
         min_chars=lengths.min // count, max_chars=lengths.max // count, act=act,
         story_brief=d.request.story_brief, player_action=d.request.player_action,
         earlier=earlier, goals=state["goals"], summaries=tuple(state["summaries"]),
+        openings=tuple(state.get("openings", ())),
         forbidden=tuple(forbidden),
         forbidden_max=_require(d.config.limits.context, "forbidden_names_max"),
         prompts=d.prompts,
@@ -463,9 +467,22 @@ def _writer_context(d: _Deps, state: _State, present: Sequence[str]) -> WriterCo
     ctx = d.store.writer_context(
         state["chapter"] - 1, present, d.plan,
         max_neighbors=d.config.limits.context.writer_max_neighbors,
+        personality_max_chars=d.config.limits.context.character_personality_max_chars,
     )
     keep = d.config.limits.facts.writer_max_page_facts  # Fact sinh từ trang có trần (D-93)
     return replace(ctx, known_facts=cap_page_facts(ctx.known_facts, keep)) if keep else ctx
+
+
+def _previous_openings(d: _Deps, chapter: int) -> list[tuple[int, str]]:
+    """Câu mở của `previous_openings` chương gần nhất đã ghi (D-110). Tắt (0): không hỏi kho."""
+    limits = d.config.limits.context
+    keep = limits.previous_openings
+    if keep <= 0:
+        return []
+    texts = d.store.chapter_texts(range(max(1, chapter - keep), chapter))
+    found = ((c, opening_of(texts[c], _require(limits, "previous_opening_max_chars")))
+             for c in sorted(texts))
+    return [(c, text) for c, text in found if text]
 
 
 def _fact_rules(d: _Deps, state: _State, scene: int) -> FactRules:
@@ -580,6 +597,7 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
                         chunk_chars=_require(d.config.limits.context, "page_quotes_chunk_chars"))
     return {
         **({"page_pool": pool} if pool is not None else {}),
+        "openings": _previous_openings(d, chapter),
         "summaries": [(c, found[c]) for c in wanted if c in found],
         "summaries_missing": missing,
         "chapter": chapter,
@@ -609,9 +627,10 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
     # thì cảnh này không bị giục nữa (D-49).
     before = OverlayState(d.store.state(), _earlier_packages(state))
     return {"context": _writer_context(d, state, state["present"]),
-            "goals": chapter_goals(d.plan, state["chapter"], before,
-                                   standstill_chapters=_require(d.config.limits.context,
-                                                                "standstill_chapters"))}
+            "goals": chapter_goals(
+                d.plan, state["chapter"], before,
+                standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
+                unplanned_goal=d.config.limits.context.unplanned_chapter_goal)}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:

@@ -127,3 +127,37 @@ def test_pool_is_deterministic():
 
 def test_pool_size_is_reported():
     assert pool().size == 13 and passages.PagePool({}, chunk_chars=CHUNK).size == 0
+
+
+# --- câu mở chương (D-110) -------------------------------------------------------------------------
+
+
+def test_opening_takes_the_first_sentences_of_the_first_paragraph_up_to_the_limit():
+    from writory.pipeline.passages import opening_of
+
+    text = ("Tôi siết ấn trong lòng bàn tay. Cạnh ấn cấn vào da, lạnh ngắt. Ba người đứng đối "
+            "diện.\n\n- Ngươi là ai?")
+    assert opening_of(text, 80) == "Tôi siết ấn trong lòng bàn tay. Cạnh ấn cấn vào da, lạnh ngắt."
+    assert opening_of(text, 40) == "Tôi siết ấn trong lòng bàn tay."
+
+
+def test_opening_clips_a_first_sentence_that_is_longer_than_the_limit_at_a_word():
+    from writory.pipeline.passages import opening_of
+
+    assert opening_of("một hai ba bốn năm sáu bảy tám chín mười.", 20) == "một hai ba bốn năm…"
+
+
+def test_opening_skips_headings_scene_breaks_and_blank_lines_and_keeps_a_dialogue_opening():
+    from writory.pipeline.passages import opening_of
+
+    text = "# Chương 3\n\n* * *\n\nĐoàn Khương khuỵu xuống giữa đường.\n\nTôi chộp."
+    assert opening_of(text, 90) == "Đoàn Khương khuỵu xuống giữa đường."
+    assert opening_of("- Các người đã định tội ta.\n\nGiọng tôi vang.", 90) == (
+        "- Các người đã định tội ta.")
+
+
+def test_opening_of_empty_text_is_none():
+    from writory.pipeline.passages import opening_of
+
+    assert opening_of("", 90) is None
+    assert opening_of("# Chương 1\n\n* * *", 90) is None
