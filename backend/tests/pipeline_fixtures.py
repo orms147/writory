@@ -95,7 +95,10 @@ TRUTH_AT_4 = (
 
 _TRIAL = {
     "limits": {"cost_usd": {"per_scene": 1.0, "per_chapter": 2.0, "per_story": 10.0},
-               "context": {"writer_max_neighbors": 10}},
+               # Ba cờ của đề v3 bật ở config thật (D-111); config thử tắt chúng để test của các vai
+               # khác không đổi, test của chính cờ tự bật.
+               "context": {"writer_max_neighbors": 10, "character_personality_max_chars": 0,
+                           "previous_openings": 0, "unplanned_chapter_goal": False}},
     "models": {"roles": {"outline": "test/outline", "choices": "test/choices"},
                # giá để ước tính chi phí tối đa của lời gọi bằng key người chơi (D-64)
                "prices": {"test/outline": {"in": 0.10, "out": 0.50},

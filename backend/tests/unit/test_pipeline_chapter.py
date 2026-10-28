@@ -1665,7 +1665,7 @@ async def test_prompt_texts_reach_outline_choices_and_goals_but_the_default_run_
 # --- tính cách nhân vật vào đề dàn ý và đề viết, sau cờ config (D-110) ---------------------------
 
 
-async def test_personality_is_off_by_default_and_the_store_is_asked_for_none(tmp_path):
+async def test_personality_is_off_at_zero_and_the_store_is_asked_for_none(tmp_path):
     _, _, llm, store = await run(full_script(), tmp_path)
     assert set(store.personality_args) == {0}
     for role in ("outline", "writer"):
@@ -1742,18 +1742,11 @@ async def test_previous_openings_come_from_the_last_chapters_and_reach_only_the_
             assert "Đoàn Khương khuỵu" not in " ".join(m.content for m in call)
 
 
-async def test_previous_openings_are_off_by_default_and_ask_the_store_for_no_text(tmp_path):
+async def test_previous_openings_are_off_at_zero_and_ask_the_store_for_no_text(tmp_path):
     _, _, llm, store = await run(full_script(), tmp_path)
     assert store.text_requests == []
     for call in calls_of(llm, "writer"):
         assert "Câu mở của các chương trước" not in call[-1].content
-
-
-def test_the_three_prose_v3_flags_are_off_in_the_repo_config():
-    """D-110: cho tới khi A/B xong, app chạy như cũ."""
-    c = load_config().limits.context
-    assert (c.character_personality_max_chars, c.previous_openings, c.unplanned_chapter_goal) == (
-        0, 0, False)
 
 
 def test_previous_openings_on_without_a_length_is_a_config_problem(tmp_path):

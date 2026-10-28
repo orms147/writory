@@ -415,9 +415,11 @@ def test_the_gap_and_next_sentences_can_be_replaced_each_without_touching_the_re
     assert "MỚI-NEXT" in new and "MỚI-GAP" in new
 
 
-def test_the_default_next_milestone_sentence_is_the_one_printed_before_the_variant_existed():
+def test_the_default_next_milestone_sentence_is_the_v3_one_and_is_what_gets_printed():
     from writory.pipeline.pacing import GOAL_DEFAULTS
 
-    assert GOAL_DEFAULTS["milestone_next"] == "Mốc kế tiếp, chuẩn bị dần"
+    sentence = ("Mốc kế tiếp, chương này đưa vào một sự kiện hay áp lực cụ thể đẩy nhân vật chính "
+                "về phía đó")
+    assert GOAL_DEFAULTS["milestone_next"] == sentence  # D-111
     text = _text(render_chapter_goals(chapter_goals(PLAN, 1, through(0)), scene=1, scene_count=2))
-    assert "- Mốc kế tiếp, chuẩn bị dần (bước ngoặt, chương 3–4)" in text
+    assert f"- {sentence} (bước ngoặt, chương 3–4)" in text

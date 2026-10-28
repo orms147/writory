@@ -49,9 +49,10 @@ from writory.safety.wrap import (
 # outline-7, writer-7: đoạn nguyên văn đã hiện trên trang, chọn bằng BM25 (D-85).
 # outline-8, writer-8: mục "Tên người đọc chưa được biết", tên người đọc biết cạnh tên thật (D-91).
 # outline-9, writer-9: dòng "PHẢI đổi tình thế" khi nhân vật chính ở yên nhiều chương (D-98).
-OUTLINE_PROMPT_VERSION = "outline-9"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-9"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
-# Hướng dẫn văn phong v2 là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
+# outline-10, writer-10: đề v3 thành mặc định (D-111).
+OUTLINE_PROMPT_VERSION = "outline-10"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-10"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# Hướng dẫn văn phong hiện hành (v3, D-111) là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
 MIN_BEATS, MAX_BEATS = 2, 8
@@ -377,7 +378,10 @@ def _goals(out: _Lines, brief: SceneBrief, *, thread_ids: bool = False) -> None:
 OUTLINE_SYSTEM_PROMPT = """Bạn lập dàn ý cho MỘT cảnh của một truyện tương tác tiếng Việt. Người chơi nhập vai nhân vật chính; truyện kể theo góc nhìn nhân vật chính. Bạn được biết sự thật của thế giới, kể cả bí mật, để dàn ý nhất quán; dàn ý không được làm lộ bí mật trước khoảng lộ.
 
 Quy tắc:
-- Cảnh nối tiếp đúng những gì đã xảy ra: các cảnh trước trong chương, và lựa chọn của người chơi dẫn tới chương này.
+- Cảnh nối tiếp đúng những gì đã xảy ra: các cảnh trước trong chương, và lựa chọn của người chơi dẫn tới chương này. Cảnh sau bắt đầu SAU nhịp cuối của cảnh trước; không lặp lại việc đã làm hay câu đã hỏi.
+- Nhịp đầu của chương là hậu quả hay phản ứng ngay sau lựa chọn của người chơi. Đừng dựng lại việc người chơi đã chọn và đừng chép lại lời họ chọn.
+- Mỗi cảnh phải đổi ít nhất một điều chỉ ra được: ai biết gì, ai giữ vật gì, ai ở đâu, quan hệ nào đổi, ai bị thương hay bị bắt, thời hạn nào bắt đầu chạy. Một văn bản được ghi, đọc, ký hay đặt xuống bàn, hoặc hai bên hẹn để sau, không tính là thay đổi.
+- Trong mỗi chương nhân vật chính làm ít nhất một việc không thể rút lại (mất, lộ, bỏ đi, ra tay), không chỉ chờ hay trả lời.
 - Hành động của người chơi vượt luật thế giới hay vượt khả năng nhân vật thì cho nó thất bại hoặc phải trả giá một cách hợp lý; không chiều theo.
 - Tôn trọng mục "Sự thật cần tôn trọng": người đã chết không xuất hiện hay hành động; điều chỉ một số người biết thì người khác không nói ra.
 - Bí mật ghi "KHÔNG để lộ" chỉ được gợi bằng manh mối mơ hồ.
@@ -386,8 +390,8 @@ Quy tắc:
 Đầu ra JSON đúng schema, mọi chữ viết bằng tiếng Việt có dấu (không chữ Hán, không tiếng Anh):
 - goal: mục tiêu của cảnh, một câu.
 - present: id các nhân vật có mặt, chỉ lấy từ danh sách "Nhân vật có thể có mặt"; luôn có nhân vật chính.
-- beats: 3 đến 6 nhịp theo thứ tự, mỗi nhịp một câu: chuyện gì xảy ra, ai nói gì.
-- ends_at: cảnh kết ở đâu, một câu.
+- beats: 3 đến 6 nhịp theo thứ tự, mỗi nhịp một câu: một việc làm hoặc một đòn đối đáp có hậu quả (ai làm gì, ai nói gì và điều đó làm tình thế nhích đi đâu). Không có hai nhịp cùng một lập trường. Tối đa một nhịp thủ tục (ghi, đối chiếu, xác nhận) mỗi cảnh. Người có mặt có mục tiêu riêng: ghi ai muốn gì từ ai.
+- ends_at: khoảnh khắc cuối cảnh, một câu: điều gì vừa xảy ra hay vừa tới khiến tình thế khác lúc đầu cảnh. Không phải lúc mọi người đứng chờ.
 - resolves: id các mạch cảnh này gỡ trên trang, chỉ lấy id ghi trong mục "Mạch phải gỡ trước khi kết truyện". Mạch ĐẾN HẠN hay QUÁ HẠN mà các cảnh trước chưa gỡ thì cảnh cuối của chương phải gỡ, và phải có nhịp gỡ nó trong beats. Không gỡ mạch nào thì để []."""
 
 
