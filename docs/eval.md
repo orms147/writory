@@ -181,14 +181,15 @@ uv run python -m writory.pipeline.bench_e run --label tu-tien-1 --questions-file
 ```
 
 ## Bài F — So model viết trên cùng một thế giới
-So nhiều model viết trên cùng một khởi tạo, rồi để giám khảo Claude chấm cả truyện và hỏi khuyến nghị "đáng tiền" (D-101). Khác bài D: chấm truyện nhiều chương (liền mạch, nhịp, lựa chọn), qua đúng đường `bench_run`, có chi phí thật. Code: `writory.quality.bench_bakeoff` (chấm), `writory.pipeline.bench_run` (viết).
+So nhiều model viết trên cùng một khởi tạo, rồi để giám khảo (Claude, và Meta Muse Wonder từ D-108) chấm cả truyện và hỏi khuyến nghị "đáng tiền" (D-101). Khác bài D: chấm truyện nhiều chương (liền mạch, nhịp, lựa chọn), qua đúng đường `bench_run`, có chi phí thật. Code: `writory.quality.bench_bakeoff` (chấm), `writory.pipeline.bench_run` (viết).
 
 - **Dữ liệu** (khai trước, đã chạy thật thì không sửa đè, tăng `version`): `evals/scenarios/story_run/model-bakeoff.yaml` (đề viết, giá của ba model) và `evals/scenarios/bakeoff/judge.yaml` (giám khảo, tiêu chí kèm mốc 1/3/5, hướng dẫn cho ba loại lượt gọi).
 - **Giữ nguyên giữa các lượt:** thế giới (một `--setup-only`, mọi lượt `--setup-from` nó), seed và luật chọn lựa chọn, đề, mọi vai trí nhớ. Chỉ đổi model viết và model dàn ý (`--writer-model`, `--outline-model`).
 - **Chấm mù (bước 1):** `pack` (hai hoặc ba lần chạy) xáo nhãn A/B(/C) theo `--seed`, ghi truyện, đề bài chung (đúng `story_brief` model viết nhận) và khoá giải nhãn `key.json`; giám khảo không đọc `key.json`, không thấy tên model ở bất kỳ bước nào. `judge` chạy: `solo` từng truyện (điểm 1–5 mỗi tiêu chí, kèm lý do và câu trích), và `compare` cả ba hai lần, thứ tự trình bày đảo (xếp hạng, tốt nhất/kém nhất từng tiêu chí). Câu trích phải có thật trong đúng truyện được nhắc (`quote_found`).
 - **Khuyến nghị đáng tiền (bước 2):** `value` khoá điểm bước 1 (`value_lock.json`, sha256), rồi đưa giám khảo bảng chi phí thật theo nhãn (USD mỗi chương, riêng phần model viết và dàn ý, lượt viết lại, lời gọi lỗi, truyện dừng sớm, lỗi do bộ kiểm văn). Điểm bước 1 đổi sau đó thì `value` từ chối và `summary` báo.
 - **Kết quả** `evals/results/<ngày>-model-bakeoff-<n>/`: `key.json`, `brief.md`, `stories/`, `code_metrics.json`, `results.jsonl`, `errors.jsonl`, `traces/` (yêu cầu và phản hồi thô), `summary.md` (giải nhãn: model | điểm từng mục | hạng so sánh | USD/chương | lỗi), `notes.md` đọc tay. Ba thư mục `run-*` của các lượt viết nằm cạnh.
-- **Key:** `ANTHROPIC_API_KEY` và `ANTHROPIC_WORKSPACE_ID` (khi key không gắn workspace) cho giám khảo; `OPENROUTER_API_KEY` cho lượt viết. **Trần:** cả hai lệnh bắt buộc `--budget` khi chạy thật; chạy tiếp tính cả phần đã tiêu.
+- **Giám khảo thứ hai (D-108):** `judge.yaml` khai giám khảo chính (`judge`) và giám khảo khác (`extra_judges`), mỗi cái có `id`, `provider` (`anthropic` hoặc `meta`), `model`, `effort`, `max_tokens`; Meta thêm `price` (USD/1M token). Hai giám khảo chấm CÙNG thang, cùng bọc và escape truyện, cùng kiểm câu trích có thật. Mỗi thư mục kết quả dành cho đúng một giám khảo (`pack --judge <id>`, ghi vào `pack_meta.json`; `judge` và `value` từ chối `--judge` khác). Meta qua API tương thích OpenAI (`POST /chat/completions`, bearer), structured output bằng `response_format` json_schema strict; `reasoning_effort` không nhận `none`; token suy luận tính giá như token ra (`usage.reasoning_tokens` ghi ở `results.jsonl`); không dùng bản `-contributor` (Meta huấn luyện bằng dữ liệu của bản đó). Chấm lại cùng truyện bằng giám khảo khác: `pack` cùng `--seed` và cùng thứ tự `--run` để cùng nhãn. `summary --dir <thư mục> --with <thư mục giám khảo khác>` thêm bảng điểm từng giám khảo, độ đồng thuận (cùng thứ tự theo điểm trung bình và theo hạng so sánh; chênh điểm từng mục; "cùng chiều" là tỉ lệ cặp model mà hai giám khảo nói cùng bên hơn, hoà tính nửa) và điểm gộp: trung bình cộng điểm trung bình solo, trọng số bằng nhau, không chuẩn hoá thang riêng của từng giám khảo; hạng gộp là trung bình cộng hạng so sánh.
+- **Key:** `ANTHROPIC_API_KEY` và `ANTHROPIC_WORKSPACE_ID` (khi key không gắn workspace) cho giám khảo Claude; `META_API_KEY` cho giám khảo Meta (bộ đo chỉ đọc đúng tên này, không in, không ghi); `OPENROUTER_API_KEY` cho lượt viết. **Trần:** `--budget` (Anthropic) hoặc `--budget-meta` (Meta) bắt buộc khi chạy thật, theo giám khảo của thư mục; chạy tiếp tính cả phần đã tiêu.
 
 ```bash
 # khởi tạo một lần, rồi ba lượt viết (model khác nhau), 6 chương mỗi lượt
@@ -199,8 +200,13 @@ uv run python -m writory.quality.bench_bakeoff pack --run <d1> --run <d2> --run 
 uv run python -m writory.quality.bench_bakeoff judge --dir <out> --budget <USD>     # --dry-run: giám khảo giả, không key
 uv run python -m writory.quality.bench_bakeoff value --dir <out> --budget <USD>
 uv run python -m writory.quality.bench_bakeoff summary --dir <out>
+# giám khảo thứ hai trên cùng truyện (cùng --seed và thứ tự --run), rồi so hai giám khảo
+uv run python -m writory.quality.bench_bakeoff pack --run <d1> --run <d2> --seed <S> --judge muse --out ../evals/results/<ngày>-model-bakeoff-muse-<n>
+uv run python -m writory.quality.bench_bakeoff judge --dir <out-muse> --budget-meta <USD>
+uv run python -m writory.quality.bench_bakeoff value --dir <out-muse> --budget-meta <USD>
+uv run python -m writory.quality.bench_bakeoff summary --dir <out-muse> --with <out>
 ```
-Giới hạn: một thế giới, vài chương, một giám khảo; điểm giám khảo chưa hiệu chuẩn với người đọc; hai thứ tự `compare` chỉ phát hiện thiên lệch vị trí.
+Giới hạn: một thế giới, vài chương, một hay hai giám khảo (hai giám khảo chưa có đa số); điểm giám khảo chưa hiệu chuẩn với người đọc; hai thứ tự `compare` chỉ phát hiện thiên lệch vị trí.
 
 ## Chạy cả truyện
 Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đi hết đường người chơi trên một truyện để đo chi phí theo vai, đếm lỗi, và để đọc tay. Cách làm: D-42, D-43. Code: `writory.pipeline.bench_run`.

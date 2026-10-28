@@ -997,3 +997,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** ghi vào design §5 bản 3. Bản 1 chưa làm. Việc nền (ngoại hình nhân vật, cảnh sắc nơi chốn, thời điểm cảnh lúc khởi tạo) có thể làm sớm hơn nếu chủ dự án yêu cầu.
 - **Hệ quả:** khi làm cần quyết bản xuất có dùng lớp `truth` hay chỉ `player_view` (G1).
 - **Người quyết:** Chủ dự án (28/10/2026)
+
+## D-108 · Giám khảo thứ hai cho bài F: Meta Muse Wonder, chấm cùng thang (bổ sung D-101)
+- **Bối cảnh:** bài F chỉ có giám khảo Claude Sonnet 5.5. Chủ dự án muốn thêm một giám khảo khác hãng để bớt thiên lệch của một nhà cung cấp.
+- **Quyết định:**
+  - `judge.yaml` (version 3) khai `judge` (id `sonnet`) và `extra_judges` (id `muse`: `muse-wonder-1.0`, API tương thích OpenAI `https://api.meta.ai/v1`, `reasoning_effort: high`, giá niêm yết 4 / 0,20 / 20 USD mỗi 1M token vào / cache / ra). Thang, tiêu chí, ba bản hướng dẫn, bọc và escape truyện, kiểm câu trích có thật: không đổi, dùng chung với Sonnet. KHÔNG dùng bản `-contributor` (Meta huấn luyện bằng dữ liệu của bản đó).
+  - Mỗi thư mục kết quả dành cho đúng một giám khảo (`pack --judge`); trần riêng `--budget-meta`; khoá chỉ đọc tên `META_API_KEY`, lỗi của Meta qua `scrub` (G7). `summary --with` thêm bảng điểm từng giám khảo, độ đồng thuận và điểm gộp: trung bình cộng điểm TB solo, trọng số bằng nhau, không chuẩn hoá thang.
+  - Qua thăm dò (khoảng 0,03 USD): `reasoning_effort: none` bị từ chối (HTTP 400); `json_schema` strict dùng được còn `json_object` bỏ qua schema; token suy luận nằm trong `completion_tokens` và tính giá ra.
+- **Kết quả** (`evals/results/2026-10-28-model-bakeoff-muse-1/notes.md`, cùng hai truyện DeepSeek và Luna của `2026-10-22-model-bakeoff-1`, 0,65 USD): cả hai giám khảo khuyến nghị Luna, nhưng điểm chênh nhỏ và đảo chiều (Sonnet xếp Luna trên, Muse xếp DeepSeek trên), và hạng so sánh của Muse đảo theo thứ tự trình bày (truyện trình bày sau luôn nhất) nên không dùng được cho cặp này. Trích không có thật: Muse 1/19, Sonnet 3/28.
+- **Chưa kiểm:** một cặp truyện, một lần chạy mỗi giám khảo, chưa đo nhiễu; hai giám khảo chưa có đa số; chưa thử `effort` khác.
+- **Người quyết:** Chủ dự án (28/10/2026) thêm key Meta, trần tổng 130 USD, dùng model mạnh nhất; cách làm: Claude
