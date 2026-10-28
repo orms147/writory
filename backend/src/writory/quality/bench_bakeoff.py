@@ -239,8 +239,10 @@ def load_run(run_dir: Path) -> RunInfo:
                    calls, [p.read_text(encoding="utf-8").strip() for p in chapters])
 
 
-def _same_world(runs: Sequence[RunInfo]) -> None:
-    """Cùng thế giới là điều kiện của phép so: cùng đề, cùng seed, cùng khởi tạo."""
+def _same_world(runs: Sequence[RunInfo], *, replicates: bool = False) -> None:
+    """Cùng thế giới là điều kiện của phép so: cùng đề, cùng seed, cùng khởi tạo. `replicates`: cho
+    phép hai lần chạy cùng cấu hình (cùng model, đề viết) khác thư mục, để đo nhiễu giữa các lần
+    viết; cùng thế giới vẫn bắt buộc, và mỗi lần chạy phải là một thư mục riêng."""
     for field_name, get in (("sha256 của đề", lambda r: r.meta["scenario"]["sha256"]),
                             ("seed", lambda r: r.meta["seed"]),
                             ("--setup-from", lambda r: r.meta.get("setup_from"))):
@@ -248,9 +250,14 @@ def _same_world(runs: Sequence[RunInfo]) -> None:
         if len(values) != 1 or (field_name == "--setup-from" and values == {"null"}):
             raise ConfigError(f"các lần chạy không cùng thế giới: {field_name} khác nhau hoặc "
                               f"trống ({sorted(values)})")
-    if len({r.identity for r in runs}) != len(runs):
+    if replicates:
+        if len({r.dir.resolve() for r in runs}) != len(runs):
+            raise ConfigError("--replicates cần mỗi lần chạy một thư mục riêng, nhận cùng một thư mục "
+                              "hai lần")
+    elif len({r.identity for r in runs}) != len(runs):
         raise ConfigError("hai lần chạy cùng model viết và cùng đề (hướng dẫn văn phong, biến thể "
-                          f"đề): {[r.writer_model for r in runs]}")
+                          f"đề): {[r.writer_model for r in runs]}; đo nhiễu giữa các lần viết thì "
+                          "thêm --replicates (cùng cấu hình, khác thư mục)")
 
 
 def display_names(runs: Sequence[RunInfo]) -> list[str]:
@@ -267,6 +274,8 @@ def display_names(runs: Sequence[RunInfo]) -> list[str]:
         variant = r.meta.get("prompt_variant") or {}
         if variant.get("name"):
             parts.append(f"variant:{variant['name']}")
+        if sum(o.identity == r.identity for o in runs) > 1:  # cùng cấu hình: phân biệt bằng thư mục
+            parts.append(f"run:{r.dir.name}")
         names.append(f"{r.writer_model} [{'; '.join(parts) or 'đề mặc định'}]")
     return names
 
@@ -332,8 +341,10 @@ def cost_table(run: RunInfo) -> dict[str, Any]:
 
 
 def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str,
-               judge_id: str | None = None, data: BakeoffData | None = None) -> dict[str, Any]:
-    """Gói truyện mù cho MỘT giám khảo (`judge_id`, mặc định giám khảo chính của judge.yaml)."""
+               judge_id: str | None = None, data: BakeoffData | None = None, *,
+               replicates: bool = False) -> dict[str, Any]:
+    """Gói truyện mù cho MỘT giám khảo (`judge_id`, mặc định giám khảo chính của judge.yaml).
+    `replicates`: các lần chạy là cùng một cấu hình lặp lại (đo nhiễu giữa các lần viết)."""
     judge = (data or load_data()[0]).judge_by_id(judge_id) if judge_id else (
         data or load_data()[0]).judge
     if not 2 <= len(run_dirs) <= len(LABELS):
@@ -342,7 +353,7 @@ def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str,
     if (out / "pack_meta.json").exists():
         raise ConfigError(f"{out} đã có gói truyện; dùng thư mục mới")
     runs = [load_run(d) for d in run_dirs]
-    _same_world(runs)
+    _same_world(runs, replicates=replicates)
     order = list(range(len(runs)))
     random.Random(seed).shuffle(order)
     key: dict[str, Any] = {}
@@ -362,7 +373,7 @@ def build_pack(run_dirs: Sequence[Path], seed: int, out: Path, data_sha: str,
     _write_json(out / "code_metrics.json", metrics)
     meta = {"bench": "F", "seed": seed, "judge_yaml_sha256": data_sha, "git": git_state(),
             "brief_sha256": _sha256(brief.encode()), "runs": [_rel(d) for d in run_dirs],
-            "labels": list(labels), "judge": judge.id}
+            "labels": list(labels), "judge": judge.id, "replicates": replicates}
     _write_json(out / "pack_meta.json", meta)
     return meta
 
@@ -802,10 +813,12 @@ class Bakeoff:
             blocks.append(extra)
         return self.provider.build_request(self.data, self.spec, unit.kind, blocks, self.labels)
 
-    async def run_units(self) -> int:
+    async def run_units(self, kinds: Sequence[str] = (SOLO, COMPARE)) -> int:
+        """Chấm các lượt `kinds` (mặc định solo và compare) chưa có kết quả. Chỉ `solo` để giữ chi
+        phí trong trần khi không cần hạng so sánh; chạy tiếp sau đó chỉ thêm phần còn thiếu."""
         finished = self.done()
         for unit in plan_units(self.labels):
-            if unit.key in finished:
+            if unit.key in finished or unit.kind not in kinds:
                 continue
             if not await self._run(unit, self.request_for(unit), self._texts_for(unit)):
                 break
@@ -1011,9 +1024,12 @@ def build_summary(data: BakeoffData, pack: Path, store: Store,
             f"{sum(c['failed_calls'].values())}"])
     out = ["| " + " | ".join(head) + " |", "|" + "---|" * len(head)]
     out += ["| " + " | ".join(r) + " |" for r in rows]
+    ranking_note = (
+        f"Hạng so sánh: trung bình của hai lượt thứ tự đảo; hai lượt "
+        f"{'đồng ý' if blind['order_agrees'] else 'KHÔNG đồng ý (nghi thiên lệch vị trí)'}."
+        if blind["rankings"] else "Hạng so sánh: chưa chạy so sánh trực tiếp (chỉ chấm solo).")
     lines = [f"# Bài F: so {len(labels)} model viết trên cùng một thế giới", "", *out, "",
-             (f"Hạng so sánh: trung bình của hai lượt thứ tự đảo; hai lượt "
-             f"{'đồng ý' if blind['order_agrees'] else 'KHÔNG đồng ý (nghi thiên lệch vị trí)'}.")]
+             ranking_note]
     for r in blind["rankings"]:
         lines.append(f"- trình bày {''.join(r['presented'])}: hạng {' > '.join(r['ranking'])}")
     bad = _bad_quotes(store)
@@ -1283,8 +1299,17 @@ def _store(args: argparse.Namespace) -> Store:
     return Store(pack)
 
 
+def parse_kinds(raw: str) -> tuple[str, ...]:
+    kinds = tuple(k.strip() for k in raw.split(",") if k.strip())
+    if not kinds or not set(kinds) <= {SOLO, COMPARE}:
+        raise ConfigError(f"--kinds chọn trong {SOLO}, {COMPARE} (cách nhau bằng dấu phẩy); "
+                          f"nhận {raw!r}")
+    return kinds
+
+
 async def _judge(args: argparse.Namespace) -> int:
     data, _ = load_data(Path(args.data_dir))
+    kinds = parse_kinds(args.kinds)
     store = _store(args)
     ensure_unlocked(store)
     spec = resolve_judge(data, store.root, args.judge)
@@ -1292,7 +1317,7 @@ async def _judge(args: argparse.Namespace) -> int:
     provider, close = _make_provider(spec, args)
     try:
         bake = Bakeoff(data, store.root, store, provider=provider, spec=spec, budget=budget)
-        return await bake.run_units()
+        return await bake.run_units(kinds)
     finally:
         await close()
 
@@ -1314,7 +1339,8 @@ async def _value(args: argparse.Namespace) -> int:
 def _cmd_pack(args: argparse.Namespace) -> int:
     data, sha = load_data(Path(args.data_dir))
     out = Path(args.out)
-    meta = build_pack([Path(d) for d in args.run], args.seed, out, sha, args.judge, data)
+    meta = build_pack([Path(d) for d in args.run], args.seed, out, sha, args.judge, data,
+                      replicates=args.replicates)
     print(f"Đã đóng gói {len(meta['labels'])} truyện vào {out} cho giám khảo {meta['judge']} "
           f"(nhãn xáo theo seed {meta['seed']}); khoá: key.json")
     return EXIT_OK
@@ -1340,6 +1366,9 @@ def _parser() -> argparse.ArgumentParser:
     pack.add_argument("--out", required=True, help="thư mục kết quả mới của bài F")
     pack.add_argument("--judge", help="id giám khảo của thư mục này (judge.yaml); mặc định giám "
                                       "khảo chính")
+    pack.add_argument("--replicates", action="store_true",
+                      help="các lần chạy là cùng một cấu hình lặp lại ở thư mục khác (đo nhiễu "
+                           "giữa các lần viết); vẫn đòi cùng thế giới")
     for name, helptext in (("judge", "chấm mù: solo ×3 + compare ×2"),
                            ("value", "khuyến nghị đáng tiền, sau khi khoá điểm mù"),
                            ("summary", "giải nhãn và dựng bảng")):
@@ -1350,6 +1379,10 @@ def _parser() -> argparse.ArgumentParser:
                             help="thư mục kết quả của giám khảo khác trên cùng truyện (lặp lại "
                                  "được): thêm bảng điểm từng giám khảo, độ đồng thuận, điểm gộp")
         else:
+            if name == "judge":
+                sp.add_argument("--kinds", default=f"{SOLO},{COMPARE}",
+                                help="các lượt chấm: solo, compare hoặc cả hai (mặc định). Chỉ solo "
+                                     "thì rẻ hơn nhiều; value đòi đủ cả hai")
             sp.add_argument("--judge", help="phải là giám khảo của thư mục (`pack_meta.json`)")
             sp.add_argument("--budget", type=float,
                             help="trần USD Anthropic (bắt buộc khi giám khảo là Anthropic)")
