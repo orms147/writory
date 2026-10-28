@@ -1,0 +1,140 @@
+{
+  "bench": "run",
+  "label": "ab-trinh-tham-v3-2",
+  "started": "2026-10-29T01:06:46+07:00",
+  "finished": "2026-10-29T01:16:51+07:00",
+  "status": "done",
+  "exit_code": 0,
+  "stop": null,
+  "dry_run": false,
+  "git": {
+    "commit": "7d2d8d2980d314fe1321458320468463576ff3d2",
+    "dirty": false
+  },
+  "story_id": "run-20261029-ab-trinh-tham-v3-2-2ac8be40",
+  "seed": 20261030,
+  "budget_usd": 0.15,
+  "chapters_arg": 6,
+  "scenario": {
+    "path": "evals/scenarios/story_run/ab-trinh-tham.yaml",
+    "sha256": "a0997a5fc13787151f7d311e6f7b8201430bc1e4b1e416c26d590d7816c00577",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "trinh thám hiện thực",
+        "era": "Hà Nội cuối thập niên 1980, thời bao cấp; một vụ mất tích ở khu tập thể cũ",
+        "voice": "trầm, hoài nghi, nhiều chi tiết đời thường, đối thoại ngắn",
+        "darkness": "vừa phải, có tội ác và nghi kỵ, không tả máu me"
+      },
+      "length_level": "short",
+      "naming": {
+        "names": "viet",
+        "places": "that"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261030,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "ae4829a623f787285157a07260a5cfd8bdb44927a29e0eff0305bb3b91825a9f",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "a4b32061fb63735b441a0cf8f5ac392d0eec2c201dcda0d19e7a72c74b1c9547",
+      "models.yaml": "c14db6788176dec1d3e61bf27768c6e6eed3f15bea82d86804d74e34dedff3ab",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "context_flags": {
+    "character_personality_max_chars": 240,
+    "previous_openings": 2,
+    "unplanned_chapter_goal": true
+  },
+  "setup_from": "evals/results/2026-10-28-run-ab-trinh-tham-setup",
+  "setup_only": false,
+  "overrides": {
+    "writer_model": null,
+    "writer_reasoning": null,
+    "outline_model": null,
+    "outline_reasoning": null
+  },
+  "prompt_versions": {
+    "setup": "setup-8",
+    "outline": "outline-9",
+    "writer": "writer-9",
+    "extract": "extract-7",
+    "choices": "choices-3"
+  },
+  "style_guide_sha256": "d75c0ca1a63ea8ad95fdcf45c191a6ff61bcc0cb04b1488d3c247cfc44bc2e93",
+  "style_guide_path": "evals/scenarios/quality/style_guide_vi_v3.md",
+  "prompt_variant": {
+    "name": "v3",
+    "files": {
+      "outline_system.md": "74d9c877a6012935c37197c52e24dc6fb9e76cf905dd1706584fd2e4b70fc9a5",
+      "choices_system.md": "29502df3554e2fa06ce23611776b9d19ca1f231dd1deb54599c065bcfe32bc93",
+      "goals.yaml": "291e31895231af2a2a54eca81a9eaac7a630f5ab64c895d407a8d17962e95e9b"
+    },
+    "overrides": [
+      "outline_system",
+      "choices_system",
+      "goals:push_forward",
+      "goals:milestone_next"
+    ]
+  },
+  "prompt_versions_overridden": [
+    "outline",
+    "writer",
+    "choices"
+  ],
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}

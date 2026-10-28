@@ -1,0 +1,4817 @@
+{
+ "story_id": "run-20261029-ab-ky-ao-v3-1-ad6baea6",
+ "plan": {
+  "acts": [
+   {
+    "name": "Ngọn đèn tắt",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Những mảnh lời thề",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Nước dưới bùn",
+    "from_chapter": 5,
+    "to_chapter": 6
+   },
+   {
+    "name": "Đèn trước cửa",
+    "from_chapter": 7,
+    "to_chapter": 7
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "loi_the_la_giao_uoc",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "lời thề cổ",
+      "trao lại một phần đường nước"
+     ],
+     [
+      "món nợ",
+      "đường nước cho thủy thần"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "coc_bi_rut",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Ông Bá",
+      "rút Cọc Thề"
+     ],
+     [
+      "Ông Bá",
+      "mở lối thoát nước"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "den_tat_co_y",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 6,
+    "leak_terms": [
+     [
+      "Lan",
+      "dập tắt Đèn Chung"
+     ],
+     [
+      "Lan",
+      "lời khấn ở Miếu Bùn"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "loi_nhan_day_du",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 2
+   },
+   {
+    "thread_id": "ky_uc_loi_the",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "nguoi_rut_coc",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "nguon_den_tat",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "so_phan_xom",
+    "resolve_from_chapter": 6,
+    "resolve_to_chapter": 7
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Nguyễn Lâm nhận ra lời nhắn đứt quãng của người gác đầm dẫn tới một dấu vết cụ thể trong xóm.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Những mảnh ký ức rời rạc cho thấy lời thề xưa còn có một điều kiện bị bỏ quên.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Nước tràn tới các sàn thấp, buộc dân làng phải chọn giữa giữ nhà và giữ lối nước.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "climax",
+    "goal": "Nguyễn Lâm cùng dân làng thực hiện một lựa chọn có thể làm dịu hoặc đánh thức hẳn thủy thần.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   },
+   {
+    "kind": "ending",
+    "goal": "Dân Xóm Chìm chấp nhận cái giá của lựa chọn và đối diện với bình minh sau đêm nước dâng.",
+    "from_chapter": 7,
+    "to_chapter": 7
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 6,
+  "total_chapters": 7,
+  "secrets": [
+   {
+    "fact_id": "loi_the_la_giao_uoc",
+    "text": "Lời thề cổ không chỉ yêu cầu dân làng giữ đèn và cọc mà còn buộc họ phải trao lại một phần đường nước cho thủy thần mỗi năm.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": 4
+   },
+   {
+    "fact_id": "coc_bi_rut",
+    "text": "Ông Bá đã bí mật rút Cọc Thề để mở lối thoát nước khỏi khu sàn nhà mình.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": 4
+   },
+   {
+    "fact_id": "den_tat_co_y",
+    "text": "Lan đã dập tắt Đèn Chung để buộc dân làng nghe những lời khấn ở Miếu Bùn.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "revealed_chapter": 5
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "loi_nhan_day_du",
+    "description": "Người gác đầm đã để lại lời nhắn nào trọn vẹn cho Nguyễn Lâm?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "resolved_chapter": 1
+   },
+   {
+    "thread_id": "ky_uc_loi_the",
+    "description": "Lời thề xưa thực sự đòi hỏi dân làng điều gì?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": 3
+   },
+   {
+    "thread_id": "nguoi_rut_coc",
+    "description": "Ai đã làm Cọc Thề bật khỏi bùn?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": 4
+   },
+   {
+    "thread_id": "nguon_den_tat",
+    "description": "Vì sao mọi ngọn đèn trong xóm đều tắt?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "so_phan_xom",
+    "description": "Dân Xóm Chìm sẽ chọn cách nào để đối diện với thủy thần?",
+    "user_authored": false,
+    "from_chapter": 6,
+    "to_chapter": 7,
+    "resolved_chapter": 6
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261029-ab-ky-ao-v3-1-ad6baea6-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn Lâm",
+      "personality": "Kiệm lời, bền bỉ và quen quan sát trước khi hành động. Khi người khác tranh cãi, cậu thường tìm cách nghe hết mọi phía.",
+      "backstory": "Lâm lớn lên ở xóm Chìm, phụ người nhà vá sàn và đưa đò qua những lối nước quanh xóm. Cậu từng nghe người gác đầm kể vài đoạn về lời thề, nhưng chưa bao giờ nghĩ chúng sẽ liên quan đến mình. Sáng nay, ông nắm lấy tay cậu bên chiếc cọc bật khỏi bùn và để lại lời nhắn đứt quãng.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "ba_thu",
+     "label": "Character",
+     "props": {
+      "name": "Bà Thu",
+      "personality": "Điềm đạm, cứng cỏi, không dễ tin lời đồn; khi nói thường lựa lời như đang cân từng hạt gạo.",
+      "backstory": "Bà giữ chiếc đèn chung của xóm Chìm và nhớ phần lời thề dặn dân làng phải thắp đèn mỗi đêm."
+     }
+    },
+    {
+     "id": "ong_ba",
+     "label": "Character",
+     "props": {
+      "name": "Ông Bá",
+      "personality": "Nóng nảy, thực dụng, thương người nhà nhưng sợ mất mát hơn sợ mang tiếng.",
+      "backstory": "Ông từng cùng dân làng đóng cọc ngăn nước ở bờ xóm, và nhớ phần lời thề liên quan đến việc không rút cọc khỏi đầm."
+     }
+    },
+    {
+     "id": "mai",
+     "label": "Character",
+     "props": {
+      "name": "Mai",
+      "personality": "Nhanh trí, ít nói, luôn để ý những điều người khác bỏ qua.",
+      "backstory": "Mai chèo đò qua các lối nước quanh xóm và nhớ câu hát cũ của mẹ mình về vật được đặt dưới cọc thề."
+     }
+    },
+    {
+     "id": "lan",
+     "label": "Character",
+     "props": {
+      "name": "Lan",
+      "personality": "Nhẫn nại, kín đáo, gắn bó với những người đã khuất và những phong tục cũ.",
+      "backstory": "Lan chăm nom miếu bùn đã lâu, nơi người trong xóm từng để lại những lời khấn trước mùa nước dâng."
+     }
+    },
+    {
+     "id": "nguoi_gac_dam",
+     "label": "Character",
+     "props": {
+      "name": "Ông Tư Đầm",
+      "aliases": [
+       "người gác đầm"
+      ],
+      "personality": "Ít lời, kiên nhẫn, mang vẻ mệt mỏi của người đã canh một điều quá lâu.",
+      "backstory": "Ông canh chiếc cọc thề ở mép xóm và kể cho Nguyễn Lâm vài đoạn rời rạc về lời thề xưa."
+     }
+    },
+    {
+     "id": "xom_chim",
+     "label": "Location",
+     "props": {
+      "name": "Xóm Chìm",
+      "description": "Xóm nhà sàn thấp bám quanh những lối nước đen, nơi đèn trước cửa vốn chưa từng tắt đồng loạt."
+     }
+    },
+    {
+     "id": "me_bun",
+     "label": "Location",
+     "props": {
+      "name": "Mép Bùn",
+      "description": "Bãi bùn bên ngoài xóm, nơi chiếc cọc thề đã bật lên và mặt nước đang dâng rất chậm."
+     }
+    },
+    {
+     "id": "mieng_dam",
+     "label": "Location",
+     "props": {
+      "name": "Miệng Đầm",
+      "description": "Vùng nước sâu khuất sau những bụi sậy, nơi lời thề xưa được truyền rằng đã giữ yên một vị thủy thần."
+     }
+    },
+    {
+     "id": "san_chung",
+     "label": "Location",
+     "props": {
+      "name": "Sàn Chung",
+      "description": "Sàn gỗ rộng giữa xóm, nơi dân làng tụ họp khi nước hoặc lời đồn khiến họ không thể ngồi yên trong nhà."
+     }
+    },
+    {
+     "id": "mieu_bun",
+     "label": "Location",
+     "props": {
+      "name": "Miếu Bùn",
+      "description": "Miếu nhỏ dựng trên nền đất sũng, nơi các lời khấn cũ được giữ qua nhiều mùa nước."
+     }
+    },
+    {
+     "id": "dan_xom_chim",
+     "label": "Faction",
+     "props": {
+      "name": "Dân Xóm Chìm",
+      "description": "Những gia đình sống trên sàn gỗ quanh đầm và cùng mang lời thề cổ."
+     }
+    },
+    {
+     "id": "coc_the",
+     "label": "Item",
+     "props": {
+      "name": "Cọc Thề",
+      "description": "Cọc gỗ đen đã bật khỏi bùn, mang những vết khắc mòn mà người trong xóm xem là dấu tích của lời thề."
+     }
+    },
+    {
+     "id": "den_chung",
+     "label": "Item",
+     "props": {
+      "name": "Đèn Chung",
+      "description": "Chiếc đèn dầu cũ được bà Thu giữ để làm mẫu cho những ngọn đèn trước cửa trong xóm."
+     }
+    },
+    {
+     "id": "den_tat_dong_loat",
+     "label": "Fact",
+     "props": {
+      "text": "Sáng nay, mọi ngọn đèn trước cửa ở Xóm Chìm đều tắt dù tim đèn còn ấm."
+     }
+    },
+    {
+     "id": "coc_bat_len",
+     "label": "Fact",
+     "props": {
+      "text": "Chiếc Cọc Thề đã bật khỏi bùn ở Mép Bùn."
+     }
+    },
+    {
+     "id": "loi_nhan_gac_dam",
+     "label": "Fact",
+     "props": {
+      "text": "Người gác đầm đã nói với Nguyễn Lâm rằng mặt nước đang thức dậy."
+     }
+    },
+    {
+     "id": "loi_the_den",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề xưa dặn dân Xóm Chìm phải thắp đèn trước cửa mỗi đêm."
+     }
+    },
+    {
+     "id": "loi_the_coc",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề xưa cấm dân làng rút những chiếc cọc ngăn nước khỏi đầm."
+     }
+    },
+    {
+     "id": "loi_the_vat_chon",
+     "label": "Fact",
+     "props": {
+      "text": "Câu hát cũ của mẹ Mai nói rằng một vật được đặt dưới Cọc Thề để giữ lời khấn."
+     }
+    },
+    {
+     "id": "loi_khan_mieu",
+     "label": "Fact",
+     "props": {
+      "text": "Những lời khấn ở Miếu Bùn nhắc đến một món nợ mà dân làng chưa trả."
+     }
+    },
+    {
+     "id": "thuy_than_ngu",
+     "label": "Fact",
+     "props": {
+      "text": "Một vị thủy thần đang ngủ dưới Miệng Đầm."
+     }
+    },
+    {
+     "id": "loi_the_la_giao_uoc",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề cổ không chỉ yêu cầu dân làng giữ đèn và cọc mà còn buộc họ phải trao lại một phần đường nước cho thủy thần mỗi năm."
+     }
+    },
+    {
+     "id": "coc_bi_rut",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Bá đã bí mật rút Cọc Thề để mở lối thoát nước khỏi khu sàn nhà mình."
+     }
+    },
+    {
+     "id": "den_tat_co_y",
+     "label": "Fact",
+     "props": {
+      "text": "Lan đã dập tắt Đèn Chung để buộc dân làng nghe những lời khấn ở Miếu Bùn."
+     }
+    },
+    {
+     "id": "loi_nhan_day_du",
+     "label": "Thread",
+     "props": {
+      "description": "Người gác đầm đã để lại lời nhắn nào trọn vẹn cho Nguyễn Lâm?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 2
+     }
+    },
+    {
+     "id": "ky_uc_loi_the",
+     "label": "Thread",
+     "props": {
+      "description": "Lời thề xưa thực sự đòi hỏi dân làng điều gì?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "nguoi_rut_coc",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã làm Cọc Thề bật khỏi bùn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "nguon_den_tat",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao mọi ngọn đèn trong xóm đều tắt?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "so_phan_xom",
+     "label": "Thread",
+     "props": {
+      "description": "Dân Xóm Chìm sẽ chọn cách nào để đối diện với thủy thần?",
+      "planted_chapter": 0,
+      "due_from_chapter": 6,
+      "due_to_chapter": 7
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ba_thu",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ba_thu>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ong_ba",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ong_ba>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "mai",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:mai>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lan",
+     "to": "mieu_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lan>mieu_bun@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguoi_gac_dam",
+     "to": "me_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguoi_gac_dam>me_bun@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "coc_the",
+     "to": "me_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:coc_the>me_bun@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "ba_thu",
+     "to": "den_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:ba_thu>den_chung@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ba_thu",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ba_thu>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ong_ba",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ong_ba>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "mai",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:mai>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "lan",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:lan>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nguoi_gac_dam",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nguoi_gac_dam>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "nguoi_gac_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>nguoi_gac_dam@0",
+     "props": {
+      "kind": "người quen",
+      "score": 45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nguoi_gac_dam",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nguoi_gac_dam>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 45
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_dong_loat",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_dong_loat>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_thu",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_thu>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "mai",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:mai>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bat_len",
+     "to": "coc_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bat_len>coc_the@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bat_len",
+     "to": "me_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bat_len>me_bun@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "coc_bat_len",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>coc_bat_len@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_nhan_gac_dam",
+     "to": "nguoi_gac_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_nhan_gac_dam>nguoi_gac_dam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_nhan_gac_dam",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_nhan_gac_dam>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_den",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_den>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_den",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_den>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_thu",
+     "to": "loi_the_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_thu>loi_the_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "loi_the_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>loi_the_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_the_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_the_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_coc",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_coc>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_coc",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_coc>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "loi_the_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>loi_the_coc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_the_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_the_coc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_vat_chon",
+     "to": "mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_vat_chon>mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_vat_chon",
+     "to": "coc_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_vat_chon>coc_the@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "mai",
+     "to": "loi_the_vat_chon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:mai>loi_the_vat_chon@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_khan_mieu",
+     "to": "mieu_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_khan_mieu>mieu_bun@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_khan_mieu",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_khan_mieu>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "loi_khan_mieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>loi_khan_mieu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "thuy_than_ngu",
+     "to": "mieng_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thuy_than_ngu>mieng_dam@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_thu",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_thu>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "mai",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:mai>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_la_giao_uoc",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_la_giao_uoc>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_la_giao_uoc",
+     "to": "mieng_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_la_giao_uoc>mieng_dam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_la_giao_uoc",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_la_giao_uoc>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "loi_the_la_giao_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>loi_the_la_giao_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_the_la_giao_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_the_la_giao_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bi_rut",
+     "to": "ong_ba",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bi_rut>ong_ba@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bi_rut",
+     "to": "coc_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bi_rut>coc_the@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bi_rut",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bi_rut>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "coc_bi_rut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>coc_bi_rut@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_co_y",
+     "to": "lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_co_y>lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_co_y",
+     "to": "den_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_co_y>den_chung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_co_y",
+     "to": "mieu_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_co_y>mieu_bun@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "den_tat_co_y",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>den_tat_co_y@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Nguyễn Lâm",
+      "known_as": "Nguyễn Lâm"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-43a50511870a",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    },
+    {
+     "id": "fact_c1s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Nền miếu sụp xuống dưới tay Nguyễn Lâm.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c1s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Nước tụ thành một dòng nhỏ rồi trườn vào khe tối dưới cửa miếu."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "mieu_bun",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>mieu_bun@1",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "mai",
+     "to": "mieu_bun",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:mai>mieu_bun@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "loi_nhan_gac_dam",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>loi_nhan_gac_dam@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "nguoi_gac_dam",
+      "quote": "- Mặt nước đang thức dậy. Còn… nghe tiếng vọng. Đừng động vào cọc."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "me_bun",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:me_bun>ch1@1",
+     "props": {
+      "quote": "Đám đông rời Mép Bùn thành từng tốp, bước vội trên những tấm sàn hẹp.",
+      "known_as": "Mép Bùn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "nguoi_gac_dam",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:nguoi_gac_dam>ch1@1",
+     "props": {
+      "quote": "Tôi còn cảm giác bàn tay ông Tư Đầm khép quanh cổ tay mình.",
+      "known_as": "ông Tư Đầm"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "mai",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:mai>ch1@1",
+     "props": {
+      "quote": "Mai chặn tôi ở chỗ lối sàn rẽ về xóm.",
+      "known_as": "Mai"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ba_thu",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ba_thu>ch1@1",
+     "props": {
+      "quote": "Bên kia lối sàn, bà Thu đang giữ chiếc Đèn Chung sát ngực.",
+      "known_as": "bà Thu"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "den_chung",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:den_chung>ch1@1",
+     "props": {
+      "quote": "Bên kia lối sàn, bà Thu đang giữ chiếc Đèn Chung sát ngực.",
+      "known_as": "Đèn Chung"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "loi_nhan_gac_dam",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:loi_nhan_gac_dam>ch1@1",
+     "props": {
+      "quote": "- Mặt nước đang thức dậy. Còn… nghe tiếng vọng. Đừng động vào cọc."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "mieu_bun",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:mieu_bun>ch1@1",
+     "props": {
+      "quote": "Miếu Bùn hiện ra sau hàng lau, mái thấp và nghiêng về một phía.",
+      "known_as": "Miếu Bùn"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_nhan_gac_dam",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_nhan_gac_dam@1",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "coc_the",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:coc_the>ch1@1",
+     "props": {
+      "quote": "Rồi nhìn về phía Mép Bùn, nơi Cọc Thề nằm bật khỏi đất",
+      "known_as": "Cọc Thề"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "loi_the_vat_chon",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>loi_the_vat_chon@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "mai",
+      "quote": "Có vật đặt dưới Cọc Thề để giữ lời khấn."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "loi_nhan_day_du",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:loi_nhan_day_du>ch1@1",
+     "props": {
+      "quote": "Lời ông Tư cuối cùng cũng liền lại trong đầu tôi: tìm dấu nước ở Miếu Bùn, nghe tiếng vọng tại đó, đừng động vào Cọc Thề."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_1",
+     "to": "mieu_bun",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_1>mieu_bun@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s2_1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s2_1@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Đất sụp xuống dưới tay tôi."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_2",
+     "to": "mieu_bun",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_2>mieu_bun@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s2_2",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s2_2@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Nước lùa qua khoảng trống giữa hai thanh ván dưới cửa miếu, rồi tụ thành một dòng nhỏ."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s2_1",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s2_1>ch1@1",
+     "props": {
+      "quote": "Đất sụp xuống dưới tay tôi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s2_2",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s2_2>ch1@1",
+     "props": {
+      "quote": "Nước lùa qua khoảng trống giữa hai thanh ván dưới cửa miếu, rồi tụ thành một dòng nhỏ. Nó kéo bùn đen khỏi bậc cửa, trườn thẳng vào khe tối."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>xom_chim@0",
+     "valid_to_chapter": 1
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:mai>xom_chim@0",
+     "valid_to_chapter": 1
+    }
+   ]
+  },
+  "2": {
+   "commit_id": "ch2-f77a5eb84208",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    },
+    {
+     "id": "fact_c2s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Tiếng gõ vang lên ngay dưới lối đi giữa những căn nhà khép cửa trong Xóm Chìm."
+     }
+    },
+    {
+     "id": "fact_c2s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Nguyễn Lâm làm tấm ván sẫm màu bật lên và gãy ngang.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c2s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Một khe nước đen chảy ngược dưới lối đi, hướng về những căn nhà."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_c1s2_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_c1s2_1@2",
+     "props": {
+      "feeling": "liều lĩnh"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "xom_chim",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>xom_chim@2",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "mai",
+     "to": "xom_chim",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:mai>xom_chim@2",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_1",
+     "to": "xom_chim",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_1>xom_chim@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s1_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s1_1@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Tiếng gõ không còn vọng từ miếu. Nó ở ngay dưới lối đi, giữa những căn nhà khép cửa."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s1_1",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s1_1>ch2@2",
+     "props": {
+      "quote": "Tiếng gõ không còn vọng từ miếu. Nó ở ngay dưới lối đi, giữa những căn nhà khép cửa."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "xom_chim",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:xom_chim>ch2@2",
+     "props": {
+      "quote": "Xa hơn, từ phía những căn sàn trong Xóm Chìm, có tiếng đáp lại",
+      "known_as": "Xóm Chìm"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s2_1",
+     "to": "protagonist",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s2_1>protagonist@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s2_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s2_1@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Tấm ván bật lên, gãy ngang."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s2_2",
+     "to": "xom_chim",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s2_2>xom_chim@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s2_2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s2_2@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Bên dưới là một khe nước đen. Nó chảy ngược dưới lối đi, hướng về những căn nhà."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s2_1",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s2_1>ch2@2",
+     "props": {
+      "quote": "Tấm ván bật lên, gãy ngang."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s2_2",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s2_2>ch2@2",
+     "props": {
+      "quote": "Bên dưới là một khe nước đen. Nó chảy ngược dưới lối đi, hướng về những căn nhà."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>mieu_bun@1",
+     "valid_to_chapter": 2
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:mai>mieu_bun@1",
+     "valid_to_chapter": 2
+    }
+   ]
+  },
+  "3": {
+   "commit_id": "ch3-40f4a3a9f854",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    },
+    {
+     "id": "lie:choice-0e10430829b8",
+     "label": "Lie",
+     "props": {
+      "chapter": 3,
+      "content": "Tiếng gõ im rồi."
+     }
+    },
+    {
+     "id": "fact_c3s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Nước đen phủ kín con đường dẫn ra Mép Bùn."
+     }
+    },
+    {
+     "id": "fact_c3s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Nguyễn Lâm bẩy thanh gỗ chèn khỏi khe để mở lối thoát nước.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c3s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Dòng nước đen đổi hướng, chảy vào xóm về phía những căn sàn thấp."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "TOLD",
+     "from": "protagonist",
+     "to": "lie:choice-0e10430829b8",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "TOLD:protagonist>lie:choice-0e10430829b8@3",
+     "props": {}
+    },
+    {
+     "type": "TOLD_TO",
+     "from": "lie:choice-0e10430829b8",
+     "to": "mai",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "TOLD_TO:lie:choice-0e10430829b8>mai@3",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "ky_uc_loi_the",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:ky_uc_loi_the>ch3@3",
+     "props": {
+      "quote": "Nhưng họ đều nhớ chuyện này: dân làng phải thắp đèn trước cửa, giữ Cọc Thề. Mỗi năm còn phải nhường cho thủy thần một phần đường nước."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "me_bun",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>me_bun@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_1@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Nước đen tràn qua mặt sàn, phủ kín con đường dẫn ra Mép Bùn."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_1",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+     "props": {
+      "quote": "Nước đen tràn qua mặt sàn, phủ kín con đường dẫn ra Mép Bùn."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s2_1",
+     "to": "protagonist",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s2_1>protagonist@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s2_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s2_1@3",
+     "props": {
+      "how": "tự làm",
+      "quote": "Tôi cúi xuống, luồn tay vào dưới thanh chèn. Gỗ nặng và trơn. Vai tôi đau nhói khi dồn sức bẩy; thanh gỗ bật khỏi khe, rơi tõm xuống nước."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s2_2",
+     "to": "xom_chim",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s2_2>xom_chim@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s2_2",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s2_2@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Dòng đen quặt vào xóm, dồn thẳng về những căn sàn thấp."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s2_1",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s2_1>ch3@3",
+     "props": {
+      "quote": "Vai tôi đau nhói khi dồn sức bẩy; thanh gỗ bật khỏi khe, rơi tõm xuống nước."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s2_2",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s2_2>ch3@3",
+     "props": {
+      "quote": "Dòng đen quặt vào xóm, dồn thẳng về những căn sàn thấp."
+     }
+    }
+   ],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-2beb7fd79210",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "loi_the_la_giao_uoc",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:loi_the_la_giao_uoc>ch4@4",
+     "props": {
+      "quote": "Lời thề không chỉ bắt dân làng thắp đèn trước cửa, giữ Cọc Thề. Mỗi năm, chúng ta còn phải trao lại cho thủy thần một phần đường nước, để nước chảy qua xóm rồi về đầm."
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "me_bun",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>me_bun@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "mai",
+     "to": "me_bun",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:mai>me_bun@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ba_thu",
+     "to": "me_bun",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ba_thu>me_bun@4",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ong_ba",
+     "to": "me_bun",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ong_ba>me_bun@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "coc_bi_rut",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>coc_bi_rut@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "ong_ba",
+      "quote": "- Tôi rút cọc."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "nguoi_rut_coc",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:nguoi_rut_coc>ch4@4",
+     "props": {
+      "quote": "- Tôi rút cọc."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "ong_ba",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:ong_ba>ch4@4",
+     "props": {
+      "quote": "Ông Bá đứng chắn trước Cọc Thề.",
+      "known_as": "Ông Bá"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "coc_bi_rut",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:coc_bi_rut>ch4@4",
+     "props": {
+      "quote": "- Tôi rút cọc."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>xom_chim@2",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:mai>xom_chim@2",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:ba_thu>xom_chim@0",
+     "valid_to_chapter": 4
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:ong_ba>xom_chim@0",
+     "valid_to_chapter": 4
+    }
+   ]
+  },
+  "5": {
+   "commit_id": "ch5-5654d4998a76",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    },
+    {
+     "id": "fact_c5s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Bà Thu đặt Đèn Chung vào tay Nguyễn Lâm.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c5s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Thủy triều bùn quét mất lối cũ nối về Mép Bùn."
+     }
+    },
+    {
+     "id": "fact_c5s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Nguyễn Lâm giữ tấm chắn mở để nước tiếp tục chảy qua khe.",
+      "user_authored": true
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "den_tat_co_y",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:den_tat_co_y>ch5@5",
+     "props": {
+      "quote": "- Chính tôi dập tắt Đèn Chung. - Lan nói. - Tôi muốn dân làng nghe lời khấn, thay vì cứ thắp đèn rồi tưởng món nợ đã được trả."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "den_tat_co_y",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>den_tat_co_y@5",
+     "props": {
+      "how": "được kể",
+      "told_by": "lan",
+      "quote": "- Chính tôi dập tắt Đèn Chung. - Lan nói. - Tôi muốn dân làng nghe lời khấn, thay vì cứ thắp đèn rồi tưởng món nợ đã được trả."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "nguon_den_tat",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:nguon_den_tat>ch5@5",
+     "props": {
+      "quote": "- Chính tôi dập tắt Đèn Chung. - Lan nói. - Tôi muốn dân làng nghe lời khấn, thay vì cứ thắp đèn rồi tưởng món nợ đã được trả."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "ba_thu",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>ba_thu@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "protagonist",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>protagonist@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "den_chung",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>den_chung@5",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s1_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s1_1@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Bà Thu đặt Đèn Chung vào tay tôi."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_2",
+     "to": "protagonist",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_2>protagonist@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_2",
+     "to": "me_bun",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_2>me_bun@5",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s1_2",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s1_2@5",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Thủy triều bùn quét mất lối cũ, còn ngọn đèn trong tay tôi chao mạnh."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s1_1",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s1_1>ch5@5",
+     "props": {
+      "quote": "Bà Thu đặt Đèn Chung vào tay tôi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s1_2",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s1_2>ch5@5",
+     "props": {
+      "quote": "Thủy triều bùn quét mất lối cũ, còn ngọn đèn trong tay tôi chao mạnh."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lan",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lan>ch5@5",
+     "props": {
+      "quote": "Lan bước nhanh, vạt áo sẫm dính bùn tới gối",
+      "known_as": "Lan"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "mieu_bun",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>mieu_bun@5",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "den_chung",
+     "to": "mieu_bun",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:den_chung>mieu_bun@5",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s2_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s2_1@5",
+     "props": {
+      "how": "tự làm",
+      "quote": "Tôi giữ nó mở."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_1",
+     "to": "protagonist",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_1>protagonist@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s2_1",
+     "to": "xom_chim",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s2_1>xom_chim@5",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s2_1",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s2_1>ch5@5",
+     "props": {
+      "quote": "Tôi giữ nó mở."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:ba_thu>den_chung@0",
+     "valid_to_chapter": 5
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>me_bun@4",
+     "valid_to_chapter": 5
+    }
+   ]
+  },
+  "6": {
+   "commit_id": "ch6-b7ee62592201",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    },
+    {
+     "id": "fact_c6s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Lan yêu cầu mọi người lên sàn cao và không để ai ở dưới nữa."
+     }
+    },
+    {
+     "id": "fact_c6s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Nguyễn Lâm kéo một người mắc dưới dòng nước lên sàn.",
+      "user_authored": true
+     }
+    },
+    {
+     "id": "fact_c6s1_3",
+     "label": "Fact",
+     "props": {
+      "text": "Nước đen tràn qua lối cũ và phủ kín con đường trở lại khe."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_1",
+     "to": "lan",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_1>lan@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_1",
+     "to": "xom_chim",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_1>xom_chim@6",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s1_1",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s1_1@6",
+     "props": {
+      "how": "được kể",
+      "told_by": "lan",
+      "quote": "- Gọi mọi người lên đây. Đừng để ai ở dưới nữa."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_2",
+     "to": "protagonist",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_2>protagonist@6",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s1_2",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s1_2@6",
+     "props": {
+      "how": "tự làm",
+      "quote": "Cuối cùng, đầu gối họ đập lên bậc gỗ. Tôi lôi họ lên sàn, rồi tự chống tay đứng dậy."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_3",
+     "to": "xom_chim",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_3>xom_chim@6",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s1_3",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s1_3@6",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Nước đen tràn qua lối cũ, phủ kín con đường trở lại khe."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s1_1",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s1_1>ch6@6",
+     "props": {
+      "quote": "- Gọi mọi người lên đây. Đừng để ai ở dưới nữa."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s1_2",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s1_2>ch6@6",
+     "props": {
+      "quote": "Cuối cùng, đầu gối họ đập lên bậc gỗ. Tôi lôi họ lên sàn, rồi tự chống tay đứng dậy."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s1_3",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s1_3>ch6@6",
+     "props": {
+      "quote": "Nước đen tràn qua lối cũ, phủ kín con đường trở lại khe."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "fact_c6s1_1",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>fact_c6s1_1@6",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "so_phan_xom",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:so_phan_xom>ch6@6",
+     "props": {
+      "quote": "Xóm Chìm chọn nhường đường nước rồi."
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 6,
+  "nodes": {
+   "ba_thu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bà giữ chiếc đèn chung của xóm Chìm và nhớ phần lời thề dặn dân làng phải thắp đèn mỗi đêm.",
+     "personality": "Điềm đạm, cứng cỏi, không dễ tin lời đồn; khi nói thường lựa lời như đang cân từng hạt gạo.",
+     "name": "Bà Thu"
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "coc_bat_len": {
+    "label": "Fact",
+    "props": {
+     "text": "Chiếc Cọc Thề đã bật khỏi bùn ở Mép Bùn."
+    }
+   },
+   "coc_bi_rut": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Bá đã bí mật rút Cọc Thề để mở lối thoát nước khỏi khu sàn nhà mình."
+    }
+   },
+   "coc_the": {
+    "label": "Item",
+    "props": {
+     "name": "Cọc Thề",
+     "description": "Cọc gỗ đen đã bật khỏi bùn, mang những vết khắc mòn mà người trong xóm xem là dấu tích của lời thề."
+    }
+   },
+   "dan_xom_chim": {
+    "label": "Faction",
+    "props": {
+     "name": "Dân Xóm Chìm",
+     "description": "Những gia đình sống trên sàn gỗ quanh đầm và cùng mang lời thề cổ."
+    }
+   },
+   "den_chung": {
+    "label": "Item",
+    "props": {
+     "name": "Đèn Chung",
+     "description": "Chiếc đèn dầu cũ được bà Thu giữ để làm mẫu cho những ngọn đèn trước cửa trong xóm."
+    }
+   },
+   "den_tat_co_y": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan đã dập tắt Đèn Chung để buộc dân làng nghe những lời khấn ở Miếu Bùn."
+    }
+   },
+   "den_tat_dong_loat": {
+    "label": "Fact",
+    "props": {
+     "text": "Sáng nay, mọi ngọn đèn trước cửa ở Xóm Chìm đều tắt dù tim đèn còn ấm."
+    }
+   },
+   "fact_c1s2_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Nền miếu sụp xuống dưới tay Nguyễn Lâm."
+    }
+   },
+   "fact_c1s2_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Nước tụ thành một dòng nhỏ rồi trườn vào khe tối dưới cửa miếu."
+    }
+   },
+   "fact_c2s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Tiếng gõ vang lên ngay dưới lối đi giữa những căn nhà khép cửa trong Xóm Chìm."
+    }
+   },
+   "fact_c2s2_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Nguyễn Lâm làm tấm ván sẫm màu bật lên và gãy ngang."
+    }
+   },
+   "fact_c2s2_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Một khe nước đen chảy ngược dưới lối đi, hướng về những căn nhà."
+    }
+   },
+   "fact_c3s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Nước đen phủ kín con đường dẫn ra Mép Bùn."
+    }
+   },
+   "fact_c3s2_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Nguyễn Lâm bẩy thanh gỗ chèn khỏi khe để mở lối thoát nước."
+    }
+   },
+   "fact_c3s2_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Dòng nước đen đổi hướng, chảy vào xóm về phía những căn sàn thấp."
+    }
+   },
+   "fact_c5s1_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Bà Thu đặt Đèn Chung vào tay Nguyễn Lâm."
+    }
+   },
+   "fact_c5s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Thủy triều bùn quét mất lối cũ nối về Mép Bùn."
+    }
+   },
+   "fact_c5s2_1": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Nguyễn Lâm giữ tấm chắn mở để nước tiếp tục chảy qua khe."
+    }
+   },
+   "fact_c6s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan yêu cầu mọi người lên sàn cao và không để ai ở dưới nữa."
+    }
+   },
+   "fact_c6s1_2": {
+    "label": "Fact",
+    "props": {
+     "user_authored": true,
+     "text": "Nguyễn Lâm kéo một người mắc dưới dòng nước lên sàn."
+    }
+   },
+   "fact_c6s1_3": {
+    "label": "Fact",
+    "props": {
+     "text": "Nước đen tràn qua lối cũ và phủ kín con đường trở lại khe."
+    }
+   },
+   "ky_uc_loi_the": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Lời thề xưa thực sự đòi hỏi dân làng điều gì?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "lan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lan chăm nom miếu bùn đã lâu, nơi người trong xóm từng để lại những lời khấn trước mùa nước dâng.",
+     "personality": "Nhẫn nại, kín đáo, gắn bó với những người đã khuất và những phong tục cũ.",
+     "name": "Lan"
+    }
+   },
+   "lie:choice-0e10430829b8": {
+    "label": "Lie",
+    "props": {
+     "chapter": 3,
+     "content": "Tiếng gõ im rồi."
+    }
+   },
+   "loi_khan_mieu": {
+    "label": "Fact",
+    "props": {
+     "text": "Những lời khấn ở Miếu Bùn nhắc đến một món nợ mà dân làng chưa trả."
+    }
+   },
+   "loi_nhan_day_du": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Người gác đầm đã để lại lời nhắn nào trọn vẹn cho Nguyễn Lâm?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 2
+    }
+   },
+   "loi_nhan_gac_dam": {
+    "label": "Fact",
+    "props": {
+     "text": "Người gác đầm đã nói với Nguyễn Lâm rằng mặt nước đang thức dậy."
+    }
+   },
+   "loi_the_coc": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề xưa cấm dân làng rút những chiếc cọc ngăn nước khỏi đầm."
+    }
+   },
+   "loi_the_den": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề xưa dặn dân Xóm Chìm phải thắp đèn trước cửa mỗi đêm."
+    }
+   },
+   "loi_the_la_giao_uoc": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề cổ không chỉ yêu cầu dân làng giữ đèn và cọc mà còn buộc họ phải trao lại một phần đường nước cho thủy thần mỗi năm."
+    }
+   },
+   "loi_the_vat_chon": {
+    "label": "Fact",
+    "props": {
+     "text": "Câu hát cũ của mẹ Mai nói rằng một vật được đặt dưới Cọc Thề để giữ lời khấn."
+    }
+   },
+   "mai": {
+    "label": "Character",
+    "props": {
+     "backstory": "Mai chèo đò qua các lối nước quanh xóm và nhớ câu hát cũ của mẹ mình về vật được đặt dưới cọc thề.",
+     "personality": "Nhanh trí, ít nói, luôn để ý những điều người khác bỏ qua.",
+     "name": "Mai"
+    }
+   },
+   "me_bun": {
+    "label": "Location",
+    "props": {
+     "name": "Mép Bùn",
+     "description": "Bãi bùn bên ngoài xóm, nơi chiếc cọc thề đã bật lên và mặt nước đang dâng rất chậm."
+    }
+   },
+   "mieng_dam": {
+    "label": "Location",
+    "props": {
+     "name": "Miệng Đầm",
+     "description": "Vùng nước sâu khuất sau những bụi sậy, nơi lời thề xưa được truyền rằng đã giữ yên một vị thủy thần."
+    }
+   },
+   "mieu_bun": {
+    "label": "Location",
+    "props": {
+     "name": "Miếu Bùn",
+     "description": "Miếu nhỏ dựng trên nền đất sũng, nơi các lời khấn cũ được giữ qua nhiều mùa nước."
+    }
+   },
+   "nguoi_gac_dam": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông canh chiếc cọc thề ở mép xóm và kể cho Nguyễn Lâm vài đoạn rời rạc về lời thề xưa.",
+     "aliases": [
+      "người gác đầm"
+     ],
+     "personality": "Ít lời, kiên nhẫn, mang vẻ mệt mỏi của người đã canh một điều quá lâu.",
+     "name": "Ông Tư Đầm"
+    }
+   },
+   "nguoi_rut_coc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã làm Cọc Thề bật khỏi bùn?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "nguon_den_tat": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao mọi ngọn đèn trong xóm đều tắt?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "ong_ba": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông từng cùng dân làng đóng cọc ngăn nước ở bờ xóm, và nhớ phần lời thề liên quan đến việc không rút cọc khỏi đầm.",
+     "personality": "Nóng nảy, thực dụng, thương người nhà nhưng sợ mất mát hơn sợ mang tiếng.",
+     "name": "Ông Bá"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Lâm lớn lên ở xóm Chìm, phụ người nhà vá sàn và đưa đò qua những lối nước quanh xóm. Cậu từng nghe người gác đầm kể vài đoạn về lời thề, nhưng chưa bao giờ nghĩ chúng sẽ liên quan đến mình. Sáng nay, ông nắm lấy tay cậu bên chiếc cọc bật khỏi bùn và để lại lời nhắn đứt quãng.",
+     "personality": "Kiệm lời, bền bỉ và quen quan sát trước khi hành động. Khi người khác tranh cãi, cậu thường tìm cách nghe hết mọi phía.",
+     "name": "Nguyễn Lâm",
+     "is_protagonist": true
+    }
+   },
+   "san_chung": {
+    "label": "Location",
+    "props": {
+     "name": "Sàn Chung",
+     "description": "Sàn gỗ rộng giữa xóm, nơi dân làng tụ họp khi nước hoặc lời đồn khiến họ không thể ngồi yên trong nhà."
+    }
+   },
+   "so_phan_xom": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Dân Xóm Chìm sẽ chọn cách nào để đối diện với thủy thần?",
+     "due_from_chapter": 6,
+     "due_to_chapter": 7
+    }
+   },
+   "thuy_than_ngu": {
+    "label": "Fact",
+    "props": {
+     "text": "Một vị thủy thần đang ngủ dưới Miệng Đầm."
+    }
+   },
+   "xom_chim": {
+    "label": "Location",
+    "props": {
+     "name": "Xóm Chìm",
+     "description": "Xóm nhà sàn thấp bám quanh những lối nước đen, nơi đèn trước cửa vốn chưa từng tắt đồng loạt."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:nguoi_gac_dam>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "nguoi_gac_dam",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 45,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>nguoi_gac_dam@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "nguoi_gac_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 45,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "LOCATED_AT:ba_thu>me_bun@4",
+    "type": "LOCATED_AT",
+    "source": "ba_thu",
+    "target": "me_bun",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:coc_the>me_bun@0",
+    "type": "LOCATED_AT",
+    "source": "coc_the",
+    "target": "me_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:den_chung>mieu_bun@5",
+    "type": "LOCATED_AT",
+    "source": "den_chung",
+    "target": "mieu_bun",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lan>mieu_bun@0",
+    "type": "LOCATED_AT",
+    "source": "lan",
+    "target": "mieu_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:mai>me_bun@4",
+    "type": "LOCATED_AT",
+    "source": "mai",
+    "target": "me_bun",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nguoi_gac_dam>me_bun@0",
+    "type": "LOCATED_AT",
+    "source": "nguoi_gac_dam",
+    "target": "me_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ong_ba>me_bun@4",
+    "type": "LOCATED_AT",
+    "source": "ong_ba",
+    "target": "me_bun",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>mieu_bun@5",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "mieu_bun",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ba_thu>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "ba_thu",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:lan>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "lan",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:mai>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "mai",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nguoi_gac_dam>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "nguoi_gac_dam",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ong_ba>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "ong_ba",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:ba_thu>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "ba_thu",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_thu>loi_the_den@0",
+    "type": "KNOWS",
+    "source": "ba_thu",
+    "target": "loi_the_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_thu>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "ba_thu",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>den_tat_co_y@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "den_tat_co_y",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>fact_c6s1_1@6",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "fact_c6s1_1",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>loi_khan_mieu@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "loi_khan_mieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>loi_the_den@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "loi_the_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>loi_the_la_giao_uoc@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "loi_the_la_giao_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:mai>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "mai",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:mai>loi_the_vat_chon@0",
+    "type": "KNOWS",
+    "source": "mai",
+    "target": "loi_the_vat_chon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:mai>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "mai",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>coc_bat_len@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "coc_bat_len",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_nhan_gac_dam@1",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_nhan_gac_dam",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_the_coc@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_the_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_the_den@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_the_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_the_la_giao_uoc@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_the_la_giao_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>coc_bi_rut@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "coc_bi_rut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>loi_the_coc@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "loi_the_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>coc_bi_rut@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "coc_bi_rut",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "- Tôi rút cọc.",
+     "told_by": "ong_ba"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>den_tat_co_y@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "den_tat_co_y",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "- Chính tôi dập tắt Đèn Chung. - Lan nói. - Tôi muốn dân làng nghe lời khấn, thay vì cứ thắp đèn rồi tưởng món nợ đã được trả.",
+     "told_by": "lan"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s2_1@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s2_1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Đất sụp xuống dưới tay tôi."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s2_2@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s2_2",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Nước lùa qua khoảng trống giữa hai thanh ván dưới cửa miếu, rồi tụ thành một dòng nhỏ."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s1_1@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s1_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Tiếng gõ không còn vọng từ miếu. Nó ở ngay dưới lối đi, giữa những căn nhà khép cửa."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s2_1@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s2_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Tấm ván bật lên, gãy ngang."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s2_2@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s2_2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Bên dưới là một khe nước đen. Nó chảy ngược dưới lối đi, hướng về những căn nhà."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_1@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Nước đen tràn qua mặt sàn, phủ kín con đường dẫn ra Mép Bùn."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s2_1@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s2_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự làm",
+     "quote": "Tôi cúi xuống, luồn tay vào dưới thanh chèn. Gỗ nặng và trơn. Vai tôi đau nhói khi dồn sức bẩy; thanh gỗ bật khỏi khe, rơi tõm xuống nước."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s2_2@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s2_2",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Dòng đen quặt vào xóm, dồn thẳng về những căn sàn thấp."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s1_1@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s1_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Bà Thu đặt Đèn Chung vào tay tôi."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s1_2@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s1_2",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Thủy triều bùn quét mất lối cũ, còn ngọn đèn trong tay tôi chao mạnh."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s2_1@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s2_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự làm",
+     "quote": "Tôi giữ nó mở."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s1_1@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s1_1",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "- Gọi mọi người lên đây. Đừng để ai ở dưới nữa.",
+     "told_by": "lan"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s1_2@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s1_2",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự làm",
+     "quote": "Cuối cùng, đầu gối họ đập lên bậc gỗ. Tôi lôi họ lên sàn, rồi tự chống tay đứng dậy."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s1_3@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s1_3",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Nước đen tràn qua lối cũ, phủ kín con đường trở lại khe."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>loi_nhan_gac_dam@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "loi_nhan_gac_dam",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "- Mặt nước đang thức dậy. Còn… nghe tiếng vọng. Đừng động vào cọc.",
+     "told_by": "nguoi_gac_dam"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>loi_the_vat_chon@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "loi_the_vat_chon",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Có vật đặt dưới Cọc Thề để giữ lời khấn.",
+     "told_by": "mai"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_c1s2_1@2",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_c1s2_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "liều lĩnh"
+    }
+   },
+   {
+    "id": "TOLD:protagonist>lie:choice-0e10430829b8@3",
+    "type": "TOLD",
+    "source": "protagonist",
+    "target": "lie:choice-0e10430829b8",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "TOLD_TO:lie:choice-0e10430829b8>mai@3",
+    "type": "TOLD_TO",
+    "source": "lie:choice-0e10430829b8",
+    "target": "mai",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bat_len>coc_the@0",
+    "type": "ABOUT",
+    "source": "coc_bat_len",
+    "target": "coc_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bat_len>me_bun@0",
+    "type": "ABOUT",
+    "source": "coc_bat_len",
+    "target": "me_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bi_rut>coc_the@0",
+    "type": "ABOUT",
+    "source": "coc_bi_rut",
+    "target": "coc_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bi_rut>ong_ba@0",
+    "type": "ABOUT",
+    "source": "coc_bi_rut",
+    "target": "ong_ba",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bi_rut>xom_chim@0",
+    "type": "ABOUT",
+    "source": "coc_bi_rut",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_co_y>den_chung@0",
+    "type": "ABOUT",
+    "source": "den_tat_co_y",
+    "target": "den_chung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_co_y>lan@0",
+    "type": "ABOUT",
+    "source": "den_tat_co_y",
+    "target": "lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_co_y>mieu_bun@0",
+    "type": "ABOUT",
+    "source": "den_tat_co_y",
+    "target": "mieu_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_dong_loat>xom_chim@0",
+    "type": "ABOUT",
+    "source": "den_tat_dong_loat",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_1>mieu_bun@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_1",
+    "target": "mieu_bun",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_2>mieu_bun@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_2",
+    "target": "mieu_bun",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s1_1>xom_chim@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_1",
+    "target": "xom_chim",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s2_1>protagonist@2",
+    "type": "ABOUT",
+    "source": "fact_c2s2_1",
+    "target": "protagonist",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s2_2>xom_chim@2",
+    "type": "ABOUT",
+    "source": "fact_c2s2_2",
+    "target": "xom_chim",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>me_bun@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "me_bun",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s2_1>protagonist@3",
+    "type": "ABOUT",
+    "source": "fact_c3s2_1",
+    "target": "protagonist",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s2_2>xom_chim@3",
+    "type": "ABOUT",
+    "source": "fact_c3s2_2",
+    "target": "xom_chim",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>ba_thu@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "ba_thu",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>den_chung@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "den_chung",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>protagonist@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "protagonist",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_2>me_bun@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_2",
+    "target": "me_bun",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_2>protagonist@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_2",
+    "target": "protagonist",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_1>protagonist@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_1",
+    "target": "protagonist",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s2_1>xom_chim@5",
+    "type": "ABOUT",
+    "source": "fact_c5s2_1",
+    "target": "xom_chim",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_1>lan@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_1",
+    "target": "lan",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_1>xom_chim@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_1",
+    "target": "xom_chim",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_2>protagonist@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_2",
+    "target": "protagonist",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_3>xom_chim@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_3",
+    "target": "xom_chim",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_khan_mieu>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_khan_mieu",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_khan_mieu>mieu_bun@0",
+    "type": "ABOUT",
+    "source": "loi_khan_mieu",
+    "target": "mieu_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_nhan_gac_dam>nguoi_gac_dam@0",
+    "type": "ABOUT",
+    "source": "loi_nhan_gac_dam",
+    "target": "nguoi_gac_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_nhan_gac_dam>protagonist@0",
+    "type": "ABOUT",
+    "source": "loi_nhan_gac_dam",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_coc>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_coc",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_coc>xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_coc",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_den>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_den",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_den>xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_den",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_la_giao_uoc>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_la_giao_uoc",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_la_giao_uoc>mieng_dam@0",
+    "type": "ABOUT",
+    "source": "loi_the_la_giao_uoc",
+    "target": "mieng_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_la_giao_uoc>xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_la_giao_uoc",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_vat_chon>coc_the@0",
+    "type": "ABOUT",
+    "source": "loi_the_vat_chon",
+    "target": "coc_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_vat_chon>mai@0",
+    "type": "ABOUT",
+    "source": "loi_the_vat_chon",
+    "target": "mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thuy_than_ngu>mieng_dam@0",
+    "type": "ABOUT",
+    "source": "thuy_than_ngu",
+    "target": "mieng_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:ky_uc_loi_the>ch3@3",
+    "type": "RESOLVED_IN",
+    "source": "ky_uc_loi_the",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhưng họ đều nhớ chuyện này: dân làng phải thắp đèn trước cửa, giữ Cọc Thề. Mỗi năm còn phải nhường cho thủy thần một phần đường nước."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:loi_nhan_day_du>ch1@1",
+    "type": "RESOLVED_IN",
+    "source": "loi_nhan_day_du",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lời ông Tư cuối cùng cũng liền lại trong đầu tôi: tìm dấu nước ở Miếu Bùn, nghe tiếng vọng tại đó, đừng động vào Cọc Thề."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:nguoi_rut_coc>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "nguoi_rut_coc",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Tôi rút cọc."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:nguon_den_tat>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "nguon_den_tat",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Chính tôi dập tắt Đèn Chung. - Lan nói. - Tôi muốn dân làng nghe lời khấn, thay vì cứ thắp đèn rồi tưởng món nợ đã được trả."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:so_phan_xom>ch6@6",
+    "type": "RESOLVED_IN",
+    "source": "so_phan_xom",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Xóm Chìm chọn nhường đường nước rồi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ba_thu>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ba_thu",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bên kia lối sàn, bà Thu đang giữ chiếc Đèn Chung sát ngực.",
+     "known_as": "bà Thu"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:coc_bi_rut>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "coc_bi_rut",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Tôi rút cọc."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:coc_the>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "coc_the",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Rồi nhìn về phía Mép Bùn, nơi Cọc Thề nằm bật khỏi đất",
+     "known_as": "Cọc Thề"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:den_chung>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "den_chung",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bên kia lối sàn, bà Thu đang giữ chiếc Đèn Chung sát ngực.",
+     "known_as": "Đèn Chung"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:den_tat_co_y>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "den_tat_co_y",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Chính tôi dập tắt Đèn Chung. - Lan nói. - Tôi muốn dân làng nghe lời khấn, thay vì cứ thắp đèn rồi tưởng món nợ đã được trả."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s2_1>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s2_1",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đất sụp xuống dưới tay tôi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s2_2>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s2_2",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nước lùa qua khoảng trống giữa hai thanh ván dưới cửa miếu, rồi tụ thành một dòng nhỏ. Nó kéo bùn đen khỏi bậc cửa, trườn thẳng vào khe tối."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s1_1>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s1_1",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tiếng gõ không còn vọng từ miếu. Nó ở ngay dưới lối đi, giữa những căn nhà khép cửa."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s2_1>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s2_1",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tấm ván bật lên, gãy ngang."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s2_2>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s2_2",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bên dưới là một khe nước đen. Nó chảy ngược dưới lối đi, hướng về những căn nhà."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_1",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nước đen tràn qua mặt sàn, phủ kín con đường dẫn ra Mép Bùn."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s2_1>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s2_1",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vai tôi đau nhói khi dồn sức bẩy; thanh gỗ bật khỏi khe, rơi tõm xuống nước."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s2_2>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s2_2",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Dòng đen quặt vào xóm, dồn thẳng về những căn sàn thấp."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s1_1>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s1_1",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Bà Thu đặt Đèn Chung vào tay tôi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s1_2>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s1_2",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thủy triều bùn quét mất lối cũ, còn ngọn đèn trong tay tôi chao mạnh."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s2_1>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s2_1",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi giữ nó mở."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s1_1>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s1_1",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Gọi mọi người lên đây. Đừng để ai ở dưới nữa."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s1_2>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s1_2",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cuối cùng, đầu gối họ đập lên bậc gỗ. Tôi lôi họ lên sàn, rồi tự chống tay đứng dậy."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s1_3>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s1_3",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nước đen tràn qua lối cũ, phủ kín con đường trở lại khe."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lan>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lan",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lan bước nhanh, vạt áo sẫm dính bùn tới gối",
+     "known_as": "Lan"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:loi_nhan_gac_dam>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "loi_nhan_gac_dam",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Mặt nước đang thức dậy. Còn… nghe tiếng vọng. Đừng động vào cọc."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:loi_the_la_giao_uoc>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "loi_the_la_giao_uoc",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lời thề không chỉ bắt dân làng thắp đèn trước cửa, giữ Cọc Thề. Mỗi năm, chúng ta còn phải trao lại cho thủy thần một phần đường nước, để nước chảy qua xóm rồi về đầm."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:mai>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "mai",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Mai chặn tôi ở chỗ lối sàn rẽ về xóm.",
+     "known_as": "Mai"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:me_bun>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "me_bun",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đám đông rời Mép Bùn thành từng tốp, bước vội trên những tấm sàn hẹp.",
+     "known_as": "Mép Bùn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:mieu_bun>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "mieu_bun",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Miếu Bùn hiện ra sau hàng lau, mái thấp và nghiêng về một phía.",
+     "known_as": "Miếu Bùn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:nguoi_gac_dam>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "nguoi_gac_dam",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi còn cảm giác bàn tay ông Tư Đầm khép quanh cổ tay mình.",
+     "known_as": "ông Tư Đầm"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:ong_ba>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "ong_ba",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ông Bá đứng chắn trước Cọc Thề.",
+     "known_as": "Ông Bá"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Nguyễn Lâm",
+     "known_as": "Nguyễn Lâm"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:xom_chim>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "xom_chim",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Xa hơn, từ phía những căn sàn trong Xóm Chìm, có tiếng đáp lại",
+     "known_as": "Xóm Chìm"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-43a50511870a",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Sau khi đám đông rời Mép Bùn, nhân vật chính kể với Mai lời ông Tư Đầm dặn về mặt nước đang thức dậy, tiếng vọng và việc không được động vào Cọc Thề. Bà Thu cho biết tiếng vọng thường gắn với Miếu Bùn; Mai phát hiện vệt bùn đi ngược dòng về phía miếu. Nhân vật chính quyết định đến đó, Mai đi cùng. Trong miếu, tiếng gõ cho thấy bên dưới có khoảng rỗng. Mai kể mẹ từng hát rằng có vật đặt dưới Cọc Thề để giữ lời khấn, nhưng không biết đó là vật gì. Nhân vật chính gạt bùn quanh chỗ đất võng, khiến nền sụp và nước đổi dòng, kéo bùn đen vào khe tối. Cuối chương, cả hai lùi khỏi nền lún; khoảng rỗng vẫn chưa được khám phá.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Nguyễn Lâm lần theo ý nghĩa lời nhắn đứt quãng của Ông Tư Đầm và tìm được dấu vết cụ thể dẫn tới Miếu Bùn.",
+      "present": [
+       "protagonist",
+       "mai",
+       "ba_thu"
+      ],
+      "beats": [
+       "Ngay sau khi đám đông dạt khỏi Mép Bùn, Mai muốn Lâm nói rõ lời nhắn mình nhận được; Lâm chỉ kể phần cậu còn nhớ, khiến Mai chú ý tới đoạn nhắc về tiếng vọng chứ không phải mặt nước.",
+       "Bà Thu muốn ngăn lời đồn lan rộng, nhưng khi Lâm hỏi về những nơi tiếng vọng lên trước lúc nước đổi dòng, bà chỉ Miếu Bùn và nói người xưa từng đến đó khi lời thề bị nghi vấn.",
+       "Mai nhận ra vệt bùn ướt trên lối sàn dẫn về phía miếu không khớp với chiều nước đang lấn vào xóm; cô muốn Lâm xem dấu ấy, còn Bà Thu khuyên cả hai đừng bước khỏi lối sàn.",
+       "Lâm công khai nhắc lại với hai người lời nhắn trọn vẹn mà cậu ghép được: hãy tìm dấu nước ở Miếu Bùn, đừng động vào Cọc Thề; lời nói khiến Bà Thu biết cậu sẽ không chờ dân làng thống nhất.",
+       "Để không mất dấu khi nước dâng, Lâm rời lối sàn an toàn và bước theo vệt bùn về phía Miếu Bùn; Mai đi cùng, còn Bà Thu ở lại giữ Đèn Chung."
+      ],
+      "ends_at": "Ở chân Miếu Bùn, Lâm thấy vệt nước đen bò ngược lên nền đất cao, còn Mai nhận ra nó dẫn vào trong miếu.",
+      "resolves": [
+       "loi_nhan_day_du"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Nguyễn Lâm và Mai lần theo dấu bùn trong Miếu Bùn để hoàn tất lời nhắn của Ông Tư Đầm, trước khi nước đổi hướng.",
+      "present": [
+       "protagonist",
+       "mai"
+      ],
+      "beats": [
+       "Mai muốn hiểu vì sao vệt bùn bò ngược dòng; cô gõ nhẹ lên nền miếu và nghe một tiếng vọng rỗng dưới lớp bùn, khiến cả hai nhận ra dấu vết dẫn xuống ngay dưới chân.",
+       "Nguyễn Lâm nhớ ra phần lời nhắn bị đứt: khi nghe tiếng vọng, hãy tìm ở Miếu Bùn, nhưng tuyệt đối đừng động vào Cọc Thề; lời nhắn không bảo cậu phải làm gì với điều nằm dưới miếu.",
+       "Mai muốn Lâm nghe hết mảnh ký ức cô giữ; cô kể câu hát của mẹ nói có một vật được đặt dưới Cọc Thề để giữ lời khấn, nhưng không biết vật ấy là gì hay còn ở đó không.",
+       "Để kiểm chứng tiếng vọng, Nguyễn Lâm tự tay gạt lớp bùn bịt một khe trên nền miếu; lớp đất sụp xuống, để lộ một khoảng rỗng tối và khiến nước quanh chân họ rút khỏi cửa miếu rồi dồn vào khe.",
+       "Mai giục Lâm rời khỏi nền đang lún, còn Lâm nhận ra lời nhắn đã trọn vẹn: Ông Tư bảo cậu tìm dấu nước ở Miếu Bùn, nghe tiếng vọng tại đó và không chạm vào Cọc Thề; tiếng vọng vừa dẫn họ tới khoảng rỗng dưới nền miếu."
+      ],
+      "ends_at": "Khi Lâm và Mai lùi khỏi nền đất sụp, nước bắt đầu chảy thành một dòng nhỏ vào khoảng rỗng, kéo bùn đen khỏi bậc cửa Miếu Bùn.",
+      "resolves": [
+       "loi_nhan_day_du"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "KNOWS protagonist→coc_bat_len",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "REVEALED_TO_PLAYER coc_the→ch1",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "REVEALED_TO_PLAYER coc_bat_len→ch1",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d533418d7a1c",
+      "kind": "action",
+      "tone": null,
+      "text": "Rời khỏi nền sụp, lùi ra khỏi Miếu Bùn",
+      "listeners": [],
+      "about": [
+       "mieu_bun"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-55be20a8a148",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Bảo Mai gọi bà Thu đến Miếu Bùn",
+      "listeners": [
+       "mai"
+      ],
+      "about": [
+       "ba_thu",
+       "mieu_bun"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-b1c34589c930",
+      "kind": "inner",
+      "tone": null,
+      "text": "Bất chấp đầu gối đau, quyết định thò tay xuống khe để dò khoảng rỗng",
+      "listeners": [],
+      "about": [
+       "fact_c1s2_1"
+      ],
+      "lie": null,
+      "feeling": "liều lĩnh"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-f77a5eb84208",
+    "player_action": "[Nội tâm] Bất chấp đầu gối đau, quyết định thò tay xuống khe để dò khoảng rỗng",
+    "error_detail": null,
+    "summary": "Tôi phát hiện nước đen trong khe ở Miếu Bùn chảy ngược về phía cửa miếu và nghe ba tiếng gõ vọng dưới đất; Mai cảnh báo nền có thể sụp, định báo người lớn và bảo ra Mép Bùn. Tôi rời miếu, Mai theo sau, nhưng tiếng gõ vang ngay dưới lối sàn trong Xóm Chìm. Dòng nước đổi hướng, tụ dưới một tấm ván; Mai nhớ lời mẹ trong câu hát “Ba tiếng gõ rồi mới được bước…” nhưng không nhớ phần sau. Mai bảo tôi đừng động vào ván, song tôi giật tay ra và dùng vai bật nó lên. Khe nước đen bên dưới phun nước, làm các tấm ván đội cong; Mai kéo tôi lùi và chúng tôi chạy khỏi đó. Cuối chương, tấm ván gãy bật khỏi lối đi, nước đen tràn lên, tiếng gõ tiếp tục chạy dưới những căn nhà đóng kín.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Nguyễn Lâm dò khe tối để tìm dấu vết cụ thể mà lời nhắn đứt quãng của người gác đầm dẫn tới, rồi quyết định lần theo nó.",
+      "present": [
+       "protagonist",
+       "mai"
+      ],
+      "beats": [
+       "Bất chấp đầu gối đau, Lâm luồn tay xuống khe; nước lạnh siết quanh cổ tay và một cạnh đá cứa rách da, nhưng đầu ngón tay chạm được vào bùn đang chảy ngược về phía xóm.",
+       "Mai níu vai Lâm, muốn cậu rút tay ra trước khi nền sụp thêm; Lâm giật tay lên, để lại một vệt máu mỏng trên bùn, còn dòng nước trong khe vẫn tiếp tục trườn về phía cửa miếu.",
+       "Lâm áp lòng bàn tay rớm máu xuống nền để giữ thăng bằng; dưới lớp bùn, cậu nghe ba tiếng gõ khô vọng lên, rồi tiếng đáp lại xa hơn từ phía những căn sàn trong Xóm Chìm.",
+       "Mai muốn quay lại Mép Bùn báo cho người lớn, nhưng Lâm nhận ra nước đang kéo một vệt bùn thành đường thẳng từ miếu về phía xóm; cậu bước khỏi miếu theo dấu ấy, buộc Mai phải chọn đi cùng hay ở lại.",
+       "Mai theo sau Lâm; khi cả hai đặt chân lên lối sàn đầu xóm, tiếng gõ vang lên lần nữa ngay dưới những tấm ván, khiến họ biết dấu vết không nằm dưới miếu mà đã dẫn tới nhà cửa của dân làng."
+      ],
+      "ends_at": "Tiếng gõ thứ ba dội lên dưới lối sàn trước mặt Lâm, trong khi vệt nước từ miếu vẫn bò theo chân họ vào xóm.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Nguyễn Lâm lần theo tiếng gõ dưới lối sàn để tìm dấu vết cụ thể của lời nhắn người gác đầm, nhưng việc dò tìm khiến nước tràn vào giữa xóm.",
+      "present": [
+       "protagonist",
+       "mai"
+      ],
+      "beats": [
+       "Nguyễn Lâm dừng trên tấm ván đang rung, áp bàn tay rớm máu xuống mặt gỗ để cảm tiếng gõ; Mai muốn cậu tránh xa chỗ sàn yếu, nhưng nhịp gõ đáp lại ngay dưới chân họ, giống tiếng vọng từng nghe ở Miếu Bùn.",
+       "Mai men theo vệt nước sẫm dưới các khe ván, còn Lâm quan sát hướng dòng chảy; cậu nhận ra nước không chỉ trườn từ miếu tới xóm mà đang dồn về một điểm dưới lối đi, một dấu vết rõ ràng hơn lời cảnh báo mơ hồ của người gác đầm.",
+       "Mai nói mẹ cô từng ngắt câu hát sau ba tiếng gõ, như thể có điều gì đó phải được nghe trước khi người ta bước tiếp; cô không nhớ phần còn lại, và tiếng gõ lại vang lên khiến cả hai hiểu rằng dấu vết dưới sàn đang dịch chuyển.",
+       "Lâm bỏ qua lời Mai can, dùng vai nạy bật tấm ván đang rung; gỗ gãy, không thể đặt lại nguyên vẹn, để lộ một khe nước đen chảy ngược dưới lối đi về phía những căn nhà khép cửa.",
+       "Dòng nước phụt qua khe, làm các tấm ván quanh họ đội lên; Mai kéo Lâm lùi khỏi chỗ sàn vỡ, còn tiếng gõ lan dọc dưới xóm, buộc họ phải rời lối đi trước khi nó sụp thêm."
+      ],
+      "ends_at": "Tấm ván gãy bật khỏi lối sàn, và dòng nước đen tràn qua khe vừa mở trong khi tiếng gõ tiếp tục chạy dưới những căn nhà.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER xom_chim→ch2",
+        "Value error, `known_as` phải nằm trong `quote` (D-17)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-5b4d2b3db7fb",
+      "kind": "action",
+      "tone": null,
+      "text": "Men theo vệt nước về phía những căn nhà khép cửa",
+      "listeners": [],
+      "about": [
+       "xom_chim"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-0e10430829b8",
+      "kind": "dialogue",
+      "tone": "lie",
+      "text": "Nói dối Mai rằng tiếng gõ đã im",
+      "listeners": [
+       "mai"
+      ],
+      "about": [],
+      "lie": {
+       "content": "Tiếng gõ im rồi.",
+       "told_to": [
+        "mai"
+       ]
+      },
+      "feeling": null
+     },
+     {
+      "id": "choice-3798c4eff52b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Quyết định nói thật với Mai rằng mình đã cố ý làm bật tấm ván, dù có thể khiến cô mất lòng tin",
+      "listeners": [],
+      "about": [
+       "mai",
+       "fact_c2s2_1"
+      ],
+      "lie": null,
+      "feeling": "day dứt"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-40f4a3a9f854",
+    "player_action": "[Lời thoại, nói dối] Nói dối Mai rằng tiếng gõ đã im",
+    "error_detail": null,
+    "summary": "Tiếng gõ vẫn vang dưới sàn; Lâm thú nhận đã nói dối Mai rằng nó im rồi, khiến cô giận và xa cách. Tại nhà Bà Thu, họ biết dân làng phải thắp đèn, giữ Cọc Thề và mỗi năm nhường thủy thần một phần đường nước để nước qua xóm về đầm, nhưng không ai nhớ đường nào. Nước đen dâng, chặn lối ra Mép Bùn và làm một căn sàn nghiêng. Mai kéo Bà Thu khỏi đoạn sàn chao, rồi nói vẫn giận Lâm. Khi thấy các tấm ván thoát nước bị chèn, Lâm bất chấp lời can, tháo chúng để mở lối cho nước. Dòng nước rút khỏi chân họ nhưng quặt vào xóm, dồn thẳng về những căn sàn thấp; Lâm và mọi người còn trên sàn cao, tình thế nguy cấp.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Nguyễn Lâm tìm được một mảnh ký ức đủ rõ để hiểu lời thề xưa còn đòi dân làng nhường đường nước cho thủy thần.",
+      "present": [
+       "protagonist",
+       "mai",
+       "ba_thu"
+      ],
+      "beats": [
+       "Mai không tin lời Lâm vừa nói: tiếng gõ vẫn dội dưới những căn sàn, và cô muốn cậu thôi che giấu điều đang xảy ra; cô dẫn cậu tránh đoạn lối đã ngập để tìm Bà Thu.",
+       "Bà Thu chặn hai người trước cửa nhà mình, đòi biết nước đen đã tràn đến đâu; Lâm thú nhận mình đã nói dối Mai, khiến Mai lùi khỏi cậu và không còn chịu đi sát bên.",
+       "Mai muốn Bà Thu nói rõ câu hát mẹ cô bỏ dở, còn Bà Thu đáp rằng ký ức của người già trong xóm khớp ở một điều: lời thề buộc dân làng thắp đèn và giữ Cọc Thề, nhưng mỗi năm còn phải trao lại cho thủy thần một phần đường nước.",
+       "Lâm quyết định đi khỏi lối sàn an toàn để tới Mép Bùn, tự mình nhìn xem dòng nước còn đường thoát nào; Mai không theo, còn Bà Thu gọi cậu lại nhưng không ngăn được.",
+       "Từ Mép Bùn, Lâm thấy nước đen tràn qua lối thấp hướng về các căn nhà; một sàn nhà gần đó chao nghiêng, buộc Bà Thu rời khỏi cửa để kéo Mai lùi lên phần sàn cao."
+      ],
+      "ends_at": "Khi Lâm đặt chân lên phần sàn cao cùng Mai và Bà Thu, lối thấp vừa bị nước đen nuốt mất, chia họ khỏi con đường về Mép Bùn.",
+      "resolves": [
+       "ky_uc_loi_the"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Nguyễn Lâm phải ứng phó khi nước đen dâng tới sàn thấp, đồng thời biến lời thề vừa được hé lộ thành một quyết định có giá phải trả.",
+      "present": [
+       "protagonist",
+       "mai",
+       "ba_thu"
+      ],
+      "beats": [
+       "Nước đen tràn lên bậc sàn cao; Mai muốn đưa Bà Thu lên chỗ chắc hơn, còn Bà Thu giữ Đèn Chung và giục cả hai rời khỏi mép nước.",
+       "Mai nói cô vẫn giận vì Lâm đã nói dối, nhưng đưa tay kéo Bà Thu khỏi đoạn ván đang chao; khoảng cách giữa cô và Lâm vẫn còn đó.",
+       "Bà Thu khẳng định lời thề đòi dân làng mỗi năm nhường một phần đường nước cho thủy thần, nhưng lối ra Mép Bùn đã bị nước phủ kín; bà muốn chờ tìm lối khác thay vì liều bước xuống.",
+       "Lâm chọn không chờ, dùng sức bẩy bật những tấm ván thấp ở rìa sàn để mở một lối thoát cho dòng nước, dù biết nước có thể cuốn mất phần sàn ấy.",
+       "Nước đổi hướng qua khe vừa mở, kéo theo một mảng ván sụp xuống; dòng đen rút khỏi chân họ nhưng bắt đầu dồn về phía những căn sàn thấp trong xóm."
+      ],
+      "ends_at": "Mảng sàn Lâm vừa phá bật khỏi chỗ, và dòng nước đen chuyển hướng về khu nhà thấp.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được ba_thu kể về loi_the_coc, nhưng ba_thu không biết điều đó ở chương 3"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được ba_thu kể về loi_the_la_giao_uoc, nhưng ba_thu không biết điều đó ở chương 3"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới new_1",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "ABOUT new_1→ba_thu",
+        "Fact mới bị bỏ: ['new_1']"
+       ],
+       [
+        "ABOUT new_1→mai",
+        "Fact mới bị bỏ: ['new_1']"
+       ],
+       [
+        "KNOWS protagonist→new_1",
+        "Fact mới bị bỏ: ['new_1']"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được ba_thu kể về loi_the_la_giao_uoc, nhưng ba_thu không biết điều đó ở chương 3"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "mai được protagonist kể về lie:choice-0e10430829b8, nhưng protagonist không biết điều đó ở chương 3"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới new_1",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "ABOUT new_1→ba_thu",
+        "Fact mới bị bỏ: ['new_1']"
+       ],
+       [
+        "ABOUT new_1→mai",
+        "Fact mới bị bỏ: ['new_1']"
+       ],
+       [
+        "KNOWS protagonist→new_1",
+        "Fact mới bị bỏ: ['new_1']"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được ba_thu kể về loi_the_la_giao_uoc, nhưng ba_thu không biết điều đó ở chương 3"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-32dc74358afe",
+      "kind": "action",
+      "tone": null,
+      "text": "Rời mép nước, men lên phần sàn cao về phía cây cột còn đứng",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-cb38cdb27ff3",
+      "kind": "dialogue",
+      "tone": "silence",
+      "text": "Im lặng trước tiếng gọi của Mai, không giải thích việc vừa làm",
+      "listeners": [
+       "mai"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-f1b02c6a8963",
+      "kind": "inner",
+      "tone": null,
+      "text": "Quyết định giấu Mai rằng vai mình đang đau, tự chịu đựng để tiếp tục giúp bà Thu",
+      "listeners": [],
+      "about": [
+       "mai",
+       "ba_thu"
+      ],
+      "lie": null,
+      "feeling": "căng thẳng"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-2beb7fd79210",
+    "player_action": "[Lời thoại, im lặng] Im lặng trước tiếng gọi của Mai, không giải thích việc vừa làm",
+    "error_detail": null,
+    "summary": "Nước đen dâng vào xóm, và Mai nhận ra nước phải được dẫn qua một lối đã dành sẵn sau ba tiếng gõ. Bà Thu xác nhận lời thề đòi dân làng nhường đúng lối nước, nhưng bà không biết lối ấy ở đâu; Mai nói Lâm đã mở nhầm đường. Lâm vẫn xuống lối ngập để cứu các nhà thấp. Tại Mép Bùn, họ phát hiện ông Bá đã rút Cọc Thề và đào rãnh cho nước thoát khỏi nhà mình, khiến dòng nước chảy vào xóm. Mai nhắc lại rằng không thể bới đường tùy ý. Lâm kéo ông Bá khỏi bờ; ông thôi vùng vẫy khi nước quét qua dép. Cuối chương, nước tràn qua sàn thấp và dâng tới bậc đầu tiên, các căn nhà vẫn bị dòng chảy đe dọa; lối đúng chưa được tìm ra.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Sau khi im lặng trước Mai, Lâm cùng cô và Bà Thu nhận ra lời thề còn buộc dân làng phải nhường một phần đường nước cho thủy thần, rồi rời chỗ an toàn để tìm dấu vết của Cọc Thề.",
+      "present": [
+       "protagonist",
+       "mai",
+       "ba_thu"
+      ],
+      "beats": [
+       "Dòng nước đen trườn vào gần chân sàn cao, Mai quay đi khỏi Lâm vì vẫn giận, còn Bà Thu giục cả hai cứu những căn nhà thấp trước khi nước chạm tới; Lâm không giải thích, chỉ quan sát hướng nước đang dồn vào xóm.",
+       "Mai nhắc lại câu hát mẹ từng truyền: sau ba tiếng gõ, phải để nước đi qua một lối đã dành sẵn; cô muốn Bà Thu nói nốt điều mình biết, còn Bà Thu thừa nhận ký ức ấy khớp với lời thề nhưng bà chưa từng hiểu lối nào được nhường.",
+       "Bà Thu nói thẳng lời thề cổ không chỉ đòi dân làng thắp đèn và giữ Cọc Thề: mỗi năm họ phải trao lại cho thủy thần một phần đường nước để nước chảy qua xóm về đầm; lời thú nhận khiến Mai hiểu các tấm ván Lâm tháo đã không mở đúng lối.",
+       "Lâm nhận ra dòng nước đang ép về phía những căn sàn thấp, không phải đường về đầm; dù Mai bảo chờ tìm được lối đúng, cậu bước khỏi sàn cao xuống đoạn lối ngập để men theo dòng nước, tự đặt mình vào vùng nguy hiểm và buộc Mai cùng Bà Thu phải chọn theo hay ở lại.",
+       "Từ phía Mép Bùn vọng tới một tiếng gỗ va khô khốc; Bà Thu nhìn về hướng ấy, nói Cọc Thề không tự bật khỏi bùn, còn Mai muốn biết ai đã động vào nó trước khi họ liều mở đường nước."
+      ],
+      "ends_at": "Lâm đặt chân xuống lối ngập, nước đen khép quanh mắt cá chân; phía Mép Bùn lại vang lên tiếng gỗ va, kéo cả ba khỏi chỗ trú cao.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Đưa lời thề bị quên thành điều kiện cụ thể, xác định ai làm bật Cọc Thề và buộc Lâm đối mặt với hiểm nguy đang dồn tới các sàn thấp.",
+      "present": [
+       "protagonist",
+       "mai",
+       "ba_thu",
+       "ong_ba"
+      ],
+      "beats": [
+       "Tôi im lặng trước Mai; cô không chờ lời giải thích, mà quay đi theo tiếng gỗ va, còn Bà Thu ôm Đèn Chung tiến về Mép Bùn.",
+       "Ở Mép Bùn, Ông Bá chặn lối tới Cọc Thề rồi thú nhận đã rút cọc để mở đường thoát nước khỏi khu sàn nhà mình; Mai nhìn ông, nhận ra dòng nước đang trườn đúng về phía những căn nhà thấp.",
+       "Mai ráp phần câu hát còn nhớ với lời Bà Thu vừa kể: sau ba tiếng gõ, nước phải được dẫn qua lối đã dành sẵn, không phải bất cứ khe nào người sống tự mở; Bà Thu hiểu rằng lời thề đòi hỏi dân làng nhường đúng lối ấy, chứ không chỉ để nước chảy đi đâu cũng được.",
+       "Tôi nắm lấy tay áo Ông Bá, kéo ông rời khỏi Cọc Thề và dẫn ông xuống lối sàn thấp; Mai theo sát, còn Bà Thu giữ Đèn Chung ở lại phía sau, không để ông quay lại giấu việc mình đã làm.",
+       "Một tiếng gõ dội lên dưới chân chúng tôi; nước đen tràn qua mép sàn thấp, cuốn qua những khe ván về phía các căn nhà."
+      ],
+      "ends_at": "Nước dâng tới bậc sàn đầu tiên khi Ông Bá bị tôi kéo khỏi Mép Bùn, còn Mai và Bà Thu đã thấy rõ lối nước đang đe dọa những căn nhà thấp.",
+      "resolves": [
+       "nguoi_rut_coc"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được ba_thu kể về loi_the_la_giao_uoc, nhưng ba_thu không biết điều đó ở chương 4"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được mai kể về fact_c4s1_1, nhưng mai không biết điều đó ở chương 4"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c4s1_1",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được ba_thu kể về loi_the_la_giao_uoc, nhưng ba_thu không biết điều đó ở chương 4"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-8c6c3f8590b4",
+      "kind": "action",
+      "tone": null,
+      "text": "Đi về phía những căn sàn thấp để cảnh báo người trong xóm",
+      "listeners": [],
+      "about": [
+       "fact_c3s2_2",
+       "xom_chim"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-287e860d4bab",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Thú nhận với Mai rằng tôi đã nói dối về tiếng gõ",
+      "listeners": [
+       "mai"
+      ],
+      "about": [
+       "mai"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-fd1e04596b0b",
+      "kind": "inner",
+      "tone": null,
+      "text": "Quyết giữ ông Bá lại và buộc ông chỉ lối nước đã dành sẵn",
+      "listeners": [],
+      "about": [
+       "ong_ba",
+       "loi_the_la_giao_uoc",
+       "coc_bi_rut"
+      ],
+      "lie": null,
+      "feeling": "quyết liệt"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-5654d4998a76",
+    "player_action": "[Lời thoại, nói thật] Thú nhận với Mai rằng tôi đã nói dối về tiếng gõ",
+    "error_detail": null,
+    "summary": "Mai không còn tin tôi; Bà Thu khẩn cấp muốn cứu các nhà sàn thấp đang ngập, còn ông Bá phản đối vì nhà mình cũng bị nước đe dọa. Lan thú nhận đã dập tắt Đèn Chung để buộc dân làng nghe lời khấn ở Miếu Bùn, đồng thời biết việc ấy khiến nước dâng nhanh hơn. Bà Thu không giao đèn cho Lan nhưng đưa cho tôi; tôi quyết định đến miếu, và lối về Mép Bùn bị nước cắt mất. Tại đó, Lan chỉ ra một khe dẫn nước ra đầm nhưng chạy dưới những căn nhà thấp. Tôi mở tấm chắn, khiến nước quặt qua xóm và một đoạn lối sụp, rồi giữ khe mở dù Lan cảnh báo nhà dưới không chịu nổi. Cuối chương, người trong xóm gọi nhau, tấm ván rung và tiếng gõ vọng từ bùn; mọi người phải chọn cứu người, giữ nhà hay đóng khe để nước tiếp tục dâng.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lâm đối diện với hậu quả lời nói dối, tìm ra nguyên do những ngọn đèn tắt và nhận lấy một việc phải làm trước khi nước nuốt các sàn thấp.",
+      "present": [
+       "protagonist",
+       "mai",
+       "ba_thu",
+       "ong_ba",
+       "lan"
+      ],
+      "beats": [
+       "Mai lùi khỏi Lâm, lạnh giọng rằng giờ cô không biết lời nào của cậu còn đáng tin; Bà Thu muốn họ ngừng cãi để cứu những căn sàn thấp, còn ông Bá chỉ muốn nước tránh xa nhà mình.",
+       "Lan bước tới từ phía xóm, đòi Bà Thu nghe hết lời khấn ở Miếu Bùn rồi thú nhận chính mình đã dập tắt Đèn Chung để buộc dân làng lắng nghe; Mai nhìn sang Bà Thu, nhận ra chuyện tắt đèn không phải tai họa vô cớ.",
+       "Bà Thu giữ chặt Đèn Chung, không chịu giao nó cho Lan, nhưng nói lời khấn đã nhắc món nợ chưa trả và nước đang đòi lối của nó; ông Bá thúc họ cứu nhà trước, còn Mai muốn tìm lối đúng thay vì để dòng nước tự chọn.",
+       "Lâm nhận lấy Đèn Chung từ tay Bà Thu và rời Mép Bùn hướng về Miếu Bùn, bỏ lại cuộc tranh cãi để tận mắt nghe lời khấn; Mai không đi theo, khiến khoảng cách giữa hai người còn nguyên.",
+       "Nước đen tràn qua bậc đầu của những căn sàn thấp, cuốn mất lối quay lại Mép Bùn khi Lâm vừa đặt chân lên đường tới Miếu Bùn. "
+      ],
+      "ends_at": "Lâm đã rời nhóm mang theo Đèn Chung, còn nước cắt đứt lối về khi dân làng vẫn chưa thống nhất giữ nhà hay nhường đường nước.",
+      "resolves": [
+       "nguon_den_tat"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Nguyễn Lâm phải đưa nước khỏi những căn sàn thấp mà không biến thêm một lối thoát thành dòng lũ quét qua xóm.",
+      "present": [
+       "protagonist",
+       "lan"
+      ],
+      "beats": [
+       "Rời khỏi lối nối Mép Bùn đã bị nước phủ, Lâm lần theo ánh Đèn Chung tới Miếu Bùn; Lan muốn anh nghe lời khấn, nhưng cô chỉ về phía những căn sàn thấp đang chìm dần và nói không thể để nước chờ thêm.",
+       "Lan chỉ cho Lâm thấy dưới lớp nước, các khe giữa những tấm ván tạo thành một đường chảy men qua dãy sàn thấp; cô muốn anh mở đường ấy về phía đầm, còn Lâm nhận ra dòng nước sẽ đi xuyên qua nhà dân.",
+       "Lâm đặt Đèn Chung lên phần sàn cao rồi dùng sức bẩy một tấm ván chắn ở đầu khe; nước lập tức rút khỏi bậc sàn gần nhất nhưng dồn qua những căn nhà thấp, làm một đoạn lối đi sụp xuống và cắt hẳn đường quay lại Mép Bùn.",
+       "Lan níu tay Lâm, muốn anh dừng lại trước khi dòng nước cuốn thêm nhà cửa; Lâm giằng tay ra và giữ khe mở, chấp nhận để nước tràn qua các sàn thấp thay vì dồn vào toàn xóm.",
+       "Tiếng gọi vọng qua màn nước từ phía xóm: những người còn đứng trên sàn cao phải chọn kéo người nhà lên, bỏ mặc nhà cửa, hay đóng khe lại để giữ nhà và để dòng nước tiếp tục dâng; Lan nhìn Lâm, chờ anh trả lời, nhưng mặt sàn dưới chân họ bắt đầu rung theo nhịp gõ từ dưới bùn."
+      ],
+      "ends_at": "Một nhịp gõ dội lên dưới sàn vừa nứt, và dòng nước đang lùa qua khe mở về phía đầm trong khi tiếng gọi từ xóm buộc người làng phải chọn ngay giữa nhà cửa và lối nước.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-d8ff3647e2e5",
+      "kind": "action",
+      "tone": null,
+      "text": "Buông tấm chắn rồi chạy về phía những sàn cao để kéo người lên",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-bac4df155921",
+      "kind": "dialogue",
+      "tone": "lie",
+      "text": "Bảo Lan rằng tôi sẽ đóng khe, rồi nhờ cô giúp đưa người ra khỏi nhà thấp",
+      "listeners": [
+       "lan"
+      ],
+      "about": [],
+      "lie": {
+       "content": "Tôi sẽ đóng khe lại ngay.",
+       "told_to": [
+        "lan"
+       ]
+      },
+      "feeling": null
+     },
+     {
+      "id": "choice-b5843b26c5e8",
+      "kind": "inner",
+      "tone": null,
+      "text": "Quyết định giữ dòng nước hướng ra đầm và tìm cách cứu người ở dãy nhà thấp",
+      "listeners": [],
+      "about": [
+       "lan"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-b7ee62592201",
+    "player_action": "[Hành động] Buông tấm chắn rồi chạy về phía những sàn cao để kéo người lên",
+    "error_detail": null,
+    "summary": "Nước đen tràn qua xóm, cuốn mất lối về khe và đe dọa các căn nhà thấp. Tôi cứu một người mắc dưới nước rồi cùng Lan gọi mọi người lên sàn cao, dìu bà cụ, trẻ nhỏ và những người khác đến chỗ an toàn. Tôi nhận ra nước bị dồn vào khu nhà thấp nên đề nghị mở một lối cho dòng chảy; Lan ban đầu lo nhà sẽ mất, nhưng quyết định gọi người còn ở dưới lên thay vì để ai quay xuống. Tôi tháo ba tấm ván chắn lối, khiến nước đổi hướng và sàn cao bớt chao. Lan nói Xóm Chìm đã chọn nhường đường nước. Cuối chương, những mái nhà thấp chìm dần, lối ván đã mất và không còn đường nối xuống đó.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Lâm cứu người khỏi các sàn thấp sau khi buông tấm chắn, trong khi dòng nước đổi hướng và buộc xóm Chìm phải tiến gần một lựa chọn không thể trì hoãn.",
+      "present": [
+       "protagonist",
+       "lan"
+      ],
+      "beats": [
+       "Lâm buông tấm chắn và lao về phía sàn cao; nước lập tức ép qua khe về những căn nhà thấp, khiến tiếng gọi dưới lối đi lẫn vào tiếng ván rung.",
+       "Lan đuổi theo, muốn Lâm quay lại Miếu Bùn lấy Đèn Chung; cô nói dòng nước đang dồn vào nhà, nhưng Lâm không dừng chân.",
+       "Lâm bám mép một sàn cao, kéo một người đang mắc ở bậc ngập lên trên; người ấy thoát khỏi dòng nước, còn Lâm phải bỏ lại lối quay về phía khe đang bị nước phủ kín.",
+       "Lan nhìn xuống khoảng nước đen vừa tràn qua lối đi, rồi thôi thúc Lâm gọi dân làng tụ về sàn cao: tiếng gõ dưới bùn đã dồn thành một nhịp rung làm cả mặt sàn chao đi."
+      ],
+      "ends_at": "Khi Lâm vừa kéo người cuối cùng trong tầm tay lên sàn cao, một tiếng gõ nặng vọng dưới chân họ và nước đen tràn qua lối cũ, cắt hẳn đường trở lại khe.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Nguyễn Lâm phải cùng dân Xóm Chìm chọn dứt khoát cách nhường đường nước cho thủy thần trước khi tiếng gõ thứ ba vang lên.",
+      "present": [
+       "protagonist",
+       "lan"
+      ],
+      "beats": [
+       "Sau tiếng gõ thứ hai, Lan kéo người vừa được cứu và những người đã lên sàn cao khỏi mép lối ngập; cô muốn giữ mọi người sống sót, nhưng đám đông vẫn nhìn về những căn nhà thấp đang chìm.",
+       "Lâm quan sát dòng nước đang dồn qua chỗ lối cũ bị phủ kín rồi nói với Lan rằng không thể cứu những căn nhà ấy bằng cách giữ nước ngoài xóm; cậu muốn dân làng nhường hẳn một lối cho nước thay vì để nó quét qua mọi sàn.",
+       "Lan phản đối rằng nhường đường cũng đồng nghĩa bỏ lại nhà cửa, nhưng khi tiếng gõ thứ ba làm sàn chao, cô quay sang kêu gọi mọi người tự rời các nhà thấp và để dòng nước đi qua; đám đông thôi tranh cãi, bắt đầu dìu nhau lên cao.",
+       "Lâm giật những tấm ván còn chắn ngang lối nước khỏi mép sàn, tự tay bỏ đi con đường nối về các căn nhà thấp; nước tràn qua khoảng trống mới, kéo theo những tấm ván và không còn đập thẳng vào sàn cao.",
+       "Lan đứng bên Lâm khi tiếng gõ dưới bùn lắng thành một rung động xa; cô nói rằng Xóm Chìm đã chọn nhường đường nước, còn những người trên sàn cao nhìn xuống mái nhà bị ngập và hiểu rằng không thể quay lại cứu chúng trong đêm."
+      ],
+      "ends_at": "Dòng nước đổi hướng qua khoảng trống Lâm vừa mở, còn dân làng dồn lên sàn cao và bỏ lại các căn nhà thấp dưới mặt nước.",
+      "resolves": [
+       "so_phan_xom"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-844a39008a79",
+      "kind": "action",
+      "tone": null,
+      "text": "Dìu những người còn đứng gần mép sàn lên chỗ cao hơn",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5d3565793b69",
+      "kind": "dialogue",
+      "tone": "silence",
+      "text": "Im lặng trước lời Lan nói rằng Xóm Chìm đã chọn nhường đường nước",
+      "listeners": [
+       "lan"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-8be73030da54",
+      "kind": "inner",
+      "tone": null,
+      "text": "Quyết định nói với dân làng rằng chính tôi đã mở lối nước, dù những căn nhà thấp đã chìm",
+      "listeners": [],
+      "about": [
+       "protagonist"
+      ],
+      "lie": null,
+      "feeling": "day dứt"
+     }
+    ]
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": [],
+ "quotes": []
+}
