@@ -1,0 +1,4892 @@
+{
+ "story_id": "run-20261028-ab-tu-tien-cu-2-717bce08",
+ "plan": {
+  "acts": [
+   {
+    "name": "Đêm đèn tắt",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Tro dưới niêm phong",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "name": "Lời khai và cái giá",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "name": "Lò cũ",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_lao_van_doi_ca",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Lão Vân",
+      "sửa sổ đổi ca"
+     ],
+     [
+      "Lão Vân",
+      "khiến Tạ Minh Viễn vắng mặt"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_tinh_lac_giau_vat",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Trưởng Tĩnh Lạc",
+      "giấu một mảnh phù văn"
+     ],
+     [
+      "lò cũ",
+      "chứng minh khu luyện đan vẫn còn giá trị"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "truy_ca_truc",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "giu_ca_truc",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "so_phan_lo_cu",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "manh_phu_van",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Tạ Minh Viễn phát hiện ca trực của mình đã bị đổi trước đêm đèn tắt.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Tạ Minh Viễn tìm được dấu vết cho thấy lò cũ có thể làm thay đổi cán cân giữa hai đại tông.",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Tạ Minh Viễn phải đưa ra lời khai quyết định trước khi hai sứ giả buộc Thanh Vi giao lò cũ.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Số phận khu luyện đan được định đoạt qua lựa chọn cuối cùng của Tạ Minh Viễn.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 6,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "fact_lao_van_doi_ca",
+    "text": "Lão Vân đã sửa sổ đổi ca theo lời nhờ của một người trong nội môn để khiến Tạ Minh Viễn vắng mặt khỏi cổng lò vào giờ xảy ra biến cố.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": 5
+   },
+   {
+    "fact_id": "fact_tinh_lac_giau_vat",
+    "text": "Trưởng Tĩnh Lạc đã giấu một mảnh phù văn trong lò cũ để chứng minh khu luyện đan vẫn còn giá trị.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": 5
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "truy_ca_truc",
+    "description": "Ai đã đổi ca trực của Tạ Minh Viễn?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": 3
+   },
+   {
+    "thread_id": "giu_ca_truc",
+    "description": "Tạ Minh Viễn có giữ được những người cùng ca khỏi bị quy tội?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": 4
+   },
+   {
+    "thread_id": "so_phan_lo_cu",
+    "description": "Khu luyện đan sẽ thuộc về phe nào sau cuộc đối đầu?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": 6
+   },
+   {
+    "thread_id": "manh_phu_van",
+    "description": "Mảnh phù văn trong lò cũ chứng minh điều gì về khu luyện đan?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": 4
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261028-ab-tu-tien-cu-2-717bce08-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Tạ Minh Viễn",
+      "personality": "Cứng cỏi, thực tế và có phần đa nghi; anh ít khi tin vào lời hứa nếu chưa thấy người nói chấp nhận hậu quả. Dẫu vậy, anh vẫn âm thầm gánh việc nặng thay cho những đồng môn không có chỗ dựa.",
+      "backstory": "Minh Viễn là đệ tử ngoại môn chuyên sửa lò và canh cửa khu luyện đan, thường bị xem như người chỉ biết làm việc tay chân. Đêm xảy ra biến cố, anh nghe thấy tiếng động lạ gần lò cũ nhưng không nhìn rõ ai đã đi qua. Khi trưởng lão chết và các đệ tử bị tra hỏi, lời khai của anh có thể giúp bảo vệ cả ca trực hoặc khiến nghi kỵ trong Thanh Vi càng sâu thêm.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "doan_thanh_nghi",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Thanh Nghi",
+      "aliases": [
+       "Thanh Nghi"
+      ],
+      "personality": "Điềm đạm, kín đáo, thường dùng câu hỏi thay cho lời khuyên; khi bị dồn ép, nàng chọn bảo vệ người yếu thế hơn là giữ thanh danh.",
+      "backstory": "Là đệ tử ngoại môn cùng ca trực với Tạ Minh Viễn, nàng từng học cách nhận biết lò hỏng từ người thợ cũ, nhưng không được phép bước vào gian lò niêm phong."
+     }
+    },
+    {
+     "id": "lao_van",
+     "label": "Character",
+     "props": {
+      "name": "Lão Vân",
+      "aliases": [
+       "Vân sư huynh"
+      ],
+      "personality": "Khéo miệng, biết chiều lòng người có quyền, nhưng dễ dao động khi sự an toàn của mình bị đe dọa.",
+      "backstory": "Từng phụ trách ghi sổ đổi ca ở khu luyện đan; gần đây hắn thường xuyên nhận việc riêng từ những người trong nội môn."
+     }
+    },
+    {
+     "id": "truong_tinh_lac",
+     "label": "Character",
+     "props": {
+      "name": "Trưởng Tĩnh Lạc",
+      "aliases": [
+       "Tĩnh Lạc trưởng lão"
+      ],
+      "personality": "Nghiêm khắc, ít nói, coi trọng kỷ luật hơn tình riêng.",
+      "backstory": "Là trưởng lão Thanh Vi trông coi khu luyện đan; ông chết trong phòng khóa kín vào sáng sau đêm đèn tắt."
+     }
+    },
+    {
+     "id": "hanh_bach_chau",
+     "label": "Character",
+     "props": {
+      "name": "Hành Bạch Châu",
+      "aliases": [
+       "sứ giả Huyền Đài"
+      ],
+      "personality": "Lịch thiệp và kiên nhẫn, nhưng mỗi lời hỏi đều như đã biết sẵn một nửa câu trả lời.",
+      "backstory": "Được Huyền Đài phái đến Thanh Vi để xem xét lò luyện đan và đánh giá khả năng tiếp quản tông môn."
+     }
+    },
+    {
+     "id": "luong_tu_khoi",
+     "label": "Character",
+     "props": {
+      "name": "Lương Tử Khôi",
+      "aliases": [
+       "sứ giả Vạn Kiếm"
+      ],
+      "personality": "Thẳng thắn, nóng nảy, tin rằng sức mạnh mới là thước đo đáng tin cậy.",
+      "backstory": "Là người của Vạn Kiếm đến sau Hành Bạch Châu, mang theo lệnh triệu tập yêu cầu Thanh Vi giao nộp sổ trực và chìa khóa khu luyện đan."
+     }
+    },
+    {
+     "id": "thung_lung_han_tung",
+     "label": "Location",
+     "props": {
+      "name": "Thung lũng Hàn Tùng",
+      "description": "Thung lũng hẹp quanh năm gió lạnh, nơi tông môn Thanh Vi dựng sơn môn và những dãy nhà tu hành."
+     }
+    },
+    {
+     "id": "khu_luyen_dan",
+     "label": "Location",
+     "props": {
+      "name": "Khu luyện đan Thanh Vi",
+      "aliases": [
+       "khu lò"
+      ],
+      "description": "Dãy nhà cũ có mái ngói rạn, nơi đệ tử ngoại môn trông lò, sửa lò và thay phiên canh cửa."
+     }
+    },
+    {
+     "id": "gian_lo_cu",
+     "label": "Location",
+     "props": {
+      "name": "Gian lò cũ",
+      "aliases": [
+       "lò cũ"
+      ],
+      "description": "Gian luyện đan bị bỏ không phần lớn thời gian, với một lò đá đã nứt và nhiều khe tối khó quan sát."
+     }
+    },
+    {
+     "id": "chinh_dien_thanh_vi",
+     "label": "Location",
+     "props": {
+      "name": "Chính điện Thanh Vi",
+      "aliases": [
+       "chính điện"
+      ],
+      "description": "Điện lớn nhất của Thanh Vi, nơi tiếp sứ giả và xét hỏi đệ tử khi trong tông có biến."
+     }
+    },
+    {
+     "id": "phong_truong_tinh_lac",
+     "label": "Location",
+     "props": {
+      "name": "Phòng Trưởng Tĩnh Lạc",
+      "aliases": [
+       "phòng trưởng lão"
+      ],
+      "description": "Căn phòng nhỏ phía sau chính điện, có then cửa đóng từ bên trong và cửa sổ nhìn xuống vách đá."
+     }
+    },
+    {
+     "id": "thanh_vi",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Vi",
+      "aliases": [
+       "Thanh Vi tông"
+      ],
+      "description": "Tông môn nhỏ đang suy yếu, giữ khu luyện đan cũ và phải đối diện sức ép thôn tính từ hai đại tông."
+     }
+    },
+    {
+     "id": "huyen_dai",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Đài",
+      "aliases": [
+       "tông Huyền Đài"
+      ],
+      "description": "Đại tông môn có thế lực, muốn đặt khu luyện đan Thanh Vi dưới quyền quản lý của mình."
+     }
+    },
+    {
+     "id": "van_kiem",
+     "label": "Faction",
+     "props": {
+      "name": "Vạn Kiếm",
+      "aliases": [
+       "tông Vạn Kiếm"
+      ],
+      "description": "Đại tông môn cạnh tranh với Huyền Đài và đang tìm cách buộc Thanh Vi giao nộp quyền kiểm soát khu luyện đan."
+     }
+    },
+    {
+     "id": "so_doi_ca",
+     "label": "Item",
+     "props": {
+      "name": "Sổ đổi ca",
+      "aliases": [
+       "sổ trực"
+      ],
+      "description": "Cuốn sổ ghi tên người trực khu luyện đan, giờ đổi ca và các lần sửa chữa."
+     }
+    },
+    {
+     "id": "chia_khoa_lo_cu",
+     "label": "Item",
+     "props": {
+      "name": "Chìa khóa lò cũ",
+      "aliases": [
+       "chìa khóa đồng"
+      ],
+      "description": "Chiếc chìa đồng cũ mở cửa gian lò bị niêm phong."
+     }
+    },
+    {
+     "id": "lenh_trieu_tap",
+     "label": "Item",
+     "props": {
+      "name": "Lệnh triệu tập",
+      "aliases": [
+       "lệnh đóng dấu"
+      ],
+      "description": "Tờ lệnh có dấu của Huyền Đài và Vạn Kiếm, yêu cầu Thanh Vi đưa người cùng vật chứng ra trình diện."
+     }
+    },
+    {
+     "id": "fact_thanh_vi_bi_ep",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Vi đang chịu sức ép của Huyền Đài và Vạn Kiếm nhằm giành quyền kiểm soát khu luyện đan."
+     }
+    },
+    {
+     "id": "fact_truong_tinh_lac_chet",
+     "label": "Fact",
+     "props": {
+      "text": "Trưởng Tĩnh Lạc đã chết trong phòng khóa kín vào buổi sáng sau đêm đèn tắt."
+     }
+    },
+    {
+     "id": "fact_lenh_trieu_tap_den",
+     "label": "Fact",
+     "props": {
+      "text": "Lệnh triệu tập của Huyền Đài và Vạn Kiếm đã được đặt trước thềm chính điện sau khi trưởng lão chết."
+     }
+    },
+    {
+     "id": "fact_ca_truc_doi",
+     "label": "Fact",
+     "props": {
+      "text": "Ca trực của Tạ Minh Viễn đã bị đổi trong sổ trước đêm đèn tắt."
+     }
+    },
+    {
+     "id": "fact_lao_van_doi_ca",
+     "label": "Fact",
+     "props": {
+      "text": "Lão Vân đã sửa sổ đổi ca theo lời nhờ của một người trong nội môn để khiến Tạ Minh Viễn vắng mặt khỏi cổng lò vào giờ xảy ra biến cố."
+     }
+    },
+    {
+     "id": "fact_tinh_lac_giau_vat",
+     "label": "Fact",
+     "props": {
+      "text": "Trưởng Tĩnh Lạc đã giấu một mảnh phù văn trong lò cũ để chứng minh khu luyện đan vẫn còn giá trị."
+     }
+    },
+    {
+     "id": "fact_lo_cu_bi_phong",
+     "label": "Fact",
+     "props": {
+      "text": "Gian lò cũ đã bị niêm phong sau cái chết của Trưởng Tĩnh Lạc."
+     }
+    },
+    {
+     "id": "truy_ca_truc",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã đổi ca trực của Tạ Minh Viễn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "giu_ca_truc",
+     "label": "Thread",
+     "props": {
+      "description": "Tạ Minh Viễn có giữ được những người cùng ca khỏi bị quy tội?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "so_phan_lo_cu",
+     "label": "Thread",
+     "props": {
+      "description": "Khu luyện đan sẽ thuộc về phe nào sau cuộc đối đầu?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "manh_phu_van",
+     "label": "Thread",
+     "props": {
+      "description": "Mảnh phù văn trong lò cũ chứng minh điều gì về khu luyện đan?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_thanh_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_thanh_nghi@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_thanh_nghi",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_thanh_nghi>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 40
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "lao_van",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>lao_van@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": -15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "lao_van",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:lao_van>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "truong_tinh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>truong_tinh_lac@0",
+     "props": {
+      "kind": "trưởng lão và đệ tử",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "hanh_bach_chau",
+     "to": "luong_tu_khoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:hanh_bach_chau>luong_tu_khoi@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luong_tu_khoi",
+     "to": "hanh_bach_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luong_tu_khoi>hanh_bach_chau@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -50
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>khu_luyen_dan@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_thanh_nghi",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_thanh_nghi>khu_luyen_dan@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_van",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_van>khu_luyen_dan@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "truong_tinh_lac",
+     "to": "phong_truong_tinh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:truong_tinh_lac>phong_truong_tinh_lac@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "hanh_bach_chau",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:hanh_bach_chau>chinh_dien_thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luong_tu_khoi",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luong_tu_khoi>chinh_dien_thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "lao_van",
+     "to": "so_doi_ca",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:lao_van>so_doi_ca@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "doan_thanh_nghi",
+     "to": "chia_khoa_lo_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:doan_thanh_nghi>chia_khoa_lo_cu@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lenh_trieu_tap",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lenh_trieu_tap>chinh_dien_thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_thanh_nghi",
+     "to": "thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_thanh_nghi>thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "lao_van",
+     "to": "thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:lao_van>thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "truong_tinh_lac",
+     "to": "thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:truong_tinh_lac>thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "hanh_bach_chau",
+     "to": "huyen_dai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:hanh_bach_chau>huyen_dai@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luong_tu_khoi",
+     "to": "van_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luong_tu_khoi>van_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_vi_bi_ep",
+     "to": "thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_vi_bi_ep>thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_vi_bi_ep",
+     "to": "huyen_dai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_vi_bi_ep>huyen_dai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_vi_bi_ep",
+     "to": "van_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_vi_bi_ep>van_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_vi_bi_ep",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_vi_bi_ep>khu_luyen_dan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_nghi",
+     "to": "fact_thanh_vi_bi_ep",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_nghi>fact_thanh_vi_bi_ep@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_thanh_vi_bi_ep",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_thanh_vi_bi_ep@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "truong_tinh_lac",
+     "to": "fact_thanh_vi_bi_ep",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:truong_tinh_lac>fact_thanh_vi_bi_ep@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_truong_tinh_lac_chet",
+     "to": "truong_tinh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_truong_tinh_lac_chet>truong_tinh_lac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_truong_tinh_lac_chet",
+     "to": "phong_truong_tinh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_truong_tinh_lac_chet>phong_truong_tinh_lac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_nghi",
+     "to": "fact_truong_tinh_lac_chet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_nghi>fact_truong_tinh_lac_chet@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_truong_tinh_lac_chet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_truong_tinh_lac_chet@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "hanh_bach_chau",
+     "to": "fact_truong_tinh_lac_chet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:hanh_bach_chau>fact_truong_tinh_lac_chet@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_tu_khoi",
+     "to": "fact_truong_tinh_lac_chet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_tu_khoi>fact_truong_tinh_lac_chet@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_trieu_tap_den",
+     "to": "lenh_trieu_tap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_trieu_tap_den>lenh_trieu_tap@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_trieu_tap_den",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_trieu_tap_den>chinh_dien_thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_trieu_tap_den",
+     "to": "huyen_dai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_trieu_tap_den>huyen_dai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lenh_trieu_tap_den",
+     "to": "van_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lenh_trieu_tap_den>van_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_nghi",
+     "to": "fact_lenh_trieu_tap_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_nghi>fact_lenh_trieu_tap_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_lenh_trieu_tap_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_lenh_trieu_tap_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "hanh_bach_chau",
+     "to": "fact_lenh_trieu_tap_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:hanh_bach_chau>fact_lenh_trieu_tap_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_tu_khoi",
+     "to": "fact_lenh_trieu_tap_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_tu_khoi>fact_lenh_trieu_tap_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_ca_truc_doi",
+     "to": "so_doi_ca",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_ca_truc_doi>so_doi_ca@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_ca_truc_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_ca_truc_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lao_van_doi_ca",
+     "to": "lao_van",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lao_van_doi_ca>lao_van@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lao_van_doi_ca",
+     "to": "so_doi_ca",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lao_van_doi_ca>so_doi_ca@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_lao_van_doi_ca",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_lao_van_doi_ca@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tinh_lac_giau_vat",
+     "to": "truong_tinh_lac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tinh_lac_giau_vat>truong_tinh_lac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tinh_lac_giau_vat",
+     "to": "gian_lo_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tinh_lac_giau_vat>gian_lo_cu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "truong_tinh_lac",
+     "to": "fact_tinh_lac_giau_vat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:truong_tinh_lac>fact_tinh_lac_giau_vat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lo_cu_bi_phong",
+     "to": "gian_lo_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lo_cu_bi_phong>gian_lo_cu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_nghi",
+     "to": "fact_lo_cu_bi_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_nghi>fact_lo_cu_bi_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_lo_cu_bi_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_lo_cu_bi_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "hanh_bach_chau",
+     "to": "fact_lo_cu_bi_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:hanh_bach_chau>fact_lo_cu_bi_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_tu_khoi",
+     "to": "fact_lo_cu_bi_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_tu_khoi>fact_lo_cu_bi_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Tạ Minh Viễn",
+      "known_as": "Tạ Minh Viễn"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-62ced8e11843",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    },
+    {
+     "id": "fact_c1s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Toàn bộ đèn trong khu luyện đan vụt tắt."
+     }
+    },
+    {
+     "id": "fact_c1s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Chuông báo động vang lên từ phía cổng núi."
+     }
+    },
+    {
+     "id": "fact_c1s1_3",
+     "label": "Fact",
+     "props": {
+      "text": "Một tiếng động khẽ vọng ra từ phía lò cũ."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "khu_luyen_dan",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:khu_luyen_dan>ch1@1",
+     "props": {
+      "quote": "Tôi đang đứng cạnh dãy lò phía đông, tay còn đặt trên viên gạch nóng, thì toàn bộ đèn trong khu luyện đan vụt tắt.",
+      "known_as": "khu luyện đan"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lao_van",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lao_van>ch1@1",
+     "props": {
+      "quote": "- Vân sư huynh? Thanh Nghi?",
+      "known_as": "Vân sư huynh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "doan_thanh_nghi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:doan_thanh_nghi>ch1@1",
+     "props": {
+      "quote": "- Vân sư huynh? Thanh Nghi?",
+      "known_as": "Thanh Nghi"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "thanh_vi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:thanh_vi>ch1@1",
+     "props": {
+      "quote": "Chuông báo động của Thanh Vi chỉ vang khi có chuyện ngoài cổng hoặc trên núi.",
+      "known_as": "Thanh Vi"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "gian_lo_cu",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:gian_lo_cu>ch1@1",
+     "props": {
+      "quote": "Chưa đi được mấy bước, một tiếng động khẽ vọng ra từ phía lò cũ.",
+      "known_as": "lò cũ"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s1_1",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s1_1>khu_luyen_dan@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s1_1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s1_1@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Tôi đang đứng cạnh dãy lò phía đông, tay còn đặt trên viên gạch nóng, thì toàn bộ đèn trong khu luyện đan vụt tắt."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s1_2",
+     "to": "thung_lung_han_tung",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s1_2>thung_lung_han_tung@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s1_2",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s1_2@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Từ phía cổng núi, chuông báo động bỗng vang lên."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s1_3",
+     "to": "gian_lo_cu",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s1_3>gian_lo_cu@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s1_3",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s1_3@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Chưa đi được mấy bước, một tiếng động khẽ vọng ra từ phía lò cũ."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s1_1",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s1_1>ch1@1",
+     "props": {
+      "quote": "Tôi đang đứng cạnh dãy lò phía đông, tay còn đặt trên viên gạch nóng, thì toàn bộ đèn trong khu luyện đan vụt tắt."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s1_2",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s1_2>ch1@1",
+     "props": {
+      "quote": "Từ phía cổng núi, chuông báo động bỗng vang lên."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s1_3",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s1_3>ch1@1",
+     "props": {
+      "quote": "Chưa đi được mấy bước, một tiếng động khẽ vọng ra từ phía lò cũ."
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>chinh_dien_thanh_vi@1",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_van",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_van>chinh_dien_thanh_vi@1",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_thanh_nghi",
+     "to": "chinh_dien_thanh_vi",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_thanh_nghi>chinh_dien_thanh_vi@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_lo_cu_bi_phong",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_lo_cu_bi_phong@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "doan_thanh_nghi",
+      "quote": "Lò cũ đã bị niêm phong rồi."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_truong_tinh_lac_chet",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_truong_tinh_lac_chet@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "doan_thanh_nghi",
+      "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_lenh_trieu_tap_den",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_lenh_trieu_tap_den@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_thanh_vi_bi_ep",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_thanh_vi_bi_ep@1",
+     "props": {
+      "how": "suy ra",
+      "quote": "Chỉ đến khi đứng trước dấu ấn của họ, tôi mới hiểu Thanh Vi đang bị ép sát đến mức nào."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "chinh_dien_thanh_vi",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:chinh_dien_thanh_vi>ch1@1",
+     "props": {
+      "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+      "known_as": "chính điện"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "huyen_dai",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:huyen_dai>ch1@1",
+     "props": {
+      "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+      "known_as": "Huyền Đài"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "van_kiem",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:van_kiem>ch1@1",
+     "props": {
+      "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+      "known_as": "Vạn Kiếm"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "lenh_trieu_tap",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:lenh_trieu_tap>ch1@1",
+     "props": {
+      "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+      "known_as": "lệnh"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "truong_tinh_lac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:truong_tinh_lac>ch1@1",
+     "props": {
+      "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín.",
+      "known_as": "Trưởng Tĩnh Lạc"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "phong_truong_tinh_lac",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:phong_truong_tinh_lac>ch1@1",
+     "props": {
+      "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín.",
+      "known_as": "phòng khóa kín"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_lo_cu_bi_phong",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_lo_cu_bi_phong>ch1@1",
+     "props": {
+      "quote": "Lò cũ đã bị niêm phong rồi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_truong_tinh_lac_chet",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_truong_tinh_lac_chet>ch1@1",
+     "props": {
+      "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_lenh_trieu_tap_den",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_lenh_trieu_tap_den>ch1@1",
+     "props": {
+      "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_thanh_vi_bi_ep",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_thanh_vi_bi_ep>ch1@1",
+     "props": {
+      "quote": "Chỉ đến khi đứng trước dấu ấn của họ, tôi mới hiểu Thanh Vi đang bị ép sát đến mức nào."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>khu_luyen_dan@0",
+     "valid_to_chapter": 1
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:lao_van>khu_luyen_dan@0",
+     "valid_to_chapter": 1
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:doan_thanh_nghi>khu_luyen_dan@0",
+     "valid_to_chapter": 1
+    }
+   ]
+  },
+  "2": {
+   "commit_id": "ch2-5513288c0bb5",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    },
+    {
+     "id": "fact_c2s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Nghi nói sẽ không để lời khai của Minh Viễn bị biến thành lời buộc tội cả ca trực."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_c1s1_3",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_c1s1_3@2",
+     "props": {
+      "feeling": "quyết tâm"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "chia_khoa_lo_cu",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:chia_khoa_lo_cu>ch2@2",
+     "props": {
+      "quote": "Chìa khóa lò cũ nằm trong tay nàng, vòng sắt lạnh lấp ló dưới tay áo.",
+      "known_as": "Chìa khóa lò cũ"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_ca_truc_doi",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_ca_truc_doi@2",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Bên cạnh là một nét mực sửa, nhỏ và gọn, chuyển tôi sang ca khác trước đêm đèn tắt."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "so_doi_ca",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:so_doi_ca>ch2@2",
+     "props": {
+      "quote": "- Nếu muốn đối chiếu lời khai, xem sổ đổi ca cũng được",
+      "known_as": "sổ đổi ca"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "hanh_bach_chau",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:hanh_bach_chau>ch2@2",
+     "props": {
+      "quote": "Hành Bạch Châu đặt bàn tay lên án thư, ánh mắt dừng ở quyển sổ đổi ca.",
+      "known_as": "Hành Bạch Châu"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "luong_tu_khoi",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:luong_tu_khoi>ch2@2",
+     "props": {
+      "quote": "Lương Tử Khôi khoanh tay, giọng lạnh tanh.",
+      "known_as": "Lương Tử Khôi"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s2_1",
+     "to": "doan_thanh_nghi",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s2_1>doan_thanh_nghi@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s2_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s2_1@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "doan_thanh_nghi",
+      "quote": "Nhưng tôi sẽ không để lời khai của Minh Viễn bị biến thành lời buộc tội cả ca trực."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s2_1",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s2_1>ch2@2",
+     "props": {
+      "quote": "Nhưng tôi sẽ không để lời khai của Minh Viễn bị biến thành lời buộc tội cả ca trực."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_nghi",
+     "to": "fact_c2s2_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_nghi>fact_c2s2_1@2",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "3": {
+   "commit_id": "ch3-70b93c8ce3de",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    },
+    {
+     "id": "fact_c3s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Nghi bóc niêm phong và mở cửa gian lò cũ."
+     }
+    },
+    {
+     "id": "fact_c3s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Lão Vân đồng ý sẽ kể lại chuyện sửa sổ trước mặt những người đang kiểm tra."
+     }
+    },
+    {
+     "id": "fact_c3s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Đường dẫn khí trong lò cũ vẫn còn nguyên."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "lao_van",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>lao_van@3",
+     "props": {
+      "feeling": "dè chừng"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "so_doi_ca",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>so_doi_ca@3",
+     "props": {
+      "feeling": "dè chừng"
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>khu_luyen_dan@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_thanh_nghi",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_thanh_nghi>khu_luyen_dan@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "hanh_bach_chau",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:hanh_bach_chau>khu_luyen_dan@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luong_tu_khoi",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luong_tu_khoi>khu_luyen_dan@3",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_van",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_van>khu_luyen_dan@3",
+     "props": {}
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "truy_ca_truc",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:truy_ca_truc>ch3@3",
+     "props": {
+      "quote": "Có người trong nội môn nhờ ta sửa sổ."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_1@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Niêm phong được bóc ra, gỗ khẽ rít khi cửa mở."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "gian_lo_cu",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>gian_lo_cu@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_2",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_2@3",
+     "props": {
+      "how": "được kể",
+      "told_by": "lao_van",
+      "quote": "Được. Ta sẽ nói."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_2",
+     "to": "lao_van",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_2>lao_van@3",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_1",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+     "props": {
+      "quote": "Thanh Nghi cắm chìa vào ổ khóa. Niêm phong được bóc ra, gỗ khẽ rít khi cửa mở."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_2",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_2>ch3@3",
+     "props": {
+      "quote": "Được. Ta sẽ nói."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_c3s1_2",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_c3s1_2@3",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s2_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s2_1@3",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Đường dẫn chưa sụp."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_nghi",
+     "to": "fact_c3s2_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_nghi>fact_c3s2_1@3",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "hanh_bach_chau",
+     "to": "fact_c3s2_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:hanh_bach_chau>fact_c3s2_1@3",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_tu_khoi",
+     "to": "fact_c3s2_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_tu_khoi>fact_c3s2_1@3",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s2_1",
+     "to": "gian_lo_cu",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s2_1>gian_lo_cu@3",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s2_1",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s2_1>ch3@3",
+     "props": {
+      "quote": "Đường dẫn chưa sụp."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:protagonist>chinh_dien_thanh_vi@1",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:doan_thanh_nghi>chinh_dien_thanh_vi@1",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:hanh_bach_chau>chinh_dien_thanh_vi@0",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:luong_tu_khoi>chinh_dien_thanh_vi@0",
+     "valid_to_chapter": 3
+    },
+    {
+     "type": "LOCATED_AT",
+     "id": "LOCATED_AT:lao_van>chinh_dien_thanh_vi@1",
+     "valid_to_chapter": 3
+    }
+   ]
+  },
+  "4": {
+   "commit_id": "ch4-ddc568e936db",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    },
+    {
+     "id": "fact_c4s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Lão Vân không biết danh tính người đã nhờ ông sửa sổ."
+     }
+    },
+    {
+     "id": "fact_c4s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Một mảnh phù văn sẫm màu lộ ra sát chân lò."
+     }
+    },
+    {
+     "id": "fact_c4s1_3",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RESOLVED_IN",
+     "from": "manh_phu_van",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:manh_phu_van>ch4@4",
+     "props": {
+      "quote": "Mảnh phù chứng minh khu luyện đan vẫn còn giá trị."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "giu_ca_truc",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:giu_ca_truc>ch4@4",
+     "props": {
+      "quote": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s1_1",
+     "to": "lao_van",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s1_1>lao_van@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c4s1_1",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c4s1_1@4",
+     "props": {
+      "how": "được kể",
+      "told_by": "lao_van",
+      "quote": "Không biết. Ta chỉ nhận lời nhắn, không gặp mặt."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s1_2",
+     "to": "gian_lo_cu",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s1_2>gian_lo_cu@4",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s1_2",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s1_2>khu_luyen_dan@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c4s1_2",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c4s1_2@4",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Một mảnh phù văn sẫm màu hiện ra, bị giấu sát chân lò."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s1_3",
+     "to": "thanh_vi",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s1_3>thanh_vi@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c4s1_3",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c4s1_3@4",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c4s1_1",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c4s1_1>ch4@4",
+     "props": {
+      "quote": "Không biết. Ta chỉ nhận lời nhắn, không gặp mặt."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c4s1_2",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c4s1_2>ch4@4",
+     "props": {
+      "quote": "Một mảnh phù văn sẫm màu hiện ra, bị giấu sát chân lò."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c4s1_3",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c4s1_3>ch4@4",
+     "props": {
+      "quote": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_van",
+     "to": "fact_c4s1_1",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_van>fact_c4s1_1@4",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "5": {
+   "commit_id": "ch5-3c755addc59f",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "huyen_dai",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>huyen_dai@5",
+     "props": {
+      "feeling": "bất an"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "van_kiem",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>van_kiem@5",
+     "props": {
+      "feeling": "bất an"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_tinh_lac_giau_vat",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_tinh_lac_giau_vat>ch5@5",
+     "props": {
+      "quote": "Trưởng Tĩnh Lạc đã giấu mảnh phù văn này trong lò cũ. Ông ấy muốn chứng minh khu luyện đan vẫn còn giá trị."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_lao_van_doi_ca",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_lao_van_doi_ca@5",
+     "props": {
+      "how": "được kể",
+      "told_by": "lao_van",
+      "quote": "Là ta sửa. Có người trong nội môn nhờ ta đổi ca để Minh Viễn vắng ở cổng lò vào giờ ấy. Ta không biết người đó là ai."
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-bf9940263c3c",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    },
+    {
+     "id": "fact_c6s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Huyền Đài đề nghị quyền trông coi khu luyện đan có thời hạn dưới sự giám sát của mình."
+     }
+    },
+    {
+     "id": "fact_c6s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Vạn Kiếm cho rằng muốn giữ lò thì phải có một thỏa thuận ngang hàng."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_c4s1_2",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_c4s1_2@6",
+     "props": {
+      "feeling": "quyết tâm bảo vệ chứng cứ"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_tinh_lac_giau_vat",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_tinh_lac_giau_vat@6",
+     "props": {
+      "feeling": "quyết tâm bảo vệ chứng cứ"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_1",
+     "to": "huyen_dai",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_1>huyen_dai@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_1",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_1>khu_luyen_dan@6",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s1_1",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s1_1@6",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Huyền Đài đề nghị quyền trông coi có thời hạn, dưới sự giám sát của chúng ta."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_2",
+     "to": "van_kiem",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_2>van_kiem@6",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c6s1_2",
+     "to": "khu_luyen_dan",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c6s1_2>khu_luyen_dan@6",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c6s1_2",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c6s1_2@6",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Muốn giữ lò, phải có một thỏa thuận ngang hàng."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s1_1",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s1_1>ch6@6",
+     "props": {
+      "quote": "Huyền Đài đề nghị quyền trông coi có thời hạn, dưới sự giám sát của chúng ta."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c6s1_2",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c6s1_2>ch6@6",
+     "props": {
+      "quote": "Muốn giữ lò, phải có một thỏa thuận ngang hàng."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "so_phan_lo_cu",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:so_phan_lo_cu>ch6@6",
+     "props": {
+      "quote": "Khu luyện đan vẫn thuộc quyền Thanh Vi, chưa thành phần thưởng của kẻ mạnh."
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "HOLDS",
+     "id": "HOLDS:lao_van>so_doi_ca@0",
+     "valid_to_chapter": 6
+    }
+   ]
+  }
+ },
+ "final": {
+  "chapter": 6,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "chia_khoa_lo_cu": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chìa khóa đồng"
+     ],
+     "name": "Chìa khóa lò cũ",
+     "description": "Chiếc chìa đồng cũ mở cửa gian lò bị niêm phong."
+    }
+   },
+   "chinh_dien_thanh_vi": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "chính điện"
+     ],
+     "name": "Chính điện Thanh Vi",
+     "description": "Điện lớn nhất của Thanh Vi, nơi tiếp sứ giả và xét hỏi đệ tử khi trong tông có biến."
+    }
+   },
+   "doan_thanh_nghi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là đệ tử ngoại môn cùng ca trực với Tạ Minh Viễn, nàng từng học cách nhận biết lò hỏng từ người thợ cũ, nhưng không được phép bước vào gian lò niêm phong.",
+     "aliases": [
+      "Thanh Nghi"
+     ],
+     "personality": "Điềm đạm, kín đáo, thường dùng câu hỏi thay cho lời khuyên; khi bị dồn ép, nàng chọn bảo vệ người yếu thế hơn là giữ thanh danh.",
+     "name": "Đoàn Thanh Nghi"
+    }
+   },
+   "fact_c1s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Toàn bộ đèn trong khu luyện đan vụt tắt."
+    }
+   },
+   "fact_c1s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Chuông báo động vang lên từ phía cổng núi."
+    }
+   },
+   "fact_c1s1_3": {
+    "label": "Fact",
+    "props": {
+     "text": "Một tiếng động khẽ vọng ra từ phía lò cũ."
+    }
+   },
+   "fact_c2s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Nghi nói sẽ không để lời khai của Minh Viễn bị biến thành lời buộc tội cả ca trực."
+    }
+   },
+   "fact_c3s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Nghi bóc niêm phong và mở cửa gian lò cũ."
+    }
+   },
+   "fact_c3s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Lão Vân đồng ý sẽ kể lại chuyện sửa sổ trước mặt những người đang kiểm tra."
+    }
+   },
+   "fact_c3s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Đường dẫn khí trong lò cũ vẫn còn nguyên."
+    }
+   },
+   "fact_c4s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Lão Vân không biết danh tính người đã nhờ ông sửa sổ."
+    }
+   },
+   "fact_c4s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Một mảnh phù văn sẫm màu lộ ra sát chân lò."
+    }
+   },
+   "fact_c4s1_3": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+    }
+   },
+   "fact_c6s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Huyền Đài đề nghị quyền trông coi khu luyện đan có thời hạn dưới sự giám sát của mình."
+    }
+   },
+   "fact_c6s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Vạn Kiếm cho rằng muốn giữ lò thì phải có một thỏa thuận ngang hàng."
+    }
+   },
+   "fact_ca_truc_doi": {
+    "label": "Fact",
+    "props": {
+     "text": "Ca trực của Tạ Minh Viễn đã bị đổi trong sổ trước đêm đèn tắt."
+    }
+   },
+   "fact_lao_van_doi_ca": {
+    "label": "Fact",
+    "props": {
+     "text": "Lão Vân đã sửa sổ đổi ca theo lời nhờ của một người trong nội môn để khiến Tạ Minh Viễn vắng mặt khỏi cổng lò vào giờ xảy ra biến cố."
+    }
+   },
+   "fact_lenh_trieu_tap_den": {
+    "label": "Fact",
+    "props": {
+     "text": "Lệnh triệu tập của Huyền Đài và Vạn Kiếm đã được đặt trước thềm chính điện sau khi trưởng lão chết."
+    }
+   },
+   "fact_lo_cu_bi_phong": {
+    "label": "Fact",
+    "props": {
+     "text": "Gian lò cũ đã bị niêm phong sau cái chết của Trưởng Tĩnh Lạc."
+    }
+   },
+   "fact_thanh_vi_bi_ep": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Vi đang chịu sức ép của Huyền Đài và Vạn Kiếm nhằm giành quyền kiểm soát khu luyện đan."
+    }
+   },
+   "fact_tinh_lac_giau_vat": {
+    "label": "Fact",
+    "props": {
+     "text": "Trưởng Tĩnh Lạc đã giấu một mảnh phù văn trong lò cũ để chứng minh khu luyện đan vẫn còn giá trị."
+    }
+   },
+   "fact_truong_tinh_lac_chet": {
+    "label": "Fact",
+    "props": {
+     "text": "Trưởng Tĩnh Lạc đã chết trong phòng khóa kín vào buổi sáng sau đêm đèn tắt."
+    }
+   },
+   "gian_lo_cu": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "lò cũ"
+     ],
+     "name": "Gian lò cũ",
+     "description": "Gian luyện đan bị bỏ không phần lớn thời gian, với một lò đá đã nứt và nhiều khe tối khó quan sát."
+    }
+   },
+   "giu_ca_truc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tạ Minh Viễn có giữ được những người cùng ca khỏi bị quy tội?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "hanh_bach_chau": {
+    "label": "Character",
+    "props": {
+     "backstory": "Được Huyền Đài phái đến Thanh Vi để xem xét lò luyện đan và đánh giá khả năng tiếp quản tông môn.",
+     "aliases": [
+      "sứ giả Huyền Đài"
+     ],
+     "personality": "Lịch thiệp và kiên nhẫn, nhưng mỗi lời hỏi đều như đã biết sẵn một nửa câu trả lời.",
+     "name": "Hành Bạch Châu"
+    }
+   },
+   "huyen_dai": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "tông Huyền Đài"
+     ],
+     "name": "Huyền Đài",
+     "description": "Đại tông môn có thế lực, muốn đặt khu luyện đan Thanh Vi dưới quyền quản lý của mình."
+    }
+   },
+   "khu_luyen_dan": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "khu lò"
+     ],
+     "name": "Khu luyện đan Thanh Vi",
+     "description": "Dãy nhà cũ có mái ngói rạn, nơi đệ tử ngoại môn trông lò, sửa lò và thay phiên canh cửa."
+    }
+   },
+   "lao_van": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng phụ trách ghi sổ đổi ca ở khu luyện đan; gần đây hắn thường xuyên nhận việc riêng từ những người trong nội môn.",
+     "aliases": [
+      "Vân sư huynh"
+     ],
+     "personality": "Khéo miệng, biết chiều lòng người có quyền, nhưng dễ dao động khi sự an toàn của mình bị đe dọa.",
+     "name": "Lão Vân"
+    }
+   },
+   "lenh_trieu_tap": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "lệnh đóng dấu"
+     ],
+     "name": "Lệnh triệu tập",
+     "description": "Tờ lệnh có dấu của Huyền Đài và Vạn Kiếm, yêu cầu Thanh Vi đưa người cùng vật chứng ra trình diện."
+    }
+   },
+   "luong_tu_khoi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là người của Vạn Kiếm đến sau Hành Bạch Châu, mang theo lệnh triệu tập yêu cầu Thanh Vi giao nộp sổ trực và chìa khóa khu luyện đan.",
+     "aliases": [
+      "sứ giả Vạn Kiếm"
+     ],
+     "personality": "Thẳng thắn, nóng nảy, tin rằng sức mạnh mới là thước đo đáng tin cậy.",
+     "name": "Lương Tử Khôi"
+    }
+   },
+   "manh_phu_van": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mảnh phù văn trong lò cũ chứng minh điều gì về khu luyện đan?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "phong_truong_tinh_lac": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "phòng trưởng lão"
+     ],
+     "name": "Phòng Trưởng Tĩnh Lạc",
+     "description": "Căn phòng nhỏ phía sau chính điện, có then cửa đóng từ bên trong và cửa sổ nhìn xuống vách đá."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Minh Viễn là đệ tử ngoại môn chuyên sửa lò và canh cửa khu luyện đan, thường bị xem như người chỉ biết làm việc tay chân. Đêm xảy ra biến cố, anh nghe thấy tiếng động lạ gần lò cũ nhưng không nhìn rõ ai đã đi qua. Khi trưởng lão chết và các đệ tử bị tra hỏi, lời khai của anh có thể giúp bảo vệ cả ca trực hoặc khiến nghi kỵ trong Thanh Vi càng sâu thêm.",
+     "personality": "Cứng cỏi, thực tế và có phần đa nghi; anh ít khi tin vào lời hứa nếu chưa thấy người nói chấp nhận hậu quả. Dẫu vậy, anh vẫn âm thầm gánh việc nặng thay cho những đồng môn không có chỗ dựa.",
+     "name": "Tạ Minh Viễn",
+     "is_protagonist": true
+    }
+   },
+   "so_doi_ca": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "sổ trực"
+     ],
+     "name": "Sổ đổi ca",
+     "description": "Cuốn sổ ghi tên người trực khu luyện đan, giờ đổi ca và các lần sửa chữa."
+    }
+   },
+   "so_phan_lo_cu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Khu luyện đan sẽ thuộc về phe nào sau cuộc đối đầu?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "thanh_vi": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Vi tông"
+     ],
+     "name": "Thanh Vi",
+     "description": "Tông môn nhỏ đang suy yếu, giữ khu luyện đan cũ và phải đối diện sức ép thôn tính từ hai đại tông."
+    }
+   },
+   "thung_lung_han_tung": {
+    "label": "Location",
+    "props": {
+     "name": "Thung lũng Hàn Tùng",
+     "description": "Thung lũng hẹp quanh năm gió lạnh, nơi tông môn Thanh Vi dựng sơn môn và những dãy nhà tu hành."
+    }
+   },
+   "truong_tinh_lac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là trưởng lão Thanh Vi trông coi khu luyện đan; ông chết trong phòng khóa kín vào sáng sau đêm đèn tắt.",
+     "aliases": [
+      "Tĩnh Lạc trưởng lão"
+     ],
+     "personality": "Nghiêm khắc, ít nói, coi trọng kỷ luật hơn tình riêng.",
+     "name": "Trưởng Tĩnh Lạc"
+    }
+   },
+   "truy_ca_truc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã đổi ca trực của Tạ Minh Viễn?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "van_kiem": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "tông Vạn Kiếm"
+     ],
+     "name": "Vạn Kiếm",
+     "description": "Đại tông môn cạnh tranh với Huyền Đài và đang tìm cách buộc Thanh Vi giao nộp quyền kiểm soát khu luyện đan."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_thanh_nghi>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_thanh_nghi",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 40,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:hanh_bach_chau>luong_tu_khoi@0",
+    "type": "RELATES_TO",
+    "source": "hanh_bach_chau",
+    "target": "luong_tu_khoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -45,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:lao_van>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "lao_van",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:luong_tu_khoi>hanh_bach_chau@0",
+    "type": "RELATES_TO",
+    "source": "luong_tu_khoi",
+    "target": "hanh_bach_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -50,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_thanh_nghi@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_thanh_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>lao_van@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "lao_van",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -15,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>truong_tinh_lac@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "truong_tinh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "trưởng lão và đệ tử"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_thanh_nghi>khu_luyen_dan@3",
+    "type": "LOCATED_AT",
+    "source": "doan_thanh_nghi",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:hanh_bach_chau>khu_luyen_dan@3",
+    "type": "LOCATED_AT",
+    "source": "hanh_bach_chau",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lao_van>khu_luyen_dan@3",
+    "type": "LOCATED_AT",
+    "source": "lao_van",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lenh_trieu_tap>chinh_dien_thanh_vi@0",
+    "type": "LOCATED_AT",
+    "source": "lenh_trieu_tap",
+    "target": "chinh_dien_thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luong_tu_khoi>khu_luyen_dan@3",
+    "type": "LOCATED_AT",
+    "source": "luong_tu_khoi",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>khu_luyen_dan@3",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:truong_tinh_lac>phong_truong_tinh_lac@0",
+    "type": "LOCATED_AT",
+    "source": "truong_tinh_lac",
+    "target": "phong_truong_tinh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:doan_thanh_nghi>chia_khoa_lo_cu@0",
+    "type": "HOLDS",
+    "source": "doan_thanh_nghi",
+    "target": "chia_khoa_lo_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_thanh_nghi>thanh_vi@0",
+    "type": "MEMBER_OF",
+    "source": "doan_thanh_nghi",
+    "target": "thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:hanh_bach_chau>huyen_dai@0",
+    "type": "MEMBER_OF",
+    "source": "hanh_bach_chau",
+    "target": "huyen_dai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:lao_van>thanh_vi@0",
+    "type": "MEMBER_OF",
+    "source": "lao_van",
+    "target": "thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luong_tu_khoi>van_kiem@0",
+    "type": "MEMBER_OF",
+    "source": "luong_tu_khoi",
+    "target": "van_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>thanh_vi@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:truong_tinh_lac>thanh_vi@0",
+    "type": "MEMBER_OF",
+    "source": "truong_tinh_lac",
+    "target": "thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_thanh_nghi>fact_c2s2_1@2",
+    "type": "KNOWS",
+    "source": "doan_thanh_nghi",
+    "target": "fact_c2s2_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_nghi>fact_c3s2_1@3",
+    "type": "KNOWS",
+    "source": "doan_thanh_nghi",
+    "target": "fact_c3s2_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_nghi>fact_lenh_trieu_tap_den@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_nghi",
+    "target": "fact_lenh_trieu_tap_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_nghi>fact_lo_cu_bi_phong@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_nghi",
+    "target": "fact_lo_cu_bi_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_nghi>fact_thanh_vi_bi_ep@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_nghi",
+    "target": "fact_thanh_vi_bi_ep",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_nghi>fact_truong_tinh_lac_chet@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_nghi",
+    "target": "fact_truong_tinh_lac_chet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:hanh_bach_chau>fact_c3s2_1@3",
+    "type": "KNOWS",
+    "source": "hanh_bach_chau",
+    "target": "fact_c3s2_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:hanh_bach_chau>fact_lenh_trieu_tap_den@0",
+    "type": "KNOWS",
+    "source": "hanh_bach_chau",
+    "target": "fact_lenh_trieu_tap_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:hanh_bach_chau>fact_lo_cu_bi_phong@0",
+    "type": "KNOWS",
+    "source": "hanh_bach_chau",
+    "target": "fact_lo_cu_bi_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:hanh_bach_chau>fact_truong_tinh_lac_chet@0",
+    "type": "KNOWS",
+    "source": "hanh_bach_chau",
+    "target": "fact_truong_tinh_lac_chet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_c3s1_2@3",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_c3s1_2",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_c4s1_1@4",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_c4s1_1",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_ca_truc_doi@0",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_ca_truc_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_lao_van_doi_ca@0",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_lao_van_doi_ca",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_lenh_trieu_tap_den@0",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_lenh_trieu_tap_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_lo_cu_bi_phong@0",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_lo_cu_bi_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_thanh_vi_bi_ep@0",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_thanh_vi_bi_ep",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_van>fact_truong_tinh_lac_chet@0",
+    "type": "KNOWS",
+    "source": "lao_van",
+    "target": "fact_truong_tinh_lac_chet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luong_tu_khoi>fact_c3s2_1@3",
+    "type": "KNOWS",
+    "source": "luong_tu_khoi",
+    "target": "fact_c3s2_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:luong_tu_khoi>fact_lenh_trieu_tap_den@0",
+    "type": "KNOWS",
+    "source": "luong_tu_khoi",
+    "target": "fact_lenh_trieu_tap_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luong_tu_khoi>fact_lo_cu_bi_phong@0",
+    "type": "KNOWS",
+    "source": "luong_tu_khoi",
+    "target": "fact_lo_cu_bi_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luong_tu_khoi>fact_truong_tinh_lac_chet@0",
+    "type": "KNOWS",
+    "source": "luong_tu_khoi",
+    "target": "fact_truong_tinh_lac_chet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s1_1@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s1_1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Tôi đang đứng cạnh dãy lò phía đông, tay còn đặt trên viên gạch nóng, thì toàn bộ đèn trong khu luyện đan vụt tắt."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s1_2@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s1_2",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Từ phía cổng núi, chuông báo động bỗng vang lên."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s1_3@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s1_3",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Chưa đi được mấy bước, một tiếng động khẽ vọng ra từ phía lò cũ."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s2_1@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s2_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Nhưng tôi sẽ không để lời khai của Minh Viễn bị biến thành lời buộc tội cả ca trực.",
+     "told_by": "doan_thanh_nghi"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_1@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Niêm phong được bóc ra, gỗ khẽ rít khi cửa mở."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_2@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_2",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Được. Ta sẽ nói.",
+     "told_by": "lao_van"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s2_1@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s2_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Đường dẫn chưa sụp."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c4s1_1@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c4s1_1",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Không biết. Ta chỉ nhận lời nhắn, không gặp mặt.",
+     "told_by": "lao_van"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c4s1_2@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c4s1_2",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Một mảnh phù văn sẫm màu hiện ra, bị giấu sát chân lò."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c4s1_3@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c4s1_3",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s1_1@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s1_1",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Huyền Đài đề nghị quyền trông coi có thời hạn, dưới sự giám sát của chúng ta."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c6s1_2@6",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c6s1_2",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Muốn giữ lò, phải có một thỏa thuận ngang hàng."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_ca_truc_doi@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_ca_truc_doi",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Bên cạnh là một nét mực sửa, nhỏ và gọn, chuyển tôi sang ca khác trước đêm đèn tắt."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_lao_van_doi_ca@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_lao_van_doi_ca",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Là ta sửa. Có người trong nội môn nhờ ta đổi ca để Minh Viễn vắng ở cổng lò vào giờ ấy. Ta không biết người đó là ai.",
+     "told_by": "lao_van"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_lenh_trieu_tap_den@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_lenh_trieu_tap_den",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_lo_cu_bi_phong@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_lo_cu_bi_phong",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Lò cũ đã bị niêm phong rồi.",
+     "told_by": "doan_thanh_nghi"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_thanh_vi_bi_ep@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_thanh_vi_bi_ep",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "suy ra",
+     "quote": "Chỉ đến khi đứng trước dấu ấn của họ, tôi mới hiểu Thanh Vi đang bị ép sát đến mức nào."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_truong_tinh_lac_chet@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_truong_tinh_lac_chet",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín.",
+     "told_by": "doan_thanh_nghi"
+    }
+   },
+   {
+    "id": "KNOWS:truong_tinh_lac>fact_thanh_vi_bi_ep@0",
+    "type": "KNOWS",
+    "source": "truong_tinh_lac",
+    "target": "fact_thanh_vi_bi_ep",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:truong_tinh_lac>fact_tinh_lac_giau_vat@0",
+    "type": "KNOWS",
+    "source": "truong_tinh_lac",
+    "target": "fact_tinh_lac_giau_vat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_c1s1_3@2",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_c1s1_3",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "quyết tâm"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_c4s1_2@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_c4s1_2",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "quyết tâm bảo vệ chứng cứ"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_tinh_lac_giau_vat@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_tinh_lac_giau_vat",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "quyết tâm bảo vệ chứng cứ"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>huyen_dai@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "huyen_dai",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "bất an"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>lao_van@3",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "lao_van",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "dè chừng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>so_doi_ca@3",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "so_doi_ca",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "dè chừng"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>van_kiem@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "van_kiem",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "bất an"
+    }
+   },
+   {
+    "id": "ABOUT:fact_c1s1_1>khu_luyen_dan@1",
+    "type": "ABOUT",
+    "source": "fact_c1s1_1",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s1_2>thung_lung_han_tung@1",
+    "type": "ABOUT",
+    "source": "fact_c1s1_2",
+    "target": "thung_lung_han_tung",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s1_3>gian_lo_cu@1",
+    "type": "ABOUT",
+    "source": "fact_c1s1_3",
+    "target": "gian_lo_cu",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s2_1>doan_thanh_nghi@2",
+    "type": "ABOUT",
+    "source": "fact_c2s2_1",
+    "target": "doan_thanh_nghi",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>gian_lo_cu@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "gian_lo_cu",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_2>lao_van@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_2",
+    "target": "lao_van",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s2_1>gian_lo_cu@3",
+    "type": "ABOUT",
+    "source": "fact_c3s2_1",
+    "target": "gian_lo_cu",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s1_1>lao_van@4",
+    "type": "ABOUT",
+    "source": "fact_c4s1_1",
+    "target": "lao_van",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s1_2>gian_lo_cu@4",
+    "type": "ABOUT",
+    "source": "fact_c4s1_2",
+    "target": "gian_lo_cu",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s1_2>khu_luyen_dan@4",
+    "type": "ABOUT",
+    "source": "fact_c4s1_2",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s1_3>thanh_vi@4",
+    "type": "ABOUT",
+    "source": "fact_c4s1_3",
+    "target": "thanh_vi",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_1>huyen_dai@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_1",
+    "target": "huyen_dai",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_1>khu_luyen_dan@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_1",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_2>khu_luyen_dan@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_2",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c6s1_2>van_kiem@6",
+    "type": "ABOUT",
+    "source": "fact_c6s1_2",
+    "target": "van_kiem",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_ca_truc_doi>so_doi_ca@0",
+    "type": "ABOUT",
+    "source": "fact_ca_truc_doi",
+    "target": "so_doi_ca",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lao_van_doi_ca>lao_van@0",
+    "type": "ABOUT",
+    "source": "fact_lao_van_doi_ca",
+    "target": "lao_van",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lao_van_doi_ca>so_doi_ca@0",
+    "type": "ABOUT",
+    "source": "fact_lao_van_doi_ca",
+    "target": "so_doi_ca",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_trieu_tap_den>chinh_dien_thanh_vi@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_trieu_tap_den",
+    "target": "chinh_dien_thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_trieu_tap_den>huyen_dai@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_trieu_tap_den",
+    "target": "huyen_dai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_trieu_tap_den>lenh_trieu_tap@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_trieu_tap_den",
+    "target": "lenh_trieu_tap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lenh_trieu_tap_den>van_kiem@0",
+    "type": "ABOUT",
+    "source": "fact_lenh_trieu_tap_den",
+    "target": "van_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lo_cu_bi_phong>gian_lo_cu@0",
+    "type": "ABOUT",
+    "source": "fact_lo_cu_bi_phong",
+    "target": "gian_lo_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_vi_bi_ep>huyen_dai@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_vi_bi_ep",
+    "target": "huyen_dai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_vi_bi_ep>khu_luyen_dan@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_vi_bi_ep",
+    "target": "khu_luyen_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_vi_bi_ep>thanh_vi@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_vi_bi_ep",
+    "target": "thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_vi_bi_ep>van_kiem@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_vi_bi_ep",
+    "target": "van_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tinh_lac_giau_vat>gian_lo_cu@0",
+    "type": "ABOUT",
+    "source": "fact_tinh_lac_giau_vat",
+    "target": "gian_lo_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tinh_lac_giau_vat>truong_tinh_lac@0",
+    "type": "ABOUT",
+    "source": "fact_tinh_lac_giau_vat",
+    "target": "truong_tinh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_truong_tinh_lac_chet>phong_truong_tinh_lac@0",
+    "type": "ABOUT",
+    "source": "fact_truong_tinh_lac_chet",
+    "target": "phong_truong_tinh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_truong_tinh_lac_chet>truong_tinh_lac@0",
+    "type": "ABOUT",
+    "source": "fact_truong_tinh_lac_chet",
+    "target": "truong_tinh_lac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:giu_ca_truc>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "giu_ca_truc",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:manh_phu_van>ch4@4",
+    "type": "RESOLVED_IN",
+    "source": "manh_phu_van",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Mảnh phù chứng minh khu luyện đan vẫn còn giá trị."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:so_phan_lo_cu>ch6@6",
+    "type": "RESOLVED_IN",
+    "source": "so_phan_lo_cu",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Khu luyện đan vẫn thuộc quyền Thanh Vi, chưa thành phần thưởng của kẻ mạnh."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:truy_ca_truc>ch3@3",
+    "type": "RESOLVED_IN",
+    "source": "truy_ca_truc",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Có người trong nội môn nhờ ta sửa sổ."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:chia_khoa_lo_cu>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "chia_khoa_lo_cu",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chìa khóa lò cũ nằm trong tay nàng, vòng sắt lạnh lấp ló dưới tay áo.",
+     "known_as": "Chìa khóa lò cũ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:chinh_dien_thanh_vi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "chinh_dien_thanh_vi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+     "known_as": "chính điện"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:doan_thanh_nghi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "doan_thanh_nghi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Vân sư huynh? Thanh Nghi?",
+     "known_as": "Thanh Nghi"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s1_1>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s1_1",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đang đứng cạnh dãy lò phía đông, tay còn đặt trên viên gạch nóng, thì toàn bộ đèn trong khu luyện đan vụt tắt."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s1_2>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s1_2",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Từ phía cổng núi, chuông báo động bỗng vang lên."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s1_3>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s1_3",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chưa đi được mấy bước, một tiếng động khẽ vọng ra từ phía lò cũ."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s2_1>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s2_1",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhưng tôi sẽ không để lời khai của Minh Viễn bị biến thành lời buộc tội cả ca trực."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_1",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thanh Nghi cắm chìa vào ổ khóa. Niêm phong được bóc ra, gỗ khẽ rít khi cửa mở."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_2>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_2",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Được. Ta sẽ nói."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s2_1>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s2_1",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đường dẫn chưa sụp."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c4s1_1>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c4s1_1",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Không biết. Ta chỉ nhận lời nhắn, không gặp mặt."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c4s1_2>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c4s1_2",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Một mảnh phù văn sẫm màu hiện ra, bị giấu sát chân lò."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c4s1_3>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c4s1_3",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Thanh Vi sẽ không quy tội cả ca trực khi chưa có chứng cứ."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s1_1>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s1_1",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Huyền Đài đề nghị quyền trông coi có thời hạn, dưới sự giám sát của chúng ta."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c6s1_2>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c6s1_2",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Muốn giữ lò, phải có một thỏa thuận ngang hàng."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_lenh_trieu_tap_den>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_lenh_trieu_tap_den",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_lo_cu_bi_phong>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_lo_cu_bi_phong",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lò cũ đã bị niêm phong rồi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_thanh_vi_bi_ep>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_thanh_vi_bi_ep",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chỉ đến khi đứng trước dấu ấn của họ, tôi mới hiểu Thanh Vi đang bị ép sát đến mức nào."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_tinh_lac_giau_vat>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_tinh_lac_giau_vat",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trưởng Tĩnh Lạc đã giấu mảnh phù văn này trong lò cũ. Ông ấy muốn chứng minh khu luyện đan vẫn còn giá trị."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_truong_tinh_lac_chet>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_truong_tinh_lac_chet",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:gian_lo_cu>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "gian_lo_cu",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chưa đi được mấy bước, một tiếng động khẽ vọng ra từ phía lò cũ.",
+     "known_as": "lò cũ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:hanh_bach_chau>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "hanh_bach_chau",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Hành Bạch Châu đặt bàn tay lên án thư, ánh mắt dừng ở quyển sổ đổi ca.",
+     "known_as": "Hành Bạch Châu"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:huyen_dai>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "huyen_dai",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+     "known_as": "Huyền Đài"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:khu_luyen_dan>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "khu_luyen_dan",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi đang đứng cạnh dãy lò phía đông, tay còn đặt trên viên gạch nóng, thì toàn bộ đèn trong khu luyện đan vụt tắt.",
+     "known_as": "khu luyện đan"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lao_van>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lao_van",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Vân sư huynh? Thanh Nghi?",
+     "known_as": "Vân sư huynh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:lenh_trieu_tap>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "lenh_trieu_tap",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+     "known_as": "lệnh"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:luong_tu_khoi>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "luong_tu_khoi",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lương Tử Khôi khoanh tay, giọng lạnh tanh.",
+     "known_as": "Lương Tử Khôi"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:phong_truong_tinh_lac>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "phong_truong_tinh_lac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín.",
+     "known_as": "phòng khóa kín"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Tạ Minh Viễn",
+     "known_as": "Tạ Minh Viễn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:so_doi_ca>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "so_doi_ca",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Nếu muốn đối chiếu lời khai, xem sổ đổi ca cũng được",
+     "known_as": "sổ đổi ca"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:thanh_vi>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "thanh_vi",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chuông báo động của Thanh Vi chỉ vang khi có chuyện ngoài cổng hoặc trên núi.",
+     "known_as": "Thanh Vi"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:truong_tinh_lac>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "truong_tinh_lac",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Sáng nay người ta phát hiện Trưởng Tĩnh Lạc chết trong phòng khóa kín.",
+     "known_as": "Trưởng Tĩnh Lạc"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:van_kiem>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "van_kiem",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Trước cửa chính điện có hai tấm lệnh đặt ngay ngắn, dấu của Huyền Đài và Vạn Kiếm hiện rõ trên nền sáp.",
+     "known_as": "Vạn Kiếm"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-62ced8e11843",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Đèn trong khu luyện đan vụt tắt, Tạ Minh Viễn men theo tường tìm đường giữa bóng tối, nghe chuông báo động từ cổng núi và một tiếng kim loại chạm đá gần lò cũ. Anh chọn đến gian nghỉ trước, nơi gặp Lão Vân và Thanh Nghi; Thanh Nghi cho biết lò cũ đã bị niêm phong và Trưởng Tĩnh Lạc được phát hiện chết trong phòng khóa kín, cửa khóa từ bên trong. Sáng hôm sau, người của chính điện đưa họ đến tra hỏi; trước thềm có lệnh của Huyền Đài và Vạn Kiếm. Tạ Minh Viễn khai đã nghe tiếng động nhưng không thấy ai. Cuộc tra hỏi vẫn chưa ngã ngũ, và nguyên nhân tiếng động cùng cái chết của Trưởng Tĩnh Lạc còn chưa rõ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Tạ Minh Viễn tìm cách giữ bình tĩnh và xác định điều gì đang xảy ra khi đèn khu luyện đan đồng loạt tắt giữa ca trực.",
+      "present": [
+       "protagonist"
+      ],
+      "beats": [
+       "Đang ở khu luyện đan Thanh Vi, Tạ Minh Viễn nghe gió lùa qua mái ngói thì toàn bộ đèn vụt tắt; anh đứng yên một nhịp, không vội bước giữa những lối đi quen mà lúc này đã hóa thành bóng tối.",
+       "Anh thử gọi người cùng ca nhưng chỉ nhận lại tiếng vọng mơ hồ; tự nhủ rằng hoảng loạn lúc này chỉ khiến người khác vấp ngã, anh lần theo mép tường để tránh làm đổ những thứ quanh lò.",
+       "Từ phía cổng núi, chuông báo động vang lên, dồn dập và xa hơn tiếng gió; Minh Viễn hiểu rằng sự cố không chỉ nằm trong khu luyện đan, nhưng không thể biết ai đã đánh chuông hay vì chuyện gì.",
+       "Một tiếng động khẽ vọng ra từ phía lò cũ, khiến anh dừng bước; anh cố lắng nghe, song gió rít qua mái ngói lấp mất phần còn lại, chỉ để lại cảm giác có điều gì đó vừa thay đổi trong bóng tối.",
+       "Minh Viễn cân nhắc giữa việc tiến về phía lò cũ và việc đi tìm những người cùng ca; cuối cùng anh chọn men theo lối quen để kiểm tra họ trước, đồng thời ghi nhớ hướng tiếng động vừa phát ra mà không dám kết luận mình đã nghe thấy ai."
+      ],
+      "ends_at": "Cảnh kết ở lối đi tối của khu luyện đan Thanh Vi, khi Tạ Minh Viễn vừa quyết định tìm những người cùng ca và để tiếng động gần lò cũ chưa được giải thích.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Tạ Minh Viễn tìm được người cùng ca, rồi bị cuốn vào cuộc tra hỏi đầu tiên khi cái chết của Trưởng Tĩnh Lạc biến tiếng động gần lò cũ thành mối nghi ngờ.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi"
+      ],
+      "beats": [
+       "Tôi men theo tường tới gian nghỉ, nơi Lão Vân và Đoàn Thanh Nghi đang chờ trong bóng tối; không ai biết chuông báo động vang lên vì chuyện gì.",
+       "Lão Vân bảo mọi người đừng tự ý quay lại lò cũ, còn Thanh Nghi xác nhận nơi ấy đã bị niêm phong sau khi Trưởng Tĩnh Lạc được phát hiện chết trong phòng khóa kín vào sáng hôm sau.",
+       "Khi chúng tôi được gọi lên chính điện, lời triệu tập của Huyền Đài và Vạn Kiếm đã đặt sẵn trước thềm; tôi hiểu Thanh Vi đang bị hai tông môn lớn ép sát, nhưng chưa biết họ muốn hỏi đến đâu.",
+       "Trong cuộc tra hỏi đầu tiên, người phụ trách gọi tên tôi và hỏi đêm đèn tắt tôi đã nghe thấy gì; tôi kể tiếng động khẽ vọng từ phía lò cũ, nhưng nói rõ mình không nhìn thấy ai.",
+       "Lão Vân không nói thay tôi, còn Thanh Nghi chỉ nhìn sang phía gian lò bị khóa; tôi nhận ra lời khai của mình có thể khiến cả ca trực bị nghi ngờ, dù chưa ai buộc tội chúng tôi thành lời."
+      ],
+      "ends_at": "Cảnh kết tại chính điện Thanh Vi, khi Tạ Minh Viễn vừa khai về tiếng động gần lò cũ và cuộc tra hỏi vẫn chưa ngã ngũ.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-86627582a8ea",
+      "kind": "action",
+      "tone": null,
+      "text": "Giữ im lặng, chờ vị chấp sự hỏi tiếp.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-5ab275ca1e9e",
+      "kind": "dialogue",
+      "tone": "lie",
+      "text": "Nói với Thanh Nghi rằng tôi chỉ nghe tiếng gió.",
+      "listeners": [
+       "doan_thanh_nghi"
+      ],
+      "about": [],
+      "lie": {
+       "content": "Tôi chỉ nghe tiếng gió thôi.",
+       "told_to": [
+        "doan_thanh_nghi"
+       ]
+      },
+      "feeling": null
+     },
+     {
+      "id": "choice-bc54ca9a20b2",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ sẽ không giấu tiếng động ở lò cũ nếu bị hỏi thêm.",
+      "listeners": [],
+      "about": [
+       "fact_c1s1_3"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-5513288c0bb5",
+    "player_action": "[Nội tâm] Tự nhủ sẽ không giấu tiếng động ở lò cũ nếu bị hỏi thêm.",
+    "error_detail": null,
+    "summary": "Trong cuộc tra hỏi tại chính điện Thanh Vi, Minh Viễn khai đã nghe tiếng kim loại chạm đá gần lò cũ sau khi đèn tắt nhưng không nhìn rõ ai đi qua. Sổ đổi ca cho thấy tên anh bị chuyển sang ca khác trước đêm xảy ra chuyện, song không ghi ai đề nghị; Lão Vân không giải thích thêm. Thanh Nghi nhắc Minh Viễn chỉ nói đúng điều mình biết, và anh quyết không rút lời khai hay nhận thay cho người khác. Hành Bạch Châu đề nghị kiểm tra khu luyện đan, còn Lương Tử Khôi cảnh báo người ngoài có thể can thiệp nếu Thanh Vi không tự làm rõ. Thanh Nghi muốn cùng Minh Viễn đi kiểm tra và không để lời khai thành lời buộc tội cả ca trực; Minh Viễn đồng ý đi cùng. Hai người rời chỗ tra hỏi, nhưng chính điện chưa quyết định việc kiểm tra khu luyện đan.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Tạ Minh Viễn thành thật khai lại tiếng động gần lò cũ và phát hiện ca trực của mình đã bị đổi trước đêm đèn tắt.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi"
+      ],
+      "beats": [
+       "Khi cuộc tra hỏi vẫn chưa ngã ngũ, Đoàn Thanh Nghi hỏi Tạ Minh Viễn liệu anh còn điều gì chưa nói; anh nhắc lại tiếng kim loại chạm đá gần lò cũ, đồng thời thừa nhận mình không thấy người nào.",
+       "Lão Vân đề nghị đối chiếu lời khai với sổ đổi ca mà ông đang giữ; Tạ Minh Viễn nhận ra tên mình được ghi sang ca khác trước đêm đèn tắt.",
+       "Tạ Minh Viễn hỏi vì sao ca trực bị đổi, nhưng Lão Vân chỉ đáp rằng sổ ghi việc đổi ca, không ghi rõ ai là người đề nghị; vẻ ngập ngừng của ông khiến Minh Viễn càng dè chừng.",
+       "Đoàn Thanh Nghi nhắc rằng tiếng động và việc đổi ca chưa đủ để kết tội ai; Tạ Minh Viễn quyết không rút lại lời khai, nhưng cũng không nhận thay trách nhiệm cho điều mình không chứng kiến."
+      ],
+      "ends_at": "Cảnh kết tại chính điện Thanh Vi, khi Tạ Minh Viễn đứng trước sổ đổi ca và cuộc tra hỏi vẫn chưa có kết luận.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Khép lại cuộc tra hỏi bằng việc buộc Tạ Minh Viễn phải đối mặt với hậu quả của lời khai mà không kết luận vội về người đã đổi ca.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Người giữ án thư khép lời khai lại; Hành Bạch Châu nói tiếng động gần lò cũ cùng nét sửa trong sổ khiến Thanh Vi phải cho người kiểm tra khu luyện đan trước khi hai tông lớn quyết định bước tiếp.",
+       "Lương Tử Khôi lạnh nhạt đáp rằng một tiếng động không chứng minh được điều gì, nhưng việc ca trực bị đổi càng không thể xem như chuyện nhỏ; tôi nghe ra cả hai đang dò xem Thanh Vi sẽ tự giao quyền kiểm soát đến đâu.",
+       "Tôi nhìn Lão Vân, hỏi ông có thể xác nhận mình đã nghe tiếng động sau khi đèn tắt hay không; ông chỉ nói sổ ghi ca trực, không ghi người đề nghị đổi ca, rồi khép sổ lại.",
+       "Thanh Nghi đề nghị để nàng cùng tôi đi trước tới khu luyện đan khi lệnh niêm phong được xem xét; nàng không hứa sẽ giữ được lò cũ, chỉ nói sẽ không để lời khai của tôi bị biến thành lời buộc tội cả ca trực.",
+       "Tôi đồng ý đi cùng nàng, nhưng nhấn mạnh rằng mình chỉ có thể nói điều đã nghe và thấy; Hành Bạch Châu bảo cuộc kiểm tra sẽ diễn ra sau khi chính điện quyết định, còn Lương Tử Khôi không phản đối."
+      ],
+      "ends_at": "Cảnh kết tại chính điện Thanh Vi, khi Tạ Minh Viễn rời chỗ tra hỏi cùng Đoàn Thanh Nghi và việc kiểm tra khu luyện đan vẫn còn chờ quyết định.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được lao_van kể về fact_c2s1_1, nhưng lao_van không biết điều đó ở chương 2"
+       }
+      ],
+      "rejected": [
+       [
+        "REVEALED_TO_PLAYER so_doi_ca→ch2",
+        "Value error, `known_as` phải nằm trong `quote` (D-17)"
+       ],
+       [
+        "Fact mới fact_c2s1_1",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "fallback",
+      "issues": [
+       {
+        "source": "leak",
+        "kind": "name",
+        "block": true,
+        "feedback": "lộ bí mật: đoạn «sổ đổi ca» nói ra điều người đọc chưa được biết; viết lại để không nói ra điều đó. Người đọc chỉ biết nhân vật hay vật này là «quyển sổ bìa sẫm»: dùng «quyển sổ bìa sẫm» thay vào"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được lao_van kể về fact_c2s2_1, nhưng lao_van không biết điều đó ở chương 2"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c2s2_1",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"người giữ án thư\" xuất hiện 3 lần (tối đa 2); đoạn: «Người giữ án thư»"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-66fd00c6f5f3",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Thanh Nghi xem chúng ta nên làm gì trong lúc chờ chính điện quyết định.",
+      "listeners": [
+       "doan_thanh_nghi"
+      ],
+      "about": [
+       "doan_thanh_nghi"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-568bd6de48d0",
+      "kind": "action",
+      "tone": null,
+      "text": "Quay lại án thư, đề nghị được xem quyển sổ đổi ca.",
+      "listeners": [],
+      "about": [
+       "so_doi_ca"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-81ade47d8dc4",
+      "kind": "inner",
+      "tone": null,
+      "text": "Giữ sự dè chừng với Lão Vân vì ông vẫn đè tay lên quyển sổ đã khép.",
+      "listeners": [],
+      "about": [
+       "lao_van",
+       "so_doi_ca"
+      ],
+      "lie": null,
+      "feeling": "dè chừng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-70b93c8ce3de",
+    "player_action": "[Nội tâm] Giữ sự dè chừng với Lão Vân vì ông vẫn đè tay lên quyển sổ đã khép.",
+    "error_detail": null,
+    "summary": "Tôi theo Thanh Nghi, Hành Bạch Châu, Lương Tử Khôi và Lão Vân đến khu lò để kiểm tra chứng cứ của Thanh Vi. Tôi hỏi vì sao ca trực bị đổi; Lão Vân thú nhận đã sửa sổ theo lời nhờ của một người trong nội môn, khiến Minh Viễn vắng mặt ở cổng lò đúng giờ xảy ra biến cố, nhưng ông không biết người ấy là ai. Thanh Nghi mở cửa, mọi người chỉ quan sát. Tôi và Thanh Nghi nhận ra đường dẫn khí dưới lớp tro vẫn liền mạch, lò có thể chưa mất công dụng; không ai chạm vào dấu tích. Sau đó Thanh Nghi kết thúc buổi kiểm tra và khóa cửa. Hai sứ giả tạm chờ kết quả, chưa yêu cầu giao lò; Thanh Nghi vẫn giữ chìa khóa, mọi người còn đứng ngoài cửa.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Cùng Thanh Nghi kiểm tra lò cũ để tìm manh mối có thể bảo vệ khu luyện đan, đồng thời buộc Lão Vân đối diện với việc sửa sổ đổi ca.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Rời chính điện, Minh Viễn vẫn để ý bàn tay Lão Vân từng đè lên quyển sổ; Thanh Nghi cầm chìa khóa dẫn đường, còn hai sứ giả cùng đi theo với lý do không để Thanh Vi tự ý che giấu chứng cứ.",
+       "Trước cửa khu lò đã niêm phong, Hành Bạch Châu muốn kiểm tra trước, nhưng Lương Tử Khôi đòi Thanh Vi mở cửa dưới sự chứng kiến của cả hai bên; Thanh Nghi không nhường chìa khóa mà yêu cầu họ giữ đúng khoảng cách, tránh làm xáo trộn dấu vết.",
+       "Minh Viễn hỏi thẳng Lão Vân vì sao ca trực của mình bị đổi. Sau một thoáng im lặng, Lão Vân thừa nhận đã sửa sổ theo lời nhờ của một người trong nội môn, để Minh Viễn vắng mặt khỏi cổng lò vào giờ xảy ra biến cố; ông không nêu tên người ấy.",
+       "Lão Vân nói mình tưởng chỉ đang giúp đổi ca, không biết việc đó sẽ khiến cả ca trực bị nghi ngờ. Minh Viễn không nhận lời tha thứ, nhưng yêu cầu ông nói lại điều này trước những người đang kiểm tra; Lão Vân gật đầu, chấp nhận để lời thú nhận bị ghi nhận.",
+       "Thanh Nghi mở niêm phong và cả nhóm quan sát lò cũ mà không chạm vào những dấu tích bên trong. Minh Viễn nhận ra một dấu hiệu cho thấy lò vẫn có thể vận hành ổn định, trái với điều khiến người ta xem nó là phế tích; Hành Bạch Châu và Lương Tử Khôi lập tức ngừng tranh lời, cùng hỏi Thanh Vi ai có quyền quyết định việc kiểm tra tiếp."
+      ],
+      "ends_at": "Cảnh kết tại cửa khu lò đã mở, khi hai sứ giả cùng nhận thấy lò cũ có thể còn giá trị nhưng chưa ai thống nhất được quyền kiểm tra tiếp.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Tạ Minh Viễn cùng Thanh Nghi kiểm tra lò cũ, tìm được dấu tích đủ sức khiến hai sứ giả phải nhìn nhận lại giá trị của khu luyện đan.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Tôi bước qua ngưỡng cửa cùng Thanh Nghi; nàng nhắc mọi người chỉ quan sát, còn Hành Bạch Châu và Lương Tử Khôi giữ khoảng cách nhưng không rời mắt khỏi lò.",
+       "Theo dấu tro mỏng sát chân lò, tôi nhận ra đường dẫn khí dưới lớp bụi vẫn liền; Thanh Nghi lần theo đường khắc, rồi cùng tôi xác định nó nối tới miệng lò chứ không phải một vết nứt vô nghĩa.",
+       "Khi tôi chỉ ra đường dẫn chưa sụp và vệt tro cho thấy lò từng được giữ thông, Hành Bạch Châu thừa nhận lò có thể chưa mất công dụng; Lương Tử Khôi đáp rằng nếu vậy, quyền kiểm soát nó càng không thể giao vội.",
+       "Trước mặt hai sứ giả, Lão Vân nói rõ ông đã sửa sổ đổi ca theo lời nhờ của một người trong nội môn, khiến tôi vắng mặt ở cổng lò đúng giờ xảy ra biến cố; ông vẫn không nêu được người ấy là ai.",
+       "Tôi nhìn hai sứ giả đổi sắc mặt khi đường dẫn khí còn nguyên được ghi nhận; Thanh Nghi khép cửa lò lại, còn họ thống nhất sẽ chờ Thanh Vi kiểm tra tiếp thay vì đòi giao lò ngay trong đêm."
+      ],
+      "ends_at": "Cảnh kết trước cửa khu luyện đan Thanh Vi, khi cánh cửa lò cũ đã khép và hai sứ giả tạm hoãn yêu cầu giao lò.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "KNOWS protagonist→fact_lao_van_doi_ca",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "REVEALED_TO_PLAYER fact_lao_van_doi_ca→ch3",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-223e014867f3",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Lão Vân xem ông còn nhớ điều gì về người đã nhờ sửa sổ.",
+      "listeners": [
+       "doan_thanh_nghi"
+      ],
+      "about": [
+       "fact_ca_truc_doi",
+       "so_doi_ca",
+       "fact_c3s1_2"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-7dd7c2fa1cfc",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị Thanh Nghi sắp xếp lần kiểm tra tiếp theo, giữ nguyên hiện trạng lò.",
+      "listeners": [],
+      "about": [
+       "doan_thanh_nghi",
+       "gian_lo_cu",
+       "fact_c3s2_1"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-fb0d28ae16fd",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm dè chừng việc hai sứ giả cùng chờ kết quả kiểm tra lò.",
+      "listeners": [],
+      "about": [
+       "huyen_dai",
+       "van_kiem",
+       "gian_lo_cu"
+      ],
+      "lie": null,
+      "feeling": "dè chừng"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-ddc568e936db",
+    "player_action": "[Lời thoại, nói thật] Hỏi Lão Vân xem ông còn nhớ điều gì về người đã nhờ sửa sổ.",
+    "error_detail": null,
+    "summary": "Lão Vân thú nhận đã sửa sổ theo lời nhờ của một người trong nội môn để Minh Viễn vắng mặt ở cổng lò đúng giờ xảy ra biến cố; ông không biết người đó là ai và nhận lỗi về mình, không muốn quy tội cả ca trực. Thanh Nghi mở cửa lò cho mọi người chỉ quan sát, phát hiện mảnh phù văn dẫn khí cho thấy lò vẫn có thể vận hành. Lời nhận của Lão Vân và tình trạng lò được ghi vào biên bản, đồng thời xác nhận chưa có chứng cứ ca trực thông đồng. Bạch Châu yêu cầu Minh Viễn khai ở buổi tra hỏi tiếp theo; sau khi được nhắc chỉ nói điều mình biết, Minh Viễn nhận lời, không đoán và không nhận thay ai. Cuối chương, cửa lò vẫn hé, Thanh Nghi giữ chìa khóa, sổ đổi ca ở bên Lão Vân, còn quyền sở hữu khu lò chưa được quyết định.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Buộc Lão Vân nói rõ cái giá của việc sửa sổ, rồi biến lời khai và dấu tích trong lò thành căn cứ bảo vệ những người cùng ca mà không nhường quyền quyết định về khu luyện đan.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Đứng ngoài gian lò đã khóa, Minh Viễn hỏi Lão Vân còn nhớ gì về người nhờ sửa sổ; ông cúi nhìn cuốn sổ trong tay, thú nhận người ấy thuộc nội môn và dặn phải đổi ca để Minh Viễn vắng mặt đúng giờ biến cố, nhưng ông không biết danh tính, cũng không có bằng chứng nào khác.",
+       "Minh Viễn hỏi vì sao Lão Vân vẫn làm theo; ông đáp mình sợ mất chỗ đứng, rồi nhận việc sửa sổ là lỗi của riêng ông, không phải bằng chứng những người cùng ca đã thông đồng hay gây ra chuyện trong đêm đèn tắt.",
+       "Thanh Nghi mở cửa bằng chìa khóa mình giữ và cho mọi người xem xét dấu tích mà không xáo trộn chúng; trong tro sát chân lò, Minh Viễn nhận ra một mảnh phù văn được giấu kín, còn Thanh Nghi giải thích nét khắc cho thấy đường dẫn khí có thể khơi lại công dụng của lò, chứng minh nơi này vẫn có giá trị chứ chưa phải lò bỏ.",
+       "Bạch Châu và Tử Khôi đều đòi ghi nhận phát hiện, nhưng bất đồng về ý nghĩa của nó; Minh Viễn nói rõ lời khai của mình chỉ xác nhận tiếng động và việc đổi ca, không buộc tội cả ca trực, còn Thanh Nghi tuyên bố Thanh Vi sẽ không quy tội tập thể khi chưa có chứng cứ.",
+       "Trước sức ép phải ghi lời khai vào biên bản kiểm tra, Lão Vân tự nhận đã sửa sổ theo lời nhờ của người trong nội môn để khiến Minh Viễn vắng mặt; ông chấp nhận để lời nhận lỗi ấy được ghi cùng việc không rõ danh tính người nhờ, còn hai sứ giả đồng ý rằng ca trực không thể bị quy tội chỉ dựa vào sổ đã bị sửa."
+      ],
+      "ends_at": "Cảnh kết tại ngưỡng gian lò cũ, khi lời nhận lỗi của Lão Vân và ý nghĩa của mảnh phù văn đã được ghi nhận, nhưng quyền kiểm soát khu luyện đan vẫn chưa ngã ngũ.",
+      "resolves": [
+       "giu_ca_truc",
+       "manh_phu_van"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Đưa lời khai của Minh Viễn thành một cam kết có giá trị trước hai sứ giả, đồng thời đặt anh trước sức ép phải tiếp tục làm chứng.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Sau khi lời nhận của Lão Vân được ghi lại, tôi nhận ra từ giờ không thể xem việc sửa sổ là chuyện riêng giữa ông và tôi; hai sứ giả đã nghe rõ lời ấy.",
+       "Bạch Châu nói Huyền Đài sẽ ghi nhận rằng đường dẫn khí còn nguyên và ca trực chưa bị chứng minh là thông đồng, nhưng cần lời khai của tôi tại buổi tra hỏi tiếp theo.",
+       "Tử Khôi đáp rằng lời khai phải ghi rõ tôi chỉ nghe tiếng động, không nhìn thấy người qua lò; nếu tôi nói thêm điều mình không biết, cả lời nhận của Lão Vân lẫn sự thật về ca trực đều có thể bị lợi dụng.",
+       "Thanh Nghi nhắc rằng tôi có thể từ chối đứng ra lần nữa, nhưng nếu nhận lời thì lời khai sẽ không còn chỉ nằm trong phạm vi khu lò; tôi cân nhắc cái giá ấy mà không rút lại điều đã nói.",
+       "Tôi đồng ý trình bày đúng những gì mình biết trước buổi tra hỏi tiếp theo, không nhận thay cho ai và cũng không để người khác biến sự im lặng của tôi thành lời buộc tội cả ca trực."
+      ],
+      "ends_at": "Cảnh kết ngoài gian lò cũ, khi tôi đã nhận lời làm chứng ở buổi tra hỏi tiếp theo còn quyền quyết định số phận khu lò vẫn chưa được định đoạt.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "overdue_secret",
+        "block": false,
+        "feedback": "bí mật fact_lao_van_doi_ca (khoảng lộ chương 3–4) đến hết chương 4 vẫn chưa được hé lộ cho người đọc: viết lại để cảnh hé lộ rõ điều này một cách hợp lý, có câu nói thẳng trên trang: «Lão Vân đã sửa sổ đổi ca theo lời nhờ của một người trong nội môn để khiến Tạ Minh Viễn vắng mặt khỏi cổng lò vào giờ xảy ra biến cố.»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"ở buổi tra hỏi\" xuất hiện 3 lần (tối đa 2); đoạn: «ở buổi tra hỏi tiếp theo»"
+       },
+       {
+        "source": "guard",
+        "kind": "overdue_secret",
+        "block": false,
+        "feedback": "bí mật fact_lao_van_doi_ca (khoảng lộ chương 3–4) đến hết chương 4 vẫn chưa được hé lộ cho người đọc: viết lại để cảnh hé lộ rõ điều này một cách hợp lý, có câu nói thẳng trên trang: «Lão Vân đã sửa sổ đổi ca theo lời nhờ của một người trong nội môn để khiến Tạ Minh Viễn vắng mặt khỏi cổng lò vào giờ xảy ra biến cố.»"
+       }
+      ],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-b3486b2ea839",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị được đọc lại biên bản trước khi rời lò.",
+      "listeners": [],
+      "about": [
+       "so_doi_ca"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-7f212936baf7",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với Bạch Châu rằng mình chỉ khai những điều đã biết, không suy đoán.",
+      "listeners": [
+       "hanh_bach_chau"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-45a95a949c86",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm lo lời khai sẽ bị Huyền Đài và Vạn Kiếm đem ra sử dụng theo cách mình không thể kiểm soát.",
+      "listeners": [],
+      "about": [
+       "huyen_dai",
+       "van_kiem"
+      ],
+      "lie": null,
+      "feeling": "bất an"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-3c755addc59f",
+    "player_action": "[Nội tâm] Thầm lo lời khai sẽ bị Huyền Đài và Vạn Kiếm đem ra sử dụng theo cách mình không thể kiểm soát.",
+    "error_detail": null,
+    "summary": "Minh Viễn khai rằng đêm đèn tắt, anh nghe tiếng động gần lò cũ nhưng không nhìn rõ ai đi qua và không thể kết luận người đó liên quan đến cái chết của trưởng lão. Lão Vân nhận đã sửa ca theo lời nhờ của một người trong nội môn mà ông không biết tên. Minh Viễn yêu cầu ghi riêng lời khai của mình và lời khai của Lão Vân, không lấy việc vắng mặt làm chứng cứ buộc tội cả nhóm; Thanh Nghi đề nghị đối chiếu sổ đổi ca. Nàng cũng cho hai sứ giả thấy mảnh phù văn Trưởng Tĩnh Lạc giấu trong lò để chứng minh khu luyện đan còn giá trị. Huyền Đài và Vạn Kiếm vẫn yêu cầu phân định quyền giữ lò, nhưng Bạch Châu ghi nhận chưa có căn cứ buộc Thanh Vi giao lò ngay. Cuối chương, hai sứ giả rời khu luyện đan, Lão Vân giữ cuốn sổ, Thanh Nghi cầm chìa khóa; không ai nhận bàn giao lò cũ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Tạ Minh Viễn đưa lời khai có giới hạn nhưng đủ sức bảo vệ ca trực, trong khi hai sứ giả biến lời khai ấy thành sức ép đòi giao lò cũ.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Từ cửa lò cũ còn hé, tôi nhìn sổ đổi ca trong tay Lão Vân và nghĩ đến việc lời mình sắp nói có thể bị Huyền Đài, Vạn Kiếm đem đi nơi khác; Thanh Nghi nhắc tôi chỉ khai điều tận mắt biết.",
+       "Trước mặt hai sứ giả, tôi khai rằng đêm đèn tắt mình nghe tiếng động gần lò nhưng không nhìn rõ ai đi qua, còn việc vắng ở cổng đúng giờ là do ca trực đã bị đổi; tôi không thể xác nhận ai đã vào lò hay có liên quan đến cái chết của trưởng lão.",
+       "Lão Vân nhận trước mọi người rằng chính ông sửa sổ theo lời nhờ của một người trong nội môn để tôi vắng mặt khỏi cổng lò, nhưng ông không biết người ấy là ai và không thể chỉ tên ai khác; Bạch Châu ghi nhận lời này, còn Tử Khôi chất vấn vì sao Thanh Vi vẫn giữ lò khi chứng cứ chưa đủ.",
+       "Thanh Nghi chỉ mảnh phù văn sẫm màu sát chân lò, nói rõ Trưởng Tĩnh Lạc đã giấu nó trong lò cũ để chứng minh khu luyện đan vẫn còn giá trị; sự thật ấy khiến lời khai của tôi không còn chỉ là chuyện đổi ca, mà trở thành căn cứ để hai bên tranh quyền kiểm soát.",
+       "Bạch Châu nói nếu Thanh Vi không thể bảo đảm lò còn giá trị và an toàn, Huyền Đài sẽ yêu cầu giao lò; Tử Khôi lập tức tán thành, còn Thanh Nghi đáp rằng lời khai và mảnh phù văn sẽ được đưa ra trước khi có quyết định, khiến cuộc tra hỏi khép lại trong một hạn chót mới."
+      ],
+      "ends_at": "Cảnh kết tại cửa gian lò cũ ở khu luyện đan Thanh Vi, khi hai sứ giả đã nêu rõ yêu cầu giao lò nếu Thanh Vi không đưa ra được căn cứ giữ nó.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Tạ Minh Viễn dùng lời khai đã được đối chiếu với chứng cứ để ngăn hai sứ giả buộc Thanh Vi giao lò ngay trong buổi tra hỏi.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Bạch Châu yêu cầu Minh Viễn xác nhận lời khai trước khi ghi biên bản; Minh Viễn nhắc lại rằng mình chỉ nghe tiếng động gần lò trong đêm đèn tắt, không nhìn rõ ai đi qua và không thể kết luận người đó liên quan đến cái chết của trưởng lão.",
+       "Tử Khôi chất vấn việc Minh Viễn vắng mặt ở cổng lò; Minh Viễn nói ca trực của mình bị đổi, còn Lão Vân xác nhận sổ đổi ca do ông sửa theo lời nhờ của một người trong nội môn mà ông không biết danh tính.",
+       "Minh Viễn yêu cầu biên bản ghi riêng điều mình tận mắt biết với lời khai của Lão Vân, không biến khoảng trống trong ca trực thành bằng chứng buộc tội cả nhóm; Thanh Nghi đồng ý và đề nghị hai sứ giả đối chiếu lời khai với sổ đổi ca.",
+       "Bạch Châu và Tử Khôi tranh luận về việc giao lò; Thanh Nghi chỉ ra mảnh phù văn cùng đường dẫn khí còn nguyên là chứng cứ lò vẫn có thể vận hành, còn Minh Viễn nói lời khai của anh không thể là căn cứ tước lò khi chưa chứng minh được ai đã gây ra biến cố.",
+       "Bạch Châu ghi nhận lời khai và chứng cứ, tuyên bố Huyền Đài chưa thể buộc Thanh Vi giao lò ngay; Tử Khôi không rút yêu cầu của Vạn Kiếm nhưng chấp nhận chờ việc phân định quyền giữ lò, khiến Minh Viễn hiểu lời mình đã chặn được việc bàn giao tức thì chứ chưa quyết định lò thuộc về ai."
+      ],
+      "ends_at": "Cảnh kết tại ngưỡng gian lò cũ, khi biên bản lời khai đã được ghi nhận và hai sứ giả rời đi mà chưa nhận bàn giao khu luyện đan.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được doan_thanh_nghi kể về fact_tinh_lac_giau_vat, nhưng doan_thanh_nghi không biết điều đó ở chương 5"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được hanh_bach_chau kể về fact_c5s1_1, nhưng hanh_bach_chau không biết điều đó ở chương 5"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được luong_tu_khoi kể về fact_c5s1_2, nhưng luong_tu_khoi không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c5s1_1",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c5s1_2",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được doan_thanh_nghi kể về fact_tinh_lac_giau_vat, nhưng doan_thanh_nghi không biết điều đó ở chương 5"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được hanh_bach_chau kể về fact_c5s1_1, nhưng hanh_bach_chau không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới new_2",
+        "trùng Fact fact_c5s1_1, dùng lại id đó"
+       ],
+       [
+        "KNOWS protagonist→new_2",
+        "trùng cạnh trong cùng gói"
+       ],
+       [
+        "Fact mới fact_c5s1_1",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-f0fa335d0a3f",
+      "kind": "action",
+      "tone": null,
+      "text": "Đề nghị đối chiếu sổ đổi ca với lời khai của Lão Vân.",
+      "listeners": [],
+      "about": [
+       "so_doi_ca",
+       "fact_c3s1_2",
+       "fact_lao_van_doi_ca"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-2ef0c1cd33e7",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Lão Vân liệu ông còn nhớ điều gì về lời nhắn nhờ sửa sổ không.",
+      "listeners": [
+       "lao_van"
+      ],
+      "about": [
+       "so_doi_ca",
+       "fact_lao_van_doi_ca"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-60694858a6ee",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải bảo vệ mảnh phù văn khỏi bị xem nhẹ trong cuộc tranh quyền giữ lò.",
+      "listeners": [],
+      "about": [
+       "fact_c4s1_2",
+       "fact_tinh_lac_giau_vat"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm bảo vệ chứng cứ"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-bf9940263c3c",
+    "player_action": "[Nội tâm] Tự nhủ phải bảo vệ mảnh phù văn khỏi bị xem nhẹ trong cuộc tranh quyền giữ lò.",
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Tạ Minh Viễn giữ cho mảnh phù văn được xem như căn cứ trong cuộc phân định quyền giữ lò, đồng thời buộc hai sứ giả nói rõ họ định đặt khu luyện đan dưới quyền ai.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Sau khi hai sứ giả rời đi rồi quay lại theo lời triệu tập của Thanh Vi, Minh Viễn đứng gần cửa lò, tự nhắc mình rằng mảnh phù văn không thể bị gạt đi như một món đồ vô dụng; Thanh Nghi vẫn giữ chìa khóa, còn Lão Vân ôm cuốn sổ đổi ca.",
+       "Bạch Châu nói Huyền Đài sẵn sàng bảo hộ khu luyện đan nếu Thanh Vi giao quyền trông coi; Tử Khôi đáp rằng Vạn Kiếm không chấp nhận để đối thủ nắm lò, nhưng cả hai đều tránh nói ai sẽ chịu trách nhiệm nếu nơi này bị bỏ phế.",
+       "Minh Viễn yêu cầu họ nhìn vào mảnh phù văn đã được ghi nhận trong biên bản, không phải để kết luận nó chứng minh điều gì hơn những gì họ tận mắt thấy, mà để họ không thể gọi lò cũ là một phế tích rồi chia nhau quyền sở hữu.",
+       "Thanh Nghi nói khu luyện đan còn có thể vận hành, nhưng việc giao hẳn cho một tông lớn sẽ biến đệ tử Thanh Vi thành người ngoài ngay tại nơi họ đã làm việc; Lão Vân không biện hộ cho chuyện sửa sổ, chỉ nói ông sẽ ở lại chịu trách nhiệm về lời khai của mình.",
+       "Bạch Châu đề nghị một quyền trông coi có thời hạn dưới sự giám sát của Huyền Đài, còn Tử Khôi đòi một thỏa thuận ngang hàng với Vạn Kiếm; Minh Viễn nhận ra lựa chọn cuối cùng sẽ buộc anh phải đứng về một phía, hoặc đặt ra một cách giữ lò mà cả hai đều có thể bác bỏ."
+      ],
+      "ends_at": "Cảnh kết tại cửa gian lò cũ, khi Thanh Nghi chờ Minh Viễn lên tiếng trước hai sứ giả và chưa ai nhận bàn giao khu luyện đan.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Tạ Minh Viễn bảo vệ mảnh phù văn bằng cách buộc hai sứ giả nhìn nhận giá trị của lò cũ và chốt quyền giữ lò thuộc về Thanh Vi.",
+      "present": [
+       "protagonist",
+       "lao_van",
+       "doan_thanh_nghi",
+       "hanh_bach_chau",
+       "luong_tu_khoi"
+      ],
+      "beats": [
+       "Tạ Minh Viễn nhắc rằng mảnh phù văn đã được ghi vào biên bản và đường dẫn khí còn nguyên, nên không thể lấy cớ lò đã thành phế tích để chia quyền; anh chỉ khẳng định điều mình tận mắt thấy, không suy đoán thêm.",
+       "Bạch Châu giữ lời đề nghị trông coi có thời hạn dưới sự giám sát của Huyền Đài, còn Tử Khôi phản đối việc một bên độc quyền quyết định; cả hai hiểu rằng nếu lò bị bỏ mặc, bên kia sẽ có cớ giành lấy.",
+       "Thanh Nghi nói Thanh Vi không giao lò cho tông khác và đề nghị giữ quyền vận hành tại chỗ; Lão Vân đặt cuốn sổ đổi ca bên mình, nhận sẽ chịu trách nhiệm về lời khai đã ghi, không đòi dùng chuyện cũ để đổi lấy quyền lợi.",
+       "Minh Viễn nói anh không thể quyết thay tông môn, nhưng nếu hai sứ giả muốn tranh lò thì phải công khai nhận lấy trách nhiệm khi đệ tử Thanh Vi mất nơi làm việc; sự im lặng sau câu nói khiến Bạch Châu rút đề nghị giám sát độc quyền, còn Tử Khôi chấp nhận không đòi đồng quyền trông coi.",
+       "Hai sứ giả thống nhất ghi nhận khu luyện đan vẫn thuộc quyền Thanh Vi, không bàn giao cho Huyền Đài hay Vạn Kiếm; Thanh Nghi giữ chìa khóa, còn Minh Viễn nhìn mảnh phù văn nằm yên bên chân lò và hiểu rằng ít nhất nơi này chưa bị biến thành phần thưởng của kẻ mạnh."
+      ],
+      "ends_at": "Cảnh khép lại trước cửa lò cũ ở khu luyện đan Thanh Vi, với quyền giữ lò được xác định thuộc về Thanh Vi.",
+      "resolves": [
+       "so_phan_lo_cu"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được hanh_bach_chau kể về fact_c6s1_3, nhưng hanh_bach_chau không biết điều đó ở chương 6"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c6s1_3",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": [
+       [
+        "Fact mới new_1",
+        "trùng Fact fact_thanh_vi_bi_ep, dùng lại id đó"
+       ],
+       [
+        "KNOWS protagonist→new_1",
+        "đã có KNOWS đang hiệu lực giữa hai nút này"
+       ]
+      ]
+     }
+    ],
+    "choices": []
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": [],
+ "quotes": []
+}

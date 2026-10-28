@@ -1,0 +1,118 @@
+{
+  "bench": "run",
+  "label": "ab-ky-ao-cu-2",
+  "started": "2026-10-28T23:30:51+07:00",
+  "finished": "2026-10-28T23:39:14+07:00",
+  "status": "done",
+  "exit_code": 0,
+  "stop": null,
+  "dry_run": false,
+  "git": {
+    "commit": "51a13a8328827f66c018e6e9e9eead9ac902885d",
+    "dirty": true
+  },
+  "story_id": "run-20261028-ab-ky-ao-cu-2-a7a694b3",
+  "seed": 20261029,
+  "budget_usd": 0.15,
+  "chapters_arg": 6,
+  "scenario": {
+    "path": "evals/scenarios/story_run/ab-ky-ao.yaml",
+    "sha256": "7b1d86e0688fc8a28c29b8db52acd5837efaa7e5c50f574c9fbae4b15ef3206b",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "kỳ ảo dân gian",
+        "era": "các làng ven đầm lầy giữ lời thề cổ với một vị thuỷ thần đang ngủ; năm nay thần trở mình",
+        "voice": "u tối, giàu hình ảnh, câu ngắn, đối thoại giản dị",
+        "darkness": "vừa phải, có mất mát và chết chóc, không tả máu me"
+      },
+      "length_level": "short",
+      "naming": {
+        "names": "viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261029,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "1b9db7f9197db41e100a2234c183f61c2463624047d4f10d0017ce3f548583f0",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "6c331f63a90804c9d743cc65cae499cdc2f7b1465fd5e751bec88ddf5f32afcb",
+      "models.yaml": "c14db6788176dec1d3e61bf27768c6e6eed3f15bea82d86804d74e34dedff3ab",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "setup_from": "evals/results/2026-10-28-run-ab-ky-ao-setup",
+  "setup_only": false,
+  "overrides": {
+    "writer_model": null,
+    "writer_reasoning": null,
+    "outline_model": null,
+    "outline_reasoning": null
+  },
+  "prompt_versions": {
+    "setup": "setup-8",
+    "outline": "outline-9",
+    "writer": "writer-9",
+    "extract": "extract-7",
+    "choices": "choices-3"
+  },
+  "style_guide_sha256": "58292c7ff5fc0db6aa95fa1a31bba158f0838ac7dc7bb9d04d32f3312a7ffffa",
+  "style_guide_path": null,
+  "prompt_variant": null,
+  "prompt_versions_overridden": [],
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}

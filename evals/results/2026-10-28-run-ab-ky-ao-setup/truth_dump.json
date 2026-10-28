@@ -1,0 +1,1944 @@
+{
+ "story_id": "run-20261028-ab-ky-ao-setup-a2f386d1",
+ "plan": {
+  "acts": [
+   {
+    "name": "Ngọn đèn tắt",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Những mảnh lời thề",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Nước dưới bùn",
+    "from_chapter": 5,
+    "to_chapter": 6
+   },
+   {
+    "name": "Đèn trước cửa",
+    "from_chapter": 7,
+    "to_chapter": 7
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "loi_the_la_giao_uoc",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "lời thề cổ",
+      "trao lại một phần đường nước"
+     ],
+     [
+      "món nợ",
+      "đường nước cho thủy thần"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "coc_bi_rut",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Ông Bá",
+      "rút Cọc Thề"
+     ],
+     [
+      "Ông Bá",
+      "mở lối thoát nước"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "den_tat_co_y",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 6,
+    "leak_terms": [
+     [
+      "Lan",
+      "dập tắt Đèn Chung"
+     ],
+     [
+      "Lan",
+      "lời khấn ở Miếu Bùn"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "loi_nhan_day_du",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 2
+   },
+   {
+    "thread_id": "ky_uc_loi_the",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "nguoi_rut_coc",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "nguon_den_tat",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "so_phan_xom",
+    "resolve_from_chapter": 6,
+    "resolve_to_chapter": 7
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Nguyễn Lâm nhận ra lời nhắn đứt quãng của người gác đầm dẫn tới một dấu vết cụ thể trong xóm.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Những mảnh ký ức rời rạc cho thấy lời thề xưa còn có một điều kiện bị bỏ quên.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Nước tràn tới các sàn thấp, buộc dân làng phải chọn giữa giữ nhà và giữ lối nước.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "climax",
+    "goal": "Nguyễn Lâm cùng dân làng thực hiện một lựa chọn có thể làm dịu hoặc đánh thức hẳn thủy thần.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   },
+   {
+    "kind": "ending",
+    "goal": "Dân Xóm Chìm chấp nhận cái giá của lựa chọn và đối diện với bình minh sau đêm nước dâng.",
+    "from_chapter": 7,
+    "to_chapter": 7
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 7,
+  "secrets": [
+   {
+    "fact_id": "loi_the_la_giao_uoc",
+    "text": "Lời thề cổ không chỉ yêu cầu dân làng giữ đèn và cọc mà còn buộc họ phải trao lại một phần đường nước cho thủy thần mỗi năm.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "coc_bi_rut",
+    "text": "Ông Bá đã bí mật rút Cọc Thề để mở lối thoát nước khỏi khu sàn nhà mình.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "den_tat_co_y",
+    "text": "Lan đã dập tắt Đèn Chung để buộc dân làng nghe những lời khấn ở Miếu Bùn.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "loi_nhan_day_du",
+    "description": "Người gác đầm đã để lại lời nhắn nào trọn vẹn cho Nguyễn Lâm?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ky_uc_loi_the",
+    "description": "Lời thề xưa thực sự đòi hỏi dân làng điều gì?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "nguoi_rut_coc",
+    "description": "Ai đã làm Cọc Thề bật khỏi bùn?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "nguon_den_tat",
+    "description": "Vì sao mọi ngọn đèn trong xóm đều tắt?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "so_phan_xom",
+    "description": "Dân Xóm Chìm sẽ chọn cách nào để đối diện với thủy thần?",
+    "user_authored": false,
+    "from_chapter": 6,
+    "to_chapter": 7,
+    "resolved_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261028-ab-ky-ao-setup-a2f386d1-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn Lâm",
+      "personality": "Kiệm lời, bền bỉ và quen quan sát trước khi hành động. Khi người khác tranh cãi, cậu thường tìm cách nghe hết mọi phía.",
+      "backstory": "Lâm lớn lên ở xóm Chìm, phụ người nhà vá sàn và đưa đò qua những lối nước quanh xóm. Cậu từng nghe người gác đầm kể vài đoạn về lời thề, nhưng chưa bao giờ nghĩ chúng sẽ liên quan đến mình. Sáng nay, ông nắm lấy tay cậu bên chiếc cọc bật khỏi bùn và để lại lời nhắn đứt quãng.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "ba_thu",
+     "label": "Character",
+     "props": {
+      "name": "Bà Thu",
+      "personality": "Điềm đạm, cứng cỏi, không dễ tin lời đồn; khi nói thường lựa lời như đang cân từng hạt gạo.",
+      "backstory": "Bà giữ chiếc đèn chung của xóm Chìm và nhớ phần lời thề dặn dân làng phải thắp đèn mỗi đêm."
+     }
+    },
+    {
+     "id": "ong_ba",
+     "label": "Character",
+     "props": {
+      "name": "Ông Bá",
+      "personality": "Nóng nảy, thực dụng, thương người nhà nhưng sợ mất mát hơn sợ mang tiếng.",
+      "backstory": "Ông từng cùng dân làng đóng cọc ngăn nước ở bờ xóm, và nhớ phần lời thề liên quan đến việc không rút cọc khỏi đầm."
+     }
+    },
+    {
+     "id": "mai",
+     "label": "Character",
+     "props": {
+      "name": "Mai",
+      "personality": "Nhanh trí, ít nói, luôn để ý những điều người khác bỏ qua.",
+      "backstory": "Mai chèo đò qua các lối nước quanh xóm và nhớ câu hát cũ của mẹ mình về vật được đặt dưới cọc thề."
+     }
+    },
+    {
+     "id": "lan",
+     "label": "Character",
+     "props": {
+      "name": "Lan",
+      "personality": "Nhẫn nại, kín đáo, gắn bó với những người đã khuất và những phong tục cũ.",
+      "backstory": "Lan chăm nom miếu bùn đã lâu, nơi người trong xóm từng để lại những lời khấn trước mùa nước dâng."
+     }
+    },
+    {
+     "id": "nguoi_gac_dam",
+     "label": "Character",
+     "props": {
+      "name": "Ông Tư Đầm",
+      "aliases": [
+       "người gác đầm"
+      ],
+      "personality": "Ít lời, kiên nhẫn, mang vẻ mệt mỏi của người đã canh một điều quá lâu.",
+      "backstory": "Ông canh chiếc cọc thề ở mép xóm và kể cho Nguyễn Lâm vài đoạn rời rạc về lời thề xưa."
+     }
+    },
+    {
+     "id": "xom_chim",
+     "label": "Location",
+     "props": {
+      "name": "Xóm Chìm",
+      "description": "Xóm nhà sàn thấp bám quanh những lối nước đen, nơi đèn trước cửa vốn chưa từng tắt đồng loạt."
+     }
+    },
+    {
+     "id": "me_bun",
+     "label": "Location",
+     "props": {
+      "name": "Mép Bùn",
+      "description": "Bãi bùn bên ngoài xóm, nơi chiếc cọc thề đã bật lên và mặt nước đang dâng rất chậm."
+     }
+    },
+    {
+     "id": "mieng_dam",
+     "label": "Location",
+     "props": {
+      "name": "Miệng Đầm",
+      "description": "Vùng nước sâu khuất sau những bụi sậy, nơi lời thề xưa được truyền rằng đã giữ yên một vị thủy thần."
+     }
+    },
+    {
+     "id": "san_chung",
+     "label": "Location",
+     "props": {
+      "name": "Sàn Chung",
+      "description": "Sàn gỗ rộng giữa xóm, nơi dân làng tụ họp khi nước hoặc lời đồn khiến họ không thể ngồi yên trong nhà."
+     }
+    },
+    {
+     "id": "mieu_bun",
+     "label": "Location",
+     "props": {
+      "name": "Miếu Bùn",
+      "description": "Miếu nhỏ dựng trên nền đất sũng, nơi các lời khấn cũ được giữ qua nhiều mùa nước."
+     }
+    },
+    {
+     "id": "dan_xom_chim",
+     "label": "Faction",
+     "props": {
+      "name": "Dân Xóm Chìm",
+      "description": "Những gia đình sống trên sàn gỗ quanh đầm và cùng mang lời thề cổ."
+     }
+    },
+    {
+     "id": "coc_the",
+     "label": "Item",
+     "props": {
+      "name": "Cọc Thề",
+      "description": "Cọc gỗ đen đã bật khỏi bùn, mang những vết khắc mòn mà người trong xóm xem là dấu tích của lời thề."
+     }
+    },
+    {
+     "id": "den_chung",
+     "label": "Item",
+     "props": {
+      "name": "Đèn Chung",
+      "description": "Chiếc đèn dầu cũ được bà Thu giữ để làm mẫu cho những ngọn đèn trước cửa trong xóm."
+     }
+    },
+    {
+     "id": "den_tat_dong_loat",
+     "label": "Fact",
+     "props": {
+      "text": "Sáng nay, mọi ngọn đèn trước cửa ở Xóm Chìm đều tắt dù tim đèn còn ấm."
+     }
+    },
+    {
+     "id": "coc_bat_len",
+     "label": "Fact",
+     "props": {
+      "text": "Chiếc Cọc Thề đã bật khỏi bùn ở Mép Bùn."
+     }
+    },
+    {
+     "id": "loi_nhan_gac_dam",
+     "label": "Fact",
+     "props": {
+      "text": "Người gác đầm đã nói với Nguyễn Lâm rằng mặt nước đang thức dậy."
+     }
+    },
+    {
+     "id": "loi_the_den",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề xưa dặn dân Xóm Chìm phải thắp đèn trước cửa mỗi đêm."
+     }
+    },
+    {
+     "id": "loi_the_coc",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề xưa cấm dân làng rút những chiếc cọc ngăn nước khỏi đầm."
+     }
+    },
+    {
+     "id": "loi_the_vat_chon",
+     "label": "Fact",
+     "props": {
+      "text": "Câu hát cũ của mẹ Mai nói rằng một vật được đặt dưới Cọc Thề để giữ lời khấn."
+     }
+    },
+    {
+     "id": "loi_khan_mieu",
+     "label": "Fact",
+     "props": {
+      "text": "Những lời khấn ở Miếu Bùn nhắc đến một món nợ mà dân làng chưa trả."
+     }
+    },
+    {
+     "id": "thuy_than_ngu",
+     "label": "Fact",
+     "props": {
+      "text": "Một vị thủy thần đang ngủ dưới Miệng Đầm."
+     }
+    },
+    {
+     "id": "loi_the_la_giao_uoc",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề cổ không chỉ yêu cầu dân làng giữ đèn và cọc mà còn buộc họ phải trao lại một phần đường nước cho thủy thần mỗi năm."
+     }
+    },
+    {
+     "id": "coc_bi_rut",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Bá đã bí mật rút Cọc Thề để mở lối thoát nước khỏi khu sàn nhà mình."
+     }
+    },
+    {
+     "id": "den_tat_co_y",
+     "label": "Fact",
+     "props": {
+      "text": "Lan đã dập tắt Đèn Chung để buộc dân làng nghe những lời khấn ở Miếu Bùn."
+     }
+    },
+    {
+     "id": "loi_nhan_day_du",
+     "label": "Thread",
+     "props": {
+      "description": "Người gác đầm đã để lại lời nhắn nào trọn vẹn cho Nguyễn Lâm?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 2
+     }
+    },
+    {
+     "id": "ky_uc_loi_the",
+     "label": "Thread",
+     "props": {
+      "description": "Lời thề xưa thực sự đòi hỏi dân làng điều gì?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "nguoi_rut_coc",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã làm Cọc Thề bật khỏi bùn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "nguon_den_tat",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao mọi ngọn đèn trong xóm đều tắt?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "so_phan_xom",
+     "label": "Thread",
+     "props": {
+      "description": "Dân Xóm Chìm sẽ chọn cách nào để đối diện với thủy thần?",
+      "planted_chapter": 0,
+      "due_from_chapter": 6,
+      "due_to_chapter": 7
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ba_thu",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ba_thu>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ong_ba",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ong_ba>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "mai",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:mai>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lan",
+     "to": "mieu_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lan>mieu_bun@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguoi_gac_dam",
+     "to": "me_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguoi_gac_dam>me_bun@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "coc_the",
+     "to": "me_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:coc_the>me_bun@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "ba_thu",
+     "to": "den_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:ba_thu>den_chung@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ba_thu",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ba_thu>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ong_ba",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ong_ba>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "mai",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:mai>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "lan",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:lan>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nguoi_gac_dam",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nguoi_gac_dam>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "nguoi_gac_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>nguoi_gac_dam@0",
+     "props": {
+      "kind": "người quen",
+      "score": 45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nguoi_gac_dam",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nguoi_gac_dam>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 45
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_dong_loat",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_dong_loat>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_thu",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_thu>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "mai",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:mai>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "den_tat_dong_loat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>den_tat_dong_loat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bat_len",
+     "to": "coc_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bat_len>coc_the@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bat_len",
+     "to": "me_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bat_len>me_bun@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "coc_bat_len",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>coc_bat_len@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_nhan_gac_dam",
+     "to": "nguoi_gac_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_nhan_gac_dam>nguoi_gac_dam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_nhan_gac_dam",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_nhan_gac_dam>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_den",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_den>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_den",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_den>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_thu",
+     "to": "loi_the_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_thu>loi_the_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "loi_the_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>loi_the_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_the_den",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_the_den@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_coc",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_coc>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_coc",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_coc>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "loi_the_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>loi_the_coc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_the_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_the_coc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_vat_chon",
+     "to": "mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_vat_chon>mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_vat_chon",
+     "to": "coc_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_vat_chon>coc_the@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "mai",
+     "to": "loi_the_vat_chon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:mai>loi_the_vat_chon@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_khan_mieu",
+     "to": "mieu_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_khan_mieu>mieu_bun@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_khan_mieu",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_khan_mieu>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "loi_khan_mieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>loi_khan_mieu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "thuy_than_ngu",
+     "to": "mieng_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thuy_than_ngu>mieng_dam@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_thu",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_thu>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "mai",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:mai>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "thuy_than_ngu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>thuy_than_ngu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_la_giao_uoc",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_la_giao_uoc>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_la_giao_uoc",
+     "to": "mieng_dam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_la_giao_uoc>mieng_dam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_la_giao_uoc",
+     "to": "dan_xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_la_giao_uoc>dan_xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "loi_the_la_giao_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>loi_the_la_giao_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguoi_gac_dam",
+     "to": "loi_the_la_giao_uoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguoi_gac_dam>loi_the_la_giao_uoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bi_rut",
+     "to": "ong_ba",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bi_rut>ong_ba@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bi_rut",
+     "to": "coc_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bi_rut>coc_the@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "coc_bi_rut",
+     "to": "xom_chim",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:coc_bi_rut>xom_chim@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ong_ba",
+     "to": "coc_bi_rut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ong_ba>coc_bi_rut@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_co_y",
+     "to": "lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_co_y>lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_co_y",
+     "to": "den_chung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_co_y>den_chung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "den_tat_co_y",
+     "to": "mieu_bun",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:den_tat_co_y>mieu_bun@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lan",
+     "to": "den_tat_co_y",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lan>den_tat_co_y@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Nguyễn Lâm",
+      "known_as": "Nguyễn Lâm"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ba_thu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bà giữ chiếc đèn chung của xóm Chìm và nhớ phần lời thề dặn dân làng phải thắp đèn mỗi đêm.",
+     "personality": "Điềm đạm, cứng cỏi, không dễ tin lời đồn; khi nói thường lựa lời như đang cân từng hạt gạo.",
+     "name": "Bà Thu"
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "coc_bat_len": {
+    "label": "Fact",
+    "props": {
+     "text": "Chiếc Cọc Thề đã bật khỏi bùn ở Mép Bùn."
+    }
+   },
+   "coc_bi_rut": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Bá đã bí mật rút Cọc Thề để mở lối thoát nước khỏi khu sàn nhà mình."
+    }
+   },
+   "coc_the": {
+    "label": "Item",
+    "props": {
+     "name": "Cọc Thề",
+     "description": "Cọc gỗ đen đã bật khỏi bùn, mang những vết khắc mòn mà người trong xóm xem là dấu tích của lời thề."
+    }
+   },
+   "dan_xom_chim": {
+    "label": "Faction",
+    "props": {
+     "name": "Dân Xóm Chìm",
+     "description": "Những gia đình sống trên sàn gỗ quanh đầm và cùng mang lời thề cổ."
+    }
+   },
+   "den_chung": {
+    "label": "Item",
+    "props": {
+     "name": "Đèn Chung",
+     "description": "Chiếc đèn dầu cũ được bà Thu giữ để làm mẫu cho những ngọn đèn trước cửa trong xóm."
+    }
+   },
+   "den_tat_co_y": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan đã dập tắt Đèn Chung để buộc dân làng nghe những lời khấn ở Miếu Bùn."
+    }
+   },
+   "den_tat_dong_loat": {
+    "label": "Fact",
+    "props": {
+     "text": "Sáng nay, mọi ngọn đèn trước cửa ở Xóm Chìm đều tắt dù tim đèn còn ấm."
+    }
+   },
+   "ky_uc_loi_the": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Lời thề xưa thực sự đòi hỏi dân làng điều gì?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "lan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lan chăm nom miếu bùn đã lâu, nơi người trong xóm từng để lại những lời khấn trước mùa nước dâng.",
+     "personality": "Nhẫn nại, kín đáo, gắn bó với những người đã khuất và những phong tục cũ.",
+     "name": "Lan"
+    }
+   },
+   "loi_khan_mieu": {
+    "label": "Fact",
+    "props": {
+     "text": "Những lời khấn ở Miếu Bùn nhắc đến một món nợ mà dân làng chưa trả."
+    }
+   },
+   "loi_nhan_day_du": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Người gác đầm đã để lại lời nhắn nào trọn vẹn cho Nguyễn Lâm?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 2
+    }
+   },
+   "loi_nhan_gac_dam": {
+    "label": "Fact",
+    "props": {
+     "text": "Người gác đầm đã nói với Nguyễn Lâm rằng mặt nước đang thức dậy."
+    }
+   },
+   "loi_the_coc": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề xưa cấm dân làng rút những chiếc cọc ngăn nước khỏi đầm."
+    }
+   },
+   "loi_the_den": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề xưa dặn dân Xóm Chìm phải thắp đèn trước cửa mỗi đêm."
+    }
+   },
+   "loi_the_la_giao_uoc": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề cổ không chỉ yêu cầu dân làng giữ đèn và cọc mà còn buộc họ phải trao lại một phần đường nước cho thủy thần mỗi năm."
+    }
+   },
+   "loi_the_vat_chon": {
+    "label": "Fact",
+    "props": {
+     "text": "Câu hát cũ của mẹ Mai nói rằng một vật được đặt dưới Cọc Thề để giữ lời khấn."
+    }
+   },
+   "mai": {
+    "label": "Character",
+    "props": {
+     "backstory": "Mai chèo đò qua các lối nước quanh xóm và nhớ câu hát cũ của mẹ mình về vật được đặt dưới cọc thề.",
+     "personality": "Nhanh trí, ít nói, luôn để ý những điều người khác bỏ qua.",
+     "name": "Mai"
+    }
+   },
+   "me_bun": {
+    "label": "Location",
+    "props": {
+     "name": "Mép Bùn",
+     "description": "Bãi bùn bên ngoài xóm, nơi chiếc cọc thề đã bật lên và mặt nước đang dâng rất chậm."
+    }
+   },
+   "mieng_dam": {
+    "label": "Location",
+    "props": {
+     "name": "Miệng Đầm",
+     "description": "Vùng nước sâu khuất sau những bụi sậy, nơi lời thề xưa được truyền rằng đã giữ yên một vị thủy thần."
+    }
+   },
+   "mieu_bun": {
+    "label": "Location",
+    "props": {
+     "name": "Miếu Bùn",
+     "description": "Miếu nhỏ dựng trên nền đất sũng, nơi các lời khấn cũ được giữ qua nhiều mùa nước."
+    }
+   },
+   "nguoi_gac_dam": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông canh chiếc cọc thề ở mép xóm và kể cho Nguyễn Lâm vài đoạn rời rạc về lời thề xưa.",
+     "aliases": [
+      "người gác đầm"
+     ],
+     "personality": "Ít lời, kiên nhẫn, mang vẻ mệt mỏi của người đã canh một điều quá lâu.",
+     "name": "Ông Tư Đầm"
+    }
+   },
+   "nguoi_rut_coc": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã làm Cọc Thề bật khỏi bùn?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "nguon_den_tat": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao mọi ngọn đèn trong xóm đều tắt?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "ong_ba": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông từng cùng dân làng đóng cọc ngăn nước ở bờ xóm, và nhớ phần lời thề liên quan đến việc không rút cọc khỏi đầm.",
+     "personality": "Nóng nảy, thực dụng, thương người nhà nhưng sợ mất mát hơn sợ mang tiếng.",
+     "name": "Ông Bá"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Lâm lớn lên ở xóm Chìm, phụ người nhà vá sàn và đưa đò qua những lối nước quanh xóm. Cậu từng nghe người gác đầm kể vài đoạn về lời thề, nhưng chưa bao giờ nghĩ chúng sẽ liên quan đến mình. Sáng nay, ông nắm lấy tay cậu bên chiếc cọc bật khỏi bùn và để lại lời nhắn đứt quãng.",
+     "personality": "Kiệm lời, bền bỉ và quen quan sát trước khi hành động. Khi người khác tranh cãi, cậu thường tìm cách nghe hết mọi phía.",
+     "name": "Nguyễn Lâm",
+     "is_protagonist": true
+    }
+   },
+   "san_chung": {
+    "label": "Location",
+    "props": {
+     "name": "Sàn Chung",
+     "description": "Sàn gỗ rộng giữa xóm, nơi dân làng tụ họp khi nước hoặc lời đồn khiến họ không thể ngồi yên trong nhà."
+    }
+   },
+   "so_phan_xom": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Dân Xóm Chìm sẽ chọn cách nào để đối diện với thủy thần?",
+     "due_from_chapter": 6,
+     "due_to_chapter": 7
+    }
+   },
+   "thuy_than_ngu": {
+    "label": "Fact",
+    "props": {
+     "text": "Một vị thủy thần đang ngủ dưới Miệng Đầm."
+    }
+   },
+   "xom_chim": {
+    "label": "Location",
+    "props": {
+     "name": "Xóm Chìm",
+     "description": "Xóm nhà sàn thấp bám quanh những lối nước đen, nơi đèn trước cửa vốn chưa từng tắt đồng loạt."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:nguoi_gac_dam>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "nguoi_gac_dam",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 45,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>nguoi_gac_dam@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "nguoi_gac_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 45,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "LOCATED_AT:ba_thu>xom_chim@0",
+    "type": "LOCATED_AT",
+    "source": "ba_thu",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:coc_the>me_bun@0",
+    "type": "LOCATED_AT",
+    "source": "coc_the",
+    "target": "me_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lan>mieu_bun@0",
+    "type": "LOCATED_AT",
+    "source": "lan",
+    "target": "mieu_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:mai>xom_chim@0",
+    "type": "LOCATED_AT",
+    "source": "mai",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nguoi_gac_dam>me_bun@0",
+    "type": "LOCATED_AT",
+    "source": "nguoi_gac_dam",
+    "target": "me_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ong_ba>xom_chim@0",
+    "type": "LOCATED_AT",
+    "source": "ong_ba",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>xom_chim@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:ba_thu>den_chung@0",
+    "type": "HOLDS",
+    "source": "ba_thu",
+    "target": "den_chung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ba_thu>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "ba_thu",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:lan>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "lan",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:mai>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "mai",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nguoi_gac_dam>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "nguoi_gac_dam",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ong_ba>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "ong_ba",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>dan_xom_chim@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:ba_thu>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "ba_thu",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_thu>loi_the_den@0",
+    "type": "KNOWS",
+    "source": "ba_thu",
+    "target": "loi_the_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_thu>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "ba_thu",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>den_tat_co_y@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "den_tat_co_y",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>loi_khan_mieu@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "loi_khan_mieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>loi_the_den@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "loi_the_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>loi_the_la_giao_uoc@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "loi_the_la_giao_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lan>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "lan",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:mai>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "mai",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:mai>loi_the_vat_chon@0",
+    "type": "KNOWS",
+    "source": "mai",
+    "target": "loi_the_vat_chon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:mai>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "mai",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>coc_bat_len@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "coc_bat_len",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_the_coc@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_the_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_the_den@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_the_den",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>loi_the_la_giao_uoc@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "loi_the_la_giao_uoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguoi_gac_dam>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "nguoi_gac_dam",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>coc_bi_rut@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "coc_bi_rut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>den_tat_dong_loat@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "den_tat_dong_loat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>loi_the_coc@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "loi_the_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ong_ba>thuy_than_ngu@0",
+    "type": "KNOWS",
+    "source": "ong_ba",
+    "target": "thuy_than_ngu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:coc_bat_len>coc_the@0",
+    "type": "ABOUT",
+    "source": "coc_bat_len",
+    "target": "coc_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bat_len>me_bun@0",
+    "type": "ABOUT",
+    "source": "coc_bat_len",
+    "target": "me_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bi_rut>coc_the@0",
+    "type": "ABOUT",
+    "source": "coc_bi_rut",
+    "target": "coc_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bi_rut>ong_ba@0",
+    "type": "ABOUT",
+    "source": "coc_bi_rut",
+    "target": "ong_ba",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:coc_bi_rut>xom_chim@0",
+    "type": "ABOUT",
+    "source": "coc_bi_rut",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_co_y>den_chung@0",
+    "type": "ABOUT",
+    "source": "den_tat_co_y",
+    "target": "den_chung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_co_y>lan@0",
+    "type": "ABOUT",
+    "source": "den_tat_co_y",
+    "target": "lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_co_y>mieu_bun@0",
+    "type": "ABOUT",
+    "source": "den_tat_co_y",
+    "target": "mieu_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:den_tat_dong_loat>xom_chim@0",
+    "type": "ABOUT",
+    "source": "den_tat_dong_loat",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_khan_mieu>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_khan_mieu",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_khan_mieu>mieu_bun@0",
+    "type": "ABOUT",
+    "source": "loi_khan_mieu",
+    "target": "mieu_bun",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_nhan_gac_dam>nguoi_gac_dam@0",
+    "type": "ABOUT",
+    "source": "loi_nhan_gac_dam",
+    "target": "nguoi_gac_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_nhan_gac_dam>protagonist@0",
+    "type": "ABOUT",
+    "source": "loi_nhan_gac_dam",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_coc>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_coc",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_coc>xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_coc",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_den>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_den",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_den>xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_den",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_la_giao_uoc>dan_xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_la_giao_uoc",
+    "target": "dan_xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_la_giao_uoc>mieng_dam@0",
+    "type": "ABOUT",
+    "source": "loi_the_la_giao_uoc",
+    "target": "mieng_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_la_giao_uoc>xom_chim@0",
+    "type": "ABOUT",
+    "source": "loi_the_la_giao_uoc",
+    "target": "xom_chim",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_vat_chon>coc_the@0",
+    "type": "ABOUT",
+    "source": "loi_the_vat_chon",
+    "target": "coc_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_vat_chon>mai@0",
+    "type": "ABOUT",
+    "source": "loi_the_vat_chon",
+    "target": "mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thuy_than_ngu>mieng_dam@0",
+    "type": "ABOUT",
+    "source": "thuy_than_ngu",
+    "target": "mieng_dam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Nguyễn Lâm",
+     "known_as": "Nguyễn Lâm"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "pacing": 1
+   },
+   "problems": [
+    "chương 4 có 5 việc đến hạn, tối đa 3 (trừ chương cuối)"
+   ]
+  }
+ ],
+ "quotes": []
+}

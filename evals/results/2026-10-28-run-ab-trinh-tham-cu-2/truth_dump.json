@@ -1,0 +1,4389 @@
+{
+ "story_id": "run-20261028-ab-trinh-tham-cu-2-803f0518",
+ "plan": {
+  "acts": [
+   {
+    "name": "Căn buồng khép hờ",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Những tiếng gõ",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Lời khai trong tối",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_vu_lam_lay_so",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Vũ Lâm",
+      "cuốn sổ"
+     ],
+     [
+      "Lâm",
+      "lấy sổ"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_vu_lam_dong_co",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Vũ Lâm",
+      "nhận tiền"
+     ],
+     [
+      "Lâm",
+      "không trả đủ"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_ong_tan",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "dem_mat_dien",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "khoan_tien",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "loi_khai_cua_mai",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Mai nhận ra tiếng gõ có nhịp lặp lại và có thể dùng để đối chiếu lời kể về đêm mất điện.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Mai phát hiện lời khai về người ra vào buồng ông Tấn không khớp với dấu vết trên cửa.",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Mai đối chất với Vũ Lâm bằng những chi tiết nghe được và tìm ra manh mối dẫn tới nơi ông Tấn đang ẩn náu.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Mai lựa chọn lời khai cuối cùng của mình và biết được số phận ông Tấn.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 6,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "fact_vu_lam_lay_so",
+    "text": "Vũ Lâm lấy cuốn sổ của ông Tấn trong đêm mất điện.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": 3
+   },
+   {
+    "fact_id": "fact_vu_lam_dong_co",
+    "text": "Vũ Lâm lấy cuốn sổ để che giấu việc mình đã nhận tiền của ông Tấn rồi không trả đủ.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": 5
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_ong_tan",
+    "description": "Mai có xác định được ông Tấn đang ở đâu không?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 6,
+    "resolved_chapter": 6
+   },
+   {
+    "thread_id": "dem_mat_dien",
+    "description": "Ai đã vào buồng ông Tấn trong đêm mất điện?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 4,
+    "resolved_chapter": 3
+   },
+   {
+    "thread_id": "khoan_tien",
+    "description": "Khoản tiền giữa ông Tấn và chị Hòa thực chất là chuyện gì?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "resolved_chapter": 5
+   },
+   {
+    "thread_id": "loi_khai_cua_mai",
+    "description": "Mai sẽ kể lại những gì mình nghe được với công an khu vực đến mức nào?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 6,
+    "resolved_chapter": 3
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261028-ab-trinh-tham-cu-2-803f0518-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Lê Thị Mai",
+      "personality": "Nhanh trí, kín đáo và nhạy với tâm trạng người khác. Mai thường dùng vẻ bông đùa để che sự bất an, nhưng không dễ bỏ qua những điều mình thấy bất thường.",
+      "backstory": "Mai là nữ y tá trực tại một trạm y tế gần khu tập thể, sống cùng mẹ và em trong căn buồng nhỏ trên cùng tầng với ông Tấn. Cô thường thức khuya, nên biết tiếng bước chân và tiếng gõ vọng qua vách vào những đêm mùa đông, dù không chắc chúng bắt đầu từ căn hộ nào. Khi ông Tấn biến mất, những lần cô ra hành lang lấy nước khiến lời kể của cô được chú ý, đồng thời làm cô lo rằng hàng xóm sẽ xem mình là người xen vào chuyện riêng.",
+      "is_protagonist": true,
+      "user_authored": true
+     }
+    },
+    {
+     "id": "tran_tan",
+     "label": "Character",
+     "props": {
+      "name": "Trần Tấn",
+      "aliases": [
+       "ông Tấn"
+      ],
+      "personality": "Ít lời, cẩn trọng, quen giữ việc riêng cho mình; khi bị dồn ép thường gõ nhịp đều lên mặt bàn.",
+      "backstory": "Sống một mình trong căn buồng sát nhà Mai ở khu tập thể Khâm Thiên; trước khi mất tích, ông thường tranh cãi với người hàng xóm về một khoản tiền và những giấy tờ cũ."
+     }
+    },
+    {
+     "id": "pham_hoa",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Hòa",
+      "aliases": [
+       "chị Hòa"
+      ],
+      "personality": "Thực tế, dễ cáu khi bị hỏi dồn, nhưng vẫn để ý chuyện ăn ở của hàng xóm.",
+      "backstory": "Ở buồng đối diện ông Tấn, làm công việc may gia công tại nhà và thường ra hành lang lấy nước vào ban đêm."
+     }
+    },
+    {
+     "id": "nguyen_binh",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn Bình",
+      "aliases": [
+       "anh Bình"
+      ],
+      "personality": "Điềm đạm, kiệm lời, quen hỏi từng chi tiết nhỏ trước khi kết luận.",
+      "backstory": "Công an khu vực phụ trách khu tập thể; đã tiếp nhận tin ông Tấn mất tích và đang lần lượt hỏi chuyện cư dân."
+     }
+    },
+    {
+     "id": "vu_lam",
+     "label": "Character",
+     "props": {
+      "name": "Vũ Lâm",
+      "aliases": [
+       "Lâm"
+      ],
+      "personality": "Nói năng mềm mỏng nhưng hay lảng tránh những câu hỏi cụ thể.",
+      "backstory": "Từng làm cùng ông Tấn ở một tổ sửa chữa; gần đây thường ghé khu tập thể, nói là đến thăm người quen."
+     }
+    },
+    {
+     "id": "khu_tap_the_kham_thien",
+     "label": "Location",
+     "props": {
+      "name": "Khu tập thể Khâm Thiên",
+      "aliases": [
+       "khu tập thể"
+      ],
+      "description": "Dãy nhà cũ gần phố Khâm Thiên có hành lang chung tối sau giờ cắt điện và những vách ngăn mỏng."
+     }
+    },
+    {
+     "id": "buong_mai",
+     "label": "Location",
+     "props": {
+      "name": "Buồng nhà Mai",
+      "aliases": [
+       "buồng Mai"
+      ],
+      "description": "Căn buồng nhỏ của gia đình Mai ở tầng trên, có vách vôi chung với buồng ông Tấn."
+     }
+    },
+    {
+     "id": "buong_tan",
+     "label": "Location",
+     "props": {
+      "name": "Buồng ông Tấn",
+      "aliases": [
+       "buồng bên"
+      ],
+      "description": "Căn buồng chật của ông Tấn, nơi chiếc nồi nước nguội còn lại sau khi ông biến mất."
+     }
+    },
+    {
+     "id": "cau_thang_kham_thien",
+     "label": "Location",
+     "props": {
+      "name": "Cầu thang khu tập thể",
+      "aliases": [
+       "cầu thang"
+      ],
+      "description": "Cầu thang hẹp thường vương mùi dầu hỏa và tiếng bước chân khó phân biệt."
+     }
+    },
+    {
+     "id": "cong_an_khu_vuc",
+     "label": "Faction",
+     "props": {
+      "name": "Công an khu vực",
+      "aliases": [
+       "công an"
+      ],
+      "description": "Nhóm cán bộ phụ trách trật tự và xác minh tin báo trong khu dân cư."
+     }
+    },
+    {
+     "id": "so_ghi_chep",
+     "label": "Item",
+     "props": {
+      "name": "Sổ ghi chép của ông Tấn",
+      "aliases": [
+       "cuốn sổ"
+      ],
+      "description": "Cuốn sổ bìa sẫm ông Tấn thường cất trong ngăn bàn, ghi những khoản tiền và ngày tháng rời rạc."
+     }
+    },
+    {
+     "id": "chiec_chia_khoa",
+     "label": "Item",
+     "props": {
+      "name": "Chìa khóa buồng ông Tấn",
+      "aliases": [
+       "chìa khóa"
+      ],
+      "description": "Chiếc chìa khóa dự phòng được giao cho chị Hòa giữ hộ trước khi ông Tấn biến mất."
+     }
+    },
+    {
+     "id": "fact_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Tấn không có mặt ở buồng mình từ sáng sau một đêm mất điện."
+     }
+    },
+    {
+     "id": "fact_noi_cai_va",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Tấn và chị Hòa từng cãi nhau về một khoản tiền chưa trả."
+     }
+    },
+    {
+     "id": "fact_tieng_go",
+     "label": "Fact",
+     "props": {
+      "text": "Trong những đêm trước khi ông Tấn biến mất, có người nghe tiếng gõ đều đặn qua vách buồng."
+     }
+    },
+    {
+     "id": "fact_vu_lam_lay_so",
+     "label": "Fact",
+     "props": {
+      "text": "Vũ Lâm lấy cuốn sổ của ông Tấn trong đêm mất điện."
+     }
+    },
+    {
+     "id": "fact_vu_lam_dong_co",
+     "label": "Fact",
+     "props": {
+      "text": "Vũ Lâm lấy cuốn sổ để che giấu việc mình đã nhận tiền của ông Tấn rồi không trả đủ."
+     }
+    },
+    {
+     "id": "fact_chia_khoa_du_phong",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa giữ chìa khóa dự phòng buồng ông Tấn theo lời nhờ của ông."
+     }
+    },
+    {
+     "id": "fact_mai_o_tram_y_te",
+     "label": "Fact",
+     "props": {
+      "text": "Mai làm y tá tại một trạm y tế gần khu tập thể."
+     }
+    },
+    {
+     "id": "tim_ong_tan",
+     "label": "Thread",
+     "props": {
+      "description": "Mai có xác định được ông Tấn đang ở đâu không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "dem_mat_dien",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã vào buồng ông Tấn trong đêm mất điện?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "khoan_tien",
+     "label": "Thread",
+     "props": {
+      "description": "Khoản tiền giữa ông Tấn và chị Hòa thực chất là chuyện gì?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "loi_khai_cua_mai",
+     "label": "Thread",
+     "props": {
+      "description": "Mai sẽ kể lại những gì mình nghe được với công an khu vực đến mức nào?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "buong_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>buong_mai@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_tan",
+     "to": "buong_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_tan>buong_tan@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_hoa",
+     "to": "khu_tap_the_kham_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_hoa>khu_tap_the_kham_thien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguyen_binh",
+     "to": "khu_tap_the_kham_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguyen_binh>khu_tap_the_kham_thien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "vu_lam",
+     "to": "khu_tap_the_kham_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:vu_lam>khu_tap_the_kham_thien@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "pham_hoa",
+     "to": "chiec_chia_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:pham_hoa>chiec_chia_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "vu_lam",
+     "to": "so_ghi_chep",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:vu_lam>so_ghi_chep@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nguyen_binh",
+     "to": "cong_an_khu_vuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nguyen_binh>cong_an_khu_vuc@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>tran_tan@0",
+     "props": {
+      "kind": "hàng xóm",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_tan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_tan>protagonist@0",
+     "props": {
+      "kind": "hàng xóm",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_hoa",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_hoa>tran_tan@0",
+     "props": {
+      "kind": "hàng xóm hay cãi vã",
+      "score": -35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_tan",
+     "to": "pham_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_tan>pham_hoa@0",
+     "props": {
+      "kind": "hàng xóm hay cãi vã",
+      "score": -25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nguyen_binh",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nguyen_binh>protagonist@0",
+     "props": {
+      "kind": "người đang lấy lời khai",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "nguyen_binh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>nguyen_binh@0",
+     "props": {
+      "kind": "người được hỏi",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "vu_lam",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:vu_lam>tran_tan@0",
+     "props": {
+      "kind": "người quen cũ",
+      "score": -10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_tan",
+     "to": "vu_lam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_tan>vu_lam@0",
+     "props": {
+      "kind": "người quen cũ",
+      "score": -10
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_mat_tich",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_mat_tich>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_mat_tich",
+     "to": "buong_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_mat_tich>buong_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_mat_tich",
+     "to": "khu_tap_the_kham_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_mat_tich>khu_tap_the_kham_thien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_binh",
+     "to": "fact_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_binh>fact_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_noi_cai_va",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_noi_cai_va>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_noi_cai_va",
+     "to": "pham_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_noi_cai_va>pham_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_noi_cai_va",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_noi_cai_va@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_lam",
+     "to": "fact_noi_cai_va",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_lam>fact_noi_cai_va@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tieng_go",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tieng_go>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tieng_go",
+     "to": "buong_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tieng_go>buong_mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tieng_go",
+     "to": "buong_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tieng_go>buong_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_tieng_go",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_tieng_go@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_lam",
+     "to": "fact_tieng_go",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_lam>fact_tieng_go@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vu_lam_lay_so",
+     "to": "vu_lam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vu_lam_lay_so>vu_lam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vu_lam_lay_so",
+     "to": "so_ghi_chep",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vu_lam_lay_so>so_ghi_chep@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vu_lam_dong_co",
+     "to": "vu_lam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vu_lam_dong_co>vu_lam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vu_lam_dong_co",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vu_lam_dong_co>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_vu_lam_dong_co",
+     "to": "so_ghi_chep",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_vu_lam_dong_co>so_ghi_chep@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_chia_khoa_du_phong",
+     "to": "pham_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_chia_khoa_du_phong>pham_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_chia_khoa_du_phong",
+     "to": "chiec_chia_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_chia_khoa_du_phong>chiec_chia_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_chia_khoa_du_phong",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_chia_khoa_du_phong>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_chia_khoa_du_phong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_chia_khoa_du_phong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_mai_o_tram_y_te",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_mai_o_tram_y_te>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_mai_o_tram_y_te",
+     "to": "khu_tap_the_kham_thien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_mai_o_tram_y_te>khu_tap_the_kham_thien@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_mai_o_tram_y_te",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_mai_o_tram_y_te@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_binh",
+     "to": "fact_mai_o_tram_y_te",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_binh>fact_mai_o_tram_y_te@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Lê Thị Mai",
+      "known_as": "Lê Thị Mai"
+     }
+    }
+   ],
+   "close": []
+  },
+  "1": {
+   "commit_id": "ch1-6c5dc28ad4bf",
+   "nodes": [
+    {
+     "id": "ch1",
+     "label": "Chapter",
+     "props": {
+      "number": 1
+     }
+    },
+    {
+     "id": "fact_c1s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa nhớ cửa buồng ông Tấn đã khép lại vào tối hôm ấy."
+     }
+    },
+    {
+     "id": "fact_c1s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa không nhớ cửa buồng khép lại trước hay sau lúc mất điện."
+     }
+    },
+    {
+     "id": "fact_c1s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa từ chối cho Mai xem buồng ông Tấn cho đến khi công an quay lại."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "nguyen_binh",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:nguyen_binh>ch1@1",
+     "props": {
+      "quote": "Sau khi anh Bình hỏi chuyện, tôi lại ra hành lang.",
+      "known_as": "anh Bình"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tran_tan",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tran_tan>ch1@1",
+     "props": {
+      "quote": "Cánh buồng ông Tấn vẫn khép hờ.",
+      "known_as": "ông Tấn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "buong_tan",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:buong_tan>ch1@1",
+     "props": {
+      "quote": "Cánh buồng ông Tấn vẫn khép hờ.",
+      "known_as": "buồng ông Tấn"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "pham_hoa",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:pham_hoa>ch1@1",
+     "props": {
+      "quote": "Chị Hòa bước ra từ đầu hành lang, tay kéo vạt áo len sát cổ.",
+      "known_as": "Chị Hòa"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "chiec_chia_khoa",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:chiec_chia_khoa>ch1@1",
+     "props": {
+      "quote": "Ông ấy nhờ chị giữ chìa dự phòng.",
+      "known_as": "chìa dự phòng"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cong_an_khu_vuc",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cong_an_khu_vuc>ch1@1",
+     "props": {
+      "quote": "Nhưng công an chưa quay lại, chị không muốn đụng vào đồ đạc.",
+      "known_as": "công an"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "cau_thang_kham_thien",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:cau_thang_kham_thien>ch1@1",
+     "props": {
+      "quote": "Mùi dầu hỏa vương từ chiếc đèn bão nhà ai để trên bậc thang.",
+      "known_as": "bậc thang"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "buong_mai",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:buong_mai>ch1@1",
+     "props": {
+      "quote": "Tôi quay về buồng mình.",
+      "known_as": "buồng mình"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_mat_tich",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_mat_tich>ch1@1",
+     "props": {
+      "quote": "Ông Tấn vắng mặt từ sáng."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_mat_tich",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_mat_tich@1",
+     "props": {
+      "how": "tự biết",
+      "quote": "Ông Tấn vắng mặt từ sáng."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_tieng_go",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_tieng_go>ch1@1",
+     "props": {
+      "quote": "Tôi chợt nhớ đêm mất điện: tiếng chân đi đâu đó trên nền xi măng, rồi tiếng gõ vọng qua vách, đều đều đến mức tôi đã tưởng nhà bên đang sửa cái gì."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_tieng_go",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_tieng_go@1",
+     "props": {
+      "how": "tự biết",
+      "quote": "Tôi chợt nhớ đêm mất điện: tiếng chân đi đâu đó trên nền xi măng, rồi tiếng gõ vọng qua vách, đều đều đến mức tôi đã tưởng nhà bên đang sửa cái gì."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s1_1",
+     "to": "pham_hoa",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s1_1>pham_hoa@1",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s1_1",
+     "to": "tran_tan",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s1_1>tran_tan@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s1_1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s1_1@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "pham_hoa",
+      "quote": "Chị chỉ nhớ tối hôm ấy cửa buồng khép lại."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s1_2",
+     "to": "pham_hoa",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s1_2>pham_hoa@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s1_2",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s1_2@1",
+     "props": {
+      "how": "được kể",
+      "told_by": "pham_hoa",
+      "quote": "Chị không nhớ rõ."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s1_1",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s1_1>ch1@1",
+     "props": {
+      "quote": "Chị chỉ nhớ tối hôm ấy cửa buồng khép lại."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s1_2",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s1_2>ch1@1",
+     "props": {
+      "quote": "Chị không nhớ rõ."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_c1s1_1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_c1s1_1@1",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_c1s1_2",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_c1s1_2@1",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_1",
+     "to": "pham_hoa",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_1>pham_hoa@1",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c1s2_1",
+     "to": "protagonist",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c1s2_1>protagonist@1",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c1s2_1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c1s2_1@1",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "- Để khi nào họ đến đã."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c1s2_1",
+     "to": "ch1",
+     "valid_from_chapter": 1,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c1s2_1>ch1@1",
+     "props": {
+      "quote": "- Để khi nào họ đến đã."
+     }
+    }
+   ],
+   "close": []
+  },
+  "2": {
+   "commit_id": "ch2-fd42aebba550",
+   "nodes": [
+    {
+     "id": "ch2",
+     "label": "Chapter",
+     "props": {
+      "number": 2
+     }
+    },
+    {
+     "id": "fact_c2s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa nói khoản tiền giữa chị và ông Tấn là việc riêng chưa giải quyết xong."
+     }
+    },
+    {
+     "id": "fact_c2s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Mai ghi vào sổ rằng chị Hòa không nhận ra nhịp gõ."
+     }
+    },
+    {
+     "id": "fact_c2s2_2",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa nói không biết tiếng gõ phát ra từ đâu."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "dem_mat_dien",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:dem_mat_dien>ch2@2",
+     "props": {
+      "quote": "Nhịp gõ giúp tôi đối chiếu lời người ta kể về đêm mất điện; nó chưa chỉ cho tôi biết bàn tay nào đã gõ."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "khoan_tien",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:khoan_tien>ch2@2",
+     "props": {
+      "quote": "Vậy khoản tiền giữa chị với ông Tấn, rốt cuộc là chuyện gì?"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s1_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s1_1@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "pham_hoa",
+      "quote": "- Việc riêng chưa giải quyết xong."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_1",
+     "to": "pham_hoa",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_1>pham_hoa@2",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s1_1",
+     "to": "tran_tan",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s1_1>tran_tan@2",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s1_1",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s1_1>ch2@2",
+     "props": {
+      "quote": "- Việc riêng chưa giải quyết xong."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_c2s1_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_c2s1_1@2",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "so_ghi_chep",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:so_ghi_chep>ch2@2",
+     "props": {
+      "quote": "Tôi lấy cuốn sổ nhỏ trong túi áo, ghi bên cạnh nhịp gõ: chị Hòa không nhận ra.",
+      "known_as": "cuốn sổ"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s2_1",
+     "to": "pham_hoa",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s2_1>pham_hoa@2",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s2_1",
+     "to": "protagonist",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s2_1>protagonist@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s2_1",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s2_1@2",
+     "props": {
+      "how": "tự làm",
+      "quote": "Tôi lấy cuốn sổ nhỏ trong túi áo, ghi bên cạnh nhịp gõ: chị Hòa không nhận ra."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c2s2_2",
+     "to": "pham_hoa",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c2s2_2>pham_hoa@2",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c2s2_2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c2s2_2@2",
+     "props": {
+      "how": "được kể",
+      "told_by": "pham_hoa",
+      "quote": "- Tôi không biết nó từ đâu."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s2_1",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s2_1>ch2@2",
+     "props": {
+      "quote": "Tôi lấy cuốn sổ nhỏ trong túi áo, ghi bên cạnh nhịp gõ: chị Hòa không nhận ra."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c2s2_2",
+     "to": "ch2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c2s2_2>ch2@2",
+     "props": {
+      "quote": "- Tôi không biết nó từ đâu."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_hoa",
+     "to": "fact_c2s2_2",
+     "valid_from_chapter": 2,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_hoa>fact_c2s2_2@2",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "3": {
+   "commit_id": "ch3-b827975645f2",
+   "nodes": [
+    {
+     "id": "ch3",
+     "label": "Chapter",
+     "props": {
+      "number": 3
+     }
+    },
+    {
+     "id": "fact_c3s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Anh Bình thấy cửa buồng ông Tấn khép khi đi ngang."
+     }
+    },
+    {
+     "id": "fact_c3s1_2",
+     "label": "Fact",
+     "props": {
+      "text": "Anh Bình thấy vết cọ mới ở mép chốt vào hôm sau."
+     }
+    },
+    {
+     "id": "fact_c3s1_3",
+     "label": "Fact",
+     "props": {
+      "text": "Mai nói với anh Bình rằng cô sẽ chỉ kể phần mình biết và chưa thể nói ai vào buồng ông Tấn."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "nguyen_binh",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>nguyen_binh@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_1",
+     "to": "buong_tan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_1>buong_tan@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_1@3",
+     "props": {
+      "how": "được kể",
+      "told_by": "nguyen_binh",
+      "quote": "Cửa khép rồi. Tôi đi qua thấy vậy thôi, chứ không biết ai vào trước đó hay có ai ra sau."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_2",
+     "to": "nguyen_binh",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_2>nguyen_binh@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_2",
+     "to": "buong_tan",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_2>buong_tan@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_2",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_2@3",
+     "props": {
+      "how": "được kể",
+      "told_by": "nguyen_binh",
+      "quote": "Mép chốt có vết cọ mới. Hôm sau tôi mới thấy."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_3",
+     "to": "protagonist",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_3>protagonist@3",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c3s1_3",
+     "to": "nguyen_binh",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c3s1_3>nguyen_binh@3",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c3s1_3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c3s1_3@3",
+     "props": {
+      "how": "tự làm",
+      "quote": "- Tôi sẽ nói đúng phần mình biết. Còn chuyện ai vào buồng, tôi chưa thể nói."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "loi_khai_cua_mai",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:loi_khai_cua_mai>ch3@3",
+     "props": {
+      "quote": "- Tôi sẽ nói đúng phần mình biết. Còn chuyện ai vào buồng, tôi chưa thể nói."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_1",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+     "props": {
+      "quote": "Cửa khép rồi. Tôi đi qua thấy vậy thôi, chứ không biết ai vào trước đó hay có ai ra sau."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_2",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_2>ch3@3",
+     "props": {
+      "quote": "Mép chốt có vết cọ mới. Hôm sau tôi mới thấy."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c3s1_3",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c3s1_3>ch3@3",
+     "props": {
+      "quote": "- Tôi sẽ nói đúng phần mình biết. Còn chuyện ai vào buồng, tôi chưa thể nói."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_binh",
+     "to": "fact_c3s1_1",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_binh>fact_c3s1_1@3",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_binh",
+     "to": "fact_c3s1_2",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_binh>fact_c3s1_2@3",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_vu_lam_lay_so",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_vu_lam_lay_so@3",
+     "props": {
+      "how": "được kể",
+      "told_by": "vu_lam",
+      "quote": "Tôi lấy cuốn sổ của ông ấy."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_vu_lam_lay_so",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_vu_lam_lay_so>ch3@3",
+     "props": {
+      "quote": "Tôi lấy cuốn sổ của ông ấy."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "vu_lam",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:vu_lam>ch3@3",
+     "props": {
+      "quote": "Lâm bước tới, hai tay đút túi áo bông.",
+      "known_as": "Lâm"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "dem_mat_dien",
+     "to": "ch3",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:dem_mat_dien>ch3@3",
+     "props": {
+      "quote": "Giờ tôi biết ai đã vào buồng ông Tấn trong đêm mất điện; còn vì sao anh ta lấy cuốn sổ, tôi chưa biết."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_lam",
+     "to": "fact_vu_lam_lay_so",
+     "valid_from_chapter": 3,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_lam>fact_vu_lam_lay_so@3",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "4": {
+   "commit_id": "ch4-059e8bb9fd56",
+   "nodes": [
+    {
+     "id": "ch4",
+     "label": "Chapter",
+     "props": {
+      "number": 4
+     }
+    },
+    {
+     "id": "fact_c4s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Người trực bảo Lâm sáng hôm sau mang cuốn sổ đến để đối chiếu."
+     }
+    },
+    {
+     "id": "fact_c4s2_1",
+     "label": "Fact",
+     "props": {
+      "text": "Lâm nói rằng lúc này anh chưa muốn giải thích lý do vào buồng ông Tấn đêm mất điện."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "KNOWS",
+     "from": "nguyen_binh",
+     "to": "fact_vu_lam_lay_so",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_binh>fact_vu_lam_lay_so@4",
+     "props": {
+      "how": "chứng kiến"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s1_1",
+     "to": "vu_lam",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s1_1>vu_lam@4",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s1_1",
+     "to": "so_ghi_chep",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s1_1>so_ghi_chep@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c4s1_1",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c4s1_1@4",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Người trực gấp trang ghi lời khai lại, bảo Lâm sáng hôm sau mang cuốn sổ đến để đối chiếu."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c4s1_1",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c4s1_1>ch4@4",
+     "props": {
+      "quote": "Người trực gấp trang ghi lời khai lại, bảo Lâm sáng hôm sau mang cuốn sổ đến để đối chiếu."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c4s2_1",
+     "to": "vu_lam",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c4s2_1>vu_lam@4",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c4s2_1",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c4s2_1@4",
+     "props": {
+      "how": "chứng kiến",
+      "quote": "Lúc này tôi chưa muốn giải thích."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c4s2_1",
+     "to": "ch4",
+     "valid_from_chapter": 4,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c4s2_1>ch4@4",
+     "props": {
+      "quote": "Lúc này tôi chưa muốn giải thích."
+     }
+    }
+   ],
+   "close": []
+  },
+  "5": {
+   "commit_id": "ch5-2a81db6f4007",
+   "nodes": [
+    {
+     "id": "ch5",
+     "label": "Chapter",
+     "props": {
+      "number": 5
+     }
+    },
+    {
+     "id": "fact_c5s1_1",
+     "label": "Fact",
+     "props": {
+      "text": "Chị Hòa cho ông Tấn vay tiền, rồi ông Tấn cho Lâm vay lại một phần; Lâm đã trả một phần và còn nợ ông Tấn."
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "pham_hoa",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>pham_hoa@5",
+     "props": {
+      "feeling": "băn khoăn, kiên quyết"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "tran_tan",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>tran_tan@5",
+     "props": {
+      "feeling": "băn khoăn, kiên quyết"
+     }
+    },
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "fact_c2s1_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>fact_c2s1_1@5",
+     "props": {
+      "feeling": "băn khoăn, kiên quyết"
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "khoan_tien",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:khoan_tien>ch5@5",
+     "props": {
+      "quote": "Chị Hòa cho ông Tấn vay. Ông ấy đưa một phần số tiền đó cho tôi vay lại. Chị Hòa đòi ông Tấn, chứ không đòi tôi."
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "pham_hoa",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>pham_hoa@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "tran_tan",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>tran_tan@5",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_c5s1_1",
+     "to": "vu_lam",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_c5s1_1>vu_lam@5",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_c5s1_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_c5s1_1@5",
+     "props": {
+      "how": "được kể",
+      "told_by": "vu_lam",
+      "quote": "Chị Hòa cho ông Tấn vay. Ông ấy đưa một phần số tiền đó cho tôi vay lại. Chị Hòa đòi ông Tấn, chứ không đòi tôi."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "fact_c5s1_1",
+     "to": "ch5",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:fact_c5s1_1>ch5@5",
+     "props": {
+      "quote": "Chị Hòa cho ông Tấn vay. Ông ấy đưa một phần số tiền đó cho tôi vay lại. Chị Hòa đòi ông Tấn, chứ không đòi tôi."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_lam",
+     "to": "fact_c5s1_1",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_lam>fact_c5s1_1@5",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "protagonist",
+     "to": "fact_vu_lam_dong_co",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:protagonist>fact_vu_lam_dong_co@5",
+     "props": {
+      "how": "được kể",
+      "told_by": "vu_lam",
+      "quote": "Tôi lấy cuốn sổ để che chuyện đã nhận tiền của ông Tấn mà chưa trả đủ."
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_lam",
+     "to": "fact_vu_lam_dong_co",
+     "valid_from_chapter": 5,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_lam>fact_vu_lam_dong_co@5",
+     "props": {
+      "how": "tự biết"
+     }
+    }
+   ],
+   "close": []
+  },
+  "6": {
+   "commit_id": "ch6-c231bc856e5a",
+   "nodes": [
+    {
+     "id": "ch6",
+     "label": "Chapter",
+     "props": {
+      "number": 6
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "FEELS",
+     "from": "protagonist",
+     "to": "tran_tan",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "FEELS:protagonist>tran_tan@6",
+     "props": {
+      "feeling": "quyết tâm"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "tim_ong_tan",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:tim_ong_tan>ch6@6",
+     "props": {
+      "quote": "Đã biết ông Tấn ở đâu, biết ông còn sống; chuyện ông có trở lại khu tập thể hay không, người trong nhà cũng chưa thể nói thay."
+     }
+    },
+    {
+     "type": "RESOLVED_IN",
+     "from": "tim_ong_tan",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "RESOLVED_IN:tim_ong_tan>ch6@6",
+     "props": {
+      "quote": "Đã biết ông Tấn ở đâu, biết ông còn sống; chuyện ông có trở lại khu tập thể hay không, người trong nhà cũng chưa thể nói thay."
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "khu_tap_the_kham_thien",
+     "to": "ch6",
+     "valid_from_chapter": 6,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:khu_tap_the_kham_thien>ch6@6",
+     "props": {
+      "quote": "- Chúng tôi ở khu tập thể Khâm Thiên",
+      "known_as": "khu tập thể Khâm Thiên"
+     }
+    }
+   ],
+   "close": [
+    {
+     "type": "FEELS",
+     "id": "FEELS:protagonist>tran_tan@5",
+     "valid_to_chapter": 6
+    }
+   ]
+  }
+ },
+ "final": {
+  "chapter": 6,
+  "nodes": {
+   "buong_mai": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "buồng Mai"
+     ],
+     "name": "Buồng nhà Mai",
+     "description": "Căn buồng nhỏ của gia đình Mai ở tầng trên, có vách vôi chung với buồng ông Tấn."
+    }
+   },
+   "buong_tan": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "buồng bên"
+     ],
+     "name": "Buồng ông Tấn",
+     "description": "Căn buồng chật của ông Tấn, nơi chiếc nồi nước nguội còn lại sau khi ông biến mất."
+    }
+   },
+   "cau_thang_kham_thien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "cầu thang"
+     ],
+     "name": "Cầu thang khu tập thể",
+     "description": "Cầu thang hẹp thường vương mùi dầu hỏa và tiếng bước chân khó phân biệt."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "ch1": {
+    "label": "Chapter",
+    "props": {
+     "number": 1
+    }
+   },
+   "ch2": {
+    "label": "Chapter",
+    "props": {
+     "number": 2
+    }
+   },
+   "ch3": {
+    "label": "Chapter",
+    "props": {
+     "number": 3
+    }
+   },
+   "ch4": {
+    "label": "Chapter",
+    "props": {
+     "number": 4
+    }
+   },
+   "ch5": {
+    "label": "Chapter",
+    "props": {
+     "number": 5
+    }
+   },
+   "ch6": {
+    "label": "Chapter",
+    "props": {
+     "number": 6
+    }
+   },
+   "chiec_chia_khoa": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chìa khóa"
+     ],
+     "name": "Chìa khóa buồng ông Tấn",
+     "description": "Chiếc chìa khóa dự phòng được giao cho chị Hòa giữ hộ trước khi ông Tấn biến mất."
+    }
+   },
+   "cong_an_khu_vuc": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "công an"
+     ],
+     "name": "Công an khu vực",
+     "description": "Nhóm cán bộ phụ trách trật tự và xác minh tin báo trong khu dân cư."
+    }
+   },
+   "dem_mat_dien": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã vào buồng ông Tấn trong đêm mất điện?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 4
+    }
+   },
+   "fact_c1s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa nhớ cửa buồng ông Tấn đã khép lại vào tối hôm ấy."
+    }
+   },
+   "fact_c1s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa không nhớ cửa buồng khép lại trước hay sau lúc mất điện."
+    }
+   },
+   "fact_c1s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa từ chối cho Mai xem buồng ông Tấn cho đến khi công an quay lại."
+    }
+   },
+   "fact_c2s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa nói khoản tiền giữa chị và ông Tấn là việc riêng chưa giải quyết xong."
+    }
+   },
+   "fact_c2s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Mai ghi vào sổ rằng chị Hòa không nhận ra nhịp gõ."
+    }
+   },
+   "fact_c2s2_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa nói không biết tiếng gõ phát ra từ đâu."
+    }
+   },
+   "fact_c3s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Anh Bình thấy cửa buồng ông Tấn khép khi đi ngang."
+    }
+   },
+   "fact_c3s1_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Anh Bình thấy vết cọ mới ở mép chốt vào hôm sau."
+    }
+   },
+   "fact_c3s1_3": {
+    "label": "Fact",
+    "props": {
+     "text": "Mai nói với anh Bình rằng cô sẽ chỉ kể phần mình biết và chưa thể nói ai vào buồng ông Tấn."
+    }
+   },
+   "fact_c4s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Người trực bảo Lâm sáng hôm sau mang cuốn sổ đến để đối chiếu."
+    }
+   },
+   "fact_c4s2_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Lâm nói rằng lúc này anh chưa muốn giải thích lý do vào buồng ông Tấn đêm mất điện."
+    }
+   },
+   "fact_c5s1_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa cho ông Tấn vay tiền, rồi ông Tấn cho Lâm vay lại một phần; Lâm đã trả một phần và còn nợ ông Tấn."
+    }
+   },
+   "fact_chia_khoa_du_phong": {
+    "label": "Fact",
+    "props": {
+     "text": "Chị Hòa giữ chìa khóa dự phòng buồng ông Tấn theo lời nhờ của ông."
+    }
+   },
+   "fact_mai_o_tram_y_te": {
+    "label": "Fact",
+    "props": {
+     "text": "Mai làm y tá tại một trạm y tế gần khu tập thể."
+    }
+   },
+   "fact_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Tấn không có mặt ở buồng mình từ sáng sau một đêm mất điện."
+    }
+   },
+   "fact_noi_cai_va": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Tấn và chị Hòa từng cãi nhau về một khoản tiền chưa trả."
+    }
+   },
+   "fact_tieng_go": {
+    "label": "Fact",
+    "props": {
+     "text": "Trong những đêm trước khi ông Tấn biến mất, có người nghe tiếng gõ đều đặn qua vách buồng."
+    }
+   },
+   "fact_vu_lam_dong_co": {
+    "label": "Fact",
+    "props": {
+     "text": "Vũ Lâm lấy cuốn sổ để che giấu việc mình đã nhận tiền của ông Tấn rồi không trả đủ."
+    }
+   },
+   "fact_vu_lam_lay_so": {
+    "label": "Fact",
+    "props": {
+     "text": "Vũ Lâm lấy cuốn sổ của ông Tấn trong đêm mất điện."
+    }
+   },
+   "khoan_tien": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Khoản tiền giữa ông Tấn và chị Hòa thực chất là chuyện gì?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "khu_tap_the_kham_thien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "khu tập thể"
+     ],
+     "name": "Khu tập thể Khâm Thiên",
+     "description": "Dãy nhà cũ gần phố Khâm Thiên có hành lang chung tối sau giờ cắt điện và những vách ngăn mỏng."
+    }
+   },
+   "loi_khai_cua_mai": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mai sẽ kể lại những gì mình nghe được với công an khu vực đến mức nào?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "nguyen_binh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Công an khu vực phụ trách khu tập thể; đã tiếp nhận tin ông Tấn mất tích và đang lần lượt hỏi chuyện cư dân.",
+     "aliases": [
+      "anh Bình"
+     ],
+     "personality": "Điềm đạm, kiệm lời, quen hỏi từng chi tiết nhỏ trước khi kết luận.",
+     "name": "Nguyễn Bình"
+    }
+   },
+   "pham_hoa": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ở buồng đối diện ông Tấn, làm công việc may gia công tại nhà và thường ra hành lang lấy nước vào ban đêm.",
+     "aliases": [
+      "chị Hòa"
+     ],
+     "personality": "Thực tế, dễ cáu khi bị hỏi dồn, nhưng vẫn để ý chuyện ăn ở của hàng xóm.",
+     "name": "Phạm Hòa"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Mai là nữ y tá trực tại một trạm y tế gần khu tập thể, sống cùng mẹ và em trong căn buồng nhỏ trên cùng tầng với ông Tấn. Cô thường thức khuya, nên biết tiếng bước chân và tiếng gõ vọng qua vách vào những đêm mùa đông, dù không chắc chúng bắt đầu từ căn hộ nào. Khi ông Tấn biến mất, những lần cô ra hành lang lấy nước khiến lời kể của cô được chú ý, đồng thời làm cô lo rằng hàng xóm sẽ xem mình là người xen vào chuyện riêng.",
+     "personality": "Nhanh trí, kín đáo và nhạy với tâm trạng người khác. Mai thường dùng vẻ bông đùa để che sự bất an, nhưng không dễ bỏ qua những điều mình thấy bất thường.",
+     "name": "Lê Thị Mai",
+     "is_protagonist": true
+    }
+   },
+   "so_ghi_chep": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "cuốn sổ"
+     ],
+     "name": "Sổ ghi chép của ông Tấn",
+     "description": "Cuốn sổ bìa sẫm ông Tấn thường cất trong ngăn bàn, ghi những khoản tiền và ngày tháng rời rạc."
+    }
+   },
+   "tim_ong_tan": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mai có xác định được ông Tấn đang ở đâu không?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 6
+    }
+   },
+   "tran_tan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Sống một mình trong căn buồng sát nhà Mai ở khu tập thể Khâm Thiên; trước khi mất tích, ông thường tranh cãi với người hàng xóm về một khoản tiền và những giấy tờ cũ.",
+     "aliases": [
+      "ông Tấn"
+     ],
+     "personality": "Ít lời, cẩn trọng, quen giữ việc riêng cho mình; khi bị dồn ép thường gõ nhịp đều lên mặt bàn.",
+     "name": "Trần Tấn"
+    }
+   },
+   "vu_lam": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng làm cùng ông Tấn ở một tổ sửa chữa; gần đây thường ghé khu tập thể, nói là đến thăm người quen.",
+     "aliases": [
+      "Lâm"
+     ],
+     "personality": "Nói năng mềm mỏng nhưng hay lảng tránh những câu hỏi cụ thể.",
+     "name": "Vũ Lâm"
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:nguyen_binh>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "nguyen_binh",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người đang lấy lời khai"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_hoa>tran_tan@0",
+    "type": "RELATES_TO",
+    "source": "pham_hoa",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -35,
+     "kind": "hàng xóm hay cãi vã"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>nguyen_binh@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "nguyen_binh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người được hỏi"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>tran_tan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "hàng xóm"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_tan>pham_hoa@0",
+    "type": "RELATES_TO",
+    "source": "tran_tan",
+    "target": "pham_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -25,
+     "kind": "hàng xóm hay cãi vã"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_tan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "tran_tan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "hàng xóm"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_tan>vu_lam@0",
+    "type": "RELATES_TO",
+    "source": "tran_tan",
+    "target": "vu_lam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -10,
+     "kind": "người quen cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:vu_lam>tran_tan@0",
+    "type": "RELATES_TO",
+    "source": "vu_lam",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -10,
+     "kind": "người quen cũ"
+    }
+   },
+   {
+    "id": "LOCATED_AT:nguyen_binh>khu_tap_the_kham_thien@0",
+    "type": "LOCATED_AT",
+    "source": "nguyen_binh",
+    "target": "khu_tap_the_kham_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_hoa>khu_tap_the_kham_thien@0",
+    "type": "LOCATED_AT",
+    "source": "pham_hoa",
+    "target": "khu_tap_the_kham_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>buong_mai@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "buong_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_tan>buong_tan@0",
+    "type": "LOCATED_AT",
+    "source": "tran_tan",
+    "target": "buong_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:vu_lam>khu_tap_the_kham_thien@0",
+    "type": "LOCATED_AT",
+    "source": "vu_lam",
+    "target": "khu_tap_the_kham_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:pham_hoa>chiec_chia_khoa@0",
+    "type": "HOLDS",
+    "source": "pham_hoa",
+    "target": "chiec_chia_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:vu_lam>so_ghi_chep@0",
+    "type": "HOLDS",
+    "source": "vu_lam",
+    "target": "so_ghi_chep",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nguyen_binh>cong_an_khu_vuc@0",
+    "type": "MEMBER_OF",
+    "source": "nguyen_binh",
+    "target": "cong_an_khu_vuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:nguyen_binh>fact_c3s1_1@3",
+    "type": "KNOWS",
+    "source": "nguyen_binh",
+    "target": "fact_c3s1_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_binh>fact_c3s1_2@3",
+    "type": "KNOWS",
+    "source": "nguyen_binh",
+    "target": "fact_c3s1_2",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_binh>fact_mai_o_tram_y_te@0",
+    "type": "KNOWS",
+    "source": "nguyen_binh",
+    "target": "fact_mai_o_tram_y_te",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_binh>fact_mat_tich@0",
+    "type": "KNOWS",
+    "source": "nguyen_binh",
+    "target": "fact_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_binh>fact_vu_lam_lay_so@4",
+    "type": "KNOWS",
+    "source": "nguyen_binh",
+    "target": "fact_vu_lam_lay_so",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_c1s1_1@1",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_c1s1_1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_c1s1_2@1",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_c1s1_2",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_c2s1_1@2",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_c2s1_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_c2s2_2@2",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_c2s2_2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_chia_khoa_du_phong@0",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_chia_khoa_du_phong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_mai_o_tram_y_te@0",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_mai_o_tram_y_te",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_mat_tich@0",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_noi_cai_va@0",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_noi_cai_va",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_hoa>fact_tieng_go@0",
+    "type": "KNOWS",
+    "source": "pham_hoa",
+    "target": "fact_tieng_go",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s1_1@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s1_1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Chị chỉ nhớ tối hôm ấy cửa buồng khép lại.",
+     "told_by": "pham_hoa"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s1_2@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s1_2",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Chị không nhớ rõ.",
+     "told_by": "pham_hoa"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c1s2_1@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c1s2_1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "- Để khi nào họ đến đã."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s1_1@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s1_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "- Việc riêng chưa giải quyết xong.",
+     "told_by": "pham_hoa"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s2_1@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s2_1",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự làm",
+     "quote": "Tôi lấy cuốn sổ nhỏ trong túi áo, ghi bên cạnh nhịp gõ: chị Hòa không nhận ra."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c2s2_2@2",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c2s2_2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "- Tôi không biết nó từ đâu.",
+     "told_by": "pham_hoa"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_1@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_1",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Cửa khép rồi. Tôi đi qua thấy vậy thôi, chứ không biết ai vào trước đó hay có ai ra sau.",
+     "told_by": "nguyen_binh"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_2@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_2",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Mép chốt có vết cọ mới. Hôm sau tôi mới thấy.",
+     "told_by": "nguyen_binh"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c3s1_3@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c3s1_3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự làm",
+     "quote": "- Tôi sẽ nói đúng phần mình biết. Còn chuyện ai vào buồng, tôi chưa thể nói."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c4s1_1@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c4s1_1",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Người trực gấp trang ghi lời khai lại, bảo Lâm sáng hôm sau mang cuốn sổ đến để đối chiếu."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c4s2_1@4",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c4s2_1",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "chứng kiến",
+     "quote": "Lúc này tôi chưa muốn giải thích."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_c5s1_1@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_c5s1_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Chị Hòa cho ông Tấn vay. Ông ấy đưa một phần số tiền đó cho tôi vay lại. Chị Hòa đòi ông Tấn, chứ không đòi tôi.",
+     "told_by": "vu_lam"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_mat_tich@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_mat_tich",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Ông Tấn vắng mặt từ sáng."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_tieng_go@1",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_tieng_go",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết",
+     "quote": "Tôi chợt nhớ đêm mất điện: tiếng chân đi đâu đó trên nền xi măng, rồi tiếng gõ vọng qua vách, đều đều đến mức tôi đã tưởng nhà bên đang sửa cái gì."
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_vu_lam_dong_co@5",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_vu_lam_dong_co",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Tôi lấy cuốn sổ để che chuyện đã nhận tiền của ông Tấn mà chưa trả đủ.",
+     "told_by": "vu_lam"
+    }
+   },
+   {
+    "id": "KNOWS:protagonist>fact_vu_lam_lay_so@3",
+    "type": "KNOWS",
+    "source": "protagonist",
+    "target": "fact_vu_lam_lay_so",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "được kể",
+     "quote": "Tôi lấy cuốn sổ của ông ấy.",
+     "told_by": "vu_lam"
+    }
+   },
+   {
+    "id": "KNOWS:vu_lam>fact_c5s1_1@5",
+    "type": "KNOWS",
+    "source": "vu_lam",
+    "target": "fact_c5s1_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_lam>fact_noi_cai_va@0",
+    "type": "KNOWS",
+    "source": "vu_lam",
+    "target": "fact_noi_cai_va",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_lam>fact_tieng_go@0",
+    "type": "KNOWS",
+    "source": "vu_lam",
+    "target": "fact_tieng_go",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_lam>fact_vu_lam_dong_co@5",
+    "type": "KNOWS",
+    "source": "vu_lam",
+    "target": "fact_vu_lam_dong_co",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_lam>fact_vu_lam_lay_so@3",
+    "type": "KNOWS",
+    "source": "vu_lam",
+    "target": "fact_vu_lam_lay_so",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>fact_c2s1_1@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "fact_c2s1_1",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "băn khoăn, kiên quyết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>pham_hoa@5",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "pham_hoa",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "băn khoăn, kiên quyết"
+    }
+   },
+   {
+    "id": "FEELS:protagonist>tran_tan@6",
+    "type": "FEELS",
+    "source": "protagonist",
+    "target": "tran_tan",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "feeling": "quyết tâm"
+    }
+   },
+   {
+    "id": "ABOUT:fact_c1s1_1>pham_hoa@1",
+    "type": "ABOUT",
+    "source": "fact_c1s1_1",
+    "target": "pham_hoa",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s1_1>tran_tan@1",
+    "type": "ABOUT",
+    "source": "fact_c1s1_1",
+    "target": "tran_tan",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s1_2>pham_hoa@1",
+    "type": "ABOUT",
+    "source": "fact_c1s1_2",
+    "target": "pham_hoa",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_1>pham_hoa@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_1",
+    "target": "pham_hoa",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c1s2_1>protagonist@1",
+    "type": "ABOUT",
+    "source": "fact_c1s2_1",
+    "target": "protagonist",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s1_1>pham_hoa@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_1",
+    "target": "pham_hoa",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s1_1>tran_tan@2",
+    "type": "ABOUT",
+    "source": "fact_c2s1_1",
+    "target": "tran_tan",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s2_1>pham_hoa@2",
+    "type": "ABOUT",
+    "source": "fact_c2s2_1",
+    "target": "pham_hoa",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s2_1>protagonist@2",
+    "type": "ABOUT",
+    "source": "fact_c2s2_1",
+    "target": "protagonist",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c2s2_2>pham_hoa@2",
+    "type": "ABOUT",
+    "source": "fact_c2s2_2",
+    "target": "pham_hoa",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>buong_tan@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "buong_tan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_1>nguyen_binh@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_1",
+    "target": "nguyen_binh",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_2>buong_tan@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_2",
+    "target": "buong_tan",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_2>nguyen_binh@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_2",
+    "target": "nguyen_binh",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_3>nguyen_binh@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_3",
+    "target": "nguyen_binh",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c3s1_3>protagonist@3",
+    "type": "ABOUT",
+    "source": "fact_c3s1_3",
+    "target": "protagonist",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s1_1>so_ghi_chep@4",
+    "type": "ABOUT",
+    "source": "fact_c4s1_1",
+    "target": "so_ghi_chep",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s1_1>vu_lam@4",
+    "type": "ABOUT",
+    "source": "fact_c4s1_1",
+    "target": "vu_lam",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c4s2_1>vu_lam@4",
+    "type": "ABOUT",
+    "source": "fact_c4s2_1",
+    "target": "vu_lam",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>pham_hoa@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "pham_hoa",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>tran_tan@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "tran_tan",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_c5s1_1>vu_lam@5",
+    "type": "ABOUT",
+    "source": "fact_c5s1_1",
+    "target": "vu_lam",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_chia_khoa_du_phong>chiec_chia_khoa@0",
+    "type": "ABOUT",
+    "source": "fact_chia_khoa_du_phong",
+    "target": "chiec_chia_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_chia_khoa_du_phong>pham_hoa@0",
+    "type": "ABOUT",
+    "source": "fact_chia_khoa_du_phong",
+    "target": "pham_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_chia_khoa_du_phong>tran_tan@0",
+    "type": "ABOUT",
+    "source": "fact_chia_khoa_du_phong",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_mai_o_tram_y_te>khu_tap_the_kham_thien@0",
+    "type": "ABOUT",
+    "source": "fact_mai_o_tram_y_te",
+    "target": "khu_tap_the_kham_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_mai_o_tram_y_te>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_mai_o_tram_y_te",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_mat_tich>buong_tan@0",
+    "type": "ABOUT",
+    "source": "fact_mat_tich",
+    "target": "buong_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_mat_tich>khu_tap_the_kham_thien@0",
+    "type": "ABOUT",
+    "source": "fact_mat_tich",
+    "target": "khu_tap_the_kham_thien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_mat_tich>tran_tan@0",
+    "type": "ABOUT",
+    "source": "fact_mat_tich",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_noi_cai_va>pham_hoa@0",
+    "type": "ABOUT",
+    "source": "fact_noi_cai_va",
+    "target": "pham_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_noi_cai_va>tran_tan@0",
+    "type": "ABOUT",
+    "source": "fact_noi_cai_va",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tieng_go>buong_mai@0",
+    "type": "ABOUT",
+    "source": "fact_tieng_go",
+    "target": "buong_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tieng_go>buong_tan@0",
+    "type": "ABOUT",
+    "source": "fact_tieng_go",
+    "target": "buong_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tieng_go>tran_tan@0",
+    "type": "ABOUT",
+    "source": "fact_tieng_go",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vu_lam_dong_co>so_ghi_chep@0",
+    "type": "ABOUT",
+    "source": "fact_vu_lam_dong_co",
+    "target": "so_ghi_chep",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vu_lam_dong_co>tran_tan@0",
+    "type": "ABOUT",
+    "source": "fact_vu_lam_dong_co",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vu_lam_dong_co>vu_lam@0",
+    "type": "ABOUT",
+    "source": "fact_vu_lam_dong_co",
+    "target": "vu_lam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vu_lam_lay_so>so_ghi_chep@0",
+    "type": "ABOUT",
+    "source": "fact_vu_lam_lay_so",
+    "target": "so_ghi_chep",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_vu_lam_lay_so>vu_lam@0",
+    "type": "ABOUT",
+    "source": "fact_vu_lam_lay_so",
+    "target": "vu_lam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "RESOLVED_IN:dem_mat_dien>ch3@3",
+    "type": "RESOLVED_IN",
+    "source": "dem_mat_dien",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Giờ tôi biết ai đã vào buồng ông Tấn trong đêm mất điện; còn vì sao anh ta lấy cuốn sổ, tôi chưa biết."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:khoan_tien>ch5@5",
+    "type": "RESOLVED_IN",
+    "source": "khoan_tien",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chị Hòa cho ông Tấn vay. Ông ấy đưa một phần số tiền đó cho tôi vay lại. Chị Hòa đòi ông Tấn, chứ không đòi tôi."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:loi_khai_cua_mai>ch3@3",
+    "type": "RESOLVED_IN",
+    "source": "loi_khai_cua_mai",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Tôi sẽ nói đúng phần mình biết. Còn chuyện ai vào buồng, tôi chưa thể nói."
+    }
+   },
+   {
+    "id": "RESOLVED_IN:tim_ong_tan>ch6@6",
+    "type": "RESOLVED_IN",
+    "source": "tim_ong_tan",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đã biết ông Tấn ở đâu, biết ông còn sống; chuyện ông có trở lại khu tập thể hay không, người trong nhà cũng chưa thể nói thay."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:buong_mai>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "buong_mai",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi quay về buồng mình.",
+     "known_as": "buồng mình"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:buong_tan>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "buong_tan",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cánh buồng ông Tấn vẫn khép hờ.",
+     "known_as": "buồng ông Tấn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cau_thang_kham_thien>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cau_thang_kham_thien",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Mùi dầu hỏa vương từ chiếc đèn bão nhà ai để trên bậc thang.",
+     "known_as": "bậc thang"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:chiec_chia_khoa>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "chiec_chia_khoa",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ông ấy nhờ chị giữ chìa dự phòng.",
+     "known_as": "chìa dự phòng"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:cong_an_khu_vuc>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "cong_an_khu_vuc",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhưng công an chưa quay lại, chị không muốn đụng vào đồ đạc.",
+     "known_as": "công an"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:dem_mat_dien>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "dem_mat_dien",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhịp gõ giúp tôi đối chiếu lời người ta kể về đêm mất điện; nó chưa chỉ cho tôi biết bàn tay nào đã gõ."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s1_1>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s1_1",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chị chỉ nhớ tối hôm ấy cửa buồng khép lại."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s1_2>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s1_2",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chị không nhớ rõ."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c1s2_1>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c1s2_1",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Để khi nào họ đến đã."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s1_1>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s1_1",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Việc riêng chưa giải quyết xong."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s2_1>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s2_1",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi lấy cuốn sổ nhỏ trong túi áo, ghi bên cạnh nhịp gõ: chị Hòa không nhận ra."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c2s2_2>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c2s2_2",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Tôi không biết nó từ đâu."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_1>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_1",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cửa khép rồi. Tôi đi qua thấy vậy thôi, chứ không biết ai vào trước đó hay có ai ra sau."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_2>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_2",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Mép chốt có vết cọ mới. Hôm sau tôi mới thấy."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c3s1_3>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c3s1_3",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Tôi sẽ nói đúng phần mình biết. Còn chuyện ai vào buồng, tôi chưa thể nói."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c4s1_1>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c4s1_1",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Người trực gấp trang ghi lời khai lại, bảo Lâm sáng hôm sau mang cuốn sổ đến để đối chiếu."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c4s2_1>ch4@4",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c4s2_1",
+    "target": "ch4",
+    "valid_from_chapter": 4,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lúc này tôi chưa muốn giải thích."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_c5s1_1>ch5@5",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_c5s1_1",
+    "target": "ch5",
+    "valid_from_chapter": 5,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chị Hòa cho ông Tấn vay. Ông ấy đưa một phần số tiền đó cho tôi vay lại. Chị Hòa đòi ông Tấn, chứ không đòi tôi."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_mat_tich>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_mat_tich",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Ông Tấn vắng mặt từ sáng."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_tieng_go>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_tieng_go",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi chợt nhớ đêm mất điện: tiếng chân đi đâu đó trên nền xi măng, rồi tiếng gõ vọng qua vách, đều đều đến mức tôi đã tưởng nhà bên đang sửa cái gì."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:fact_vu_lam_lay_so>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "fact_vu_lam_lay_so",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi lấy cuốn sổ của ông ấy."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:khoan_tien>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "khoan_tien",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Vậy khoản tiền giữa chị với ông Tấn, rốt cuộc là chuyện gì?"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:khu_tap_the_kham_thien>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "khu_tap_the_kham_thien",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "- Chúng tôi ở khu tập thể Khâm Thiên",
+     "known_as": "khu tập thể Khâm Thiên"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:nguyen_binh>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "nguyen_binh",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Sau khi anh Bình hỏi chuyện, tôi lại ra hành lang.",
+     "known_as": "anh Bình"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:pham_hoa>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "pham_hoa",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Chị Hòa bước ra từ đầu hành lang, tay kéo vạt áo len sát cổ.",
+     "known_as": "Chị Hòa"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Lê Thị Mai",
+     "known_as": "Lê Thị Mai"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:so_ghi_chep>ch2@2",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "so_ghi_chep",
+    "target": "ch2",
+    "valid_from_chapter": 2,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Tôi lấy cuốn sổ nhỏ trong túi áo, ghi bên cạnh nhịp gõ: chị Hòa không nhận ra.",
+     "known_as": "cuốn sổ"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tim_ong_tan>ch6@6",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tim_ong_tan",
+    "target": "ch6",
+    "valid_from_chapter": 6,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Đã biết ông Tấn ở đâu, biết ông còn sống; chuyện ông có trở lại khu tập thể hay không, người trong nhà cũng chưa thể nói thay."
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:tran_tan>ch1@1",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "tran_tan",
+    "target": "ch1",
+    "valid_from_chapter": 1,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Cánh buồng ông Tấn vẫn khép hờ.",
+     "known_as": "ông Tấn"
+    }
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:vu_lam>ch3@3",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "vu_lam",
+    "target": "ch3",
+    "valid_from_chapter": 3,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Lâm bước tới, hai tay đút túi áo bông.",
+     "known_as": "Lâm"
+    }
+   }
+  ]
+ },
+ "chapters": {
+  "1": [
+   {
+    "attempt": 1,
+    "commit_id": "ch1-6c5dc28ad4bf",
+    "player_action": null,
+    "error_detail": null,
+    "summary": "Sau khi anh Bình hỏi chuyện, tôi ra hành lang và xin chị Hòa cho xem buồng ông Tấn, nhưng chị từ chối vì công an chưa quay lại. Chị chỉ nhớ cửa buồng khép trong đêm, không rõ trước hay sau lúc mất điện; chị cũng né câu hỏi về tiếng cãi nhau và khoản tiền giữa hai người. Tôi ghi lại các manh mối, định sáng hỏi giờ mất điện. Đêm đó, tôi nghe tiếng gõ đều qua vách, không xác định được phát ra từ buồng nào. Sáng hôm sau, chị Hòa nói không nhớ đã nghe tiếng gõ và cảnh báo tôi đừng biến âm thanh mơ hồ thành lời buộc tội; chị tiếp tục không cho tôi vào buồng ông Tấn. Tôi chưa biết ông Tấn ở đâu hay ai đã vào buồng, và quyết định ghi nhận tiếng gõ để kiểm chứng.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Mai tìm hiểu những gì có thể về buồng ông Tấn và đêm ông biến mất, nhưng chưa vội kể hết điều mình nghe với công an.",
+      "present": [
+       "protagonist",
+       "pham_hoa"
+      ],
+      "beats": [
+       "Sau khi công an khu vực hỏi chuyện, Mai trở lại hành lang tối và dừng trước cánh cửa buồng ông Tấn vẫn khép hờ; mùi dầu hỏa lẫn với mùi nước nguội khiến cô nhớ lại đêm mất điện.",
+       "Chị Hòa gặp Mai ở hành lang, nói ông Tấn đã nhờ chị giữ chìa khóa dự phòng; khi Mai hỏi có thể vào xem một lượt không, chị Hòa lắc đầu, bảo không muốn đụng đến đồ đạc trước khi công an quay lại.",
+       "Mai hỏi chị Hòa lần cuối cùng nhìn thấy ông Tấn là khi nào; chị đáp rằng bà chỉ nhớ cửa buồng khép lại trong đêm, rồi cụp mắt khi Mai nhắc đến tiếng cãi vã từng vọng qua vách.",
+       "Mai không ép hỏi chuyện khoản tiền mà hàng xóm từng xì xào; cô nhận ra chị Hòa đang lo người khác nghe thấy, còn câu trả lời về đêm mất điện vẫn quá ngắn để xác nhận ông Tấn đã đi đâu.",
+       "Trở về buồng mình, Mai ghi lại những điều chắc chắn và những điều chỉ là suy đoán, rồi quyết định sáng hôm sau sẽ tự kiểm tra thời điểm tiếng động bắt đầu thay vì dựa vào lời kể đứt quãng."
+      ],
+      "ends_at": "Cảnh kết trong buồng Mai, khi cô ngồi bên trang giấy ghi chép và nghe hành lang im bặt sau cánh cửa.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Mai đối chiếu tiếng gõ mình từng nghe với lời kể còn thiếu chắc chắn, nhưng chỉ nhận ra đó là một dấu hiệu cần kiểm chứng chứ không thể kết luận từ đâu phát ra.",
+      "present": [
+       "protagonist",
+       "pham_hoa"
+      ],
+      "beats": [
+       "Đêm xuống, Mai ngồi trong buồng mình và nghe tiếng gõ đều đều vọng qua vách; cô đếm nhịp, nhưng âm thanh tắt trước khi xác định được nó phát ra từ buồng nào.",
+       "Sáng hôm sau, Mai gặp chị Hòa ngoài hành lang và hỏi liệu chị có nghe tiếng gõ vào đêm ông Tấn biến mất; chị Hòa đáp rằng mình không nhớ rõ, rồi nhắc Mai đừng biến một âm thanh mơ hồ thành lời buộc tội.",
+       "Mai hỏi xin chị Hòa mở cửa buồng ông Tấn để nhìn qua, nhưng chị Hòa từ chối vì công an chưa quay lại và chị không muốn tự ý động vào đồ đạc.",
+       "Khi chị Hòa quay vào nhà, Mai đứng lại trước cánh cửa khép hờ, nhận ra tiếng gõ lặp đều trong những đêm trước có thể giúp cô đối chiếu lời kể về đêm mất điện, nhưng hiện giờ chưa đủ để xác định ông Tấn ở đâu hay ai đã vào buồng ông."
+      ],
+      "ends_at": "Cảnh kết ở hành lang khu tập thể, khi Mai rời cánh cửa buồng ông Tấn mà chưa biết ông đang ở đâu.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-865ce779b94d",
+      "kind": "action",
+      "tone": null,
+      "text": "Ghi lại nhịp tiếng gõ và thời điểm nghe thấy để đối chiếu sau.",
+      "listeners": [],
+      "about": [
+       "fact_tieng_go"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-45feddb5815f",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi chị Hòa lần nữa, nhưng nhấn mạnh rằng mình chưa buộc tội ai.",
+      "listeners": [
+       "pham_hoa"
+      ],
+      "about": [
+       "fact_c1s1_2",
+       "fact_tieng_go"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-cabaf70451ba",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình đừng biến tiếng gõ mơ hồ thành kết luận về ông Tấn.",
+      "listeners": [],
+      "about": [
+       "fact_tieng_go",
+       "fact_mat_tich"
+      ],
+      "lie": null,
+      "feeling": "thận trọng, kiềm chế nghi ngờ"
+     }
+    ]
+   }
+  ],
+  "2": [
+   {
+    "attempt": 1,
+    "commit_id": "ch2-fd42aebba550",
+    "player_action": "[Lời thoại, nói thật] Hỏi chị Hòa lần nữa, nhưng nhấn mạnh rằng mình chưa buộc tội ai.",
+    "error_detail": null,
+    "summary": "Mai hỏi chị Hòa về cửa buồng ông Tấn, tiếng gõ và khoản tiền giữa chị với ông Tấn. Chị xác nhận cửa buồng khép tối hôm ấy nhưng không nhớ trước hay sau lúc mất điện; chị từng nghe nhiều tiếng động song không biết tiếng gõ phát ra từ đâu hay có đúng đêm ông Tấn mất tích không. Khi Mai gõ thử lên vách, cô nhận ra nhịp gồm những tiếng gõ thành cụm, có quãng ngắt, nhưng âm thanh dội hai phía nên không xác định được nguồn hay người gõ. Chị Hòa không nhận ra nhịp, không muốn kể thêm về khoản tiền và dặn Mai đừng hỏi chuyện căn buồng. Mai ghi lại lời chị và giới hạn của điều mình biết, không định kể với công an khi đó chỉ là âm thanh chưa rõ. Cô quyết định hỏi anh Bình giờ khu nhà mất điện; cuối chương, Mai rời chỗ chị Hòa bên cửa sổ, còn nguồn tiếng gõ và vị trí ông Tấn vẫn chưa rõ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Mai muốn hỏi lại chị Hòa mà không biến những âm thanh mơ hồ thành lời buộc tội, đồng thời tìm cách kiểm chứng nhịp gõ đã nghe.",
+      "present": [
+       "protagonist",
+       "pham_hoa"
+      ],
+      "beats": [
+       "Mai gặp chị Hòa ngoài hành lang và nói mình chỉ muốn làm rõ lời kể, không định buộc tội chị; Hòa đáp rằng cô đã nói những gì mình nhớ.",
+       "Mai nhắc lại việc Hòa nhớ cửa buồng ông Tấn khép vào tối ấy nhưng không nhớ trước hay sau lúc mất điện; Hòa xác nhận, rồi nhấn mạnh rằng trí nhớ của chị không thể thay cho chứng cứ.",
+       "Mai hỏi về tiếng gõ đều đặn mình nghe qua vách; Hòa thoáng im lặng, sau đó nói chị không thể khẳng định tiếng ấy phát ra từ buồng nào hay vào đúng đêm ông Tấn biến mất.",
+       "Khi Mai khẽ gõ thử một nhịp lên vách, cô nhận ra âm thanh mình từng nghe lặp theo từng cụm đều đặn, có khoảng ngắt rõ ràng; ký ức ấy có thể đem đối chiếu với lời kể về đêm mất điện, nhưng chưa chỉ ra ai đã gõ.",
+       "Mai hỏi khoản tiền giữa hai người là chuyện gì; Hòa chỉ nói đó là việc riêng chưa giải quyết xong, không nói rõ số tiền hay lý do, rồi từ chối tiếp tục trò chuyện về căn buồng."
+      ],
+      "ends_at": "Cảnh kết ngoài hành lang, nơi Mai đã nhận ra nhịp gõ có thể kiểm chứng nhưng vẫn chưa biết nguồn phát ra.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Mai kiểm chứng nhịp tiếng gõ và tìm được một bước tiếp theo mà không biến manh mối mơ hồ thành lời buộc tội.",
+      "present": [
+       "protagonist",
+       "pham_hoa"
+      ],
+      "beats": [
+       "Sáng hôm sau, tôi gặp chị Hòa ngoài hành lang và nói rằng mình chỉ muốn kiểm tra tiếng gõ, không quy nó cho chị hay cho buồng nào.",
+       "Chị Hòa đáp ngắn rằng chị không biết tiếng ấy từ đâu, rồi nhắc tôi đừng hỏi thêm chuyện khoản tiền; tôi không ép chị kể.",
+       "Tôi gõ lại lên vách theo nhịp đã nhớ, nghỉ đúng quãng ngắt rồi lặp lại; âm thanh dội sang hai phía, không cho biết nó từng phát ra từ căn buồng nào.",
+       "Chị Hòa nghe một lượt nhưng không nhận ra nhịp gõ, chỉ nói rằng nhà sát vách thì tiếng động dễ lẫn; tôi ghi nhận lời chị bên cạnh điều mình tự nghe.",
+       "Tôi hiểu nhịp lặp có thể giúp đối chiếu những lời kể về đêm mất điện, nhưng chưa đủ để xác định ai đã vào buồng ông Tấn hay ông đang ở đâu; tôi quyết định hỏi anh Bình về thời điểm mất điện trước khi kể lại điều gì với công an."
+      ],
+      "ends_at": "Cảnh kết ở hành lang khu tập thể, khi tôi rời chị Hòa với một manh mối cần kiểm chứng và chưa đưa ra lời buộc tội nào.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-0104e952ea84",
+      "kind": "action",
+      "tone": null,
+      "text": "Tìm anh Bình để hỏi đêm mất điện bắt đầu lúc nào.",
+      "listeners": [],
+      "about": [
+       "nguyen_binh"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-959defe340b9",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "“Anh Bình, anh nhớ đêm ấy mất điện lúc nào không?”",
+      "listeners": [
+       "nguyen_binh"
+      ],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-b22bb356e7e0",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhắc mình chỉ ghi nhận âm thanh, chưa xem nó là dấu hiệu ai đã gõ.",
+      "listeners": [],
+      "about": [
+       "fact_c2s2_1",
+       "so_ghi_chep"
+      ],
+      "lie": null,
+      "feeling": "thận trọng"
+     }
+    ]
+   }
+  ],
+  "3": [
+   {
+    "attempt": 1,
+    "commit_id": "ch3-b827975645f2",
+    "player_action": "[Lời thoại, nói thật] “Anh Bình, anh nhớ đêm ấy mất điện lúc nào không?”",
+    "error_detail": null,
+    "summary": "Tôi hỏi anh Bình về đêm mất điện: anh chỉ nhớ cửa buồng ông Tấn khép khi đi ngang và hôm sau thấy vết cọ mới ở mép chốt, nhưng không biết dấu ấy xuất hiện lúc nào hay ai đã ra vào. Tôi quyết định chỉ kể với công an những gì thực sự nghe và biết, không buộc tội khi chưa có căn cứ; tôi cũng nhắc tiếng cãi vã, tiếng gõ không rõ từ buồng nào, không chắc đúng đêm ông Tấn mất tích. Lâm bất ngờ thú nhận đã vào buồng ông Tấn đêm mất điện để lấy cuốn sổ. Tôi hứa thuật lại lời anh cùng những giới hạn của các lời kể và dấu vết. Anh Bình bảo Lâm đi cùng lên công an khu vực khai rõ; hai người rời hành lang, còn lý do Lâm lấy cuốn sổ chưa được biết.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Mai hỏi anh Bình về giờ mất điện và nhận ra lời kể của anh về người ra vào buồng ông Tấn không khớp với dấu vết trên cửa.",
+      "present": [
+       "protagonist",
+       "nguyen_binh"
+      ],
+      "beats": [
+       "Rời chỗ chị Hòa bên cửa sổ, Mai tìm anh Bình ở hành lang và hỏi thẳng: “Anh nhớ đêm ấy mất điện lúc nào không?”",
+       "Bình nói điện tắt vào khoảng tối muộn, nhưng không chắc giờ; anh nhớ lúc đi ngang thì cửa buồng ông Tấn đã khép, nên không thể khẳng định ai vào sau đó.",
+       "Mai hỏi anh có thấy dấu hiệu nào ở cửa không; Bình kể trên mép chốt có vết cọ mới, như thể cửa từng bị tác động, nhưng anh không biết vết ấy có từ đêm mất điện hay không.",
+       "Mai nhớ lời chị Hòa rằng cửa đã khép vào tối hôm ấy, song không biết trước hay sau khi mất điện; hai lời kể không xác định được ai đã ra vào, còn vết cọ cũng chưa chứng minh được điều gì.",
+       "Không muốn biến suy đoán thành lời buộc tội, Mai quyết định chưa kể với công an rằng mình đã xác định được người vào buồng; cô sẽ báo đúng phần mình nghe và cả những điều chưa kiểm chứng."
+      ],
+      "ends_at": "Cảnh kết ở hành lang khu tập thể, khi Mai tạm biệt anh Bình và mang theo một điểm bất nhất chưa được giải đáp.",
+      "resolves": [
+       "loi_khai_cua_mai"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Mai kể trung thực những gì mình nghe được, còn lời thú nhận bất ngờ của Lâm làm rõ ai đã vào buồng ông Tấn trong đêm mất điện.",
+      "present": [
+       "protagonist",
+       "nguyen_binh",
+       "vu_lam"
+      ],
+      "beats": [
+       "Tôi quay lại chỗ anh Bình bên vòi nước và nhắc rõ tiếng cãi vã, những cụm tiếng gõ qua vách, cùng việc tôi không xác định được tiếng gõ phát ra từ buồng nào hay xảy ra đúng đêm ông Tấn biến mất.",
+       "Tôi kể chị Hòa nhớ cửa buồng ông Tấn khép nhưng không nhớ trước hay sau lúc mất điện; anh Bình cũng chỉ thấy cửa khép khi đi ngang, còn vết cọ ở mép chốt thì đến hôm sau mới nhận ra, nên lời kể chưa thể giải thích dấu vết ấy.",
+       "Bình hỏi tôi có dám nói với công an rằng ai đã vào buồng không; tôi đáp mình không biết và sẽ không biến điều chưa kiểm chứng thành lời buộc tội.",
+       "Lâm từ cuối hành lang bước tới, nghe đoạn cuối rồi nói ngắn rằng chính anh đã vào buồng ông Tấn trong đêm mất điện và lấy cuốn sổ, nhưng không nói rõ vì sao; tôi hiểu lời khai về người ra vào buồng không khớp với điều dấu vết trên cửa tự nó chứng minh được.",
+       "Tôi nói với Bình rằng tôi sẽ thuật lại cả lời Lâm, đồng thời giữ nguyên giới hạn của điều mình biết; Bình bảo sẽ ghi nhận lời khai riêng của Lâm và để công an kiểm tra."
+      ],
+      "ends_at": "Cảnh kết ở hành lang khu tập thể, khi Bình đưa Lâm đi khai lại lời vừa nói còn tôi đứng bên vòi nước, biết thêm ai đã vào buồng nhưng chưa biết vì sao.",
+      "resolves": [
+       "dem_mat_dien"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được nguyen_binh kể về fact_c3s1_2, nhưng nguyen_binh không biết điều đó ở chương 3"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c3s1_2",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-6857bddb2391",
+      "kind": "action",
+      "tone": null,
+      "text": "Đi theo anh Bình và Lâm lên công an khu vực, tự mình thuật lại những gì đã biết.",
+      "listeners": [],
+      "about": [],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-60b71a7c0483",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Tìm chị Hòa và hỏi thẳng vì sao chị vẫn chưa cho tôi xem buồng ông Tấn.",
+      "listeners": [
+       "pham_hoa"
+      ],
+      "about": [
+       "fact_c1s2_1"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-94a4a4cdf084",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự hỏi điều gì khiến Lâm lấy cuốn sổ của ông Tấn.",
+      "listeners": [],
+      "about": [
+       "vu_lam",
+       "fact_vu_lam_lay_so"
+      ],
+      "lie": null,
+      "feeling": "băn khoăn về động cơ của Lâm"
+     }
+    ]
+   }
+  ],
+  "4": [
+   {
+    "attempt": 1,
+    "commit_id": "ch4-059e8bb9fd56",
+    "player_action": "[Hành động] Đi theo anh Bình và Lâm lên công an khu vực, tự mình thuật lại những gì đã biết.",
+    "error_detail": null,
+    "summary": "Mai cùng anh Bình và Lâm đến trụ sở công an khu vực khai về những gì biết được: Mai nghe tiếng cãi vã và tiếng gõ nhưng không rõ phát ra từ buồng nào, cũng không chắc có đúng đêm ông Tấn mất tích; anh Bình kể đã thấy cửa buồng ông Tấn khép và hôm sau nhận ra vết cọ ở mép chốt. Lâm thừa nhận vào buồng ông Tấn trong đêm mất điện để lấy cuốn sổ nhưng chưa muốn giải thích vì sao. Mai nhấn mạnh cô chỉ nghe Lâm tự nhận, không tận mắt thấy anh vào buồng, và quyết định hôm sau sẽ hỏi anh những điều anh tự xác nhận được. Người trực yêu cầu Lâm sáng mai mang sổ đến đối chiếu; anh Bình hẹn đi cùng. Cả ba rời trụ sở, còn ông Tấn và khoản tiền giữa ông với chị Hòa vẫn chưa có lời giải.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Mai cùng anh Bình và Lâm trình bày lời khai tại công an khu vực, giữ rõ ranh giới giữa điều mình biết và điều chỉ mới suy đoán.",
+      "present": [
+       "protagonist",
+       "nguyen_binh",
+       "vu_lam"
+      ],
+      "beats": [
+       "Mai theo anh Bình và Lâm rời khu tập thể trong cái rét cuối ngày, tự nhắc mình không được biến những tiếng động mơ hồ thành lời buộc tội.",
+       "Trước bàn trực, Mai thuật lại tiếng cãi vã và nhịp gõ thành cụm qua vách, nói rõ cô không biết chúng phát ra từ buồng nào hay có đúng đêm ông Tấn mất tích không.",
+       "Anh Bình bổ sung rằng cửa buồng ông Tấn đã khép khi anh đi ngang và hôm sau anh thấy vết cọ mới ở mép chốt, nhưng không thể xác định dấu ấy xuất hiện lúc nào.",
+       "Lâm xác nhận mình đã vào buồng ông Tấn đêm mất điện và lấy cuốn sổ; Mai nghe anh nói ngắn gọn, không suy diễn lý do thay anh.",
+       "Mai thuật lại việc Lâm tự nhận đã lấy cuốn sổ, đồng thời nhấn mạnh cô không tận mắt thấy anh vào buồng và chưa biết ông Tấn hiện ở đâu; người trực ghi lời khai rồi yêu cầu Lâm mang cuốn sổ đến đối chiếu vào buổi sáng hôm sau."
+      ],
+      "ends_at": "Cảnh kết tại công an khu vực, khi Mai cùng Bình và Lâm vừa khai xong và được yêu cầu quay lại vào sáng hôm sau.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Khép lại buổi khai báo bằng một quyết định đưa Mai ra khỏi thế chờ đợi, nhưng vẫn giữ nguyên những điều cô chưa thể xác nhận.",
+      "present": [
+       "protagonist",
+       "nguyen_binh",
+       "vu_lam"
+      ],
+      "beats": [
+       "Người trực nhắc lại lời khai của Mai và Bình, rồi hỏi Lâm vì sao đã vào buồng ông Tấn; Lâm đáp ngắn rằng lúc này anh chưa muốn giải thích.",
+       "Mai nói mình không thể xác nhận Lâm đã vào buồng bằng mắt thấy, cũng không biết tiếng gõ phát ra từ đâu hay có vang lên đúng đêm ông Tấn biến mất.",
+       "Người trực yêu cầu Lâm sáng hôm sau mang cuốn sổ đến đối chiếu; Lâm gật đầu, còn Bình nói sẽ đi cùng để tránh lời khai bị bỏ dở.",
+       "Mai nhận ra buổi hỏi chuyện không thể trả lời thay những gì cô chưa biết, nên nói với Bình rằng ngày mai cô sẽ hỏi Lâm về những chi tiết anh có thể tự xác nhận.",
+       "Ba người rời phòng trực; Mai theo Bình xuống khỏi trụ sở, không nhận được lời giải nào về ông Tấn hay khoản tiền giữa ông và chị Hòa."
+      ],
+      "ends_at": "Cảnh kết khi Mai cùng Bình rời trụ sở công an khu vực trong đêm, biết sáng hôm sau sẽ có dịp hỏi Lâm tiếp.",
+      "resolves": [],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-884da63c34a4",
+      "kind": "action",
+      "tone": null,
+      "text": "Quay lại gọi Lâm, hỏi thẳng vì sao anh lấy cuốn sổ của ông Tấn.",
+      "listeners": [],
+      "about": [
+       "vu_lam",
+       "fact_vu_lam_lay_so"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-4feacead40dd",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Nói với anh Bình: “Sáng mai tôi sẽ hỏi Lâm về cuốn sổ và chỉ ghi nhận điều anh ấy tự xác nhận.”",
+      "listeners": [
+       "nguyen_binh"
+      ],
+      "about": [
+       "vu_lam",
+       "fact_vu_lam_lay_so"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-fee7b0a9d0d7",
+      "kind": "inner",
+      "tone": null,
+      "text": "Thầm quyết định không để chuyện khoản tiền giữa chị Hòa và ông Tấn bị gạt khỏi những điều cần làm rõ.",
+      "listeners": [],
+      "about": [
+       "pham_hoa",
+       "tran_tan",
+       "fact_c2s1_1"
+      ],
+      "lie": null,
+      "feeling": "băn khoăn, kiên quyết"
+     }
+    ]
+   }
+  ],
+  "5": [
+   {
+    "attempt": 1,
+    "commit_id": "ch5-2a81db6f4007",
+    "player_action": "[Nội tâm] Thầm quyết định không để chuyện khoản tiền giữa chị Hòa và ông Tấn bị gạt khỏi những điều cần làm rõ.",
+    "error_detail": null,
+    "summary": "Tôi đối chất với Lâm về cuốn sổ và khoản tiền liên quan đến chị Hòa, ông Tấn; Lâm thú nhận đã vay tiền ông Tấn, còn nợ chưa trả đủ nên lấy sổ để che giấu. Anh cho biết ông Tấn từng nói sẽ ở nhờ nhà một người bà con, đồng thời chuẩn bị thuốc và giấy tờ trước đêm mất điện, nhưng ban đầu không nói địa chỉ. Tôi báo công an; tại trụ sở, Lâm chỉ ra địa chỉ trong sổ và nói ông Tấn định đi ngay sau đêm mất điện, song anh không tận mắt thấy ông đến đó. Anh Bình chép địa chỉ để nhờ kiểm tra. Tôi quyết định đi cùng anh Bình đến tận nơi hỏi thăm; cả hai chuẩn bị rời trụ sở, còn Lâm ở lại với cuốn sổ.",
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Mai buộc Lâm giải thích cuốn sổ và khoản tiền, rồi nhận được manh mối mới về nơi ông Tấn đang ở.",
+      "present": [
+       "protagonist",
+       "vu_lam"
+      ],
+      "beats": [
+       "Khi Lâm mang cuốn sổ đến như đã hẹn, Mai rời buồng mình để gặp anh ở hành lang; cô nói thẳng rằng chuyện tiền giữa chị Hòa và ông Tấn không thể bị bỏ qua.",
+       "Mai nhắc lại những điều đã biết về đêm mất điện, rồi hỏi Lâm vì sao anh phải lấy cuốn sổ; Lâm đáp rằng anh đã nhận tiền của ông Tấn nhưng chưa trả đủ, và lấy sổ vì sợ khoản nợ của mình bị lộ.",
+       "Lâm nói rõ khoản tiền chị Hòa đòi là tiền chị cho ông Tấn vay; ông Tấn đã đưa một phần số tiền ấy cho Lâm vay, nên chị Hòa đòi ông Tấn chứ không phải đòi Lâm.",
+       "Mai không nhận lời giải thích thay cho chứng cứ, nhưng hỏi Lâm lần cuối về ông Tấn; Lâm thú nhận trước khi biến mất, ông Tấn có nói sẽ tìm chỗ ở nhờ nhà một người bà con, và anh biết ông đã mang theo thuốc cùng giấy tờ cần thiết.",
+       "Mai yêu cầu Lâm nói rõ điều này với công an khi đối chiếu cuốn sổ; cô quyết định đi báo ngay manh mối mới, thay vì tiếp tục chờ trong buồng."
+      ],
+      "ends_at": "Cảnh kết ở hành lang khu tập thể, khi Mai rời đi để báo manh mối về nơi ông Tấn có thể đang ẩn náu.",
+      "resolves": [
+       "khoan_tien"
+      ],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Mai theo lời Lâm và những gì vừa được làm rõ để xác định nơi ông Tấn có thể đang ẩn náu.",
+      "present": [
+       "protagonist",
+       "vu_lam",
+       "nguyen_binh"
+      ],
+      "beats": [
+       "Ở trụ sở công an khu vực, tôi nói với Lâm rằng lời khai về món nợ đã làm rõ vì sao anh lấy cuốn sổ, nhưng chưa trả lời được ông Tấn đi đâu; anh Bình đứng cạnh, không chen vào.",
+       "Lâm lật đến một trang trong cuốn sổ và chỉ cho tôi dòng ghi địa chỉ nhà người bà con mà ông Tấn từng định tìm đến; anh thừa nhận trước đó đã giấu chi tiết này vì sợ người ta lần ra khoản tiền mình còn nợ.",
+       "Tôi đối chiếu dòng ghi với lời Lâm vừa kể về thuốc men và giấy tờ ông Tấn đã chuẩn bị, rồi hỏi thẳng liệu ông ấy có đến đó không; Lâm đáp rằng ông Tấn nói sẽ đi ngay sau đêm mất điện, nhưng anh không tận mắt thấy ông tới nơi.",
+       "Anh Bình bảo sẽ chuyển địa chỉ cho công an khu vực kiểm tra; tôi quyết định đi cùng anh đến đó, vì địa chỉ ấy là manh mối cụ thể duy nhất về chỗ ông Tấn có thể đang ở."
+      ],
+      "ends_at": "Cảnh kết ở trụ sở công an khu vực, khi tôi cùng anh Bình chuẩn bị rời đi để tìm đến địa chỉ ghi trong cuốn sổ.",
+      "resolves": [
+       "tim_ong_tan"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được vu_lam kể về fact_c5s1_3, nhưng vu_lam không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c5s1_3",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 1,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được vu_lam kể về fact_c5s1_2, nhưng vu_lam không biết điều đó ở chương 5"
+       },
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được vu_lam kể về fact_c5s1_3, nhưng vu_lam không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới fact_c5s1_2",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c5s1_3",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "overdue_secret",
+        "block": false,
+        "feedback": "bí mật fact_vu_lam_dong_co (khoảng lộ chương 5–5) đến hết chương 5 vẫn chưa được hé lộ cho người đọc: viết lại để cảnh hé lộ rõ điều này một cách hợp lý, có câu nói thẳng trên trang: «Vũ Lâm lấy cuốn sổ để che giấu việc mình đã nhận tiền của ông Tấn rồi không trả đủ.»"
+       }
+      ],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "teller_does_not_know",
+        "block": false,
+        "feedback": "protagonist được vu_lam kể về fact_c5s2_1, nhưng vu_lam không biết điều đó ở chương 5"
+       }
+      ],
+      "rejected": [
+       [
+        "Fact mới new_2",
+        "trùng Fact fact_c4s2_1, dùng lại id đó"
+       ],
+       [
+        "KNOWS protagonist→new_2",
+        "đã có KNOWS đang hiệu lực giữa hai nút này"
+       ],
+       [
+        "Fact mới fact_c5s2_1",
+        "thiếu KNOWS sau khi người canh cắt: bỏ Fact"
+       ]
+      ]
+     }
+    ],
+    "choices": [
+     {
+      "id": "choice-6045cf316b86",
+      "kind": "action",
+      "tone": null,
+      "text": "Bước ra cùng anh Bình, đi tới địa chỉ ghi trong sổ.",
+      "listeners": [],
+      "about": [
+       "nguyen_binh",
+       "buong_tan"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-3acb4ff4b90c",
+      "kind": "dialogue",
+      "tone": "truth",
+      "text": "Hỏi Lâm xem anh còn nhớ điều gì khác về chuyến đi của ông Tấn.",
+      "listeners": [
+       "vu_lam"
+      ],
+      "about": [
+       "fact_mat_tich"
+      ],
+      "lie": null,
+      "feeling": null
+     },
+     {
+      "id": "choice-d3a35cbc38ce",
+      "kind": "inner",
+      "tone": null,
+      "text": "Tự nhủ phải tìm cho ra tung tích ông Tấn.",
+      "listeners": [],
+      "about": [
+       "tran_tan"
+      ],
+      "lie": null,
+      "feeling": "quyết tâm"
+     }
+    ]
+   }
+  ],
+  "6": [
+   {
+    "attempt": 1,
+    "commit_id": "ch6-c231bc856e5a",
+    "player_action": "[Nội tâm] Tự nhủ phải tìm cho ra tung tích ông Tấn.",
+    "error_detail": null,
+    "summary": null,
+    "outlines": [
+     {
+      "scene": 1,
+      "goal": "Mai cùng anh Bình đến địa chỉ ghi trong cuốn sổ để kiểm chứng lời Lâm và tìm dấu vết mới về ông Tấn.",
+      "present": [
+       "protagonist",
+       "nguyen_binh"
+      ],
+      "beats": [
+       "Rời trụ sở, Mai tự nhắc mình phải tìm cho ra tung tích ông Tấn, còn anh Bình mang theo địa chỉ đã chép từ cuốn sổ.",
+       "Trên đường đi, anh Bình nói Lâm không tận mắt thấy ông Tấn tới đó; Mai đáp rằng lời ấy chỉ là đầu mối, chưa phải câu trả lời.",
+       "Mai cân nhắc những điều mình đã nghe và quyết định nếu công an hỏi lại, cô sẽ phân biệt rõ điều tận tai nghe được với điều chỉ suy đoán.",
+       "Hai người tìm đến đúng địa chỉ trong sổ; trước khi gõ cửa, Mai nhận ra mình vẫn chưa biết nơi này có liên hệ gì với ông Tấn."
+      ],
+      "ends_at": "Cảnh kết trước cửa nơi ghi trong sổ, khi Mai và anh Bình chuẩn bị hỏi thăm.",
+      "resolves": [],
+      "unplanned_threads": []
+     },
+     {
+      "scene": 2,
+      "goal": "Mai và anh Bình xác nhận ông Tấn đã đến địa chỉ trong cuốn sổ, rồi Mai chốt lời khai của mình với công an.",
+      "present": [
+       "protagonist",
+       "nguyen_binh"
+      ],
+      "beats": [
+       "Anh Bình gõ cửa căn nhà; sau một lúc, một giọng người bên trong hỏi họ tìm ai, và anh nói rõ tên ông Tấn cùng lý do đến hỏi.",
+       "Người trong nhà xác nhận ông Tấn đang ở đó, đã tới sau đêm mất điện và vẫn ở nhờ người bà con; ông rời khu tập thể vì muốn tránh chuyện nợ nần và tự thu xếp cuộc sống, không phải vì bị đưa đi.",
+       "Mai hỏi thêm một câu để chắc rằng ông Tấn hiện vẫn bình an; người bên trong xác nhận ông còn sống và đã nhắn sẽ tự liên lạc khi sẵn sàng, nhưng không cho biết ngày trở về.",
+       "Trên đường quay lại, Mai nói với anh Bình rằng cô sẽ khai đúng những gì mình nghe và những gì vừa được xác nhận, không biến tiếng gõ hay lời đồn thành chứng cứ; anh Bình đồng ý báo lại cho công an.",
+       "Mai cùng anh Bình trở về trụ sở, trình bày địa chỉ và tin xác nhận ông Tấn đang ở nhờ nhà người bà con; Mai dứt khoát giữ nguyên phần lời khai chỉ dựa trên điều cô trực tiếp nghe hoặc kiểm chứng được."
+      ],
+      "ends_at": "Cảnh kết thúc tại trụ sở công an khu vực, sau khi Mai đã chốt lời khai và xác nhận ông Tấn đang ở nhờ nhà người bà con.",
+      "resolves": [
+       "tim_ong_tan"
+      ],
+      "unplanned_threads": []
+     }
+    ],
+    "reviews": [
+     {
+      "scene": 1,
+      "attempt": 1,
+      "verdict": "accept",
+      "issues": [],
+      "rejected": []
+     },
+     {
+      "scene": 2,
+      "attempt": 1,
+      "verdict": "rewrite",
+      "issues": [
+       {
+        "source": "guard",
+        "kind": "overdue_thread",
+        "block": false,
+        "feedback": "mạch tim_ong_tan (hạn gỡ chương 1–6) đến hết chương 6 vẫn chưa được gỡ: viết lại để cảnh gỡ mạch này một cách hợp lý: «Mai có xác định được ông Tấn đang ở đâu không?»"
+       }
+      ],
+      "rejected": [
+       [
+        "RESOLVED_IN tim_ong_tan→ch6",
+        "câu trích không có nguyên văn trong chương (G3)"
+       ],
+       [
+        "KNOWS protagonist→new_1",
+        "Value error, KNOWS với how = \"được kể\" phải có `told_by` là id người kể"
+       ],
+       [
+        "KNOWS protagonist→new_2",
+        "Value error, KNOWS với how = \"được kể\" phải có `told_by` là id người kể"
+       ]
+      ]
+     },
+     {
+      "scene": 2,
+      "attempt": 2,
+      "verdict": "accept",
+      "issues": [
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"sau đêm mất điện\" xuất hiện 4 lần (tối đa 2); đoạn: «sau đêm mất điện»"
+       },
+       {
+        "source": "quality",
+        "kind": "repetition",
+        "block": false,
+        "feedback": "lặp từ: cụm \"sau đêm mất điện\" xuất hiện 4 lần (tối đa 2); đoạn: «sau đêm mất điện một hôm»"
+       }
+      ],
+      "rejected": [
+       [
+        "KNOWS protagonist→new_1",
+        "Value error, KNOWS với how = \"được kể\" phải có `told_by` là id người kể"
+       ],
+       [
+        "KNOWS nguyen_binh→new_1",
+        "Value error, KNOWS với how = \"được kể\" phải có `told_by` là id người kể"
+       ],
+       [
+        "KNOWS protagonist→new_2",
+        "Value error, KNOWS với how = \"được kể\" phải có `told_by` là id người kể"
+       ],
+       [
+        "KNOWS nguyen_binh→new_2",
+        "Value error, KNOWS với how = \"được kể\" phải có `told_by` là id người kể"
+       ],
+       [
+        "Fact mới fact_c6s2_1",
+        "thiếu KNOWS hợp lệ: bỏ Fact"
+       ],
+       [
+        "Fact mới fact_c6s2_2",
+        "thiếu KNOWS hợp lệ: bỏ Fact"
+       ]
+      ]
+     }
+    ],
+    "choices": []
+   }
+  ]
+ },
+ "errors": [],
+ "setup_repairs": [],
+ "quotes": []
+}
