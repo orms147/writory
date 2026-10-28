@@ -1,5 +1,5 @@
 # So 2 hoặc 3 model viết trên cùng một thế giới (D-101): thang chấm của giám khảo (Claude Sonnet 5.5 qua
-# Anthropic API). Khai TRƯỚC khi chạy bất kỳ lượt viết hay chấm thật nào; đổi chữ ở đây sau khi đã
+# Anthropic API; giám khảo thứ hai Meta Muse Wonder, D-108). Khai TRƯỚC khi chạy bất kỳ lượt viết hay chấm thật nào; đổi chữ ở đây sau khi đã
 # thấy kết quả thì tăng `version` và chạy lại, không sửa đè.
 #
 # Quy trình (lệnh: python -m writory.quality.bench_bakeoff; docs/eval.md "Bài F"):
@@ -12,13 +12,31 @@
 
 # version 2: chữ không nêu số truyện, vì chủ dự án loại hy3 giữa chừng nên bài chạy với hai truyện
 # (22/10/2026, trước mọi lượt chấm thật).
-version: 2
+# version 3 (28/10/2026, D-108): thêm giám khảo thứ hai khác hãng (`extra_judges`). Thang chấm,
+# tiêu chí và ba bản hướng dẫn KHÔNG đổi một chữ: hai giám khảo chấm cùng một thang. Kết quả
+# `evals/results/2026-10-22-model-bakeoff-1/` là của version 2 với giám khảo `sonnet`.
+version: 3
 
+# Mỗi thư mục kết quả của bài F dành cho đúng MỘT giám khảo (`pack --judge <id>`, mặc định `judge`).
 judge:
+  id: sonnet
+  provider: anthropic
   model: claude-sonnet-5-5
   effort: high
   thinking: adaptive
   max_tokens: 16000
+
+extra_judges:
+  - id: muse
+    provider: meta        # API tương thích OpenAI: https://api.meta.ai/v1, khoá META_API_KEY
+    # KHÔNG dùng bản `-contributor`: Meta dùng dữ liệu của bản đó để huấn luyện.
+    model: muse-wonder-1.0
+    # `none` bị từ chối (HTTP 400); nhận minimal, low, medium, high, xhigh, max. `high` như Sonnet.
+    effort: high
+    max_tokens: 20000     # gồm cả token suy luận (tính giá như token ra)
+    # USD / 1 triệu token, giá niêm yết chủ dự án cung cấp 28/10/2026. Chỉ để tính chi phí và
+    # giữ chỗ ngân sách; token suy luận nằm trong `output`.
+    price: {input: 4.0, cached_input: 0.2, output: 20.0}
 
 # Thang 1–5 cho mọi tiêu chí; điểm cao luôn là tốt (kể cả `loi`: 5 là không lỗi).
 criteria:

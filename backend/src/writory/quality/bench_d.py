@@ -1671,16 +1671,20 @@ class BenchKeys(BaseSettings):
     anthropic_api_key: SecretStr | None = None
     # Tuỳ chọn: cần khi key Anthropic không gắn với workspace nào.
     anthropic_workspace_id: SecretStr | None = None
+    # Giám khảo thứ hai của bài F (Meta Muse Wonder, D-108).
+    meta_api_key: SecretStr | None = None
 
 
-KEY_NAMES = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY"}
+KEY_NAMES = {"openrouter": "OPENROUTER_API_KEY", "anthropic": "ANTHROPIC_API_KEY",
+             "meta": "META_API_KEY"}
 
 
 def load_keys(env_file: Path, needed: Sequence[str]) -> BenchKeys:
-    """Chỉ đọc OPENROUTER_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_WORKSPACE_ID; chỉ bắt buộc key
-    lệnh cần. Không in, không ghi key."""
+    """Chỉ đọc OPENROUTER_API_KEY, ANTHROPIC_API_KEY, ANTHROPIC_WORKSPACE_ID, META_API_KEY; chỉ
+    bắt buộc key lệnh cần. Không in, không ghi key."""
     keys = BenchKeys(_env_file=env_file if env_file.exists() else None)  # type: ignore[call-arg]
-    found = {"openrouter": keys.openrouter_api_key, "anthropic": keys.anthropic_api_key}
+    found = {"openrouter": keys.openrouter_api_key, "anthropic": keys.anthropic_api_key,
+             "meta": keys.meta_api_key}
     missing = [KEY_NAMES[k] for k in needed
                if found[k] is None or not found[k].get_secret_value().strip()]
     if missing:
