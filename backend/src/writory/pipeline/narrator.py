@@ -93,7 +93,8 @@ class BlockReason(StrEnum):
 _NEG = r"(?:không|chưa|chẳng)"
 META_HEDGE_PATTERNS: tuple[tuple[str, str, str], ...] = (
     ("thieu_thong_tin",
-     (rf"\b(?:{_NEG}|thiếu)\s+(?:(?:hề|có|đủ|rõ|thấy|biết|nắm|được|một|chút|bất kỳ|bất cứ)\s+)"
+     # "việc/sự thiếu thông tin" là danh từ trong văn truyện ("đừng lấy việc thiếu thông tin làm cớ")
+     (rf"\b(?:{_NEG}|(?<!việc )(?<!sự )thiếu)\s+(?:(?:hề|có|đủ|rõ|thấy|biết|nắm|được|một|chút|bất kỳ|bất cứ)\s+)"
       r"{0,3}(?:thông tin|dữ liệu|dữ kiện)\b"),
      "Lão Gù bị đánh vào gáy, nhưng không có thông tin về việc kẻ ra tay là người quen."),
     ("chua_ghi_chep",
