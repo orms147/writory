@@ -31,6 +31,8 @@ describe('nhóm lỗi theo code', () => {
     expect(GROUP_ACTIONS[errorGroup('LLM_INSUFFICIENT_CREDITS')]).toEqual(['retry', 'open_openrouter']);
     expect(GROUP_ACTIONS[errorGroup('COST_LIMIT_CHAPTER')]).toEqual(['retry', 'new_story']);
     expect(GROUP_ACTIONS[errorGroup('RETRY_LIMIT_REACHED')]).toEqual(['back_to_choices', 'home']);
+    // Quá hạn tổng một lời gọi (D-113): chữ là message của máy chủ, bố cục chung "Thử lại · Về tủ truyện".
+    expect(errorGroup('LLM_TIMEOUT')).toBe('generic');
     expect(GROUP_ACTIONS[errorGroup('STORY_BUSY')]).toEqual(['reload']);
     expect(errorGroup('ACTION_FORBIDDEN')).toBe('action_input');
     expect(errorGroup('NARRATOR_LIMIT_REACHED')).toBe('narrator_limit');

@@ -1101,3 +1101,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bản xuất có lộ bí mật. Vì vậy phải quyết khi làm: ai được xuất, và có cho xuất trước khi truyện kết không. Đề xuất của Claude: chỉ cho chủ truyện xuất, chỉ khi truyện đã kết, hoặc có cảnh báo lộ nội dung.
   - Đổi bước khởi tạo (D-54) thì phải đo lại khởi tạo. Thư mục khởi tạo cũ không có ngoại hình, nên trường này là tuỳ chọn.
 - **Người quyết:** Chủ dự án (29/10/2026)
+
+## D-121 · Sửa theo review độc lập đợt D-112..D-117: nơi ở, câu idle, lời thoại không người nghe, số truy vấn, bảng lỗi mock
+- **Bối cảnh:** review độc lập của writory-28 (agent riêng, đã chạy test nháp xác nhận ba lỗi đầu) trên code D-112..D-117. Mỗi mục dưới đây là một lỗi do review tìm ra, có test đỏ trước.
+- **Quyết định:**
+  - `extract._one_place_for_protagonist` (D-112): nơi cuối của gói là cạnh `LOCATED_AT` ghi sau cùng của nhân vật chính. Đang mở thì không đổi gì: bỏ mọi cạnh chuyển (kể cả "đi rồi quay về" trong cùng gói, trước đây giữ nơi vừa rời) và lệnh đóng nơi đó. Mới thì chỉ cạnh đó được giữ. Không có cạnh chuyển thì lệnh đóng chỉ giữ chừng nào sau đó còn một nơi mở (trước đây bỏ mọi lệnh đóng, nên đồ thị trước D-112 có hai nơi mở cùng lúc thì cả hai mở mãi).
+  - `pacing` câu `idle`: thay `{chapters}` bằng `str.replace` như `standstill`, không `.format`: câu thay của `goals.yaml` có `{` khác không còn gây `KeyError` giữa lượt đo.
+  - `choices._resolve` (D-114): nhân vật chính không phải người nghe; lời thoại (kể cả nói thật, im lặng) mất hết người nghe thì bỏ cả lựa chọn, đúng bất biến của `ChoiceDraft` (trước đây giữ với `listeners=()`, và lời dối chỉ có mình nghe vẫn qua). Vẫn theo `MIN_CHOICES` và `MIN_KINDS`. Hệ quả: ca ch14 của `run-long-ky-ao-hanh-trinh-1` nay còn 2 lựa chọn (hành động, nội tâm) thay vì 3. Chưa lọc người nghe đã chết ở đây: `_resolve` không đọc đồ thị, `choice_effects` vẫn lọc khi ghi.
+  - `pacing.idle_chapters` (D-112): ba lần đọc `ever=True` rồi tính trong Python, không còn khoảng ba truy vấn Neo4j mỗi chương lùi; số lần đọc không phụ thuộc độ dài dãy (test đếm), kết quả không đổi (test trên Neo4j thật).
+  - Giao diện: câu của mã `LLM_TIMEOUT` (D-113) là `message` của máy chủ, hiện qua nhóm lỗi chung; bảng lỗi của lớp mock (`frontend/src/mock/messages.ts`) thêm mã này, kèm test song song backend: mọi mã `LLM_*` có cùng câu và cùng status ở hai nơi.
+- **Hệ quả:** không thêm tính năng. Câu `LLM_TIMEOUT` trong bảng mock phải sửa cùng `errors.py` (test bắt lệch).
+- **Người quyết:** Claude, từ review độc lập do writory-28 điều phối (29/10/2026), nhánh fix/review-d112-d117 · 29/10/2026

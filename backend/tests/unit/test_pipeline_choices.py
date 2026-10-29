@@ -138,19 +138,37 @@ async def test_a_ref_outside_the_notebook_is_dropped_from_the_choice_not_the_who
     llm = ScriptedLLM([_fixture("second_round_unknown_ref", refs)])
     with caplog.at_level("WARNING"):
         choices = await _make(llm)
-    assert len(llm.calls) == 1 and len(choices) == 3
-    talk = choices[1]
-    assert talk.kind == "dialogue" and talk.listeners == () and talk.text.startswith("Hỏi người dẫn đầu")
-    assert choices[2].about == ("minh",)
-    assert GHOST not in caplog.text and "bỏ 1 tham chiếu" in caplog.text  # đếm, không ghi chữ
+    # Lời thoại không còn người nghe nào thì bỏ cả lựa chọn (bất biến của ChoiceDraft, D-121); hai
+    # lựa chọn còn lại đủ MIN_CHOICES và MIN_KINDS nên không phải thử lại.
+    assert len(llm.calls) == 1 and [c.kind for c in choices] == ["action", "inner"]
+    assert choices[1].about == ("minh",)
+    assert GHOST not in caplog.text and "bỏ 1 tham chiếu ngoài sổ tay, 1 lựa chọn" in caplog.text  # đếm, không ghi chữ
 
 
 async def test_a_listener_that_is_not_a_character_is_dropped_too():
     refs = _refs_by_text()
-    # Lời thoại nói thật mất người nghe vẫn còn nguyên chữ; nội tâm có thể hướng tới một đồ vật nên giữ.
+    # Lời thoại mất hết người nghe thì bỏ cả lựa chọn; nội tâm có thể hướng tới một đồ vật nên giữ.
     choices = await _make(ScriptedLLM([_fixture("first_round_listener_not_a_character", refs)]))
-    assert [c.kind for c in choices] == ["action", "dialogue", "inner"]
-    assert choices[1].listeners == () and len(choices[2].about) == 1
+    assert [c.kind for c in choices] == ["action", "inner"] and len(choices[1].about) == 1
+
+
+async def test_the_protagonist_is_never_a_listener():
+    """D-121 (review): nhân vật chính không thể là người nghe lời mình nói."""
+    refs = _refs_by_text()
+    me = refs["Trần Minh"]
+    only_me = _reply(refs, **{"1": {"listeners": [me]}})
+    choices = await _make(ScriptedLLM([only_me]))
+    assert [c.kind for c in choices] == ["action", "inner"]  # lời dối chỉ có mình nghe: bỏ
+    both = _reply(refs, **{"1": {"listeners": [me, refs["Phạm Thị Lan"]]}})
+    kept = await _make(ScriptedLLM([both]))
+    assert kept[1].listeners == ("lan",) and kept[1].lie.told_to == ("lan",)
+
+
+async def test_a_truthful_line_with_no_listener_left_is_dropped_not_kept_empty():
+    refs = _refs_by_text()
+    truth = _reply(refs, **{"1": {"tone": "truth", "lie_content": None, "listeners": [GHOST]}})
+    choices = await _make(ScriptedLLM([truth]))
+    assert all(c.kind != "dialogue" for c in choices) and len(choices) == 2
 
 
 async def test_a_lie_with_no_valid_listener_is_dropped_because_nobody_hears_it():

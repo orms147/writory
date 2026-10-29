@@ -216,20 +216,24 @@ def idle_chapters(state: GraphState, writing_chapter: int, threshold: int | None
     lặp ch8–17, nên đếm chúng thì dãy rỗng dài nhất chỉ 2). Không đo được mốc từ đồ thị. None = tắt."""
     if threshold is None or writing_chapter - 1 < threshold:
         return None
-    cache: dict[tuple[str, int], set[tuple[str, str]]] = {}
+    # Ba lần đọc `ever=True` bất kể dãy dài bao nhiêu (D-121, review), rồi tính trong Python.
+    last = writing_chapter - 1
+    loc = state.edges_at("LOCATED_AT", last, ever=True)
+    held = state.edges_at("HOLDS", last, ever=True)
+    died = state.edges_at("DIED_IN", last, ever=True)
 
-    def pairs(kind: str, chapter: int) -> set[tuple[str, str]]:
-        if (kind, chapter) not in cache:
-            cache[kind, chapter] = {(e.source, e.target) for e in state.edges_at(kind, chapter)}
-        return cache[kind, chapter]
+    def open_pairs(rows, chapter: int) -> set[tuple[str, str]]:
+        return {(e.source, e.target) for e in rows if e.valid_from_chapter <= chapter
+                and (e.valid_to_chapter is None or e.valid_to_chapter > chapter)}
 
     def changed(chapter: int) -> bool:
-        if any(e.valid_from_chapter == chapter for e in state.edges_at("DIED_IN", chapter)):
+        if any(e.valid_from_chapter == chapter for e in died):
             return True
-        return any(pairs(kind, chapter) - pairs(kind, chapter - 1) for kind in ("LOCATED_AT", "HOLDS"))
+        return any(open_pairs(rows, chapter) - open_pairs(rows, chapter - 1)
+                   for rows in (loc, held))
 
     run = 0
-    for chapter in range(writing_chapter - 1, 0, -1):
+    for chapter in range(last, 0, -1):
         if changed(chapter):
             break
         run += 1
@@ -423,7 +427,7 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
     if goals.standstill is not None:
         line("- ", *_fill_standstill(say["standstill"], goals.standstill))
     if goals.idle is not None:
-        line("- " + say["idle"].format(chapters=goals.idle.chapters))
+        line("- " + say["idle"].replace("{chapters}", str(goals.idle.chapters)))
     if goals.act is not None and goals.act.last_chapter_of_act and not goals.final:
         line(f"- Đây là chương cuối của hồi «{escape_text(goals.act.name)}»: khép lại tình huống "
              "của hồi này để chương sau sang hồi mới.")

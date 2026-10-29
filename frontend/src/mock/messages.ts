@@ -14,6 +14,7 @@ export const MOCK_ERRORS: Record<string, { message: string; status: number }> = 
   LLM_CONTENT_BLOCKED: { message: "Nhà cung cấp model từ chối nội dung của yêu cầu này. Thử chọn hoặc viết một hành động khác.", status: 422 },
   LLM_REQUEST_INVALID: { message: "Yêu cầu gửi tới model bị từ chối vì lỗi phía hệ thống, không phải do bạn. Bấm thử lại. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 502 },
   LLM_UNAVAILABLE: { message: "Model đang không phản hồi hoặc mạng tới OpenRouter bị gián đoạn. Đợi một lát rồi bấm thử lại.", status: 503 },
+  LLM_TIMEOUT: { message: "Model không trả lời trong thời gian cho phép nên hệ thống đã dừng chờ. Đợi một lát rồi bấm thử lại. Phần đã lưu vẫn còn nguyên.", status: 504 },
   LLM_BAD_RESPONSE: { message: "Model trả về kết quả sai định dạng nên hệ thống không dùng được. Bấm thử lại. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 502 },
   PLAYER_KEY_MISSING: { message: "Bạn chưa nhập key OpenRouter. Nhập key trong phần cài đặt để tiếp tục.", status: 400 },
   PLAYER_KEY_UNREADABLE: { message: "Không đọc được key OpenRouter đã lưu của bạn. Nhập lại key trong phần cài đặt.", status: 400 },

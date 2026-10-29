@@ -538,6 +538,35 @@ def test_the_count_is_the_whole_run_not_just_the_threshold():
     assert idle_chapters(state, 8, 4) == Idle(7)
 
 
+def test_other_braces_in_a_replaced_idle_sentence_are_plain_text():
+    """Review D-121: `.format` ném KeyError giữa lượt đo nếu câu thay có `{` khác `{chapters}`."""
+    goals = chapter_goals(IDLE_PLAN, 5, _idle_state(*(_noise(c) for c in range(1, 5))),
+                          idle_chapters=4)
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                      texts={"idle": "Nhóm {a} đã {chapters} chương {}."}))
+    assert "Nhóm {a} đã 4 chương {}." in text
+
+
+class _Counting(OverlayState):
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self.reads = 0
+
+    def edges_at(self, *a, **kw):
+        self.reads += 1
+        return super().edges_at(*a, **kw)
+
+
+def test_idle_reads_the_graph_a_fixed_number_of_times_however_long_the_run():
+    """Review D-121: trước đây ~3 truy vấn mỗi chương lùi; đồ thị thật là Neo4j."""
+    def reads(n: int) -> int:
+        state = _Counting(EmptyState(), [_BASE, *(_noise(c) for c in range(1, n + 1))])
+        assert idle_chapters(state, n + 1, 4) == Idle(n)
+        return state.reads
+
+    assert reads(5) == reads(30) <= 3
+
+
 def test_chapter_goals_carry_idle_only_when_asked_and_not_beside_standstill_or_in_the_last_chapter():
     state = _idle_state(*(_quiet(c) for c in range(1, 5)))
     assert chapter_goals(IDLE_PLAN, 5, state).idle is None
