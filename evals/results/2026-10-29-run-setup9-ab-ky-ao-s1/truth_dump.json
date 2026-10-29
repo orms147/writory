@@ -1,0 +1,1529 @@
+{
+ "story_id": "run-20261029-setup9-ab-ky-ao-s1-ca1063ef",
+ "plan": {
+  "acts": [
+   {
+    "name": "Tiếng gọi bên bến",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Dấu vết trong đầm",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Lời thề dưới nước",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "f_minh_mat",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Trần Minh",
+      "đã chết"
+     ],
+     [
+      "đứa trẻ lạ",
+      "chết từ nhiều năm"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "f_cau_bi_bo",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "lời thề",
+      "người chết ở lại"
+     ],
+     [
+      "câu bị bỏ",
+      "dưới đầm"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_duong_ve",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "than_thuc_giac",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "minh_tro_lai",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Duy nhận ra tiếng gõ dưới nước đổi nhịp theo tiếng chuông.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Duy tìm thấy dấu vết nối đứa trẻ lạ với những chuyến đò đã mất.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Duy đối diện tiếng đáp từ dưới đầm và chọn cách hoàn tất lời thề.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Đêm khép lại khi Duy biết chiếc chuông và bến sẽ được giữ lại bằng lựa chọn của mình.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "f_minh_mat",
+    "text": "Trần Minh là đứa trẻ chèo đò đã chết từ nhiều năm trước.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "f_cau_bi_bo",
+    "text": "Câu bị bỏ khỏi lời thề là lời hứa không giữ người chết ở lại dưới đầm.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_duong_ve",
+    "description": "Duy có đưa được Chuông Đồng trở lại Nhà Thề không?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "than_thuc_giac",
+    "description": "Vị thủy thần có thức giấc trước bình minh không?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "minh_tro_lai",
+    "description": "Vì sao Trần Minh trở lại bên bến?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Duy nhận ra tiếng gõ dưới nước đổi nhịp theo tiếng chuông.",
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Duy tìm thấy dấu vết nối đứa trẻ lạ với những chuyến đò đã mất.",
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Duy đối diện tiếng đáp từ dưới đầm và chọn cách hoàn tất lời thề.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Đêm khép lại khi Duy biết chiếc chuông và bến sẽ được giữ lại bằng lựa chọn của mình.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261029-setup9-ab-ky-ao-s1-ca1063ef-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Lê Quốc Duy",
+      "personality": "Nhạy cảm, kiên nhẫn và có trí nhớ tốt về âm thanh, lời kể. Duy dễ bị nỗi sợ lấn át, nhưng vẫn bước tới khi tin rằng có người đang cần mình.",
+      "backstory": "Duy phụ cha sửa mái chèo và thường ngồi ở bến nghe những người chèo đò kể về lời thề cổ. Gần đây, cậu liên tục nghe tiếng gõ vọng lên từ mặt nước, dù quanh đó không có ai. Khi đứa trẻ lạ trao chiếc chuông đồng cho người gác bến, Duy nhận ra nhịp gõ ấy giống hệt âm thanh mình đã nghe và quyết tìm hiểu chuyện gì đang xảy ra.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Trông khoảng hai mươi tuổi, dáng người gọn và hơi khom vì quen cúi sửa mái chèo, mặt dài, tóc đen cắt gọn. Duy mặc áo vải nâu sẫm, cổ tay áo sờn; một vết chai nhỏ nằm ngang lòng bàn tay phải."
+     }
+    },
+    {
+     "id": "le_thi_hanh",
+     "label": "Character",
+     "props": {
+      "name": "Lê Thị Hạnh",
+      "aliases": [
+       "bà Hạnh"
+      ],
+      "personality": "Cẩn trọng, cứng rắn, thương người nhưng sợ lời thề bị phá.",
+      "backstory": "Bà là người trông coi nhà thờ lời thề của Cồn Mù, được dân làng giao giữ chiếc chuông đồng qua nhiều năm. Đêm trước, bà đem chuông ra bến để kiểm tra sau khi nghe tiếng gõ dưới nước, rồi bị một đứa trẻ lạ lấy mất.",
+      "appearance": "Trông ngoài sáu mươi, dáng nhỏ và hơi còng, mặt nhiều nếp nhăn, tóc bạc búi thấp dưới khăn nâu. Bà mặc áo chàm sẫm, đeo một vòng chìa khóa ở thắt lưng."
+     }
+    },
+    {
+     "id": "pham_van_khoi",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Văn Khôi",
+      "aliases": [
+       "ông Khôi"
+      ],
+      "personality": "Ít lời, thực tế, quyết đoán khi có nguy hiểm.",
+      "backstory": "Ông là người chèo đò lâu năm ở Cồn Mù và từng học thuộc lời thề từ cha mình. Ông cho rằng không ai nên rời bến trong đêm nước dâng.",
+      "appearance": "Trông ngoài năm mươi, vai rộng, mặt vuông rám nắng, tóc đen lẫn bạc cắt ngắn. Ông mặc áo tơi sẫm và luôn chống một cây sào tre có đầu quấn dây đỏ."
+     }
+    },
+    {
+     "id": "tran_min",
+     "label": "Character",
+     "props": {
+      "name": "Trần Minh",
+      "aliases": [
+       "đứa trẻ lạ"
+      ],
+      "personality": "Trầm lặng, dè dặt, có vẻ như đang cố cảnh báo người khác.",
+      "backstory": "Minh xuất hiện trên mặt đầm trong đêm nước dâng, trao chiếc chuông đồng cho người gác bến rồi biến vào sương. Cậu bé là đứa con đã mất của một gia đình chèo đò, nhưng không ai trong làng biết vì sao hình bóng cậu trở lại.",
+      "appearance": "Trông khoảng mười tuổi, người gầy nhỏ, mặt tái nhợt, tóc đen ướt bết vào trán. Cậu mặc áo vải xám cũ, chân trần và có một sợi dây xanh buộc ở cổ tay trái."
+     }
+    },
+    {
+     "id": "con_mu",
+     "label": "Location",
+     "props": {
+      "name": "Cồn Mù",
+      "aliases": [
+       "cụm nhà bên đầm"
+      ],
+      "description": "Cụm nhà của những người chèo đò nằm trên nền đất cao giữa đầm lầy.",
+      "visual": "Những mái lá thấp chìm trong sương xám, ánh đèn dầu hắt vàng qua phên tre ướt. Lối đi bằng ván đen kêu cót két trên mặt nước lặng."
+     }
+    },
+    {
+     "id": "ben_cuoi",
+     "label": "Location",
+     "props": {
+      "name": "Bến Cuối",
+      "aliases": [
+       "bến"
+      ],
+      "description": "Bến đò cuối cùng của Cồn Mù, nơi người gác thay phiên canh nước và giữ lời thề.",
+      "visual": "Cọc bến gãy để lại một hố nước đen giữa những tấm ván mục. Sương đọng thành vệt trắng, che khuất bờ bên kia."
+     }
+    },
+    {
+     "id": "nha_the",
+     "label": "Location",
+     "props": {
+      "name": "Nhà Thề",
+      "aliases": [
+       "nhà giữ lời thề"
+      ],
+      "description": "Căn nhà nhỏ nơi dân làng cất giữ chuông và nhắc lại lời thề cổ.",
+      "visual": "Vách gỗ bạc màu dựng trên nền đá thấp, trong nhà chỉ có một ngọn đèn dầu xanh nhạt. Khói nhang mỏng quẩn dưới mái rơm."
+     }
+    },
+    {
+     "id": "vung_say",
+     "label": "Location",
+     "props": {
+      "name": "Vũng Sậy",
+      "aliases": [
+       "đám sậy"
+      ],
+      "description": "Khoảng nước kín sau bến, nơi lau sậy mọc dày và tiếng gõ vọng lên rõ nhất.",
+      "visual": "Lá sậy đen bóng nghiêng sát mặt nước, ánh trăng bị xé thành những mảnh nhỏ. Không khí lạnh và nặng mùi bùn."
+     }
+    },
+    {
+     "id": "dan_con_mu",
+     "label": "Faction",
+     "props": {
+      "name": "Dân Cồn Mù",
+      "aliases": [
+       "dân làng"
+      ],
+      "description": "Những gia đình chèo đò ở Cồn Mù cùng gìn giữ lời thề cổ và tránh đi xa khi đầm trở mình."
+     }
+    },
+    {
+     "id": "chuong_dong",
+     "label": "Item",
+     "props": {
+      "name": "Chuông Đồng",
+      "aliases": [
+       "chiếc chuông"
+      ],
+      "description": "Chiếc chuông nhỏ của làng, được dùng trong nghi thức nhắc lại lời thề với thủy thần."
+     }
+    },
+    {
+     "id": "sao_tre",
+     "label": "Item",
+     "props": {
+      "name": "Sào Tre",
+      "aliases": [
+       "cây sào"
+      ],
+      "description": "Cây sào chèo dài có đầu quấn dây đỏ, thường được ông Khôi mang theo."
+     }
+    },
+    {
+     "id": "f_loi_the",
+     "label": "Fact",
+     "props": {
+      "text": "Dân Cồn Mù tin rằng lời thề cổ giữ vị thủy thần ngủ sâu dưới đầm."
+     }
+    },
+    {
+     "id": "f_nuoc_dang",
+     "label": "Fact",
+     "props": {
+      "text": "Nước đen đã tràn qua bậc cửa dù trời tạnh."
+     }
+    },
+    {
+     "id": "f_coc_mat",
+     "label": "Fact",
+     "props": {
+      "text": "Cọc buộc đò cuối cùng đã bị nước cuốn khỏi Bến Cuối."
+     }
+    },
+    {
+     "id": "f_chuong_thieu",
+     "label": "Fact",
+     "props": {
+      "text": "Chiếc Chuông Đồng đã rời Nhà Thề trong đêm trước."
+     }
+    },
+    {
+     "id": "f_hanh_lay_chuong",
+     "label": "Fact",
+     "props": {
+      "text": "Lê Thị Hạnh đem Chuông Đồng ra bến để kiểm tra sau khi nghe tiếng gõ dưới nước."
+     }
+    },
+    {
+     "id": "f_minh_mat",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Minh là đứa trẻ chèo đò đã chết từ nhiều năm trước."
+     }
+    },
+    {
+     "id": "f_minh_lay",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Minh lấy Chuông Đồng khỏi tay Lê Thị Hạnh rồi trao nó cho người gác bến."
+     }
+    },
+    {
+     "id": "f_am_go",
+     "label": "Fact",
+     "props": {
+      "text": "Mỗi hồi chuông khiến mặt đầm đáp lại bằng những tiếng gõ."
+     }
+    },
+    {
+     "id": "f_loi_the_day_du",
+     "label": "Fact",
+     "props": {
+      "text": "Lời thề cổ có một câu bị bỏ khỏi những lần đọc trước đây."
+     }
+    },
+    {
+     "id": "f_cau_bi_bo",
+     "label": "Fact",
+     "props": {
+      "text": "Câu bị bỏ khỏi lời thề là lời hứa không giữ người chết ở lại dưới đầm."
+     }
+    },
+    {
+     "id": "tim_duong_ve",
+     "label": "Thread",
+     "props": {
+      "description": "Duy có đưa được Chuông Đồng trở lại Nhà Thề không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "than_thuc_giac",
+     "label": "Thread",
+     "props": {
+      "description": "Vị thủy thần có thức giấc trước bình minh không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "minh_tro_lai",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao Trần Minh trở lại bên bến?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "LOCATED_AT",
+     "from": "le_thi_hanh",
+     "to": "nha_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:le_thi_hanh>nha_the@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_van_khoi",
+     "to": "ben_cuoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_van_khoi>ben_cuoi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_min",
+     "to": "vung_say",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_min>vung_say@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "ben_cuoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>ben_cuoi@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "chuong_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>chuong_dong@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "pham_van_khoi",
+     "to": "sao_tre",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:pham_van_khoi>sao_tre@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "le_thi_hanh",
+     "to": "dan_con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:le_thi_hanh>dan_con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "pham_van_khoi",
+     "to": "dan_con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:pham_van_khoi>dan_con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "dan_con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>dan_con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "le_thi_hanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>le_thi_hanh@0",
+     "props": {
+      "kind": "quen biết",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_thi_hanh",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_thi_hanh>protagonist@0",
+     "props": {
+      "kind": "quen biết",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "pham_van_khoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>pham_van_khoi@0",
+     "props": {
+      "kind": "quen biết",
+      "score": 30
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_van_khoi",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_van_khoi>protagonist@0",
+     "props": {
+      "kind": "quen biết",
+      "score": 30
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_loi_the",
+     "to": "dan_con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_loi_the>dan_con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_loi_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_loi_the@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_van_khoi",
+     "to": "f_loi_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_van_khoi>f_loi_the@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_nuoc_dang",
+     "to": "con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_nuoc_dang>con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_nuoc_dang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_nuoc_dang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_van_khoi",
+     "to": "f_nuoc_dang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_van_khoi>f_nuoc_dang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_coc_mat",
+     "to": "ben_cuoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_coc_mat>ben_cuoi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_coc_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_coc_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_van_khoi",
+     "to": "f_coc_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_van_khoi>f_coc_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_chuong_thieu",
+     "to": "chuong_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_chuong_thieu>chuong_dong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_chuong_thieu",
+     "to": "nha_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_chuong_thieu>nha_the@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_chuong_thieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_chuong_thieu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_hanh_lay_chuong",
+     "to": "le_thi_hanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_hanh_lay_chuong>le_thi_hanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_hanh_lay_chuong",
+     "to": "chuong_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_hanh_lay_chuong>chuong_dong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_hanh_lay_chuong",
+     "to": "ben_cuoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_hanh_lay_chuong>ben_cuoi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_hanh_lay_chuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_hanh_lay_chuong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_minh_mat",
+     "to": "tran_min",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_minh_mat>tran_min@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_minh_mat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_minh_mat@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_minh_lay",
+     "to": "tran_min",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_minh_lay>tran_min@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_minh_lay",
+     "to": "chuong_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_minh_lay>chuong_dong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_minh_lay",
+     "to": "le_thi_hanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_minh_lay>le_thi_hanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_am_go",
+     "to": "chuong_dong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_am_go>chuong_dong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_am_go",
+     "to": "vung_say",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_am_go>vung_say@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_am_go",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_am_go@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_van_khoi",
+     "to": "f_am_go",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_van_khoi>f_am_go@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_loi_the_day_du",
+     "to": "dan_con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_loi_the_day_du>dan_con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_loi_the_day_du",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_loi_the_day_du@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_cau_bi_bo",
+     "to": "dan_con_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_cau_bi_bo>dan_con_mu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_cau_bi_bo",
+     "to": "tran_min",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_cau_bi_bo>tran_min@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_hanh",
+     "to": "f_cau_bi_bo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_hanh>f_cau_bi_bo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Lê Quốc Duy",
+      "known_as": "Lê Quốc Duy"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ben_cuoi": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "bến"
+     ],
+     "name": "Bến Cuối",
+     "description": "Bến đò cuối cùng của Cồn Mù, nơi người gác thay phiên canh nước và giữ lời thề.",
+     "visual": "Cọc bến gãy để lại một hố nước đen giữa những tấm ván mục. Sương đọng thành vệt trắng, che khuất bờ bên kia."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "chuong_dong": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc chuông"
+     ],
+     "name": "Chuông Đồng",
+     "description": "Chiếc chuông nhỏ của làng, được dùng trong nghi thức nhắc lại lời thề với thủy thần."
+    }
+   },
+   "con_mu": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "cụm nhà bên đầm"
+     ],
+     "name": "Cồn Mù",
+     "visual": "Những mái lá thấp chìm trong sương xám, ánh đèn dầu hắt vàng qua phên tre ướt. Lối đi bằng ván đen kêu cót két trên mặt nước lặng.",
+     "description": "Cụm nhà của những người chèo đò nằm trên nền đất cao giữa đầm lầy."
+    }
+   },
+   "dan_con_mu": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "dân làng"
+     ],
+     "name": "Dân Cồn Mù",
+     "description": "Những gia đình chèo đò ở Cồn Mù cùng gìn giữ lời thề cổ và tránh đi xa khi đầm trở mình."
+    }
+   },
+   "f_am_go": {
+    "label": "Fact",
+    "props": {
+     "text": "Mỗi hồi chuông khiến mặt đầm đáp lại bằng những tiếng gõ."
+    }
+   },
+   "f_cau_bi_bo": {
+    "label": "Fact",
+    "props": {
+     "text": "Câu bị bỏ khỏi lời thề là lời hứa không giữ người chết ở lại dưới đầm."
+    }
+   },
+   "f_chuong_thieu": {
+    "label": "Fact",
+    "props": {
+     "text": "Chiếc Chuông Đồng đã rời Nhà Thề trong đêm trước."
+    }
+   },
+   "f_coc_mat": {
+    "label": "Fact",
+    "props": {
+     "text": "Cọc buộc đò cuối cùng đã bị nước cuốn khỏi Bến Cuối."
+    }
+   },
+   "f_hanh_lay_chuong": {
+    "label": "Fact",
+    "props": {
+     "text": "Lê Thị Hạnh đem Chuông Đồng ra bến để kiểm tra sau khi nghe tiếng gõ dưới nước."
+    }
+   },
+   "f_loi_the": {
+    "label": "Fact",
+    "props": {
+     "text": "Dân Cồn Mù tin rằng lời thề cổ giữ vị thủy thần ngủ sâu dưới đầm."
+    }
+   },
+   "f_loi_the_day_du": {
+    "label": "Fact",
+    "props": {
+     "text": "Lời thề cổ có một câu bị bỏ khỏi những lần đọc trước đây."
+    }
+   },
+   "f_minh_lay": {
+    "label": "Fact",
+    "props": {
+     "text": "Trần Minh lấy Chuông Đồng khỏi tay Lê Thị Hạnh rồi trao nó cho người gác bến."
+    }
+   },
+   "f_minh_mat": {
+    "label": "Fact",
+    "props": {
+     "text": "Trần Minh là đứa trẻ chèo đò đã chết từ nhiều năm trước."
+    }
+   },
+   "f_nuoc_dang": {
+    "label": "Fact",
+    "props": {
+     "text": "Nước đen đã tràn qua bậc cửa dù trời tạnh."
+    }
+   },
+   "le_thi_hanh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bà là người trông coi nhà thờ lời thề của Cồn Mù, được dân làng giao giữ chiếc chuông đồng qua nhiều năm. Đêm trước, bà đem chuông ra bến để kiểm tra sau khi nghe tiếng gõ dưới nước, rồi bị một đứa trẻ lạ lấy mất.",
+     "appearance": "Trông ngoài sáu mươi, dáng nhỏ và hơi còng, mặt nhiều nếp nhăn, tóc bạc búi thấp dưới khăn nâu. Bà mặc áo chàm sẫm, đeo một vòng chìa khóa ở thắt lưng.",
+     "aliases": [
+      "bà Hạnh"
+     ],
+     "personality": "Cẩn trọng, cứng rắn, thương người nhưng sợ lời thề bị phá.",
+     "name": "Lê Thị Hạnh"
+    }
+   },
+   "minh_tro_lai": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao Trần Minh trở lại bên bến?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "nha_the": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "nhà giữ lời thề"
+     ],
+     "name": "Nhà Thề",
+     "visual": "Vách gỗ bạc màu dựng trên nền đá thấp, trong nhà chỉ có một ngọn đèn dầu xanh nhạt. Khói nhang mỏng quẩn dưới mái rơm.",
+     "description": "Căn nhà nhỏ nơi dân làng cất giữ chuông và nhắc lại lời thề cổ."
+    }
+   },
+   "pham_van_khoi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông là người chèo đò lâu năm ở Cồn Mù và từng học thuộc lời thề từ cha mình. Ông cho rằng không ai nên rời bến trong đêm nước dâng.",
+     "appearance": "Trông ngoài năm mươi, vai rộng, mặt vuông rám nắng, tóc đen lẫn bạc cắt ngắn. Ông mặc áo tơi sẫm và luôn chống một cây sào tre có đầu quấn dây đỏ.",
+     "aliases": [
+      "ông Khôi"
+     ],
+     "personality": "Ít lời, thực tế, quyết đoán khi có nguy hiểm.",
+     "name": "Phạm Văn Khôi"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Duy phụ cha sửa mái chèo và thường ngồi ở bến nghe những người chèo đò kể về lời thề cổ. Gần đây, cậu liên tục nghe tiếng gõ vọng lên từ mặt nước, dù quanh đó không có ai. Khi đứa trẻ lạ trao chiếc chuông đồng cho người gác bến, Duy nhận ra nhịp gõ ấy giống hệt âm thanh mình đã nghe và quyết tìm hiểu chuyện gì đang xảy ra.",
+     "appearance": "Trông khoảng hai mươi tuổi, dáng người gọn và hơi khom vì quen cúi sửa mái chèo, mặt dài, tóc đen cắt gọn. Duy mặc áo vải nâu sẫm, cổ tay áo sờn; một vết chai nhỏ nằm ngang lòng bàn tay phải.",
+     "personality": "Nhạy cảm, kiên nhẫn và có trí nhớ tốt về âm thanh, lời kể. Duy dễ bị nỗi sợ lấn át, nhưng vẫn bước tới khi tin rằng có người đang cần mình.",
+     "name": "Lê Quốc Duy",
+     "is_protagonist": true
+    }
+   },
+   "sao_tre": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "cây sào"
+     ],
+     "name": "Sào Tre",
+     "description": "Cây sào chèo dài có đầu quấn dây đỏ, thường được ông Khôi mang theo."
+    }
+   },
+   "than_thuc_giac": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vị thủy thần có thức giấc trước bình minh không?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "tim_duong_ve": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Duy có đưa được Chuông Đồng trở lại Nhà Thề không?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "tran_min": {
+    "label": "Character",
+    "props": {
+     "backstory": "Minh xuất hiện trên mặt đầm trong đêm nước dâng, trao chiếc chuông đồng cho người gác bến rồi biến vào sương. Cậu bé là đứa con đã mất của một gia đình chèo đò, nhưng không ai trong làng biết vì sao hình bóng cậu trở lại.",
+     "appearance": "Trông khoảng mười tuổi, người gầy nhỏ, mặt tái nhợt, tóc đen ướt bết vào trán. Cậu mặc áo vải xám cũ, chân trần và có một sợi dây xanh buộc ở cổ tay trái.",
+     "aliases": [
+      "đứa trẻ lạ"
+     ],
+     "personality": "Trầm lặng, dè dặt, có vẻ như đang cố cảnh báo người khác.",
+     "name": "Trần Minh"
+    }
+   },
+   "vung_say": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "đám sậy"
+     ],
+     "name": "Vũng Sậy",
+     "visual": "Lá sậy đen bóng nghiêng sát mặt nước, ánh trăng bị xé thành những mảnh nhỏ. Không khí lạnh và nặng mùi bùn.",
+     "description": "Khoảng nước kín sau bến, nơi lau sậy mọc dày và tiếng gõ vọng lên rõ nhất."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:le_thi_hanh>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "le_thi_hanh",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "quen biết"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_van_khoi>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "pham_van_khoi",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 30,
+     "kind": "quen biết"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>le_thi_hanh@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "le_thi_hanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "quen biết"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>pham_van_khoi@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "pham_van_khoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 30,
+     "kind": "quen biết"
+    }
+   },
+   {
+    "id": "LOCATED_AT:le_thi_hanh>nha_the@0",
+    "type": "LOCATED_AT",
+    "source": "le_thi_hanh",
+    "target": "nha_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_van_khoi>ben_cuoi@0",
+    "type": "LOCATED_AT",
+    "source": "pham_van_khoi",
+    "target": "ben_cuoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>ben_cuoi@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "ben_cuoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_min>vung_say@0",
+    "type": "LOCATED_AT",
+    "source": "tran_min",
+    "target": "vung_say",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:pham_van_khoi>sao_tre@0",
+    "type": "HOLDS",
+    "source": "pham_van_khoi",
+    "target": "sao_tre",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>chuong_dong@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "chuong_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:le_thi_hanh>dan_con_mu@0",
+    "type": "MEMBER_OF",
+    "source": "le_thi_hanh",
+    "target": "dan_con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:pham_van_khoi>dan_con_mu@0",
+    "type": "MEMBER_OF",
+    "source": "pham_van_khoi",
+    "target": "dan_con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>dan_con_mu@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "dan_con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_am_go@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_am_go",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_cau_bi_bo@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_cau_bi_bo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_chuong_thieu@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_chuong_thieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_coc_mat@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_coc_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_hanh_lay_chuong@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_hanh_lay_chuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_loi_the@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_loi_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_loi_the_day_du@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_loi_the_day_du",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_minh_mat@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_minh_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_hanh>f_nuoc_dang@0",
+    "type": "KNOWS",
+    "source": "le_thi_hanh",
+    "target": "f_nuoc_dang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_van_khoi>f_am_go@0",
+    "type": "KNOWS",
+    "source": "pham_van_khoi",
+    "target": "f_am_go",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_van_khoi>f_coc_mat@0",
+    "type": "KNOWS",
+    "source": "pham_van_khoi",
+    "target": "f_coc_mat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_van_khoi>f_loi_the@0",
+    "type": "KNOWS",
+    "source": "pham_van_khoi",
+    "target": "f_loi_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_van_khoi>f_nuoc_dang@0",
+    "type": "KNOWS",
+    "source": "pham_van_khoi",
+    "target": "f_nuoc_dang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:f_am_go>chuong_dong@0",
+    "type": "ABOUT",
+    "source": "f_am_go",
+    "target": "chuong_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_am_go>vung_say@0",
+    "type": "ABOUT",
+    "source": "f_am_go",
+    "target": "vung_say",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_cau_bi_bo>dan_con_mu@0",
+    "type": "ABOUT",
+    "source": "f_cau_bi_bo",
+    "target": "dan_con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_cau_bi_bo>tran_min@0",
+    "type": "ABOUT",
+    "source": "f_cau_bi_bo",
+    "target": "tran_min",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_chuong_thieu>chuong_dong@0",
+    "type": "ABOUT",
+    "source": "f_chuong_thieu",
+    "target": "chuong_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_chuong_thieu>nha_the@0",
+    "type": "ABOUT",
+    "source": "f_chuong_thieu",
+    "target": "nha_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_coc_mat>ben_cuoi@0",
+    "type": "ABOUT",
+    "source": "f_coc_mat",
+    "target": "ben_cuoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_hanh_lay_chuong>ben_cuoi@0",
+    "type": "ABOUT",
+    "source": "f_hanh_lay_chuong",
+    "target": "ben_cuoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_hanh_lay_chuong>chuong_dong@0",
+    "type": "ABOUT",
+    "source": "f_hanh_lay_chuong",
+    "target": "chuong_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_hanh_lay_chuong>le_thi_hanh@0",
+    "type": "ABOUT",
+    "source": "f_hanh_lay_chuong",
+    "target": "le_thi_hanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_loi_the>dan_con_mu@0",
+    "type": "ABOUT",
+    "source": "f_loi_the",
+    "target": "dan_con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_loi_the_day_du>dan_con_mu@0",
+    "type": "ABOUT",
+    "source": "f_loi_the_day_du",
+    "target": "dan_con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_minh_lay>chuong_dong@0",
+    "type": "ABOUT",
+    "source": "f_minh_lay",
+    "target": "chuong_dong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_minh_lay>le_thi_hanh@0",
+    "type": "ABOUT",
+    "source": "f_minh_lay",
+    "target": "le_thi_hanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_minh_lay>tran_min@0",
+    "type": "ABOUT",
+    "source": "f_minh_lay",
+    "target": "tran_min",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_minh_mat>tran_min@0",
+    "type": "ABOUT",
+    "source": "f_minh_mat",
+    "target": "tran_min",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_nuoc_dang>con_mu@0",
+    "type": "ABOUT",
+    "source": "f_nuoc_dang",
+    "target": "con_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Lê Quốc Duy",
+     "known_as": "Lê Quốc Duy"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [],
+ "quotes": []
+}

@@ -1,0 +1,678 @@
+{
+ "old": {
+  "ab-tu-tien": [
+   {
+    "dir": "2026-10-28-run-ab-tu-tien-setup",
+    "setup_version": "setup-8",
+    "seed": 20261028,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.003885,
+    "setup_prompt_tokens": 7320,
+    "setup_completion_tokens": 5986,
+    "build_completion_tokens": [
+     4380
+    ],
+    "characters": 6,
+    "characters_with_appearance": 0,
+    "locations": 5,
+    "locations_with_visual": 0,
+    "appearance_chars": null,
+    "visual_chars": null,
+    "appearances": {},
+    "visuals": {}
+   }
+  ],
+  "ab-ky-ao": [
+   {
+    "dir": "2026-10-28-run-ab-ky-ao-setup",
+    "setup_version": "setup-8",
+    "seed": 20261029,
+    "status": "done",
+    "build_calls": 2,
+    "repairs_used": 1,
+    "repair_kinds": {
+     "pacing": 1
+    },
+    "initial_problems": [
+     "chương 4 có 5 việc đến hạn, tối đa 3 (trừ chương cuối)"
+    ],
+    "errors": [],
+    "setup_cost_usd": 0.005362,
+    "setup_prompt_tokens": 13584,
+    "setup_completion_tokens": 8020,
+    "build_completion_tokens": [
+     3791,
+     2827
+    ],
+    "characters": 6,
+    "characters_with_appearance": 0,
+    "locations": 5,
+    "locations_with_visual": 0,
+    "appearance_chars": null,
+    "visual_chars": null,
+    "appearances": {},
+    "visuals": {}
+   }
+  ],
+  "ab-trinh-tham": [
+   {
+    "dir": "2026-10-28-run-ab-trinh-tham-setup",
+    "setup_version": "setup-8",
+    "seed": 20261030,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.002783,
+    "setup_prompt_tokens": 7186,
+    "setup_completion_tokens": 3816,
+    "build_completion_tokens": [
+     2219
+    ],
+    "characters": 5,
+    "characters_with_appearance": 0,
+    "locations": 4,
+    "locations_with_visual": 0,
+    "appearance_chars": null,
+    "visual_chars": null,
+    "appearances": {},
+    "visuals": {}
+   }
+  ],
+  "long-tu-tien": [
+   {
+    "dir": "2026-10-29-run-long-tu-tien-3",
+    "setup_version": "setup-8",
+    "seed": 20261022,
+    "status": "error",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [
+     {
+      "where": "chapter 18",
+      "attempt": 1,
+      "code": "RETRY_LIMIT_REACHED",
+      "detail": "3 lần thử đều lỗi; lỗi cuối: LLM_UNAVAILABLE: ConnectError"
+     },
+     {
+      "where": "chapter 18",
+      "attempt": 2,
+      "code": "RETRY_LIMIT_REACHED",
+      "detail": "3 lần thử đều lỗi; lỗi cuối: LLM_UNAVAILABLE: ConnectError"
+     },
+     {
+      "where": "chapter 18",
+      "code": "RETRY_LIMIT_REACHED",
+      "detail": "3 lần thử đều lỗi; lỗi cuối: LLM_UNAVAILABLE: ConnectError"
+     }
+    ],
+    "setup_cost_usd": 0.003708,
+    "setup_prompt_tokens": 7368,
+    "setup_completion_tokens": 5622,
+    "build_completion_tokens": [
+     3846
+    ],
+    "characters": 7,
+    "characters_with_appearance": 0,
+    "locations": 5,
+    "locations_with_visual": 0,
+    "appearance_chars": null,
+    "visual_chars": null,
+    "appearances": {},
+    "visuals": {}
+   }
+  ],
+  "long-ky-ao-hanh-trinh": [
+   {
+    "dir": "2026-10-29-run-long-ky-ao-hanh-trinh-1",
+    "setup_version": "setup-8",
+    "seed": 20261031,
+    "status": "error",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [
+     {
+      "where": "chapter 14: choices",
+      "attempt": 1,
+      "code": "RETRY_LIMIT_REACHED",
+      "detail": "2 lần thử đều lỗi; lỗi cuối: LLM_BAD_RESPONSE: ChoicesOutput: listeners có mục không phải nhân vật"
+     },
+     {
+      "where": "chapter 14: choices",
+      "attempt": 1,
+      "code": "RETRY_LIMIT_REACHED",
+      "detail": "2 lần thử đều lỗi; lỗi cuối: LLM_BAD_RESPONSE: ChoicesOutput: ref không có trong danh sách: ['mã người dẫn đầu chưa có trong sổ tay']"
+     },
+     {
+      "where": "chapter 14: choices",
+      "code": "RETRY_LIMIT_REACHED",
+      "detail": null
+     }
+    ],
+    "setup_cost_usd": 0.004404,
+    "setup_prompt_tokens": 7370,
+    "setup_completion_tokens": 7013,
+    "build_completion_tokens": [
+     5446
+    ],
+    "characters": 7,
+    "characters_with_appearance": 0,
+    "locations": 6,
+    "locations_with_visual": 0,
+    "appearance_chars": null,
+    "visual_chars": null,
+    "appearances": {},
+    "visuals": {}
+   }
+  ]
+ },
+ "new": {
+  "ab-tu-tien": [
+   {
+    "dir": "2026-10-29-run-setup9-ab-tu-tien-s0",
+    "setup_version": "setup-9",
+    "seed": 20261028,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.00389,
+    "setup_prompt_tokens": 7584,
+    "setup_completion_tokens": 5931,
+    "build_completion_tokens": [
+     4380
+    ],
+    "characters": 5,
+    "characters_with_appearance": 5,
+    "locations": 4,
+    "locations_with_visual": 4,
+    "appearance_chars": {
+     "min": 126,
+     "mean": 155.4,
+     "max": 195
+    },
+    "visual_chars": {
+     "min": 120,
+     "mean": 135.5,
+     "max": 146
+    },
+    "appearances": {
+     "doan_thanh_lam": "Trông ngoài ba mươi, vóc người mảnh, gương mặt trái xoan và tóc đen vấn bằng trâm gỗ; áo dài xanh sẫm luôn phẳng phiu, trên ngón cái có chiếc nhẫn đồng.",
+     "luong_khac": "Trông gần ba mươi tuổi, vai rộng, mặt vuông và tóc đen cắt gọn; mặc áo choàng màu ngà viền bạc, mang một thanh kiếm vỏ trắng có nút tua xanh.",
+     "pham_tieu": "Trông chừng mười chín tuổi, vóc nhỏ, mặt tròn và tóc đen cắt ngang gáy; mặc áo vải nâu rộng tay, cổ áo luôn cài lệch một khuy.",
+     "protagonist": "Trông khoảng hai mươi bốn tuổi, vóc người gầy chắc, gương mặt thanh và tóc đen buộc thấp sau gáy; anh mặc áo ngoại môn màu tro đã bạc ở vai, thường mang túi vải đựng dụng cụ ruộng thuốc bên hông.",
+     "ta_minh_vien": "Trông khoảng hai mươi lăm tuổi, người cao gầy, mặt dài và tóc đen buộc gọn sau gáy; thường mặc áo môn sinh màu tro đã sờn, bên hông có một vết sẹo mảnh sát cổ tay."
+    },
+    "visuals": {
+     "con_duong_da": "Những phiến đá đen ướt sương xếp men theo sườn dốc, hai bên cỏ dại mọc chen qua kẽ. Từ đây có thể nghe tiếng chuông cổng vọng xuống từng hồi thưa.",
+     "nha_chap_su": "Căn nhà gỗ thấp có mái ngói sẫm, cửa sổ hẹp và giá sách ngả màu. Ánh đèn dầu vàng yếu hắt lên những mặt bàn đầy vết mực.",
+     "ruong_thuoc_hoang": "Các bờ luống bằng đất nện lở vụn dưới màn sương, lá thuốc xanh úa bắt ánh sáng mờ như phủ bụi. Hàng rào tre mục kêu khe khẽ mỗi khi gió luồn qua.",
+     "thung_lung_tram_suong": "Sương bạc thường phủ kín những triền dốc đá xám, khiến ánh sáng ban ngày nhợt nhạt và xa xăm. Không khí ẩm lạnh, thoảng mùi đất cũ."
+    }
+   },
+   {
+    "dir": "2026-10-29-run-setup9-ab-tu-tien-s1",
+    "setup_version": "setup-9",
+    "seed": 20261029,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.003677,
+    "setup_prompt_tokens": 7566,
+    "setup_completion_tokens": 6231,
+    "build_completion_tokens": [
+     4677
+    ],
+    "characters": 5,
+    "characters_with_appearance": 5,
+    "locations": 5,
+    "locations_with_visual": 5,
+    "appearance_chars": {
+     "min": 119,
+     "mean": 150.2,
+     "max": 197
+    },
+    "visual_chars": {
+     "min": 114,
+     "mean": 123.6,
+     "max": 135
+    },
+    "appearances": {
+     "doan_khuong": "Trông ngoài ba mươi, người gầy cao, mặt dài, tóc đen búi thấp và mặc áo xám đã sờn; một chiếc khuyên đồng nhỏ ở tai trái là dấu hiệu dễ nhận ra.",
+     "han_tu_bach": "Trông gần ba mươi, vóc người cân đối, khuôn mặt sáng, tóc đen vấn bằng trâm gỗ và mặc trường bào xanh sẫm; bên hông luôn đeo một túi vải thêu chỉ bạc.",
+     "luu_tu_nghi": "Trông khoảng hai mươi tuổi, vóc người thanh mảnh, mặt trái xoan, tóc đen tết gọn sau gáy và mặc áo xanh nhạt; cổ tay phải có vòng gỗ sẫm màu.",
+     "pham_tac": "Trông ngoài hai mươi, vai rộng, mặt vuông, tóc cắt ngắn và mặc áo nâu buộc gọn tay áo; một vết sẹo mảnh chạy ngang cằm.",
+     "protagonist": "Trông khoảng hai mươi tuổi, vóc người gọn và rắn rỏi, khuôn mặt hơi gầy, tóc đen buộc thấp và mặc áo ngoại môn màu chàm đã bạc ở cổ tay; bên hông đeo túi vải đựng linh thạch là dấu hiệu dễ nhận ra."
+    },
+    "visuals": {
+     "ben_do_van_te": "Mặt bến lát đá xám, vài cọc gỗ thẫm màu nhô khỏi làn nước đục. Ánh sáng ở đây thường nhợt nhạt dưới lớp sương lững lờ.",
+     "doi_da_thien_anh": "Những phiến đá xám dựng nghiêng dưới ánh trời nhạt, cỏ thấp chen giữa các khe nứt. Gió lùa qua sườn đồi nghe khô và lạnh.",
+     "son_mon_thanh_khue": "Cổng đá xanh đứng giữa những vách núi phủ rêu, đèn treo hắt ánh vàng yếu ớt. Sương quẩn quanh bậc đá khiến nơi này vừa gần vừa xa.",
+     "thuyen_moc_luu": "Ván thuyền sẫm nước, mái chèo cũ va nhẹ vào mạn theo nhịp sóng. Sương phủ thấp khiến bờ xa chỉ còn là một vệt tối.",
+     "tram_nghi_bach_thach": "Tường đá bạc màu ôm lấy một mái ngói thấp, cửa gỗ khép hờ trong bóng tối. Bụi phủ trên nền gạch, chỉ còn vệt sáng mỏng len qua khe mái."
+    }
+   }
+  ],
+  "ab-ky-ao": [
+   {
+    "dir": "2026-10-29-run-setup9-ab-ky-ao-s0",
+    "setup_version": "setup-9",
+    "seed": 20261029,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.003484,
+    "setup_prompt_tokens": 7409,
+    "setup_completion_tokens": 5162,
+    "build_completion_tokens": [
+     3865
+    ],
+    "characters": 4,
+    "characters_with_appearance": 4,
+    "locations": 4,
+    "locations_with_visual": 4,
+    "appearance_chars": {
+     "min": 139,
+     "mean": 153.8,
+     "max": 178
+    },
+    "visual_chars": {
+     "min": 104,
+     "mean": 123.8,
+     "max": 137
+    },
+    "appearances": {
+     "ba_lam": "Trông ngoài sáu mươi, người nhỏ và lưng hơi còng, mặt dài với tóc bạc búi thấp dưới khăn nâu. Bà mặc áo chàm sẫm, đeo một vòng đồng xỉn ở cổ tay trái.",
+     "le_van": "Trông khoảng ba mươi, vóc người rắn chắc, mặt vuông với tóc đen tết gọn sau gáy. Cô mặc áo vải sẫm xắn tay, đi chân đất và có vết sẹo nhỏ ngang cằm.",
+     "ong_huan": "Trông gần bảy mươi, gầy và cao, gò má hõm, tóc bạc thưa chải ngược. Ông mặc áo nâu vá ở khuỷu tay, luôn cầm một cây gậy trúc có nút dây đỏ.",
+     "protagonist": "Trông khoảng hai mươi lăm tuổi, người mảnh nhưng rắn rỏi, mặt trái xoan với tóc đen dài thường buộc thấp. Cô mặc áo nâu giản dị và váy tối màu, cổ tay quấn một sợi vải cũ đã sờn."
+    },
+    "visuals": {
+     "bai_lau_sau": "Lau cao quá đầu người, lá khô cọ vào nhau thành tiếng thì thầm. Sương phủ sát mặt nước, khiến lối đi chỉ hiện ra từng đoạn.",
+     "bo_dam_coc_the": "Bùn đen loang dưới những tấm ván mục, còn mặt đầm ánh lên màu chì. Cọc gỗ sần sùi trồi khỏi lau, quanh đó phảng phất mùi nước lạnh.",
+     "lang_tro_say": "Những mái nhà lá xám nép giữa lau cao và lối ván đen ẩm. Ánh sáng thường nhợt như bị sương nước giữ lại.",
+     "nha_giu_le": "Vách gỗ ám khói, mái lợp lá sẫm và cửa thấp chỉ vừa một người cúi đầu bước qua. Một ngọn đèn dầu vàng đục làm bóng đồ vật rung trên vách."
+    }
+   },
+   {
+    "dir": "2026-10-29-run-setup9-ab-ky-ao-s1",
+    "setup_version": "setup-9",
+    "seed": 20261030,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.002455,
+    "setup_prompt_tokens": 7399,
+    "setup_completion_tokens": 3824,
+    "build_completion_tokens": [
+     2499
+    ],
+    "characters": 4,
+    "characters_with_appearance": 4,
+    "locations": 4,
+    "locations_with_visual": 4,
+    "appearance_chars": {
+     "min": 146,
+     "mean": 160.5,
+     "max": 191
+    },
+    "visual_chars": {
+     "min": 107,
+     "mean": 115.8,
+     "max": 130
+    },
+    "appearances": {
+     "le_thi_hanh": "Trông ngoài sáu mươi, dáng nhỏ và hơi còng, mặt nhiều nếp nhăn, tóc bạc búi thấp dưới khăn nâu. Bà mặc áo chàm sẫm, đeo một vòng chìa khóa ở thắt lưng.",
+     "pham_van_khoi": "Trông ngoài năm mươi, vai rộng, mặt vuông rám nắng, tóc đen lẫn bạc cắt ngắn. Ông mặc áo tơi sẫm và luôn chống một cây sào tre có đầu quấn dây đỏ.",
+     "protagonist": "Trông khoảng hai mươi tuổi, dáng người gọn và hơi khom vì quen cúi sửa mái chèo, mặt dài, tóc đen cắt gọn. Duy mặc áo vải nâu sẫm, cổ tay áo sờn; một vết chai nhỏ nằm ngang lòng bàn tay phải.",
+     "tran_min": "Trông khoảng mười tuổi, người gầy nhỏ, mặt tái nhợt, tóc đen ướt bết vào trán. Cậu mặc áo vải xám cũ, chân trần và có một sợi dây xanh buộc ở cổ tay trái."
+    },
+    "visuals": {
+     "ben_cuoi": "Cọc bến gãy để lại một hố nước đen giữa những tấm ván mục. Sương đọng thành vệt trắng, che khuất bờ bên kia.",
+     "con_mu": "Những mái lá thấp chìm trong sương xám, ánh đèn dầu hắt vàng qua phên tre ướt. Lối đi bằng ván đen kêu cót két trên mặt nước lặng.",
+     "nha_the": "Vách gỗ bạc màu dựng trên nền đá thấp, trong nhà chỉ có một ngọn đèn dầu xanh nhạt. Khói nhang mỏng quẩn dưới mái rơm.",
+     "vung_say": "Lá sậy đen bóng nghiêng sát mặt nước, ánh trăng bị xé thành những mảnh nhỏ. Không khí lạnh và nặng mùi bùn."
+    }
+   }
+  ],
+  "ab-trinh-tham": [
+   {
+    "dir": "2026-10-29-run-setup9-ab-trinh-tham-s0",
+    "setup_version": "setup-9",
+    "seed": 20261030,
+    "status": "done",
+    "build_calls": 2,
+    "repairs_used": 1,
+    "repair_kinds": {
+     "package": 1
+    },
+    "initial_problems": [
+     "gói chương 0: (gốc): Value error, id nút trùng trong gói: ['chum_chia_khoa']"
+    ],
+    "errors": [],
+    "setup_cost_usd": 0.005886,
+    "setup_prompt_tokens": 14743,
+    "setup_completion_tokens": 8848,
+    "build_completion_tokens": [
+     4107,
+     3165
+    ],
+    "characters": 5,
+    "characters_with_appearance": 5,
+    "locations": 5,
+    "locations_with_visual": 5,
+    "appearance_chars": {
+     "min": 124,
+     "mean": 147.6,
+     "max": 166
+    },
+    "visual_chars": {
+     "min": 124,
+     "mean": 145.6,
+     "max": 162
+    },
+    "appearances": {
+     "le_thi_lan": "Trông ngoài ba mươi, dáng người nhỏ, mặt trái xoan, tóc đen vấn thấp; chị thường mặc áo len nâu và đeo đôi bông tai bạc nhỏ.",
+     "nguyen_van_binh": "Trông khoảng ngoài bốn mươi, thân hình đậm, mặt vuông, tóc đen chải lệch; anh thường mặc áo sơ mi cài kín cổ và đeo chiếc đồng hồ dây da cũ.",
+     "pham_quang_dung": "Trông gần năm mươi, vai rộng, mặt rám nắng, tóc đen lẫn bạc; anh mặc áo công nhân xanh đã bạc màu, bên hông thường có túi dụng cụ và một vệt sẹo mảnh ở cằm.",
+     "protagonist": "Trông ngoài ba mươi, dáng người nhanh nhẹn, mặt trái xoan, tóc đen thường buộc gọn; Hạnh hay mặc áo nâu giản dị khi bán xôi, với chiếc khăn vải sẫm màu quàng bên vai.",
+     "tran_tan": "Trông ngoài sáu mươi, người gầy, mặt dài với tóc bạc cắt ngắn và thường mặc áo bông sẫm màu; ông có dáng đi hơi khập khiễng, dễ nhận ra trong hành lang."
+    },
+    "visuals": {
+     "be_nuoc": "Thành bể xi măng sần sùi loang rêu, một vòi sắt nhỏ giọt xuống nền; khoảng sân quanh đó sáng nhợt vào ban ngày và tối nhanh khi hành lang mất điện.",
+     "buong_ong_tan": "Cửa gỗ bạc màu mở ra một gian hẹp với chiếc bàn thấp, bếp dầu và bát cơm nguội còn nguyên; ánh sáng ban ngày lọt qua ô cửa nhỏ phủ lên đồ đạc một màu đục.",
+     "khu_tap_the_cho_dua": "Tường vôi ngả xám, lan can sắt sơn tróc chạy dọc những hành lang hẹp; ánh sáng vàng yếu từ bóng đèn trần làm mùi cơm nguội và hơi ẩm như đọng lại trong không khí.",
+     "nha_xe": "Mái tôn thấp và những hàng xe đạp khóa sát nhau, chỉ có một bóng đèn trần chập chờn; nền xi măng vương vệt dầu cũ và lá khô.",
+     "tang_ham": "Bậc xi măng ẩm dẫn xuống một cánh cửa sắt sơn đen, ánh sáng lọt vào thành những vệt mỏng; mùi bụi, dầu xe và nước đọng quẩn trong khoảng tối."
+    }
+   },
+   {
+    "dir": "2026-10-29-run-setup9-ab-trinh-tham-s1",
+    "setup_version": "setup-9",
+    "seed": 20261031,
+    "status": "done",
+    "build_calls": 2,
+    "repairs_used": 1,
+    "repair_kinds": {
+     "plan": 1
+    },
+    "initial_problems": [
+     "bản kế hoạch: (gốc): Value error, hồi thứ [1] không có mốc nào kết thúc trong hồi"
+    ],
+    "errors": [],
+    "setup_cost_usd": 0.005088,
+    "setup_prompt_tokens": 14198,
+    "setup_completion_tokens": 8104,
+    "build_completion_tokens": [
+     3710,
+     2843
+    ],
+    "characters": 5,
+    "characters_with_appearance": 5,
+    "locations": 5,
+    "locations_with_visual": 5,
+    "appearance_chars": {
+     "min": 136,
+     "mean": 167.2,
+     "max": 218
+    },
+    "visual_chars": {
+     "min": 125,
+     "mean": 143.4,
+     "max": 158
+    },
+    "appearances": {
+     "do_thi_sen": "Trông ngoài năm mươi, người thấp đậm, mặt tròn với tóc hoa râm búi sau gáy. Bà thường mặc áo bông tối màu và đeo kính gọng đen hơi lệch.",
+     "le_thuan": "Trông khoảng ba mươi tuổi, người mảnh, mặt trái xoan và tóc đen vấn thấp sau gáy. Cô thường mặc áo nâu cổ bẻ, quần sẫm màu, đeo chiếc đồng hồ nhỏ dây vải ở cổ tay trái.",
+     "nguyen_van_hoa": "Trông ngoài ba mươi, vóc người chắc, mặt vuông, tóc đen cắt ngắn và thường mặc áo sơ mi xanh đã bạc màu. Một vết sẹo mảnh nằm sát cằm bên phải.",
+     "protagonist": "Trông khoảng ngoài ba mươi, vóc người gọn và hơi mảnh, gương mặt có nét mệt nhưng tỉnh táo, tóc đen buộc gọn sau gáy. Liên thường mặc áo sơ mi vải sẫm màu cùng tạp dề bếp đã giặt bạc, cổ tay có vết chai mờ do làm việc.",
+     "vu_quang": "Trông khoảng bốn mươi tuổi, cao gầy, mặt dài, tóc đen lẫn bạc ở hai bên thái dương. Ông thường mặc áo công nhân xanh sẫm, đi dép cao su và đeo chùm chìa khóa lớn bên hông."
+    },
+    "visuals": {
+     "can_ho_thuan": "Cánh cửa gỗ sẫm có lớp sơn tróc quanh ổ khóa, hành lang hẹp chỉ sáng nhờ một bóng đèn vàng. Qua cửa sổ, ánh chiều nhạt phủ lên những món đồ gia dụng cũ.",
+     "goc_bep_nha_tre": "Bếp dầu đen ám khói đặt cạnh chiếc bàn gỗ thấp, trên tường là kệ bát men sứt miệng. Nắng xiên qua ô cửa nhỏ, làm bụi bột và hơi nước hiện lên mờ đục.",
+     "kho_giat": "Cửa gỗ dày ngả xám, bản lề hoen rỉ và nền xi măng phủ bụi. Một khe sáng hẹp từ ô thông gió khiến căn phòng có vẻ lạnh và kín.",
+     "nha_tre_hoa_sen": "Ánh sáng cuối ngày lọt qua những khung cửa sổ sơn xanh đã bong, rơi lên nền gạch hoa xước. Mùi cơm nguội, nước rửa bát và phấn bảng quẩn trong các phòng thấp.",
+     "san_khu_tap_the": "Sân bê tông loang nước, dưới những bóng đèn vàng yếu là hàng xe đạp dựng sát tường. Các dây phơi chùng xuống giữa những ban công tối."
+    }
+   }
+  ],
+  "long-tu-tien": [
+   {
+    "dir": "2026-10-29-run-setup9-long-tu-tien-s0",
+    "setup_version": "setup-9",
+    "seed": 20261022,
+    "status": "done",
+    "build_calls": 3,
+    "repairs_used": 1,
+    "repair_kinds": {
+     "id": 1,
+     "package": 7
+    },
+    "initial_problems": [
+     "các id 'ta_dật_chau', 'tạ_dật_châu' khác nhau nhưng đổi sang dạng ^[a-z0-9_]+$ đều ra 'ta_dat_chau': đặt cho mỗi thứ một id riêng",
+     "gói chương 0: nodes.5.id: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+     "gói chương 0: edges.13.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+     "gói chương 0: edges.19.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+     "gói chương 0: edges.27.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+     "gói chương 0: edges.34.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+     "gói chương 0: edges.40.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+     "gói chương 0: edges.47.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'"
+    ],
+    "errors": [
+     {
+      "where": "setup:build",
+      "attempt": 1,
+      "code": "STORY_SETUP_INVALID",
+      "detail": "sai quy tắc sau 1 lượt sửa: package ×1",
+      "problems": [
+       "gói chương 0: (gốc): Value error, id nút trùng trong gói: ['danh_sach_lac_nhai']"
+      ]
+     }
+    ],
+    "setup_cost_usd": 0.009713,
+    "setup_prompt_tokens": 20113,
+    "setup_completion_tokens": 16115,
+    "build_completion_tokens": [
+     5373,
+     4034,
+     5220
+    ],
+    "characters": 6,
+    "characters_with_appearance": 6,
+    "locations": 4,
+    "locations_with_visual": 4,
+    "appearance_chars": {
+     "min": 146,
+     "mean": 165.7,
+     "max": 204
+    },
+    "visual_chars": {
+     "min": 153,
+     "mean": 165.5,
+     "max": 191
+    },
+    "appearances": {
+     "doan_khuong": "Trông ngoài sáu mươi, người cao gầy, mặt dài với đôi mắt sâu, tóc bạc búi dưới trâm gỗ; ông thường mặc áo đạo bào xanh sẫm và có vết sẹo mảnh sát chân mày trái.",
+     "lao_thanh_nghi": "Trông khoảng bốn mươi, vóc người rắn chắc, mặt vuông rám nắng, tóc đen điểm bạc buộc thấp; ông mặc áo choàng xám phủ bụi muối và đeo một vòng đồng xước trên cổ tay.",
+     "le_tuyet_dung": "Trông ngoài ba mươi, vóc người thanh mảnh, mặt trái xoan, tóc đen cài trâm bạc hình lá; bà mặc áo choàng trắng viền lam và có nốt ruồi nhỏ dưới khóe mắt phải.",
+     "pham_tu_nhan": "Trông ngoài bốn mươi, dáng cao đậm, mặt vuông sạch râu, tóc đen chải gọn dưới mão ngọc; ông mặc trường bào màu mực thêu chỉ bạc và đeo nhẫn ngọc trắng ở ngón cái.",
+     "protagonist": "Trông khoảng ba mươi, vóc người thanh gọn, mặt hơi dài với đôi mắt tĩnh, tóc đen buộc cao bằng dây vải; chàng mặc áo môn sinh màu tro viền xanh sẫm, bên hông đeo túi văn thư và có một vết chai ở ngón trỏ.",
+     "tran_mac": "Trông khoảng hai mươi lăm, vóc người mảnh, mặt tái và hẹp, tóc đen buộc bằng dây vải; anh mặc áo nâu giản dị, luôn mang theo ống bút tre bên hông."
+    },
+    "visuals": {
+     "ben_lac_nguyet": "Cầu tàu bằng đá đen vươn ra mặt nước lặng, hai bên treo đèn giấy vàng nhạt. Tiếng dây neo va vào cọc gỗ hòa cùng tiếng sóng, tạo nên vẻ yên ổn đầy gượng ép.",
+     "dao_van_chau": "Những đảo đá xám nổi lên giữa màn sương bạc, mái ngói đen và cầu gỗ ướt ánh lên dưới trời âm u. Gió biển mang vị muối, khiến mọi tiếng chuông đều nghe xa và lạnh.",
+     "thuy_nghi_cung": "Cột đá xanh dựng trên nền gỗ sẫm, đèn lồng trắng hắt ánh sáng nhợt nhạt lên những tấm bình phong chạm sóng. Hơi ẩm từ biển len qua khe cửa, làm không khí trong điện lạnh như một lời cảnh cáo.",
+     "tram_thanh_tuc": "Tháp đá thấp đứng trên mỏm đảo trơ gió, quanh chân tháp là những cọc đồng xỉn màu và bậc đá nứt. Ánh sáng ở đây thường xanh tái, như bị sương mù hút mất."
+    }
+   },
+   {
+    "dir": "2026-10-29-run-setup9-long-tu-tien-s1",
+    "setup_version": "setup-9",
+    "seed": 20261023,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.004929,
+    "setup_prompt_tokens": 7596,
+    "setup_completion_tokens": 8727,
+    "build_completion_tokens": [
+     6926
+    ],
+    "characters": 7,
+    "characters_with_appearance": 7,
+    "locations": 5,
+    "locations_with_visual": 5,
+    "appearance_chars": {
+     "min": 180,
+     "mean": 198.9,
+     "max": 254
+    },
+    "visual_chars": {
+     "min": 127,
+     "mean": 143,
+     "max": 155
+    },
+    "appearances": {
+     "doan_khuong": "Trông ngoài hai mươi, vai rộng, gương mặt vuông và có vết sẹo mảnh dưới cằm; tóc đen buộc gọn sau gáy. Hắn mặc áo giáp vảy màu than trên áo chàm, bước chân hơi nặng vì một bên giày đóng đinh đồng.",
+     "han_mac": "Trông gần năm mươi, thân hình chắc nịch, mặt rộng với lông mày rậm; tóc đen lẫn bạc búi dưới quan sắt. Hắn mặc áo bào xanh đen khoác giáp vai, đeo một thẻ lệnh hình vuông ở thắt lưng.",
+     "ky_van_lac": "Trông ngoài hai mươi, dáng cao thanh, mặt hơi nhọn và đôi mắt sáng; tóc đen dài buộc bằng dải lụa tím sẫm. Nàng mặc áo khoác màu mận chín, bên tai phải đeo khuyên bạc hình chiếc lá.",
+     "luu_thanh_nghi": "Trông khoảng ba mươi, dáng thanh mảnh, gương mặt trái xoan và mắt dài; tóc đen vấn cao bằng trâm ngọc xanh. Nàng mặc áo xanh sẫm cổ chéo, bên hông luôn đeo thẻ gỗ khắc tên thư khố.",
+     "pham_tu_anh": "Trông khoảng ba mươi, vóc người cân đối, mặt trái xoan với nốt ruồi nhỏ bên thái dương trái; tóc đen vấn thành búi thấp. Nàng mặc trường sam màu ngà thêu đường chỉ bạc ở cổ tay và đeo một chiếc nhẫn ngọc khói.",
+     "protagonist": "Trông ngoài hai mươi, dáng người thanh mảnh, gương mặt dài với đôi mắt tĩnh và hàng mày ngay ngắn; tóc đen búi gọn bằng trâm gỗ giản dị. Chàng mặc áo thư lại màu xanh tro đã sờn ở cổ tay, bên hông mang túi bút và có một vết mực đậm khó tẩy trên ngón trỏ.",
+     "van_tu_hanh": "Trông ngoài sáu mươi, người cao gầy, mặt dài với đôi mắt sâu và hàng lông mày bạc; tóc bạc búi thấp dưới trâm gỗ sẫm. Ông thường mặc áo bào xám viền xanh, đeo một vòng đồng xước ở ngón cái."
+    },
+    "visuals": {
+     "ben_thach_luu": "Bậc đá xám trượt xuống làn nước đục, bên trên có mái che lợp gỗ nâu bạc màu. Những chiếc đèn treo thấp chao nhẹ trong gió lạnh.",
+     "dien_tu_van": "Nền đá nhẵn phản chiếu ánh đèn dầu, những tấm bình phong gỗ chia gian thành các khoảng hẹp. Mùi mực khô và hương trầm cũ quẩn dưới xà nhà.",
+     "ho_vu_kinh": "Nước hồ phẳng như kính mờ, sương trắng nằm thấp trên mặt nước. Bờ đá xám trơn lạnh, thỉnh thoảng vang lên tiếng nước chạm vào những chân trụ chìm.",
+     "lang_da_ngu_anh": "Đá xanh đen phủ một lớp rêu mỏng, ánh sáng từ các khe tường chỉ đủ soi những vệt khắc mờ. Không khí ẩm lạnh, tiếng bước chân vọng lại như có người đi theo.",
+     "thuy_mac_cac": "Mái ngói đen ánh lên dưới màn sương, hành lang gỗ sẫm nối những gian nhà trên mặt nước. Đèn đá tỏa ánh vàng lạnh, soi những vệt ẩm chạy dọc chân cột."
+    }
+   }
+  ],
+  "long-ky-ao-hanh-trinh": [
+   {
+    "dir": "2026-10-29-run-setup9-long-ky-ao-hanh-trinh-s0",
+    "setup_version": "setup-9",
+    "seed": 20261031,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.004747,
+    "setup_prompt_tokens": 7731,
+    "setup_completion_tokens": 7609,
+    "build_completion_tokens": [
+     5969
+    ],
+    "characters": 7,
+    "characters_with_appearance": 7,
+    "locations": 6,
+    "locations_with_visual": 6,
+    "appearance_chars": {
+     "min": 148,
+     "mean": 185.7,
+     "max": 230
+    },
+    "visual_chars": {
+     "min": 126,
+     "mean": 147.8,
+     "max": 172
+    },
+    "appearances": {
+     "bao_lam": "Trông ngoài ba mươi, vai rộng, mặt vuông rám nắng, tóc đen cắt ngắn và có ria mép mảnh. Anh mặc áo khoác nâu chống mưa, đeo vòng dây thừng ở cổ tay trái và đi hơi khập khiễng.",
+     "doan_khuong": "Trông ngoài năm mươi, thấp đậm, mặt vuông nhiều nếp nhăn, tóc muối tiêu cắt sát. Ông mặc áo choàng màu cát quấn kín cổ và đeo cân đồng nhỏ bên hông.",
+     "lam_vy": "Trông khoảng ba mươi tuổi, vóc người chắc khỏe, mặt tròn với nốt ruồi dưới cằm và tóc đen buộc thành búi thấp. Cô mặc áo choàng xanh rêu viền vải sáng màu, đeo một chiếc la bàn gỗ trước ngực.",
+     "mai_thu": "Trông khoảng ba mươi tuổi, người cao gầy, mặt dài với đôi mắt đen và mái tóc đen tết gọn sau gáy. Cô mặc áo khoác xanh sẫm có hàng khuy đồng và luôn đeo một chiếc còi bạc ở cổ.",
+     "protagonist": "Trông khoảng hai mươi lăm tuổi, vóc người rắn rỏi, mặt hơi góc cạnh và tóc đen cắt gọn để khỏi vướng khi sửa sàn tàu. Đạt mặc áo lao động xanh sẫm có nhiều túi vá, đi ủng chống nước và luôn đeo một đoạn dây thừng ngắn ở thắt lưng.",
+     "thu_van": "Trông khoảng bốn mươi tuổi, người cao, gương mặt góc cạnh, tóc đen pha bạc tết thành một bím dày. Cô mặc áo dài tay màu gạch phủ tạp dề da sẫm và mang một vòng đồng bản rộng ở cánh tay phải.",
+     "yen_nhi": "Trông khoảng hai mươi lăm tuổi, nhỏ người, mặt trái xoan, tóc đen ngang cằm thường giấu dưới khăn trùm màu xám. Cô mặc áo ngắn chống nước, có một chiếc khuyên đồng hình giọt nước ở tai phải."
+    },
+    "visuals": {
+     "ben_may": "Sàn gỗ ghép thành những bè lớn, nối nhau bằng cầu dây dưới ánh đèn vàng lay động. Mưa phủ lên mái bạt và mặt nước một màu chì, còn chuông gió va khẽ như đang báo thời tiết.",
+     "chan_nui_ngu": "Đá đen phủ bụi đỏ vây quanh các nhà mái thấp bằng đất nung. Ánh sáng cam rỉ ra từ những khe thông hơi, làm không khí có vẻ ấm dù trời tối.",
+     "cua_noi_lac": "Những sàn gỗ buộc bằng dây gai chen chúc dưới các mái vải nhiều màu. Đèn lồng xanh soi mặt nước lăn tăn, còn lối đi cứ kẽo kẹt theo mỗi đợt sóng.",
+     "eo_day_neo": "Mặt nước đen phẳng, chỉ lộ ra các đoạn dây sẫm màu khi sét lóe trên trời. Hai bên là những phao gỗ bạc màu, không có đèn hiệu.",
+     "rung_suong": "Thân cây trắng xám dựng dày dưới một tầng sương xanh nhạt, ánh sáng chỉ lọt xuống thành những vệt mỏng. Rêu mềm phủ kín đá và rễ cây, khiến mọi tiếng bước chân nghe xa lạ.",
+     "sa_mac_muoi": "Những gò muối sáng như kính vỡ trải đến tận chân trời dưới nắng trắng. Các cọc gỗ đen và mái lều thấp là dấu hiệu hiếm hoi của người ở."
+    }
+   },
+   {
+    "dir": "2026-10-29-run-setup9-long-ky-ao-hanh-trinh-s1",
+    "setup_version": "setup-9",
+    "seed": 20261032,
+    "status": "done",
+    "build_calls": 1,
+    "repairs_used": 0,
+    "repair_kinds": {},
+    "initial_problems": [],
+    "errors": [],
+    "setup_cost_usd": 0.003436,
+    "setup_prompt_tokens": 7637,
+    "setup_completion_tokens": 5728,
+    "build_completion_tokens": [
+     4171
+    ],
+    "characters": 6,
+    "characters_with_appearance": 6,
+    "locations": 6,
+    "locations_with_visual": 6,
+    "appearance_chars": {
+     "min": 171,
+     "mean": 202.8,
+     "max": 233
+    },
+    "visual_chars": {
+     "min": 126,
+     "mean": 157.8,
+     "max": 181
+    },
+    "appearances": {
+     "ba_thu": "Trông ngoài sáu mươi, người thấp và chắc, mặt vuông với nếp nhăn sâu quanh miệng, tóc bạc búi gọn dưới khăn nâu. Bà mặc áo chàm dày, đeo chiếc vòng đồng xỉn ở cổ tay trái.",
+     "dinh_quang": "Trông khoảng ba mươi lăm tuổi, người vai rộng, mặt vuông, tóc đen chải ngược và có nốt ruồi nhỏ dưới tai phải. Anh mặc áo khoác màu đất viền đồng, đeo một chiếc nhẫn bạc bản rộng và đi đứng với dáng ung dung.",
+     "ngoc_diem": "Trông ngoài năm mươi, vóc người mảnh, mặt gầy với đôi mắt sâu, tóc muối tiêu tết thành một bím dài. Bà mặc áo choàng xanh rêu có viền vải bạc và đeo một chiếc chuông nhỏ không lưỡi ở thắt lưng.",
+     "phuc_lam": "Trông khoảng ba mươi tuổi, vóc người gầy cao, mặt dài, tóc đen buộc thấp sau gáy và có sẹo mảnh ngang cằm. Anh mặc áo choàng xám phủ vai, mang găng da sẫm màu và chống một cây gậy gỗ cong.",
+     "protagonist": "Trông khoảng cuối hai mươi, vóc người săn chắc của người quen đi đường núi, mặt hơi góc cạnh, tóc đen cắt gọn và thường rối vì tro bụi. Kha mặc áo đi đường màu nâu sẫm có nhiều túi nhỏ, đi ủng bám bụi và đeo dây buộc bản đồ ở cổ tay.",
+     "yen_mai": "Trông khoảng hai mươi lăm tuổi, dáng cao gọn, mặt trái xoan, tóc đen cắt ngang cằm và thường cài một chiếc kẹp vỏ sò. Cô mặc áo khoác xanh ngắn, đi ủng buộc dây đỏ và có dáng bước hơi nghiêng như quen giữ thăng bằng trên bè."
+    },
+    "visuals": {
+     "cang_noi": "Các sàn gỗ vá víu dập dềnh trên làn nước đen xanh, nối nhau bằng cầu dây rung theo từng đợt sóng. Đèn lồng vỏ trai hắt ánh vàng méo mó lên những cột buồm chen chúc.",
+     "chan_than": "Tro xám phủ lên mái ngói sẫm, còn ánh lửa âm ỉ hắt đỏ các khe đá khi trời tối. Không khí có mùi lưu huỳnh nhẹ và tiếng gió khô lùa qua những giàn phơi.",
+     "rom_suong": "Thân cây bạc xám đứng san sát, rêu sáng lấm tấm dưới những vòm lá không để lộ mặt trời. Sương cuộn ngang đầu gối và làm mọi âm thanh gần như bị bọc trong vải.",
+     "sa_mac_muoi": "Mặt đất lấp lóa như kính vụn, những gờ muối trắng kéo dài đến tận đường chân trời. Ban ngày ánh sáng làm mọi bóng người nhợt đi, còn đêm lạnh đến mức hơi thở tưởng như có thể vỡ ra.",
+     "thap_chuong_bo_hoang": "Những phiến đá đen nứt rạn quấn quanh cầu thang hẹp, trên đỉnh là khung chuông trơ dưới nền trời đỏ sẫm. Tro mịn bám thành viền trên các bậc, như thể có ai vừa đi qua.",
+     "vung_nui_lua_ngu": "Đá đen bóng như vừa được mài, xen các vệt đỏ âm ỉ dưới lớp tro. Không khí rung nhẹ theo những tiếng ù sâu phát ra từ lòng núi."
+    }
+   }
+  ]
+ }
+}

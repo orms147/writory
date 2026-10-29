@@ -1,0 +1,1959 @@
+{
+ "story_id": "run-20261029-setup9-ab-trinh-tham-s0-5e9c3e44",
+ "plan": {
+  "acts": [
+   {
+    "name": "Lời giải thích dễ dàng",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Những lời nhớ khác nhau",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Dưới tầng hầm",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "dung_da_mo_cua_phu",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Dũng",
+      "mở cửa sắt"
+     ],
+     [
+      "anh Dũng",
+      "đưa ông Tấn qua lối kỹ thuật"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "dung_bao_ve_tan",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Dũng",
+      "giúp ông Tấn lẩn tránh"
+     ],
+     [
+      "ông Tấn",
+      "phát hiện việc Dũng lấy trộm vật tư"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tinh_trang_ong_tan",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "nguoi_mo_cua",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "ly_do_lan_tranh",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "mach_chia_khoa",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Hạnh nhận ra tiếng cửa sắt có thể liên quan đến lối kỹ thuật dẫn khỏi tầng hầm.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Những lời kể về giờ mất điện và tiếng cửa khiến Hạnh nghi ngờ một người trong khu đã dùng lối tầng hầm.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Hạnh tìm thấy ông Tấn trong kho kỹ thuật kín dưới tầng hầm.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Hạnh quyết định cách đưa sự thật về việc ông Tấn lẩn tránh ra trước cư dân khu tập thể.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "dung_da_mo_cua_phu",
+    "text": "Dũng đã mở cửa sắt tầng hầm sau giờ giới nghiêm để đưa ông Tấn qua lối kỹ thuật.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "dung_bao_ve_tan",
+    "text": "Dũng giúp ông Tấn lẩn tránh vì ông Tấn phát hiện việc Dũng lấy trộm vật tư sửa chữa của khu.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tinh_trang_ong_tan",
+    "description": "Ông Tấn đang ở đâu?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "nguoi_mo_cua",
+    "description": "Ai đã mở cửa sắt tầng hầm sau giờ giới nghiêm?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ly_do_lan_tranh",
+    "description": "Vì sao ông Tấn phải lẩn tránh?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "mach_chia_khoa",
+    "description": "Ai đã đặt chùm chìa khóa cạnh bể nước?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Hạnh nhận ra tiếng cửa sắt có thể liên quan đến lối kỹ thuật dẫn khỏi tầng hầm.",
+    "from_chapter": 2,
+    "to_chapter": 2,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Những lời kể về giờ mất điện và tiếng cửa khiến Hạnh nghi ngờ một người trong khu đã dùng lối tầng hầm.",
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Hạnh tìm thấy ông Tấn trong kho kỹ thuật kín dưới tầng hầm.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Hạnh quyết định cách đưa sự thật về việc ông Tấn lẩn tránh ra trước cư dân khu tập thể.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261029-setup9-ab-trinh-tham-s0-5e9c3e44-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Thị Hạnh",
+      "personality": "Nhanh nhạy, khéo chuyện trò nhưng kín đáo về điều mình nghĩ. Hạnh nhớ giọng nói, thói quen và giờ giấc của mọi người, song đôi khi phải tự hỏi đâu là quan sát, đâu là suy diễn.",
+      "backstory": "Hạnh bán xôi ở đầu ngõ và thường gặp cư dân khu tập thể từ sáng sớm. Cô từng trao đổi với ông Tấn vài câu mỗi ngày, nên sự vắng mặt của ông khiến cô để ý đến căn buồng còn nguyên bữa cơm nguội. Khi nghe chuyện chùm chìa khóa được tìm thấy bên bể nước, Hạnh bắt đầu lần hỏi từng người về đêm cuối cùng có ai nghe tiếng động dưới tầng hầm.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Trông ngoài ba mươi, dáng người nhanh nhẹn, mặt trái xoan, tóc đen thường buộc gọn; Hạnh hay mặc áo nâu giản dị khi bán xôi, với chiếc khăn vải sẫm màu quàng bên vai."
+     }
+    },
+    {
+     "id": "tran_tan",
+     "label": "Character",
+     "props": {
+      "name": "Trần Tấn",
+      "aliases": [
+       "ông Tấn"
+      ],
+      "personality": "Ít nói, cẩn thận và quen giữ chuyện trong bụng.",
+      "backstory": "Ông trông coi nhà xe khu tập thể đã nhiều năm, quen biết giờ giấc và nếp sinh hoạt của cư dân. Trước khi mất tích, ông sống một mình trong căn buồng nhỏ cạnh nhà xe.",
+      "appearance": "Trông ngoài sáu mươi, người gầy, mặt dài với tóc bạc cắt ngắn và thường mặc áo bông sẫm màu; ông có dáng đi hơi khập khiễng, dễ nhận ra trong hành lang."
+     }
+    },
+    {
+     "id": "nguyen_van_binh",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn Văn Bình",
+      "aliases": [
+       "anh Bình"
+      ],
+      "personality": "Nóng ruột, thực tế, thường trả lời ngắn và tránh nói dài về chuyện trong khu.",
+      "backstory": "Bình là tổ trưởng tổ dân phố, thường đứng ra giải quyết việc chung và muốn giữ yên ổn cho khu tập thể.",
+      "appearance": "Trông khoảng ngoài bốn mươi, thân hình đậm, mặt vuông, tóc đen chải lệch; anh thường mặc áo sơ mi cài kín cổ và đeo chiếc đồng hồ dây da cũ."
+     }
+    },
+    {
+     "id": "le_thi_lan",
+     "label": "Character",
+     "props": {
+      "name": "Lê Thị Lan",
+      "aliases": [
+       "chị Lan"
+      ],
+      "personality": "Hay để ý chuyện xung quanh, nói năng dè chừng và thường ngừng lại trước khi trả lời.",
+      "backstory": "Lan sống cùng gia đình ở tầng trệt, gần lối xuống tầng hầm, và thường thức khuya vá quần áo cho khách quen.",
+      "appearance": "Trông ngoài ba mươi, dáng người nhỏ, mặt trái xoan, tóc đen vấn thấp; chị thường mặc áo len nâu và đeo đôi bông tai bạc nhỏ."
+     }
+    },
+    {
+     "id": "pham_quang_dung",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Quang Dũng",
+      "aliases": [
+       "anh Dũng"
+      ],
+      "personality": "Điềm tĩnh, rành việc sửa chữa nhưng có thói quen trả lời đúng phần được hỏi.",
+      "backstory": "Dũng phụ trách sửa điện nước lặt vặt trong khu tập thể và biết các đường dây, ổ khóa cùng lối đi kỹ thuật của tòa nhà.",
+      "appearance": "Trông gần năm mươi, vai rộng, mặt rám nắng, tóc đen lẫn bạc; anh mặc áo công nhân xanh đã bạc màu, bên hông thường có túi dụng cụ và một vệt sẹo mảnh ở cằm."
+     }
+    },
+    {
+     "id": "khu_tap_the_cho_dua",
+     "label": "Location",
+     "props": {
+      "name": "Khu tập thể Chợ Dừa",
+      "aliases": [
+       "khu tập thể",
+       "khu nhà"
+      ],
+      "description": "Một dãy nhà tập thể cũ ở Hà Nội, nơi cư dân dùng chung lối đi, bể nước và nhà xe.",
+      "visual": "Tường vôi ngả xám, lan can sắt sơn tróc chạy dọc những hành lang hẹp; ánh sáng vàng yếu từ bóng đèn trần làm mùi cơm nguội và hơi ẩm như đọng lại trong không khí."
+     }
+    },
+    {
+     "id": "tang_ham",
+     "label": "Location",
+     "props": {
+      "name": "Tầng hầm",
+      "aliases": [
+       "hầm",
+       "dưới tầng hầm"
+      ],
+      "description": "Khoang thấp dưới khu nhà, có cửa sắt và lối kỹ thuật thông về phía nhà xe.",
+      "visual": "Bậc xi măng ẩm dẫn xuống một cánh cửa sắt sơn đen, ánh sáng lọt vào thành những vệt mỏng; mùi bụi, dầu xe và nước đọng quẩn trong khoảng tối."
+     }
+    },
+    {
+     "id": "nha_xe",
+     "label": "Location",
+     "props": {
+      "name": "Nhà xe",
+      "aliases": [
+       "nhà để xe"
+      ],
+      "description": "Gian để xe chung do ông Tấn trông coi, nằm sát lối xuống tầng hầm.",
+      "visual": "Mái tôn thấp và những hàng xe đạp khóa sát nhau, chỉ có một bóng đèn trần chập chờn; nền xi măng vương vệt dầu cũ và lá khô."
+     }
+    },
+    {
+     "id": "buong_ong_tan",
+     "label": "Location",
+     "props": {
+      "name": "Buồng ông Tấn",
+      "aliases": [
+       "căn buồng nhỏ"
+      ],
+      "description": "Căn buồng chật cạnh nhà xe, nơi ông Tấn ở một mình.",
+      "visual": "Cửa gỗ bạc màu mở ra một gian hẹp với chiếc bàn thấp, bếp dầu và bát cơm nguội còn nguyên; ánh sáng ban ngày lọt qua ô cửa nhỏ phủ lên đồ đạc một màu đục."
+     }
+    },
+    {
+     "id": "be_nuoc",
+     "label": "Location",
+     "props": {
+      "name": "Bể nước chung",
+      "aliases": [
+       "bể nước"
+      ],
+      "description": "Bể nước xi măng đặt cạnh sân trong, nơi cư dân lấy nước vào những giờ nước máy có.",
+      "visual": "Thành bể xi măng sần sùi loang rêu, một vòi sắt nhỏ giọt xuống nền; khoảng sân quanh đó sáng nhợt vào ban ngày và tối nhanh khi hành lang mất điện."
+     }
+    },
+    {
+     "id": "to_dan_pho",
+     "label": "Faction",
+     "props": {
+      "name": "Tổ dân phố",
+      "aliases": [
+       "tổ"
+      ],
+      "description": "Nhóm cư dân phụ trách việc chung và thường thống nhất cách giải thích những chuyện xảy ra trong khu."
+     }
+    },
+    {
+     "id": "chum_chia_khoa",
+     "label": "Item",
+     "props": {
+      "name": "Chùm chìa khóa của ông Tấn",
+      "aliases": [
+       "chùm chìa khóa"
+      ],
+      "description": "Chùm chìa khóa nhà xe và cửa phụ, được tìm thấy cạnh bể nước vào buổi sáng sau khi ông Tấn mất tích."
+     }
+    },
+    {
+     "id": "xe_dap_ong_tan",
+     "label": "Item",
+     "props": {
+      "name": "Xe đạp của ông Tấn",
+      "aliases": [
+       "chiếc xe đạp"
+      ],
+      "description": "Chiếc xe đạp cũ của ông Tấn vẫn khóa trong nhà xe sau khi ông không về ngủ."
+     }
+    },
+    {
+     "id": "tan_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Tấn không về buồng ngủ trong đêm trước khi câu chuyện bắt đầu."
+     }
+    },
+    {
+     "id": "chum_chia_khoa_o_be",
+     "label": "Fact",
+     "props": {
+      "text": "Chùm chìa khóa của ông Tấn được tìm thấy cạnh bể nước vào buổi sáng."
+     }
+    },
+    {
+     "id": "xe_dap_con_khoa",
+     "label": "Fact",
+     "props": {
+      "text": "Xe đạp của ông Tấn vẫn khóa trong nhà xe."
+     }
+    },
+    {
+     "id": "com_nguoi_con_nguyen",
+     "label": "Fact",
+     "props": {
+      "text": "Bữa cơm nguội trong buồng ông Tấn vẫn còn nguyên."
+     }
+    },
+    {
+     "id": "hanh_nghe_tieng_cua",
+     "label": "Fact",
+     "props": {
+      "text": "Hạnh nghe tiếng cửa sắt tầng hầm khép lại sau giờ giới nghiêm trong đêm ông Tấn mất tích."
+     }
+    },
+    {
+     "id": "binh_bac_bo_chuyen_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Bình cho rằng ông Tấn chỉ đi vắng vài hôm."
+     }
+    },
+    {
+     "id": "dung_da_mo_cua_phu",
+     "label": "Fact",
+     "props": {
+      "text": "Dũng đã mở cửa sắt tầng hầm sau giờ giới nghiêm để đưa ông Tấn qua lối kỹ thuật."
+     }
+    },
+    {
+     "id": "dung_bao_ve_tan",
+     "label": "Fact",
+     "props": {
+      "text": "Dũng giúp ông Tấn lẩn tránh vì ông Tấn phát hiện việc Dũng lấy trộm vật tư sửa chữa của khu."
+     }
+    },
+    {
+     "id": "tan_an_trong_kho",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Tấn đang ẩn trong kho kỹ thuật kín ở cuối lối đi dưới tầng hầm."
+     }
+    },
+    {
+     "id": "lan_thay_vet_bui",
+     "label": "Fact",
+     "props": {
+      "text": "Lan thấy vệt bụi mới trên tay nắm cửa tầng hầm vào sáng sau khi ông Tấn mất tích."
+     }
+    },
+    {
+     "id": "tinh_trang_ong_tan",
+     "label": "Thread",
+     "props": {
+      "description": "Ông Tấn đang ở đâu?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "nguoi_mo_cua",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã mở cửa sắt tầng hầm sau giờ giới nghiêm?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "ly_do_lan_tranh",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao ông Tấn phải lẩn tránh?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "mach_chia_khoa",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã đặt chùm chìa khóa cạnh bể nước?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>tran_tan@0",
+     "props": {
+      "kind": "người quen",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_tan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_tan>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "nguyen_van_binh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>nguyen_van_binh@0",
+     "props": {
+      "kind": "người cùng khu",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nguyen_van_binh",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nguyen_van_binh>protagonist@0",
+     "props": {
+      "kind": "người cùng khu",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "le_thi_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>le_thi_lan@0",
+     "props": {
+      "kind": "người quen",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_thi_lan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_thi_lan>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "pham_quang_dung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>pham_quang_dung@0",
+     "props": {
+      "kind": "người cùng khu",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_quang_dung",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_quang_dung>protagonist@0",
+     "props": {
+      "kind": "người cùng khu",
+      "score": 0
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "khu_tap_the_cho_dua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>khu_tap_the_cho_dua@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_tan",
+     "to": "tang_ham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_tan>tang_ham@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguyen_van_binh",
+     "to": "khu_tap_the_cho_dua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguyen_van_binh>khu_tap_the_cho_dua@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "le_thi_lan",
+     "to": "khu_tap_the_cho_dua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:le_thi_lan>khu_tap_the_cho_dua@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_quang_dung",
+     "to": "khu_tap_the_cho_dua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_quang_dung>khu_tap_the_cho_dua@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "chum_chia_khoa",
+     "to": "be_nuoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:chum_chia_khoa>be_nuoc@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "xe_dap_ong_tan",
+     "to": "nha_xe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:xe_dap_ong_tan>nha_xe@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nguyen_van_binh",
+     "to": "to_dan_pho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nguyen_van_binh>to_dan_pho@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tan_mat_tich",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tan_mat_tich>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tan_mat_tich",
+     "to": "buong_ong_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tan_mat_tich>buong_ong_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_van_binh",
+     "to": "tan_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_van_binh>tan_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_lan",
+     "to": "tan_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_lan>tan_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "tan_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>tan_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "chum_chia_khoa_o_be",
+     "to": "chum_chia_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chum_chia_khoa_o_be>chum_chia_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chum_chia_khoa_o_be",
+     "to": "be_nuoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chum_chia_khoa_o_be>be_nuoc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chum_chia_khoa_o_be",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chum_chia_khoa_o_be>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_van_binh",
+     "to": "chum_chia_khoa_o_be",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_van_binh>chum_chia_khoa_o_be@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_lan",
+     "to": "chum_chia_khoa_o_be",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_lan>chum_chia_khoa_o_be@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "chum_chia_khoa_o_be",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>chum_chia_khoa_o_be@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "xe_dap_con_khoa",
+     "to": "xe_dap_ong_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:xe_dap_con_khoa>xe_dap_ong_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "xe_dap_con_khoa",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:xe_dap_con_khoa>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "xe_dap_con_khoa",
+     "to": "nha_xe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:xe_dap_con_khoa>nha_xe@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_van_binh",
+     "to": "xe_dap_con_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_van_binh>xe_dap_con_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_lan",
+     "to": "xe_dap_con_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_lan>xe_dap_con_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "xe_dap_con_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>xe_dap_con_khoa@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "com_nguoi_con_nguyen",
+     "to": "buong_ong_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:com_nguoi_con_nguyen>buong_ong_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "com_nguoi_con_nguyen",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:com_nguoi_con_nguyen>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_van_binh",
+     "to": "com_nguoi_con_nguyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_van_binh>com_nguoi_con_nguyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_lan",
+     "to": "com_nguoi_con_nguyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_lan>com_nguoi_con_nguyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "com_nguoi_con_nguyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>com_nguoi_con_nguyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "hanh_nghe_tieng_cua",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hanh_nghe_tieng_cua>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hanh_nghe_tieng_cua",
+     "to": "tang_ham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hanh_nghe_tieng_cua>tang_ham@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hanh_nghe_tieng_cua",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hanh_nghe_tieng_cua>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "binh_bac_bo_chuyen_mat_tich",
+     "to": "nguyen_van_binh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:binh_bac_bo_chuyen_mat_tich>nguyen_van_binh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "binh_bac_bo_chuyen_mat_tich",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:binh_bac_bo_chuyen_mat_tich>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_van_binh",
+     "to": "binh_bac_bo_chuyen_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_van_binh>binh_bac_bo_chuyen_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_lan",
+     "to": "binh_bac_bo_chuyen_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_lan>binh_bac_bo_chuyen_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "binh_bac_bo_chuyen_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>binh_bac_bo_chuyen_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "dung_da_mo_cua_phu",
+     "to": "pham_quang_dung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:dung_da_mo_cua_phu>pham_quang_dung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "dung_da_mo_cua_phu",
+     "to": "tang_ham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:dung_da_mo_cua_phu>tang_ham@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "dung_da_mo_cua_phu",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:dung_da_mo_cua_phu>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "dung_da_mo_cua_phu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>dung_da_mo_cua_phu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "dung_bao_ve_tan",
+     "to": "pham_quang_dung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:dung_bao_ve_tan>pham_quang_dung@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "dung_bao_ve_tan",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:dung_bao_ve_tan>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "dung_bao_ve_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>dung_bao_ve_tan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "tan_an_trong_kho",
+     "to": "tran_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tan_an_trong_kho>tran_tan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tan_an_trong_kho",
+     "to": "tang_ham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tan_an_trong_kho>tang_ham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_quang_dung",
+     "to": "tan_an_trong_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_quang_dung>tan_an_trong_kho@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "lan_thay_vet_bui",
+     "to": "le_thi_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:lan_thay_vet_bui>le_thi_lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "lan_thay_vet_bui",
+     "to": "tang_ham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:lan_thay_vet_bui>tang_ham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_thi_lan",
+     "to": "lan_thay_vet_bui",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_thi_lan>lan_thay_vet_bui@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Phạm Thị Hạnh",
+      "known_as": "Phạm Thị Hạnh"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "be_nuoc": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "bể nước"
+     ],
+     "name": "Bể nước chung",
+     "description": "Bể nước xi măng đặt cạnh sân trong, nơi cư dân lấy nước vào những giờ nước máy có.",
+     "visual": "Thành bể xi măng sần sùi loang rêu, một vòi sắt nhỏ giọt xuống nền; khoảng sân quanh đó sáng nhợt vào ban ngày và tối nhanh khi hành lang mất điện."
+    }
+   },
+   "binh_bac_bo_chuyen_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Bình cho rằng ông Tấn chỉ đi vắng vài hôm."
+    }
+   },
+   "buong_ong_tan": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "căn buồng nhỏ"
+     ],
+     "name": "Buồng ông Tấn",
+     "description": "Căn buồng chật cạnh nhà xe, nơi ông Tấn ở một mình.",
+     "visual": "Cửa gỗ bạc màu mở ra một gian hẹp với chiếc bàn thấp, bếp dầu và bát cơm nguội còn nguyên; ánh sáng ban ngày lọt qua ô cửa nhỏ phủ lên đồ đạc một màu đục."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "chum_chia_khoa": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chùm chìa khóa"
+     ],
+     "name": "Chùm chìa khóa của ông Tấn",
+     "description": "Chùm chìa khóa nhà xe và cửa phụ, được tìm thấy cạnh bể nước vào buổi sáng sau khi ông Tấn mất tích."
+    }
+   },
+   "chum_chia_khoa_o_be": {
+    "label": "Fact",
+    "props": {
+     "text": "Chùm chìa khóa của ông Tấn được tìm thấy cạnh bể nước vào buổi sáng."
+    }
+   },
+   "com_nguoi_con_nguyen": {
+    "label": "Fact",
+    "props": {
+     "text": "Bữa cơm nguội trong buồng ông Tấn vẫn còn nguyên."
+    }
+   },
+   "dung_bao_ve_tan": {
+    "label": "Fact",
+    "props": {
+     "text": "Dũng giúp ông Tấn lẩn tránh vì ông Tấn phát hiện việc Dũng lấy trộm vật tư sửa chữa của khu."
+    }
+   },
+   "dung_da_mo_cua_phu": {
+    "label": "Fact",
+    "props": {
+     "text": "Dũng đã mở cửa sắt tầng hầm sau giờ giới nghiêm để đưa ông Tấn qua lối kỹ thuật."
+    }
+   },
+   "hanh_nghe_tieng_cua": {
+    "label": "Fact",
+    "props": {
+     "text": "Hạnh nghe tiếng cửa sắt tầng hầm khép lại sau giờ giới nghiêm trong đêm ông Tấn mất tích."
+    }
+   },
+   "khu_tap_the_cho_dua": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "khu tập thể",
+      "khu nhà"
+     ],
+     "name": "Khu tập thể Chợ Dừa",
+     "visual": "Tường vôi ngả xám, lan can sắt sơn tróc chạy dọc những hành lang hẹp; ánh sáng vàng yếu từ bóng đèn trần làm mùi cơm nguội và hơi ẩm như đọng lại trong không khí.",
+     "description": "Một dãy nhà tập thể cũ ở Hà Nội, nơi cư dân dùng chung lối đi, bể nước và nhà xe."
+    }
+   },
+   "lan_thay_vet_bui": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan thấy vệt bụi mới trên tay nắm cửa tầng hầm vào sáng sau khi ông Tấn mất tích."
+    }
+   },
+   "le_thi_lan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lan sống cùng gia đình ở tầng trệt, gần lối xuống tầng hầm, và thường thức khuya vá quần áo cho khách quen.",
+     "appearance": "Trông ngoài ba mươi, dáng người nhỏ, mặt trái xoan, tóc đen vấn thấp; chị thường mặc áo len nâu và đeo đôi bông tai bạc nhỏ.",
+     "aliases": [
+      "chị Lan"
+     ],
+     "personality": "Hay để ý chuyện xung quanh, nói năng dè chừng và thường ngừng lại trước khi trả lời.",
+     "name": "Lê Thị Lan"
+    }
+   },
+   "ly_do_lan_tranh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao ông Tấn phải lẩn tránh?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "mach_chia_khoa": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã đặt chùm chìa khóa cạnh bể nước?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "nguoi_mo_cua": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã mở cửa sắt tầng hầm sau giờ giới nghiêm?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "nguyen_van_binh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bình là tổ trưởng tổ dân phố, thường đứng ra giải quyết việc chung và muốn giữ yên ổn cho khu tập thể.",
+     "appearance": "Trông khoảng ngoài bốn mươi, thân hình đậm, mặt vuông, tóc đen chải lệch; anh thường mặc áo sơ mi cài kín cổ và đeo chiếc đồng hồ dây da cũ.",
+     "aliases": [
+      "anh Bình"
+     ],
+     "personality": "Nóng ruột, thực tế, thường trả lời ngắn và tránh nói dài về chuyện trong khu.",
+     "name": "Nguyễn Văn Bình"
+    }
+   },
+   "nha_xe": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "nhà để xe"
+     ],
+     "name": "Nhà xe",
+     "visual": "Mái tôn thấp và những hàng xe đạp khóa sát nhau, chỉ có một bóng đèn trần chập chờn; nền xi măng vương vệt dầu cũ và lá khô.",
+     "description": "Gian để xe chung do ông Tấn trông coi, nằm sát lối xuống tầng hầm."
+    }
+   },
+   "pham_quang_dung": {
+    "label": "Character",
+    "props": {
+     "backstory": "Dũng phụ trách sửa điện nước lặt vặt trong khu tập thể và biết các đường dây, ổ khóa cùng lối đi kỹ thuật của tòa nhà.",
+     "appearance": "Trông gần năm mươi, vai rộng, mặt rám nắng, tóc đen lẫn bạc; anh mặc áo công nhân xanh đã bạc màu, bên hông thường có túi dụng cụ và một vệt sẹo mảnh ở cằm.",
+     "aliases": [
+      "anh Dũng"
+     ],
+     "personality": "Điềm tĩnh, rành việc sửa chữa nhưng có thói quen trả lời đúng phần được hỏi.",
+     "name": "Phạm Quang Dũng"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Hạnh bán xôi ở đầu ngõ và thường gặp cư dân khu tập thể từ sáng sớm. Cô từng trao đổi với ông Tấn vài câu mỗi ngày, nên sự vắng mặt của ông khiến cô để ý đến căn buồng còn nguyên bữa cơm nguội. Khi nghe chuyện chùm chìa khóa được tìm thấy bên bể nước, Hạnh bắt đầu lần hỏi từng người về đêm cuối cùng có ai nghe tiếng động dưới tầng hầm.",
+     "appearance": "Trông ngoài ba mươi, dáng người nhanh nhẹn, mặt trái xoan, tóc đen thường buộc gọn; Hạnh hay mặc áo nâu giản dị khi bán xôi, với chiếc khăn vải sẫm màu quàng bên vai.",
+     "personality": "Nhanh nhạy, khéo chuyện trò nhưng kín đáo về điều mình nghĩ. Hạnh nhớ giọng nói, thói quen và giờ giấc của mọi người, song đôi khi phải tự hỏi đâu là quan sát, đâu là suy diễn.",
+     "name": "Phạm Thị Hạnh",
+     "is_protagonist": true
+    }
+   },
+   "tan_an_trong_kho": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Tấn đang ẩn trong kho kỹ thuật kín ở cuối lối đi dưới tầng hầm."
+    }
+   },
+   "tan_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Tấn không về buồng ngủ trong đêm trước khi câu chuyện bắt đầu."
+    }
+   },
+   "tang_ham": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "hầm",
+      "dưới tầng hầm"
+     ],
+     "name": "Tầng hầm",
+     "description": "Khoang thấp dưới khu nhà, có cửa sắt và lối kỹ thuật thông về phía nhà xe.",
+     "visual": "Bậc xi măng ẩm dẫn xuống một cánh cửa sắt sơn đen, ánh sáng lọt vào thành những vệt mỏng; mùi bụi, dầu xe và nước đọng quẩn trong khoảng tối."
+    }
+   },
+   "tinh_trang_ong_tan": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ông Tấn đang ở đâu?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "to_dan_pho": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "tổ"
+     ],
+     "name": "Tổ dân phố",
+     "description": "Nhóm cư dân phụ trách việc chung và thường thống nhất cách giải thích những chuyện xảy ra trong khu."
+    }
+   },
+   "tran_tan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Ông trông coi nhà xe khu tập thể đã nhiều năm, quen biết giờ giấc và nếp sinh hoạt của cư dân. Trước khi mất tích, ông sống một mình trong căn buồng nhỏ cạnh nhà xe.",
+     "appearance": "Trông ngoài sáu mươi, người gầy, mặt dài với tóc bạc cắt ngắn và thường mặc áo bông sẫm màu; ông có dáng đi hơi khập khiễng, dễ nhận ra trong hành lang.",
+     "aliases": [
+      "ông Tấn"
+     ],
+     "personality": "Ít nói, cẩn thận và quen giữ chuyện trong bụng.",
+     "name": "Trần Tấn"
+    }
+   },
+   "xe_dap_con_khoa": {
+    "label": "Fact",
+    "props": {
+     "text": "Xe đạp của ông Tấn vẫn khóa trong nhà xe."
+    }
+   },
+   "xe_dap_ong_tan": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc xe đạp"
+     ],
+     "name": "Xe đạp của ông Tấn",
+     "description": "Chiếc xe đạp cũ của ông Tấn vẫn khóa trong nhà xe sau khi ông không về ngủ."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:le_thi_lan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "le_thi_lan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:nguyen_van_binh>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "nguyen_van_binh",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người cùng khu"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_quang_dung>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "pham_quang_dung",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người cùng khu"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>le_thi_lan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "le_thi_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>nguyen_van_binh@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "nguyen_van_binh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người cùng khu"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>pham_quang_dung@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "pham_quang_dung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người cùng khu"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>tran_tan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_tan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "tran_tan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "LOCATED_AT:chum_chia_khoa>be_nuoc@0",
+    "type": "LOCATED_AT",
+    "source": "chum_chia_khoa",
+    "target": "be_nuoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:le_thi_lan>khu_tap_the_cho_dua@0",
+    "type": "LOCATED_AT",
+    "source": "le_thi_lan",
+    "target": "khu_tap_the_cho_dua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nguyen_van_binh>khu_tap_the_cho_dua@0",
+    "type": "LOCATED_AT",
+    "source": "nguyen_van_binh",
+    "target": "khu_tap_the_cho_dua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_quang_dung>khu_tap_the_cho_dua@0",
+    "type": "LOCATED_AT",
+    "source": "pham_quang_dung",
+    "target": "khu_tap_the_cho_dua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>khu_tap_the_cho_dua@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "khu_tap_the_cho_dua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_tan>tang_ham@0",
+    "type": "LOCATED_AT",
+    "source": "tran_tan",
+    "target": "tang_ham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:xe_dap_ong_tan>nha_xe@0",
+    "type": "LOCATED_AT",
+    "source": "xe_dap_ong_tan",
+    "target": "nha_xe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nguyen_van_binh>to_dan_pho@0",
+    "type": "MEMBER_OF",
+    "source": "nguyen_van_binh",
+    "target": "to_dan_pho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:le_thi_lan>binh_bac_bo_chuyen_mat_tich@0",
+    "type": "KNOWS",
+    "source": "le_thi_lan",
+    "target": "binh_bac_bo_chuyen_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_lan>chum_chia_khoa_o_be@0",
+    "type": "KNOWS",
+    "source": "le_thi_lan",
+    "target": "chum_chia_khoa_o_be",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_lan>com_nguoi_con_nguyen@0",
+    "type": "KNOWS",
+    "source": "le_thi_lan",
+    "target": "com_nguoi_con_nguyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_lan>lan_thay_vet_bui@0",
+    "type": "KNOWS",
+    "source": "le_thi_lan",
+    "target": "lan_thay_vet_bui",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_lan>tan_mat_tich@0",
+    "type": "KNOWS",
+    "source": "le_thi_lan",
+    "target": "tan_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_thi_lan>xe_dap_con_khoa@0",
+    "type": "KNOWS",
+    "source": "le_thi_lan",
+    "target": "xe_dap_con_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_van_binh>binh_bac_bo_chuyen_mat_tich@0",
+    "type": "KNOWS",
+    "source": "nguyen_van_binh",
+    "target": "binh_bac_bo_chuyen_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_van_binh>chum_chia_khoa_o_be@0",
+    "type": "KNOWS",
+    "source": "nguyen_van_binh",
+    "target": "chum_chia_khoa_o_be",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_van_binh>com_nguoi_con_nguyen@0",
+    "type": "KNOWS",
+    "source": "nguyen_van_binh",
+    "target": "com_nguoi_con_nguyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_van_binh>tan_mat_tich@0",
+    "type": "KNOWS",
+    "source": "nguyen_van_binh",
+    "target": "tan_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_van_binh>xe_dap_con_khoa@0",
+    "type": "KNOWS",
+    "source": "nguyen_van_binh",
+    "target": "xe_dap_con_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>binh_bac_bo_chuyen_mat_tich@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "binh_bac_bo_chuyen_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>chum_chia_khoa_o_be@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "chum_chia_khoa_o_be",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>com_nguoi_con_nguyen@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "com_nguoi_con_nguyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>dung_bao_ve_tan@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "dung_bao_ve_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>dung_da_mo_cua_phu@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "dung_da_mo_cua_phu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>tan_an_trong_kho@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "tan_an_trong_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>tan_mat_tich@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "tan_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_quang_dung>xe_dap_con_khoa@0",
+    "type": "KNOWS",
+    "source": "pham_quang_dung",
+    "target": "xe_dap_con_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:binh_bac_bo_chuyen_mat_tich>nguyen_van_binh@0",
+    "type": "ABOUT",
+    "source": "binh_bac_bo_chuyen_mat_tich",
+    "target": "nguyen_van_binh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:binh_bac_bo_chuyen_mat_tich>tran_tan@0",
+    "type": "ABOUT",
+    "source": "binh_bac_bo_chuyen_mat_tich",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chum_chia_khoa_o_be>be_nuoc@0",
+    "type": "ABOUT",
+    "source": "chum_chia_khoa_o_be",
+    "target": "be_nuoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chum_chia_khoa_o_be>chum_chia_khoa@0",
+    "type": "ABOUT",
+    "source": "chum_chia_khoa_o_be",
+    "target": "chum_chia_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chum_chia_khoa_o_be>tran_tan@0",
+    "type": "ABOUT",
+    "source": "chum_chia_khoa_o_be",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:com_nguoi_con_nguyen>buong_ong_tan@0",
+    "type": "ABOUT",
+    "source": "com_nguoi_con_nguyen",
+    "target": "buong_ong_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:com_nguoi_con_nguyen>tran_tan@0",
+    "type": "ABOUT",
+    "source": "com_nguoi_con_nguyen",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:dung_bao_ve_tan>pham_quang_dung@0",
+    "type": "ABOUT",
+    "source": "dung_bao_ve_tan",
+    "target": "pham_quang_dung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:dung_bao_ve_tan>tran_tan@0",
+    "type": "ABOUT",
+    "source": "dung_bao_ve_tan",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:dung_da_mo_cua_phu>pham_quang_dung@0",
+    "type": "ABOUT",
+    "source": "dung_da_mo_cua_phu",
+    "target": "pham_quang_dung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:dung_da_mo_cua_phu>tang_ham@0",
+    "type": "ABOUT",
+    "source": "dung_da_mo_cua_phu",
+    "target": "tang_ham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:dung_da_mo_cua_phu>tran_tan@0",
+    "type": "ABOUT",
+    "source": "dung_da_mo_cua_phu",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hanh_nghe_tieng_cua>protagonist@0",
+    "type": "ABOUT",
+    "source": "hanh_nghe_tieng_cua",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hanh_nghe_tieng_cua>tang_ham@0",
+    "type": "ABOUT",
+    "source": "hanh_nghe_tieng_cua",
+    "target": "tang_ham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hanh_nghe_tieng_cua>tran_tan@0",
+    "type": "ABOUT",
+    "source": "hanh_nghe_tieng_cua",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:lan_thay_vet_bui>le_thi_lan@0",
+    "type": "ABOUT",
+    "source": "lan_thay_vet_bui",
+    "target": "le_thi_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:lan_thay_vet_bui>tang_ham@0",
+    "type": "ABOUT",
+    "source": "lan_thay_vet_bui",
+    "target": "tang_ham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tan_an_trong_kho>tang_ham@0",
+    "type": "ABOUT",
+    "source": "tan_an_trong_kho",
+    "target": "tang_ham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tan_an_trong_kho>tran_tan@0",
+    "type": "ABOUT",
+    "source": "tan_an_trong_kho",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tan_mat_tich>buong_ong_tan@0",
+    "type": "ABOUT",
+    "source": "tan_mat_tich",
+    "target": "buong_ong_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tan_mat_tich>tran_tan@0",
+    "type": "ABOUT",
+    "source": "tan_mat_tich",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:xe_dap_con_khoa>nha_xe@0",
+    "type": "ABOUT",
+    "source": "xe_dap_con_khoa",
+    "target": "nha_xe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:xe_dap_con_khoa>tran_tan@0",
+    "type": "ABOUT",
+    "source": "xe_dap_con_khoa",
+    "target": "tran_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:xe_dap_con_khoa>xe_dap_ong_tan@0",
+    "type": "ABOUT",
+    "source": "xe_dap_con_khoa",
+    "target": "xe_dap_ong_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Phạm Thị Hạnh",
+     "known_as": "Phạm Thị Hạnh"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "package": 1
+   },
+   "problems": [
+    "gói chương 0: (gốc): Value error, id nút trùng trong gói: ['chum_chia_khoa']"
+   ]
+  }
+ ],
+ "quotes": []
+}
