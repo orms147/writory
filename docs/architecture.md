@@ -177,7 +177,7 @@ stateDiagram-v2
 | `accept` | `_accept` | phát `scene_ready` (chữ cảnh tới người chơi), giữ gói của cảnh | |
 | `blocked` | `_blocked` | phát `scene_blocked`, dừng chương, không ghi gì | |
 | `commit` | `_commit` | `merge_scene_packages` rồi `store.commit` (mục 6) | |
-| `summary` | `_summary` | tóm tắt chương cho đề chương sau; lỗi chỉ ghi log, không làm hỏng chương | `summary` |
+| `summary` | `_summary` | tóm tắt chương cho đề chương sau, luôn gọi nhân vật chính bằng tên chuẩn trong đồ thị (D-112); lỗi chỉ ghi log, không làm hỏng chương | `summary` |
 | `choices` | `_choices` | `make_choices` từ `player_view` (G1) | `choices`, `moderate` |
 | `finish` | `_finish` | chương cuối của kế hoạch: phát `story_finished`, không tóm tắt, không lựa chọn (D-50) | |
 
@@ -292,7 +292,7 @@ flowchart LR
 | model viết | như dàn ý, cộng dàn ý, cộng bản trước và lỗi khi viết lại; system là hướng dẫn văn phong | có | chữ thường, không schema | `pipeline/scene.py` `writer_messages`, gọi từ `_write` |
 | `extract` | danh mục mọi nút, cạnh đang mở, mạch phải gỡ kèm hạn, văn cảnh (bọc) | có | `ExtractOutput`, rồi `to_package` | `pipeline/extract.py` `extract_changes` |
 | `summary` | chỉ chữ chương đã hiện (bọc) | không | `SummaryOutput` | `pipeline/summary.py` `summarize_chapter` |
-| `choices` | sổ tay dựng từ `player_view` (mã công khai), cảnh cuối đã hiện, cờ đứng yên chỉ đúng hay sai (D-98) | không | `ChoicesOutput` | `pipeline/choices.py` `make_choices`, từ `_choices` và `POST /stories/{id}/choices` |
+| `choices` | sổ tay dựng từ `player_view` (mã công khai), cảnh cuối đã hiện, cờ đứng yên chỉ đúng hay sai (D-98: ở yên một nơi; D-112: nhiều chương liền không đổi trạng thái nào) | không | `ChoicesOutput` | `pipeline/choices.py` `make_choices`, từ `_choices` và `POST /stories/{id}/choices` |
 | `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput` | `pipeline/narrator.py` `ask_narrator_reply` |
 | `classify` | chỉ chữ ô tự viết (bọc) | không | `Classification`, nhãn enum (G5) | `safety/classify.py` `classify_action` |
 | `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn (bọc) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |

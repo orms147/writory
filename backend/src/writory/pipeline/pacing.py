@@ -78,6 +78,13 @@ class Standstill:
 
 
 @dataclass(frozen=True)
+class Idle:
+    """Truyện không đổi trạng thái nào `chapters` chương liền (D-112)."""
+
+    chapters: int
+
+
+@dataclass(frozen=True)
 class ThreadGoal:
     """Mạch phải gỡ, chưa gỡ."""
 
@@ -103,6 +110,9 @@ class ChapterGoals:
     standstill: Standstill | None = None
     # Chương này không có mốc nào đang diễn ra và cờ `unplanned_chapter_goal` bật (D-110).
     gap: bool = False
+    # Chỉ khi `chapter_goals(idle_chapters=N)` và N chương liền không đổi trạng thái nào (D-112);
+    # không đặt cùng `standstill` vì một lời giục là đủ.
+    idle: Idle | None = None
 
     @property
     def final(self) -> bool:
@@ -153,14 +163,52 @@ def standstill(state: GraphState, writing_chapter: int, threshold: int | None) -
     return Standstill(name, node.props.get("user_authored") is True, stayed)
 
 
-def stalled_after(state: GraphState, committed_chapter: int, threshold: int | None) -> bool:
-    """Truyện đứng yên khi viết chương kế tiếp (đề tạo lựa chọn cuối chương `committed_chapter`)."""
-    return standstill(state, committed_chapter + 1, threshold) is not None
+def idle_chapters(state: GraphState, writing_chapter: int, threshold: int | None) -> Idle | None:
+    """Số chương liền ngay trước `writing_chapter` mà truyện không đổi trạng thái nào, nếu từ
+    `threshold` trở lên (D-112). Không dựa vào một cạnh nên không mù khi bộ trích bỏ cạnh nơi ở
+    (long-tu-tien-2: cờ `standstill` mù 11 chương). Một chương CÓ đổi khi có một trong:
+    nhân vật hay đồ vật tới một nơi mới (`LOCATED_AT`), đồ vật sang người giữ khác (`HOLDS`), có
+    người chết (`DIED_IN`). Nói lại nơi hay người giữ đã có không tính; Fact mới, quan hệ, người biết
+    thêm cũng không, vì chương nào cũng có (D-93). KHÔNG tính mạch gỡ và bí mật lộ: chúng xảy ra đúng
+    lịch của kế hoạch dù chương là thủ tục (long-tu-tien-2: ch9, 11, 14, 17 gỡ mạch trong đúng đoạn
+    lặp ch8–17, nên đếm chúng thì dãy rỗng dài nhất chỉ 2). Không đo được mốc từ đồ thị. None = tắt."""
+    if threshold is None or writing_chapter - 1 < threshold:
+        return None
+    cache: dict[tuple[str, int], set[tuple[str, str]]] = {}
+
+    def pairs(kind: str, chapter: int) -> set[tuple[str, str]]:
+        if (kind, chapter) not in cache:
+            cache[kind, chapter] = {(e.source, e.target) for e in state.edges_at(kind, chapter)}
+        return cache[kind, chapter]
+
+    def changed(chapter: int) -> bool:
+        if any(e.valid_from_chapter == chapter for e in state.edges_at("DIED_IN", chapter)):
+            return True
+        return any(pairs(kind, chapter) - pairs(kind, chapter - 1) for kind in ("LOCATED_AT", "HOLDS"))
+
+    run = 0
+    for chapter in range(writing_chapter - 1, 0, -1):
+        if changed(chapter):
+            break
+        run += 1
+    return Idle(run) if run >= threshold else None
+
+
+_idle = idle_chapters  # `chapter_goals` có tham số cùng tên
+
+
+def stalled_after(state: GraphState, committed_chapter: int, threshold: int | None, *,
+                  idle_threshold: int | None = None) -> bool:
+    """Truyện đứng yên khi viết chương kế tiếp (đề tạo lựa chọn cuối chương `committed_chapter`):
+    nhân vật chính ở yên một nơi (D-98), hoặc nhiều chương liền không đổi trạng thái nào (D-112)."""
+    return (standstill(state, committed_chapter + 1, threshold) is not None
+            or _idle(state, committed_chapter + 1, idle_threshold) is not None)
 
 
 def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
                   standstill_chapters: int | None = None,
-                  unplanned_goal: bool = False) -> ChapterGoals:
+                  unplanned_goal: bool = False,
+                  idle_chapters: int | None = None) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
     phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt."""
     progress = plan_progress(plan, state, chapter)
@@ -188,8 +236,9 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
     still = None if final else standstill(state, chapter, standstill_chapters)
     milestones = _milestones(plan, chapter, final)
     gap = unplanned_goal and not final and all(m.status == "next" for m in milestones)
+    idle = None if final or still is not None else _idle(state, chapter, idle_chapters)
     return ChapterGoals(chapter, plan.total_chapters, act, milestones,
-                        tuple(secrets), threads, revealed, still, gap)
+                        tuple(secrets), threads, revealed, still, gap, idle)
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -249,6 +298,11 @@ GOAL_DEFAULTS: dict[str, str] = {
                    "thế: một sự kiện mới buộc nhân vật chính rời nơi này, hoặc phá vỡ thế giằng co, "
                    "hoặc làm lộ điều chưa ai biết. Không lặp lại cảnh dò xét, chờ đợi hay thương "
                    "lượng của các chương trước."),
+    # {chapters} = số chương liền không đổi trạng thái nào (D-112).
+    "idle": ("Đã {chapters} chương liền truyện không đổi trạng thái nào: không ai tới nơi mới, không "
+             "vật nào đổi chủ hay đổi chỗ, không ai chết. Chương này PHẢI có ít nhất một điều như vậy "
+             "xảy ra trên trang, không lặp lại cảnh dò xét, chờ đợi, "
+             "thương lượng hay ghi chép của các chương trước."),
     "secret_note": ("Hé lộ nghĩa là trên trang có câu nói thẳng điều đó (lời nhân vật, chứng cứ, "
                     "điều nhân vật chính tận mắt thấy), không chỉ gợi ý."),
     "revealed_note": ("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân "
@@ -313,6 +367,8 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
         line("- " + say["milestone_gap"])
     if goals.standstill is not None:
         line("- ", *_fill_standstill(say["standstill"], goals.standstill))
+    if goals.idle is not None:
+        line("- " + say["idle"].format(chapters=goals.idle.chapters))
     if goals.act is not None and goals.act.last_chapter_of_act and not goals.final:
         line(f"- Đây là chương cuối của hồi «{escape_text(goals.act.name)}»: khép lại tình huống "
              "của hồi này để chương sau sang hồi mới.")

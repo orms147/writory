@@ -302,7 +302,8 @@ async def chapter_choices(story: deps.OwnedStory, conn: deps.PgConn, driver: dep
                          darkness_level=story.darkness_level),
         # D-98: như đường của pipeline, truyện đứng yên thì lựa chọn phải có một bước vượt ra.
         stalled=stalled_after(Neo4jState(driver, story.id), chapter,
-                              config.limits.context.standstill_chapters),
+                              config.limits.context.standstill_chapters,
+                              idle_threshold=config.limits.context.idle_chapters),
     )
     saved = save_choices(conn, story.id, chapter, [choice_record(c) for c in choices])
     return ChoicesOut(chapter=chapter, choices=_for_player(saved))

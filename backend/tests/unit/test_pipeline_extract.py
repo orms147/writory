@@ -551,3 +551,72 @@ def test_a_rejected_edge_closes_nothing():
     pkg, _ = _item_package(
         [_edge(type="HOLDS", source="khong_co", target="box")], [placed])
     assert pkg.close == []
+
+
+# --- nhân vật chính luôn có đúng một nơi ở sau mỗi gói (D-112) ------------------------------------
+
+_PLACE_ENTITIES = [
+    Entity(id="protagonist", label="Character", text="Bạn"),
+    Entity(id="lan", label="Character", text="Lan"),
+    Entity(id="ben_do", label="Location", text="Bến đò"),
+    Entity(id="dien", label="Location", text="Điện Nghị An"),
+]
+
+
+def _place_package(edges, open_edges, close=()):
+    out = ExtractOutput(edges=edges, close=list(close))
+    return to_package(out, chapter=7, commit_id="c", protagonist_id="protagonist",
+                      chapter_text="Bạn rời bến đò.", entities=_PLACE_ENTITIES,
+                      open_edges=open_edges)
+
+
+_HERE = OpenEdge("here", "LOCATED_AT", "protagonist", "ben_do")
+
+
+def test_the_protagonist_moving_closes_the_old_place_even_if_the_model_forgot_to():
+    pkg, rejected = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="dien")], [_HERE])
+    assert [c.id for c in pkg.close] == ["here"] and pkg.close[0].valid_to_chapter == 7
+    assert [(e.type, e.target) for e in pkg.edges] == [("LOCATED_AT", "dien")] and rejected == []
+
+
+def test_closing_the_protagonist_place_without_a_new_one_keeps_the_old_place():
+    """Hồi quy long-tu-tien-2: ch7 đóng cạnh Điện Nghị An mà không mở cạnh mới, 11 chương không có nơi ở."""
+    pkg, rejected = _place_package([], [_HERE], close=["here"])
+    assert pkg.close == [] and pkg.edges == []
+    assert [d for d, _ in rejected] == ["close here"]
+    assert "nơi ở" in rejected[0][1]
+
+
+def test_closing_and_opening_a_new_place_is_kept_as_it_is():
+    pkg, rejected = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="dien")], [_HERE], close=["here"])
+    assert [c.id for c in pkg.close] == ["here"] and len(pkg.edges) == 1 and rejected == []
+
+
+def test_saying_again_the_place_they_are_already_in_changes_nothing():
+    """Cạnh mới cùng nơi sẽ đặt lại `valid_from` và làm cờ standstill đếm lại từ đầu."""
+    pkg, rejected = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="ben_do")], [_HERE], close=["here"])
+    assert pkg.edges == [] and pkg.close == []
+    assert any("LOCATED_AT protagonist→ben_do" == d for d, _ in rejected)
+
+
+def test_two_new_places_in_one_package_keep_only_the_last():
+    pkg, rejected = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="dien"),
+         _edge(type="LOCATED_AT", source="protagonist", target="ben_do")], [])
+    assert [e.target for e in pkg.edges] == ["ben_do"]
+    assert [d for d, _ in rejected] == ["LOCATED_AT protagonist→dien"]
+
+
+def test_the_first_place_of_the_protagonist_needs_nothing_to_close():
+    pkg, rejected = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="dien")], [])
+    assert len(pkg.edges) == 1 and pkg.close == [] and rejected == []
+
+
+def test_other_characters_keep_the_old_rules():
+    there = OpenEdge("lan_here", "LOCATED_AT", "lan", "ben_do")
+    pkg, rejected = _place_package([], [there], close=["lan_here"])
+    assert [c.id for c in pkg.close] == ["lan_here"] and rejected == []

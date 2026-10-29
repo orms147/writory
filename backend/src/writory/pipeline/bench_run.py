@@ -951,7 +951,8 @@ class StoryRun:
             last_scene_text=out.scenes[-1].text, truth_names=leak_names(state), plan=self.plan,
             story_brief=self.brief,
             retries=self.config.limits.retries, extra=role_extra(self.config.models, "choices"),
-            stalled=stalled_after(state, number, self.config.limits.context.standstill_chapters),
+            stalled=stalled_after(state, number, self.config.limits.context.standstill_chapters,
+                                  idle_threshold=self.config.limits.context.idle_chapters),
             system_prompt=(self.options.prompt_variant.choices_system
                            if self.options.prompt_variant is not None else None),
         )
