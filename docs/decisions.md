@@ -1155,6 +1155,19 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** lời thoại im lặng với người ẩn danh bị mất khỏi bộ (người chơi còn 2 lựa chọn, ô tự viết vẫn luôn có). Một lần mạng đứt dài hơn 40 giây vẫn giết chương (người chơi bấm thử lại); không có chờ ở bước khởi tạo ngoài `with_json_retries` nên bước khởi tạo cũng được chờ. Chưa đo trên mạng chập thật.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh fix/transient-backoff-and-silence · 29/10/2026
 
+## D-124 · `bench_run --resume`: chạy tiếp lượt đã dừng giữa chừng, ghi vào thư mục mới
+- **Bối cảnh:** hai lượt Dài chết giữa chừng (ConnectError ở chương 18 và 12, chạm trần ở chương 22) và mỗi lần phải chạy lại cả truyện (~0,3 USD).
+- **Quyết định:**
+  - `--resume <thư mục cũ>` nạp truyện còn trong Neo4j + Postgres (`story_id` cũ), tiếp từ chương kế tiếp chưa ghi. Trạng thái trong bộ nhớ dựng lại từ thư mục cũ: kế hoạch và gói từng chương (`truth_dump.json`), lựa chọn khởi tạo (`setup.json`), số liệu (`report.json`, `calls.jsonl`). Dãy chọn phát lại bằng seed và đối chiếu với `choice_picked` đã ghi; lựa chọn đã bấm ở cuối chương cuối được dùng lại, nếu chương đó ghi xong mà chưa có bộ lựa chọn thì tạo lại như người chơi bấm thử lại.
+  - Ghi vào thư mục MỚI (`--label`/`--out`), sao chép phần cũ rồi nối tiếp; thư mục cũ nguyên vẹn để còn dấu vết lượt dừng. Chọn thư mục mới thay vì ghi chồng để một lượt chạy tiếp vẫn có `meta.json` của riêng nó (commit, config, `resume_points`) và không đổi kết quả đã commit vào repo.
+  - `--budget` là trần tổng: `Budget` khởi đầu bằng số đã tiêu của lượt cũ (chi phí thật, hoặc ước tính tối đa khi không rõ) và `per_story` cộng dồn. Số thứ tự lời gọi nối tiếp; lượt thử của chương chạy lại đánh số nối sau các lượt hỏng, không đè.
+  - Từ chối khi `git.commit`, hash config, đề, model, phiên bản đề lời gọi, cờ ngữ cảnh hay `dry_run` khác lần đầu; `--resume-allow-drift` cho qua và ghi vào `resume_drift` của meta. Seed khác thì luôn từ chối (không phát lại được dãy chọn).
+- **Hệ quả:**
+  - Lượt chạy tiếp ghép hai nửa chạy ở hai thời điểm; model thật không tất định, nên không bao giờ giống hệt chạy liền, chỉ giống ở các chương đã có. Kết quả cần ghi rõ `resume_points` khi so sánh.
+  - Lượt bị ngắt cứng (không kịp ghi `truth_dump.json`) không chạy tiếp được; dựng lại từ đồ thị là việc khác.
+  - Chưa thử trên Neo4j + Postgres thật với lượt thật (không gọi model trả tiền ở đợt này); test chạy bằng model giả và kho trong bộ nhớ, thêm test tích hợp ở `tests/graph/test_bench_run.py`.
+- **Người quyết:** Claude (writory-28 giao việc 29/10/2026)
+
 ## D-125 · Bộ xuất kịch bản video: lệnh của admin, package `export/`, vai model `video`, trần chi phí ở limits.yaml (thực hiện D-118)
 - **Bối cảnh:** D-118 chọn nguồn là toàn bộ `truth` và đầu ra là danh sách shot kèm prompt; D-120 đã sinh `appearance` và `visual` ở khởi tạo. Chủ dự án quyết 29/10/2026 làm bộ xuất ngay, và chỉ admin cầm DB mới xuất được.
 - **Quyết định (phạm vi: Chủ dự án; thiết kế: Claude):**
