@@ -60,6 +60,11 @@ context:
   previous_opening_max_chars: 160
   # true: chương không có mốc nào đang diễn ra phải kết ở một tình thế mới cụ thể. false = như cũ.
   unplanned_chapter_goal: true
+  # Đổi pha (D-119), TẮT mặc định để đo A/B: cứ từng ấy chương kể từ lần đổi pha trước (nhân vật chính
+  # tới nơi chưa từng tới, hoặc chương đầu của một hồi; mỗi lần nhắc cũng tính là mốc mới) thì mục tiêu
+  # chương đòi đổi nơi, đổi người nắm quyền quyết định hay đổi luật chơi, không thêm mối nguy cùng loại.
+  # Số đề nghị khi bật: 5 (tạm, D-47). null = tắt, đề y hệt cũ.
+  phase_shift_every: null
   # Ngoại hình (appearance) của nhân vật có mặt và nhân vật lân cận còn sống, sinh ở khởi tạo (D-118),
   # vào đề dàn ý và đề viết để các cảnh tả khớp nhau, cắt ở từng ấy ký tự mỗi người. 0 = tắt: tắt cho
   # tới khi đo xem có làm văn cứng hơn không.

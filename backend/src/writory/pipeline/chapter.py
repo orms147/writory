@@ -201,6 +201,8 @@ class ChapterOutcome:
     error_detail: str | None = None  # chi tiết cho log máy chủ (đã redact); không tới người chơi
     reviews: list[ReviewRecord] = field(default_factory=list)  # mọi lượt soát, theo thứ tự
     cost_usd: float = 0.0
+    # Mục tiêu chương có câu đòi đổi pha (D-119); bộ đo ghi vào report.json.
+    phase_shift: bool = False
 
 
 # --- gói của chương ----------------------------------------------------------------------------
@@ -649,7 +651,8 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
                 done_extra=marked,
                 standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
                 unplanned_goal=d.config.limits.context.unplanned_chapter_goal,
-                idle_chapters=d.config.limits.context.idle_chapters)}
+                idle_chapters=d.config.limits.context.idle_chapters,
+                phase_shift_every=d.config.limits.context.phase_shift_every)}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -1157,4 +1160,6 @@ class ChapterRun:
         out.summary_error = final.get("summary_error")
         out.summaries_missing = list(final.get("summaries_missing", []))
         out.reviews = list(final.get("reviews", []))
+        goals = final.get("goals")
+        out.phase_shift = goals is not None and goals.phase_shift is not None
         out.cost_usd = self._deps.llm.tracker.chapter_usd

@@ -6,8 +6,8 @@ thì dùng đề mặc định của mã:
 - `outline_system.md`: system prompt của vai dàn ý (thay `scene.OUTLINE_SYSTEM_PROMPT`);
 - `choices_system.md`: system prompt của vai tạo lựa chọn (thay `choices.SYSTEM_PROMPT`);
 - `goals.yaml`: ánh xạ khoá → câu, thay các câu cố định của mục tiêu chương
-  (`pacing.GOAL_DEFAULTS`). `standstill` phải có đủ `{place}` và `{chapters}`; các khoá khác không
-  được có chỗ điền.
+  (`pacing.GOAL_DEFAULTS`). `standstill` phải có đủ `{place}` và `{chapters}`; `idle` và `phase_shift`
+  phải có `{chapters}`; các khoá khác không được có chỗ điền.
 
 Hướng dẫn văn phong của model viết (system prompt của vai viết) KHÔNG nằm ở đây: dùng cờ
 `--style-guide <file>` của `bench_run`.
@@ -38,7 +38,8 @@ VARIANT_FILES = (OUTLINE_FILE, CHOICES_FILE, GOALS_FILE)
 IGNORED_FILES = ("README.md",)
 GOAL_KEYS = frozenset(GOAL_DEFAULTS)
 _NAME = re.compile(r"[a-z0-9][a-z0-9_-]*")
-_PLACEHOLDERS = {"standstill": ("{place}", "{chapters}"), "idle": ("{chapters}",)}
+_PLACEHOLDERS = {"standstill": ("{place}", "{chapters}"), "idle": ("{chapters}",),
+                 "phase_shift": ("{chapters}",)}
 _ANY_PLACEHOLDER = ("{place}", "{chapters}")
 
 

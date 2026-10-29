@@ -14,7 +14,7 @@ G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đ
 `user_authored` bọc `UserAuthored`.
 """
 
-from collections.abc import Mapping
+from collections.abc import Iterable, Mapping
 from dataclasses import dataclass
 from typing import Literal
 
@@ -99,6 +99,13 @@ class Idle:
 
 
 @dataclass(frozen=True)
+class PhaseShift:
+    """Đã `chapters` chương kể từ lần đổi pha trước, hoặc lần nhắc đổi pha trước (D-119)."""
+
+    chapters: int
+
+
+@dataclass(frozen=True)
 class ThreadGoal:
     """Mạch phải gỡ, chưa gỡ."""
 
@@ -131,6 +138,9 @@ class ChapterGoals:
     # (D-116). Rỗng khi `chapter_goals(milestone_lookahead=None)`. Chỉ vào đề dàn ý, viết và bộ trích.
     pending_milestones: tuple[PendingMilestone, ...] = ()
     milestones_done: tuple[tuple[int, int], ...] = ()
+    # Chỉ khi `chapter_goals(phase_shift_every=N)` và đã tới nhịp đổi pha (D-119); không đặt cùng
+    # `standstill` hay `idle`, vì chúng đã đòi đổi tình thế cụ thể hơn.
+    phase_shift: PhaseShift | None = None
 
     @property
     def final(self) -> bool:
@@ -243,6 +253,51 @@ def idle_chapters(state: GraphState, writing_chapter: int, threshold: int | None
 _idle = idle_chapters  # `chapter_goals` có tham số cùng tên
 
 
+def _phase_changes(plan: StoryPlan, state: GraphState, writing_chapter: int,
+                   milestone_done: Iterable[int] = ()) -> set[int]:
+    """Các chương đã đổi pha tính tới `writing_chapter` (D-119), đo từ kế hoạch và đồ thị:
+    - chương đầu của một hồi, trừ hồi một (kế hoạch ghi sẵn nên biết cả chương đang viết);
+    - chương nhân vật chính tới một nơi mà trước đó chưa từng có cạnh `LOCATED_AT` nào của họ tới
+      (nơi ở chương 0 tính là đã tới). Quay lại nơi cũ không tính: đó là dạng lặp của truyện dài;
+    - chương mà một mốc kế hoạch đã diễn ra (`milestone_done`: `done_chapter` của `plan_progress`, dấu
+      do bộ trích ghi ở nút `Chapter`, D-116).
+    Đọc tới cuối chương `writing_chapter - 1`, như `standstill`, nên mọi cảnh của chương cho cùng kết
+    quả (mốc các cảnh trước của chính chương này, `done_extra`, không tính). Không tính mạch gỡ hay bí
+    mật lộ (xảy ra đúng lịch kế hoạch dù chương là thủ tục, như lý do bỏ ở `idle_chapters`, D-112)."""
+    changes = {a.from_chapter for a in plan.acts if 1 < a.from_chapter <= writing_chapter}
+    changes |= {c for c in milestone_done if 1 <= c < writing_chapter}
+    try:
+        protagonist = state.protagonist_id()
+    except LookupError:
+        return changes
+    first: dict[str, int] = {}
+    for e in state.edges_at("LOCATED_AT", writing_chapter - 1, source_id=protagonist, ever=True):
+        first[e.target] = min(first.get(e.target, e.valid_from_chapter), e.valid_from_chapter)
+    return changes | {c for c in first.values() if c >= 1}
+
+
+def phase_shift(plan: StoryPlan, state: GraphState, writing_chapter: int,
+                every: int | None, milestone_done: Iterable[int] = ()) -> PhaseShift | None:
+    """Có phải chương `writing_chapter` cần câu đòi đổi pha không (D-119). Đồng hồ chạy từ chương 0 và
+    chạy lại ở mỗi lần đổi pha thật (`_phase_changes`) VÀ ở mỗi lần đã nhắc; câu bật khi đã `every`
+    chương từ mốc gần nhất. Vì thế nếu model không đổi gì thì câu lặp mỗi `every` chương chứ không mỗi
+    chương. Tính lại tất định từ đồ thị và kế hoạch mỗi lần, không lưu trạng thái. `every` None = tắt.
+    Chương cuối và việc nhường cho `standstill`, `idle` do `chapter_goals` lo; ở đó đồng hồ vẫn tính
+    như đã nhắc, vì chúng cũng đã đòi đổi tình thế."""
+    if every is None or writing_chapter < every:
+        return None
+    changes = _phase_changes(plan, state, writing_chapter, milestone_done)
+    last = 0
+    for chapter in range(1, writing_chapter + 1):
+        if chapter in changes:
+            last = chapter
+        if chapter - last >= every:
+            if chapter == writing_chapter:
+                return PhaseShift(chapter - last)
+            last = chapter
+    return None
+
+
 def stalled_after(state: GraphState, committed_chapter: int, threshold: int | None, *,
                   idle_threshold: int | None = None) -> bool:
     """Truyện đứng yên khi viết chương kế tiếp (đề tạo lựa chọn cuối chương `committed_chapter`):
@@ -256,7 +311,8 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
                   unplanned_goal: bool = False,
                   idle_chapters: int | None = None,
                   milestone_lookahead: int | None = None,
-                  done_extra: Mapping[int, int] | None = None) -> ChapterGoals:
+                  done_extra: Mapping[int, int] | None = None,
+                  phase_shift_every: int | None = None) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
     phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt.
     `milestone_lookahead`: theo dõi mốc đã diễn ra (D-116), None = tắt; `done_extra`: mốc các cảnh
@@ -291,10 +347,14 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
     milestones = _milestones(plan, chapter, final, done)
     gap = unplanned_goal and not final and all(m.status in ("next", "done") for m in milestones)
     idle = None if final or still is not None else _idle(state, chapter, idle_chapters)
+    shift = (None if final or still is not None or idle is not None
+             else phase_shift(plan, state, chapter, phase_shift_every,
+                              [m.done_chapter for m in progress.milestones
+                               if m.done_chapter is not None]))
     return ChapterGoals(chapter, plan.total_chapters, act, milestones,
                         tuple(secrets), threads, revealed, still, gap, idle,
                         _pending_milestones(plan, chapter, milestone_lookahead, done),
-                        tuple(sorted(done.items())))
+                        tuple(sorted(done.items())), shift)
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -362,6 +422,12 @@ GOAL_DEFAULTS: dict[str, str] = {
              "vật nào đổi chủ hay đổi chỗ, không ai chết. Chương này PHẢI có ít nhất một điều như vậy "
              "xảy ra trên trang, không lặp lại cảnh dò xét, chờ đợi, "
              "thương lượng hay ghi chép của các chương trước."),
+    # {chapters} = số chương kể từ lần đổi pha trước, hoặc lần nhắc trước (D-119).
+    "phase_shift": ("Đã {chapters} chương kể từ lần đổi pha trước (nhân vật chính tới một nơi mới, "
+                    "hoặc sang hồi mới). Chương này ĐỔI PHA: đổi nơi nhân vật chính tới, hoặc đổi "
+                    "người nắm quyền quyết định, hoặc đổi luật chơi (điều kiện, thời hạn hay cái giá "
+                    "của cuộc chơi). KHÔNG thêm một mối nguy cùng loại với những chương trước: mối "
+                    "nguy nếu có phải khác về cơ chế và về người gây ra."),
     "secret_note": ("Hé lộ nghĩa là trên trang có câu nói thẳng điều đó (lời nhân vật, chứng cứ, "
                     "điều nhân vật chính tận mắt thấy), không chỉ gợi ý."),
     "revealed_note": ("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân "
@@ -428,6 +494,8 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
         line("- ", *_fill_standstill(say["standstill"], goals.standstill))
     if goals.idle is not None:
         line("- " + say["idle"].replace("{chapters}", str(goals.idle.chapters)))
+    if goals.phase_shift is not None:
+        line("- " + say["phase_shift"].replace("{chapters}", str(goals.phase_shift.chapters)))
     if goals.act is not None and goals.act.last_chapter_of_act and not goals.final:
         line(f"- Đây là chương cuối của hồi «{escape_text(goals.act.name)}»: khép lại tình huống "
              "của hồi này để chương sau sang hồi mới.")
