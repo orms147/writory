@@ -134,6 +134,9 @@ class ContextLimits(_Section):
     previous_openings: NonNegativeInt = 0  # số chương gần nhất có câu mở đưa vào đề viết; 0 = tắt
     previous_opening_max_chars: PositiveInt | None = None  # độ dài tối đa một câu mở
     unplanned_chapter_goal: bool = False  # chương không có mốc vẫn phải đổi tình thế cụ thể
+    # Cứ từng ấy chương kể từ lần đổi pha trước (hoặc lần nhắc trước) thì mục tiêu chương đòi đổi pha
+    # (D-119); None = tắt, đề y hệt cũ.
+    phase_shift_every: PositiveInt | None = None
 
 
 class LLMCallLimits(_Section):

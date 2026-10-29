@@ -502,7 +502,8 @@ class RunPrompts:
 
 # Ba cờ ngữ cảnh của đề "v3" (D-110, bật mặc định ở D-111): nằm ở `limits.context`, `meta.json` ghi
 # giá trị đã dùng để hai lượt A/B so được.
-CONTEXT_FLAGS = ("character_personality_max_chars", "previous_openings", "unplanned_chapter_goal")
+CONTEXT_FLAGS = ("character_personality_max_chars", "previous_openings", "unplanned_chapter_goal",
+                 "phase_shift_every")
 
 
 def prompts_from_args(args: argparse.Namespace, *,
@@ -1022,6 +1023,7 @@ class StoryRun:
             "reviews": reviews, "rewrites": sum(r["verdict"] == "rewrite" for r in reviews),
             "fallbacks": sum(r["verdict"] == "fallback" for r in reviews),
             "choices": len(out.choices), "cost_usd": round(out.cost_usd, 6),
+            "phase_shift": out.phase_shift,  # mục tiêu chương có câu đổi pha (D-119)
             # Tóm tắt (D-49): chỉ trạng thái và số chương, chữ tóm tắt chỉ ở truth_dump.
             "summary": _summary_status(out),
             "summary_error": out.summary_error.value if out.summary_error else None,
@@ -1260,6 +1262,9 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         "chapters_planned": run.plan.total_chapters if run.plan else None,
         "chapters_target": run.target, "chapters_clamped": run.clamped,
         "chapters_committed": len(committed), "story_finished": run.finished,
+        # Các chương đã ghi mà mục tiêu chương có câu đòi đổi pha (D-119); rỗng khi cờ tắt.
+        "phase_shift_chapters": sorted({a["chapter"] for a in run.attempts
+                                        if a["committed"] and a["phase_shift"]}),
         "rejected_bodies": run.rejected_bodies,  # số dòng rejected.jsonl (D-115)
         # Fact mới do bộ trích tạo sau chương 0 (D-93)
         "new_facts": sum(1 for n in committed for nd in run.packages[n].nodes if nd.label == "Fact"),

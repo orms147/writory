@@ -983,15 +983,36 @@ async def test_meta_records_the_three_context_flags(tmp_path):
     assert await run.run() == bench_run.EXIT_OK
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     assert meta["context_flags"] == {"character_personality_max_chars": 0,
-                                     "previous_openings": 0, "unplanned_chapter_goal": False}
+                                     "previous_openings": 0, "unplanned_chapter_goal": False,
+                                     "phase_shift_every": None}
     on = make_config(tmp_path / "on", **FIRST_PERSON, limits={"context": {
         "character_personality_max_chars": 240, "previous_openings": 2,
-        "previous_opening_max_chars": 160, "unplanned_chapter_goal": True}})
+        "previous_opening_max_chars": 160, "unplanned_chapter_goal": True,
+        "phase_shift_every": 4}})
     run2, _, _, out2 = make_run(tmp_path / "on", config=on)
     assert await run2.run() == bench_run.EXIT_OK
     flags = json.loads((out2 / "meta.json").read_text(encoding="utf-8"))["context_flags"]
     assert flags == {"character_personality_max_chars": 240, "previous_openings": 2,
-                     "unplanned_chapter_goal": True}
+                     "unplanned_chapter_goal": True, "phase_shift_every": 4}
+
+
+async def test_report_says_which_chapters_had_the_phase_shift_line_on(tmp_path):
+    """Mặc định tắt: danh sách rỗng. Bật `phase_shift_every`: `phase_shift_chapters` là đúng các chương
+    đã ghi mà câu bật, khớp cờ trên từng bản ghi attempt. Truyện thử có mỗi hồi một chương, nên chương
+    đầu của hồi nào cũng là đổi pha và chỉ chương 1 (chưa có hồi mới) tới nhịp khi N = 1."""
+    run, _, _, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    off = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert off["phase_shift_chapters"] == [] and not any(a["phase_shift"] for a in run.attempts)
+
+    on = make_config(tmp_path / "on", **FIRST_PERSON, limits={"context": {"phase_shift_every": 1}})
+    run2, llm2, _, out2 = make_run(tmp_path / "on", config=on)
+    assert await run2.run() == bench_run.EXIT_OK
+    report = json.loads((out2 / "report.json").read_text(encoding="utf-8"))
+    assert report["phase_shift_chapters"] == [1]
+    assert report["phase_shift_chapters"] == sorted({a["chapter"] for a in run2.attempts
+                                                     if a["committed"] and a["phase_shift"]})
+    assert any("ĐỔI PHA" in m.content for call in llm2.calls for m in call)
 
 
 # --- thân trả lời bị từ chối của mọi vai (D-115) ------------------------------------------------
