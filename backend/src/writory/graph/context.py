@@ -61,6 +61,9 @@ class CharacterInfo:
     # Tính cách do khởi tạo viết (hoặc người chơi viết, nếu `user_authored`), đã cắt theo trần;
     # None khi tắt (`limits.context.character_personality_max_chars` = 0, D-110).
     personality: str | None = None
+    # Ngoại hình cố định do khởi tạo sinh (D-118), đã cắt theo trần; None khi tắt
+    # (`limits.context.character_appearance_max_chars` = 0) hoặc truyện cũ không có.
+    appearance: str | None = None
 
 
 @dataclass(frozen=True)
@@ -120,6 +123,7 @@ class NeighborInfo:
     alive: bool | None  # chỉ cho Character
     user_authored: bool
     personality: str | None = None  # chỉ cho Character, như `CharacterInfo.personality` (D-110)
+    appearance: str | None = None  # chỉ cho Character, như `CharacterInfo.appearance` (D-118)
 
 
 @dataclass(frozen=True)
@@ -222,6 +226,9 @@ def clip_personality(text: str | None, max_chars: int) -> str | None:
     return cut.rstrip() + "…"
 
 
+clip_appearance = clip_personality  # ngoại hình cắt cùng luật với tính cách (D-118)
+
+
 def _neighbor_query(limit: bool) -> str:
     """Hàng xóm 1–2 bước của người có mặt, mỗi node một dòng với số bước nhỏ nhất. Hai `WITH` tách rời
     (không gộp `min(length(path))` vào một): Neo4j 5.26 với `VarLengthExpand(Pruning)` bỏ bước gom khi
@@ -239,6 +246,7 @@ def _neighbor_query(limit: bool) -> str:
                    coalesce(n.aliases, []) AS aliases, hops,
                    coalesce(n.user_authored, false) AS ua,
                    CASE WHEN n:Character THEN n.personality END AS personality,
+                   CASE WHEN n:Character THEN n.appearance END AS appearance,
                    CASE WHEN n:Character THEN NOT EXISTS {{
                      MATCH (n)-[d:DIED_IN]->(:{ENTITY} {{story_id: $story_id}})
                      WHERE d.valid_from_chapter <= $chapter
@@ -249,7 +257,7 @@ def _neighbor_query(limit: bool) -> str:
 
 
 def _neighbors(read, max_neighbors: int | None, shown: set[str],
-               personality_max_chars: int) -> tuple[NeighborInfo, ...]:
+               personality_max_chars: int, appearance_max_chars: int = 0) -> tuple[NeighborInfo, ...]:
     """Hàng xóm gần nhất trước, mỗi node đúng một lần, tối đa `max_neighbors`. Truy vấn đã trả mỗi node
     một dòng; nếu vẫn thấy trùng (planner đổi kế hoạch) thì truy vấn lại không giới hạn rồi gộp theo id,
     giữ số bước nhỏ nhất, và cắt ở Python, để trần không bị trùng chiếm chỗ."""
@@ -269,7 +277,8 @@ def _neighbors(read, max_neighbors: int | None, shown: set[str],
             rows = rows[:max_neighbors]
     return tuple(
         NeighborInfo(r["id"], r["kind"], r["text"], tuple(r["aliases"]), r["hops"], r["alive"],
-                     r["ua"], clip_personality(r["personality"], personality_max_chars))
+                     r["ua"], clip_personality(r["personality"], personality_max_chars),
+                     clip_appearance(r.get("appearance"), appearance_max_chars))
         for r in rows
     )
 
@@ -283,10 +292,13 @@ def writer_context(
     *,
     max_neighbors: int | None = None,
     personality_max_chars: int = 0,
+    appearance_max_chars: int = 0,
 ) -> WriterContext:
     """`max_neighbors`: lấy từ `limits.context.writer_max_neighbors` (None = không giới hạn).
     `personality_max_chars`: `limits.context.character_personality_max_chars`; 0 = tắt, không nhân
-    vật nào có tính cách trong kết quả (D-110). Không bao giờ đọc `backstory`: có thể chứa bí mật."""
+    vật nào có tính cách trong kết quả (D-110). `appearance_max_chars`:
+    `limits.context.character_appearance_max_chars`, như trên cho ngoại hình (D-118). Không bao giờ
+    đọc `backstory`: có thể chứa bí mật."""
     require_story_id(story_id)
     require_chapter(as_of_chapter)
     present = list(dict.fromkeys(present_ids))
@@ -304,7 +316,7 @@ def writer_context(
         OPTIONAL MATCH (n)-[r:HOLDS]->(item:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
         WITH n, locs, collect(item) AS items
         RETURN n.id AS id, n.name AS name, coalesce(n.aliases, []) AS aliases,
-               n.personality AS personality,
+               n.personality AS personality, n.appearance AS appearance,
                [x IN locs | {{id: x.id, name: x.name, ua: coalesce(x.user_authored, false)}}]
                  AS locs,
                [x IN items | {{id: x.id, name: x.name, ua: coalesce(x.user_authored, false)}}]
@@ -325,7 +337,8 @@ def writer_context(
                        Text(r["locs"][0]["name"], r["locs"][0]["ua"]) if r["locs"] else None,
                        tuple(sorted((Text(x["name"], x["ua"]) for x in r["items"]),
                                     key=lambda t: t.value)),
-                       r["ua"], clip_personality(r["personality"], personality_max_chars))
+                       r["ua"], clip_personality(r["personality"], personality_max_chars),
+                       clip_appearance(r["appearance"], appearance_max_chars))
          for r in chars),
         key=lambda c: order[c.id],
     ))
@@ -442,7 +455,7 @@ def writer_context(
     )
 
     shown |= {f.id for f in facts} | {lie.id for lie in lies} | {i.id for i in items}
-    neighbors = _neighbors(read, max_neighbors, shown, personality_max_chars)
+    neighbors = _neighbors(read, max_neighbors, shown, personality_max_chars, appearance_max_chars)
 
     threads = tuple(
         ThreadInfo(r["id"], r["description"], r["planted"], r["due_from"], r["due_to"],
@@ -552,7 +565,8 @@ def render_writer_context(
         where = ["; ở: ", _t(c.location)] if c.location else []
         holds = ["; đang giữ: ", *_joined(c.holds)] if c.holds else ["; không giữ đồ vật nào"]
         trait = ["; tính cách: ", (c.personality, c.user_authored)] if c.personality else []
-        out.line("- ", *_name(c), *known(c.id), f" — {state}", *where, *holds, *trait)
+        look = ["; ngoại hình: ", (c.appearance, c.user_authored)] if c.appearance else []
+        out.line("- ", *_name(c), *known(c.id), f" — {state}", *where, *holds, *trait, *look)
 
     if ctx.items:
         out.line("### Đồ vật quan trọng (mỗi đồ vật chỉ ở một chỗ: người giữ hoặc nơi chốn; "
@@ -615,7 +629,9 @@ def render_writer_context(
         for n in alive_neighbors:
             who = n.personality if n.kind == "Character" else None
             trait = [" — tính cách: ", (who, n.user_authored)] if who else []
-            out.line("- ", *_name(n), f" [{n.kind}, cách {n.hops} bước]", *trait)
+            seen = n.appearance if n.kind == "Character" else None
+            look = [" — ngoại hình: ", (seen, n.user_authored)] if seen else []
+            out.line("- ", *_name(n), f" [{n.kind}, cách {n.hops} bước]", *trait, *look)
     if ctx.open_threads:
         out.line("### Mạch đang mở")
         for t in ctx.open_threads:

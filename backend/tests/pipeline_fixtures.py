@@ -27,6 +27,7 @@ from writory.graph.context import (
     SecretInfo,
     Text,
     WriterContext,
+    clip_appearance,
     clip_personality,
 )
 from writory.graph.package import chapter_rule_problems, quote_problems
@@ -276,9 +277,14 @@ def final_chapter_script() -> list[Any]:
 
 PERSONALITIES = {"minh": "Trầm tĩnh, hay lo xa.", "lan": "Kín đáo, nói ít, hay hỏi ngược lại.",
                  "ly_that": "Cộc cằn, hay chửi thề."}
+# Ngoại hình sinh ở khởi tạo (D-118): lớp truth, chỉ dàn ý và model viết được thấy.
+APPEARANCES = {"minh": "Cao gầy, tóc đen buộc gọn, áo chàm bạc màu.",
+               "lan": "Nhỏ nhắn, mắt phượng, cài trâm bạc hình cánh én.",
+               "ly_that": "Vạm vỡ, râu quai nón, vết sẹo dài chạy ngang cằm."}
 
 
-def writer_context_ch4(story_id: str, present_ids, personality_max_chars: int = 0) -> WriterContext:
+def writer_context_ch4(story_id: str, present_ids, personality_max_chars: int = 0,
+                       appearance_max_chars: int = 0) -> WriterContext:
     """Ngữ cảnh lớp truth dựng tay (giống writer_context trên truyện mẫu): có bí mật, để test G1
     chứng minh model tạo lựa chọn không nhận được chúng."""
     people = {
@@ -289,7 +295,8 @@ def writer_context_ch4(story_id: str, present_ids, personality_max_chars: int = 
         "khai": CharacterInfo("khai", "Trần Văn Khải", ("Khải",), True, None, (), False),
     }
     lan = Text("Phạm Thị Lan", False)
-    people = {k: replace(v, personality=clip_personality(PERSONALITIES.get(k), personality_max_chars))
+    people = {k: replace(v, personality=clip_personality(PERSONALITIES.get(k), personality_max_chars),
+                         appearance=clip_appearance(APPEARANCES.get(k), appearance_max_chars))
               for k, v in people.items()}
     return WriterContext(
         story_id=story_id, as_of_chapter=3, writing_chapter=4,
@@ -304,7 +311,8 @@ def writer_context_ch4(story_id: str, present_ids, personality_max_chars: int = 
         neighbors=(NeighborInfo("gu", "Character", "Hồ Sĩ Bằng", ("Lão Gù",), 1, False, False),
                    NeighborInfo("ly_that", "Character", "Lý Thất", ("gã lái đò mặt sẹo",), 2,
                                 True, False,
-                                clip_personality(PERSONALITIES["ly_that"], personality_max_chars)),
+                                clip_personality(PERSONALITIES["ly_that"], personality_max_chars),
+                                clip_appearance(APPEARANCES["ly_that"], appearance_max_chars)),
                    NeighborInfo("khai", "Character", "Trần Văn Khải", ("Khải",), 1, True, False)),
         open_threads=(),
     )
@@ -325,6 +333,7 @@ class MemoryStore:
         self.commits: list[tuple[int, list[str], ChangePackage]] = []
         self.context_calls: list[tuple[int, tuple[str, ...]]] = []
         self.personality_args: list[int] = []
+        self.appearance_args: list[int] = []
         self.saved_summaries: dict[int, str] = dict(summaries or {})
         # văn đã hiện: truyện mẫu tới chương `through`, cộng các chương ghi qua `commit`
         self.text_requests: list[tuple[int, ...]] = []  # chương mỗi lần hỏi văn đã hiện
@@ -356,10 +365,12 @@ class MemoryStore:
         return entities_from_rows(rows)
 
     def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors,
-                       personality_max_chars=0) -> WriterContext:
+                       personality_max_chars=0, appearance_max_chars=0) -> WriterContext:
         self.context_calls.append((as_of_chapter, tuple(present_ids)))
         self.personality_args.append(personality_max_chars)
-        return writer_context_ch4(self.story_id, present_ids, personality_max_chars)
+        self.appearance_args.append(appearance_max_chars)
+        return writer_context_ch4(self.story_id, present_ids, personality_max_chars,
+                                  appearance_max_chars)
 
     def commit(self, number: int, scenes: list[str], package: ChangePackage) -> None:
         assert number == self.committed + 1, (number, self.committed)
@@ -459,7 +470,7 @@ class OverlayStore:
         return entities_from_rows(self.state().nodes([n.id for p in self.packages for n in p.nodes]))
 
     def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors,
-                       personality_max_chars=0) -> WriterContext:
+                       personality_max_chars=0, appearance_max_chars=0) -> WriterContext:
         rows = {i: r for i, r in self.state().nodes([e.id for e in self.catalogue()]).items()
                 if r.label == "Character"}
 

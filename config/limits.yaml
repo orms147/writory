@@ -65,6 +65,10 @@ context:
   # chương đòi đổi nơi, đổi người nắm quyền quyết định hay đổi luật chơi, không thêm mối nguy cùng loại.
   # Số đề nghị khi bật: 5 (tạm, D-47). null = tắt, đề y hệt cũ.
   phase_shift_every: null
+  # Ngoại hình (appearance) của nhân vật có mặt và nhân vật lân cận còn sống, sinh ở khởi tạo (D-118),
+  # vào đề dàn ý và đề viết để các cảnh tả khớp nhau, cắt ở từng ấy ký tự mỗi người. 0 = tắt: tắt cho
+  # tới khi đo xem có làm văn cứng hơn không.
+  character_appearance_max_chars: 0
 facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; số tạm, D-47). 0 = tắt
   max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
   text_max_chars: 160          # chữ của Fact: một câu ngắn
