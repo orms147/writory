@@ -43,9 +43,10 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 
 log = logging.getLogger(__name__)
 
-PROMPT_VERSION = "choices-4"  # đổi chữ prompt thì tăng số (choices-3: STALLED_NOTE, D-98; choices-4: đề v3, D-111)
+PROMPT_VERSION = "choices-5"  # đổi chữ prompt thì tăng số (choices-3: STALLED_NOTE, D-98; choices-4: đề v3, D-111; choices-5: REF_NOTE khi thử lại, D-114)
 CHOICE_COUNT = 3
 MIN_KINDS = 2  # design §6.2 bước 6: tối thiểu 2 loại khác nhau
+MIN_CHOICES = 2  # ít nhất từng ấy lựa chọn còn dùng được sau khi bỏ tham chiếu ngoài sổ tay (D-114)
 
 
 class ChoiceDraft(BaseModel):
@@ -194,6 +195,13 @@ Trả về JSON đúng schema."""
 STALLED_NOTE = """Ghi chú: mấy chương gần đây nhân vật chính chưa rời nơi hiện tại và tình thế chưa đổi. Ít nhất một trong 3 lựa chọn phải là bước vượt khỏi thế giằng co đó (rời nơi này, đối mặt trực tiếp, hỏi thẳng điều đang bị giấu, hay mạo hiểm), không chỉ giữ yên, chờ hay dò thêm."""
 
 
+# Chỉ gửi khi lượt trước không cứu được vì tham chiếu (D-114). Chữ cố định của code: không nhắc lại chữ
+# model đã trả, nên không dội ngược chữ bịa hay chữ có thể mang lệnh vào đề (G4).
+REF_NOTE = ("Lần trước bộ lựa chọn bị bỏ vì có mã không nằm trong sổ tay hoặc người nghe không phải nhân "
+            "vật. Chỉ dùng mã dạng m1, m2… ghi trong sổ tay; không tự bịa mã, không viết mô tả thay cho "
+            "mã. Lời thoại, lời nói dối và nội tâm phải gắn với mã của một nhân vật có trong sổ tay.")
+
+
 def build_choice_messages(
     view: PlayerView, *, protagonist_id: str, last_scene_text: str, stalled: bool = False,
     system_prompt: str | None = None,
@@ -224,26 +232,39 @@ def _bad(detail: str) -> WritoryError:
     return WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail=f"ChoicesOutput: {detail}")
 
 
-def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str, str]) -> list[Choice]:
-    """Ref → id nút. Ref lạ, hoặc người nghe không phải nhân vật: sai schema (G11), để thử lại."""
+def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str, str], *,
+             chapter: int = 0) -> list[Choice]:
+    """Ref → id nút. Ref ngoài sổ tay (bịa ra, hoặc mô tả thay cho mã) hay người nghe không phải nhân
+    vật thì bỏ RIÊNG tham chiếu đó, không đoán thêm (G1, D-114). Lựa chọn mất thứ nó bắt buộc phải có
+    thì bỏ riêng lựa chọn đó: nội tâm không còn `about` (không có đích cho FEELS), lời nói dối không
+    còn người nghe (không ai nghe thì không phải lời dối). Còn dưới `MIN_CHOICES` lựa chọn hay dưới
+    `MIN_KINDS` loại thì không cứu được: sai schema (G11), để thử lại. Log chỉ ghi số, không ghi ref."""
 
-    def ids(values: list[str]) -> tuple[str, ...]:
-        unknown = [v for v in values if v not in refs]
-        if unknown:
-            raise _bad(f"ref không có trong danh sách: {unknown}")
-        return tuple(dict.fromkeys(refs[v] for v in values))
+    def known(values: list[str]) -> tuple[list[str], int]:
+        ok = [refs[v] for v in values if v in refs]
+        return list(dict.fromkeys(ok)), len(values) - len(ok)
 
-    choices = []
+    choices: list[Choice] = []
+    dropped_refs = dropped_choices = 0
     for draft in output.choices:
-        listeners = ids(draft.listeners)
-        if any(kinds[i] != "Character" for i in listeners):
-            raise _bad("listeners có mục không phải nhân vật")
-        lie = LieEffect(draft.lie_content.strip(), listeners) if draft.tone == "lie" else None
+        about, lost_about = known(draft.about)
+        heard, lost_heard = known(draft.listeners)
+        listeners = [i for i in heard if kinds[i] == "Character"]
+        dropped_refs += lost_about + lost_heard + (len(heard) - len(listeners))
+        if (draft.kind == "inner" and not about) or (draft.tone == "lie" and not listeners):
+            dropped_choices += 1
+            continue
+        lie = LieEffect(draft.lie_content.strip(), tuple(listeners)) if draft.tone == "lie" else None
         choices.append(Choice(
             id=f"choice-{uuid.uuid4().hex[:12]}", kind=draft.kind, tone=draft.tone,
-            text=draft.text.strip(), listeners=listeners, about=ids(draft.about), lie=lie,
+            text=draft.text.strip(), listeners=tuple(listeners), about=tuple(about), lie=lie,
             feeling=draft.feeling.strip() if draft.feeling else None,
         ))
+    if dropped_refs or dropped_choices:
+        log.warning("chương %s: bỏ %d tham chiếu ngoài sổ tay, %d lựa chọn không còn dùng được",
+                    chapter, dropped_refs, dropped_choices)
+    if len(choices) < MIN_CHOICES or len({c.kind for c in choices}) < MIN_KINDS:
+        raise _bad(f"chỉ còn {len(choices)} lựa chọn dùng được sau khi bỏ tham chiếu ngoài sổ tay")
     return choices
 
 
@@ -310,9 +331,17 @@ async def make_choices(
                                            system_prompt=system_prompt)
     kinds = {e.id: e.kind for e in view.entries}
 
+    unusable = False  # lượt trước hỏng vì tham chiếu: lượt sau nhắc một câu cố định
+
     async def call() -> list[Choice]:
-        output, _ = await llm.chat_json(model, messages, ChoicesOutput, extra=extra)
-        return _resolve(output, refs, kinds)
+        nonlocal unusable
+        sent = [*messages, user_message(REF_NOTE)] if unusable else messages
+        output, _ = await llm.chat_json(model, sent, ChoicesOutput, extra=extra)
+        try:
+            return _resolve(output, refs, kinds, chapter=view.chapter)
+        except WritoryError:
+            unusable = True
+            raise
 
     choices = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
                                       transient_retries=retries.llm_transient)
