@@ -124,3 +124,9 @@ def test_truth_silence_and_action_choices_write_nothing():
                    plain("dialogue", "silence", listeners=("lan",)),
                    plain("action", about=("sword",))):
         assert effects(choice) == ChangePackage(commit_id="header")
+
+
+def test_an_inner_choice_with_no_target_writes_nothing():
+    """D-126: ý định thầm không có mục nào trong sổ tay để hướng tới thì không có cạnh `FEELS`."""
+    pkg = effects(inner_choice(about=()))
+    assert pkg.nodes == [] and pkg.edges == [] and pkg.close == []

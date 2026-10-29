@@ -43,17 +43,39 @@ def test_exactly_three_choices_of_at_least_two_kinds():
         draft(), draft(), draft("inner", about=["p1"], feeling="lo")]})
 
 
-@pytest.mark.parametrize("bad", [
+BAD_DRAFTS = [
     draft("dialogue", listeners=["p1"]),  # lời thoại thiếu sắc thái
     draft("dialogue", tone="lie", listeners=["p1"]),  # nói dối thiếu nội dung
+    draft("dialogue", tone="truth", lie_content="x", listeners=["p1"]),  # lie_content mà không nói dối
     draft("action", tone="truth"),  # sắc thái chỉ cho lời thoại
+    draft("action", listeners=["p1"]),  # người nghe chỉ cho lời thoại
+    draft("action", feeling="lo"),  # cảm xúc chỉ cho nội tâm
     draft("inner", about=["p1"]),  # nội tâm thiếu cảm xúc
     draft("action", text="  "),
-])
-def test_choice_fields_must_match_kind(bad):
-    with pytest.raises(ValidationError):
-        ChoicesOutput.model_validate({"choices": [bad, draft(), draft("inner", about=["p1"],
-                                                                     feeling="lo")]})
+]
+
+
+@pytest.mark.parametrize("bad", BAD_DRAFTS)
+async def test_a_choice_whose_fields_do_not_match_its_kind_is_dropped_alone_not_the_whole_set(bad):
+    """D-126: schema chỉ giữ hình dạng cả bộ (đúng 3, tối thiểu 2 loại); lựa chọn nào sai trường thì
+    `_resolve` bỏ RIÊNG lựa chọn đó (như tham chiếu lạ, D-114), không bỏ cả bộ rồi thử lại."""
+    refs = _refs_by_text()
+    good = json.loads(_reply(refs))["choices"]  # hành động, lời dối, nội tâm
+    raw = json.dumps({"choices": [bad, good[0], good[2]]}, ensure_ascii=False)
+    ChoicesOutput.model_validate_json(raw)
+    llm = ScriptedLLM([raw])
+    choices = await _make(llm)
+    assert len(llm.calls) == 1 and [c.kind for c in choices] == ["action", "inner"]
+
+
+async def test_two_malformed_choices_leave_too_few_so_the_set_is_still_retried():
+    refs = _refs_by_text()
+    good = json.loads(_reply(refs))["choices"]
+    raw = json.dumps({"choices": [draft("action", text=" "), draft("action", tone="truth"), good[2]]},
+                     ensure_ascii=False)
+    with pytest.raises(WritoryError) as exc:
+        await _make(ScriptedLLM([raw, raw]))
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED
 
 
 def test_a_dialogue_without_listeners_passes_the_schema_so_resolve_can_drop_just_that_choice():
@@ -186,10 +208,14 @@ async def test_a_lie_with_no_valid_listener_is_dropped_because_nobody_hears_it()
     assert [c.kind for c in choices] == ["action", "inner"] and all(c.lie is None for c in choices)
 
 
-async def test_an_inner_choice_with_no_valid_about_is_dropped():
-    bad = _reply(_refs_by_text(), **{"2": {"about": ["m999"]}})
-    choices = await _make(ScriptedLLM([bad]))
-    assert [c.kind for c in choices] == ["action", "dialogue"]
+async def test_an_inner_choice_whose_about_is_empty_or_unknown_is_kept_without_a_target():
+    """D-126: ý định thầm hướng tới điều không có trong sổ tay (một tấm ván) vẫn là lựa chọn dùng
+    được; mất đích thì chỉ mất cạnh `FEELS` (xem `test_choice_effects`), chữ vẫn vào đề chương."""
+    for about in ([], ["m999"]):
+        bad = _reply(_refs_by_text(), **{"2": {"about": about}})
+        choices = await _make(ScriptedLLM([bad]))
+        assert [c.kind for c in choices] == ["action", "dialogue", "inner"]
+        assert choices[2].about == () and choices[2].feeling == "thương"
 
 
 async def test_an_action_keeps_its_text_and_loses_only_the_unknown_ref():
@@ -237,9 +263,8 @@ async def test_a_set_that_cannot_be_saved_twice_is_still_the_old_error():
 async def test_a_set_with_fewer_than_two_kinds_after_dropping_is_not_accepted():
     refs = _refs_by_text()
     # Hai lựa chọn còn lại cùng loại hành động: dưới ngưỡng MIN_KINDS, phải thử lại.
-    bad = _reply(refs, **{"1": {"kind": "action", "tone": None, "lie_content": None,
-                                "listeners": []},
-                          "2": {"about": ["m999"]}})
+    bad = _reply(refs, **{"1": {"listeners": [GHOST]},
+                          "2": {"kind": "action", "feeling": None, "about": []}})
     with pytest.raises(WritoryError):
         await _make(ScriptedLLM([bad, bad]))
 
@@ -379,3 +404,22 @@ async def test_the_real_rejected_body_of_ky_ao_ch10_now_gives_two_choices_not_an
     choices = await _make(llm)
     assert len(llm.calls) == 1 and [c.kind for c in choices] == ["action", "inner"]
     assert choices[0].about == ("lan",) and choices[1].about == ("minh",)
+
+
+FIXTURE_INNER = FIXTURE.with_name("choices_inner_no_about_run_long_after_ky_ao_2_ch16.json")
+
+
+async def test_the_real_rejected_body_of_ky_ao_ch16_now_gives_three_choices_not_a_retry():
+    """Thân THẬT bị từ chối ở lượt long-after-ky-ao-2 ch16 (rejected.jsonl, D-115): hai hành động và
+    một ý định thầm hướng tới tấm ván (không có mục trong sổ tay) làm pydantic bỏ cả bộ. Lượt đó cứu
+    được nhờ thử lại; nay bộ ra ngay lần đầu, ý định thầm giữ nguyên chữ và cảm xúc, không có đích."""
+    real = json.loads(FIXTURE_INNER.read_text(encoding="utf-8"))["real_body"]
+    ChoicesOutput.model_validate(real)  # trước đây: choices.2: value_error
+    refs = _refs_by_text()
+    raw = json.dumps(real, ensure_ascii=False).replace('"m35"', json.dumps(refs["Phạm Thị Lan"])
+                                                       ).replace('"m61"', json.dumps(refs["Trần Minh"]))
+    llm = ScriptedLLM([raw])
+    choices = await _make(llm)
+    assert len(llm.calls) == 1 and [c.kind for c in choices] == ["action", "action", "inner"]
+    assert choices[0].about == ("lan", "minh") and choices[2].about == ()
+    assert choices[2].feeling == "quyết liệt"
