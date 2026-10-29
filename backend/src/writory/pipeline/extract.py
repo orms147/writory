@@ -47,7 +47,7 @@ from writory.safety.wrap import (
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
 # Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
-# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-115).
+# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116).
 PROMPT_VERSION = "extract-8"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
@@ -85,7 +85,7 @@ class NewFact(_Out):
 
 
 class ExtractedMilestone(_Out):
-    """Mốc cốt truyện đã diễn ra trên trang (D-115): `id` dạng `m<số>` trong mục "Mốc cốt truyện chưa
+    """Mốc cốt truyện đã diễn ra trên trang (D-116): `id` dạng `m<số>` trong mục "Mốc cốt truyện chưa
     xảy ra", `quote` là câu nguyên văn cho thấy điều mốc mô tả đã xảy ra."""
 
     id: str
@@ -161,7 +161,7 @@ class ExtractResult:
     package: ChangePackage
     rejected: list[tuple[str, str]] = field(default_factory=list)  # (mô tả cạnh, lý do)
     chat: ChatResult | None = None
-    milestones: tuple[MilestoneMark, ...] = ()  # mốc đánh dấu đã qua kiểm (D-115)
+    milestones: tuple[MilestoneMark, ...] = ()  # mốc đánh dấu đã qua kiểm (D-116)
 
 
 SYSTEM_PROMPT = """Bạn là người ghi chép đồ thị của một truyện tương tác tiếng Việt. Đọc văn bản một chương và ghi lại những gì THAY ĐỔI hoặc ĐƯỢC HÉ LỘ trong chương đó, dưới dạng cạnh giữa các thực thể.
@@ -243,7 +243,7 @@ def _window(low: int | None, high: int | None) -> str:
 
 
 def _milestone_lines(milestones: Sequence[PendingMilestone]) -> list[str | UserAuthored]:
-    """Mục "Mốc cốt truyện chưa xảy ra" (D-115). Mô tả mốc do model khởi tạo viết: escape. Rỗng thì
+    """Mục "Mốc cốt truyện chưa xảy ra" (D-116). Mô tả mốc do model khởi tạo viết: escape. Rỗng thì
     không có mục."""
     if not milestones:
         return []
@@ -638,7 +638,7 @@ def accept_milestones(
     output: ExtractOutput, pending: Sequence[PendingMilestone], done: Mapping[int, int],
     chapter_text: str,
 ) -> tuple[list[MilestoneMark], list[tuple[str, str]]]:
-    """Mốc bộ trích đánh dấu mà code nhận (D-115): id có trong mục "chưa xảy ra", chưa đánh dấu (ở
+    """Mốc bộ trích đánh dấu mà code nhận (D-116): id có trong mục "chưa xảy ra", chưa đánh dấu (ở
     chương trước hay trong cùng câu trả lời), và `quote` nguyên văn trong chương (G3). Mô tả bị bỏ
     chỉ có id mốc, không chữ của model."""
     allowed = {p.number for p in pending}
@@ -673,7 +673,7 @@ async def extract_changes(
     """Một lời gọi model. Lỗi schema để nơi gọi thử lại theo RETRY_SCHEMA (G11, D-14).
     `threads`: mạch phải gỡ chưa gỡ, kèm trạng thái hạn (`ChapterGoals.threads`, D-82).
     `fact_rules`: luật Fact mới (D-93); None = tắt. `milestones`: mốc chưa xảy ra bộ trích được đánh
-    dấu, `milestones_done`: số thứ tự -> chương đã xong (D-115)."""
+    dấu, `milestones_done`: số thứ tự -> chương đã xong (D-116)."""
     messages = build_messages(
         chapter=chapter, chapter_id=chapter_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text, entities=entities, open_edges=open_edges, threads=threads,

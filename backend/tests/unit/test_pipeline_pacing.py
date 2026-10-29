@@ -573,7 +573,7 @@ def test_stalled_after_is_true_for_idle_as_well_as_for_a_stood_still_protagonist
     assert not stalled_after(state, 4, None, idle_threshold=5)
 
 
-# --- mốc đã diễn ra (D-115) --------------------------------------------------------------------------
+# --- mốc đã diễn ra (D-116) --------------------------------------------------------------------------
 # Hồi quy long-baseline: mốc ky-ao-1 ch7-9 "vào Rừng Rủ Sương" mà ch5 đã vào rừng; tu-tien-3 mốc ch9-11
 # "phát hiện chuông suy yếu" mà ch5-7 đã viết. Code chỉ biết khoảng chương nên giục lại mốc đã xong.
 # Bộ trích đánh dấu bằng câu trích có thật; dấu nằm ở thuộc tính nút `Chapter` của chương xảy ra.
@@ -695,4 +695,4 @@ def test_the_done_sentence_can_be_overridden_by_the_measurement_tool():
 def test_the_milestone_lookahead_is_in_config():
     from writory.config import load_config
 
-    assert load_config().limits.context.milestone_lookahead == 4  # D-115; số tạm, D-47
+    assert load_config().limits.context.milestone_lookahead == 4  # D-116; số tạm, D-47

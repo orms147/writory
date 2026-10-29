@@ -1777,7 +1777,7 @@ async def test_protagonist_keeps_one_place_when_the_extractor_closes_it_without_
     assert [(r.id, r.target) for r in rows] == [(old.id, old.target)]
 
 
-# --- mốc đã diễn ra (D-115) --------------------------------------------------------------------------
+# --- mốc đã diễn ra (D-116) --------------------------------------------------------------------------
 # Kế hoạch có hai mốc theo dõi (bước ngoặt chương 3-5, cao trào 6-8) và mốc kết ở chương 12.
 
 MS_PLAN = plan_with(milestones=[

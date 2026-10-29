@@ -43,7 +43,7 @@ class MilestoneGoal:
     goal: str
     from_chapter: int
     to_chapter: int
-    # `next`: mốc kế tiếp, chưa tới khoảng. `done`: đã diễn ra rồi (D-115), khoảng trùm chương này.
+    # `next`: mốc kế tiếp, chưa tới khoảng. `done`: đã diễn ra rồi (D-116), khoảng trùm chương này.
     status: Literal["open", "due", "next", "done"]
     number: int = 0  # thứ tự 1-based trong kế hoạch
     done_chapter: int | None = None
@@ -51,7 +51,7 @@ class MilestoneGoal:
 
 @dataclass(frozen=True)
 class PendingMilestone:
-    """Mốc chưa diễn ra mà bộ trích được phép đánh dấu ở cảnh này (D-115)."""
+    """Mốc chưa diễn ra mà bộ trích được phép đánh dấu ở cảnh này (D-116)."""
 
     number: int
     kind: MilestoneKind
@@ -128,7 +128,7 @@ class ChapterGoals:
     # không đặt cùng `standstill` vì một lời giục là đủ.
     idle: Idle | None = None
     # Mốc bộ trích được đánh dấu ở cảnh này, và các mốc đã xong (số thứ tự -> chương), cho đề bộ trích
-    # (D-115). Rỗng khi `chapter_goals(milestone_lookahead=None)`. Chỉ vào đề dàn ý, viết và bộ trích.
+    # (D-116). Rỗng khi `chapter_goals(milestone_lookahead=None)`. Chỉ vào đề dàn ý, viết và bộ trích.
     pending_milestones: tuple[PendingMilestone, ...] = ()
     milestones_done: tuple[tuple[int, int], ...] = ()
 
@@ -145,7 +145,7 @@ class ChapterGoals:
 
 def _milestones(plan: StoryPlan, chapter: int, final: bool,
                 done: Mapping[int, int] | None = None) -> tuple[MilestoneGoal, ...]:
-    """Mốc của chương. `done`: số thứ tự -> chương đã diễn ra (D-115). Mốc đã xong mà khoảng trùm
+    """Mốc của chương. `done`: số thứ tự -> chương đã diễn ra (D-116). Mốc đã xong mà khoảng trùm
     chương này thì ghi `done`; mốc kế tiếp bỏ qua mốc đã xong."""
     done = done or {}
     numbered = list(enumerate(plan.milestones, 1))
@@ -255,7 +255,7 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
                   done_extra: Mapping[int, int] | None = None) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
     phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt.
-    `milestone_lookahead`: theo dõi mốc đã diễn ra (D-115), None = tắt; `done_extra`: mốc các cảnh
+    `milestone_lookahead`: theo dõi mốc đã diễn ra (D-116), None = tắt; `done_extra`: mốc các cảnh
     trước của chính chương này đã đánh dấu (chưa vào nút Chapter, số thứ tự -> chương N)."""
     progress = plan_progress(plan, state, chapter)
     final = progress.final
@@ -347,7 +347,7 @@ GOAL_DEFAULTS: dict[str, str] = {
                       "chương có một điều mà đầu chương chưa xảy ra hoặc chưa ai biết (người bị "
                       "thương hay bị bắt, vật đổi chủ, bí mật lộ, người đổi phe, thời hạn bắt đầu, "
                       "nơi chốn đổi). Ký, ghi, đặt xuống hay hẹn để sau không tính."),
-    # Mốc đã diễn ra rồi (D-115); chương xảy ra do code điền sau câu này.
+    # Mốc đã diễn ra rồi (D-116); chương xảy ra do code điền sau câu này.
     "milestone_done": ("Mốc ĐÃ xảy ra rồi: không diễn lại, đi bước kế"),
     "standstill": ("Nhân vật chính đã ở {place} suốt {chapters} chương. Chương này PHẢI đổi tình "
                    "thế: một sự kiện mới buộc nhân vật chính rời nơi này, hoặc phá vỡ thế giằng co, "

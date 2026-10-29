@@ -11,9 +11,10 @@ Nút mang `user_authored: true` có chữ do người chơi viết; khi render, 
 bằng `UserAuthored` (G4).
 """
 
+import logging
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
-from typing import Literal, Protocol
+from typing import Any, Literal, Protocol
 
 from neo4j import Driver, RoutingControl
 
@@ -21,6 +22,8 @@ from writory.graph.queries import VALID_AT
 from writory.graph.schema import ENTITY
 from writory.graph.story import require_chapter, require_story_id
 from writory.safety.wrap import UserAuthored
+
+log = logging.getLogger(__name__)
 
 SecretStatus = Literal["not_yet", "in_window", "overdue", "revealed"]
 
@@ -219,6 +222,58 @@ def clip_personality(text: str | None, max_chars: int) -> str | None:
     return cut.rstrip() + "…"
 
 
+def _neighbor_query(limit: bool) -> str:
+    """Hàng xóm 1–2 bước của người có mặt, mỗi node một dòng với số bước nhỏ nhất. Hai `WITH` tách rời
+    (không gộp `min(length(path))` vào một): Neo4j 5.26 với `VarLengthExpand(Pruning)` bỏ bước gom khi
+    `$shown` ngắn và trả node trùng một lần cho mỗi nhân vật có mặt (D-117); chia hai bước thì đúng cả
+    ba ca đã đo. Chặn ở Python (`_neighbors`) vẫn có, để không phụ thuộc kế hoạch của planner."""
+    return f"""
+            MATCH (p:{ENTITY} {{story_id: $story_id}}) WHERE p.id IN $present
+            MATCH path = (p)-[rels*1..2]-(n:{ENTITY} {{story_id: $story_id}})
+            WHERE NOT n.id IN $present AND NOT n.id IN $shown
+              AND all(r IN rels WHERE type(r) <> 'REVEALED_TO_PLAYER' AND {VALID_AT})
+              AND all(x IN nodes(path) WHERE NOT x:Chapter)
+            WITH n, length(path) AS len
+            WITH n, min(len) AS hops
+            RETURN n.id AS id, {_KIND} AS kind, {_TEXT} AS text,
+                   coalesce(n.aliases, []) AS aliases, hops,
+                   coalesce(n.user_authored, false) AS ua,
+                   CASE WHEN n:Character THEN n.personality END AS personality,
+                   CASE WHEN n:Character THEN NOT EXISTS {{
+                     MATCH (n)-[d:DIED_IN]->(:{ENTITY} {{story_id: $story_id}})
+                     WHERE d.valid_from_chapter <= $chapter
+                   }} END AS alive
+            ORDER BY hops, id
+            {"LIMIT $limit" if limit else ""}
+            """
+
+
+def _neighbors(read, max_neighbors: int | None, shown: set[str],
+               personality_max_chars: int) -> tuple[NeighborInfo, ...]:
+    """Hàng xóm gần nhất trước, mỗi node đúng một lần, tối đa `max_neighbors`. Truy vấn đã trả mỗi node
+    một dòng; nếu vẫn thấy trùng (planner đổi kế hoạch) thì truy vấn lại không giới hạn rồi gộp theo id,
+    giữ số bước nhỏ nhất, và cắt ở Python, để trần không bị trùng chiếm chỗ."""
+    def run(limit: bool):
+        return read(_neighbor_query(limit), limit=max_neighbors, shown=sorted(shown))
+
+    rows = run(max_neighbors is not None)
+    if len({r["id"] for r in rows}) != len(rows):
+        log.warning("hàng xóm: truy vấn trả node trùng (%d dòng, %d node); gộp theo id ở Python",
+                    len(rows), len({r["id"] for r in rows}))
+        best: dict[str, Any] = {}
+        for r in run(False):
+            if r["id"] not in best or r["hops"] < best[r["id"]]["hops"]:
+                best[r["id"]] = r
+        rows = sorted(best.values(), key=lambda r: (r["hops"], r["id"]))
+        if max_neighbors is not None:
+            rows = rows[:max_neighbors]
+    return tuple(
+        NeighborInfo(r["id"], r["kind"], r["text"], tuple(r["aliases"]), r["hops"], r["alive"],
+                     r["ua"], clip_personality(r["personality"], personality_max_chars))
+        for r in rows
+    )
+
+
 def writer_context(
     driver: Driver,
     story_id: str,
@@ -387,30 +442,7 @@ def writer_context(
     )
 
     shown |= {f.id for f in facts} | {lie.id for lie in lies} | {i.id for i in items}
-    limit = "" if max_neighbors is None else "LIMIT $limit"
-    neighbors = tuple(
-        NeighborInfo(r["id"], r["kind"], r["text"], tuple(r["aliases"]), r["hops"],
-                     r["alive"], r["ua"],
-                     clip_personality(r["personality"], personality_max_chars))
-        for r in read(f"""
-            MATCH (p:{ENTITY} {{story_id: $story_id}}) WHERE p.id IN $present
-            MATCH path = (p)-[rels*1..2]-(n:{ENTITY} {{story_id: $story_id}})
-            WHERE NOT n.id IN $present AND NOT n.id IN $shown
-              AND all(r IN rels WHERE type(r) <> 'REVEALED_TO_PLAYER' AND {VALID_AT})
-              AND all(x IN nodes(path) WHERE NOT x:Chapter)
-            WITH n, min(length(path)) AS hops
-            RETURN n.id AS id, {_KIND} AS kind, {_TEXT} AS text,
-                   coalesce(n.aliases, []) AS aliases, hops,
-                   coalesce(n.user_authored, false) AS ua,
-                   CASE WHEN n:Character THEN n.personality END AS personality,
-                   CASE WHEN n:Character THEN NOT EXISTS {{
-                     MATCH (n)-[d:DIED_IN]->(:{ENTITY} {{story_id: $story_id}})
-                     WHERE d.valid_from_chapter <= $chapter
-                   }} END AS alive
-            ORDER BY hops, id
-            {limit}
-            """, limit=max_neighbors, shown=sorted(shown))
-    )
+    neighbors = _neighbors(read, max_neighbors, shown, personality_max_chars)
 
     threads = tuple(
         ThreadInfo(r["id"], r["description"], r["planted"], r["due_from"], r["due_to"],

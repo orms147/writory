@@ -168,7 +168,7 @@ async def test_run_stops_after_the_last_chapter_and_compares_plan_with_result(tm
                      "status": "missed"}],
         "threads": [{"n": 1, "window": [total - 1, total], "resolved_chapter": None,
                      "status": "missed"}],
-        # Bộ trích giả không đánh dấu mốc nào; mốc nào đã qua hạn thì "missed" (D-115).
+        # Bộ trích giả không đánh dấu mốc nào; mốc nào đã qua hạn thì "missed" (D-116).
         "milestones": [{"n": i, "window": [m.from_chapter, m.to_chapter], "done_chapter": None,
                         "status": "missed"} for i, m in enumerate(run.plan.milestones, 1)],
     }
@@ -995,3 +995,84 @@ async def test_meta_records_the_three_context_flags(tmp_path):
     flags = json.loads((out2 / "meta.json").read_text(encoding="utf-8"))["context_flags"]
     assert flags == {"character_personality_max_chars": 240, "previous_openings": 2,
                      "unplanned_chapter_goal": True}
+
+
+# --- thân trả lời bị từ chối của mọi vai (D-115) ------------------------------------------------
+
+
+class _BlankSummaryOnce(DryRunLLM):
+    """Tóm tắt trống ở lần đầu (sai quy tắc sau schema), nhúng key giả để kiểm G7."""
+
+    def __init__(self, total: int, body: str = "  ", raw: str | None = None) -> None:
+        super().__init__(total)
+        self.body, self.raw, self.fired = body, raw, False
+
+    def reply(self, schema_name, text):
+        if schema_name == "SummaryOutput" and not self.fired:
+            self.fired = True
+            if self.raw is not None:  # không phải JSON: sai schema
+                return self.raw
+            return json.dumps({"summary": self.body}, ensure_ascii=False)
+        return super().reply(schema_name, text)
+
+
+async def test_a_rejected_body_is_kept_in_rejected_jsonl_with_where_and_why(tmp_path):
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, _, out = make_run(tmp_path, llm=_BlankSummaryOnce(total), config=config)
+    assert await run.run() == bench_run.EXIT_OK
+    [row] = rows(out / "rejected.jsonl")
+    assert row["role"] == "summary" and row["chapter"] == 1 and row["code"] == "LLM_BAD_RESPONSE"
+    assert "rỗng" in row["reason"] and json.loads(row["body"]) == {"summary": "  "}
+    assert row["truncated"] is False and row["body_chars"] == len(row["body"])
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["rejected_bodies"] == 1
+
+
+async def test_no_rejection_means_no_file(tmp_path):
+    run, _, _, out = make_run(tmp_path)
+    assert await run.run() == bench_run.EXIT_OK
+    assert not (out / "rejected.jsonl").exists()
+    assert json.loads((out / "report.json").read_text(encoding="utf-8"))["rejected_bodies"] == 0
+
+
+async def test_a_long_body_is_cut_to_the_line_limit(tmp_path, monkeypatch):
+    monkeypatch.setattr(bench_run, "REJECTED_BODY_MAX_CHARS", 40)
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, _, out = make_run(tmp_path, llm=_BlankSummaryOnce(total, body=" " * 500), config=config)
+    assert await run.run() == bench_run.EXIT_OK
+    [row] = rows(out / "rejected.jsonl")
+    assert len(row["body"]) == 40 and row["truncated"] is True and row["body_chars"] > 40
+
+
+async def test_a_key_in_a_rejected_body_is_redacted_g7(tmp_path):
+    key = "sk-or-v1-" + "0123456789abcdef" * 4
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, _, out = make_run(tmp_path, llm=_BlankSummaryOnce(total, raw=f"không phải JSON {key}"),
+                              config=config)
+    assert await run.run() == bench_run.EXIT_OK
+    text = (out / "rejected.jsonl").read_text(encoding="utf-8")
+    assert key not in text and "sk-or-v1-" not in text
+
+
+async def test_rejected_bodies_stay_out_of_the_general_files(tmp_path):
+    """Thân có thể mang lớp truth (dàn ý, viết): như truth_dump.json, không phải file chung."""
+    assert "rejected.jsonl" not in GENERAL_FILES
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, _, out = make_run(tmp_path, llm=_BlankSummaryOnce(total, raw="BÍ-MẬT-TRONG-THÂN"),
+                              config=config)
+    assert await run.run() == bench_run.EXIT_OK
+    assert "BÍ-MẬT-TRONG-THÂN" not in all_text(out, skip=("truth_dump.json", "rejected.jsonl"))
+
+
+def test_the_app_never_installs_the_rejection_hook():
+    """G7 và D-115: thân bị từ chối chỉ được giữ ở bộ đo, không ở app."""
+    from writory.config import REPO_ROOT
+
+    src = REPO_ROOT / "backend" / "src" / "writory"
+    users = sorted(p.relative_to(src).as_posix() for p in src.rglob("*.py")
+                   if "watch_rejections" in p.read_text(encoding="utf-8"))
+    assert users == ["llm/retry.py", "pipeline/bench_run.py"]

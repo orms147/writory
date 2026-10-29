@@ -1064,7 +1064,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** người chơi có thể nhận 2 lựa chọn thay vì 3 (sau khi bỏ); ô tự viết hành động (G5) vẫn luôn có. Một lời thoại không còn người nghe mất `listeners` nên không ghi được gì vào đồ thị (nói thật không ghi gì sẵn). **Fixture dựng lại, không phải thân trả lời thật:** `calls.jsonl` không lưu thân trả lời, chỉ có chuỗi ref sai trong lỗi; `tests/fixtures/llm/choices_unknown_ref_run_long_ky_ao_hanh_trinh_1.json` ghi rõ điều đó. Hai test cũ đã đổi (ref lạ và người nghe không phải nhân vật không còn là lỗi chặn cả bộ).
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh fix/choices-unknown-ref · 29/10/2026
 
-## D-115 · Theo dõi mốc đã diễn ra: bộ trích đánh dấu bằng câu trích, dấu ở nút `Chapter`, mục tiêu chương không giục lại
+## D-115 · Bộ đo lưu thân trả lời bị từ chối của mọi vai vào `rejected.jsonl`
+- **Bối cảnh:** D-114: lượt `run-long-ky-ao-hanh-trinh-1` dừng ở ch14 vì bộ lựa chọn bị từ chối, nhưng `calls.jsonl` không lưu thân trả lời (chỉ số đếm, cố ý) nên test hồi quy phải dựng lại thân từ chuỗi ref trong lỗi. Không thấy được model thật đã trả gì ở bất kỳ vai nào khi pydantic hay quy tắc sau schema từ chối.
+- **Quyết định:** `llm/retry.py` thêm móc `watch_rejections(hook)` (ContextVar): trong khối này `with_retries` gọi `hook(lỗi)` mỗi lần một lời gọi bị từ chối với `LLM_BAD_RESPONSE`, kể cả lần cuối trước `RETRY_LIMIT_REACHED`. Mọi vai đã đi qua `with_retries`/`with_json_retries` (dàn ý, bộ trích, tóm tắt, lựa chọn, kiểm duyệt, khởi tạo, người kể). `bench_run` cài móc quanh cả lần chạy; `BudgetedClient.last_body` giữ thân của lời gọi vừa xong (None khi lời gọi hỏng, để không ghi thân cũ). Mỗi lần ghi một dòng `rejected.jsonl` (chương, cảnh, lượt, vai, mã, lý do, thân), thân cắt ở `REJECTED_BODY_MAX_CHARS` (20 000, tạm D-47) và qua `redact` (G7). `report.json` có `rejected_bodies`.
+- **Chỉ ở bộ đo:** app không bao giờ cài móc (test quét mã: chỉ `llm/retry.py` và `pipeline/bench_run.py` nhắc `watch_rejections`), nên không giữ thân trả lời nào ở app hay log. File mới theo luật của `truth_dump.json`: thân của dàn ý, viết, bộ trích có thể mang lớp truth, nên không thuộc nhóm file chung (có test).
+- **Hệ quả:** lượt chạy thật sau này có thân thật của mọi lần từ chối để làm fixture hồi quy. Chưa phủ: lỗi quy tắc khởi tạo (`initial_problems`, sửa bằng một lượt sửa, không qua `with_retries`) và cạnh bộ trích bị bỏ (đã ở `truth_dump.json`). Bộ đo khác (`bench_a`, `bench_c`…) không lưu gì.
+- **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh eval/keep-rejected-bodies · 29/10/2026
+
+## D-116 · Theo dõi mốc đã diễn ra: bộ trích đánh dấu bằng câu trích, dấu ở nút `Chapter`, mục tiêu chương không giục lại
 - **Bối cảnh:** `evals/results/2026-10-29-run-long-baseline/notes.md`, nguyên nhân 2: mốc của `story_plan` chỉ là khoảng chương (`pacing._milestones`), code không biết mốc đã xảy ra, nên mốc xảy ra sớm vẫn bị giục lại (ky-ao-1: mốc ch7–9 "vào Rừng Rủ Sương" mà ch5 đã vào rừng, truyện bị kéo về rồi vào lại; tu-tien-3: mốc ch9–11 "phát hiện chuông suy yếu" đã viết ở ch5–7). Bí mật và mạch đã có tiến độ (`plan_progress`), mốc chưa.
 - **Quyết định:**
   - **Ai đánh dấu: bộ trích.** Đề của nó có mục "Mốc cốt truyện chưa xảy ra" (id `m<số>`, khoảng chương, mô tả) và đầu ra có `milestones: [{id, quote}]`. Dàn ý ghi ý định, nhưng mốc xảy ra SỚM hơn khoảng thì chỉ thấy được trên trang. Code chỉ nhận khi id có trong mục đó, chưa đánh dấu (ở chương trước hay trong cùng câu trả lời), và `quote` nguyên văn trong cảnh (G3); không thì vào `rejected` với lý do riêng (đếm ở report). Mốc kết (`ending`) không theo dõi. Mục chỉ liệt kê mốc bắt đầu trong `limits.context.milestone_lookahead` chương tới (4; null = tắt theo dõi, mục tiêu chương như trước).
@@ -1073,3 +1080,24 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - **Mục tiêu chương:** mốc đã xong mà khoảng trùm chương này in "Mốc ĐÃ xảy ra rồi … (xảy ra ở chương N …)" (`milestone_done`, ghi đè được ở biến thể đề, D-109); mốc kế tiếp bỏ qua mốc đã xong; mốc đã xong không tính là đang diễn ra cho cờ `unplanned_chapter_goal` (D-110). `report.json` có `plan_vs_result.milestones` (chương diễn ra so với khoảng, không chữ). `extract-8`, `outline-11`, `writer-11`.
 - **Hệ quả:** bộ trích có thể đánh dấu nhầm khi trang mới gợi ý; đề đòi "đã diễn ra thật, chưa chắc thì không ghi" và câu trích nguyên văn, nhưng độ chính xác với model thật CHƯA đo (đợt này không gọi model trả tiền; chỉ test bằng model giả). Mỗi lời gọi trích dài thêm vài dòng. Mốc xong một nửa vẫn chưa xong. Không giải quyết "biến cố đổi pha" hay độ hội tụ của lựa chọn (nguyên nhân 1 và 3).
 - **Người quyết:** Claude; chủ dự án chọn làm truyện dài 29/10/2026 · 29/10/2026
+
+## D-117 · Hàng xóm 1–2 bước của ngữ cảnh model viết: mỗi nút một lần, chặn trùng ở Cypher và ở Python
+- **Bối cảnh:** session 1 tái hiện được: `graph/context.py` truy vấn hàng xóm `WITH n, min(length(path)) AS hops` trả NODE TRÙNG khi ≥ 2 nhân vật có mặt cùng tới một nút và `$shown` ngắn (truyện `run-20261021-ky-ao-vua-2-f8a61160` ch3: 37 dòng cho 21 nút; `$shown` dài 12 id thì đúng). Suy luận của session 1 (chưa tra lỗi đã biết của Neo4j 5.26): planner chọn `VarLengthExpand(Pruning)` và bỏ bước gom. Hậu quả: nút lặp trong ngữ cảnh model viết và dàn ý, chiếm chỗ của `LIMIT writer_max_neighbors`.
+- **Tái hiện bằng test (đỏ trước):** `tests/graph/test_writer_context.py`, hai nhân vật có mặt cùng thuộc hai tổ chức và một người thứ ba: 6 dòng cho 3 nút với truy vấn cũ.
+- **Quyết định:** (1) Cypher tách `WITH n, length(path) AS len` rồi `WITH n, min(len) AS hops` (cách session 1 thử đúng cả 3 ca). (2) Chặn ở Python không phụ thuộc planner (`_neighbors`): thấy id trùng thì ghi log số dòng và số nút (không ghi id), truy vấn lại không `LIMIT`, gộp theo id giữ số bước nhỏ nhất, sắp theo (số bước, id) rồi cắt `max_neighbors` ở Python, nên trần đếm nút thật. Test graph kiểm chính truy vấn đã đúng (log không có cảnh báo trùng), test nhanh kiểm đường chặn bằng `read` giả. Hành vi không đổi khi truy vấn đã đúng.
+- **Rà các truy vấn khác:** trong `backend/src/writory` chỉ có đúng một truy vấn dạng `*1..2` với gom; không có `shortestPath` hay `length(path)` ở nơi khác (notebook, bench_a không dùng Cypher).
+- **Hệ quả:** truyện đã chạy trước D-117 có thể có ngữ cảnh viết với nút lặp ở các chương nhiều nhân vật có mặt; kết quả đo cũ không đổi, nhưng token vào của vai dàn ý và viết có thể thấp hơn chút khi chạy lại. Chưa tra tài liệu Neo4j xác nhận nguyên nhân planner.
+- **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh fix/neighbor-dupes · 29/10/2026
+
+## D-118 · Xuất kịch bản video: nguồn `truth`, danh sách shot kèm prompt, ngoại hình sinh lúc khởi tạo (bổ sung D-107)
+- **Bối cảnh:** chủ dự án yêu cầu làm phần nền của tính năng xuất kịch bản video (D-107) ngay sau đợt truyện dài, chạy song song nếu được.
+- **Quyết định (chủ dự án chọn, 29/10/2026):**
+  - Nguồn là toàn bộ lớp `truth`, kể cả bí mật và hậu trường, không chỉ `player_view`.
+  - Đầu ra là danh sách cảnh quay: mỗi cảnh chia shot (khung hình, góc máy, chuyển động, thời lượng, lời thoại), mỗi shot có một prompt video dán thẳng vào app.
+  - Prompt mô tả hình ảnh viết tiếng Anh. Lời thoại theo ngôn ngữ người xuất chọn, ví dụ tiếng Trung hay tiếng Việt.
+  - Ngoại hình nhân vật được sinh ở bước khởi tạo truyện và giữ cố định suốt truyện, để các shot khớp nhau.
+- **Hệ quả:**
+  - Bản xuất không đi qua đường của người chơi (sổ tay, người kể, lựa chọn), nên G1 không áp cho nó.
+  - Bản xuất có lộ bí mật. Vì vậy phải quyết khi làm: ai được xuất, và có cho xuất trước khi truyện kết không. Đề xuất của Claude: chỉ cho chủ truyện xuất, chỉ khi truyện đã kết, hoặc có cảnh báo lộ nội dung.
+  - Đổi bước khởi tạo (D-54) thì phải đo lại khởi tạo. Thư mục khởi tạo cũ không có ngoại hình, nên trường này là tuỳ chọn.
+- **Người quyết:** Chủ dự án (29/10/2026)

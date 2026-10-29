@@ -264,3 +264,45 @@ def test_personality_of_present_and_neighbor_characters_is_read_clipped_and_neve
     assert "BÍ MẬT" not in text  # backstory không bao giờ vào ngữ cảnh viết
     short = writer_context(driver, sid, 0, ["npc"], None, personality_max_chars=12)
     assert len(short.present[0].personality) <= 12 and short.present[0].personality.endswith("…")
+
+
+def _shared_neighbor_story(driver, sid):
+    from writory.graph import ChangePackage, apply_package
+
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character", "props": {"name": "Minh", "is_protagonist": True}},
+            {"id": "ally", "label": "Character", "props": {"name": "Lan"}},
+            {"id": "third", "label": "Character", "props": {"name": "Khải"}},
+            {"id": "club", "label": "Faction", "props": {"name": "Hội"}},
+            {"id": "guild", "label": "Faction", "props": {"name": "Bang"}}],
+        "edges": [
+            {"type": "MEMBER_OF", "from": "hero", "to": "club", "valid_from_chapter": 0},
+            {"type": "MEMBER_OF", "from": "ally", "to": "club", "valid_from_chapter": 0},
+            {"type": "MEMBER_OF", "from": "hero", "to": "guild", "valid_from_chapter": 0},
+            {"type": "MEMBER_OF", "from": "ally", "to": "guild", "valid_from_chapter": 0},
+            {"type": "MEMBER_OF", "from": "third", "to": "club", "valid_from_chapter": 0}]}))
+
+
+def test_a_neighbor_reached_from_two_present_characters_is_listed_once(driver, new_story_id, caplog):
+    """Hồi quy session 1 (D-117): truy vấn hàng xóm trả node trùng khi ≥ 2 nhân vật có mặt cùng tới
+    một node và `$shown` rỗng (kế hoạch Neo4j bỏ bước gom theo node)."""
+    sid = new_story_id()
+    _shared_neighbor_story(driver, sid)
+    with caplog.at_level("WARNING"):
+        ctx = writer_context(driver, sid, 0, ["hero", "ally"], None)
+    ids = [n.id for n in ctx.neighbors]
+    assert sorted(ids) == ["club", "guild", "third"] and len(ids) == len(set(ids))
+    assert "node trùng" not in caplog.text  # chính truy vấn đã đúng, chặn ở Python không phải gánh
+    hops = {n.id: n.hops for n in ctx.neighbors}
+    assert hops == {"club": 1, "guild": 1, "third": 2}  # hops nhỏ nhất của mỗi node
+
+
+def test_the_neighbor_limit_counts_distinct_nodes(driver, new_story_id):
+    sid = new_story_id()
+    _shared_neighbor_story(driver, sid)
+    ctx = writer_context(driver, sid, 0, ["hero", "ally"], None, max_neighbors=3)
+    assert [n.id for n in ctx.neighbors] == ["club", "guild", "third"]  # gần trước, rồi theo id
+    ctx = writer_context(driver, sid, 0, ["hero", "ally"], None, max_neighbors=2)
+    assert [n.id for n in ctx.neighbors] == ["club", "guild"]

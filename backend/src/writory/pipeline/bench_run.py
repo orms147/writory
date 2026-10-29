@@ -11,6 +11,9 @@ Kết quả ở `evals/results/<ngày>-run-<nhãn>/`, tách theo người đư�
 - File chung chỉ có chữ người chơi thấy (văn cảnh đã kiểm, lựa chọn, câu lỗi G12) và số đếm, mã
   lỗi, loại lỗi: meta.json, setup.json, events.jsonl, chapters/, calls.jsonl, report.json,
   summary.md. Không có bản kế hoạch, id nút, góp ý của người canh hay chi tiết lỗi.
+- rejected.jsonl (chỉ có khi có lời gọi bị từ chối, D-115): thân trả lời bị nơi gọi từ chối vì sai
+  schema hay sai quy tắc, kèm chương, cảnh, vai, lượt, mã và lý do; cắt ở `REJECTED_BODY_MAX_CHARS`,
+  key bị che. Thân có thể mang lớp truth nên như truth_dump.json, không phải file chung.
 - truth_dump.json: kế hoạch, gói thay đổi từng chương, đồ thị cuối, dàn ý, góp ý viết lại, cạnh
   bộ trích bỏ, chi tiết lỗi (đã redact), và với đoạn trên trang (D-85) câu hỏi cùng id đoạn của
   mỗi lời gọi dàn ý và viết (`quotes`; câu hỏi có tên và nhịp dàn ý). Để chấm tay.
@@ -86,6 +89,7 @@ from writory.llm.base import (
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import call_deadline
+from writory.llm.retry import watch_rejections
 from writory.pipeline import choices as choices_mod
 from writory.pipeline import extract as extract_mod
 from writory.pipeline import scene as scene_mod
@@ -143,6 +147,9 @@ log = logging.getLogger(__name__)
 DEFAULT_SCENARIO = REPO_ROOT / "evals" / "scenarios" / "story_run" / "tu-tien-ngan.yaml"
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
 EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ABORT = 0, 1, 2, 3
+# Trần ký tự của thân trả lời trong MỘT dòng rejected.jsonl (D-115; tạm, D-47). Thân dài hơn thì cắt và
+# đánh dấu `truncated`, `body_chars` vẫn là độ dài đầy đủ.
+REJECTED_BODY_MAX_CHARS = 20_000
 
 # Lỗi mà người chơi gặp thì bấm thử lại (câu G12 của các mã này đều bảo bấm thử lại).
 RETRYABLE = frozenset({
@@ -363,6 +370,9 @@ class BudgetedClient(LLMClient):
         tracker: StepTracker, record: Callable[[dict[str, Any]], None],
         clock: Callable[[], float] = time.perf_counter,
     ) -> None:
+        # Thân trả lời của lời gọi vừa xong (None khi lời gọi hỏng): chỉ để `StoryRun` ghi
+        # `rejected.jsonl` khi nơi gọi từ chối thân đó (D-115). Không ghi vào calls.jsonl.
+        self.last_body: dict[str, Any] | None = None
         self._inner, self._budget, self._prices = inner, budget, prices
         self._max_tokens, self._tracker, self._record, self._clock = (
             max_tokens, tracker, record, clock)
@@ -410,6 +420,7 @@ class BudgetedClient(LLMClient):
             "model": model, "extra": body_extra, "reserved_usd": round(estimate, 6),
         }
         started = self._clock()
+        self.last_body = None
         try:
             result = await self._inner.chat(model, messages, response_schema=response_schema,
                                             extra=body_extra)
@@ -425,6 +436,8 @@ class BudgetedClient(LLMClient):
             self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
                                 "cost_estimated_usd": estimate})
             raise
+        self.last_body = {k: row[k] for k in ("seq", "chapter", "attempt", "role", "scene")} | {
+            "text": result.text}
         cost = result.usage.cost_usd
         self._budget.settle(held, estimate if cost is None else cost)
         self._record(row | {
@@ -562,7 +575,7 @@ _REJECT_REASONS = (
     "hết trần Fact mới", "ref phải dạng", "chữ phải một dòng", "chữ Fact không bám trang",
     "trùng Fact", "lộ bí mật hay tên đang giấu (G2)", "thiếu ABOUT", "thiếu KNOWS",
     "Fact mới",
-    # Mốc đã diễn ra (D-115)
+    # Mốc đã diễn ra (D-116)
     "mốc đã xảy ra ở chương", "mốc không có trong danh sách chưa xảy ra",
     "mốc đã đánh dấu trong cùng câu trả lời", "mốc thiếu câu trích (G3)",
     "câu trích mốc không có nguyên văn trong chương (G3)",
@@ -627,6 +640,7 @@ class StoryRun:
         self.errors: list[dict[str, Any]] = []  # chi tiết lỗi, chỉ vào truth_dump
         # Câu hỏi và id đoạn trên trang của mỗi lời gọi dàn ý, viết (D-85), chỉ vào truth_dump.
         self.quotes: list[dict[str, Any]] = []
+        self.rejected_bodies = 0  # số dòng đã ghi vào rejected.jsonl (D-115)
         self.retries_used = {"setup": 0, "chapter": 0, "choices": 0}
         # Lượt sửa của build_story (D-54): lượt "bấm thử lại", loại lỗi, danh sách lỗi (có id, chỉ
         # vào truth_dump).
@@ -658,8 +672,9 @@ class StoryRun:
         self.started = datetime.now().astimezone().isoformat(timespec="seconds")
         self.files.write_meta(self._meta("running"))
         try:
-            if await self._setup() and not self.options.setup_only:
-                await self._chapters()
+            with watch_rejections(self._on_rejected):  # chỉ bộ đo cài móc này (D-115)
+                if await self._setup() and not self.options.setup_only:
+                    await self._chapters()
         except Exception:  # noqa: BLE001 — lỗi của khung chạy: ghi lại, vẫn ghi đủ file
             self._stop("error", "harness", ErrorCode.INTERNAL_ERROR,
                        redact(traceback.format_exc()))
@@ -693,6 +708,23 @@ class StoryRun:
     def _record_call(self, row: dict[str, Any]) -> None:
         self.calls.append(row)
         self.files.append("calls.jsonl", row)
+
+    def _on_rejected(self, e: WritoryError) -> None:
+        """Thân trả lời vừa bị nơi gọi từ chối (sai schema hay sai quy tắc, D-115) vào
+        `rejected.jsonl`, để thấy đúng model đã trả gì. Chỉ lần chạy bộ đo; thân có thể mang lớp
+        truth (dàn ý, viết, bộ trích) nên như truth_dump.json, không phải file chung. Cắt ở
+        `REJECTED_BODY_MAX_CHARS`, key bị che (G7)."""
+        body = self.budgeted.last_body
+        if body is None:  # lời gọi hỏng trước khi có thân (mạng, trần): không có gì để ghi
+            return
+        text = redact(body["text"])
+        self.rejected_bodies += 1
+        self.files.append("rejected.jsonl", {
+            **{k: body[k] for k in ("seq", "chapter", "scene", "attempt", "role")},
+            "code": e.code.value, "reason": redact(e.detail),
+            "body_chars": len(text), "truncated": len(text) > REJECTED_BODY_MAX_CHARS,
+            "body": text[:REJECTED_BODY_MAX_CHARS],
+        })
 
     def _fail(self, where: str, attempt: int, e: WritoryError) -> None:
         """Ghi một lỗi có mã: câu G12 vào sự kiện chung, chi tiết vào truth_dump. Khởi tạo sai
@@ -1182,7 +1214,7 @@ def plan_vs_result(progress: PlanProgress | None) -> dict[str, Any] | None:
              "status": _item_status(progress, t.resolved_chapter, t.from_chapter, t.to_chapter)}
             for i, t in enumerate(progress.threads, 1)
         ],
-        # Mốc: số thứ tự và chương xảy ra, không chữ mô tả (D-115)
+        # Mốc: số thứ tự và chương xảy ra, không chữ mô tả (D-116)
         "milestones": [
             {"n": m.number, "window": window(m.from_chapter, m.to_chapter),
              "done_chapter": m.done_chapter,
@@ -1239,6 +1271,7 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         "chapters_planned": run.plan.total_chapters if run.plan else None,
         "chapters_target": run.target, "chapters_clamped": run.clamped,
         "chapters_committed": len(committed), "story_finished": run.finished,
+        "rejected_bodies": run.rejected_bodies,  # số dòng rejected.jsonl (D-115)
         # Fact mới do bộ trích tạo sau chương 0 (D-93)
         "new_facts": sum(1 for n in committed for nd in run.packages[n].nodes if nd.label == "Fact"),
         "plan_vs_result": plan_vs_result(run.progress),
@@ -1388,7 +1421,7 @@ def _plan_lines(report: dict[str, Any]) -> list[str]:
     lines += ["", "| Mạch phải gỡ | Hạn gỡ | Gỡ ở chương | Đánh giá |", "|---|---|---|---|"]
     lines += [f"| {t['n']} | {window(t['window'])} | {done(t['resolved_chapter'])} "
               f"| {_STATUS_TEXT[t['status']]} |" for t in plan["threads"]]
-    if plan.get("milestones"):  # D-115
+    if plan.get("milestones"):  # D-116
         lines += ["", "| Mốc | Khoảng | Xảy ra ở chương | Đánh giá |", "|---|---|---|---|"]
         lines += [f"| {m['n']} | {window(m['window'])} | {done(m['done_chapter'])} "
                   f"| {_STATUS_TEXT[m['status']]} |" for m in plan["milestones"]]

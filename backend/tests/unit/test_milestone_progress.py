@@ -1,4 +1,4 @@
-"""Mốc cốt truyện đã diễn ra (D-115): dấu nằm ở thuộc tính nút `Chapter`, ghi cùng gói chương (D-6),
+"""Mốc cốt truyện đã diễn ra (D-116): dấu nằm ở thuộc tính nút `Chapter`, ghi cùng gói chương (D-6),
 câu trích kiểm lại ở bước ghi (G3), và báo cáo so kế hoạch với kết quả."""
 
 from writory.graph import ChangePackage, NodeSpec

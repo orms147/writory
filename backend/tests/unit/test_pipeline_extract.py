@@ -625,7 +625,7 @@ def test_other_characters_keep_the_old_rules():
     assert [c.id for c in pkg.close] == ["lan_here"] and rejected == []
 
 
-# --- mốc đã diễn ra: bộ trích đánh dấu bằng câu trích có thật (D-115) --------------------------------
+# --- mốc đã diễn ra: bộ trích đánh dấu bằng câu trích có thật (D-116) --------------------------------
 
 _MS_TEXT = "Cánh cửa hầm mở ra. Minh bước xuống bậc thang đá, rời quán trà để vào lòng đất. Lan đứng lại."
 _PENDING = (

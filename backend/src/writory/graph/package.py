@@ -193,7 +193,7 @@ def quote_problems(package: ChangePackage, scenes: Sequence[str], *, protagonist
 
     - `REVEALED_TO_PLAYER` và `KNOWS` từ nhân vật chính: bắt buộc có `quote`, và `quote` ở trên trang.
     - `RESOLVED_IN` có `quote`: `quote` ở trên trang (gói dựng tay có thể không có quote).
-    - Nút `Chapter` mang `milestones` (mốc đã diễn ra, D-115): có đủ một `milestone_quotes` cho mỗi
+    - Nút `Chapter` mang `milestones` (mốc đã diễn ra, D-116): có đủ một `milestone_quotes` cho mỗi
       mốc, và mỗi câu ở trên trang.
 
     Mọi câu trích của đường pipeline đều lấy từ chữ một cảnh: bộ trích (`to_package`), tự hé lộ

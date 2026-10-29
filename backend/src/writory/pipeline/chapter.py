@@ -149,7 +149,7 @@ class Review:
     package: ChangePackage  # gói của cảnh, đã bỏ cạnh bị người canh báo
     issues: tuple[ReviewIssue, ...]
     rejected: tuple[tuple[str, str], ...]  # cạnh bộ trích bỏ (mô tả, lý do)
-    milestones: tuple[MilestoneMark, ...] = ()  # mốc đã diễn ra trên chữ này (D-115)
+    milestones: tuple[MilestoneMark, ...] = ()  # mốc đã diễn ra trên chữ này (D-116)
 
 
 @dataclass(frozen=True)
@@ -177,7 +177,7 @@ class AcceptedScene:
     # Id mạch đến hạn mà hết lượt thử dàn ý vẫn không dàn ý nào của chương định gỡ (D-82); lớp
     # truth, chỉ cho máy chủ đo.
     unplanned_threads: tuple[str, ...] = ()
-    # Mốc đã diễn ra trong cảnh được hiện (D-115): chỉ cảnh được nhận mới có dấu; vào nút Chapter lúc
+    # Mốc đã diễn ra trong cảnh được hiện (D-116): chỉ cảnh được nhận mới có dấu; vào nút Chapter lúc
     # commit. Bản nháp bị trả lại không để lại dấu.
     milestones: tuple[MilestoneMark, ...] = ()
 
@@ -222,7 +222,7 @@ def merge_scene_packages(
     `prelude`: tác động của lựa chọn dẫn tới chương (D-55), coi như xảy ra trước cảnh 1: nút của
     nó vào gói, cạnh và `close` của nó đi qua cùng phép gộp như một cảnh.
 
-    `milestones`: mốc các cảnh được nhận đã đánh dấu (D-115). Vào thuộc tính `milestones` và
+    `milestones`: mốc các cảnh được nhận đã đánh dấu (D-116). Vào thuộc tính `milestones` và
     `milestone_quotes` của nút Chapter; mốc đánh dấu hai lần thì giữ lần đầu."""
     marks = list({m.number: m for m in reversed(milestones)}.values())[::-1]
     if marks:
