@@ -3,11 +3,12 @@
 Người đọc: Claude, 29/10/2026. Đây là kết quả đo của bộ xuất kịch bản video (D-125, thực hiện D-118): MỘT lần chạy, MỘT truyện, một ngôn ngữ thoại. File xuất có lộ bí mật (dựng từ toàn bộ lớp `truth`), có cảnh báo ở đầu `script.md` và `script.json`; thư mục này là kết quả đo được commit theo quyết định của chủ dự án, bản xuất thật mặc định nằm ở `exports/` (git bỏ qua).
 
 ## Lần chạy được commit
+- **Lưu ý:** kết quả này chạy TRƯỚC các sửa sau review độc lập (cảnh bị kiểm duyệt giữ lại mọi chữ model sinh, kiểm duyệt fail-closed, `maybe_billed`, tên trong kiểm tiếng Anh, thư mục đã có kết quả bị từ chối, cảnh báo ở `prompts.txt` và `calls.jsonl`). Không gọi lại model: các thay đổi đó không đổi cách đo ở đây, nhưng `prompts.txt` và `calls.jsonl` ở thư mục này chưa có dòng cảnh báo đầu file mà mã hiện tại ghi.
 - Lệnh (chạy trong `backend/`): `uv run python -m writory.export.video --story run-20261021-ky-ao-vua-2-f8a61160 --dialogue-lang zh --chapters 1-3 --budget 0.10 --env-file <.env của chủ dự án> --out ../evals/results/2026-10-29-video-export-demo`.
 - Mã: commit `cff6553` (nhánh `feature/video-export`). Hash cấu hình: `config/models.yaml` sha256 `85a93003c31cb257e51255fc98da992def730358332e8f9b5bc26f6d54e11a11`, `config/limits.yaml` sha256 `2e2fb8d677dac59d74f6a5329c7305f66d65779c66b55612cbfc5521efa53d68`. Model vai `video` và `moderate`: `openai/gpt-6-luna` (suy luận low). Phiên bản đề: `video-1`.
 - Truyện: `run-20261021-ky-ao-vua-2-f8a61160` (10 chương do pipeline viết, khởi tạo trước D-120 nên KHÔNG có `appearance`/`visual`; đường "sinh bù" được dùng cho cả sáu nhân vật và bốn nơi chốn, cờ `inferred`). Chương 1–3, sáu cảnh.
 - Chi phí thật (`usage.cost` trong `calls.jsonl`): 0,012754 USD, 14 lời gọi: 1 bảng, 6 cảnh (một cảnh thử lại một lần vì sai kiểm bằng code), 6 kiểm duyệt G9 (cả sáu cho qua). Trần `--budget` 0,10.
-- Tổng chi cho demo, kể cả các lần chạy đã bỏ (không commit): lần đầu trước khi sửa 0,012062 USD (13 lời gọi); một lần mạng đứt giữa chừng 0,000573 USD (một lời gọi xong, mười tám lời gọi `LLM_UNAVAILABLE` không tính tiền); một lần sau khi sửa tên 0,012073 USD (13 lời gọi); lần cuối này 0,012754 USD. Cộng khoảng 0,0375 USD.
+- Tổng chi cho demo, kể cả các lần chạy đã bỏ (không commit): lần đầu trước khi sửa 0,012062 USD (13 lời gọi); một lần mạng đứt giữa chừng 0,000573 USD (một lời gọi xong, mười tám lời gọi `LLM_UNAVAILABLE` mà không rõ có bị tính tiền hay không: lúc đó bộ xuất chưa dùng `maybe_billed`, nên ghi 0); một lần sau khi sửa tên 0,012073 USD (13 lời gọi); lần cuối này 0,012754 USD. Cộng khoảng 0,0375 USD.
 
 ## Số đo bằng code (trên `script.json`)
 - Sáu cảnh đều `ok`, 68 shot (mỗi cảnh 10–12 shot, trần 12; 3 cảnh chạm trần), tổng 80–110 giây mỗi cảnh. Lời thoại: 72 câu trong 54 shot.

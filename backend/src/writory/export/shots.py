@@ -131,8 +131,16 @@ def _single_line(text: str) -> str:
     return " ".join(text.split())
 
 
-def _nonascii_ratio(text: str) -> float:
-    letters = [c for c in text if c.isalpha()]
+def _strip_names(text: str, names: Sequence[str]) -> str:
+    """Bỏ tên nhân vật, biệt danh và nơi chốn khỏi chữ (đề bắt model chép nguyên văn, có dấu) trước khi
+    kiểm xem câu có phải tiếng Anh không."""
+    for name in sorted({n for n in names if n and n.strip()}, key=len, reverse=True):
+        text = re.sub(re.escape(name.strip()), " ", text, flags=re.IGNORECASE)
+    return text
+
+
+def _nonascii_ratio(text: str, names: Sequence[str] = ()) -> float:
+    letters = [c for c in _strip_names(text, names) if c.isalpha()]
     if not letters:
         return 0.0
     return sum(1 for c in letters if ord(c) > 127) / len(letters)
@@ -185,7 +193,7 @@ def sheet_problems(output: SheetOutput, characters: Sequence[str], locations: Se
 
 
 def scene_problems(output: SceneOutput, characters: Sequence[str], locations: Sequence[str],
-                   limits: VideoExportLimits) -> list[str]:
+                   limits: VideoExportLimits, *, names: Sequence[str] = ()) -> list[str]:
     most = limits.require("max_shots_per_scene")
     low, high = limits.require("shot_seconds_min"), limits.require("shot_seconds_max")
     problems = []
@@ -206,7 +214,7 @@ def scene_problems(output: SceneOutput, characters: Sequence[str], locations: Se
         action = _single_line(shot.action_en)
         if not action:
             problems.append(f"{tag}: action_en rỗng")
-        elif _nonascii_ratio(action) > 0.15:
+        elif _nonascii_ratio(action, names) > 0.15:
             problems.append(f"{tag}: action_en phải là tiếng Anh")
         for line in shot.dialogue:
             if line.speaker_id not in shot.appears:
@@ -280,10 +288,12 @@ def sheet_messages(cast: Cast, chapters: Mapping[int, Sequence[str]], *, max_cha
             lines.append(f"  personality: {_clip(c.personality, 240)}")
         if c.backstory:
             lines.append(f"  backstory: {_clip(c.backstory, 300)}")
-        if not c.appearance:
-            for s in snippets((c.name, *c.aliases), chapters):
-                lines.append(f"  story snippet: {s}")
         parts.append(_data("\n".join(lines), c.user_authored, "character_sheet_input"))
+        if not c.appearance:
+            found = snippets((c.name, *c.aliases), chapters)
+            if found:  # chữ từ truyện, có thể mang chữ người chơi: luôn là dữ liệu (G4)
+                parts.append(UserAuthored("\n".join(f"story snippet: {s}" for s in found),
+                                          "story_snippet"))
     parts.append("Locations:")
     for loc in cast.locations.values():
         lines = [f"- id: {loc.id}", f"  name: {loc.name}"]
@@ -292,19 +302,23 @@ def sheet_messages(cast: Cast, chapters: Mapping[int, Sequence[str]], *, max_cha
         lines.append(f"  visual: {loc.visual or 'none'}")
         if loc.description:
             lines.append(f"  description: {_clip(loc.description, 240)}")
-        if not loc.visual:
-            for s in snippets((loc.name, *loc.aliases), chapters):
-                lines.append(f"  story snippet: {s}")
         parts.append(_data("\n".join(lines), loc.user_authored, "location_sheet_input"))
+        if not loc.visual:
+            found = snippets((loc.name, *loc.aliases), chapters)
+            if found:
+                parts.append(UserAuthored("\n".join(f"story snippet: {s}" for s in found),
+                                          "story_snippet"))
     system = SHEET_SYSTEM_PROMPT.format(max_chars=max_chars, lang=lang_name(lang_tag), lang_tag=lang_tag)
     return [system_message(system, DATA_NOTICE), user_message(*parts, "Write the identity sheet.")]
 
 
 def scene_messages(
     *, chapter: int, scene: int, scene_text: str, characters: Sequence[CharacterRow],
-    locations: Sequence[LocationRow], relations: Sequence[str], where: str | None,
-    lang_tag: str, limits: VideoExportLimits, said: Mapping[str, str] | None = None,
+    locations: Sequence[LocationRow], relations: Sequence[tuple[str, bool]],
+    where: tuple[str, bool] | None, lang_tag: str, limits: VideoExportLimits,
+    said: Mapping[str, str] | None = None,
 ) -> list[Message]:
+    """`relations` và `where`: (chữ, có chữ người chơi viết không); chữ người chơi bọc `UserAuthored` (G4)."""
     system = SCENE_SYSTEM_PROMPT.format(
         max_shots=limits.require("max_shots_per_scene"), low=limits.require("shot_seconds_min"),
         high=limits.require("shot_seconds_max"), lang=lang_name(lang_tag), lang_tag=lang_tag)
@@ -313,20 +327,22 @@ def scene_messages(
     for c in characters:
         tail = f" (in dialogue: {said[c.id]})" if c.id in said else ""
         cast_lines.append(_data(f"- {c.id}: {c.name}{tail}", c.user_authored, "character_name"))
-    place_lines = ["Locations you may use (id: name):",
-                   *(f"- {loc.id}: {escape_text(loc.name)}"
-                     + (f" (in dialogue: {escape_text(said[loc.id])})" if loc.id in said else "")
-                     for loc in locations)]
-    extra = []
+    place_lines: list[str | UserAuthored] = ["Locations you may use (id: name):"]
+    for loc in locations:
+        tail = f" (in dialogue: {said[loc.id]})" if loc.id in said else ""
+        place_lines.append(_data(f"- {loc.id}: {loc.name}{tail}", loc.user_authored, "location_name"))
+    extra: list[str | UserAuthored] = []
     if where:
-        extra.append(f"Where the protagonist is at the end of the chapter: {escape_text(where)}")
+        extra.append(_data(f"Where the protagonist is at the end of the chapter: {where[0]}", where[1],
+                           "protagonist_place"))
     if relations:
-        extra.append("Relationships among them: " + "; ".join(escape_text(r) for r in relations))
+        extra.append("Relationships among them:")
+        extra += [_data(f"- {text}", authored, "relationship") for text, authored in relations]
     return [
         system_message(system, DATA_NOTICE),
         user_message(f"Chapter {chapter}, scene {scene}. The scene text exactly as readers saw it:",
-                     UserAuthored(scene_text, "scene_text"), *cast_lines, "\n".join(place_lines),
-                     *extra, "Write the shot list."),
+                     UserAuthored(scene_text, "scene_text"), *cast_lines, *place_lines, *extra,
+                     "Write the shot list."),
     ]
 
 
@@ -350,7 +366,8 @@ async def make_sheet(
         return output
 
     output = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                     transient_retries=retries.llm_transient)
+                                     transient_retries=retries.llm_transient,
+                                     backoff=retries.transient_backoff_seconds)
     return Sheet(
         {e.id: SheetItem(e.id, cast.characters[e.id].name, _single_line(e.visual_en),
                          _single_line(e.dialogue_name), not cast.characters[e.id].appearance)
@@ -363,17 +380,18 @@ async def make_sheet(
 async def make_scene_shots(
     llm: LLMClient, model: str, messages: list[Message], *, characters: Sequence[str],
     locations: Sequence[str], limits: VideoExportLimits, retries: RetryLimits,
-    extra: Mapping[str, Any] | None = None,
+    names: Sequence[str] = (), extra: Mapping[str, Any] | None = None,
 ) -> SceneOutput:
     async def call() -> SceneOutput:
         output, _ = await llm.chat_json(model, messages, SceneOutput, extra=extra)
-        problems = scene_problems(output, characters, locations, limits)
+        problems = scene_problems(output, characters, locations, limits, names=names)
         if problems:
             raise _bad(problems, "SceneOutput")
         return output
 
     return await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                   transient_retries=retries.llm_transient)
+                                   transient_retries=retries.llm_transient,
+                                   backoff=retries.transient_backoff_seconds)
 
 
 # --- prompt cuối do code lắp ---------------------------------------------------------------------

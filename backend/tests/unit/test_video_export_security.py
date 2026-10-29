@@ -42,12 +42,12 @@ def test_the_frontend_has_no_way_to_ask_for_an_export():
 
 
 def test_the_export_only_reads_the_databases():
-    """Không câu lệnh ghi nào: không execute_write, không INSERT/UPDATE/DELETE/MERGE/CREATE/SET/DETACH,
+    """Không câu lệnh ghi nào: không execute_write, không INSERT/UPDATE/DELETE/MERGE/CREATE/SET/DETACH/REMOVE/DROP,
     không gọi hàm ghi của db/ hay graph/ (apply_package, commit_chapter, delete_*, save_*, set_*)."""
     # Tên hàm ghi, và từ khoá SQL/Cypher viết HOA (list.insert của Python là chữ thường, không tính).
     banned = re.compile(
         r"execute_write|apply_package|commit_chapter|delete_commit|delete_story|save_story_plan|"
-        r"set_story_brief|\b(INSERT|UPDATE|DELETE|MERGE|DETACH|CREATE)\b")
+        r"set_story_brief|\b(INSERT|UPDATE|DELETE|MERGE|DETACH|CREATE|SET|REMOVE|DROP)\b")
     for path, text in _sources(EXPORT_SRC).items():
         found = [m.group(0) for m in banned.finditer(text)]
         assert not found, (path, found)

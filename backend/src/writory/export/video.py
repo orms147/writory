@@ -22,6 +22,7 @@ import json
 import logging
 import math
 import re
+import shutil
 import sys
 from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
@@ -29,7 +30,9 @@ from datetime import date
 from pathlib import Path
 from typing import Any, ClassVar
 
-from pydantic import BaseModel, SecretStr
+import psycopg
+from neo4j.exceptions import DriverError, Neo4jError
+from pydantic import BaseModel, SecretStr, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from writory.config import (
@@ -40,6 +43,7 @@ from writory.config import (
     ModelPrice,
     load_config,
 )
+from writory.db import StoryNotFoundError
 from writory.errors import ErrorCode, WritoryError
 from writory.export import sheets, shots
 from writory.graph.package import quote_in_text
@@ -52,11 +56,13 @@ from writory.llm.base import (
     Usage,
     require_model,
     role_extra,
+    trace_call,
 )
+from writory.llm.cost import maybe_billed
 from writory.llm.fake import FakeLLM
 from writory.quality.bench_d import EST_CHARS_PER_TOKEN, Budget, BudgetExceeded, load_keys
 from writory.safety.moderate import Source, Verdict, moderate
-from writory.safety.redact import install_log_redaction
+from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
 
@@ -108,7 +114,12 @@ _ROLE_BY_SCHEMA = {"SheetOutput": shots.ROLE, "SceneOutput": shots.ROLE, "Modera
 class ExportClient(LLMClient):
     """Giữ chỗ chi phí tối đa của lời gọi trong ngân sách của cả lần xuất trước khi gọi, gửi kèm
     `max_tokens`, và ghi mỗi lời gọi một dòng (vai, model, token, chi phí). Không ghi chữ của lời gọi hay
-    của câu trả lời (chữ truyện là truth)."""
+    của câu trả lời (chữ truyện là truth).
+
+    Trần là trần của giữ chỗ, như D-10: một lời gọi chỉ bắt đầu khi đã tiêu + đang giữ + ước tính tối đa
+    của nó không vượt trần. Ước tính dùng `max_tokens` nên chi phí thật thường thấp hơn; nếu nhà cung cấp
+    tính cao hơn ước tính thì tổng có thể vượt trần một lời gọi, và lời gọi kế bị từ chối. Lời gọi lỗi tính
+    theo `llm.cost.maybe_billed` (D-64)."""
 
     def __init__(self, inner: LLMClient, *, budget: Budget, prices: Mapping[str, ModelPrice],
                  max_tokens: int, record: Callable[[dict[str, Any]], None]) -> None:
@@ -148,20 +159,21 @@ class ExportClient(LLMClient):
         row = {"seq": self._seq,
                "role": _ROLE_BY_SCHEMA.get(response_schema.__name__ if response_schema else "", "?"),
                "model": model, "reserved_usd": round(estimate, 6)}
-        try:
-            result = await self._inner.chat(model, messages, response_schema=response_schema,
-                                            extra=body)
-        except WritoryError as e:
-            billed = estimate if e.code is ErrorCode.LLM_TIMEOUT else 0.0
-            self._budget.settle(held, billed)
-            self._record(row | {"status": e.code.value, "cost_usd": None,
-                                "cost_estimated_usd": billed or None})
-            raise
-        except BaseException:
-            self._budget.settle(held, estimate)  # có thể đã bị tính tiền: tính theo mức tối đa
-            self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
-                                "cost_estimated_usd": estimate})
-            raise
+        with trace_call() as trace:
+            try:
+                result = await self._inner.chat(model, messages, response_schema=response_schema,
+                                                extra=body)
+            except WritoryError as e:
+                billed = estimate if maybe_billed(e, trace) else 0.0
+                self._budget.settle(held, billed)
+                self._record(row | {"status": e.code.value, "cost_usd": None,
+                                    "cost_estimated_usd": billed or None})
+                raise
+            except BaseException:
+                self._budget.settle(held, estimate)  # có thể đã bị tính tiền: tính theo mức tối đa
+                self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
+                                    "cost_estimated_usd": estimate})
+                raise
         cost = result.usage.cost_usd
         self._budget.settle(held, estimate if cost is None else cost)
         self._record(row | {
@@ -257,10 +269,11 @@ class ShotOut:
 class SceneOut:
     chapter: int
     scene: int
-    status: str  # ok | skipped_budget | error | withheld_moderation
+    status: str  # ok | skipped_budget | error | withheld_moderation | withheld_unmoderated
     shots: list[ShotOut] = field(default_factory=list)
     moderation: dict[str, Any] | None = None
     error: str | None = None
+    withheld_shots: int = 0  # số shot bị giữ lại (chặn hay không kiểm duyệt được); chữ của chúng không được ghi
 
 
 @dataclass
@@ -335,7 +348,8 @@ async def build_export(
                         scene = await _make_scene(
                             n, k, text, llm=llm, model=model, extra=extra, config=config, cast=cast,
                             sheet=sheet, finder=finder, overview=overviews[n], options=options)
-                        if scene.status == "skipped_budget":
+                        if (scene.status == "skipped_budget"
+                                or (scene.moderation or {}).get("error") == ErrorCode.COST_LIMIT_STORY.value):
                             export.stop = "budget"
                     entry["scenes"].append(scene)
                     if on_scene is not None:
@@ -371,11 +385,18 @@ async def _make_scene(
         place_ids += [loc.id for loc in cast.locations.values() if loc.name == place]
     places = [cast.locations[i] for i in dict.fromkeys([*place_ids, *cast.locations])][:15]
     names = {c.id for c in people}
-    relations = [f"{r.source} → {r.target}: {r.kind}" + ("" if r.score is None else f" ({r.score:+d})")
-                 for r in overview.relationships
-                 if r.source in {c.name for c in people} and r.target in {c.name for c in people}][:10]
+    authored = {c.name for c in people if c.user_authored}
+    in_scene = {c.name for c in people}
+    relations = [(f"{r.source} → {r.target}: {r.kind}" + ("" if r.score is None else f" ({r.score:+d})"),
+                  bool({r.source, r.target} & authored))
+                 for r in overview.relationships if r.source in in_scene and r.target in in_scene][:10]
     protagonist = cast.characters.get(cast.protagonist_id or "")
-    where = next((place for who, place in overview.where if protagonist and who == protagonist.name), None)
+    place_name = next((place for who, place in overview.where if protagonist and who == protagonist.name),
+                      None)
+    where = None if place_name is None else (place_name, any(
+        loc.user_authored for loc in cast.locations.values() if loc.name == place_name))
+    known_names = [n for c in cast.characters.values() for n in (c.name, *c.aliases)]
+    known_names += [n for loc in cast.locations.values() for n in (loc.name, *loc.aliases)]
     messages = shots.scene_messages(
         chapter=chapter, scene=scene, scene_text=text, characters=people, locations=places,
         relations=relations, where=where, lang_tag=options.dialogue_lang, limits=limits,
@@ -383,7 +404,7 @@ async def _make_scene(
     try:
         draft = await shots.make_scene_shots(
             llm, model, messages, characters=sorted(names), locations=[loc.id for loc in places],
-            limits=limits, retries=retries, extra=extra)
+            limits=limits, retries=retries, names=known_names, extra=extra)
     except WritoryError as e:
         if e.code is ErrorCode.COST_LIMIT_STORY:
             return SceneOut(chapter, scene, "skipped_budget")
@@ -411,21 +432,31 @@ async def _make_scene(
     return out
 
 
+def _withhold(scene: SceneOut, status: str) -> None:
+    """Giữ lại MỌI chữ model sinh của cảnh (hành động, thoại, prompt): chỉ còn id cảnh, trạng thái và
+    danh mục kiểm duyệt, ở cả script.md, script.json và prompts.txt."""
+    scene.withheld_shots = len(scene.shots)
+    scene.shots = []
+    scene.status = status
+
+
 async def _moderate_scene(scene: SceneOut, *, llm: LLMClient, config: AppConfig) -> None:
-    """Kiểm duyệt G9 trên mọi prompt của cảnh (cùng một lời gọi). Chặn cứng thì giữ prompt lại; loại khác
-    thì chỉ đánh dấu để admin quyết. Hết trần thì không kiểm được: đánh dấu `not_checked`."""
+    """Kiểm duyệt G9 trên mọi prompt của cảnh (cùng một lời gọi), fail-closed như `safety/moderate.py`:
+    bị chặn (BLOCKED, HARD_BLOCKED) hay không kiểm được vì bất kỳ lỗi nào (nội dung bị nhà cung cấp chặn,
+    hết lượt thử, hết trần...) thì cảnh bị giữ lại, không có chữ nào của nó trong bản xuất. Chỉ quá mức u
+    tối thì giữ cảnh và đánh dấu để admin quyết."""
     text = "\n\n".join(s.prompt_en for s in scene.shots if s.prompt_en)
     try:
         result = await moderate(text, source=Source.SCENE, llm=llm, config=config)
     except WritoryError as e:
-        scene.moderation = {"verdict": "not_checked", "reason": e.code.value, "categories": []}
+        scene.moderation = {"verdict": "not_checked", "error": e.code.value, "categories": []}
+        _withhold(scene, "withheld_unmoderated")
         return
-    scene.moderation = {"verdict": result.verdict.value, "categories": [c.value for c in result.categories],
-                        "reason": result.reason}
-    if result.verdict is Verdict.HARD_BLOCKED:
-        scene.status = "withheld_moderation"
-        for s in scene.shots:
-            s.prompt_en = None
+    scene.moderation = {"verdict": result.verdict.value, "categories": [c.value for c in result.categories]}
+    if result.verdict in (Verdict.HARD_BLOCKED, Verdict.BLOCKED):
+        _withhold(scene, "withheld_moderation")
+    else:
+        scene.moderation["reason"] = result.reason
 
 
 # --- ghi file -----------------------------------------------------------------------------------
@@ -511,7 +542,7 @@ def render_prompts(export: Export) -> str:
         for s in scene.shots:
             if s.prompt_en:
                 blocks.append(f"# {scene.chapter}.{scene.scene}.{s.n}\n{s.prompt_en}")
-    return "\n\n".join(blocks) + ("\n" if blocks else "")
+    return "\n\n".join([f"// {WARNING}", *blocks]) + "\n"
 
 
 def export_json(export: Export) -> dict[str, Any]:
@@ -520,21 +551,45 @@ def export_json(export: Export) -> dict[str, Any]:
             "locations": export.locations, "chapters": chapters, "stop": export.stop}
 
 
+OUTPUT_FILES = ("script.md", "script.json", "prompts.txt", "calls.jsonl")
+
+
+def check_fresh(out: Path) -> None:
+    """Từ chối khi thư mục đã có kết quả: một lần chạy sau không đè bản xuất đã trả tiền, và không để lại
+    `calls.jsonl` cũ cạnh bản mới."""
+    found = [n for n in OUTPUT_FILES if (out / n).exists()]
+    if found:
+        raise ConfigError(f"đã có kết quả ở {out} ({', '.join(found)}); dùng --out khác hoặc xoá thư mục đó")
+
+
+def _write_atomically(out: Path, files: Mapping[str, str]) -> list[Path]:
+    """Ghi vào thư mục tạm cạnh `out` rồi đổi tên: lỗi giữa chừng không để lại nửa bản xuất."""
+    check_fresh(out)
+    tmp = out.parent / f".{out.name}.tmp"
+    shutil.rmtree(tmp, ignore_errors=True)
+    tmp.mkdir(parents=True)
+    try:
+        for name, text in files.items():
+            (tmp / name).write_text(text, encoding="utf-8", newline="\n")
+        if out.exists():
+            out.rmdir()  # thư mục rỗng có sẵn
+        tmp.rename(out)
+    except BaseException:
+        shutil.rmtree(tmp, ignore_errors=True)
+        raise
+    return [out / name for name in files]
+
+
 def write_export(export: Export, out: Path, calls: Sequence[dict[str, Any]] = ()) -> list[Path]:
-    out.mkdir(parents=True, exist_ok=True)
     files = {
         "script.md": render_markdown(export),
         "script.json": json.dumps(export_json(export), ensure_ascii=False, indent=2) + "\n",
         "prompts.txt": render_prompts(export),
     }
     if calls:
-        files["calls.jsonl"] = "".join(json.dumps(c, ensure_ascii=False) + "\n" for c in calls)
-    written = []
-    for name, text in files.items():
-        path = out / name
-        path.write_text(text, encoding="utf-8", newline="\n")
-        written.append(path)
-    return written
+        files["calls.jsonl"] = "".join(
+            json.dumps(c, ensure_ascii=False) + "\n" for c in [{"note": WARNING}, *calls])
+    return _write_atomically(out, files)
 
 
 # --- lệnh ---------------------------------------------------------------------------------------
@@ -622,12 +677,14 @@ async def run(args: argparse.Namespace, *, source: StorySource | None = None,
         if args.sheets_only and (args.dry_run or args.budget is not None):
             raise ConfigError("--sheets-only không dùng model: bỏ --dry-run và --budget")
         out = Path(args.out) if args.out else default_out(args.story, today)
+        check_fresh(out)  # trước mọi lời gọi tốn tiền: không đè bản xuất cũ
         if args.no_moderate and not args.sheets_only:
             print("CẢNH BÁO: --no-moderate: prompt cuối KHÔNG qua kiểm duyệt G9 (D-125); admin chịu "
                   "trách nhiệm trước khi đưa sang app video.", file=sys.stderr)
         services = driver = None
         if source is None:
-            services = ExportServices(_env_file=Path(args.env_file) if Path(args.env_file).exists() else None)  # type: ignore[call-arg]
+            env_file = Path(args.env_file)
+            services = ExportServices(_env_file=env_file if env_file.exists() else None)  # type: ignore[call-arg]
             source, driver = load_source(services, args.story, args.chapters)
         calls: list[dict[str, Any]] = []
         client: ExportClient | None = None
@@ -651,8 +708,20 @@ async def run(args: argparse.Namespace, *, source: StorySource | None = None,
                 inner, budget=Budget("export", math.inf if budget is None else budget),
                 prices=config.models.prices, max_tokens=limits.require("max_output_tokens"),
                 record=calls.append)
+    except ValidationError as e:
+        names = ", ".join(sorted({str(err["loc"][0]).upper() for err in e.errors() if err["loc"]}))
+        return _fail("EXPORT_ENV_MISSING", f"Thiếu biến môi trường {names} (trong môi trường hoặc "
+                     "--env-file). Đặt chúng như trong .env.example rồi chạy lại.")
+    except StoryNotFoundError:
+        return _fail("EXPORT_STORY_NOT_FOUND", f"Không có truyện {args.story} trong database. Kiểm lại "
+                     "--story: id nằm ở cột id của bảng stories trong Postgres.")
+    except (psycopg.Error, Neo4jError, DriverError) as e:
+        # Chỉ ghi tên loại lỗi: thân lỗi của driver có thể chứa DSN hay mật khẩu (G7).
+        return _fail("EXPORT_DB_UNAVAILABLE", "Không kết nối hay đọc được Postgres hoặc Neo4j "
+                     f"({type(e).__name__}). Kiểm Docker đang chạy (docker compose up -d) và các biến "
+                     "POSTGRES_DSN, NEO4J_URI, NEO4J_USER, NEO4J_PASSWORD.")
     except (ConfigError, ValueError, LimitNotSetError, WritoryError) as e:
-        print(f"lỗi: {e}", file=sys.stderr)
+        print(f"lỗi: {redact(str(e))}", file=sys.stderr)
         return EXIT_CONFIG
     try:
         export = await build_export(source, config=config, llm=client, options=options)
@@ -664,11 +733,17 @@ async def run(args: argparse.Namespace, *, source: StorySource | None = None,
     written = write_export(export, out, calls)
     print(f"đã ghi {len(written)} file vào {out}; {export.meta['calls']} lời gọi, "
           f"{export.meta['cost_usd']:.4f} USD", file=sys.stderr)
-    if export.stop and export.stop.startswith("budget"):
+    if export.stop in ("budget", f"sheet: {ErrorCode.COST_LIMIT_STORY.value}"):
         return EXIT_BUDGET
-    if export.stop or any(s.status in ("error",) for s in export.scenes):
+    if export.stop or any(s.status in ("error", "withheld_unmoderated") for s in export.scenes):
         return EXIT_ERRORS
     return EXIT_OK
+
+
+def _fail(code: str, sentence: str) -> int:
+    """Lỗi của lệnh: mã riêng và câu tiếng Việt nói rõ chuyện gì xảy ra và làm gì tiếp (G12), qua `redact`."""
+    print(f"lỗi {code}: {redact(sentence)}", file=sys.stderr)
+    return EXIT_CONFIG
 
 
 def main(argv: Sequence[str] | None = None) -> int:

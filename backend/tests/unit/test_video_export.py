@@ -444,10 +444,10 @@ async def test_sheets_only_needs_no_model_and_writes_the_code_parts(tmp_path):
     assert export.scenes == [] and export.characters[0]["visual_en"] is None
     md = video.render_markdown(export)
     assert "sheets only" in md and "```mermaid" in md and "Mode:" in md
-    assert video.render_prompts(export) == ""
+    assert video.render_prompts(export) == f"// {video.WARNING}\n"  # chỉ cảnh báo, không prompt nào
 
 
-async def test_moderation_hard_block_withholds_the_prompts_and_other_flags_only_mark_them(tmp_path):
+async def test_blocked_scenes_are_withheld_and_over_darkness_only_marks_the_scene(tmp_path):
     hard = json.dumps({"findings": [{"category": "sexual_minors", "intensity": "mild"}], "reason": "x"})
     soft = json.dumps({"findings": [{"category": "gore", "intensity": "extreme"}], "reason": "y"})
     script = [sheet_json(), scene_json(shot_gu()), hard, scene_json(shot(appears=["protagonist", "lan"])),
@@ -456,11 +456,11 @@ async def test_moderation_hard_block_withholds_the_prompts_and_other_flags_only_
                                       llm=FakeLLM.scripted(script), options=options())
     first, second, third = export.scenes
     assert first.status == "withheld_moderation" and first.moderation["verdict"] == "hard_blocked"
-    assert all(s.prompt_en is None for s in first.shots)
+    assert first.shots == [] and first.withheld_shots == 1  # chữ của cảnh bị giữ lại hoàn toàn
     assert second.status == "ok" and second.moderation["verdict"] == "over_darkness"
     assert second.shots[0].prompt_en and third.moderation["verdict"] == "allow"
     md = video.render_markdown(export)
-    assert "withheld: moderation hard block" in md and "Moderation: hard_blocked" in md
+    assert "withheld_moderation" in md and "Moderation: hard_blocked" in md
     assert video.render_prompts(export).count("# ") == 2  # cảnh bị chặn cứng không có prompt nào
 
 
@@ -493,7 +493,10 @@ def client_for(cfg, inner, budget: float, calls: list) -> video.ExportClient:
         max_tokens=cfg.limits.video_export.require("max_output_tokens"), record=calls.append)
 
 
-async def test_the_budget_stops_the_export_and_the_finished_part_is_kept(tmp_path):
+async def test_a_cost_above_the_estimate_can_overshoot_once_then_the_next_call_is_refused(tmp_path):
+    """Trần là trần của giữ chỗ (D-10): lời gọi bắt đầu khi tiêu + giữ chỗ + ước tính tối đa <= trần. Nhà
+    cung cấp tính cao hơn ước tính (giả lập: 0,04 mỗi lời gọi, trần 0,05) thì tổng vượt trần một lời gọi và
+    lời gọi kế bị từ chối; phần đã xong vẫn được giữ."""
     cfg, calls = config(tmp_path), []
     llm = client_for(cfg, FakeLLM.scripted([sheet_json(), scene_json(shot_gu()), scene_json()], cost_usd=0.04),
                      0.05, calls)
@@ -602,8 +605,8 @@ async def test_the_command_real_run_through_the_budgeted_client(tmp_path):
 
 async def test_the_command_stops_with_exit_2_and_keeps_the_part_it_finished(tmp_path):
     make_config(tmp_path)
-    llm = FakeLLM.scripted([sheet_json(), scene_json(shot_gu()), ALLOW, scene_json(), ALLOW], cost_usd=0.04)
-    code = await video.run(args(tmp_path, "--budget", "0.05"), source=source(), llm=llm)
+    llm = FakeLLM.scripted([sheet_json(), scene_json(shot_gu()), scene_json()], cost_usd=0.04)
+    code = await video.run(args(tmp_path, "--budget", "0.05", "--no-moderate"), source=source(), llm=llm)
     assert code == video.EXIT_BUDGET
     data = json.loads((tmp_path / "out" / "script.json").read_text(encoding="utf-8"))
     assert data["stop"] == "budget" and data["chapters"][0]["scenes"][0]["status"] == "ok"
