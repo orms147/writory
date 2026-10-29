@@ -12,7 +12,14 @@ import pytest
 
 from writory.graph import ChangePackage, read_sample
 from writory.guard.state import EmptyState, OverlayState
-from writory.pipeline.pacing import Standstill, chapter_goals, render_chapter_goals, standstill
+from writory.pipeline.pacing import (
+    Idle,
+    Standstill,
+    chapter_goals,
+    idle_chapters,
+    render_chapter_goals,
+    standstill,
+)
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.wrap import UserAuthored
 
@@ -423,3 +430,144 @@ def test_the_default_next_milestone_sentence_is_the_v3_one_and_is_what_gets_prin
     assert GOAL_DEFAULTS["milestone_next"] == sentence  # D-111
     text = _text(render_chapter_goals(chapter_goals(PLAN, 1, through(0)), scene=1, scene_count=2))
     assert f"- {sentence} (bước ngoặt, chương 3–4)" in text
+
+
+def test_the_standstill_flag_sees_the_place_after_the_extractor_closes_it_without_a_new_one():
+    """Hồi quy long-tu-tien-2 (D-112): bộ trích đóng nơi ở ở ch3 mà không mở cạnh mới; trước đây
+    chương 4 trở đi nhân vật chính không có nơi ở và cờ mù."""
+    from writory.pipeline.extract import Entity, ExtractOutput, OpenEdge, to_package
+
+    start = at("lo_ren", 1, name="lò rèn của Lão Gù")
+    old = start.edges[0]
+    entities = [Entity("minh", "Character", "Minh"), Entity("lo_ren", "Location", "lò rèn")]
+    pkg, _ = to_package(ExtractOutput(edges=[], close=[old.id]), chapter=3, commit_id="c3",
+                        protagonist_id="minh", chapter_text="Minh rời lò rèn.", entities=entities,
+                        open_edges=[OpenEdge(old.id, "LOCATED_AT", "minh", "lo_ren")])
+    state = through(5, start, pkg)
+    assert standstill(state, 6, THRESHOLD) == Standstill("lò rèn của Lão Gù", False, 5)
+
+
+# --- chương không đổi trạng thái nào (D-112): tín hiệu giậm chân không dựa vào một cạnh ------------
+
+IDLE_PLAN = StoryPlan.model_validate({
+    "acts": [{"name": "một", "from_chapter": 1, "to_chapter": 12}],
+    "secrets": [{"fact_id": "f1", "reveal_from_chapter": 5, "reveal_to_chapter": 8}],
+    "must_resolve_threads": [{"thread_id": "t1", "resolve_from_chapter": 3, "resolve_to_chapter": 10}],
+    "milestones": [],
+})
+_BASE = ChangePackage.model_validate({
+    "commit_id": "c0",
+    "nodes": [
+        {"id": "minh", "label": "Character", "props": {"name": "Minh", "is_protagonist": True}},
+        {"id": "lan", "label": "Character", "props": {"name": "Lan"}},
+        {"id": "ben", "label": "Location", "props": {"name": "bến đò"}},
+        {"id": "cho", "label": "Location", "props": {"name": "chợ"}},
+        {"id": "kiem", "label": "Item", "props": {"name": "kiếm"}},
+        {"id": "f1", "label": "Fact", "props": {"text": "Lan là gián điệp"}},
+        {"id": "t1", "label": "Thread", "props": {"description": "ai lấy kiếm?",
+                                                   "due_from_chapter": 3, "due_to_chapter": 10}}],
+    "edges": [{"type": "LOCATED_AT", "from": "minh", "to": "ben", "valid_from_chapter": 0},
+              {"type": "HOLDS", "from": "lan", "to": "kiem", "valid_from_chapter": 0}],
+})
+
+
+def _pkg(chapter: int, *edges: dict) -> ChangePackage:
+    return ChangePackage.model_validate({
+        "commit_id": f"c{chapter}",
+        "nodes": [{"id": f"ch{chapter}", "label": "Chapter", "props": {"number": chapter}}],
+        "edges": [{"valid_from_chapter": chapter, **e} for e in edges]})
+
+
+def _idle_state(*packages: ChangePackage) -> OverlayState:
+    return OverlayState(EmptyState(), [_BASE, *packages])
+
+
+# Mỗi chương "ồn" nhưng không đổi trạng thái: Fact mới, quan hệ, người biết, nơi ở nói lại.
+def _noise(chapter: int) -> ChangePackage:
+    return _pkg(chapter,
+                {"type": "RELATES_TO", "from": "minh", "to": "lan", "props": {"kind": "bạn", "score": 50 + chapter}},
+                {"type": "LOCATED_AT", "from": "minh", "to": "ben"},  # nói lại nơi đang ở
+                {"type": "HOLDS", "from": "lan", "to": "kiem"})  # nói lại người đang giữ
+
+
+def _quiet(chapter: int) -> ChangePackage:
+    return _pkg(chapter, {"type": "RELATES_TO", "from": "minh", "to": "lan",
+                          "props": {"kind": "bạn", "score": 50 + chapter}})
+
+
+def test_idle_counts_the_chapters_in_a_row_without_a_change_of_state():
+    state = _idle_state(*(_noise(c) for c in range(1, 5)))
+    assert idle_chapters(state, 5, 4) == Idle(4)
+    assert idle_chapters(state, 5, 5) is None  # mới 4 chương
+    assert idle_chapters(state, 5, None) is None  # tắt
+
+
+def test_each_kind_of_change_breaks_the_run_and_the_count_restarts_after_it():
+    changes = {
+        "đổi nơi": {"type": "LOCATED_AT", "from": "minh", "to": "cho"},
+        "vật đổi chủ": {"type": "HOLDS", "from": "minh", "to": "kiem"},
+        "đồ vật đổi chỗ": {"type": "LOCATED_AT", "from": "kiem", "to": "cho"},
+        "có người chết": {"type": "DIED_IN", "from": "lan", "to": "cho"},
+    }
+    for name, edge in changes.items():
+        state = _idle_state(_noise(1), _noise(2), _pkg(3, edge), _noise(4), _noise(5))
+        assert idle_chapters(state, 6, 2) == Idle(2), name  # ch4, ch5
+        assert idle_chapters(state, 6, 3) is None, name
+
+
+def test_a_thread_resolved_or_a_secret_revealed_on_the_plans_schedule_is_not_a_change():
+    """long-tu-tien-2: mạch gỡ ở ch9, 11, 14, 17 nằm giữa đoạn lặp ch8–17; tính chúng thì dãy rỗng
+    dài nhất chỉ 2 và cờ không bao giờ bật."""
+    resolved = {"type": "RESOLVED_IN", "from": "t1", "to": "ch3", "props": {"quote": "x"}}
+    revealed = {"type": "REVEALED_TO_PLAYER", "from": "f1", "to": "ch4", "props": {"quote": "x"}}
+    state = _idle_state(_noise(1), _noise(2), _pkg(3, resolved), _pkg(4, revealed), _noise(5))
+    assert idle_chapters(state, 6, 4) == Idle(5)
+
+
+def test_things_that_happen_every_chapter_are_not_a_change():
+    """Fact mới, quan hệ đổi điểm, người biết thêm, nói lại nơi ở: chương nào cũng có (D-93)."""
+    noisy = _pkg(2,
+                 {"type": "KNOWS", "from": "lan", "to": "f1", "props": {"how": "chứng kiến"}},
+                 {"type": "RELATES_TO", "from": "minh", "to": "lan", "props": {"kind": "bạn", "score": 90}},
+                 {"type": "PARTICIPATED_IN", "from": "minh", "to": "ch2"})
+    assert idle_chapters(_idle_state(_noise(1), noisy, _noise(3)), 4, 3) == Idle(3)
+
+
+def test_the_count_is_the_whole_run_not_just_the_threshold():
+    state = _idle_state(*(_noise(c) for c in range(1, 8)))
+    assert idle_chapters(state, 8, 4) == Idle(7)
+
+
+def test_chapter_goals_carry_idle_only_when_asked_and_not_beside_standstill_or_in_the_last_chapter():
+    state = _idle_state(*(_quiet(c) for c in range(1, 5)))
+    assert chapter_goals(IDLE_PLAN, 5, state).idle is None
+    assert chapter_goals(IDLE_PLAN, 5, state, idle_chapters=4).idle == Idle(4)
+    both = chapter_goals(IDLE_PLAN, 5, state, standstill_chapters=4, idle_chapters=4)
+    assert both.standstill is not None and both.idle is None  # một lời giục là đủ
+    last = IDLE_PLAN.model_copy(update={"acts": [IDLE_PLAN.acts[0].model_copy(
+        update={"to_chapter": 5})]})
+    assert chapter_goals(last, 5, state, idle_chapters=4).idle is None
+
+
+def test_idle_sentence_is_fixed_text_with_the_count_and_can_be_replaced():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    goals = chapter_goals(IDLE_PLAN, 5, _idle_state(*(_noise(c) for c in range(1, 5))),
+                          idle_chapters=4)
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    assert GOAL_DEFAULTS["idle"].format(chapters=4) in text and "4 chương" in text
+    none = _text(render_chapter_goals(chapter_goals(IDLE_PLAN, 5, _idle_state(
+        *(_noise(c) for c in range(1, 5)))), scene=1, scene_count=2))
+    assert "{chapters}" not in text and GOAL_DEFAULTS["idle"].split("{")[0] not in none
+    new = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                     texts={"idle": "MỚI sau {chapters} chương."}))
+    assert "MỚI sau 4 chương." in new
+
+
+def test_stalled_after_is_true_for_idle_as_well_as_for_a_stood_still_protagonist():
+    from writory.pipeline.pacing import stalled_after
+
+    state = _idle_state(*(_noise(c) for c in range(1, 5)))
+    assert not stalled_after(state, 4, None)
+    assert stalled_after(state, 4, None, idle_threshold=4)
+    assert not stalled_after(state, 4, None, idle_threshold=5)

@@ -1753,3 +1753,25 @@ def test_previous_openings_on_without_a_length_is_a_config_problem(tmp_path):
     config = make_config(tmp_path, limits={"context": {"previous_openings": 2,
                                                         "previous_opening_max_chars": None}})
     assert any("previous_opening_max_chars" in str(p) for p in config_problems(config))
+
+
+async def test_the_summary_call_gets_the_protagonist_name_from_the_graph(tmp_path):
+    """D-112: tóm tắt luôn gọi nhân vật chính bằng đúng tên trong đồ thị."""
+    _, _, llm, _ = await run(full_script(), tmp_path)
+    [summary_call] = calls_of(llm, "summary")
+    assert "Nhân vật chính (văn kể xưng" in summary_call[-1].content
+    assert "Trần Minh" in summary_call[-1].content
+
+
+async def test_protagonist_keeps_one_place_when_the_extractor_closes_it_without_a_new_one(tmp_path):
+    """Hồi quy long-tu-tien-2 (D-112): bộ trích đóng nơi ở của nhân vật chính ở ch7 mà không mở cạnh mới
+    nên 11 chương không có nơi ở và cờ `standstill` mù. Ghi chương xong vẫn còn đúng một nơi."""
+    package, _ = setup_chapter_0()
+    old = next(e for e in package.edges if e.type == "LOCATED_AT" and e.source == "protagonist")
+    outline = outline_reply(present=("protagonist", "ha_ba_tung"))
+    script = [outline, SCENE_PC, extract_reply(close=[old.id]), outline, SCENE_PC, extract_reply(),
+              SUMMARY, _choices_naming_protagonist]
+    events, _outcome, store = await run_new_story(script, tmp_path)
+    assert "chapter_committed" in kinds(events)
+    rows = store.state().edges_at("LOCATED_AT", 1, source_id="protagonist")
+    assert [(r.id, r.target) for r in rows] == [(old.id, old.target)]

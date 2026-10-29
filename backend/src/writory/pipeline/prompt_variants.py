@@ -38,7 +38,7 @@ VARIANT_FILES = (OUTLINE_FILE, CHOICES_FILE, GOALS_FILE)
 IGNORED_FILES = ("README.md",)
 GOAL_KEYS = frozenset(GOAL_DEFAULTS)
 _NAME = re.compile(r"[a-z0-9][a-z0-9_-]*")
-_PLACEHOLDERS = {"standstill": ("{place}", "{chapters}")}
+_PLACEHOLDERS = {"standstill": ("{place}", "{chapters}"), "idle": ("{chapters}",)}
 _ANY_PLACEHOLDER = ("{place}", "{chapters}")
 
 

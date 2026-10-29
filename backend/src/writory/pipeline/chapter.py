@@ -630,7 +630,8 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
             "goals": chapter_goals(
                 d.plan, state["chapter"], before,
                 standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
-                unplanned_goal=d.config.limits.context.unplanned_chapter_goal)}
+                unplanned_goal=d.config.limits.context.unplanned_chapter_goal,
+                idle_chapters=d.config.limits.context.idle_chapters)}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -915,12 +916,15 @@ async def _summary(state: _State, runtime: Runtime[_Deps]) -> dict:
     d = runtime.context
     chapter, cfg = state["chapter"], d.config
     d.llm.tracker.start_scene()  # trần mỗi cảnh áp cho bước tóm tắt như một bước riêng
+    pc = state["names"].get(state["protagonist"])  # tên chuẩn trong đồ thị (D-112)
     try:
         text = await summarize_chapter(
             d.llm, require_model(cfg.models.roles, "summary"), chapter=chapter,
             scenes=[s.text for s in state["accepted"]],
             max_chars=_require(cfg.limits.context, "summary_max_chars"),
             retries=cfg.limits.retries, extra=role_extra(cfg.models, "summary"),
+            protagonist_name=pc.text if pc is not None else None,
+            protagonist_user_authored=pc.user_authored if pc is not None else False,
         )
         d.store.save_summary(chapter, text)
     except WritoryError as e:
@@ -947,7 +951,8 @@ async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
         moderate=partial(moderate, source=Source.CHOICES, llm=d.llm, config=d.config,
                          darkness_level=d.request.darkness_level),
         stalled=stalled_after(d.store.state(), chapter,
-                              _require(d.config.limits.context, "standstill_chapters")),
+                              _require(d.config.limits.context, "standstill_chapters"),
+                              idle_threshold=d.config.limits.context.idle_chapters),
         system_prompt=d.prompts.choices_system if d.prompts is not None else None,
     )
     runtime.stream_writer(ChoicesReady(chapter=chapter,

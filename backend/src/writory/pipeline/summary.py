@@ -18,9 +18,9 @@ from writory.config import RetryLimits
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient, Message
 from writory.llm.retry import with_json_retries
-from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
+from writory.safety.wrap import DATA_NOTICE, UserAuthored, escape_text, system_message, user_message
 
-PROMPT_VERSION = "summary-1"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "summary-2"  # đổi chữ prompt thì tăng số
 ROLE = "summary"
 SUMMARY_CHAPTERS = 2  # design §6.2 bước 1: tóm tắt 1–2 chương gần nhất
 
@@ -30,6 +30,7 @@ Quy tắc:
 - Viết tiếng Việt có dấu, gọn, thành một đoạn. Không chêm tiếng Anh, không dùng chữ Hán.
 - Chỉ dựa trên chữ của chương. Không suy đoán, không thêm điều chương không nói.
 - Gọi nhân vật bằng tên như trong chương. Đây là ghi chú, không phải văn của truyện.
+- Văn kể ở ngôi "tôi", nhưng tóm tắt viết ở ngôi thứ ba. Nếu khối dữ liệu ghi tên nhân vật chính, luôn gọi nhân vật chính bằng đúng tên đó, đủ họ tên, mọi chỗ trong tóm tắt: không viết "tôi", "nhân vật chính", tên rút gọn hay tên khác.
 - Nêu theo thứ tự: chuyện chính đã xảy ra; nhân vật chính đã quyết định hay làm gì; điều gì vừa được nói ra hay lộ ra; tình thế cuối chương (ai ở đâu, việc gì còn dang dở).
 - Tối đa {max_chars} ký tự.
 
@@ -42,12 +43,22 @@ class SummaryOutput(BaseModel):
     summary: str
 
 
-def summary_messages(chapter: int, scenes: Sequence[str], *, max_chars: int) -> list[Message]:
+def summary_messages(
+    chapter: int, scenes: Sequence[str], *, max_chars: int, protagonist_name: str | None = None,
+    protagonist_user_authored: bool = False,
+) -> list[Message]:
+    """`protagonist_name`: tên chuẩn của nhân vật chính trong đồ thị (D-112), để tóm tắt luôn gọi đúng
+    tên đó. Là chữ người chơi khi nút `user_authored`: bọc như dữ liệu (G4), không vào system."""
+    name: list[str | UserAuthored] = []
+    if protagonist_name:
+        label = 'Nhân vật chính (văn kể xưng "tôi"):'
+        name = ([label, UserAuthored(protagonist_name, "protagonist_name")]
+                if protagonist_user_authored else [f"{label} {escape_text(protagonist_name)}"])
     return [
         system_message(SYSTEM_PROMPT.format(max_chars=max_chars), DATA_NOTICE),
         user_message(f"Chương {chapter}, đúng chữ người đọc đã đọc:",
                      UserAuthored("\n\n".join(scenes), "chapter_text"),
-                     "Tóm tắt chương này."),
+                     *name, "Tóm tắt chương này."),
     ]
 
 
@@ -65,8 +76,11 @@ def _fit(text: str, max_chars: int) -> str:
 async def summarize_chapter(
     llm: LLMClient, model: str, *, chapter: int, scenes: Sequence[str], max_chars: int,
     retries: RetryLimits, extra: Mapping[str, Any] | None = None,
+    protagonist_name: str | None = None, protagonist_user_authored: bool = False,
 ) -> str:
-    messages = summary_messages(chapter, scenes, max_chars=max_chars)
+    messages = summary_messages(chapter, scenes, max_chars=max_chars,
+                                protagonist_name=protagonist_name,
+                                protagonist_user_authored=protagonist_user_authored)
 
     async def call() -> str:
         output, _ = await llm.chat_json(model, messages, SummaryOutput, extra=extra)

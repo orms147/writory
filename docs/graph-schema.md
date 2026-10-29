@@ -8,6 +8,7 @@ Mô hình ý tưởng: design §7.2. Code: `backend/src/writory/graph/` (danh s�
 - **Không xoá sự thật cũ; đóng nó lại.** Đổi trạng thái = đóng cạnh cũ (đặt `valid_to_chapter`) + tạo cạnh mới.
 - **Nút không bị sửa sau khi tạo** (D-15). Mọi trạng thái đổi theo thời gian là cạnh: chết là `DIED_IN`, lời nói dối bị phát hiện là `KNOWS` tới nút `Lie`, mạch được gỡ là `RESOLVED_IN`.
 - **Bất biến "tối đa một":** ở mỗi chương, một đồ vật có tối đa một cạnh `HOLDS` hiệu lực; mỗi cặp A→B có tối đa một `RELATES_TO` hiệu lực. Truy vấn gặp hơn một thì báo `GraphIntegrityError`, không chọn đại.
+- **Nhân vật chính luôn có đúng một nơi ở** sau mỗi chương do bộ trích ghi (D-112, như đồ vật ở D-90): nơi mới đóng nơi cũ, đóng nơi cũ mà không mở nơi mới thì giữ nơi cũ, nói lại nơi đang ở thì không ghi cạnh mới (cạnh mới đặt lại `valid_from_chapter` và làm cờ "ở yên" đếm lại). Làm bằng code ở `extract.to_package`, không phải luật của schema; nhân vật khác không bị ràng buộc.
 - **Một mệnh đề một nút.** Chữ của một `Fact` hay `Event` chỉ chứa đúng một mệnh đề. Chi tiết bí mật về nó (ai làm, vì sao) phải là `Fact` riêng, vì khi nút được hé lộ thì người chơi thấy toàn bộ chữ của nó. Ví dụ trong truyện mẫu: `e_gu_death` ("Lão Gù chết sau miếu Bà") tách khỏi `f_lan_killed_gu`.
 - **Hai lớp** trên cùng một đồ thị: `truth` là toàn bộ đồ thị; `player_view` định nghĩa ở mục riêng bên dưới, trong **một hàm duy nhất** (G1).
 - **Nguồn gốc:** thuộc tính do người chơi viết mang `user_authored: true` (G4).
