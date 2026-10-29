@@ -98,7 +98,7 @@ flowchart TD
 - **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` đọc hay ghi dữ liệu truyện đều kiểm `story_id` bằng `require_story_id` (`graph/story.py`), trực tiếp hoặc qua hàm chung (ví dụ `_read` trong `graph/queries.py`, hay `apply_package`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Test nhanh `tests/unit/test_cypher_boundary.py` quét mọi file `.py` của `src/writory` ngoài `graph/`, tìm mệnh đề Cypher và lời gọi chạy truy vấn của driver (D-106). Hiện không có ngoại lệ.
 - **Phụ thuộc vào kiểu dữ liệu.** `pipeline/story_plan.py` (`StoryPlan`) chỉ là kiểu dữ liệu, nên `guard/`, `safety/leak.py` và `db/` đều nhập nó. `graph/context.py` nhập `safety/wrap.py` (`UserAuthored`) để bọc chữ người chơi viết khi đọc lại từ đồ thị (G4). Hai mũi tên này không vẽ trên sơ đồ.
 - **Gốc gói.** `config.py` (nạp và kiểm `config/*.yaml` bằng pydantic) và `errors.py` (mã lỗi, câu cho người chơi) được mọi module dùng (D-13). Hai file này không vẽ trên sơ đồ.
-- **`export/` (D-123) không có đường nào từ `api/` hay giao diện.** Bộ xuất kịch bản video đọc toàn bộ `truth` (kể cả bí mật) nên chỉ chạy bằng lệnh của admin cầm DB; nó chỉ đọc, và không module nào ngoài chính nó nhập nó (test: `tests/unit/test_video_export_security.py`). Luồng:
+- **`export/` (D-124) không có đường nào từ `api/` hay giao diện.** Bộ xuất kịch bản video đọc toàn bộ `truth` (kể cả bí mật) nên chỉ chạy bằng lệnh của admin cầm DB; nó chỉ đọc, và không module nào ngoài chính nó nhập nó (test: `tests/unit/test_video_export_security.py`). Luồng:
 
 ```mermaid
 flowchart LR

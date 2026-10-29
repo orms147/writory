@@ -1,4 +1,4 @@
-"""Bộ xuất kịch bản video trên Neo4j và Postgres thật (D-123): `all_nodes` của Neo4jState khớp OverlayState,
+"""Bộ xuất kịch bản video trên Neo4j và Postgres thật (D-124): `all_nodes` của Neo4jState khớp OverlayState,
 và lệnh `--dry-run` chạy hết đường trên truyện mẫu đã nạp vào cả hai database. Bộ xuất chỉ đọc."""
 
 import json

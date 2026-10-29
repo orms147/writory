@@ -143,7 +143,7 @@ uv run python -c "from neo4j import GraphDatabase; from writory.config import Se
 ```
 Lệnh này bỏ qua truyện đang có người viết (khoá chạy đôi D-46, kết quả `busy`), nên chạy khi app đang mở cũng được. `failed`: Neo4j từ chối gói, truyện giữ nguyên chương trước và viết lại được. `pending`: Neo4j vẫn chưa trả lời, hoặc lỗi khác (tên lỗi kèm theo).
 
-## Xuất kịch bản video (admin, D-123)
+## Xuất kịch bản video (admin, D-124)
 Chỉ chạy được trên máy có `POSTGRES_DSN` và `NEO4J_*` (Docker đang chạy). Bản xuất có lộ bí mật: không đưa cho người chơi. Chỉ đọc, không ghi DB.
 ```bash
 cd backend

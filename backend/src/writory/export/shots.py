@@ -1,4 +1,4 @@
-"""Phần của bộ xuất kịch bản video dùng model (vai `video`, config/models.yaml; D-123).
+"""Phần của bộ xuất kịch bản video dùng model (vai `video`, config/models.yaml; D-124).
 
 Hai loại lời gọi, cả hai trả JSON theo schema (G11) và qua phép kiểm bằng code trước khi dùng:
 - `make_sheet`: MỘT lời gọi cho cả bảng nhân vật và nơi chốn: mô tả tiếng Anh cố định (`visual_en`) của

@@ -1145,7 +1145,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Đo lại 5 đề x 1 seed (`evals/results/2026-10-29-setup10-check/`): hết mở bằng "Trông" và gần hết tóc đen, không còn thói quen hay nghề trong ngoại hình; còn lệch mới: khuôn câu giống nhau, tóc nâu thay tóc đen, "vết sẹo ở cằm" lặp giữa các truyện. Bộ đếm không bắt hai điều sau. Đề `build` dài thêm vài trăm token, chi phí khởi tạo khoảng +11%.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026)
 
-## D-123 · Bộ xuất kịch bản video: lệnh của admin, package `export/`, vai model `video`, trần chi phí ở limits.yaml (thực hiện D-118)
+## D-124 · Bộ xuất kịch bản video: lệnh của admin, package `export/`, vai model `video`, trần chi phí ở limits.yaml (thực hiện D-118)
 - **Bối cảnh:** D-118 chọn nguồn là toàn bộ `truth` và đầu ra là danh sách shot kèm prompt; D-120 đã sinh `appearance` và `visual` ở khởi tạo. Chủ dự án quyết 29/10/2026 làm bộ xuất ngay, và chỉ admin cầm DB mới xuất được.
 - **Quyết định (phạm vi: Chủ dự án; thiết kế: Claude):**
   - Lệnh `python -m writory.export.video --story <id> --dialogue-lang <zh|vi|en…> [--chapters A-B] --budget <USD>`. Không endpoint, không nút: "chỉ admin" nghĩa là chỉ ai có `POSTGRES_DSN` và `NEO4J_*` của máy mới chạy được. Chỉ đọc, không ghi DB nào. Mặc định ghi `exports/<story>-<ngày>/` (`.gitignore`), mở đầu bằng cảnh báo lộ bí mật. Hai chế độ không tốn tiền: `--sheets-only` (chỉ phần bằng code) và `--dry-run` (model giả).
