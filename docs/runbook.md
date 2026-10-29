@@ -143,6 +143,19 @@ uv run python -c "from neo4j import GraphDatabase; from writory.config import Se
 ```
 Lệnh này bỏ qua truyện đang có người viết (khoá chạy đôi D-46, kết quả `busy`), nên chạy khi app đang mở cũng được. `failed`: Neo4j từ chối gói, truyện giữ nguyên chương trước và viết lại được. `pending`: Neo4j vẫn chưa trả lời, hoặc lỗi khác (tên lỗi kèm theo).
 
+## Xuất kịch bản video (admin, D-125)
+Chỉ chạy được trên máy có `POSTGRES_DSN` và `NEO4J_*` (Docker đang chạy). Bản xuất có lộ bí mật: không đưa cho người chơi. Chỉ đọc, không ghi DB.
+```bash
+cd backend
+# không tốn tiền: chỉ bảng nhân vật, bảng nơi chốn, sơ đồ tuyến theo chương
+uv run python -m writory.export.video --story <id> --sheets-only --out ../exports/thu
+# model giả, không mạng, không key: xem cấu trúc file
+uv run python -m writory.export.video --story <id> --dry-run --dialogue-lang zh
+# chạy thật: key của chủ dự án trong OPENROUTER_API_KEY (môi trường hoặc --env-file), bắt buộc --budget
+uv run python -m writory.export.video --story <id> --dialogue-lang zh --chapters 1-3 --budget 0.10
+```
+`--chapters` nhận `N` hoặc `A-B` (mặc định cả truyện). `--dialogue-lang` là thẻ ngôn ngữ của lời thoại (zh, vi, en…). `--budget` không được vượt `limits.video_export.max_budget_usd`. Kiểm duyệt G9 trên prompt cuối bật mặc định; `--no-moderate` tắt và in cảnh báo. Mặc định ghi `exports/<story>-<ngày>/` (git bỏ qua): `script.md` (đọc), `script.json` (máy đọc), `prompts.txt` (mỗi shot một prompt, dán thẳng vào app video), `calls.jsonl` (số liệu từng lời gọi, không có chữ truyện). Thư mục `--out` đã có kết quả thì lệnh từ chối ngay (đổi `--out` hay xoá thư mục), không đè bản trả tiền cũ. Cảnh có mức kiểm duyệt BLOCKED hay HARD_BLOCKED (`withheld_moderation`), hoặc không kiểm duyệt được (`withheld_unmoderated`), bị giữ lại hoàn toàn trong `script.json`; chỉ mức OVER_DARKNESS thì cảnh vẫn có và được đánh dấu để admin quyết. Mã thoát: 0 xong; 1 sai tham số, cấu hình hay dữ liệu (`EXPORT_STORY_NOT_FOUND`, `EXPORT_DB_UNAVAILABLE`, `EXPORT_ENV_MISSING`); 2 dừng vì chạm `--budget` (phần đã xong vẫn được ghi); 3 có cảnh lỗi hay có cảnh bị giữ vì không kiểm duyệt được. Truyện cũ không có ngoại hình: mô tả được sinh bù lúc xuất và đánh dấu `inferred`.
+
 ## Biến môi trường
 Danh sách đầy đủ: `.env.example`. Không commit `.env`.
 
