@@ -654,6 +654,7 @@ async def _ask[T: BaseModel](
     output, _ = await with_json_retries(
         lambda: llm.chat_json(model, messages, schema, extra=extra),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
+        backoff=retries.transient_backoff_seconds,
     )
     return output
 

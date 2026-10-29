@@ -73,6 +73,9 @@ class RetryLimits(_Strict):
     rewrite_per_scene: NonNegativeInt
     extract_schema_retry: NonNegativeInt
     llm_transient: NonNegativeInt
+    # Giây chờ trước lần thử lại thứ 1, 2, 3… của lỗi tạm (LLM_UNAVAILABLE, LLM_TIMEOUT); ngắn hơn số lần
+    # thử lại thì lặp lần cuối; rỗng = không chờ (D-123).
+    transient_backoff_seconds: list[NonNegativeFloat] = []
     # `build_story` sai quy tắc: số lượt gọi lại model kèm danh sách lỗi, riêng với thử lại JSON
     # sai schema (D-14, D-54).
     setup_repair: NonNegativeInt

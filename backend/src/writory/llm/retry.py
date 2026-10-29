@@ -3,11 +3,15 @@
 Mỗi loại lỗi có số lần riêng (D-14): lỗi mạng theo `retries.llm_transient`, JSON sai schema theo
 `retries.extract_schema_retry`. Nơi gọi phải nói rõ thử lại loại nào (`retry_on`).
 
-Không chờ giữa các lần thử: không phụ thuộc thời gian, và lỗi tần suất (429) không được thử lại.
+Chờ lùi dần (D-123) chỉ giữa các lần thử lại LỖI TẠM (`BACKOFF_ON`: LLM_UNAVAILABLE, LLM_TIMEOUT), theo
+`retries.transient_backoff_seconds`; JSON sai schema thử lại ngay, lỗi tần suất (429) không được thử lại.
+Chờ qua `_sleep` (production: `asyncio.sleep`); nơi gọi hay test truyền `sleep=` riêng, `tests/conftest.py`
+thay `_sleep` cho mọi test nên không test nào chờ thật (§6).
 """
 
+import asyncio
 import logging
-from collections.abc import Awaitable, Callable, Iterator
+from collections.abc import Awaitable, Callable, Iterator, Sequence
 from contextlib import contextmanager
 from contextvars import ContextVar
 
@@ -17,6 +21,14 @@ log = logging.getLogger(__name__)
 
 RETRY_TRANSIENT = frozenset({ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT})
 RETRY_SCHEMA = frozenset({ErrorCode.LLM_BAD_RESPONSE})
+BACKOFF_ON = RETRY_TRANSIENT  # chỉ lỗi tạm mới chờ trước lần thử lại
+
+Sleep = Callable[[float], Awaitable[None]]
+
+
+async def _sleep(seconds: float) -> None:
+    """Chỗ DUY NHẤT production chờ khi thử lại; test thay hàm này (tests/conftest.py)."""
+    await asyncio.sleep(seconds)
 
 
 # Móc báo "thân trả lời bị từ chối" (D-115). CHỈ bộ đo cài (`bench_run`): app không bao giờ cài, nên
@@ -53,12 +65,18 @@ async def with_retries[T](
     *,
     max_retries: int,
     retry_on: frozenset[ErrorCode],
+    backoff: Sequence[float] = (),
+    sleep: Sleep | None = None,
 ) -> T:
-    """Chạy `op` tối đa `1 + max_retries` lần. Chỉ thử lại lỗi có mã trong `retry_on`."""
+    """Chạy `op` tối đa `1 + max_retries` lần. Chỉ thử lại lỗi có mã trong `retry_on`. `backoff`: giây
+    chờ trước lần thử lại thứ 1, 2, … sau LỖI TẠM (ngắn hơn thì lặp lần cuối; rỗng = không chờ); không
+    chờ sau lần thử cuối vì không còn lần nào."""
     if max_retries < 0:
         raise ValueError(f"max_retries phải >= 0, nhận {max_retries}")
     last: WritoryError | None = None
-    for _ in range(max_retries + 1):
+    for attempt in range(max_retries + 1):
+        if attempt and backoff and last is not None and last.code in BACKOFF_ON:
+            await (sleep or _sleep)(backoff[min(attempt - 1, len(backoff) - 1)])
         try:
             return await op()
         except WritoryError as e:
@@ -73,7 +91,8 @@ async def with_retries[T](
 
 
 async def with_json_retries[T](
-    op: Callable[[], Awaitable[T]], *, schema_retries: int, transient_retries: int
+    op: Callable[[], Awaitable[T]], *, schema_retries: int, transient_retries: int,
+    backoff: Sequence[float] = (), sleep: Sleep | None = None,
 ) -> T:
     """Lời gọi trả JSON theo schema: hai lớp lồng nhau (D-14). Lớp trong thử lại JSON sai schema
     (`retries.extract_schema_retry`), lớp ngoài thử lại lỗi mạng (`retries.llm_transient`)."""
@@ -82,4 +101,4 @@ async def with_json_retries[T](
         return await with_retries(op, max_retries=schema_retries, retry_on=RETRY_SCHEMA)
 
     return await with_retries(schema_layer, max_retries=transient_retries,
-                              retry_on=RETRY_TRANSIENT)
+                              retry_on=RETRY_TRANSIENT, backoff=backoff, sleep=sleep)

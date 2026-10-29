@@ -58,7 +58,7 @@ class ChoiceDraft(BaseModel):
     text: str
     tone: Tone | None  # chỉ cho lời thoại
     lie_content: str | None  # tone = lie: nội dung lời nói dối
-    listeners: list[str]  # ref người nghe; chỉ cho lời thoại
+    listeners: list[str]  # ref người nghe; chỉ cho lời thoại (rỗng được ở schema; `_resolve` quyết)
     about: list[str]  # ref các mục lựa chọn nói tới
     feeling: str | None  # chỉ cho nội tâm: cảm xúc hay ý định thầm
 
@@ -67,8 +67,10 @@ class ChoiceDraft(BaseModel):
         if not self.text.strip():
             raise ValueError("text rỗng")
         if self.kind == "dialogue":
-            if self.tone is None or not self.listeners:
-                raise ValueError("lời thoại phải có tone và người nghe")
+            # Người nghe có thể rỗng: người nghe ẩn danh ("người tuần") không có mã trong sổ tay. Lời thoại
+            # không còn người nghe thì `_resolve` bỏ RIÊNG lựa chọn đó, không bỏ cả bộ (D-121, D-123).
+            if self.tone is None:
+                raise ValueError("lời thoại phải có tone")
             lie = bool(self.lie_content and self.lie_content.strip())
             if (self.tone == "lie") != lie:
                 raise ValueError("lie_content có khi và chỉ khi tone = lie")
@@ -347,7 +349,8 @@ async def make_choices(
             raise
 
     choices = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                      transient_retries=retries.llm_transient)
+                                      transient_retries=retries.llm_transient,
+                                      backoff=retries.transient_backoff_seconds)
     _ensure_no_leak(choices, view=view, truth_names=truth_names, plan=plan,
                     story_brief=story_brief)
     if moderate is not None:
