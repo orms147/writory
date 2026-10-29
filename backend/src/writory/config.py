@@ -134,6 +134,7 @@ class ContextLimits(_Section):
     idle_chapters: PositiveInt | None = None
     # Ba cờ của đề v3 (D-110): mặc định pydantic là tắt; bật ở limits.yaml (D-111).
     character_personality_max_chars: NonNegativeInt = 0  # tính cách NPC vào đề dàn ý và viết; 0 = tắt
+    character_appearance_max_chars: NonNegativeInt = 0  # ngoại hình NPC vào đề dàn ý và viết; 0 = tắt (D-118)
     previous_openings: NonNegativeInt = 0  # số chương gần nhất có câu mở đưa vào đề viết; 0 = tắt
     previous_opening_max_chars: PositiveInt | None = None  # độ dài tối đa một câu mở
     unplanned_chapter_goal: bool = False  # chương không có mốc vẫn phải đổi tình thế cụ thể

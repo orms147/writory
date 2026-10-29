@@ -136,6 +136,7 @@ sequenceDiagram
 
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
 - `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
+- Bước dựng cũng sinh ngoại hình cố định cho nhân vật (`appearance`, kể cả nhân vật chính qua `protagonist_appearance`) và cảnh sắc cho nơi chốn (`visual`), nền cho xuất kịch bản video (D-118, D-120). Chúng là thuộc tính tuỳ chọn trên nút, lớp `truth`; `story_plan` không đổi. Ngữ cảnh viết đọc `appearance` của người có mặt và nhân vật lân cận khi `limits.context.character_appearance_max_chars` > 0; `visual` chưa vào đề nào.
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
 - Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`), kể cả từng lượt sửa (D-54). `api/setup.py` không bọc thêm lớp nào, nên lỗi mạng chỉ gọi lại đúng lời gọi hỏng (D-105).
 

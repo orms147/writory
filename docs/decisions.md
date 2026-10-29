@@ -1102,6 +1102,19 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Đổi bước khởi tạo (D-54) thì phải đo lại khởi tạo. Thư mục khởi tạo cũ không có ngoại hình, nên trường này là tuỳ chọn.
 - **Người quyết:** Chủ dự án (29/10/2026)
 
+## D-120 · Nền kịch bản video: ngoại hình nhân vật và cảnh sắc nơi chốn sinh lúc khởi tạo (thực hiện D-118)
+- **Bối cảnh:** D-118 chọn sinh ngoại hình ở bước khởi tạo và giữ cố định để các shot khớp nhau; bộ xuất chưa làm. Đợt này chỉ làm nền.
+- **Quyết định:**
+  - `BuildOutput` thêm `OutCharacter.appearance` (1–3 câu: tuổi trông, vóc dáng, khuôn mặt, tóc, trang phục đặc trưng, một dấu hiệu nhận diện), `OutLocation.visual` (1–2 câu: ánh sáng, chất liệu, không khí; phe phái và đồ vật không có) và `protagonist_appearance` (nhân vật chính dựng từ chữ người chơi nên không nằm trong `characters`; model viết ngoại hình hợp với chữ đó, không đổi chữ đó). `setup-9`.
+  - Ghi thành thuộc tính tuỳ chọn `appearance` / `visual` trên nút, một dòng, không ghi chuỗi rỗng. Trường bắt buộc trong schema gửi model, nhưng trả lời cũ thiếu thì mặc định rỗng (như `extract._old_replies`), nên `--setup-from` cũ vẫn dùng được. `story_plan` và lượt sửa D-54 không đổi (lượt sửa gửi lại `previous_answer` đã mang các trường mới); không thêm loại lỗi mới, rỗng hay dài chỉ cắt khi đọc.
+  - Lớp `truth`, ngoài `player_view` (chỉ đọc tên và trường chữ trong danh sách): test G1 ở `security.md`.
+  - `limits.context.character_appearance_max_chars` (0 = tắt, mặc định tắt trong `config/limits.yaml` cho tới khi đo): `appearance` của người có mặt và nhân vật lân cận còn sống vào đề dàn ý và đề viết, cắt cùng luật với tính cách (D-110), nhân vật `user_authored` bọc `UserAuthored` (G4). `visual` chưa vào đề nào; bộ xuất sẽ đọc từ đồ thị.
+- **Hệ quả:**
+  - Đổi bước khởi tạo (D-54) nên phải đo lại khởi tạo (tỉ lệ lượt sửa, chi phí), chưa đo vì đợt này không gọi model trả tiền. Cờ ngữ cảnh cũng chưa đo xem có làm văn cứng hơn không.
+  - Truyện cũ không có ngoại hình; không sinh bù. Nhân vật sinh sau khởi tạo (bộ trích) không có `appearance`.
+  - Việc sau: "thời điểm cảnh" (ngày/đêm) thuộc dàn ý cảnh (`outline`) với enum vài giá trị, không thuộc khởi tạo vì đổi theo từng cảnh. Chưa làm.
+- **Người quyết:** Claude (writory-28 giao việc 29/10/2026, duyệt thiết kế); chủ dự án chọn hướng ở D-118
+
 ## D-121 · Sửa theo review độc lập đợt D-112..D-117: nơi ở, câu idle, lời thoại không người nghe, số truy vấn, bảng lỗi mock
 - **Bối cảnh:** review độc lập của writory-28 (agent riêng, đã chạy test nháp xác nhận ba lỗi đầu) trên code D-112..D-117. Mỗi mục dưới đây là một lỗi do review tìm ra, có test đỏ trước.
 - **Quyết định:**

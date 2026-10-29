@@ -306,3 +306,79 @@ def test_the_neighbor_limit_counts_distinct_nodes(driver, new_story_id):
     assert [n.id for n in ctx.neighbors] == ["club", "guild", "third"]  # gần trước, rồi theo id
     ctx = writer_context(driver, sid, 0, ["hero", "ally"], None, max_neighbors=2)
     assert [n.id for n in ctx.neighbors] == ["club", "guild"]
+
+
+# --- ngoại hình nhân vật (D-118): thuộc tính tuỳ chọn của lớp truth ---------------------------------
+
+
+def _apply_looks(driver, sid):
+    from writory.graph import ChangePackage, apply_package
+
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character",
+             "props": {"name": "Minh", "is_protagonist": True, "user_authored": True,
+                       "appearance": "Cao gầy, tóc đen buộc gọn."}},
+            {"id": "npc", "label": "Character",
+             "props": {"name": "Lan", "appearance": "Nhỏ nhắn, cài trâm bạc hình cánh én."}},
+            {"id": "far", "label": "Character", "props": {"name": "Khải"}},
+            {"id": "club", "label": "Faction",
+             "props": {"name": "Hội", "appearance": "KHÔNG-ĐƯỢC-ĐỌC"}},
+            {"id": "inn", "label": "Location",
+             "props": {"name": "Quán trà", "visual": "Đèn dầu vàng đục, gỗ ẩm mục."}}],
+        "edges": [{"type": "RELATES_TO", "from": "hero", "to": "npc", "valid_from_chapter": 0,
+                   "props": {"kind": "bạn", "score": 50}},
+                  {"type": "MEMBER_OF", "from": "far", "to": "club", "valid_from_chapter": 0},
+                  {"type": "RELATES_TO", "from": "npc", "to": "far", "valid_from_chapter": 0,
+                   "props": {"kind": "bạn", "score": 50}}],
+    }))
+
+
+def test_appearance_is_off_by_default_even_when_the_graph_has_it(driver, new_story_id):
+    sid = new_story_id()
+    _apply_looks(driver, sid)
+    ctx = writer_context(driver, sid, 0, ["hero", "npc"], None)
+    assert all(c.appearance is None for c in ctx.present)
+    assert all(n.appearance is None for n in ctx.neighbors)
+    assert "ngoại hình" not in " ".join(str(p) for p in render_writer_context(ctx))
+
+
+def test_appearance_of_present_and_neighbor_characters_is_read_clipped_and_nothing_else(
+        driver, new_story_id):
+    sid = new_story_id()
+    _apply_looks(driver, sid)
+    ctx = writer_context(driver, sid, 0, ["hero", "npc"], None, appearance_max_chars=200)
+    by_id = {c.id: c for c in ctx.present}
+    assert by_id["npc"].appearance == "Nhỏ nhắn, cài trâm bạc hình cánh én."
+    assert by_id["hero"].appearance == "Cao gầy, tóc đen buộc gọn." and by_id["hero"].user_authored
+    far = next(n for n in ctx.neighbors if n.id == "far")
+    assert far.appearance is None  # nút không có thuộc tính: không lỗi, không chữ
+    club = next(n for n in ctx.neighbors if n.id == "club")
+    assert club.appearance is None  # không phải nhân vật
+    text = " ".join(str(p) for p in render_writer_context(ctx))
+    assert "KHÔNG-ĐƯỢC-ĐỌC" not in text and "Đèn dầu" not in text  # `visual` chưa vào đề viết
+    short = writer_context(driver, sid, 0, ["npc"], None, appearance_max_chars=12)
+    assert len(short.present[0].appearance) <= 12 and short.present[0].appearance.endswith("…")
+
+
+def test_looks_never_reach_the_player_view_after_being_revealed(driver, new_story_id):
+    """G1: nút được hé lộ cho người chơi vẫn chỉ hiện tên và câu trích, không hiện ngoại hình."""
+    from writory.graph import ChangePackage, apply_package
+    from writory.graph.player_view import player_view
+
+    sid = new_story_id()
+    _apply_looks(driver, sid)
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c1",
+        "nodes": [{"id": "ch1", "label": "Chapter", "props": {"number": 1}}],
+        "edges": [
+            {"type": "REVEALED_TO_PLAYER", "from": "npc", "to": "ch1", "valid_from_chapter": 1,
+             "quote": "Lan cài trâm bạc bước vào.", "known_as": "Lan"},
+            {"type": "REVEALED_TO_PLAYER", "from": "inn", "to": "ch1", "valid_from_chapter": 1,
+             "quote": "Họ vào Quán trà đầu bến.", "known_as": "Quán trà"}],
+    }))
+    blob = repr(player_view(driver, sid, 1))
+    assert "Lan" in blob  # nút đã hé lộ
+    for secret in ("Nhỏ nhắn", "Cao gầy", "Đèn dầu"):
+        assert secret not in blob

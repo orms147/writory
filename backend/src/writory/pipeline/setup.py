@@ -39,7 +39,7 @@ from collections.abc import Callable, Iterable, Sequence
 from dataclasses import dataclass
 from typing import Any, Literal, get_args
 
-from pydantic import BaseModel, ConfigDict, Field, ValidationError
+from pydantic import BaseModel, ConfigDict, Field, ValidationError, model_validator
 
 from writory.config import AppConfig, LengthLevel, ModerationConfig
 from writory.errors import ErrorCode, WritoryError
@@ -69,8 +69,9 @@ log = logging.getLogger(__name__)
 # Đổi chữ prompt thì tăng số. setup-3: mốc và nhịp của kế hoạch (D-49). setup-4: luật id có dạng và
 # ví dụ, luật nhịp không tính chương cuối, đề lượt sửa (D-54). setup-5: `protects` của bí mật về
 # danh tính (D-61). setup-6: `known_by` chỉ gồm nhân vật khác, kể cả với bối cảnh chung (D-76).
-# setup-8: đồ vật có người giữ HOẶC nơi chốn, không cả hai (D-90).
-PROMPT_VERSION = "setup-8"
+# setup-8: đồ vật có người giữ HOẶC nơi chốn, không cả hai (D-90). setup-9: ngoại hình nhân vật
+# (`appearance`, `protagonist_appearance`) và cảnh sắc nơi chốn (`visual`), nền cho xuất video (D-118).
+PROMPT_VERSION = "setup-9"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -237,12 +238,26 @@ class OutAct(_Out):
     to_chapter: int
 
 
+def _fill_looks(data: Any, field: str) -> Any:
+    """Trường ngoại hình/cảnh sắc bắt buộc trong schema gửi model, nhưng trả lời cũ (fixture, thư mục
+    `--setup-from` cũ) chưa có thì coi là chuỗi rỗng (D-118)."""
+    if isinstance(data, dict):
+        return {field: "", **data}
+    return data
+
+
 class OutCharacter(_Out):
     id: str
     name: str
     aliases: list[str]
     personality: str
     backstory: str
+    appearance: str  # ngoại hình cố định, 1–3 câu (D-118); rỗng = chưa có
+
+    @model_validator(mode="before")
+    @classmethod
+    def _old_replies(cls, data: Any) -> Any:
+        return _fill_looks(data, "appearance")
 
 
 class OutNamed(_Out):
@@ -252,6 +267,17 @@ class OutNamed(_Out):
     name: str
     aliases: list[str]
     description: str
+
+
+class OutLocation(OutNamed):
+    """Nơi chốn: thêm cảnh sắc (D-118)."""
+
+    visual: str  # ánh sáng, chất liệu, không khí, 1–2 câu; rỗng = chưa có
+
+    @model_validator(mode="before")
+    @classmethod
+    def _old_replies(cls, data: Any) -> Any:
+        return _fill_looks(data, "visual")
 
 
 class OutFact(_Out):
@@ -295,7 +321,7 @@ class OutMilestone(_Out):
 class BuildOutput(_Out):
     acts: list[OutAct]
     characters: list[OutCharacter]
-    locations: list[OutNamed]
+    locations: list[OutLocation]
     factions: list[OutNamed]
     items: list[OutNamed]
     facts: list[OutFact]
@@ -303,6 +329,12 @@ class BuildOutput(_Out):
     threads: list[OutThread]
     secrets: list[OutSecret]
     milestones: list[OutMilestone]
+    protagonist_appearance: str  # ngoại hình của nhân vật chính, do model viết từ chữ người chơi (D-118)
+
+    @model_validator(mode="before")
+    @classmethod
+    def _old_replies(cls, data: Any) -> Any:
+        return _fill_looks(data, "protagonist_appearance")
 
 
 @dataclass(frozen=True)
@@ -495,9 +527,15 @@ Các phần:
 tới chương cuối, không chồng, không hở. Chương cuối của hồi cuối là tổng số chương, nằm trong \
 khoảng của độ dài truyện.
 - `characters`: các nhân vật khác: `name`, `aliases` (biệt danh, cách gọi khác; không có thì để \
-danh sách rỗng), `personality`, `backstory`.
+danh sách rỗng), `personality`, `backstory`, `appearance`: ngoại hình cố định để mọi cảnh tả khớp \
+nhau, 1–3 câu tiếng Việt gồm tuổi trông, vóc dáng, khuôn mặt, tóc, trang phục đặc trưng và một \
+dấu hiệu nhận diện (sẹo, nốt ruồi, món trang sức, dáng đi). Chỉ tả điều nhìn thấy, không tả tính \
+cách hay bí mật.
+- `protagonist_appearance`: ngoại hình của nhân vật chính, cùng cách viết như `appearance` ở trên, \
+hợp với tính cách và quá khứ người chơi đã chọn; không đổi những điều người chơi đã viết.
 - `locations`, `factions`, `items`: nơi chốn, phe phái, đồ vật quan trọng: `name`, `aliases`, \
-`description` (một câu).
+`description` (một câu). Riêng nơi chốn có thêm `visual`: cảnh sắc, 1–2 câu tiếng Việt về ánh \
+sáng, chất liệu và không khí của nơi đó.
 - `facts`: sự thật của thế giới lúc truyện bắt đầu, mỗi cái đúng MỘT mệnh đề (`text`); chi tiết \
 của một bí mật (ai làm, vì sao) là fact riêng. `about`: id những thứ mệnh đề nói tới. \
 `known_by`: id nhân vật đã biết điều đó từ trước khi truyện bắt đầu; chỉ ghi các nhân vật khác, \
@@ -756,6 +794,12 @@ def _named(label: str, x: OutCharacter | OutNamed, **props: Any) -> dict[str, An
             "props": {"name": x.name, **({"aliases": aliases} if aliases else {}), **props}}
 
 
+def _looks(key: str, text: str) -> dict[str, str]:
+    """Ngoại hình/cảnh sắc thành một dòng làm thuộc tính nút; trống thì không có thuộc tính (D-118)."""
+    one = " ".join(text.split())
+    return {key: one} if one else {}
+
+
 def _edge(etype: str, source: str, target: str, **props: Any) -> dict[str, Any]:
     return {"type": etype, "from": source, "to": target, "valid_from_chapter": INITIAL_CHAPTER,
             "props": {k: v for k, v in props.items() if v is not None}}
@@ -803,12 +847,15 @@ def _check_build(
     nodes: list[dict[str, Any]] = [{
         "id": PROTAGONIST_ID, "label": "Character",
         "props": {"name": pc.name, "personality": pc.personality, "backstory": pc.backstory,
-                  "is_protagonist": True, "user_authored": True},
+                  "is_protagonist": True, "user_authored": True,
+                  **_looks("appearance", output.protagonist_appearance)},
     }]
-    nodes += [_named("Character", c, personality=c.personality, backstory=c.backstory)
+    nodes += [_named("Character", c, personality=c.personality, backstory=c.backstory,
+                     **_looks("appearance", c.appearance))
               for c in output.characters]
-    for label, group in (("Location", output.locations), ("Faction", output.factions),
-                         ("Item", output.items)):
+    nodes += [_named("Location", x, description=x.description, **_looks("visual", x.visual))
+              for x in output.locations]
+    for label, group in (("Faction", output.factions), ("Item", output.items)):
         nodes += [_named(label, x, description=x.description) for x in group]
     nodes += [{"id": f.id, "label": "Fact", "props": {"text": f.text}} for f in output.facts]
     nodes += [
