@@ -27,6 +27,7 @@ from writory.graph import (
     node_labels,
     node_rows,
     protagonist_id,
+    story_nodes,
 )
 from writory.graph.schema import EDGE_TYPES, NAMED_LABELS
 
@@ -53,6 +54,11 @@ class GraphState(Protocol):
         ...
 
     def protagonist_id(self) -> str: ...
+
+    def all_nodes(self) -> dict[str, NodeRow]:
+        """Mọi nút của truyện (id → nhãn loại + thuộc tính của truyện), lớp truth. Cho bộ xuất kịch bản
+        video (D-125), không cho đường người chơi."""
+        ...
 
 
 def _check_type(edge_type: str) -> None:
@@ -84,6 +90,9 @@ class Neo4jState:
     def protagonist_id(self) -> str:
         return protagonist_id(self._driver, self._story_id)
 
+    def all_nodes(self) -> dict[str, NodeRow]:
+        return story_nodes(self._driver, self._story_id)
+
 
 class EmptyState:
     def edges_at(self, edge_type, chapter, *, source_id=None, target_id=None,
@@ -102,6 +111,9 @@ class EmptyState:
 
     def protagonist_id(self) -> str:
         raise LookupError("trạng thái rỗng: chưa có nhân vật chính")
+
+    def all_nodes(self) -> dict[str, NodeRow]:
+        return {}
 
 
 def _valid_at(valid_from: int, valid_to: int | None, chapter: int) -> bool:
@@ -177,6 +189,9 @@ class OverlayState:
 
     def protagonist_id(self) -> str:
         return self._protagonist or self._base.protagonist_id()
+
+    def all_nodes(self) -> dict[str, NodeRow]:
+        return dict(sorted((self._base.all_nodes() | self._nodes).items()))
 
 
 def player_view_of(state: GraphState, chapter: int, *, story_id: str = "") -> PlayerView:
