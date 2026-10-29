@@ -22,6 +22,14 @@ Kết quả ở `evals/results/<ngày>-run-<nhãn>/`, tách theo người đư�
 chương 0 và ba lựa chọn khởi tạo) thay vì gọi model khởi tạo, để so hai cách chạy trên CÙNG một
 thế giới. Đề phải cùng sha256 và seed phải khớp (cùng dãy chọn).
 
+`--resume <thư mục kết quả>`: chạy tiếp một lượt đã dừng giữa chừng (lỗi mạng, chạm trần) thay vì
+chạy lại cả truyện (D-124). Đọc meta, setup, report, truth_dump, calls của lượt cũ; truyện cũ còn
+trong Neo4j + Postgres (`story_id` cũ) và phải đang ở đúng chương cuối đã ghi; tiếp từ chương kế
+tiếp, với lựa chọn đã bấm ở cuối chương cuối (dựng lại bằng seed). Kết quả ghi vào thư mục MỚI
+(`--label`/`--out`), sao chép phần cũ rồi nối tiếp; thư mục cũ giữ nguyên. `--budget` là trần TỔNG, số
+đã tiêu tính vào. Từ chối nếu commit, config, đề, model hay đề lời gọi khác lần đầu, trừ
+`--resume-allow-drift` (ghi vào meta `resume_drift`).
+
 Trần: `--budget` (USD) cho cả lần chạy. Trước mỗi lời gọi giữ chỗ chi phí tối đa của lời gọi đó
 (giá trong đề × token vào ước tính + `max_tokens_per_call` × giá ra), như bài D, nên không vượt
 trần; `max_tokens_per_call` được gửi kèm mọi lời gọi để con số tối đa là thật (D-43). Trần trong
@@ -102,7 +110,7 @@ from writory.pipeline.chapter import (
     config_problems,
     writer_tier,
 )
-from writory.pipeline.choices import Choice, ChoicesOutput, make_choices
+from writory.pipeline.choices import Choice, ChoicesOutput, LieEffect, make_choices
 from writory.pipeline.events import ChoicesReady, PlayerChoice, error_event
 from writory.pipeline.extract import ExtractOutput
 from writory.pipeline.pacing import stalled_after
@@ -348,8 +356,8 @@ class StepTracker(CostTracker):
     """CostTracker đếm cảnh. `ChapterRun` gọi `start_scene()` đầu mỗi cảnh và trước bước lựa
     chọn, nên mỗi lời gọi biết mình thuộc cảnh nào: dữ liệu để đặt trần `per_scene`."""
 
-    def __init__(self, limits) -> None:
-        super().__init__(limits)
+    def __init__(self, limits, *, story_spent_usd: float = 0.0) -> None:
+        super().__init__(limits, story_spent_usd=story_spent_usd)
         self.scene_no = 0
 
     def start_chapter(self) -> None:
@@ -368,7 +376,7 @@ class BudgetedClient(LLMClient):
     def __init__(
         self, inner: LLMClient, *, budget: Budget, prices: Mapping[str, Price], max_tokens: int,
         tracker: StepTracker, record: Callable[[dict[str, Any]], None],
-        clock: Callable[[], float] = time.perf_counter,
+        clock: Callable[[], float] = time.perf_counter, first_seq: int = 0,
     ) -> None:
         # Thân trả lời của lời gọi vừa xong (None khi lời gọi hỏng): chỉ để `StoryRun` ghi
         # `rejected.jsonl` khi nơi gọi từ chối thân đó (D-115). Không ghi vào calls.jsonl.
@@ -379,7 +387,7 @@ class BudgetedClient(LLMClient):
         self.chapter = 0
         self.attempt = 1
         self.halted: str | None = None
-        self._seq = 0
+        self._seq = first_seq  # chạy tiếp: số thứ tự lời gọi nối sau lượt cũ (D-124)
 
     @property
     def spent_usd(self) -> float:
@@ -465,6 +473,10 @@ class RunStore(ChapterStore, Protocol):
 
     def delete_story(self) -> None: ...
 
+    def scene_texts(self, number: int) -> list[str]:
+        """Các cảnh đã ghi của một chương, theo thứ tự (chạy tiếp tạo lại lựa chọn, D-124)."""
+        ...
+
 
 class GraphRunStore(GraphStore):
     """`GraphStore` (Neo4j + Postgres) với một story_id mới cho mỗi lần chạy."""
@@ -485,6 +497,11 @@ class GraphRunStore(GraphStore):
 
         delete_story_record(self._conn, self.story_id)
         delete_story(self._driver, self.story_id)
+
+    def scene_texts(self, number: int) -> list[str]:
+        from writory.db import chapter_scenes
+
+        return list(chapter_scenes(self._conn, self.story_id, number))
 
 
 # --- ghi đè đề (D-109) -------------------------------------------------------------------------
@@ -558,6 +575,8 @@ class RunOptions:
     # Đề ghi đè để so hai bản đề trên cùng một thế giới (D-109). Chỉ bộ đo; sản phẩm không có cờ này.
     prompt_variant: PromptVariant | None = None
     style_guide_path: Path | None = None  # file thay hướng dẫn văn phong; chữ nằm ở `style_guide`
+    resume: Path | None = None  # chạy tiếp lượt đã dừng ở thư mục kết quả này (D-124)
+    resume_allow_drift: bool = False  # cho chạy tiếp dù commit/config/đề/model khác lần đầu
 
 
 def player_action_text(choice: PlayerChoice) -> str:
@@ -608,6 +627,60 @@ def _choice_truth(c: Choice) -> dict[str, Any]:
             "lie": asdict(c.lie) if c.lie else None, "feeling": c.feeling}
 
 
+# Những gì phải giống lần đầu thì mới chạy tiếp được (D-124): khoá trong meta.json, dạng "a.b".
+RESUME_KEYS = (
+    "git.commit", "scenario.sha256", "config.sha256", "models", "max_tokens_per_call",
+    "prompt_versions", "style_guide_sha256", "prompt_variant", "prompt_versions_overridden",
+    "overrides", "context_flags", "page_quotes_top_k", "cost_limits", "dry_run",
+)
+
+
+def _dig(data: Mapping[str, Any], dotted: str) -> Any:
+    for part in dotted.split("."):
+        if not isinstance(data, Mapping):
+            return None
+        data = data.get(part)
+    return data
+
+
+def resume_drift(old: Mapping[str, Any], new: Mapping[str, Any]) -> list[dict[str, Any]]:
+    """Khoá của `RESUME_KEYS` mà meta lần đầu và meta lần này khác nhau (D-124)."""
+    return [{"key": k, "was": _dig(old, k), "now": _dig(new, k)}
+            for k in RESUME_KEYS if _dig(old, k) != _dig(new, k)]
+
+
+def spent_usd_of(calls: Sequence[Mapping[str, Any]]) -> float:
+    """Số đã tiêu tính vào trần `--budget`: chi phí thật, hoặc ước tính tối đa khi không rõ."""
+    return sum((c["cost_usd"] if c.get("cost_usd") is not None
+                else c.get("cost_estimated_usd")) or 0.0 for c in calls)
+
+
+def _read_rows(path: Path) -> list[dict[str, Any]]:
+    """Đọc JSONL của lượt cũ mà không sửa file: dòng cuối ghi dở thì bỏ, dòng giữa hỏng thì lỗi."""
+    lines = path.read_text(encoding="utf-8").split("\n")
+    out: list[dict[str, Any]] = []
+    for i, line in enumerate(lines):
+        if not line.strip():
+            continue
+        try:
+            out.append(json.loads(line))
+        except json.JSONDecodeError:
+            if i != len(lines) - 1 and any(x.strip() for x in lines[i + 1:]):
+                raise ConfigError(f"--resume: {path.name} dòng {i + 1} hỏng") from None
+    return out
+
+
+def _choice_from_truth(d: Mapping[str, Any]) -> Choice:
+    """Dựng lại lựa chọn phía máy chủ từ bản ghi truth_dump (`_choice_truth`)."""
+    lie = d.get("lie")
+    return Choice(
+        id=d["id"], kind=d["kind"], tone=d["tone"], text=d["text"],
+        listeners=tuple(d["listeners"]), about=tuple(d["about"]),
+        lie=LieEffect(lie["content"], tuple(lie["told_to"])) if lie else None,
+        feeling=d["feeling"],
+    )
+
+
 class StoryRun:
     """Một lần chạy cả truyện. `run()` trả mã thoát; mọi file kết quả được ghi kể cả khi dừng giữa
     chừng. `llm` là client thô (OpenRouter hoặc model giả); mọi lời gọi đi qua `BudgetedClient`
@@ -652,6 +725,13 @@ class StoryRun:
         self.finished = False  # chương cuối của kế hoạch đã ghi và kết truyện (D-50)
         self.progress: PlanProgress | None = None  # kế hoạch so với kết quả, tính lúc kết thúc
         self.started = ""
+        # Chạy tiếp (D-124): điền ở `_load_resume`.
+        self.resumed_from: str | None = None
+        self.resume_points: list[dict[str, Any]] = []
+        self.resume_drift: list[dict[str, Any]] = []
+        self._resume: dict[str, Any] | None = None
+        self._prior_spent = 0.0
+        self._prior_seq = 0
 
     # -- điều phối --
 
@@ -664,17 +744,23 @@ class StoryRun:
             raise ConfigError("lượt chạy thật cần --budget (USD)")
         if (self.options.out / "meta.json").exists():
             raise ConfigError(f"{self.options.out} đã có kết quả; dùng nhãn khác")
+        if self.options.resume is not None:
+            self._load_resume(self.options.resume)  # từ chối ở đây thì chưa ghi gì
         self.budgeted = BudgetedClient(
-            self.llm, budget=Budget("run", math.inf if budget is None else budget),
+            self.llm,
+            budget=Budget("run", math.inf if budget is None else budget,
+                          spent_usd=self._prior_spent),
             prices=self.scenario.prices, max_tokens=self.scenario.max_tokens_per_call,
-            tracker=self.tracker, record=self._record_call,
+            tracker=self.tracker, record=self._record_call, first_seq=self._prior_seq,
         )
         self.metered = MeteredClient(self.budgeted, self.tracker)
         self.started = datetime.now().astimezone().isoformat(timespec="seconds")
         self.files.write_meta(self._meta("running"))
         try:
             with watch_rejections(self._on_rejected):  # chỉ bộ đo cài móc này (D-115)
-                if await self._setup() and not self.options.setup_only:
+                if self._resume is not None:
+                    await self._resume_chapters()
+                elif await self._setup() and not self.options.setup_only:
                     await self._chapters()
         except Exception:  # noqa: BLE001 — lỗi của khung chạy: ghi lại, vẫn ghi đủ file
             self._stop("error", "harness", ErrorCode.INTERNAL_ERROR,
@@ -866,7 +952,11 @@ class StoryRun:
 
     # -- các chương --
 
-    async def _chapters(self) -> None:
+    async def _chapters(self, start: int = 1, present: tuple[str, ...] = (),
+                        action: str | None = None, choice: Choice | None = None,
+                        attempts_before: int = 0) -> None:
+        """Từ chương `start` tới chương cuối. Chạy tiếp (D-124): `present`, `action`, `choice` là kết
+        quả của chương trước; `attempts_before` là số lượt đã thử ở chương `start` ở lượt cũ."""
         assert self.plan is not None
         total = self.plan.total_chapters
         wanted = self.options.chapters
@@ -874,20 +964,18 @@ class StoryRun:
         self.clamped = wanted is not None and wanted > total
         if self.clamped:
             self._print(f"--chapters {wanted} vượt kế hoạch ({total} chương): dừng ở chương {total}")
-        present: tuple[str, ...] = ()
-        action: str | None = None
-        choice: Choice | None = None
-        for number in range(1, self.target + 1):
-            step = await self._chapter(number, present, action, choice)
+        for number in range(start, self.target + 1):
+            step = await self._chapter(number, present, action, choice,
+                                       attempts_before if number == start else 0)
             if step is None:
                 return
             action, present, choice = step
 
     async def _chapter(self, number: int, present: tuple[str, ...], action: str | None,
-                       choice: Choice | None):
+                       choice: Choice | None, attempts_before: int = 0):
         assert self.budgeted is not None and self.plan is not None
         retries = self.scenario.player_retries
-        for attempt in range(1, retries + 2):
+        for attempt in range(attempts_before + 1, attempts_before + retries + 2):
             self.budgeted.chapter, self.budgeted.attempt = number, attempt
             request = ChapterRequest(
                 present_ids=present, scene_count=self.scenario.scene_count, story_brief=self.brief,
@@ -934,7 +1022,7 @@ class StoryRun:
             if self.budgeted.halted:
                 self._stop("budget", f"chapter {number}", code or ErrorCode.COST_LIMIT_STORY,
                            out.error_detail)
-            elif code in RETRYABLE and attempt <= retries:
+            elif code in RETRYABLE and attempt <= attempts_before + retries:
                 self.retries_used["chapter"] += 1
                 continue
             else:
@@ -966,7 +1054,7 @@ class StoryRun:
             regenerated += 1
             self.retries_used["choices"] += 1
             try:
-                choices = await self._regenerate_choices(number, out)
+                choices = await self._regenerate_choices(number, out.scenes[-1].text)
             except WritoryError as e:
                 self._fail(f"chapter {number}: choices", attempt, e)
                 code = e.code
@@ -980,14 +1068,14 @@ class StoryRun:
         variant = self.options.prompt_variant
         return variant.texts() if variant is not None else None
 
-    async def _regenerate_choices(self, number: int, out: ChapterOutcome) -> list[Choice]:
+    async def _regenerate_choices(self, number: int, last_scene_text: str) -> list[Choice]:
         assert self.metered is not None and self.plan is not None
         self.tracker.start_scene()  # như bước lựa chọn trong ChapterRun
         state = self.store.state()
         return await make_choices(
             self.metered, require_model(self.config.models.roles, "choices"),
             view=self.store.player_view(number), protagonist_id=state.protagonist_id(),
-            last_scene_text=out.scenes[-1].text, truth_names=leak_names(state), plan=self.plan,
+            last_scene_text=last_scene_text, truth_names=leak_names(state), plan=self.plan,
             story_brief=self.brief,
             retries=self.config.limits.retries, extra=role_extra(self.config.models, "choices"),
             stalled=stalled_after(state, number, self.config.limits.context.standstill_chapters,
@@ -1004,10 +1092,13 @@ class StoryRun:
 
     def _carry_present(self, out: ChapterOutcome) -> tuple[str, ...]:
         """Nhân vật có mặt đầu chương sau = có mặt ở cảnh cuối chương này (chỉ id có thật)."""
-        if not out.scenes:
+        return self._present_after(out.scenes[-1].outline.present if out.scenes else ())
+
+    def _present_after(self, last_scene_present: Sequence[str]) -> tuple[str, ...]:
+        if not last_scene_present:
             return ()
         characters = {e.id for e in self.store.catalogue() if e.label == "Character"}
-        return tuple(p for p in dict.fromkeys(out.scenes[-1].outline.present) if p in characters)
+        return tuple(p for p in dict.fromkeys(last_scene_present) if p in characters)
 
     def _record_attempt(self, number: int, attempt: int, out: ChapterOutcome,
                         action: str | None) -> None:
@@ -1069,6 +1160,202 @@ class StoryRun:
         path = self.options.out / "chapters" / f"ch{number:02d}.md"
         path.parent.mkdir(parents=True, exist_ok=True)
         path.write_text("\n".join(lines) + "\n", encoding="utf-8", newline="\n")
+
+    # -- chạy tiếp (D-124) --
+
+    def _load_resume(self, source: Path) -> None:
+        """Đọc lượt cũ, kiểm mọi điều kiện rồi nạp trạng thái vào `self`. Từ chối (ConfigError) thì
+        chưa ghi gì: mọi kiểm tra xong mới sao chép file sang thư mục mới."""
+        o = self.options
+        if o.setup_from is not None or o.setup_only:
+            raise ConfigError("--resume không đi cùng --setup-from hay --setup-only")
+        try:
+            old = json.loads((source / "meta.json").read_text(encoding="utf-8"))
+            record = json.loads((source / "setup.json").read_text(encoding="utf-8"))
+            report = json.loads((source / "report.json").read_text(encoding="utf-8"))
+            truth = json.loads((source / "truth_dump.json").read_text(encoding="utf-8"))
+            calls = _read_rows(source / "calls.jsonl")
+            events = _read_rows(source / "events.jsonl")
+        except FileNotFoundError as e:
+            raise ConfigError(f"--resume: thiếu {Path(e.filename).name} trong {source}: lượt chạy "
+                              "chưa kịp ghi kết quả (bị ngắt cứng?), không chạy tiếp được") from None
+        except (OSError, ValueError) as e:
+            raise ConfigError(f"--resume: không đọc được {source}: {e}") from None
+        if old.get("bench") != "run" or truth.get("plan") is None:
+            raise ConfigError(f"--resume: {source} không phải kết quả chạy cả truyện đã khởi tạo xong")
+        if report.get("story_finished"):
+            raise ConfigError(f"--resume: truyện của {source} đã kết, không còn chương để viết tiếp")
+        if old["seed"] != self.seed:
+            raise ConfigError(f"--resume: seed {self.seed} khác seed {old['seed']} của {source}")
+        drift = resume_drift(old, self._meta("running"))
+        if drift and not o.resume_allow_drift:
+            listed = "; ".join(f"{d['key']} (trước {str(d['was'])[:60]}, nay {str(d['now'])[:60]})"
+                               for d in drift)
+            raise ConfigError(f"--resume: khác lần chạy đầu ở: {listed}. Muốn chạy tiếp dù vậy: "
+                              "--resume-allow-drift")
+        self.resume_drift = drift
+
+        packages = {int(n): ChangePackage.model_validate(p) for n, p in truth["packages"].items()}
+        last = max(packages)
+        if last < 1:
+            raise ConfigError(f"--resume: {source} mới có chương 0; dùng --setup-from để dựng lại")
+        from writory.db import StoryNotFoundError
+
+        try:
+            in_store = self.store.committed_chapter()
+        except StoryNotFoundError:
+            in_store = None
+        if in_store is None:
+            raise ConfigError(f"--resume: kho không còn truyện {self.store.story_id} "
+                              "(Neo4j + Postgres), không chạy tiếp được")
+        if in_store != last:
+            raise ConfigError(f"--resume: kho đang ở chương {in_store} còn thư mục kết quả ở chương "
+                              f"{last}; hai bên phải khớp")
+        budget = o.budget_usd
+        prior = round(spent_usd_of(calls), 6)
+        if budget is not None and budget <= prior:
+            raise ConfigError(f"--resume: trần --budget {budget} là trần tổng, đã tiêu {prior}; "
+                              "đặt trần lớn hơn số đã tiêu")
+
+        # Phát lại dãy chọn của lượt cũ bằng seed: khởi tạo rồi mỗi chương một lựa chọn.
+        choices_cfg = self.scenario.story_choices()
+        picked_opts: list[Any] = []
+        for step, cls in (("settings", setup_mod.SettingOption), ("plots", setup_mod.PlotOption),
+                          ("characters", setup_mod.CharacterOption)):
+            try:
+                options = [cls.model_validate(x) for x in record[step]["options"]]
+                index = self.rng.randrange(len(options))
+                if index != record[step]["picked"]:
+                    raise ValueError("lựa chọn khởi tạo không khớp seed")
+            except (KeyError, ValueError) as e:
+                raise ConfigError(f"--resume: seed không phát lại được khởi tạo bước {step}: "
+                                  f"{e}") from None
+            picked_opts.append(options[index])
+        picks = {e["chapter"]: e["index"] for e in events if e.get("type") == "choice_picked"}
+        last_choices: list[Choice] | None = None
+        last_index = 0
+        entry: dict[str, Any] = {}
+        for n in range(1, last + 1):
+            rows_n = truth["chapters"].get(str(n)) or []
+            if not rows_n:
+                raise ConfigError(f"--resume: truth_dump thiếu chương {n}")
+            entry = rows_n[-1]
+            chosen = [_choice_from_truth(c) for c in entry.get("choices") or []]
+            if n == last and (not chosen or n not in picks):
+                break  # chương cuối chưa có lựa chọn đã bấm: tạo/ chọn lại ở `_resume_chapters`
+            if not chosen:
+                raise ConfigError(f"--resume: chương {n} không có lựa chọn đã lưu")
+            index = self.rng.randrange(len(chosen))
+            if picks.get(n) != index:
+                raise ConfigError(f"--resume: seed không phát lại được lựa chọn ở chương {n}")
+            if n == last:
+                last_choices, last_index = chosen, index
+        outlines = entry.get("outlines") or []
+
+        self.resumed_from = repo_path(source)
+        self.resume_points = [
+            *old.get("resume_points", []),
+            {"chapter": last + 1, "at": datetime.now().astimezone().isoformat(timespec="seconds"),
+             "spent_usd_before": prior, "from_commit": (old.get("git") or {}).get("commit"),
+             "previous_stop": report.get("stop")},
+        ]
+        self.plan = StoryPlan.model_validate(truth["plan"])
+        self.packages = packages
+        self.setup_record = record
+        self.brief = story_brief(choices_cfg, *picked_opts, moderation=self.config.moderation)
+        self.attempts = list(report["chapters"])
+        self.truth_chapters = defaultdict(list, {k: list(v) for k, v in truth["chapters"].items()})
+        self.errors = list(truth.get("errors") or [])
+        self.quotes = list(truth.get("quotes") or [])
+        self.setup_repairs = list(truth.get("setup_repairs") or [])
+        self.retries_used = {**self.retries_used, **report.get("player_retries_used", {})}
+        self.rejected_bodies = report.get("rejected_bodies", 0)
+        self.calls = calls
+        self._prior_spent = spent_usd_of(calls)
+        self._prior_seq = max((c["seq"] for c in calls), default=0)
+        self.tracker = StepTracker(
+            self.config.limits.cost_usd,
+            story_spent_usd=sum(c.get("cost_usd") or 0.0 for c in calls))
+        self._resume = {
+            "last": last, "choices": last_choices, "picked": last_index, "entry": entry,
+            "present": [name for scene in outlines[-1:] for name in scene.get("present", [])],
+            "attempts_before": sum(1 for a in self.attempts if a["chapter"] == last + 1),
+            "setup_from": old.get("setup_from"),
+        }
+        self._copy_resume_files(source, calls, events)
+
+    def _copy_resume_files(self, source: Path, calls: Sequence[Mapping[str, Any]],
+                           events: Sequence[Mapping[str, Any]]) -> None:
+        """Sao chép phần cũ sang thư mục mới (thư mục cũ giữ nguyên) để nối tiếp vào đó."""
+        out = self.options.out
+        out.mkdir(parents=True, exist_ok=True)
+        for name, rows_ in (("calls.jsonl", calls), ("events.jsonl", events)):
+            for row in rows_:
+                self.files.append(name, dict(row))
+        if (source / "rejected.jsonl").exists():
+            for row in _read_rows(source / "rejected.jsonl"):
+                self.files.append("rejected.jsonl", row)
+        if (source / "chapters").is_dir():
+            (out / "chapters").mkdir(exist_ok=True)
+            for f in sorted((source / "chapters").iterdir()):
+                (out / "chapters" / f.name).write_bytes(f.read_bytes())
+
+    async def _resume_chapters(self) -> None:
+        """Tiếp từ chương kế tiếp chưa ghi, với lựa chọn đã bấm ở cuối chương cuối đã ghi."""
+        assert self._resume is not None and self.budgeted is not None
+        r = self._resume
+        last = r["last"]
+        self._event({"type": "run_resumed", "from_chapter": last + 1,
+                     "spent_usd_before": self.resume_points[-1]["spent_usd_before"]})
+        self._print(f"[chạy tiếp] từ chương {last + 1}; đã tiêu {self.budgeted.spent_usd:.4f} USD")
+        chosen = r["choices"]
+        if chosen is None:  # chương cuối ghi xong mà chưa có lựa chọn đã bấm
+            chosen_pair = await self._resume_choices(last, r["entry"])
+            if chosen_pair is None:
+                return
+            choices, picked = chosen_pair
+        else:
+            choices, picked = chosen, r["picked"]
+        choice = choices[picked]
+        await self._chapters(
+            last + 1, self._present_after(r["present"]), player_action_text(choice.for_player()),
+            choice, r["attempts_before"])
+
+    async def _resume_choices(self, number: int, entry: Mapping[str, Any]
+                              ) -> tuple[list[Choice], int] | None:
+        """Chương cuối đã ghi mà chưa có bộ lựa chọn đã bấm: tạo lại như người chơi bấm thử lại."""
+        assert self.budgeted is not None
+        scenes = self.store.scene_texts(number)
+        if not scenes:
+            self._stop("error", f"resume: chương {number}", ErrorCode.INTERNAL_ERROR,
+                       "kho không còn văn của chương cuối")
+            return None
+        retries = self.scenario.player_retries
+        self.budgeted.chapter, self.budgeted.attempt = number, int(entry.get("attempt", 1))
+        for i in range(retries + 1):
+            try:
+                choices = await self._regenerate_choices(number, scenes[-1])
+                break
+            except WritoryError as e:
+                self._fail(f"chapter {number}: choices", self.budgeted.attempt, e)
+                if self.budgeted.halted:
+                    self._stop("budget", f"chapter {number}", e.code, e.detail)
+                    return None
+                if e.code in RETRYABLE and i < retries:
+                    self.retries_used["choices"] += 1
+                    continue
+                self._stop("error", f"chapter {number}: choices", e.code, e.detail)
+                return None
+        else:  # pragma: no cover — vòng lặp luôn break hoặc return
+            return None
+        ready = ChoicesReady(chapter=number, choices=[c.for_player() for c in choices])
+        self._event({"chapter": number, "attempt": self.budgeted.attempt,
+                     **ready.model_dump(mode="json")})
+        self.truth_chapters[str(number)][-1]["choices"] = [_choice_truth(c) for c in choices]
+        picked = self._pick_choice(number, choices)
+        self._write_chapter(number, scenes, entry.get("player_action"), choices, picked,
+                            status=None)
+        return choices, picked
 
     # -- kết thúc --
 
@@ -1151,7 +1438,8 @@ class StoryRun:
             "page_quotes_top_k": self.config.limits.context.page_quotes_top_k,  # 0 = tắt (D-85)
             "context_flags": {  # ba cờ của đề v3 (D-110, D-111)
                 k: getattr(self.config.limits.context, k) for k in CONTEXT_FLAGS},
-            "setup_from": repo_path(self.options.setup_from) if self.options.setup_from else None,
+            "setup_from": (repo_path(self.options.setup_from) if self.options.setup_from
+                           else (self._resume or {}).get("setup_from")),
             "setup_only": self.options.setup_only,
             "overrides": self.options.overrides.as_meta(),
             "prompt_versions": {
@@ -1168,7 +1456,18 @@ class StoryRun:
             "prompt_versions_overridden": prompt_versions_overridden(
                 self.options.prompt_variant, self.options.style_guide_path),
             "cost_limits": self.config.limits.cost_usd.model_dump(),
+            **self._resume_meta(),
         }
+
+    def _resume_meta(self) -> dict[str, Any]:
+        """Chỉ lượt chạy tiếp mới có các khoá này (D-124)."""
+        if self.resumed_from is None:
+            return {}
+        out: dict[str, Any] = {"resumed_from": self.resumed_from,
+                               "resume_points": self.resume_points}
+        if self.resume_drift:
+            out["resume_drift"] = self.resume_drift
+        return out
 
 
 # --- báo cáo ---------------------------------------------------------------------------------
@@ -1321,6 +1620,8 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         # Ngoại hình của khởi tạo có phân biệt được nhau không: số đếm, không chữ (D-122).
         "appearance_variety": (setup_mod.appearance_variety(run.packages[0])
                                if 0 in run.packages else None),
+        **({"resumed_from": run.resumed_from, "resume_points": run.resume_points}
+           if run.resumed_from is not None else {}),
         "chapters": run.attempts,
     }
 
@@ -1761,6 +2062,15 @@ async def _cli(args: argparse.Namespace) -> int:
     out, label = resolve_out(args)
     if (out / "meta.json").exists():
         raise ConfigError(f"{out} đã có kết quả; dùng nhãn khác")
+    resume_story_id: str | None = None
+    if args.resume:
+        if args.setup_from or args.setup_only:
+            raise ConfigError("--resume không đi cùng --setup-from hay --setup-only")
+        try:
+            resume_story_id = json.loads(
+                (Path(args.resume) / "meta.json").read_text(encoding="utf-8"))["story_id"]
+        except (OSError, ValueError, KeyError) as e:
+            raise ConfigError(f"--resume: không đọc được meta.json của {args.resume}: {e}") from None
 
     import psycopg
     from neo4j import GraphDatabase
@@ -1796,7 +2106,7 @@ async def _cli(args: argparse.Namespace) -> int:
         except (DriverError, Neo4jError) as e:
             raise ConfigError(f"không kết nối được Neo4j: {redact(str(e))}") from None
         migrate(conn)
-        store = GraphRunStore(conn, driver, _story_id(label))
+        store = GraphRunStore(conn, driver, resume_story_id or _story_id(label))
         run = StoryRun(
             scenario, scenario_sha, config, llm=llm, store=store,
             options=RunOptions(out=out, budget_usd=args.budget, chapters=args.chapters,
@@ -1806,7 +2116,9 @@ async def _cli(args: argparse.Namespace) -> int:
                                setup_from=Path(args.setup_from) if args.setup_from else None,
                                setup_only=args.setup_only, overrides=overrides,
                                prompt_variant=prompts.variant,
-                               style_guide_path=prompts.style_guide_path),
+                               style_guide_path=prompts.style_guide_path,
+                               resume=Path(args.resume) if args.resume else None,
+                               resume_allow_drift=args.resume_allow_drift),
             style_guide=prompts.style_guide,
         )
         return await run.run()
@@ -1834,6 +2146,11 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--seed", type=int, help="ghi đè seed của đề")
     p.add_argument("--setup-from", help="thư mục kết quả của lần chạy trước: dùng lại khởi tạo "
                    "của nó (kế hoạch, chương 0, lựa chọn khởi tạo), không gọi model khởi tạo")
+    p.add_argument("--resume", help="thư mục kết quả của một lượt đã dừng giữa chừng: chạy tiếp từ "
+                   "chương kế tiếp chưa ghi (truyện còn trong Neo4j + Postgres), ghi vào thư mục "
+                   "mới; --budget là trần tổng (D-124)")
+    p.add_argument("--resume-allow-drift", action="store_true",
+                   help="cho --resume chạy dù commit, config, đề hay model khác lần đầu; ghi vào meta")
     p.add_argument("--setup-only", action="store_true",
                    help="chỉ khởi tạo (chương 0) rồi dừng; thư mục kết quả dùng làm --setup-from")
     p.add_argument("--writer-model", help="ghi đè model viết của mức mà đề dùng (D-101)")
