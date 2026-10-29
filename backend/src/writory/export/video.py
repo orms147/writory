@@ -1,4 +1,4 @@
-"""Bộ xuất kịch bản video: điều phối, trần chi phí, ghi file, lệnh (D-124, D-118).
+"""Bộ xuất kịch bản video: điều phối, trần chi phí, ghi file, lệnh (D-125, D-118).
 
     cd backend && uv run python -m writory.export.video --story <id> --dialogue-lang zh \\
         --chapters 1-3 --budget 0.10 [--out <thư mục>] [--env-file <file>]
@@ -623,7 +623,7 @@ async def run(args: argparse.Namespace, *, source: StorySource | None = None,
             raise ConfigError("--sheets-only không dùng model: bỏ --dry-run và --budget")
         out = Path(args.out) if args.out else default_out(args.story, today)
         if args.no_moderate and not args.sheets_only:
-            print("CẢNH BÁO: --no-moderate: prompt cuối KHÔNG qua kiểm duyệt G9 (D-124); admin chịu "
+            print("CẢNH BÁO: --no-moderate: prompt cuối KHÔNG qua kiểm duyệt G9 (D-125); admin chịu "
                   "trách nhiệm trước khi đưa sang app video.", file=sys.stderr)
         services = driver = None
         if source is None:

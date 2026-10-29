@@ -57,7 +57,7 @@ class GraphState(Protocol):
 
     def all_nodes(self) -> dict[str, NodeRow]:
         """Mọi nút của truyện (id → nhãn loại + thuộc tính của truyện), lớp truth. Cho bộ xuất kịch bản
-        video (D-124), không cho đường người chơi."""
+        video (D-125), không cho đường người chơi."""
         ...
 
 

@@ -1155,7 +1155,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** lời thoại im lặng với người ẩn danh bị mất khỏi bộ (người chơi còn 2 lựa chọn, ô tự viết vẫn luôn có). Một lần mạng đứt dài hơn 40 giây vẫn giết chương (người chơi bấm thử lại); không có chờ ở bước khởi tạo ngoài `with_json_retries` nên bước khởi tạo cũng được chờ. Chưa đo trên mạng chập thật.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh fix/transient-backoff-and-silence · 29/10/2026
 
-## D-124 · Bộ xuất kịch bản video: lệnh của admin, package `export/`, vai model `video`, trần chi phí ở limits.yaml (thực hiện D-118)
+## D-125 · Bộ xuất kịch bản video: lệnh của admin, package `export/`, vai model `video`, trần chi phí ở limits.yaml (thực hiện D-118)
 - **Bối cảnh:** D-118 chọn nguồn là toàn bộ `truth` và đầu ra là danh sách shot kèm prompt; D-120 đã sinh `appearance` và `visual` ở khởi tạo. Chủ dự án quyết 29/10/2026 làm bộ xuất ngay, và chỉ admin cầm DB mới xuất được.
 - **Quyết định (phạm vi: Chủ dự án; thiết kế: Claude):**
   - Lệnh `python -m writory.export.video --story <id> --dialogue-lang <zh|vi|en…> [--chapters A-B] --budget <USD>`. Không endpoint, không nút: "chỉ admin" nghĩa là chỉ ai có `POSTGRES_DSN` và `NEO4J_*` của máy mới chạy được. Chỉ đọc, không ghi DB nào. Mặc định ghi `exports/<story>-<ngày>/` (`.gitignore`), mở đầu bằng cảnh báo lộ bí mật. Hai chế độ không tốn tiền: `--sheets-only` (chỉ phần bằng code) và `--dry-run` (model giả).

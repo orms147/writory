@@ -1,4 +1,4 @@
-"""Bộ xuất kịch bản video (D-124, D-118): đọc TOÀN BỘ lớp `truth` của một truyện và chữ các chương đã
+"""Bộ xuất kịch bản video (D-125, D-118): đọc TOÀN BỘ lớp `truth` của một truyện và chữ các chương đã
 đọc, xuất danh sách shot kèm prompt tiếng Anh dán thẳng vào app video, bảng nhân vật, bảng nơi chốn và sơ
 đồ tuyến nhân vật theo chương.
 

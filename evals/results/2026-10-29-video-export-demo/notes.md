@@ -1,6 +1,6 @@
 # Nhận xét đọc tay: video-export-demo
 
-Người đọc: Claude, 29/10/2026. Đây là kết quả đo của bộ xuất kịch bản video (D-124, thực hiện D-118): MỘT lần chạy, MỘT truyện, một ngôn ngữ thoại. File xuất có lộ bí mật (dựng từ toàn bộ lớp `truth`), có cảnh báo ở đầu `script.md` và `script.json`; thư mục này là kết quả đo được commit theo quyết định của chủ dự án, bản xuất thật mặc định nằm ở `exports/` (git bỏ qua).
+Người đọc: Claude, 29/10/2026. Đây là kết quả đo của bộ xuất kịch bản video (D-125, thực hiện D-118): MỘT lần chạy, MỘT truyện, một ngôn ngữ thoại. File xuất có lộ bí mật (dựng từ toàn bộ lớp `truth`), có cảnh báo ở đầu `script.md` và `script.json`; thư mục này là kết quả đo được commit theo quyết định của chủ dự án, bản xuất thật mặc định nằm ở `exports/` (git bỏ qua).
 
 ## Lần chạy được commit
 - Lệnh (chạy trong `backend/`): `uv run python -m writory.export.video --story run-20261021-ky-ao-vua-2-f8a61160 --dialogue-lang zh --chapters 1-3 --budget 0.10 --env-file <.env của chủ dự án> --out ../evals/results/2026-10-29-video-export-demo`.

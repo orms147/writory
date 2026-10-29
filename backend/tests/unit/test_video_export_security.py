@@ -1,4 +1,4 @@
-"""Bộ xuất kịch bản video đọc TOÀN BỘ lớp truth nên chỉ admin cầm DB được chạy (D-124, D-118): không có
+"""Bộ xuất kịch bản video đọc TOÀN BỘ lớp truth nên chỉ admin cầm DB được chạy (D-125, D-118): không có
 đường nào từ app tới nó, nó chỉ đọc, và bản xuất thật không bao giờ lọt vào git. docs/security.md."""
 
 import re

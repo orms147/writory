@@ -1,4 +1,4 @@
-"""Bộ xuất kịch bản video (writory/export/, D-124): phần bằng code, phần dùng model với model giả, trần
+"""Bộ xuất kịch bản video (writory/export/, D-125): phần bằng code, phần dùng model với model giả, trần
 chi phí, kiểm duyệt, ghi file và lệnh. Không mạng, không Docker: đồ thị dựng bằng OverlayState."""
 
 import json

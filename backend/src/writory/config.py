@@ -147,7 +147,7 @@ class ContextLimits(_Section):
 
 
 class VideoExportLimits(_Section):
-    """Bộ xuất kịch bản video (D-124): chỉ admin chạy bằng lệnh, bằng key của chủ dự án. Số tạm (D-47)."""
+    """Bộ xuất kịch bản video (D-125): chỉ admin chạy bằng lệnh, bằng key của chủ dự án. Số tạm (D-47)."""
 
     _path = "video_export"
     _file = "limits.yaml"
@@ -239,7 +239,7 @@ class RoleModels(_Section):
     setup: str | None
     summary: str | None = None  # tóm tắt chương vừa ghi (D-49)
     moderate: str | None = None  # kiểm duyệt nội dung, G9 (D-57)
-    video: str | None = None  # bộ xuất kịch bản video, chỉ admin chạy bằng lệnh (D-124)
+    video: str | None = None  # bộ xuất kịch bản video, chỉ admin chạy bằng lệnh (D-125)
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]

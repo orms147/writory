@@ -1,4 +1,4 @@
-"""Phần của bộ xuất kịch bản video làm bằng code (D-124): bảng nhân vật, bảng nơi chốn, sơ đồ tuyến theo
+"""Phần của bộ xuất kịch bản video làm bằng code (D-125): bảng nhân vật, bảng nơi chốn, sơ đồ tuyến theo
 chương dựng từ đồ thị, và nhân vật có mặt trong một cảnh. Không gọi model, không tốn tiền.
 
 Đọc lớp `truth` qua `GraphState` (Neo4jState ở lệnh thật, OverlayState ở test; G10: Cypher chỉ nằm

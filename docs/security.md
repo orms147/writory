@@ -15,7 +15,7 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 | T5 | Nội dung cấm | người chơi lái truyện sang nội dung tình dục liên quan trẻ vị thành niên hoặc nội dung vượt mức u tối đã chọn |
 | T6 | Lộ dữ liệu giữa người dùng | truy vấn đồ thị quên lọc `story_id` |
 | T7 | Ghi dữ liệu hỏng vào đồ thị | JSON trích sai schema, thực thể bịa, ghi nửa chừng |
-| T9 | Lộ truth qua bản xuất kịch bản video (D-124) | bản xuất dựng từ toàn bộ lớp `truth`, nên có bí mật; lọt tới người chơi, vào git hoặc bị ai đó chạy được |
+| T9 | Lộ truth qua bản xuất kịch bản video (D-125) | bản xuất dựng từ toàn bộ lớp `truth`, nên có bí mật; lọt tới người chơi, vào git hoặc bị ai đó chạy được |
 | T8 | Dùng tài khoản của người khác | đoán hay trộm mã mời, trộm token phiên, trang khác gửi yêu cầu kèm cookie của người chơi (CSRF), gọi API truyện của người khác bằng `story_id` |
 
 ## Guardrail
@@ -54,7 +54,7 @@ G1 với ngoại hình và cảnh sắc của khởi tạo (D-120, lớp `truth`
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
 
-## Bản xuất kịch bản video (D-124, T9)
+## Bản xuất kịch bản video (D-125, T9)
 Bản xuất đọc toàn bộ `truth` (D-118), nên G1 không áp cho nó; thay vào đó có các ràng buộc sau, đều có test (`backend/tests/unit/test_video_export_security.py`, `test_video_export.py`):
 - Không có đường nào tới người chơi: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới export hay video, và không file nào ngoài `export/` nhập `writory.export`. Chạy được chỉ khi có `POSTGRES_DSN` và `NEO4J_*` của máy (admin cầm DB).
 - Chỉ đọc: mã nguồn `export/` không có hàm ghi nào của `db/` hay `graph/`, không có `execute_write` hay câu lệnh ghi.
