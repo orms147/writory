@@ -68,6 +68,7 @@ flowchart TD
   m_llm["llm/: client OpenRouter, trần chi phí, nhật ký"]
   m_db["db/: Postgres"]
   m_graph["graph/: lớp DUY NHẤT có Cypher"]
+  m_export["export/: xuất kịch bản video, chỉ admin chạy bằng lệnh"]
   neo[("Neo4j")]
   pg[("Postgres")]
   m_api --> m_pipeline
@@ -83,6 +84,10 @@ flowchart TD
   m_pipeline --> m_graph
   m_pipeline -->|qua pipeline/store.py, riêng bộ đo bench_run.py gọi thẳng| m_db
   m_guard --> m_graph
+  m_export -->|guard/state.py Neo4jState: đọc cả truth| m_guard
+  m_export --> m_db
+  m_export --> m_llm
+  m_export --> m_safety
   m_safety --> m_graph
   m_safety --> m_llm
   m_db -->|commit_chapter gọi apply_package| m_graph
@@ -93,6 +98,20 @@ flowchart TD
 - **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` đọc hay ghi dữ liệu truyện đều kiểm `story_id` bằng `require_story_id` (`graph/story.py`), trực tiếp hoặc qua hàm chung (ví dụ `_read` trong `graph/queries.py`, hay `apply_package`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Test nhanh `tests/unit/test_cypher_boundary.py` quét mọi file `.py` của `src/writory` ngoài `graph/`, tìm mệnh đề Cypher và lời gọi chạy truy vấn của driver (D-106). Hiện không có ngoại lệ.
 - **Phụ thuộc vào kiểu dữ liệu.** `pipeline/story_plan.py` (`StoryPlan`) chỉ là kiểu dữ liệu, nên `guard/`, `safety/leak.py` và `db/` đều nhập nó. `graph/context.py` nhập `safety/wrap.py` (`UserAuthored`) để bọc chữ người chơi viết khi đọc lại từ đồ thị (G4). Hai mũi tên này không vẽ trên sơ đồ.
 - **Gốc gói.** `config.py` (nạp và kiểm `config/*.yaml` bằng pydantic) và `errors.py` (mã lỗi, câu cho người chơi) được mọi module dùng (D-13). Hai file này không vẽ trên sơ đồ.
+- **`export/` (D-123) không có đường nào từ `api/` hay giao diện.** Bộ xuất kịch bản video đọc toàn bộ `truth` (kể cả bí mật) nên chỉ chạy bằng lệnh của admin cầm DB; nó chỉ đọc, và không module nào ngoài chính nó nhập nó (test: `tests/unit/test_video_export_security.py`). Luồng:
+
+```mermaid
+flowchart LR
+  cmd["lệnh python -m writory.export.video (admin)"] --> src["đọc: db.chapters.chapter_scenes + Neo4jState (all_nodes, edges_at)"]
+  src --> code["sheets.py, bằng code: bảng nhân vật, bảng nơi chốn, sơ đồ Mermaid theo chương, nhân vật có mặt trong cảnh"]
+  src --> sheet["shots.py, vai video: mô tả tiếng Anh cố định, 1 lời gọi"]
+  sheet --> scene["shots.py, vai video: chia shot và dịch thoại, 1 lời gọi mỗi cảnh"]
+  scene --> asm["shots.assemble_prompt, bằng code: chép nguyên văn mô tả nhân vật"]
+  asm --> mod["safety.moderate (G9) trên prompt của cảnh"]
+  mod --> files["script.md, script.json, prompts.txt, calls.jsonl"]
+  code --> files
+```
+  Mọi lời gọi model đi qua `ExportClient`: giữ chỗ chi phí tối đa trong `--budget` trước khi gọi (G8), không ghi chữ truyện vào nhật ký. Lệnh chạy: `docs/runbook.md`.
 - **Bộ đo** nằm trong chính module được đo (D-24), ví dụ `guard/bench_b.py`, `pipeline/bench_a*.py`. Xem mục 12.
 
 ## 4. Khởi tạo truyện

@@ -14,6 +14,7 @@ roles:
   setup: openai/gpt-6-luna      # khởi tạo truyện: bối cảnh, cốt truyện, nhân vật, kế hoạch + chương 0 (D-39; tạm, D-47)
   summary: openai/gpt-6-luna    # tóm tắt chương vừa ghi cho đề các chương sau (D-49; tạm, D-47)
   moderate: openai/gpt-6-luna   # kiểm duyệt nội dung đầu vào và đầu ra, G9 (D-57; tạm, D-47)
+  video: openai/gpt-6-luna      # bộ xuất kịch bản video: mô tả cố định, chia shot, dịch thoại (D-123; tạm, D-47)
 
 # Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model.
 role_reasoning:
@@ -25,6 +26,7 @@ role_reasoning:
   setup: low
   summary: low
   moderate: low
+  video: low
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
 # D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).

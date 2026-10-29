@@ -1,0 +1,669 @@
+"""Bộ xuất kịch bản video: điều phối, trần chi phí, ghi file, lệnh (D-123, D-118).
+
+    cd backend && uv run python -m writory.export.video --story <id> --dialogue-lang zh \\
+        --chapters 1-3 --budget 0.10 [--out <thư mục>] [--env-file <file>]
+
+CHỈ admin cầm DB chạy được: cần POSTGRES_DSN và NEO4J_* của máy; không endpoint, không nút (xem
+`writory.export.__doc__`). Chỉ đọc, không ghi Postgres hay Neo4j. File xuất có lộ bí mật nên mặc định
+nằm ở `exports/` (git bỏ qua) và mở đầu bằng cảnh báo.
+
+Chế độ: `--sheets-only` (chỉ phần bằng code, không model, không key, không tốn tiền), `--dry-run` (model
+giả, không mạng, không key), mặc định là chạy thật: bắt buộc `--budget` (USD) và không được vượt
+`limits.video_export.max_budget_usd` (G8). Key: chỉ OPENROUTER_API_KEY của chủ dự án, từ biến môi trường
+hoặc `--env-file`; không in, không ghi (G7). Hết trần giữa chừng thì dừng, vẫn ghi phần đã xong (mã thoát
+2). Kiểm duyệt G9 trên prompt cuối của mỗi cảnh bật mặc định; `--no-moderate` tắt và in cảnh báo.
+
+Mã thoát: 0 xong; 1 sai cấu hình hay tham số; 2 dừng vì chạm `--budget`; 3 có cảnh lỗi (đã ghi phần còn lại).
+"""
+
+import argparse
+import asyncio
+import json
+import logging
+import math
+import re
+import sys
+from collections.abc import AsyncIterator, Callable, Mapping, Sequence
+from dataclasses import asdict, dataclass, field
+from datetime import date
+from pathlib import Path
+from typing import Any
+
+from pydantic import BaseModel, SecretStr
+from pydantic_settings import BaseSettings, SettingsConfigDict
+
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    ConfigError,
+    ModelPrice,
+    load_config,
+)
+from writory.errors import ErrorCode, WritoryError
+from writory.export import sheets, shots
+from writory.graph.package import quote_in_text
+from writory.guard.state import GraphState
+from writory.llm.base import (
+    ChatResult,
+    LLMClient,
+    Message,
+    StreamEvent,
+    Usage,
+    require_model,
+    role_extra,
+)
+from writory.llm.fake import FakeLLM
+from writory.quality.bench_d import EST_CHARS_PER_TOKEN, Budget, BudgetExceeded, load_keys
+from writory.safety.moderate import Source, Verdict, moderate
+from writory.safety.redact import install_log_redaction
+
+log = logging.getLogger(__name__)
+
+FORMAT = "writory-video-script/1"
+DEFAULT_OUT_ROOT = REPO_ROOT / "exports"  # .gitignore: không bao giờ commit bản xuất thật
+EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ERRORS = 0, 1, 2, 3
+DRY_RUN_COST_USD = 0.0001
+WARNING = (
+    "SPOILER / TRUTH WARNING: this file is built from the full truth layer of the story (secrets, "
+    "backstage, what characters hide) and from text the reader has seen. It reveals everything. Do not "
+    "show it to players. | CẢNH BÁO LỘ BÍ MẬT: bản xuất dựng từ toàn bộ lớp truth của truyện; chỉ admin "
+    "được giữ, không đưa cho người chơi."
+)
+
+
+# --- nguồn dữ liệu ------------------------------------------------------------------------------
+
+
+@dataclass
+class StorySource:
+    """Truyện đã đọc vào bộ nhớ: chữ các cảnh đã commit của các chương được chọn và trạng thái đồ thị."""
+
+    story_id: str
+    chapters: dict[int, list[str]]  # số chương -> chữ từng cảnh, đúng chữ người đọc đã đọc
+    state: GraphState
+
+
+def parse_chapters(spec: str | None, last: int) -> list[int]:
+    """`--chapters`: "N", "A-B" hoặc để trống (cả truyện, 1..last)."""
+    if spec is None:
+        return list(range(1, last + 1))
+    found = re.fullmatch(r"(\d+)(?:-(\d+))?", spec.strip())
+    if not found:
+        raise ConfigError(f"--chapters {spec!r}: dạng N hoặc A-B, ví dụ 1-3")
+    low = int(found.group(1))
+    high = int(found.group(2) or low)
+    if low < 1 or high < low:
+        raise ConfigError(f"--chapters {spec!r}: cần 1 <= A <= B")
+    if low > last:
+        raise ConfigError(f"--chapters {spec!r}: truyện mới có {last} chương đã commit")
+    return list(range(low, min(high, last) + 1))
+
+
+# --- client có trần chi phí (G8) -----------------------------------------------------------------
+
+_ROLE_BY_SCHEMA = {"SheetOutput": shots.ROLE, "SceneOutput": shots.ROLE, "ModerationOutput": "moderate"}
+
+
+class ExportClient(LLMClient):
+    """Giữ chỗ chi phí tối đa của lời gọi trong ngân sách của cả lần xuất trước khi gọi, gửi kèm
+    `max_tokens`, và ghi mỗi lời gọi một dòng (vai, model, token, chi phí). Không ghi chữ của lời gọi hay
+    của câu trả lời (chữ truyện là truth)."""
+
+    def __init__(self, inner: LLMClient, *, budget: Budget, prices: Mapping[str, ModelPrice],
+                 max_tokens: int, record: Callable[[dict[str, Any]], None]) -> None:
+        self._inner, self._budget, self._prices = inner, budget, prices
+        self._max_tokens, self._record = max_tokens, record
+        self.halted: str | None = None
+        self._seq = 0
+
+    @property
+    def spent_usd(self) -> float:
+        return self._budget.spent_usd
+
+    def estimate(self, model: str, messages: Sequence[Message],
+                 schema: type[BaseModel] | None) -> float:
+        price = self._prices[model]
+        chars = sum(len(m.content) for m in messages)
+        if schema is not None:
+            chars += len(json.dumps(schema.model_json_schema(), ensure_ascii=False))
+        return (math.ceil(chars / EST_CHARS_PER_TOKEN) * price.input
+                + self._max_tokens * price.output) / 1e6
+
+    async def chat(self, model: str, messages: list[Message], *,
+                   response_schema: type[BaseModel] | None = None,
+                   extra: Mapping[str, Any] | None = None) -> ChatResult:
+        if model not in self._prices:
+            raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET,
+                               detail=f"models.yaml không có giá cho {model}")
+        estimate = self.estimate(model, messages, response_schema)
+        try:
+            held = self._budget.reserve(estimate)
+        except BudgetExceeded as e:
+            self.halted = str(e)
+            raise WritoryError(ErrorCode.COST_LIMIT_STORY, detail=f"trần --budget: {e}") from None
+        body = dict(extra or {})
+        body["max_tokens"] = min(body.get("max_tokens", self._max_tokens), self._max_tokens)
+        self._seq += 1
+        row = {"seq": self._seq,
+               "role": _ROLE_BY_SCHEMA.get(response_schema.__name__ if response_schema else "", "?"),
+               "model": model, "reserved_usd": round(estimate, 6)}
+        try:
+            result = await self._inner.chat(model, messages, response_schema=response_schema,
+                                            extra=body)
+        except WritoryError as e:
+            billed = estimate if e.code is ErrorCode.LLM_TIMEOUT else 0.0
+            self._budget.settle(held, billed)
+            self._record(row | {"status": e.code.value, "cost_usd": None,
+                                "cost_estimated_usd": billed or None})
+            raise
+        except BaseException:
+            self._budget.settle(held, estimate)  # có thể đã bị tính tiền: tính theo mức tối đa
+            self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
+                                "cost_estimated_usd": estimate})
+            raise
+        cost = result.usage.cost_usd
+        self._budget.settle(held, estimate if cost is None else cost)
+        self._record(row | {
+            "status": "ok", "served_model": result.model, "cost_usd": cost,
+            "cost_estimated_usd": estimate if cost is None else None,
+            "prompt_tokens": result.usage.prompt_tokens,
+            "completion_tokens": result.usage.completion_tokens})
+        return result
+
+    def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
+        raise NotImplementedError("bộ xuất không dùng stream")
+
+
+# --- model giả cho --dry-run và test -------------------------------------------------------------
+
+
+class DryRunLLM(FakeLLM):
+    """`--dry-run`: trả câu ghi sẵn theo schema, đủ hợp lệ để đi hết đường. Không mạng, không key."""
+
+    def __init__(self, *, cost_usd: float | None = DRY_RUN_COST_USD) -> None:
+        super().__init__([], cost_usd=cost_usd)
+
+    @staticmethod
+    def reply(schema: str | None, text: str) -> dict[str, Any]:
+        if schema == "SheetOutput":
+            head, _, tail = text.partition("Locations:")
+
+            def ids(block: str) -> list[str]:
+                return re.findall(r"^- id: (\S+)", block, re.MULTILINE)
+
+            return {"characters": [{"id": i, "visual_en": f"dry-run look of {i}", "dialogue_name": i}
+                                   for i in ids(head)],
+                    "locations": [{"id": i, "visual_en": f"dry-run view of {i}", "dialogue_name": i}
+                                  for i in ids(tail)]}
+        if schema == "SceneOutput":
+            cast = text.split("Characters you may use (id: name):", 1)[-1]
+            people, _, places = cast.partition("Locations you may use (id: name):")
+            who = re.findall(r"^- ([A-Za-z0-9_]+):", people, re.MULTILINE)[:1]
+            where = re.findall(r"^- ([A-Za-z0-9_]+):", places, re.MULTILINE)[:1] or ["unknown"]
+            return {"shots": [{
+                "location_id": where[0], "time_of_day": "unknown", "shot_size": "medium",
+                "camera_angle": "eye_level", "camera_move": "static", "duration_s": 5,
+                "appears": who, "action_en": "A dry-run action happens in the scene.",
+                "dialogue": [], "covers": ""}]}
+        if schema == "ModerationOutput":
+            return {"findings": [], "reason": "dry-run"}
+        raise AssertionError(f"DryRunLLM không biết schema {schema!r}")
+
+    async def chat(self, model, messages, *, response_schema=None, extra=None) -> ChatResult:
+        self.calls.append(list(messages))
+        self.extras.append(extra)
+        if response_schema is not None:
+            self.schemas.append(response_schema)
+        body = self.reply(response_schema.__name__ if response_schema else None, messages[-1].content)
+        text = json.dumps(body, ensure_ascii=False)
+        chars = sum(len(m.content) for m in messages)
+        usage = Usage(prompt_tokens=math.ceil(chars / EST_CHARS_PER_TOKEN),
+                      completion_tokens=math.ceil(len(text) / EST_CHARS_PER_TOKEN),
+                      cost_usd=self._cost_usd)
+        return ChatResult(text=text, usage=usage, model=model, finish_reason="stop")
+
+
+# --- kết quả ------------------------------------------------------------------------------------
+
+
+@dataclass
+class ShotOut:
+    n: int
+    location_id: str
+    location: str | None
+    time_of_day: str
+    shot_size: str
+    camera_angle: str
+    camera_move: str
+    duration_s: int
+    appears: list[str]
+    appears_names: list[str]
+    action_en: str
+    dialogue: list[dict[str, str]]
+    covers: str
+    covers_verified: bool
+    prompt_en: str | None  # None: bị giữ lại vì kiểm duyệt chặn cứng (G9)
+
+
+@dataclass
+class SceneOut:
+    chapter: int
+    scene: int
+    status: str  # ok | skipped_budget | error | withheld_moderation
+    shots: list[ShotOut] = field(default_factory=list)
+    moderation: dict[str, Any] | None = None
+    error: str | None = None
+
+
+@dataclass
+class Export:
+    meta: dict[str, Any]
+    characters: list[dict[str, Any]]
+    locations: list[dict[str, Any]]
+    chapters: list[dict[str, Any]]  # mỗi chương: overview (code) + scenes (model)
+    stop: str | None = None  # lý do dừng sớm (trần), None = xong
+
+    @property
+    def scenes(self) -> list[SceneOut]:
+        return [s for c in self.chapters for s in c["scenes"]]
+
+
+@dataclass
+class ExportOptions:
+    dialogue_lang: str
+    sheets_only: bool = False
+    moderate: bool = True
+    dry_run: bool = False
+    budget_usd: float | None = None
+    chapters_spec: str | None = None
+    model: str | None = None  # chỉ để ghi vào meta
+
+
+def _overview_json(o: sheets.ChapterOverview) -> dict[str, Any]:
+    return asdict(o)
+
+
+async def build_export(
+    source: StorySource, *, config: AppConfig, llm: LLMClient | None, options: ExportOptions,
+    on_scene: Callable[[SceneOut], None] | None = None,
+) -> Export:
+    """Dựng toàn bộ bản xuất. `llm` None khi `--sheets-only`. `llm` nên là `ExportClient` (trần G8)."""
+    limits = config.limits.video_export
+    cast = sheets.read_cast(source.state)
+    numbers = sorted(source.chapters)
+    overviews = {n: sheets.chapter_overview(source.state, cast, n) for n in numbers}
+    chapters_json: list[dict[str, Any]] = [
+        {"chapter": n, "overview": _overview_json(overviews[n]), "scenes": []} for n in numbers]
+    meta = {
+        "format": FORMAT, "story_id": source.story_id, "dialogue_lang": options.dialogue_lang,
+        "chapters": numbers, "sheets_only": options.sheets_only, "dry_run": options.dry_run,
+        "moderation": options.moderate and not options.sheets_only,
+        "model": options.model, "prompt_version": shots.PROMPT_VERSION, "generated": date.today().isoformat(),
+        "calls": 0, "cost_usd": 0.0, "budget_usd": options.budget_usd,
+    }
+    export = Export(meta, [], [], chapters_json)
+
+    sheet: shots.Sheet | None = None
+    if not options.sheets_only:
+        assert llm is not None
+        model = require_model(config.models.roles, shots.ROLE)
+        extra = role_extra(config.models, shots.ROLE)
+        retries = config.limits.retries
+        try:
+            sheet = await shots.make_sheet(llm, model, cast=cast, chapters=source.chapters,
+                                           limits=limits, retries=retries,
+                                           lang_tag=options.dialogue_lang, extra=extra)
+        except WritoryError as e:
+            export.stop = f"sheet: {e.code.value}"
+            sheet = None
+        if sheet is not None:
+            finder = sheets.SceneFinder(cast)
+            for entry in chapters_json:
+                n = entry["chapter"]
+                for k, text in enumerate(source.chapters[n], 1):
+                    if export.stop and export.stop.startswith("budget"):
+                        scene = SceneOut(n, k, "skipped_budget")
+                    else:
+                        scene = await _make_scene(
+                            n, k, text, llm=llm, model=model, extra=extra, config=config, cast=cast,
+                            sheet=sheet, finder=finder, overview=overviews[n], options=options)
+                        if scene.status == "skipped_budget":
+                            export.stop = "budget"
+                    entry["scenes"].append(scene)
+                    if on_scene is not None:
+                        on_scene(scene)
+
+    export.characters = [
+        {"id": c.id, "name": c.name, "aliases": list(c.aliases), "appearance": c.appearance,
+         "personality": c.personality, "protagonist": c.protagonist,
+         "visual_en": sheet.characters[c.id].visual_en if sheet else None,
+         "dialogue_name": sheet.characters[c.id].dialogue_name if sheet else None,
+         "inferred": sheet.characters[c.id].inferred if sheet else None}
+        for c in cast.characters.values()]
+    export.locations = [
+        {"id": loc.id, "name": loc.name, "aliases": list(loc.aliases), "visual": loc.visual,
+         "description": loc.description,
+         "visual_en": sheet.locations[loc.id].visual_en if sheet else None,
+         "dialogue_name": sheet.locations[loc.id].dialogue_name if sheet else None,
+         "inferred": sheet.locations[loc.id].inferred if sheet else None}
+        for loc in cast.locations.values()]
+    return export
+
+
+async def _make_scene(
+    chapter: int, scene: int, text: str, *, llm: LLMClient, model: str, extra: Mapping[str, Any] | None,
+    config: AppConfig, cast: sheets.Cast, sheet: shots.Sheet, finder: sheets.SceneFinder,
+    overview: sheets.ChapterOverview, options: ExportOptions,
+) -> SceneOut:
+    limits, retries = config.limits.video_export, config.limits.retries
+    people = [cast.characters[i] for i in finder.characters_in(text)]
+    # Nơi được nhắc trong cảnh và nơi các nhân vật ở cuối chương đứng trước, rồi tới các nơi còn lại.
+    place_ids = list(finder.locations_in(text))
+    for _, place in overview.where:
+        place_ids += [loc.id for loc in cast.locations.values() if loc.name == place]
+    places = [cast.locations[i] for i in dict.fromkeys([*place_ids, *cast.locations])][:15]
+    names = {c.id for c in people}
+    relations = [f"{r.source} → {r.target}: {r.kind}" + ("" if r.score is None else f" ({r.score:+d})")
+                 for r in overview.relationships
+                 if r.source in {c.name for c in people} and r.target in {c.name for c in people}][:10]
+    protagonist = cast.characters.get(cast.protagonist_id or "")
+    where = next((place for who, place in overview.where if protagonist and who == protagonist.name), None)
+    messages = shots.scene_messages(
+        chapter=chapter, scene=scene, scene_text=text, characters=people, locations=places,
+        relations=relations, where=where, lang_tag=options.dialogue_lang, limits=limits,
+        said={i: item.dialogue_name for i, item in {**sheet.characters, **sheet.locations}.items()})
+    try:
+        draft = await shots.make_scene_shots(
+            llm, model, messages, characters=sorted(names), locations=[loc.id for loc in places],
+            limits=limits, retries=retries, extra=extra)
+    except WritoryError as e:
+        if e.code is ErrorCode.COST_LIMIT_STORY:
+            return SceneOut(chapter, scene, "skipped_budget")
+        return SceneOut(chapter, scene, "error", error=e.code.value)
+
+    out = SceneOut(chapter, scene, "ok")
+    for i, shot in enumerate(draft.shots, 1):
+        place = sheet.locations.get(shot.location_id)
+        out.shots.append(ShotOut(
+            n=i, location_id=shot.location_id, location=place.name if place else None,
+            time_of_day=shot.time_of_day, shot_size=shot.shot_size, camera_angle=shot.camera_angle,
+            camera_move=shot.camera_move, duration_s=shot.duration_s, appears=list(shot.appears),
+            appears_names=[sheet.characters[a].name for a in shot.appears],
+            action_en=" ".join(shot.action_en.split()),
+            dialogue=[{"speaker_id": d.speaker_id, "speaker": sheet.characters[d.speaker_id].name,
+                       "text": " ".join(d.text.split()), "source_text": " ".join(d.source_text.split())}
+                      for d in shot.dialogue],
+            covers=shot.covers, covers_verified=quote_in_text(shot.covers, text),
+            prompt_en=shots.assemble_prompt(shot, sheet=sheet, lang_tag=options.dialogue_lang)))
+    if options.moderate:
+        await _moderate_scene(out, llm=llm, config=config)
+    return out
+
+
+async def _moderate_scene(scene: SceneOut, *, llm: LLMClient, config: AppConfig) -> None:
+    """Kiểm duyệt G9 trên mọi prompt của cảnh (cùng một lời gọi). Chặn cứng thì giữ prompt lại; loại khác
+    thì chỉ đánh dấu để admin quyết. Hết trần thì không kiểm được: đánh dấu `not_checked`."""
+    text = "\n\n".join(s.prompt_en for s in scene.shots if s.prompt_en)
+    try:
+        result = await moderate(text, source=Source.SCENE, llm=llm, config=config)
+    except WritoryError as e:
+        scene.moderation = {"verdict": "not_checked", "reason": e.code.value, "categories": []}
+        return
+    scene.moderation = {"verdict": result.verdict.value, "categories": [c.value for c in result.categories],
+                        "reason": result.reason}
+    if result.verdict is Verdict.HARD_BLOCKED:
+        scene.status = "withheld_moderation"
+        for s in scene.shots:
+            s.prompt_en = None
+
+
+# --- ghi file -----------------------------------------------------------------------------------
+
+
+def _fence(text: str, lang: str = "text") -> str:
+    return f"```{lang}\n{text}\n```"
+
+
+def _cell(text: str | None) -> str:
+    return (text or "").replace("|", "/").replace("\n", " ")
+
+
+def _table_head() -> list[str]:
+    cols = ["id", "Name", "Name in dialogue", "Look set at story setup (Vietnamese)",
+            "Canonical English description", "Source"]
+    return ["| " + " | ".join(cols) + " |", "|" + "---|" * len(cols)]
+
+
+def render_markdown(export: Export) -> str:
+    m = export.meta
+    out = [f"# Video script: {m['story_id']}", "", f"> **{WARNING}**", ""]
+    out.append(f"- Dialogue language: `{m['dialogue_lang']}` ({shots.lang_name(m['dialogue_lang'])})")
+    out.append(f"- Chapters: {', '.join(str(c) for c in m['chapters']) or '-'}")
+    out.append(f"- Model: `{m['model'] or '-'}` · prompt version `{m['prompt_version']}` · "
+               f"calls {m['calls']} · cost {m['cost_usd']:.4f} USD")
+    if m["sheets_only"]:
+        out.append("- Mode: sheets only (no model): no shots, no prompts.")
+    if not m["moderation"] and not m["sheets_only"]:
+        out.append("- **Moderation (G9) was OFF for this export.**")
+    if export.stop:
+        out.append(f"- **Stopped early: {export.stop}.** Shots after this point are missing.")
+    out += ["", "## Characters", "", *_table_head()]
+    for c in export.characters:
+        src = "-" if c["inferred"] is None else ("inferred at export" if c["inferred"] else "setup")
+        out.append(f"| {c['id']} | {_cell(c['name'])}{' (protagonist)' if c['protagonist'] else ''} | "
+                   f"{_cell(c['dialogue_name'])} | {_cell(c['appearance'])} | {_cell(c['visual_en'])} | {src} |")
+    out += ["", "## Locations", "", *_table_head()]
+    for loc in export.locations:
+        src = "-" if loc["inferred"] is None else ("inferred at export" if loc["inferred"] else "setup")
+        out.append(f"| {loc['id']} | {_cell(loc['name'])} | {_cell(loc['dialogue_name'])} | "
+                   f"{_cell(loc['visual'])} | {_cell(loc['visual_en'])} | {src} |")
+    for chapter in export.chapters:
+        o = chapter["overview"]
+        out += ["", f"## Chapter {chapter['chapter']}", "", "### Relationship map (end of chapter)", "",
+                _fence(o["mermaid"], "mermaid"), ""]
+        if o["where"]:
+            out.append("**Where they are:** " + "; ".join(f"{w} at {p}" for w, p in o["where"]))
+        for k in o["knowledge"]:
+            how = f" ({k['how']})" if k["how"] else ""
+            out.append(f"- **Learns ({k['kind']}):** {k['who']}{how}: {k['text']}")
+        for e in o["events"]:
+            who = f" [{', '.join(e['participants'])}]" if e["participants"] else ""
+            died = f" **Dies: {', '.join(e['died'])}.**" if e["died"] else ""
+            out.append(f"- **Event:** {e['text']}{who}{died}")
+        for lie in o["lies"]:
+            out.append(f"- **Lie told by {lie['speaker'] or '?'}:** {lie['text']}")
+        for scene in chapter["scenes"]:
+            out += ["", f"### Scene {scene.chapter}.{scene.scene}", ""]
+            if scene.status != "ok":
+                out.append(f"*Status: {scene.status}" + (f" ({scene.error})" if scene.error else "") + "*")
+            if scene.moderation:
+                mod = scene.moderation
+                out.append(f"*Moderation: {mod['verdict']}"
+                           + (f" [{', '.join(mod['categories'])}]" if mod["categories"] else "") + "*")
+            for s in scene.shots:
+                head = (f"{s.shot_size} · {s.camera_angle} · {s.camera_move} · {s.duration_s} s · "
+                        f"{s.time_of_day} · {s.location or 'unknown place'}")
+                out += ["", f"#### Shot {s.n}: {head}", ""]
+                out.append(f"- Appears: {', '.join(s.appears_names) or '-'}")
+                out.append(f"- Action: {s.action_en}")
+                for d in s.dialogue:
+                    out.append(f"- {d['speaker']}: \"{d['text']}\" (original: \"{d['source_text']}\")")
+                if not s.covers_verified:
+                    out.append("- *Note: the quoted source phrase was not found verbatim in the scene.*")
+                out += ["", _fence(s.prompt_en or "[withheld: moderation hard block]")]
+    return "\n".join(out) + "\n"
+
+
+def render_prompts(export: Export) -> str:
+    blocks = []
+    for scene in export.scenes:
+        for s in scene.shots:
+            if s.prompt_en:
+                blocks.append(f"# {scene.chapter}.{scene.scene}.{s.n}\n{s.prompt_en}")
+    return "\n\n".join(blocks) + ("\n" if blocks else "")
+
+
+def export_json(export: Export) -> dict[str, Any]:
+    chapters = [{**c, "scenes": [asdict(s) for s in c["scenes"]]} for c in export.chapters]
+    return {"warning": WARNING, "meta": export.meta, "characters": export.characters,
+            "locations": export.locations, "chapters": chapters, "stop": export.stop}
+
+
+def write_export(export: Export, out: Path, calls: Sequence[dict[str, Any]] = ()) -> list[Path]:
+    out.mkdir(parents=True, exist_ok=True)
+    files = {
+        "script.md": render_markdown(export),
+        "script.json": json.dumps(export_json(export), ensure_ascii=False, indent=2) + "\n",
+        "prompts.txt": render_prompts(export),
+    }
+    if calls:
+        files["calls.jsonl"] = "".join(json.dumps(c, ensure_ascii=False) + "\n" for c in calls)
+    written = []
+    for name, text in files.items():
+        path = out / name
+        path.write_text(text, encoding="utf-8", newline="\n")
+        written.append(path)
+    return written
+
+
+# --- lệnh ---------------------------------------------------------------------------------------
+
+
+class ExportServices(BaseSettings):
+    """Kết nối Neo4j + Postgres. Chỉ đọc bốn biến này, không đọc key nào."""
+
+    model_config = SettingsConfigDict(extra="ignore", hide_input_in_errors=True)  # G7
+    neo4j_uri: str
+    neo4j_user: str
+    neo4j_password: SecretStr
+    postgres_dsn: SecretStr
+
+
+def default_out(story_id: str, today: date | None = None) -> Path:
+    return DEFAULT_OUT_ROOT / f"{story_id}-{(today or date.today()).strftime('%Y%m%d')}"
+
+
+def build_parser() -> argparse.ArgumentParser:
+    p = argparse.ArgumentParser(
+        prog="python -m writory.export.video",
+        description="Xuất kịch bản video của một truyện (chỉ admin; có lộ bí mật).")
+    p.add_argument("--story", required=True, help="id truyện")
+    p.add_argument("--dialogue-lang", default="en", help="ngôn ngữ lời thoại: zh, vi, en... (mặc định en)")
+    p.add_argument("--chapters", help="N hoặc A-B (mặc định cả truyện)")
+    p.add_argument("--out", help="thư mục xuất (mặc định exports/<story>-<ngày>/, git bỏ qua)")
+    p.add_argument("--budget", type=float, help="trần chi phí USD của lần xuất (bắt buộc khi chạy thật)")
+    p.add_argument("--env-file", default=str(REPO_ROOT / ".env"))
+    p.add_argument("--config-dir", default=str(REPO_CONFIG_DIR))
+    p.add_argument("--sheets-only", action="store_true", help="chỉ phần bằng code: không model, không tiền")
+    p.add_argument("--dry-run", action="store_true", help="model giả, không mạng, không key")
+    p.add_argument("--no-moderate", action="store_true", help="tắt kiểm duyệt G9 trên prompt cuối")
+    return p
+
+
+def check_budget(config: AppConfig, budget: float | None, *, real: bool) -> float | None:
+    cap = config.limits.video_export.require("max_budget_usd")
+    if not real:
+        return budget
+    if budget is None:
+        raise ConfigError("chạy thật cần --budget (USD)")
+    if budget <= 0 or budget > cap:
+        raise ConfigError(f"--budget {budget} phải trong (0, {cap}] (limits.video_export.max_budget_usd)")
+    return budget
+
+
+def load_source(services: ExportServices, story_id: str, spec: str | None) -> tuple[StorySource, Any]:
+    """Đọc truyện từ Postgres và Neo4j. Chỉ đọc. Trả cả driver để nơi gọi đóng."""
+    from neo4j import GraphDatabase
+
+    from writory.db.chapters import chapter_scenes, get_story
+    from writory.db.connection import connect
+    from writory.guard.state import Neo4jState
+
+    class _Settings:  # connect() chỉ cần postgres_dsn
+        postgres_dsn = services.postgres_dsn
+
+    conn = connect(_Settings())  # type: ignore[arg-type]
+    try:
+        story = get_story(conn, story_id)
+        last = story.committed_chapter
+        if not last:
+            raise ConfigError(f"truyện {story_id} chưa có chương nào đã commit")
+        numbers = parse_chapters(spec, last)
+        chapters = {n: list(chapter_scenes(conn, story_id, n) or []) for n in numbers}
+    finally:
+        conn.close()
+    driver = GraphDatabase.driver(
+        services.neo4j_uri, auth=(services.neo4j_user, services.neo4j_password.get_secret_value()))
+    return StorySource(story_id, chapters, Neo4jState(driver, story_id)), driver
+
+
+async def run(args: argparse.Namespace, *, source: StorySource | None = None,
+              llm: LLMClient | None = None, today: date | None = None) -> int:
+    """`source` và `llm` chỉ để test truyền vào; lệnh thật tự dựng."""
+    from writory.config import LimitNotSetError
+
+    install_log_redaction()
+    try:
+        lang = shots.check_lang(args.dialogue_lang)
+        config = load_config(Path(args.config_dir))
+        real = not (args.dry_run or args.sheets_only)
+        budget = check_budget(config, args.budget, real=real)
+        if args.sheets_only and (args.dry_run or args.budget is not None):
+            raise ConfigError("--sheets-only không dùng model: bỏ --dry-run và --budget")
+        out = Path(args.out) if args.out else default_out(args.story, today)
+        if args.no_moderate and not args.sheets_only:
+            print("CẢNH BÁO: --no-moderate: prompt cuối KHÔNG qua kiểm duyệt G9 (D-123); admin chịu "
+                  "trách nhiệm trước khi đưa sang app video.", file=sys.stderr)
+        services = driver = None
+        if source is None:
+            services = ExportServices(_env_file=Path(args.env_file) if Path(args.env_file).exists() else None)  # type: ignore[call-arg]
+            source, driver = load_source(services, args.story, args.chapters)
+        calls: list[dict[str, Any]] = []
+        client: ExportClient | None = None
+        options = ExportOptions(lang, sheets_only=args.sheets_only, moderate=not args.no_moderate,
+                                dry_run=args.dry_run, budget_usd=budget, chapters_spec=args.chapters)
+        if not args.sheets_only:
+            limits = config.limits.video_export
+            options.model = require_model(config.models.roles, shots.ROLE)
+            inner = llm
+            if inner is None:
+                if args.dry_run:
+                    inner = DryRunLLM()
+                else:
+                    from writory.llm.openrouter import OpenRouterClient
+
+                    keys = load_keys(Path(args.env_file), ["openrouter"])
+                    assert keys.openrouter_api_key is not None
+                    inner = OpenRouterClient(keys.openrouter_api_key,
+                                             deadline_s=config.limits.llm_call.deadline_seconds)
+            client = ExportClient(
+                inner, budget=Budget("export", math.inf if budget is None else budget),
+                prices=config.models.prices, max_tokens=limits.require("max_output_tokens"),
+                record=calls.append)
+    except (ConfigError, ValueError, LimitNotSetError, WritoryError) as e:
+        print(f"lỗi: {e}", file=sys.stderr)
+        return EXIT_CONFIG
+    try:
+        export = await build_export(source, config=config, llm=client, options=options)
+    finally:
+        if driver is not None:
+            driver.close()
+    export.meta["calls"] = len(calls)
+    export.meta["cost_usd"] = round(client.spent_usd if client else 0.0, 6)
+    written = write_export(export, out, calls)
+    print(f"đã ghi {len(written)} file vào {out}; {export.meta['calls']} lời gọi, "
+          f"{export.meta['cost_usd']:.4f} USD", file=sys.stderr)
+    if export.stop and export.stop.startswith("budget"):
+        return EXIT_BUDGET
+    if export.stop or any(s.status in ("error",) for s in export.scenes):
+        return EXIT_ERRORS
+    return EXIT_OK
+
+
+def main(argv: Sequence[str] | None = None) -> int:
+    return asyncio.run(run(build_parser().parse_args(argv)))
+
+
+if __name__ == "__main__":
+    raise SystemExit(main())

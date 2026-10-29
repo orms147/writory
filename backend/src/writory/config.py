@@ -143,6 +143,26 @@ class ContextLimits(_Section):
     phase_shift_every: PositiveInt | None = None
 
 
+class VideoExportLimits(_Section):
+    """Bộ xuất kịch bản video (D-123): chỉ admin chạy bằng lệnh, bằng key của chủ dự án. Số tạm (D-47)."""
+
+    _path = "video_export"
+    _file = "limits.yaml"
+    max_budget_usd: NonNegativeFloat | None = None  # trần của `--budget`; chạy thật không được vượt
+    max_shots_per_scene: PositiveInt | None = None
+    shot_seconds_min: PositiveInt | None = None  # thời lượng một shot, giây
+    shot_seconds_max: PositiveInt | None = None
+    max_output_tokens: PositiveInt | None = None  # `max_tokens` của mỗi lời gọi
+    visual_max_chars: PositiveInt | None = None  # mô tả tiếng Anh cố định của một nhân vật hay nơi chốn
+
+    @model_validator(mode="after")
+    def _seconds_ordered(self) -> Self:
+        low, high = self.shot_seconds_min, self.shot_seconds_max
+        if low is not None and high is not None and low > high:
+            raise ValueError(f"shot_seconds_min ({low}) lớn hơn shot_seconds_max ({high})")
+        return self
+
+
 class LLMCallLimits(_Section):
     """Mọi lời gọi model trả bằng key người chơi (D-64): `max_output_tokens` được gửi làm
     `max_tokens` (gồm token suy luận), nên cũng là chặn trên của chi phí ước tính khi lời gọi không
@@ -199,6 +219,7 @@ class LimitsConfig(_Strict):
     llm_call: LLMCallLimits = LLMCallLimits()
     chapter_estimate: ChapterEstimateLimits = ChapterEstimateLimits()
     auth: AuthLimits = AuthLimits()
+    video_export: VideoExportLimits = VideoExportLimits()
 
 
 # --- models.yaml -----------------------------------------------------------------------
@@ -215,6 +236,7 @@ class RoleModels(_Section):
     setup: str | None
     summary: str | None = None  # tóm tắt chương vừa ghi (D-49)
     moderate: str | None = None  # kiểm duyệt nội dung, G9 (D-57)
+    video: str | None = None  # bộ xuất kịch bản video, chỉ admin chạy bằng lệnh (D-123)
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
@@ -231,6 +253,7 @@ class RoleReasoning(_Strict):
     setup: ReasoningEffort | None = None
     summary: ReasoningEffort | None = None
     moderate: ReasoningEffort | None = None
+    video: ReasoningEffort | None = None
 
 
 class WriterTier(_Strict):
