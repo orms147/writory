@@ -47,7 +47,7 @@ class ChapterStore(Protocol):
 
     def writer_context(
         self, as_of_chapter: int, present_ids: Sequence[str], plan: PlanLike | None, *,
-        max_neighbors: int | None, personality_max_chars: int = 0,
+        max_neighbors: int | None, personality_max_chars: int = 0, appearance_max_chars: int = 0,
     ) -> WriterContext:
         """Ngữ cảnh lớp truth cho dàn ý và model viết (D-28)."""
         ...
@@ -99,10 +99,11 @@ class GraphStore:
         return entities_from_rows(story_nodes(self._driver, self._story_id))
 
     def writer_context(self, as_of_chapter, present_ids, plan, *, max_neighbors,
-                       personality_max_chars=0) -> WriterContext:
+                       personality_max_chars=0, appearance_max_chars=0) -> WriterContext:
         return writer_context(self._driver, self._story_id, as_of_chapter, present_ids, plan,
                               max_neighbors=max_neighbors,
-                              personality_max_chars=personality_max_chars)
+                              personality_max_chars=personality_max_chars,
+                              appearance_max_chars=appearance_max_chars)
 
     def commit(self, number: int, scenes: list[str], package: ChangePackage) -> None:
         commit_chapter(self._conn, self._driver, self._story_id, number, scenes, package)

@@ -20,13 +20,16 @@ Mọi nút có hai nhãn: `Entity` (nhãn chung, mang khoá) và một nhãn lo�
 
 | Nhãn | Thuộc tính bắt buộc | Thuộc tính khác |
 |---|---|---|
-| `Character` | `name` | `aliases[]`, `is_protagonist` (đúng một nhân vật mỗi truyện), `personality`, `backstory` |
-| `Location`, `Item`, `Faction` | `name` | `aliases[]`, `description` |
+| `Character` | `name` | `aliases[]`, `is_protagonist` (đúng một nhân vật mỗi truyện), `personality`, `backstory`, `appearance` (ngoại hình cố định, D-120) |
+| `Location` | `name` | `aliases[]`, `description`, `visual` (cảnh sắc, D-120) |
+| `Item`, `Faction` | `name` | `aliases[]`, `description` |
 | `Event` | `chapter`, `description` | |
 | `Fact` | `text` | |
 | `Lie` | `chapter`, `content` | |
 | `Thread` | `description`, `planted_chapter`, `due_from_chapter`, `due_to_chapter` | |
 | `Chapter` | `number` | `title`, `milestones` (mốc đã diễn ra ở chương này, D-116), `milestone_quotes` |
+
+`appearance` và `visual` do bước khởi tạo sinh (D-120), tuỳ chọn: truyện hay thư mục `--setup-from` cũ không có thì nút không mang thuộc tính (không ghi chuỗi rỗng). Là lớp `truth`: `player_view` chỉ đọc trường chữ theo `_TEXT_FIELD` và tên, nên không bao giờ hiện hai thuộc tính này.
 
 Thuộc tính do lớp `graph/` tự đặt, đầu vào không được ghi: `story_id`, `id`, `commit_id`, `closed_by_commit`, `valid_from_chapter`, `valid_to_chapter`.
 

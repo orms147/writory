@@ -481,6 +481,7 @@ def _writer_context(d: _Deps, state: _State, present: Sequence[str]) -> WriterCo
         state["chapter"] - 1, present, d.plan,
         max_neighbors=d.config.limits.context.writer_max_neighbors,
         personality_max_chars=d.config.limits.context.character_personality_max_chars,
+        appearance_max_chars=d.config.limits.context.character_appearance_max_chars,
     )
     keep = d.config.limits.facts.writer_max_page_facts  # Fact sinh từ trang có trần (D-93)
     return replace(ctx, known_facts=cap_page_facts(ctx.known_facts, keep)) if keep else ctx

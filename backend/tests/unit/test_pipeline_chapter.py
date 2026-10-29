@@ -16,6 +16,7 @@ import pytest
 
 from tests.moderation_fixtures import ALLOW, moderation_reply
 from tests.pipeline_fixtures import (
+    APPEARANCES,
     CHAPTER,
     CLICHE,
     EXTRACT_1,
@@ -1891,3 +1892,36 @@ async def test_milestone_text_and_quotes_never_reach_choices_or_the_notebook(tmp
     shown = " ".join(f"{e.text} {' '.join(e.aliases)} {' '.join(e.quotes)}" for e in view.entries)
     assert not any(bit in shown for bit in secret_bits)
     assert all(e.kind != "Chapter" for e in view.entries)
+
+
+# --- ngoại hình nhân vật vào đề dàn ý và đề viết, sau cờ config (D-118) -----------------------------
+
+
+async def test_appearance_is_off_at_zero_and_the_store_is_asked_for_none(tmp_path):
+    _, _, llm, store = await run(full_script(), tmp_path)
+    assert set(store.appearance_args) == {0}
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            assert "ngoại hình:" not in call[-1].content
+
+
+async def test_appearance_reaches_outline_and_writer_but_never_the_other_roles(tmp_path):
+    """G1: ngoại hình là chữ lớp truth; chỉ hai vai được thấy truth (dàn ý, viết) nhận nó."""
+    _, _, llm, store = await run(
+        full_script(), tmp_path, limits={"context": {"character_appearance_max_chars": 80}})
+    assert set(store.appearance_args) == {80}
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            body = call[-1].content
+            assert f"ngoại hình: {APPEARANCES['lan']}" in body
+            assert f"ngoại hình: {APPEARANCES['ly_that']}" in body  # nhân vật lân cận
+    for role in ("choices", "extract", "summary", "moderate"):
+        for call in calls_of(llm, role):
+            seen = " ".join(m.content for m in call)
+            assert not any(t in seen for t in APPEARANCES.values())
+
+
+async def test_appearance_ceiling_is_the_configured_number(tmp_path):
+    _, _, _, store = await run(
+        full_script(), tmp_path, limits={"context": {"character_appearance_max_chars": 12}})
+    assert set(store.appearance_args) == {12}
