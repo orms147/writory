@@ -56,6 +56,7 @@ from writory.pipeline.events import (
 from writory.pipeline.extract import (
     Entity,
     FactRules,
+    MilestoneMark,
     OpenEdge,
     extract_changes,
     orphan_facts,
@@ -148,6 +149,7 @@ class Review:
     package: ChangePackage  # gói của cảnh, đã bỏ cạnh bị người canh báo
     issues: tuple[ReviewIssue, ...]
     rejected: tuple[tuple[str, str], ...]  # cạnh bộ trích bỏ (mô tả, lý do)
+    milestones: tuple[MilestoneMark, ...] = ()  # mốc đã diễn ra trên chữ này (D-115)
 
 
 @dataclass(frozen=True)
@@ -175,6 +177,9 @@ class AcceptedScene:
     # Id mạch đến hạn mà hết lượt thử dàn ý vẫn không dàn ý nào của chương định gỡ (D-82); lớp
     # truth, chỉ cho máy chủ đo.
     unplanned_threads: tuple[str, ...] = ()
+    # Mốc đã diễn ra trong cảnh được hiện (D-115): chỉ cảnh được nhận mới có dấu; vào nút Chapter lúc
+    # commit. Bản nháp bị trả lại không để lại dấu.
+    milestones: tuple[MilestoneMark, ...] = ()
 
 
 @dataclass
@@ -208,14 +213,22 @@ def chapter_node(number: int) -> NodeSpec:
 
 def merge_scene_packages(
     commit_id: str, node: NodeSpec, scene_packages: Sequence[ChangePackage],
-    prelude: ChangePackage | None = None,
+    prelude: ChangePackage | None = None, milestones: Sequence[MilestoneMark] = (),
 ) -> ChangePackage:
     """Gói của chương = trạng thái cuối chương (graph-schema: "ở chương N" là cuối chương N).
     Cùng id cạnh ở nhiều cảnh: lấy bản của cảnh sau. Cảnh sau đóng cạnh do cảnh trước mở: cạnh
     không vào gói (một cạnh không mở và đóng trong cùng chương, D-21).
 
     `prelude`: tác động của lựa chọn dẫn tới chương (D-55), coi như xảy ra trước cảnh 1: nút của
-    nó vào gói, cạnh và `close` của nó đi qua cùng phép gộp như một cảnh."""
+    nó vào gói, cạnh và `close` của nó đi qua cùng phép gộp như một cảnh.
+
+    `milestones`: mốc các cảnh được nhận đã đánh dấu (D-115). Vào thuộc tính `milestones` và
+    `milestone_quotes` của nút Chapter; mốc đánh dấu hai lần thì giữ lần đầu."""
+    marks = list({m.number: m for m in reversed(milestones)}.values())[::-1]
+    if marks:
+        node = node.model_copy(update={"props": {
+            **node.props, "milestones": [m.number for m in marks],
+            "milestone_quotes": [m.quote for m in marks]}})
     edges: dict[str, Any] = {}
     closes: dict[str, Any] = {}
     nodes: dict[str, Any] = {node.id: node, **{n.id: n for n in (prelude.nodes if prelude else [])}}
@@ -626,9 +639,13 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
     # Mục tiêu đọc trên nền đã commit phủ các cảnh trước của chương: cảnh trước đã lộ hay đã gỡ
     # thì cảnh này không bị giục nữa (D-49).
     before = OverlayState(d.store.state(), _earlier_packages(state))
+    # Mốc các cảnh trước của chính chương này đã đánh dấu: chưa vào nút Chapter, nên truyền riêng.
+    marked = {m.number: state["chapter"] for s in state["accepted"] for m in s.milestones}
     return {"context": _writer_context(d, state, state["present"]),
             "goals": chapter_goals(
                 d.plan, state["chapter"], before,
+                milestone_lookahead=d.config.limits.context.milestone_lookahead,
+                done_extra=marked,
                 standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
                 unplanned_goal=d.config.limits.context.unplanned_chapter_goal,
                 idle_chapters=d.config.limits.context.idle_chapters)}
@@ -764,6 +781,8 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             # Mạch phải gỡ chưa gỡ trước cảnh này, kèm hạn; không kèm dàn ý định gỡ gì (D-82).
             threads=state["goals"].threads, extra=role_extra(cfg.models, "extract"),
             fact_rules=_fact_rules(d, state, scene),
+            milestones=state["goals"].pending_milestones,
+            milestones_done=dict(state["goals"].milestones_done),
         ),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
     )
@@ -836,7 +855,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             for category in mod.categories
         ]
 
-    review = Review(text, package, tuple(issues), tuple(result.rejected))
+    review = Review(text, package, tuple(issues), tuple(result.rejected), result.milestones)
     if result.rejected:
         log.info("chương %s cảnh %s lượt %s: bộ trích bỏ %s cạnh", chapter, scene, attempt,
                  len(result.rejected))
@@ -879,7 +898,7 @@ async def _accept(state: _State, runtime: Runtime[_Deps]) -> dict:
     runtime.stream_writer(SceneReady(scene=scene, text=review.text))
     accepted = AcceptedScene(scene, review.text, review.package, state["outline"],
                              state["attempt"], list(review.issues), review.rejected,
-                             tuple(state.get("unplanned", [])))
+                             tuple(state.get("unplanned", [])), review.milestones)
     out: dict = {"accepted": [*state["accepted"], accepted], "scene": scene + 1, "review": None}
     fresh = [Entity.from_node(n.id, n.label, n.props) for n in review.package.nodes]
     if fresh:  # Fact mới của cảnh này có trong danh mục và tên của các cảnh sau (D-93)
@@ -901,8 +920,9 @@ async def _commit(state: _State, runtime: Runtime[_Deps]) -> dict:
     d = runtime.context
     runtime.stream_writer(stage("commit"))
     accepted = state["accepted"]
-    package = merge_scene_packages(state["commit_id"], state["header"].nodes[0],
-                                   [s.package for s in accepted], prelude=state["prelude"])
+    package = merge_scene_packages(
+        state["commit_id"], state["header"].nodes[0], [s.package for s in accepted],
+        prelude=state["prelude"], milestones=[m for s in accepted for m in s.milestones])
     d.store.commit(state["chapter"], [s.text for s in accepted], package)
     runtime.stream_writer(ChapterCommitted(chapter=state["chapter"]))
     return {"package": package, "committed": True}

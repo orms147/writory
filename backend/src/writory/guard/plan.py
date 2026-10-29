@@ -11,6 +11,10 @@ truyện (`pipeline.bench_run`).
   player_view (graph-schema.md), nên đọc từ lớp truth.
 - Khoảng gỡ của mạch: khoảng trong kế hoạch; kế hoạch cũ không có thì lấy khoảng dự kiến gỡ trên
   nút `Thread` (`due_from_chapter`, `due_to_chapter`).
+- Mốc "đã diễn ra" ở chương N (D-115): bộ trích đánh dấu bằng câu trích có thật, dấu nằm ở thuộc
+  tính `milestones` (số thứ tự 1-based trong kế hoạch) của nút `Chapter` của chương xảy ra. Mốc
+  không phải nút (không đổi khởi tạo hay `story_plan`), nên không đọc được từ cạnh; mốc đánh dấu hai
+  lần thì chương đầu thắng.
 - Bí mật hay mạch mà nút chưa có trong đồ thị ở chương N (gieo sau) thì bỏ qua: chưa có gì để
   lộ hay gỡ. Khởi tạo đã kiểm mọi id của kế hoạch có nút ở chương 0 (D-38).
 
@@ -62,11 +66,22 @@ class ThreadProgress:
 
 
 @dataclass(frozen=True)
+class MilestoneProgress:
+    number: int  # thứ tự 1-based trong kế hoạch (id `m<number>` trong đề bộ trích)
+    kind: str
+    goal: str
+    from_chapter: int
+    to_chapter: int
+    done_chapter: int | None
+
+
+@dataclass(frozen=True)
 class PlanProgress:
     chapter: int
     total_chapters: int
     secrets: tuple[SecretProgress, ...]
     threads: tuple[ThreadProgress, ...]
+    milestones: tuple[MilestoneProgress, ...] = ()
 
     @property
     def final(self) -> bool:
@@ -77,8 +92,22 @@ def _int(value: object) -> int | None:
     return value if isinstance(value, int) and not isinstance(value, bool) else None
 
 
+def milestones_done(plan: StoryPlan, state: GraphState, chapter: int) -> dict[int, int]:
+    """Số thứ tự mốc -> chương xảy ra, theo dấu trên nút `Chapter` ch1..chN của `state` (D-115).
+    Số không phải mốc của kế hoạch bị bỏ."""
+    rows = state.nodes([f"ch{n}" for n in range(1, chapter + 1)])
+    done: dict[int, int] = {}
+    for n in range(1, chapter + 1):
+        row = rows.get(f"ch{n}")
+        marks = row.props.get("milestones") if row is not None else None
+        for number in marks if isinstance(marks, list) else []:
+            if _int(number) is not None and 1 <= number <= len(plan.milestones):
+                done.setdefault(number, n)
+    return done
+
+
 def plan_progress(plan: StoryPlan, state: GraphState, chapter: int) -> PlanProgress:
-    """Bí mật đã lộ và mạch phải gỡ đã gỡ tới hết chương N, trên `state`."""
+    """Bí mật đã lộ, mạch phải gỡ đã gỡ và mốc đã diễn ra tới hết chương N, trên `state`."""
     revealed = {e.id: e.since_chapter for e in player_view_of(state, chapter).entries}
     rows = state.nodes([*(s.fact_id for s in plan.secrets), *plan.thread_ids])
     secrets = tuple(
@@ -100,4 +129,8 @@ def plan_progress(plan: StoryPlan, state: GraphState, chapter: int) -> PlanProgr
         threads.append(ThreadProgress(
             t.thread_id, str(row.props.get("description", "")),
             row.props.get("user_authored") is True, low, high, min(resolved, default=None)))
-    return PlanProgress(chapter, plan.total_chapters, secrets, tuple(threads))
+    done = milestones_done(plan, state, chapter)
+    milestones = tuple(
+        MilestoneProgress(i, m.kind, m.goal, m.from_chapter, m.to_chapter, done.get(i))
+        for i, m in enumerate(plan.milestones, 1))
+    return PlanProgress(chapter, plan.total_chapters, secrets, tuple(threads), milestones)

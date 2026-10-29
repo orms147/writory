@@ -43,7 +43,21 @@ class MilestoneGoal:
     goal: str
     from_chapter: int
     to_chapter: int
-    status: Literal["open", "due", "next"]  # `next`: mốc kế tiếp, chưa tới khoảng
+    # `next`: mốc kế tiếp, chưa tới khoảng. `done`: đã diễn ra rồi (D-115), khoảng trùm chương này.
+    status: Literal["open", "due", "next", "done"]
+    number: int = 0  # thứ tự 1-based trong kế hoạch
+    done_chapter: int | None = None
+
+
+@dataclass(frozen=True)
+class PendingMilestone:
+    """Mốc chưa diễn ra mà bộ trích được phép đánh dấu ở cảnh này (D-115)."""
+
+    number: int
+    kind: MilestoneKind
+    goal: str
+    from_chapter: int
+    to_chapter: int
 
 
 @dataclass(frozen=True)
@@ -113,6 +127,10 @@ class ChapterGoals:
     # Chỉ khi `chapter_goals(idle_chapters=N)` và N chương liền không đổi trạng thái nào (D-112);
     # không đặt cùng `standstill` vì một lời giục là đủ.
     idle: Idle | None = None
+    # Mốc bộ trích được đánh dấu ở cảnh này, và các mốc đã xong (số thứ tự -> chương), cho đề bộ trích
+    # (D-115). Rỗng khi `chapter_goals(milestone_lookahead=None)`. Chỉ vào đề dàn ý, viết và bộ trích.
+    pending_milestones: tuple[PendingMilestone, ...] = ()
+    milestones_done: tuple[tuple[int, int], ...] = ()
 
     @property
     def final(self) -> bool:
@@ -125,16 +143,40 @@ class ChapterGoals:
                 or any(m.status == "due" for m in self.milestones))
 
 
-def _milestones(plan: StoryPlan, chapter: int, final: bool) -> tuple[MilestoneGoal, ...]:
-    out = [MilestoneGoal(m.kind, m.goal, m.from_chapter, m.to_chapter,
-                         "due" if final or chapter == m.to_chapter else "open")
-           for m in plan.milestones if m.from_chapter <= chapter <= m.to_chapter]
-    later = [m for m in plan.milestones if m.from_chapter > chapter]
+def _milestones(plan: StoryPlan, chapter: int, final: bool,
+                done: Mapping[int, int] | None = None) -> tuple[MilestoneGoal, ...]:
+    """Mốc của chương. `done`: số thứ tự -> chương đã diễn ra (D-115). Mốc đã xong mà khoảng trùm
+    chương này thì ghi `done`; mốc kế tiếp bỏ qua mốc đã xong."""
+    done = done or {}
+    numbered = list(enumerate(plan.milestones, 1))
+    out = []
+    for i, m in numbered:
+        if not m.from_chapter <= chapter <= m.to_chapter:
+            continue
+        if i in done:
+            out.append(MilestoneGoal(m.kind, m.goal, m.from_chapter, m.to_chapter, "done", i,
+                                     done[i]))
+        else:
+            out.append(MilestoneGoal(m.kind, m.goal, m.from_chapter, m.to_chapter,
+                                     "due" if final or chapter == m.to_chapter else "open", i))
+    later = [(i, m) for i, m in numbered if m.from_chapter > chapter and i not in done]
     if later:
-        first = min(m.from_chapter for m in later)
-        out += [MilestoneGoal(m.kind, m.goal, m.from_chapter, m.to_chapter, "next")
-                for m in later if m.from_chapter == first]
+        first = min(m.from_chapter for _, m in later)
+        out += [MilestoneGoal(m.kind, m.goal, m.from_chapter, m.to_chapter, "next", i)
+                for i, m in later if m.from_chapter == first]
     return tuple(out)
+
+
+def _pending_milestones(plan: StoryPlan, chapter: int, lookahead: int | None,
+                        done: Mapping[int, int]) -> tuple[PendingMilestone, ...]:
+    """Mốc chưa diễn ra, bắt đầu trong `lookahead` chương tới (kể cả mốc đã qua khoảng mà chưa xong).
+    Mốc kết (`ending`) không theo dõi: vốn ở chương cuối."""
+    if lookahead is None:
+        return ()
+    return tuple(
+        PendingMilestone(i, m.kind, m.goal, m.from_chapter, m.to_chapter)
+        for i, m in enumerate(plan.milestones, 1)
+        if i not in done and m.kind != "ending" and m.from_chapter <= chapter + lookahead)
 
 
 def standstill(state: GraphState, writing_chapter: int, threshold: int | None) -> Standstill | None:
@@ -208,9 +250,13 @@ def stalled_after(state: GraphState, committed_chapter: int, threshold: int | No
 def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
                   standstill_chapters: int | None = None,
                   unplanned_goal: bool = False,
-                  idle_chapters: int | None = None) -> ChapterGoals:
+                  idle_chapters: int | None = None,
+                  milestone_lookahead: int | None = None,
+                  done_extra: Mapping[int, int] | None = None) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
-    phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt."""
+    phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt.
+    `milestone_lookahead`: theo dõi mốc đã diễn ra (D-115), None = tắt; `done_extra`: mốc các cảnh
+    trước của chính chương này đã đánh dấu (chưa vào nút Chapter, số thứ tự -> chương N)."""
     progress = plan_progress(plan, state, chapter)
     final = progress.final
     act = None
@@ -234,11 +280,17 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
         for s in progress.secrets if s.revealed_chapter is not None
     )
     still = None if final else standstill(state, chapter, standstill_chapters)
-    milestones = _milestones(plan, chapter, final)
-    gap = unplanned_goal and not final and all(m.status == "next" for m in milestones)
+    done: dict[int, int] = {}
+    if milestone_lookahead is not None:
+        done = {m.number: m.done_chapter for m in progress.milestones if m.done_chapter is not None}
+        done |= {n: c for n, c in (done_extra or {}).items() if n not in done}
+    milestones = _milestones(plan, chapter, final, done)
+    gap = unplanned_goal and not final and all(m.status in ("next", "done") for m in milestones)
     idle = None if final or still is not None else _idle(state, chapter, idle_chapters)
     return ChapterGoals(chapter, plan.total_chapters, act, milestones,
-                        tuple(secrets), threads, revealed, still, gap, idle)
+                        tuple(secrets), threads, revealed, still, gap, idle,
+                        _pending_milestones(plan, chapter, milestone_lookahead, done),
+                        tuple(sorted(done.items())))
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -260,6 +312,7 @@ _MILESTONE_TEXT = {
     "due": "ĐẾN HẠN ở chương này",
     "open": "Đang diễn ra",
 }
+
 
 
 def _window(low: int | None, high: int | None) -> str:
@@ -294,6 +347,8 @@ GOAL_DEFAULTS: dict[str, str] = {
                       "chương có một điều mà đầu chương chưa xảy ra hoặc chưa ai biết (người bị "
                       "thương hay bị bắt, vật đổi chủ, bí mật lộ, người đổi phe, thời hạn bắt đầu, "
                       "nơi chốn đổi). Ký, ghi, đặt xuống hay hẹn để sau không tính."),
+    # Mốc đã diễn ra rồi (D-115); chương xảy ra do code điền sau câu này.
+    "milestone_done": ("Mốc ĐÃ xảy ra rồi: không diễn lại, đi bước kế"),
     "standstill": ("Nhân vật chính đã ở {place} suốt {chapters} chương. Chương này PHẢI đổi tình "
                    "thế: một sự kiện mới buộc nhân vật chính rời nơi này, hoặc phá vỡ thế giằng co, "
                    "hoặc làm lộ điều chưa ai biết. Không lặp lại cảnh dò xét, chờ đợi hay thương "
@@ -375,6 +430,11 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
     if goals.milestones:
         line("### Mốc cốt truyện")
         for m in goals.milestones:
+            if m.status == "done":
+                line(f"- {say['milestone_done']} (xảy ra ở chương {m.done_chapter}; "
+                     f"{_KIND_TEXT[m.kind]}, {_window(m.from_chapter, m.to_chapter)}): "
+                     f"{escape_text(m.goal)}")
+                continue
             status_text = say["milestone_next"] if m.status == "next" else _MILESTONE_TEXT[m.status]
             line(f"- {status_text} ({_KIND_TEXT[m.kind]}, "
                  f"{_window(m.from_chapter, m.to_chapter)}): {escape_text(m.goal)}")

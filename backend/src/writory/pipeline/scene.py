@@ -50,8 +50,9 @@ from writory.safety.wrap import (
 # outline-8, writer-8: mục "Tên người đọc chưa được biết", tên người đọc biết cạnh tên thật (D-91).
 # outline-9, writer-9: dòng "PHẢI đổi tình thế" khi nhân vật chính ở yên nhiều chương (D-98).
 # outline-10, writer-10: đề v3 thành mặc định (D-111).
-OUTLINE_PROMPT_VERSION = "outline-10"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-10"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-11, writer-11: dòng mốc đã xảy ra rồi trong mục tiêu chương (D-115).
+OUTLINE_PROMPT_VERSION = "outline-11"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-11"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong hiện hành (v3, D-111) là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
