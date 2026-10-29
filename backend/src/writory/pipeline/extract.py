@@ -31,7 +31,7 @@ from writory.graph.package import (
 )
 from writory.graph.schema import NAMED_LABELS
 from writory.llm.base import ChatResult, LLMClient
-from writory.pipeline.pacing import PendingMilestone, ThreadGoal
+from writory.pipeline.pacing import KIND_TEXT, PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
 from writory.safety.reveal import known_as_conflicts
 from writory.safety.wrap import (
@@ -47,8 +47,9 @@ from writory.safety.wrap import (
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
 # Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
-# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116).
-PROMPT_VERSION = "extract-8"
+# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116). extract-9: dòng mốc có loại, cao trào đòi
+# hậu quả đã diễn ra trên trang (D-127).
+PROMPT_VERSION = "extract-9"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -183,8 +184,9 @@ Kiểu cạnh:
 - REVEALED_TO_PLAYER (thực thể → nút chương này): điều người chơi được thấy trên trang ở chương này, theo góc nhìn nhân vật chính.
 
 Mốc cốt truyện (`milestones`):
-- Mục "Mốc cốt truyện chưa xảy ra" (nếu có) liệt kê các mốc của bản kế hoạch chưa được đánh dấu: id `m<số>`, khoảng chương dự kiến, điều mốc mô tả. Khoảng chương chỉ là dự kiến: mốc có thể đã xảy ra sớm hơn.
+- Mục "Mốc cốt truyện chưa xảy ra" (nếu có) liệt kê các mốc của bản kế hoạch chưa được đánh dấu: id `m<số>`, loại (bước ngoặt hay cao trào), khoảng chương dự kiến, điều mốc mô tả. Khoảng chương chỉ là dự kiến: mốc có thể đã xảy ra sớm hơn.
 - Ghi một mốc vào `milestones` CHỈ KHI trang chương này cho thấy điều mốc mô tả đã diễn ra thật (hành động đã làm, sự kiện đã xảy ra), không phải dự định, nguy cơ, lời hứa hay gợi ý. Mốc có nhiều vế thì chỉ ghi khi các vế chính đều đã xảy ra. Chưa chắc thì không ghi.
+- Mốc loại cao trào: chỉ ghi khi trang cho thấy bước ngoặt đã diễn ra VÀ hậu quả của nó (ai phải trả giá, điều gì không còn quay lại được), không chỉ một lời quyết định hay cho phép. Quyết định mà hậu quả chưa xảy ra trên trang thì chưa ghi; chương sau cho thấy hậu quả thì ghi lúc đó.
 - `quote` bắt buộc: chép NGUYÊN VĂN một đoạn ngắn trong chương cho thấy điều đó đã xảy ra. Mỗi mốc chỉ ghi một lần. Không có mục mốc thì `milestones` rỗng.
 
 Hé lộ cho người chơi:
@@ -247,11 +249,12 @@ def _milestone_lines(milestones: Sequence[PendingMilestone]) -> list[str | UserA
     không có mục."""
     if not milestones:
         return []
-    parts: list[str | UserAuthored] = ["Mốc cốt truyện chưa xảy ra (id | khoảng chương | mô tả):"]
+    parts: list[str | UserAuthored] = [
+        "Mốc cốt truyện chưa xảy ra (id | loại | khoảng chương | mô tả):"]
     for m in milestones:
         window = f"chương {m.from_chapter}" if m.from_chapter == m.to_chapter else (
             f"chương {m.from_chapter}–{m.to_chapter}")
-        parts.append(f"- m{m.number} | {window} | " + escape_text(m.goal))
+        parts.append(f"- m{m.number} | {KIND_TEXT[m.kind]} | {window} | " + escape_text(m.goal))
     return parts
 
 

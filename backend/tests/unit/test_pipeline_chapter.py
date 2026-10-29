@@ -1841,8 +1841,9 @@ async def test_a_milestone_marked_on_the_page_lands_on_the_chapter_node_and_stop
     assert node.props["milestones"] == [1] and node.props["milestone_quotes"] == [MS_QUOTE]
     # Cảnh 1: bộ trích nhận mốc 1 và 2 (mốc kết không theo dõi). Cảnh 2: mốc 1 đã xong ở cảnh trước.
     first, second = extractor_calls(llm)
-    assert "- m1 | chương 3–5 | Lan lộ ra" in first[-1].content and "- m2 | chương 6–8" in first[-1].content
-    assert "- m1 |" not in second[-1].content and "- m2 | chương 6–8" in second[-1].content
+    assert "- m1 | bước ngoặt | chương 3–5 | Lan lộ ra" in first[-1].content
+    assert "- m2 | " in first[-1].content and "| chương 6–8 |" in first[-1].content
+    assert "- m1 |" not in second[-1].content and "| chương 6–8 |" in second[-1].content
     # Dàn ý và đề viết của cảnh 2 ghi mốc 1 đã xảy ra ở chương 4 thay vì giục lại.
     outline_two = calls_of(llm, "outline")[1][-1].content
     assert "Mốc ĐÃ xảy ra rồi" in outline_two and "xảy ra ở chương 4" in outline_two

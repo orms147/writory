@@ -1188,3 +1188,11 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Test hồi quy bằng THÂN THẬT ch16 (`tests/fixtures/llm/choices_inner_no_about_run_long_after_ky_ao_2_ch16.json`, nguồn trong `_ghi_chú`; ref `m35`, `m61` thay bằng ref của sổ tay thử): nay ra 3 lựa chọn ngay lần đầu.
 - **Hệ quả:** lựa chọn nội tâm có thể không ghi gì vào đồ thị (như nói thật, im lặng, hành động); sổ tay không thêm cảm xúc cho nó. Lỗi chữ tiếng lạ trong một lựa chọn không còn làm tốn một lần gọi model.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh fix/choice-draft-inner-about · 29/10/2026
+
+## D-127 · Bộ trích thấy loại của mốc; cao trào chỉ được đánh dấu khi hậu quả đã diễn ra (`extract-9`)
+- **Bối cảnh:** `evals/results/2026-10-29-milestone-diagnosis/notes.md`. Tu-tiên m6 (cao trào "Trường Khanh phải chọn ai được phép dùng hộp ngọc") bị đánh dấu xong ở ch19, một chương trước khoảng, vì một quyết định nhỏ khớp chữ của mốc; từ ch20 đề dàn ý/viết in "Mốc ĐÃ xảy ra rồi: không diễn lại". Bộ trích không biết mốc là cao trào: `_milestone_lines` chỉ in `id | khoảng chương | mô tả`, trong khi đề dàn ý/viết có loại (`KIND_TEXT`). Code không có khâu nào kiểm mức độ (`accept_milestones` chỉ kiểm id, chưa xong, câu trích nguyên văn).
+- **Quyết định:** dòng mốc của bộ trích thêm cột loại (`id | loại | khoảng chương | mô tả`; `pacing.KIND_TEXT` thành tên công khai); đề `extract-9` thêm một luật: mốc cao trào chỉ ghi khi trang cho thấy bước ngoặt đã diễn ra VÀ hậu quả của nó (ai trả giá, điều gì không còn quay lại), không chỉ một lời quyết định; hậu quả chưa xảy ra thì chưa ghi, chương sau cho thấy thì ghi lúc đó. **Không làm** cổng code "cao trào chỉ nhận từ `from_chapter`": D-116 cố ý không cổng theo khoảng chương, mốc có thể xảy ra sớm.
+- **Đo:** phát lại bộ trích `extract-8` và `extract-9` trên chương đã lưu, kỳ vọng khai trước ở `evals/results/2026-10-30-extract-milestone-kind/expectations.md`; kết quả ở `notes.md` cùng thư mục (mục "Hệ quả" dưới đây khi đã đo).
+- **Hệ quả:** chưa đo (ghi khi có kết quả).
+- **Người quyết:** Claude (writory-28 duyệt 30/10/2026), nhánh feature/extract-milestone-kind
+

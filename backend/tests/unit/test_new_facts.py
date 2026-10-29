@@ -301,7 +301,7 @@ def test_two_new_facts_restating_each_other_about_the_same_entity_become_one():
 
 def test_the_prompt_keeps_new_facts_to_what_happened_with_examples_both_ways():
     from writory.pipeline.extract import PROMPT_VERSION
-    assert PROMPT_VERSION == "extract-8"
+    assert PROMPT_VERSION == "extract-9"
     for phrase in ("KHÔNG ghi", "ý định", "quyết định", "cảm nghĩ", "Ví dụ ĐÚNG", "Ví dụ SAI",
                    "dù diễn đạt khác"):
         assert phrase in SYSTEM_PROMPT, phrase

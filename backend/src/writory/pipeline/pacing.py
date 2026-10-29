@@ -359,7 +359,7 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
 
 # --- chữ trong đề ------------------------------------------------------------------------------
 
-_KIND_TEXT = {"turning_point": "bước ngoặt", "climax": "cao trào", "ending": "kết"}
+KIND_TEXT = {"turning_point": "bước ngoặt", "climax": "cao trào", "ending": "kết"}
 _SECRET_TEXT = {
     "due": "ĐẾN HẠN: phải hé lộ rõ cho người đọc trong chương này",
     "overdue": "QUÁ HẠN: phải hé lộ rõ cho người đọc trong chương này",
@@ -504,11 +504,11 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
         for m in goals.milestones:
             if m.status == "done":
                 line(f"- {say['milestone_done']} (xảy ra ở chương {m.done_chapter}; "
-                     f"{_KIND_TEXT[m.kind]}, {_window(m.from_chapter, m.to_chapter)}): "
+                     f"{KIND_TEXT[m.kind]}, {_window(m.from_chapter, m.to_chapter)}): "
                      f"{escape_text(m.goal)}")
                 continue
             status_text = say["milestone_next"] if m.status == "next" else _MILESTONE_TEXT[m.status]
-            line(f"- {status_text} ({_KIND_TEXT[m.kind]}, "
+            line(f"- {status_text} ({KIND_TEXT[m.kind]}, "
                  f"{_window(m.from_chapter, m.to_chapter)}): {escape_text(m.goal)}")
     if goals.secrets:
         line("### Bí mật đã tới khoảng lộ")
