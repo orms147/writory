@@ -1,0 +1,2152 @@
+{
+ "status": "done",
+ "stop": null,
+ "chapters_planned": 24,
+ "chapters_target": 24,
+ "chapters_clamped": false,
+ "chapters_committed": 24,
+ "story_finished": true,
+ "phase_shift_chapters": [],
+ "rejected_bodies": 1,
+ "new_facts": 60,
+ "plan_vs_result": {
+  "chapter": 24,
+  "total_chapters": 24,
+  "secrets": [
+   {
+    "n": 1,
+    "window": [
+     5,
+     8
+    ],
+    "revealed_chapter": 7,
+    "status": "on_time"
+   },
+   {
+    "n": 2,
+    "window": [
+     11,
+     15
+    ],
+    "revealed_chapter": 11,
+    "status": "on_time"
+   },
+   {
+    "n": 3,
+    "window": [
+     16,
+     20
+    ],
+    "revealed_chapter": 16,
+    "status": "on_time"
+   }
+  ],
+  "threads": [
+   {
+    "n": 1,
+    "window": [
+     4,
+     8
+    ],
+    "resolved_chapter": 9,
+    "status": "late"
+   },
+   {
+    "n": 2,
+    "window": [
+     1,
+     5
+    ],
+    "resolved_chapter": 1,
+    "status": "on_time"
+   },
+   {
+    "n": 3,
+    "window": [
+     7,
+     11
+    ],
+    "resolved_chapter": 8,
+    "status": "on_time"
+   },
+   {
+    "n": 4,
+    "window": [
+     12,
+     16
+    ],
+    "resolved_chapter": 12,
+    "status": "on_time"
+   },
+   {
+    "n": 5,
+    "window": [
+     13,
+     17
+    ],
+    "resolved_chapter": 13,
+    "status": "on_time"
+   },
+   {
+    "n": 6,
+    "window": [
+     18,
+     22
+    ],
+    "resolved_chapter": 18,
+    "status": "on_time"
+   },
+   {
+    "n": 7,
+    "window": [
+     19,
+     24
+    ],
+    "resolved_chapter": 20,
+    "status": "on_time"
+   }
+  ],
+  "milestones": [
+   {
+    "n": 1,
+    "window": [
+     1,
+     2
+    ],
+    "done_chapter": 1,
+    "status": "on_time"
+   },
+   {
+    "n": 2,
+    "window": [
+     4,
+     6
+    ],
+    "done_chapter": 3,
+    "status": "early"
+   },
+   {
+    "n": 3,
+    "window": [
+     7,
+     9
+    ],
+    "done_chapter": 4,
+    "status": "early"
+   },
+   {
+    "n": 4,
+    "window": [
+     10,
+     12
+    ],
+    "done_chapter": 7,
+    "status": "early"
+   },
+   {
+    "n": 5,
+    "window": [
+     13,
+     15
+    ],
+    "done_chapter": 10,
+    "status": "early"
+   },
+   {
+    "n": 6,
+    "window": [
+     16,
+     18
+    ],
+    "done_chapter": 16,
+    "status": "on_time"
+   },
+   {
+    "n": 7,
+    "window": [
+     20,
+     23
+    ],
+    "done_chapter": null,
+    "status": "missed"
+   },
+   {
+    "n": 8,
+    "window": [
+     24,
+     24
+    ],
+    "done_chapter": null,
+    "status": "missed"
+   }
+  ]
+ },
+ "cost": {
+  "total_usd": 0.255795,
+  "estimated_unbilled_usd": 0.026951,
+  "by_role": {
+   "choices": 0.020432,
+   "extract": 0.0944,
+   "moderate": 0.011523,
+   "outline": 0.056852,
+   "summary": 0.009266,
+   "writer": 0.063323
+  },
+  "by_chapter": {
+   "1": {
+    "choices": 0.000591,
+    "extract": 0.001935,
+    "moderate": 0.000779,
+    "outline": 0.001989,
+    "summary": 0.000377,
+    "total": 0.007954,
+    "writer": 0.002283
+   },
+   "2": {
+    "choices": 0.000622,
+    "extract": 0.002167,
+    "moderate": 0.000465,
+    "outline": 0.002445,
+    "summary": 0.000425,
+    "total": 0.008392,
+    "writer": 0.002267
+   },
+   "3": {
+    "choices": 0.000757,
+    "extract": 0.00219,
+    "moderate": 0.000372,
+    "outline": 0.002364,
+    "summary": 0.000383,
+    "total": 0.008231,
+    "writer": 0.002165
+   },
+   "4": {
+    "choices": 0.00064,
+    "extract": 0.002605,
+    "moderate": 0.000508,
+    "outline": 0.002535,
+    "summary": 0.000422,
+    "total": 0.00929,
+    "writer": 0.00258
+   },
+   "5": {
+    "choices": 0.000668,
+    "extract": 0.002437,
+    "moderate": 0.000455,
+    "outline": 0.002421,
+    "summary": 0.00043,
+    "total": 0.00892,
+    "writer": 0.002509
+   },
+   "6": {
+    "choices": 0.00068,
+    "extract": 0.002792,
+    "moderate": 0.000474,
+    "outline": 0.0024,
+    "summary": 0.00046,
+    "total": 0.009364,
+    "writer": 0.002558
+   },
+   "7": {
+    "choices": 0.000725,
+    "extract": 0.002992,
+    "moderate": 0.000394,
+    "outline": 0.002376,
+    "summary": 0.000401,
+    "total": 0.009341,
+    "writer": 0.002453
+   },
+   "8": {
+    "choices": 0.000876,
+    "extract": 0.004148,
+    "moderate": 0.000516,
+    "outline": 0.002396,
+    "summary": 0.000337,
+    "total": 0.011726,
+    "writer": 0.003453
+   },
+   "9": {
+    "choices": 0.000811,
+    "extract": 0.003485,
+    "moderate": 0.000449,
+    "outline": 0.002576,
+    "summary": 0.000426,
+    "total": 0.010316,
+    "writer": 0.002569
+   },
+   "10": {
+    "choices": 0.000755,
+    "extract": 0.003175,
+    "moderate": 0.000446,
+    "outline": 0.002516,
+    "summary": 0.000485,
+    "total": 0.009823,
+    "writer": 0.002448
+   },
+   "11": {
+    "choices": 0.000791,
+    "extract": 0.006856,
+    "moderate": 0.000791,
+    "outline": 0.002502,
+    "summary": 0.000397,
+    "total": 0.016486,
+    "writer": 0.005149
+   },
+   "12": {
+    "choices": 0.000677,
+    "extract": 0.00327,
+    "moderate": 0.00044,
+    "outline": 0.002412,
+    "summary": 0.000447,
+    "total": 0.009469,
+    "writer": 0.002223
+   },
+   "13": {
+    "choices": 0.000726,
+    "extract": 0.003761,
+    "moderate": 0.00042,
+    "outline": 0.002365,
+    "summary": 0.000416,
+    "total": 0.010123,
+    "writer": 0.002435
+   },
+   "14": {
+    "choices": 0.000939,
+    "extract": 0.003529,
+    "moderate": 0.000429,
+    "outline": 0.002395,
+    "summary": 0.000514,
+    "total": 0.010313,
+    "writer": 0.002506
+   },
+   "15": {
+    "choices": 0.000933,
+    "extract": 0.00559,
+    "moderate": 0.000534,
+    "outline": 0.002413,
+    "summary": 0.00037,
+    "total": 0.01334,
+    "writer": 0.003499
+   },
+   "16": {
+    "choices": 0.001391,
+    "extract": 0.005738,
+    "moderate": 0.000508,
+    "outline": 0.002453,
+    "summary": 0.000346,
+    "total": 0.013739,
+    "writer": 0.003304
+   },
+   "17": {
+    "choices": 0.001102,
+    "extract": 0.00384,
+    "moderate": 0.0004,
+    "outline": 0.002348,
+    "summary": 0.000353,
+    "total": 0.01023,
+    "writer": 0.002187
+   },
+   "18": {
+    "choices": 0.001047,
+    "extract": 0.004107,
+    "moderate": 0.000422,
+    "outline": 0.002339,
+    "summary": 0.000407,
+    "total": 0.010836,
+    "writer": 0.002515
+   },
+   "19": {
+    "choices": 0.000993,
+    "extract": 0.004336,
+    "moderate": 0.000385,
+    "outline": 0.002389,
+    "summary": 0.000313,
+    "total": 0.010446,
+    "writer": 0.00203
+   },
+   "20": {
+    "choices": 0.001127,
+    "extract": 0.004425,
+    "moderate": 0.000442,
+    "outline": 0.002334,
+    "summary": 0.000378,
+    "total": 0.010959,
+    "writer": 0.002254
+   },
+   "21": {
+    "choices": 0.001147,
+    "extract": 0.006882,
+    "moderate": 0.000588,
+    "outline": 0.002428,
+    "summary": 0.000361,
+    "total": 0.014619,
+    "writer": 0.003212
+   },
+   "22": {
+    "choices": 0.001138,
+    "extract": 0.004698,
+    "moderate": 0.000466,
+    "outline": 0.002364,
+    "summary": 0.000422,
+    "total": 0.011262,
+    "writer": 0.002175
+   },
+   "23": {
+    "choices": 0.001297,
+    "extract": 0.004724,
+    "moderate": 0.000469,
+    "outline": 0.001755,
+    "summary": 0.000398,
+    "total": 0.010933,
+    "writer": 0.002289
+   },
+   "24": {
+    "extract": 0.004719,
+    "moderate": 0.00037,
+    "outline": 0.002334,
+    "total": 0.009682,
+    "writer": 0.002259
+   }
+  },
+  "max_chapter_attempt_usd": 0.016486,
+  "max_scene_usd": 0.007885,
+  "scenes": [
+   {
+    "chapter": 1,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.002881
+   },
+   {
+    "chapter": 1,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003327
+   },
+   {
+    "chapter": 2,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003512
+   },
+   {
+    "chapter": 2,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003368
+   },
+   {
+    "chapter": 3,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003283
+   },
+   {
+    "chapter": 3,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003436
+   },
+   {
+    "chapter": 4,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003686
+   },
+   {
+    "chapter": 4,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004034
+   },
+   {
+    "chapter": 5,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.00359
+   },
+   {
+    "chapter": 5,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.003778
+   },
+   {
+    "chapter": 6,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003542
+   },
+   {
+    "chapter": 6,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004209
+   },
+   {
+    "chapter": 7,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003632
+   },
+   {
+    "chapter": 7,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004189
+   },
+   {
+    "chapter": 8,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003476
+   },
+   {
+    "chapter": 8,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.006521
+   },
+   {
+    "chapter": 9,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004369
+   },
+   {
+    "chapter": 9,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004261
+   },
+   {
+    "chapter": 10,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003804
+   },
+   {
+    "chapter": 10,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004334
+   },
+   {
+    "chapter": 11,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.007002
+   },
+   {
+    "chapter": 11,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.007506
+   },
+   {
+    "chapter": 12,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003735
+   },
+   {
+    "chapter": 12,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.00417
+   },
+   {
+    "chapter": 13,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003977
+   },
+   {
+    "chapter": 13,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004584
+   },
+   {
+    "chapter": 14,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004164
+   },
+   {
+    "chapter": 14,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004267
+   },
+   {
+    "chapter": 15,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.007115
+   },
+   {
+    "chapter": 15,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004388
+   },
+   {
+    "chapter": 16,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.007079
+   },
+   {
+    "chapter": 16,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004415
+   },
+   {
+    "chapter": 17,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004012
+   },
+   {
+    "chapter": 17,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004363
+   },
+   {
+    "chapter": 18,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004376
+   },
+   {
+    "chapter": 18,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004585
+   },
+   {
+    "chapter": 19,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004301
+   },
+   {
+    "chapter": 19,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004454
+   },
+   {
+    "chapter": 20,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004596
+   },
+   {
+    "chapter": 20,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004417
+   },
+   {
+    "chapter": 21,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.007885
+   },
+   {
+    "chapter": 21,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004637
+   },
+   {
+    "chapter": 22,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004532
+   },
+   {
+    "chapter": 22,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004704
+   },
+   {
+    "chapter": 23,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.003886
+   },
+   {
+    "chapter": 23,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004883
+   },
+   {
+    "chapter": 24,
+    "attempt": 1,
+    "scene": 1,
+    "usd": 0.004488
+   },
+   {
+    "chapter": 24,
+    "attempt": 1,
+    "scene": 2,
+    "usd": 0.004824
+   }
+  ],
+  "limits": {
+   "per_scene": 0.02,
+   "per_chapter": 0.08,
+   "per_story": 1.0
+  }
+ },
+ "calls": {
+  "total": 283,
+  "by_role": {
+   "choices": 24,
+   "extract": 56,
+   "moderate": 77,
+   "outline": 49,
+   "summary": 23,
+   "writer": 54
+  },
+  "by_status": {
+   "LLM_UNAVAILABLE": 3,
+   "ok": 280
+  }
+ },
+ "tokens": {
+  "choices": {
+   "prompt": 112998,
+   "completion": 13887
+  },
+  "extract": {
+   "prompt": 721659,
+   "completion": 46557
+  },
+  "moderate": {
+   "prompt": 157057,
+   "completion": 7140
+  },
+  "outline": {
+   "prompt": 289297,
+   "completion": 42611
+  },
+  "summary": {
+   "prompt": 51311,
+   "completion": 5708
+  },
+  "writer": {
+   "prompt": 420314,
+   "completion": 48344
+  }
+ },
+ "issues": {
+  "found": {
+   "guard:overdue_thread": 2,
+   "guard:teller_does_not_know": 6
+  },
+  "blocking_found": {},
+  "left_when_shown": {
+   "guard:overdue_thread": 1,
+   "guard:teller_does_not_know": 1
+  }
+ },
+ "rewrites": 6,
+ "fallbacks": 0,
+ "scenes_blocked": 0,
+ "outline_unplanned_threads": 0,
+ "summaries": {
+  "made": 23,
+  "failed": 0,
+  "chapters_missing_previous": 0
+ },
+ "rejected_edges": {
+  "total": 41,
+  "by_reason": {
+   "Fact mới": 12,
+   "chữ Fact không bám trang": 4,
+   "câu trích không có nguyên văn trong chương (G3)": 3,
+   "id không có trong danh mục": 1,
+   "sai schema cạnh": 13,
+   "thiếu KNOWS": 5,
+   "trùng Fact": 3
+  }
+ },
+ "player_retries_used": {
+  "setup": 0,
+  "chapter": 0,
+  "choices": 0
+ },
+ "setup_repairs": {
+  "used": 0,
+  "kinds": {}
+ },
+ "appearance_variety": {
+  "characters": 7,
+  "with_appearance": 0,
+  "starts_with_trong": 0,
+  "opening_repeats": 0,
+  "hair": {},
+  "hair_repeats": 0
+ },
+ "chapters": [
+  {
+   "chapter": 1,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2874,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2730,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 9,
+     "rejected_by_reason": {
+      "chữ Fact không bám trang": 1,
+      "câu trích không có nguyên văn trong chương (G3)": 1,
+      "sai schema cạnh": 1,
+      "Fact mới": 6
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.007954,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 2,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3140,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3007,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.008392,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 3,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2793,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2398,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.008231,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 4,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2712,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3661,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.00929,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 5,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3243,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3146,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.00892,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 6,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3132,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3077,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.009364,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 7,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2915,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2671,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.009341,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 8,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2149,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 2,
+     "chars": 2184,
+     "left_when_shown": [
+      "guard:overdue_thread"
+     ],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:overdue_thread"
+     ],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [
+      "guard:overdue_thread"
+     ],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.011726,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 9,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3846,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2563,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 2,
+     "rejected_by_reason": {
+      "câu trích không có nguyên văn trong chương (G3)": 1,
+      "thiếu KNOWS": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.010316,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 10,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3382,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2812,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.009823,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 11,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 2,
+     "chars": 2744,
+     "left_when_shown": [
+      "guard:teller_does_not_know"
+     ],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 2,
+     "chars": 2683,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:teller_does_not_know"
+     ],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 1,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [
+      "guard:teller_does_not_know"
+     ],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "thiếu KNOWS": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:teller_does_not_know"
+     ],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    }
+   ],
+   "rewrites": 2,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.016486,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 12,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2323,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2497,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.009469,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 13,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2551,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3066,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 2,
+   "cost_usd": 0.010123,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 14,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3065,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3047,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.010313,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 15,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 2,
+     "chars": 2570,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2534,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:teller_does_not_know"
+     ],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "thiếu KNOWS": 1
+     }
+    },
+    {
+     "scene": 1,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.01334,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 16,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 2,
+     "chars": 2371,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2232,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:teller_does_not_know"
+     ],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 1,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "id không có trong danh mục": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "chữ Fact không bám trang": 1,
+      "Fact mới": 2
+     }
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.013739,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 17,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2391,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2167,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "chữ Fact không bám trang": 1,
+      "Fact mới": 2
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.01023,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 18,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 3092,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2899,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 1,
+     "rejected_by_reason": {
+      "sai schema cạnh": 1
+     }
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.010836,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 19,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2241,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 1776,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 2,
+     "rejected_by_reason": {
+      "trùng Fact": 1,
+      "sai schema cạnh": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.010446,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 20,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2750,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2021,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.010959,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 21,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 2,
+     "chars": 2263,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2394,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "rewrite",
+     "issues": [
+      "guard:teller_does_not_know"
+     ],
+     "blocking": [],
+     "rejected": 3,
+     "rejected_by_reason": {
+      "trùng Fact": 1,
+      "sai schema cạnh": 1,
+      "thiếu KNOWS": 1
+     }
+    },
+    {
+     "scene": 1,
+     "attempt": 2,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 5,
+     "rejected_by_reason": {
+      "chữ Fact không bám trang": 1,
+      "Fact mới": 2,
+      "sai schema cạnh": 1,
+      "thiếu KNOWS": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 1,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.014619,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 22,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2374,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 2389,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.011262,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 23,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2557,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3254,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 3,
+   "cost_usd": 0.010933,
+   "phase_shift": false,
+   "summary": "made",
+   "summary_error": null,
+   "summaries_missing": []
+  },
+  {
+   "chapter": 24,
+   "attempt": 1,
+   "committed": true,
+   "blocked_scene": null,
+   "error": null,
+   "scenes": [
+    {
+     "scene": 1,
+     "attempts": 1,
+     "chars": 2578,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    },
+    {
+     "scene": 2,
+     "attempts": 1,
+     "chars": 3022,
+     "left_when_shown": [],
+     "outline_unplanned": 0
+    }
+   ],
+   "reviews": [
+    {
+     "scene": 1,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 2,
+     "rejected_by_reason": {
+      "trùng Fact": 1,
+      "sai schema cạnh": 1
+     }
+    },
+    {
+     "scene": 2,
+     "attempt": 1,
+     "verdict": "accept",
+     "issues": [],
+     "blocking": [],
+     "rejected": 0,
+     "rejected_by_reason": {}
+    }
+   ],
+   "rewrites": 0,
+   "fallbacks": 0,
+   "choices": 0,
+   "cost_usd": 0.009682,
+   "phase_shift": false,
+   "summary": "skipped",
+   "summary_error": null,
+   "summaries_missing": []
+  }
+ ]
+}
