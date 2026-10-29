@@ -538,6 +538,35 @@ def test_the_count_is_the_whole_run_not_just_the_threshold():
     assert idle_chapters(state, 8, 4) == Idle(7)
 
 
+def test_other_braces_in_a_replaced_idle_sentence_are_plain_text():
+    """Review D-121: `.format` ném KeyError giữa lượt đo nếu câu thay có `{` khác `{chapters}`."""
+    goals = chapter_goals(IDLE_PLAN, 5, _idle_state(*(_noise(c) for c in range(1, 5))),
+                          idle_chapters=4)
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                      texts={"idle": "Nhóm {a} đã {chapters} chương {}."}))
+    assert "Nhóm {a} đã 4 chương {}." in text
+
+
+class _Counting(OverlayState):
+    def __init__(self, *a, **kw):
+        super().__init__(*a, **kw)
+        self.reads = 0
+
+    def edges_at(self, *a, **kw):
+        self.reads += 1
+        return super().edges_at(*a, **kw)
+
+
+def test_idle_reads_the_graph_a_fixed_number_of_times_however_long_the_run():
+    """Review D-121: trước đây ~3 truy vấn mỗi chương lùi; đồ thị thật là Neo4j."""
+    def reads(n: int) -> int:
+        state = _Counting(EmptyState(), [_BASE, *(_noise(c) for c in range(1, n + 1))])
+        assert idle_chapters(state, n + 1, 4) == Idle(n)
+        return state.reads
+
+    assert reads(5) == reads(30) <= 3
+
+
 def test_chapter_goals_carry_idle_only_when_asked_and_not_beside_standstill_or_in_the_last_chapter():
     state = _idle_state(*(_quiet(c) for c in range(1, 5)))
     assert chapter_goals(IDLE_PLAN, 5, state).idle is None
@@ -571,3 +600,128 @@ def test_stalled_after_is_true_for_idle_as_well_as_for_a_stood_still_protagonist
     assert not stalled_after(state, 4, None)
     assert stalled_after(state, 4, None, idle_threshold=4)
     assert not stalled_after(state, 4, None, idle_threshold=5)
+
+
+# --- mốc đã diễn ra (D-116) --------------------------------------------------------------------------
+# Hồi quy long-baseline: mốc ky-ao-1 ch7-9 "vào Rừng Rủ Sương" mà ch5 đã vào rừng; tu-tien-3 mốc ch9-11
+# "phát hiện chuông suy yếu" mà ch5-7 đã viết. Code chỉ biết khoảng chương nên giục lại mốc đã xong.
+# Bộ trích đánh dấu bằng câu trích có thật; dấu nằm ở thuộc tính nút `Chapter` của chương xảy ra.
+
+LOOKAHEAD = 4
+# PLAN thử: m1 bước ngoặt 1-2, m2 bước ngoặt 3-4, m3 cao trào 5-5, m4 kết 6-6.
+
+
+def mark(chapter: int, *numbers: int) -> ChangePackage:
+    """Gói đặt lại nút Chapter của `chapter` với mốc đã đánh dấu (OverlayState: gói sau ghi đè)."""
+    return ChangePackage.model_validate({
+        "commit_id": f"mark-{chapter}",
+        "nodes": [{"id": f"ch{chapter}", "label": "Chapter", "number": chapter,
+                   "milestones": list(numbers),
+                   "milestone_quotes": [f"câu trích mốc {n}" for n in numbers]}]})
+
+
+def goals_for(chapter, *extra, done_extra=None, **kw):
+    return chapter_goals(PLAN, chapter, through(chapter - 1, *extra), milestone_lookahead=LOOKAHEAD,
+                         done_extra=done_extra, **kw)
+
+
+def statuses(goals):
+    return [(m.number, m.status, m.done_chapter) for m in goals.milestones]
+
+
+def test_plan_progress_reads_the_marks_on_chapter_nodes():
+    from writory.guard.plan import plan_progress
+
+    state = through(3, mark(1, 1), mark(2, 2, 1), mark(3, 3))
+    got = {m.number: m.done_chapter for m in plan_progress(PLAN, state, 4).milestones}
+    assert got == {1: 1, 2: 2, 3: 3, 4: None}  # mốc đánh dấu hai lần: chương đầu thắng
+    assert [m.kind for m in plan_progress(PLAN, state, 4).milestones] == [
+        "turning_point", "turning_point", "climax", "ending"]
+
+
+def test_plan_progress_ignores_marks_that_are_not_plan_milestones():
+    from writory.guard.plan import plan_progress
+
+    got = plan_progress(PLAN, through(2, mark(1, 0, 9, 3)), 3).milestones
+    assert [(m.number, m.done_chapter) for m in got] == [(1, None), (2, None), (3, 1), (4, None)]
+
+
+def test_a_milestone_that_happened_early_is_listed_as_done_not_open():
+    goals = goals_for(4, mark(2, 2))  # m2 (chương 3-4) xảy ra ở chương 2
+    assert statuses(goals) == [(2, "done", 2), (3, "next", None)]
+    assert not any(m.status == "due" for m in goals.milestones)  # m2 vốn đến hạn ở chương 4
+
+
+def test_without_a_mark_the_same_milestone_is_due_as_before():
+    goals = goals_for(4)
+    assert statuses(goals) == [(2, "due", None), (3, "next", None)]
+
+
+def test_next_milestone_skips_the_ones_already_done():
+    goals = goals_for(3, mark(2, 3))  # m3 (chương 5) đã xảy ra ở chương 2
+    assert statuses(goals) == [(2, "open", None), (4, "next", None)]
+
+
+def test_a_done_milestone_whose_window_has_not_started_is_not_listed():
+    assert statuses(goals_for(2, mark(1, 3))) == [(1, "due", None), (2, "next", None)]
+
+
+def test_a_chapter_with_only_done_milestones_counts_as_having_none_for_the_gap_goal():
+    goals = goals_for(4, mark(2, 2), unplanned_goal=True)
+    assert goals.gap  # D-110: không còn mốc nào đang diễn ra
+    assert not goals_for(4, unplanned_goal=True).gap
+
+
+def test_scenes_of_the_same_chapter_pass_their_marks_as_done_extra():
+    goals = goals_for(4, done_extra={2: 4})
+    assert statuses(goals) == [(2, "done", 4), (3, "next", None)]
+
+
+def test_tracking_is_off_when_the_lookahead_is_none():
+    state = through(3, mark(2, 2))
+    off = chapter_goals(PLAN, 4, state)
+    assert statuses(off) == [(2, "due", None), (3, "next", None)] and off.pending_milestones == ()
+    assert chapter_goals(PLAN, 4, state, milestone_lookahead=None, done_extra={2: 4}) == off
+
+
+def test_pending_milestones_are_the_undone_ones_within_the_lookahead_without_the_ending():
+    got = goals_for(2).pending_milestones
+    assert [p.number for p in got] == [1, 2, 3]  # m4 là mốc kết: không theo dõi
+    near = chapter_goals(PLAN, 2, through(1), milestone_lookahead=1).pending_milestones
+    assert [p.number for p in near] == [1, 2]  # m2 bắt đầu ở chương 3 <= 2 + 1
+    assert [p.number for p in goals_for(2, mark(1, 1, 2)).pending_milestones] == [3]
+    first = goals_for(2).pending_milestones[0]
+    assert (first.kind, first.from_chapter, first.to_chapter) == ("turning_point", 1, 2)
+    assert "Minh nhận thanh kiếm" in first.goal
+
+
+def test_a_milestone_whose_window_has_passed_is_still_offered_until_marked():
+    assert [p.number for p in goals_for(5).pending_milestones] == [1, 2, 3]
+
+
+def test_pending_milestones_exclude_the_ones_done_in_earlier_scenes():
+    assert [p.number for p in goals_for(2, done_extra={1: 2}).pending_milestones] == [2, 3]
+
+
+def test_render_says_the_milestone_already_happened_and_to_go_on():
+    text = _text(render_chapter_goals(goals_for(4, mark(2, 2)), scene=1, scene_count=2))
+    assert "ở chương 2" in text and "Lão Gù chết" in text
+    assert "ĐẾN HẠN ở chương này (bước ngoặt" not in text
+    assert "đi bước kế" in text
+
+
+def test_the_done_sentence_can_be_overridden_by_the_measurement_tool():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    goals = goals_for(4, mark(2, 2))
+    base = _text(render_chapter_goals(goals, scene=1, scene_count=2))
+    new = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                     texts={"milestone_done": "MỐC XONG RỒI"}))
+    assert new == base.replace(GOAL_DEFAULTS["milestone_done"], "MỐC XONG RỒI")
+    assert "milestone_done" in GOAL_DEFAULTS and "{" not in GOAL_DEFAULTS["milestone_done"]
+
+
+def test_the_milestone_lookahead_is_in_config():
+    from writory.config import load_config
+
+    assert load_config().limits.context.milestone_lookahead == 4  # D-116; số tạm, D-47

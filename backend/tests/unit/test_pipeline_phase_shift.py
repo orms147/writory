@@ -146,6 +146,38 @@ def test_the_answer_for_a_chapter_does_not_depend_on_the_scene_being_written():
     assert phase_shift(ONE_ACT, with_scene, 5, EVERY) == phase_shift(ONE_ACT, state, 5, EVERY)
 
 
+# --- mốc kế hoạch đã diễn ra (D-116) cũng là đổi pha -------------------------------------------------
+
+MILESTONE_PLAN = StoryPlan.model_validate({
+    "acts": [{"name": "một", "from_chapter": 1, "to_chapter": 12}],
+    "secrets": [], "must_resolve_threads": [],
+    "milestones": [{"kind": "turning_point", "goal": "Minh vào rừng", "from_chapter": 6,
+                    "to_chapter": 7},
+                   {"kind": "ending", "goal": "Kết", "from_chapter": 12, "to_chapter": 12}]})
+
+
+def _marked(chapter: int, *numbers: int) -> ChangePackage:
+    """Gói đặt lại nút Chapter của `chapter` với mốc đã đánh dấu (như test_pipeline_pacing.mark)."""
+    return ChangePackage.model_validate({
+        "commit_id": f"mark-{chapter}",
+        "nodes": [{"id": f"ch{chapter}", "label": "Chapter", "number": chapter,
+                   "milestones": list(numbers),
+                   "milestone_quotes": [f"câu trích mốc {n}" for n in numbers]}]})
+
+
+def test_the_chapter_a_milestone_happened_restarts_the_clock():
+    assert phase_shift(ONE_ACT, story(7), 8, EVERY, milestone_done=[3]) == PhaseShift(5)
+    assert phase_shift(ONE_ACT, story(7), 8, EVERY) is None  # không có mốc: đã nhắc ở ch5, mới 3
+    assert phase_shift(ONE_ACT, story(7), 8, EVERY, milestone_done=[8]) is None  # chương đang viết: bỏ
+
+
+def test_chapter_goals_read_the_done_milestones_from_the_chapter_nodes():
+    state = OverlayState(story(7), [_marked(3, 1)])
+    plain = chapter_goals(MILESTONE_PLAN, 8, story(7), phase_shift_every=EVERY)
+    marked = chapter_goals(MILESTONE_PLAN, 8, state, phase_shift_every=EVERY)
+    assert plain.phase_shift is None and marked.phase_shift == PhaseShift(5)
+
+
 # --- trong mục tiêu chương ----------------------------------------------------------------------
 
 

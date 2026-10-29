@@ -31,7 +31,7 @@ from writory.graph.package import (
 )
 from writory.graph.schema import NAMED_LABELS
 from writory.llm.base import ChatResult, LLMClient
-from writory.pipeline.pacing import ThreadGoal
+from writory.pipeline.pacing import PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
 from writory.safety.reveal import known_as_conflicts
 from writory.safety.wrap import (
@@ -46,8 +46,9 @@ from writory.safety.wrap import (
 # gỡ đang mở, định nghĩa "gỡ", RESOLVED_IN bắt buộc câu trích (D-82). extract-4: mạch nhiều vế chỉ
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
-# Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95).
-PROMPT_VERSION = "extract-7"
+# Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
+# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116).
+PROMPT_VERSION = "extract-8"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -83,18 +84,35 @@ class NewFact(_Out):
     quote: str
 
 
+class ExtractedMilestone(_Out):
+    """Mốc cốt truyện đã diễn ra trên trang (D-116): `id` dạng `m<số>` trong mục "Mốc cốt truyện chưa
+    xảy ra", `quote` là câu nguyên văn cho thấy điều mốc mô tả đã xảy ra."""
+
+    id: str
+    quote: str
+
+
+@dataclass(frozen=True)
+class MilestoneMark:
+    """Mốc đã qua kiểm của code: số thứ tự 1-based trong kế hoạch và câu trích có thật (G3)."""
+
+    number: int
+    quote: str
+
+
 class ExtractOutput(_Out):
     edges: list[ExtractedEdge]
     close: list[str]  # id các cạnh đang hiệu lực không còn đúng ở cuối chương
     new_facts: list[NewFact]
+    milestones: list[ExtractedMilestone]
 
     @model_validator(mode="before")
     @classmethod
     def _old_replies(cls, data: Any) -> Any:
         """Trường bắt buộc trong schema gửi model, nhưng trả lời cũ (fixture, bài C) chưa có thì coi
         là rỗng."""
-        if isinstance(data, dict) and "new_facts" not in data:
-            return {**data, "new_facts": []}
+        if isinstance(data, dict):
+            return {"new_facts": [], "milestones": [], **data}
         return data
 
 
@@ -143,6 +161,7 @@ class ExtractResult:
     package: ChangePackage
     rejected: list[tuple[str, str]] = field(default_factory=list)  # (mô tả cạnh, lý do)
     chat: ChatResult | None = None
+    milestones: tuple[MilestoneMark, ...] = ()  # mốc đánh dấu đã qua kiểm (D-116)
 
 
 SYSTEM_PROMPT = """Bạn là người ghi chép đồ thị của một truyện tương tác tiếng Việt. Đọc văn bản một chương và ghi lại những gì THAY ĐỔI hoặc ĐƯỢC HÉ LỘ trong chương đó, dưới dạng cạnh giữa các thực thể.
@@ -162,6 +181,11 @@ Kiểu cạnh:
 - ABOUT (sự thật/sự kiện → thực thể mà nó nói về).
 - RESOLVED_IN (mạch → nút chương này): một mạch, cài cắm hay câu hỏi bỏ ngỏ được gỡ trong chương này; xem mục "Gỡ mạch".
 - REVEALED_TO_PLAYER (thực thể → nút chương này): điều người chơi được thấy trên trang ở chương này, theo góc nhìn nhân vật chính.
+
+Mốc cốt truyện (`milestones`):
+- Mục "Mốc cốt truyện chưa xảy ra" (nếu có) liệt kê các mốc của bản kế hoạch chưa được đánh dấu: id `m<số>`, khoảng chương dự kiến, điều mốc mô tả. Khoảng chương chỉ là dự kiến: mốc có thể đã xảy ra sớm hơn.
+- Ghi một mốc vào `milestones` CHỈ KHI trang chương này cho thấy điều mốc mô tả đã diễn ra thật (hành động đã làm, sự kiện đã xảy ra), không phải dự định, nguy cơ, lời hứa hay gợi ý. Mốc có nhiều vế thì chỉ ghi khi các vế chính đều đã xảy ra. Chưa chắc thì không ghi.
+- `quote` bắt buộc: chép NGUYÊN VĂN một đoạn ngắn trong chương cho thấy điều đó đã xảy ra. Mỗi mốc chỉ ghi một lần. Không có mục mốc thì `milestones` rỗng.
 
 Hé lộ cho người chơi:
 - Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ ở chương trước thì không ghi lại.
@@ -218,6 +242,19 @@ def _window(low: int | None, high: int | None) -> str:
     return f"chương {low}" if low == high else f"chương {low}–{high}"
 
 
+def _milestone_lines(milestones: Sequence[PendingMilestone]) -> list[str | UserAuthored]:
+    """Mục "Mốc cốt truyện chưa xảy ra" (D-116). Mô tả mốc do model khởi tạo viết: escape. Rỗng thì
+    không có mục."""
+    if not milestones:
+        return []
+    parts: list[str | UserAuthored] = ["Mốc cốt truyện chưa xảy ra (id | khoảng chương | mô tả):"]
+    for m in milestones:
+        window = f"chương {m.from_chapter}" if m.from_chapter == m.to_chapter else (
+            f"chương {m.from_chapter}–{m.to_chapter}")
+        parts.append(f"- m{m.number} | {window} | " + escape_text(m.goal))
+    return parts
+
+
 def _thread_lines(threads: Sequence[ThreadGoal]) -> list[str | UserAuthored]:
     """Mục "Mạch phải gỡ đang mở". Mô tả do model khởi tạo viết thì escape; mạch người chơi viết
     thì bọc (G4). Rỗng thì không có mục: bài C (truyện mẫu, không kế hoạch) không bị nhắc sai."""
@@ -239,7 +276,7 @@ def _thread_lines(threads: Sequence[ThreadGoal]) -> list[str | UserAuthored]:
 def build_messages(
     *, chapter: int, chapter_id: str, protagonist_id: str, chapter_text: str,
     entities: list[Entity], open_edges: list[OpenEdge], threads: Sequence[ThreadGoal] = (),
-    fact_rules: "FactRules | None" = None,
+    fact_rules: "FactRules | None" = None, milestones: Sequence[PendingMilestone] = (),
 ):
     parts: list[str | UserAuthored] = [
         f"Chương: {chapter} (id nút chương: {chapter_id}). Nhân vật chính: {protagonist_id}.",
@@ -250,6 +287,7 @@ def build_messages(
     parts.append("Cạnh đang hiệu lực trước chương này (id | kiểu | từ → tới):")
     parts += [f"- {o.id} | {o.type} | {o.source} → {o.target}" for o in open_edges] or ["- (không có)"]
     parts += _thread_lines(threads)
+    parts += _milestone_lines(milestones)
     if fact_rules is not None and fact_rules.max_new > 0:
         parts.append(f"Sự thật mới: còn được ghi tối đa {fact_rules.max_new} sự thật mới trong chương "
                      f"này, mỗi `text` dài tối đa {fact_rules.max_chars} ký tự.")
@@ -550,34 +588,50 @@ def _one_place_for_protagonist(
 ) -> tuple[list[EdgeSpec], list[CloseSpec]]:
     """Nhân vật chính luôn có đúng một nơi ở hiện tại sau mỗi gói (D-112, như D-90 cho đồ vật).
     long-tu-tien-2: bộ trích đóng nơi ở ở ch7 mà không mở cạnh mới, 11 chương không có nơi ở và cờ
-    `standstill` (D-98) mù. Làm bằng code vì model hay ghi cạnh mới mà quên đóng cạnh cũ, hoặc ngược lại:
-    - nơi mới thì đóng nơi cũ; hai nơi mới trong một gói thì giữ nơi ghi sau cùng;
-    - đóng nơi cũ mà không mở nơi mới thì giữ nơi cũ (bỏ lệnh đóng);
-    - nói lại nơi đang ở thì bỏ cạnh mới (nó đặt lại `valid_from`, cờ đếm lại từ đầu) và bỏ lệnh đóng."""
+    `standstill` (D-98) mù. Làm bằng code vì model hay ghi cạnh mới mà quên đóng cạnh cũ, hoặc ngược lại.
+    Nơi CUỐI của gói là cạnh `LOCATED_AT` ghi sau cùng của nhân vật chính (D-121, review):
+    - nơi cuối đang mở (nói lại, hay đi rồi quay về trong cùng gói): không đổi gì; bỏ mọi cạnh chuyển
+      và lệnh đóng nơi đó, vì cạnh mới đặt lại `valid_from` và làm cờ "ở yên" đếm lại từ đầu;
+    - nơi cuối mới: chỉ cạnh đó được giữ (các cạnh chuyển khác bỏ), mọi nơi đang mở đóng lại;
+    - không có cạnh chuyển: lệnh đóng chỉ được giữ chừng nào sau đó còn một nơi mở, nên lệnh đóng
+      nơi cuối cùng còn mở bị bỏ (giữ nơi cũ). Hai nơi cùng mở chỉ có ở đồ thị trước D-112."""
     here = [o for o in open_edges if o.type == "LOCATED_AT" and o.source == protagonist_id]
     desc = "LOCATED_AT {}→{}".format
     moves = [e for e in edges if e.type == "LOCATED_AT" and e.source == protagonist_id]
-    staying = {o.target: o for o in here}
-    kept_moves = []
-    for e in moves:
-        if e.target in staying:
-            rejected.append((desc(e.source, e.target), "đã ở nơi này (D-112)"))
-        else:
-            kept_moves.append(e)
-    for e in kept_moves[:-1]:
-        rejected.append((desc(e.source, e.target), "hai nơi ở cùng lúc: giữ nơi ghi sau cùng (D-112)"))
-    dropped = {id(e) for e in moves} - {id(e) for e in kept_moves[-1:]}
-    edges = [e for e in edges if id(e) not in dropped]
+    open_targets = {o.target for o in here}
     ids = {o.id for o in here}
-    if kept_moves:  # đi tới nơi mới: mọi nơi cũ đóng lại
+    if not moves:
+        remaining = set(ids)
+        kept: list[CloseSpec] = []
+        for c in close:
+            if c.id in ids and remaining <= {c.id}:
+                rejected.append((f"close {c.id}", "nhân vật chính phải có một nơi ở: giữ nơi cũ (D-112)"))
+                continue
+            remaining.discard(c.id)
+            kept.append(c)
+        return edges, kept
+    final = moves[-1]
+    if final.target in open_targets:  # kết thúc ở nơi đang ở: không đổi
+        stay = {o.id for o in here if o.target == final.target}
+        for e in moves:
+            rejected.append((desc(e.source, e.target), "kết thúc ở nơi đang ở: không đổi (D-121)"
+                             if e is final else "đi rồi quay về trong cùng gói: không đổi (D-121)"))
+        edges = [e for e in edges if all(e is not m for m in moves)]
+        for c in close:
+            if c.id in stay:
+                rejected.append((f"close {c.id}", "nhân vật chính phải có một nơi ở: giữ nơi cũ (D-112)"))
+        close = [c for c in close if c.id not in stay]
         have = {c.id for c in close}
-        close = [*close, *(CloseSpec(type="LOCATED_AT", id=o.id, valid_to_chapter=chapter)
-                           for o in here if o.id not in have)]
-        return edges, close
-    for c in close:
-        if c.id in ids:
-            rejected.append((f"close {c.id}", "nhân vật chính phải có một nơi ở: giữ nơi cũ (D-112)"))
-    return edges, [c for c in close if c.id not in ids]
+        return edges, [*close, *(CloseSpec(type="LOCATED_AT", id=o.id, valid_to_chapter=chapter)
+                                 for o in here if o.id not in stay and o.id not in have)]
+    for e in moves:
+        if e is not final:
+            rejected.append((desc(e.source, e.target),
+                             "hai nơi ở cùng lúc: giữ nơi ghi sau cùng (D-112)"))
+    edges = [e for e in edges if all(e is not m or m is final for m in moves)]
+    have = {c.id for c in close}
+    return edges, [*close, *(CloseSpec(type="LOCATED_AT", id=o.id, valid_to_chapter=chapter)
+                             for o in here if o.id not in have)]
 
 
 def without_facts(package: ChangePackage, fact_ids: set[str]) -> ChangePackage:
@@ -596,19 +650,50 @@ def orphan_facts(package: ChangePackage) -> set[str]:
     return {n.id for n in package.nodes if n.label == "Fact" and n.id not in known}
 
 
+def accept_milestones(
+    output: ExtractOutput, pending: Sequence[PendingMilestone], done: Mapping[int, int],
+    chapter_text: str,
+) -> tuple[list[MilestoneMark], list[tuple[str, str]]]:
+    """Mốc bộ trích đánh dấu mà code nhận (D-116): id có trong mục "chưa xảy ra", chưa đánh dấu (ở
+    chương trước hay trong cùng câu trả lời), và `quote` nguyên văn trong chương (G3). Mô tả bị bỏ
+    chỉ có id mốc, không chữ của model."""
+    allowed = {p.number for p in pending}
+    marks: list[MilestoneMark] = []
+    rejected: list[tuple[str, str]] = []
+    for item in output.milestones:
+        found = re.fullmatch(r"m(\d+)", item.id.strip())
+        number = int(found.group(1)) if found else None
+        desc = f"mốc m{number}" if number is not None else "mốc"
+        if number is not None and number in done:
+            rejected.append((desc, f"mốc đã xảy ra ở chương {done[number]}, chỉ đánh dấu một lần"))
+        elif number is None or number not in allowed:
+            rejected.append((desc, "mốc không có trong danh sách chưa xảy ra"))
+        elif any(m.number == number for m in marks):
+            rejected.append((desc, "mốc đã đánh dấu trong cùng câu trả lời"))
+        elif not item.quote.strip():
+            rejected.append((desc, "mốc thiếu câu trích (G3)"))
+        elif not quote_in_text(item.quote, chapter_text):
+            rejected.append((desc, "câu trích mốc không có nguyên văn trong chương (G3)"))
+        else:
+            marks.append(MilestoneMark(number, item.quote.strip()))
+    return marks, rejected
+
+
 async def extract_changes(
     llm: LLMClient, model: str, *, chapter: int, chapter_id: str, commit_id: str,
     protagonist_id: str, chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
     threads: Sequence[ThreadGoal] = (), extra: Mapping[str, Any] | None = None,
-    fact_rules: FactRules | None = None,
+    fact_rules: FactRules | None = None, milestones: Sequence[PendingMilestone] = (),
+    milestones_done: Mapping[int, int] | None = None,
 ) -> ExtractResult:
     """Một lời gọi model. Lỗi schema để nơi gọi thử lại theo RETRY_SCHEMA (G11, D-14).
     `threads`: mạch phải gỡ chưa gỡ, kèm trạng thái hạn (`ChapterGoals.threads`, D-82).
-    `fact_rules`: luật Fact mới (D-93); None = tắt."""
+    `fact_rules`: luật Fact mới (D-93); None = tắt. `milestones`: mốc chưa xảy ra bộ trích được đánh
+    dấu, `milestones_done`: số thứ tự -> chương đã xong (D-116)."""
     messages = build_messages(
         chapter=chapter, chapter_id=chapter_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text, entities=entities, open_edges=open_edges, threads=threads,
-        fact_rules=fact_rules,
+        fact_rules=fact_rules, milestones=milestones,
     )
     output, chat = await llm.chat_json(model, messages, ExtractOutput, extra=extra)
     package, rejected = to_package(
@@ -616,4 +701,6 @@ async def extract_changes(
         chapter_text=chapter_text,
         entities=entities, open_edges=open_edges, threads=threads, fact_rules=fact_rules,
     )
-    return ExtractResult(package=package, rejected=rejected, chat=chat)
+    marks, bad_marks = accept_milestones(output, milestones, milestones_done or {}, chapter_text)
+    return ExtractResult(package=package, rejected=[*rejected, *bad_marks], chat=chat,
+                         milestones=tuple(marks))

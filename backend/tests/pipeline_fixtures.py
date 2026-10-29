@@ -204,9 +204,10 @@ _EDGE_NULLS = {"kind": None, "score": None, "how": None, "told_by": None, "quote
                "known_as": None, "role": None}
 
 
-def extract_reply(edges=(), close=(), new_facts=()) -> str:
+def extract_reply(edges=(), close=(), new_facts=(), milestones=()) -> str:
     return json.dumps({"edges": [_EDGE_NULLS | e for e in edges], "close": list(close),
-                       "new_facts": list(new_facts)}, ensure_ascii=False)
+                       "new_facts": list(new_facts), "milestones": list(milestones)},
+                      ensure_ascii=False)
 
 
 # Cảnh 1: Lan lộ ra là biết Minh nói dối về thanh kiếm (gói vàng ch4).
