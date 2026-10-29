@@ -1,0 +1,39 @@
+# Đề chạy cả một truyện từ dòng lệnh: writory.pipeline.bench_run (docs/eval.md, mục "Chạy cả
+# truyện"; D-42). Khai TRƯỚC mọi lần chạy thật. Đã chạy thật rồi thì không sửa đè: tăng `version`
+# hoặc thêm file đề mới.
+#
+# Mục đích: đo nền mức Truyện dài (20–35 chương) trên một thế giới KHÔNG phải "phòng họp", để biết
+# giậm chân ở `long-tu-tien-2` là do mức Dài hay do kiểu thế giới tĩnh (đề nghị của writory-28,
+# chủ dự án giao 29/10/2026). Hướng đề: kỳ ảo phiêu lưu, hành trình qua nhiều vùng đất khác hẳn
+# nhau, nơi chốn đổi liên tục là việc bình thường của truyện; tên Việt thuần, địa danh hư cấu.
+# Khác `long-tu-tien.yaml` ở kiểu thế giới (đi đường, không giữ một chỗ) và kiểu tên. Seed mới.
+# Soạn chữ tag và số chạy: Claude (nhánh eval/long-baseline).
+
+version: 1
+
+# Người chơi chọn ở bước khởi tạo (design §4.1 bước 1–3). Tag là chữ người chơi (G4).
+tags:
+  genre: kỳ ảo phiêu lưu, hành trình qua nhiều vùng đất
+  era: một lục địa bị chia cắt bởi những vùng đất khác hẳn nhau (rừng sương, sa mạc muối, cảng nổi, núi lửa ngủ), muốn qua phải đi từng chặng, mỗi chặng có luật riêng
+  voice: nhanh, nhiều cảnh vật lạ, đối đáp có duyên, hơi hài hước trên nền nguy hiểm thật
+  darkness: vừa phải, có mất mát và phản bội, không tả máu me
+length_level: long                          # config/story_lengths.yaml: 20–35 chương
+naming: {names: viet, places: hu_cau}
+pov: protagonist
+writer_tier: null                           # null = mức đầu của config/models.yaml
+
+# Bước nào có 3 lựa chọn (bối cảnh, hướng, nhân vật, lựa chọn cuối chương) thì chọn bằng
+# random.Random(seed). Nhân vật chính giữ nguyên chữ model đề xuất (không sửa tay).
+seed: 20261031
+scene_count: 2        # số cảnh mỗi chương, trong story_lengths.scenes_per_chapter
+
+# Cảnh hoặc bộ lựa chọn bị chặn, hay model trả sai sau mọi lần thử lại của pipeline: lệnh tự "bấm
+# thử lại" tối đa chừng này lần, như người chơi. Lỗi khác (trần, key, cấu hình) dừng ngay.
+player_retries: 1
+
+# Giữ chỗ ngân sách (--budget): trước mỗi lời gọi trừ trước chi phí tối đa có thể =
+# token vào ước tính × giá vào + max_tokens_per_call × giá ra. Chi phí thật lấy từ usage.cost.
+max_tokens_per_call: 16000
+# USD / 1 triệu token, chỉ để giữ chỗ (config đang dùng GPT-6 Luna cho mọi vai, D-102).
+prices:
+  openai/gpt-6-luna: {in: 0.10, out: 0.50}
