@@ -6,12 +6,46 @@ Mỗi loại lỗi có số lần riêng (D-14): lỗi mạng theo `retries.llm_
 Không chờ giữa các lần thử: không phụ thuộc thời gian, và lỗi tần suất (429) không được thử lại.
 """
 
-from collections.abc import Awaitable, Callable
+import logging
+from collections.abc import Awaitable, Callable, Iterator
+from contextlib import contextmanager
+from contextvars import ContextVar
 
 from writory.errors import ErrorCode, WritoryError
 
+log = logging.getLogger(__name__)
+
 RETRY_TRANSIENT = frozenset({ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT})
 RETRY_SCHEMA = frozenset({ErrorCode.LLM_BAD_RESPONSE})
+
+
+# Móc báo "thân trả lời bị từ chối" (D-115). CHỈ bộ đo cài (`bench_run`): app không bao giờ cài, nên
+# không giữ thân trả lời nào (G7). Không cài thì không làm gì.
+RejectionHook = Callable[[WritoryError], None]
+_REJECTION_HOOK: ContextVar[RejectionHook | None] = ContextVar("writory_rejection_hook",
+                                                                default=None)
+
+
+@contextmanager
+def watch_rejections(hook: RejectionHook) -> Iterator[None]:
+    """Trong khối này, mỗi lần một lời gọi bị từ chối vì sai schema hay sai quy tắc sau schema
+    (`LLM_BAD_RESPONSE`, kể cả lần cuối trước khi hết lượt thử) thì gọi `hook(lỗi)`. Hook lỗi không
+    đổi kết quả của lời gọi."""
+    token = _REJECTION_HOOK.set(hook)
+    try:
+        yield
+    finally:
+        _REJECTION_HOOK.reset(token)
+
+
+def _heard(e: WritoryError) -> None:
+    hook = _REJECTION_HOOK.get()
+    if hook is None or e.code not in RETRY_SCHEMA:
+        return
+    try:
+        hook(e)
+    except Exception as err:  # noqa: BLE001 — móc của bộ đo không được làm hỏng lời gọi
+        log.warning("móc báo thân bị từ chối lỗi (%s)", type(err).__name__)
 
 
 async def with_retries[T](
@@ -28,6 +62,7 @@ async def with_retries[T](
         try:
             return await op()
         except WritoryError as e:
+            _heard(e)
             if e.code not in retry_on:
                 raise
             last = e

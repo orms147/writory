@@ -5,7 +5,13 @@ from writory.config import load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import Message
 from writory.llm.fake import FakeLLM
-from writory.llm.retry import RETRY_SCHEMA, RETRY_TRANSIENT, with_retries
+from writory.llm.retry import (
+    RETRY_SCHEMA,
+    RETRY_TRANSIENT,
+    watch_rejections,
+    with_json_retries,
+    with_retries,
+)
 
 MSGS = [Message(role="user", content="trích JSON")]
 RETRIES = load_config().limits.retries
@@ -170,3 +176,68 @@ def test_role_extra_has_no_provider_part_when_nothing_is_ignored():
     assert models.provider_ignore == []
     assert provider_extra(models) is None
     assert "provider" not in role_extra(models, "extract")
+
+
+# --- móc báo thân trả lời bị từ chối, chỉ bộ đo cài (D-115) ---------------------------------------
+
+
+def bad(detail="Schema: sai") -> WritoryError:
+    return WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail=detail)
+
+
+async def test_the_rejection_hook_hears_every_schema_failure_and_nothing_else():
+    heard: list[WritoryError] = []
+    calls = []
+
+    async def op():
+        calls.append(1)
+        if len(calls) == 1:
+            raise unavailable()
+        if len(calls) < 4:
+            raise bad(f"lần {len(calls)}")
+        return "ok"
+
+    with watch_rejections(heard.append):
+        assert await with_json_retries(op, schema_retries=2, transient_retries=1) == "ok"
+    assert [e.detail for e in heard] == ["lần 2", "lần 3"]  # lỗi mạng không phải thân bị từ chối
+
+
+async def test_the_last_rejection_is_heard_too_before_the_retry_limit_error():
+    heard: list[WritoryError] = []
+
+    async def op():
+        raise bad()
+
+    with watch_rejections(heard.append), pytest.raises(WritoryError) as exc:
+        await with_retries(op, max_retries=1, retry_on=RETRY_SCHEMA)
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED and len(heard) == 2
+
+
+async def test_without_a_hook_nothing_changes_and_the_hook_is_scoped():
+    async def op():
+        raise bad()
+
+    with pytest.raises(WritoryError):
+        await with_retries(op, max_retries=0, retry_on=RETRY_SCHEMA)
+    heard: list[WritoryError] = []
+    with watch_rejections(heard.append):
+        pass
+    with pytest.raises(WritoryError):
+        await with_retries(op, max_retries=0, retry_on=RETRY_SCHEMA)
+    assert heard == []  # ra khỏi khối là gỡ móc
+
+
+async def test_a_failing_hook_never_changes_the_outcome():
+    def broken(_: WritoryError) -> None:
+        raise RuntimeError("móc hỏng")
+
+    calls = []
+
+    async def op():
+        calls.append(1)
+        if len(calls) == 1:
+            raise bad()
+        return "ok"
+
+    with watch_rejections(broken):
+        assert await with_retries(op, max_retries=1, retry_on=RETRY_SCHEMA) == "ok"
