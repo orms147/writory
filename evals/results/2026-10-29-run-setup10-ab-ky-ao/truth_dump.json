@@ -1,0 +1,1691 @@
+{
+ "story_id": "run-20261029-setup10-ab-ky-ao-45864115",
+ "plan": {
+  "acts": [
+   {
+    "name": "Ngọn đèn trở về",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Lời nhắn dưới đáy thuyền",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Nước đổi dòng",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "name": "Ca trực cuối",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_5",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Bà Lành",
+      "nét chữ"
+     ],
+     [
+      "ông Phúc",
+      "lời thề bị chép thiếu"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "thread_1",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 2
+   },
+   {
+    "thread_id": "thread_2",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "thread_3",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Tâm tìm được người nhận ra nét chữ trên mảnh giấy.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Tâm phát hiện lời thề cổ bị chép thiếu một dòng.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Tâm đưa chiếc chuông bị giấu tới miếu nước khi mặt đầm dâng lên.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Tâm hoàn tất ca gác bằng một lựa chọn dứt khoát về lời thề và chiếc chuông.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "fact_5",
+    "text": "Ông Phúc đã viết lời nhắn để cảnh báo rằng lời thề bị chép thiếu một dòng.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "thread_1",
+    "description": "Ai nhận ra nét chữ trên lời nhắn?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_2",
+    "description": "Vì sao chiếc đèn cũ được đặt trên mũi thuyền?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_3",
+    "description": "Chiếc chuông miếu nước có thể làm dịu mặt đầm hay không?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Tâm tìm được người nhận ra nét chữ trên mảnh giấy.",
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Tâm phát hiện lời thề cổ bị chép thiếu một dòng.",
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Tâm đưa chiếc chuông bị giấu tới miếu nước khi mặt đầm dâng lên.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Tâm hoàn tất ca gác bằng một lựa chọn dứt khoát về lời thề và chiếc chuông.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261029-setup10-ab-ky-ao-45864115-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Lê Minh Tâm",
+      "personality": "Điềm đạm, hay lắng nghe hơn tranh cãi. Khi đã nhận lời, anh khó lòng quay lưng dù biết mình có thể gặp nguy hiểm.",
+      "backstory": "Tâm từng phụ cha chèo thuyền qua những bến lau quanh Cồn Lặng. Sau khi cha mất trong một đêm sương dày, anh rời làng và tránh nhắc đến trạm canh. Nay được gọi về nhận ca trực kế tiếp, anh thấy chiếc đèn cũ trên mũi thuyền và quyết tìm người nhận ra nét chữ trong lời nhắn.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Gương mặt trái xoan, vóc người gọn và tuổi ngoài hai mươi. Tóc nâu hạt dẻ dài vừa, buộc thấp sau gáy; áo chàm xanh sẫm bằng vải dày, bên tai trái có nốt ruồi nhỏ."
+     }
+    },
+    {
+     "id": "ba_lam",
+     "label": "Character",
+     "props": {
+      "name": "Bà Lành",
+      "aliases": [
+       "Bà giữ sổ"
+      ],
+      "personality": "Kín đáo, cứng cỏi, nói năng dè sẻn; không dễ tin người nhưng luôn giữ lời đã hứa.",
+      "backstory": "Bà từng chép lời thề của các làng ven đầm vào sổ trạm canh. Sau cái chết của người gác đêm trước, bà giữ im lặng về những nét chữ mình nhận ra.",
+      "appearance": "Khuôn mặt dài với đôi mắt sâu, dáng người nhỏ và tuổi ngoài sáu mươi. Mái tóc bạc tết gọn sau gáy, áo chàm sẫm bằng vải thô, một chiếc trâm đồng hình lá lau cài bên thái dương."
+     }
+    },
+    {
+     "id": "vu_dat",
+     "label": "Character",
+     "props": {
+      "name": "Vũ Đạt",
+      "aliases": [
+       "Đạt chèo"
+      ],
+      "personality": "Nóng ruột, thực tế, ghét những lời úp mở; vẫn thương người làng và sợ đầm sâu hơn những gì anh thừa nhận.",
+      "backstory": "Đạt lớn lên ở xóm bến, làm nghề đưa đò giữa các bãi lau. Anh là người cuối cùng nhìn thấy người gác đêm còn sống trước khi chiếc thuyền trống cập trạm.",
+      "appearance": "Gương mặt vuông, thân hình rộng vai và tuổi chừng ba mươi. Tóc nâu đỏ cắt ngắn, áo nâu đất dệt thô khoác ngoài áo vải xám, một vết sẹo mảnh chạy ngang cằm."
+     }
+    },
+    {
+     "id": "doan_nhu",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Như",
+      "aliases": [
+       "Như thầy cúng"
+      ],
+      "personality": "Bình tĩnh, giàu lòng thương, tin vào nghi thức nhưng không tin rằng mọi điều xưa cũ đều phải được giữ nguyên.",
+      "backstory": "Như chăm nom miếu nước ở rìa làng và thuộc những bài khấn truyền qua nhiều đời. Bà đã nghe tiếng nước đổi nhịp dưới đầm từ trước khi người gác đêm qua đời.",
+      "appearance": "Gò má cao, dáng người thanh mảnh và tuổi gần bốn mươi. Mái tóc nâu sẫm xoăn nhẹ chạm vai, áo xanh rêu viền chỉ bạc, một vòng hạt gỗ sáng màu quấn hai lượt quanh cổ tay."
+     }
+    },
+    {
+     "id": "tram_can_con_lang",
+     "label": "Location",
+     "props": {
+      "name": "Trạm canh Cồn Lặng",
+      "aliases": [
+       "Trạm canh"
+      ],
+      "description": "Trạm canh tách khỏi làng, nơi người gác đêm thay nhau đọc lời thề cổ bên mép đầm.",
+      "visual": "Ánh đèn vàng yếu lọt qua vách nứa và mái tranh ẩm. Sàn gỗ sẫm nổi trên những cọc đóng giữa lau, trong không khí phảng phất mùi bùn lạnh."
+     }
+    },
+    {
+     "id": "ben_lau_vet",
+     "label": "Location",
+     "props": {
+      "name": "Bến Lau Vẹt",
+      "aliases": [
+       "Bến lau"
+      ],
+      "description": "Bến nước khuất sau một dải lau rậm, nơi chiếc thuyền không người mắc cạn.",
+      "visual": "Sương trắng đục phủ ngang mặt nước, chỉ để lộ những cọc bến đen bóng. Lau vàng xám nghiêng vào nhau, tiếng nước vỗ nghe gần như tiếng thì thầm."
+     }
+    },
+    {
+     "id": "xom_bang",
+     "label": "Location",
+     "props": {
+      "name": "Xóm Bàng",
+      "aliases": [
+       "Làng ven đầm"
+      ],
+      "description": "Xóm nhà sàn nằm trên doi đất cao, cách trạm canh một quãng chèo ngắn.",
+      "visual": "Đèn dầu đỏ lờ mờ sau phên tre, hắt lên những mái lá sẫm màu. Lối ván ướt chạy giữa các nhà, còn sương đầm níu thấp quanh chân cột."
+     }
+    },
+    {
+     "id": "mieu_vong_nuoc",
+     "label": "Location",
+     "props": {
+      "name": "Miếu Vọng Nước",
+      "aliases": [
+       "Miếu nước"
+      ],
+      "description": "Miếu nhỏ dựng bên một vũng sâu, nơi dân làng dâng lễ trước mỗi mùa nước lớn.",
+      "visual": "Ánh sáng xanh nhạt lọt qua khe mái, phủ lên đá rêu và bát hương đất. Mặt vũng sát miếu phẳng lặng đến lạ, dù lau quanh bờ vẫn lay động."
+     }
+    },
+    {
+     "id": "nguoi_gac_dem",
+     "label": "Faction",
+     "props": {
+      "name": "Người gác đêm",
+      "aliases": [
+       "Ca gác"
+      ],
+      "description": "Những người thay phiên canh trạm và đọc lời thề cổ để giữ yên mặt đầm."
+     }
+    },
+    {
+     "id": "dan_xom_bang",
+     "label": "Faction",
+     "props": {
+      "name": "Dân Xóm Bàng",
+      "aliases": [
+       "Người trong xóm"
+      ],
+      "description": "Các gia đình sống quanh đầm, cùng gìn giữ lời thề truyền lại từ tổ tiên."
+     }
+    },
+    {
+     "id": "den_cu",
+     "label": "Item",
+     "props": {
+      "name": "Chiếc đèn cũ",
+      "aliases": [
+       "Đèn người gác"
+      ],
+      "description": "Chiếc đèn dầu móp một góc, còn vệt muội đen quanh chụp đồng."
+     }
+    },
+    {
+     "id": "loi_nhan",
+     "label": "Item",
+     "props": {
+      "name": "Lời nhắn úp mặt",
+      "aliases": [
+       "Mảnh giấy"
+      ],
+      "description": "Mảnh giấy ẩm có nét chữ mực nâu, được giấu dưới lòng chiếc thuyền không người."
+     }
+    },
+    {
+     "id": "so_loi_the",
+     "label": "Item",
+     "props": {
+      "name": "Sổ lời thề",
+      "aliases": [
+       "Cuốn sổ"
+      ],
+      "description": "Cuốn sổ bìa vải ghi những lần người gác đêm đọc lời thề qua nhiều mùa nước."
+     }
+    },
+    {
+     "id": "fact_1",
+     "label": "Fact",
+     "props": {
+      "text": "Người gác đêm thay phiên đọc lời thề cổ tại trạm canh Cồn Lặng."
+     }
+    },
+    {
+     "id": "fact_2",
+     "label": "Fact",
+     "props": {
+      "text": "Dân Xóm Bàng tin rằng lời thề cổ giữ vị thủy thần đang ngủ dưới đầm."
+     }
+    },
+    {
+     "id": "fact_3",
+     "label": "Fact",
+     "props": {
+      "text": "Người gác đêm vừa qua đời là ông Phúc."
+     }
+    },
+    {
+     "id": "fact_4",
+     "label": "Fact",
+     "props": {
+      "text": "Bà Lành nhận ra nét chữ trên lời nhắn là nét chữ của ông Phúc."
+     }
+    },
+    {
+     "id": "fact_5",
+     "label": "Fact",
+     "props": {
+      "text": "Ông Phúc đã viết lời nhắn để cảnh báo rằng lời thề bị chép thiếu một dòng."
+     }
+    },
+    {
+     "id": "fact_6",
+     "label": "Fact",
+     "props": {
+      "text": "Dòng bị thiếu trong lời thề yêu cầu người làng trả lại tiếng chuông đã lấy khỏi miếu nước."
+     }
+    },
+    {
+     "id": "fact_7",
+     "label": "Fact",
+     "props": {
+      "text": "Chiếc chuông của miếu nước được giấu dưới sàn trạm canh."
+     }
+    },
+    {
+     "id": "fact_8",
+     "label": "Fact",
+     "props": {
+      "text": "Vũ Đạt là người cuối cùng nhìn thấy ông Phúc còn sống."
+     }
+    },
+    {
+     "id": "fact_9",
+     "label": "Fact",
+     "props": {
+      "text": "Mặt đầm quanh trạm canh bắt đầu nổi những vòng sóng lớn trước khi Tâm tới nhận ca."
+     }
+    },
+    {
+     "id": "thread_1",
+     "label": "Thread",
+     "props": {
+      "description": "Ai nhận ra nét chữ trên lời nhắn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 2
+     }
+    },
+    {
+     "id": "thread_2",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao chiếc đèn cũ được đặt trên mũi thuyền?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "thread_3",
+     "label": "Thread",
+     "props": {
+      "description": "Chiếc chuông miếu nước có thể làm dịu mặt đầm hay không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "ba_lam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>ba_lam@0",
+     "props": {
+      "kind": "người quen",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "ba_lam",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ba_lam>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "vu_dat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>vu_dat@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "vu_dat",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:vu_dat>protagonist@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 30
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_nhu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_nhu@0",
+     "props": {
+      "kind": "người quen",
+      "score": 15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_nhu",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_nhu>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 15
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "tram_can_con_lang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>tram_can_con_lang@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ba_lam",
+     "to": "xom_bang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ba_lam>xom_bang@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "vu_dat",
+     "to": "ben_lau_vet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:vu_dat>ben_lau_vet@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_nhu",
+     "to": "mieu_vong_nuoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_nhu>mieu_vong_nuoc@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "den_cu",
+     "to": "tram_can_con_lang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:den_cu>tram_can_con_lang@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "loi_nhan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>loi_nhan@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "ba_lam",
+     "to": "so_loi_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:ba_lam>so_loi_the@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "nguoi_gac_dem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>nguoi_gac_dem@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ba_lam",
+     "to": "dan_xom_bang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ba_lam>dan_xom_bang@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "vu_dat",
+     "to": "dan_xom_bang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:vu_dat>dan_xom_bang@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_nhu",
+     "to": "dan_xom_bang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_nhu>dan_xom_bang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_1",
+     "to": "nguoi_gac_dem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_1>nguoi_gac_dem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_1",
+     "to": "tram_can_con_lang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_1>tram_can_con_lang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_nhu",
+     "to": "fact_1",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_nhu>fact_1@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_2",
+     "to": "dan_xom_bang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_2>dan_xom_bang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_2",
+     "to": "xom_bang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_2>xom_bang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_dat",
+     "to": "fact_2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_dat>fact_2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_nhu",
+     "to": "fact_2",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_nhu>fact_2@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_3",
+     "to": "nguoi_gac_dem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_3>nguoi_gac_dem@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_3",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_3@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_dat",
+     "to": "fact_3",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_dat>fact_3@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_nhu",
+     "to": "fact_3",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_nhu>fact_3@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_4",
+     "to": "ba_lam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_4>ba_lam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_4",
+     "to": "loi_nhan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_4>loi_nhan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_4",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_4@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_5",
+     "to": "loi_nhan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_5>loi_nhan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_5",
+     "to": "so_loi_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_5>so_loi_the@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_5",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_5@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_6",
+     "to": "so_loi_the",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_6>so_loi_the@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_6",
+     "to": "mieu_vong_nuoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_6>mieu_vong_nuoc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_6",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_6@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_7",
+     "to": "mieu_vong_nuoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_7>mieu_vong_nuoc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_7",
+     "to": "tram_can_con_lang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_7>tram_can_con_lang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_7",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_7@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_8",
+     "to": "vu_dat",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_8>vu_dat@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_8",
+     "to": "nguoi_gac_dem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_8>nguoi_gac_dem@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_dat",
+     "to": "fact_8",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_dat>fact_8@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_9",
+     "to": "tram_can_con_lang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_9>tram_can_con_lang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lam",
+     "to": "fact_9",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lam>fact_9@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "vu_dat",
+     "to": "fact_9",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:vu_dat>fact_9@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_nhu",
+     "to": "fact_9",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_nhu>fact_9@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Lê Minh Tâm",
+      "known_as": "Lê Minh Tâm"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ba_lam": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bà từng chép lời thề của các làng ven đầm vào sổ trạm canh. Sau cái chết của người gác đêm trước, bà giữ im lặng về những nét chữ mình nhận ra.",
+     "appearance": "Khuôn mặt dài với đôi mắt sâu, dáng người nhỏ và tuổi ngoài sáu mươi. Mái tóc bạc tết gọn sau gáy, áo chàm sẫm bằng vải thô, một chiếc trâm đồng hình lá lau cài bên thái dương.",
+     "aliases": [
+      "Bà giữ sổ"
+     ],
+     "personality": "Kín đáo, cứng cỏi, nói năng dè sẻn; không dễ tin người nhưng luôn giữ lời đã hứa.",
+     "name": "Bà Lành"
+    }
+   },
+   "ben_lau_vet": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Bến lau"
+     ],
+     "name": "Bến Lau Vẹt",
+     "description": "Bến nước khuất sau một dải lau rậm, nơi chiếc thuyền không người mắc cạn.",
+     "visual": "Sương trắng đục phủ ngang mặt nước, chỉ để lộ những cọc bến đen bóng. Lau vàng xám nghiêng vào nhau, tiếng nước vỗ nghe gần như tiếng thì thầm."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "dan_xom_bang": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Người trong xóm"
+     ],
+     "name": "Dân Xóm Bàng",
+     "description": "Các gia đình sống quanh đầm, cùng gìn giữ lời thề truyền lại từ tổ tiên."
+    }
+   },
+   "den_cu": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Đèn người gác"
+     ],
+     "name": "Chiếc đèn cũ",
+     "description": "Chiếc đèn dầu móp một góc, còn vệt muội đen quanh chụp đồng."
+    }
+   },
+   "doan_nhu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Như chăm nom miếu nước ở rìa làng và thuộc những bài khấn truyền qua nhiều đời. Bà đã nghe tiếng nước đổi nhịp dưới đầm từ trước khi người gác đêm qua đời.",
+     "appearance": "Gò má cao, dáng người thanh mảnh và tuổi gần bốn mươi. Mái tóc nâu sẫm xoăn nhẹ chạm vai, áo xanh rêu viền chỉ bạc, một vòng hạt gỗ sáng màu quấn hai lượt quanh cổ tay.",
+     "aliases": [
+      "Như thầy cúng"
+     ],
+     "personality": "Bình tĩnh, giàu lòng thương, tin vào nghi thức nhưng không tin rằng mọi điều xưa cũ đều phải được giữ nguyên.",
+     "name": "Đoàn Như"
+    }
+   },
+   "fact_1": {
+    "label": "Fact",
+    "props": {
+     "text": "Người gác đêm thay phiên đọc lời thề cổ tại trạm canh Cồn Lặng."
+    }
+   },
+   "fact_2": {
+    "label": "Fact",
+    "props": {
+     "text": "Dân Xóm Bàng tin rằng lời thề cổ giữ vị thủy thần đang ngủ dưới đầm."
+    }
+   },
+   "fact_3": {
+    "label": "Fact",
+    "props": {
+     "text": "Người gác đêm vừa qua đời là ông Phúc."
+    }
+   },
+   "fact_4": {
+    "label": "Fact",
+    "props": {
+     "text": "Bà Lành nhận ra nét chữ trên lời nhắn là nét chữ của ông Phúc."
+    }
+   },
+   "fact_5": {
+    "label": "Fact",
+    "props": {
+     "text": "Ông Phúc đã viết lời nhắn để cảnh báo rằng lời thề bị chép thiếu một dòng."
+    }
+   },
+   "fact_6": {
+    "label": "Fact",
+    "props": {
+     "text": "Dòng bị thiếu trong lời thề yêu cầu người làng trả lại tiếng chuông đã lấy khỏi miếu nước."
+    }
+   },
+   "fact_7": {
+    "label": "Fact",
+    "props": {
+     "text": "Chiếc chuông của miếu nước được giấu dưới sàn trạm canh."
+    }
+   },
+   "fact_8": {
+    "label": "Fact",
+    "props": {
+     "text": "Vũ Đạt là người cuối cùng nhìn thấy ông Phúc còn sống."
+    }
+   },
+   "fact_9": {
+    "label": "Fact",
+    "props": {
+     "text": "Mặt đầm quanh trạm canh bắt đầu nổi những vòng sóng lớn trước khi Tâm tới nhận ca."
+    }
+   },
+   "loi_nhan": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Mảnh giấy"
+     ],
+     "name": "Lời nhắn úp mặt",
+     "description": "Mảnh giấy ẩm có nét chữ mực nâu, được giấu dưới lòng chiếc thuyền không người."
+    }
+   },
+   "mieu_vong_nuoc": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Miếu nước"
+     ],
+     "name": "Miếu Vọng Nước",
+     "visual": "Ánh sáng xanh nhạt lọt qua khe mái, phủ lên đá rêu và bát hương đất. Mặt vũng sát miếu phẳng lặng đến lạ, dù lau quanh bờ vẫn lay động.",
+     "description": "Miếu nhỏ dựng bên một vũng sâu, nơi dân làng dâng lễ trước mỗi mùa nước lớn."
+    }
+   },
+   "nguoi_gac_dem": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Ca gác"
+     ],
+     "name": "Người gác đêm",
+     "description": "Những người thay phiên canh trạm và đọc lời thề cổ để giữ yên mặt đầm."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Tâm từng phụ cha chèo thuyền qua những bến lau quanh Cồn Lặng. Sau khi cha mất trong một đêm sương dày, anh rời làng và tránh nhắc đến trạm canh. Nay được gọi về nhận ca trực kế tiếp, anh thấy chiếc đèn cũ trên mũi thuyền và quyết tìm người nhận ra nét chữ trong lời nhắn.",
+     "appearance": "Gương mặt trái xoan, vóc người gọn và tuổi ngoài hai mươi. Tóc nâu hạt dẻ dài vừa, buộc thấp sau gáy; áo chàm xanh sẫm bằng vải dày, bên tai trái có nốt ruồi nhỏ.",
+     "personality": "Điềm đạm, hay lắng nghe hơn tranh cãi. Khi đã nhận lời, anh khó lòng quay lưng dù biết mình có thể gặp nguy hiểm.",
+     "name": "Lê Minh Tâm",
+     "is_protagonist": true
+    }
+   },
+   "so_loi_the": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Cuốn sổ"
+     ],
+     "name": "Sổ lời thề",
+     "description": "Cuốn sổ bìa vải ghi những lần người gác đêm đọc lời thề qua nhiều mùa nước."
+    }
+   },
+   "thread_1": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai nhận ra nét chữ trên lời nhắn?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 2
+    }
+   },
+   "thread_2": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao chiếc đèn cũ được đặt trên mũi thuyền?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 4
+    }
+   },
+   "thread_3": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Chiếc chuông miếu nước có thể làm dịu mặt đầm hay không?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "tram_can_con_lang": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Trạm canh"
+     ],
+     "name": "Trạm canh Cồn Lặng",
+     "visual": "Ánh đèn vàng yếu lọt qua vách nứa và mái tranh ẩm. Sàn gỗ sẫm nổi trên những cọc đóng giữa lau, trong không khí phảng phất mùi bùn lạnh.",
+     "description": "Trạm canh tách khỏi làng, nơi người gác đêm thay nhau đọc lời thề cổ bên mép đầm."
+    }
+   },
+   "vu_dat": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đạt lớn lên ở xóm bến, làm nghề đưa đò giữa các bãi lau. Anh là người cuối cùng nhìn thấy người gác đêm còn sống trước khi chiếc thuyền trống cập trạm.",
+     "appearance": "Gương mặt vuông, thân hình rộng vai và tuổi chừng ba mươi. Tóc nâu đỏ cắt ngắn, áo nâu đất dệt thô khoác ngoài áo vải xám, một vết sẹo mảnh chạy ngang cằm.",
+     "aliases": [
+      "Đạt chèo"
+     ],
+     "personality": "Nóng ruột, thực tế, ghét những lời úp mở; vẫn thương người làng và sợ đầm sâu hơn những gì anh thừa nhận.",
+     "name": "Vũ Đạt"
+    }
+   },
+   "xom_bang": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Làng ven đầm"
+     ],
+     "name": "Xóm Bàng",
+     "visual": "Đèn dầu đỏ lờ mờ sau phên tre, hắt lên những mái lá sẫm màu. Lối ván ướt chạy giữa các nhà, còn sương đầm níu thấp quanh chân cột.",
+     "description": "Xóm nhà sàn nằm trên doi đất cao, cách trạm canh một quãng chèo ngắn."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:ba_lam>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "ba_lam",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_nhu>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_nhu",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 15,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>ba_lam@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "ba_lam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_nhu@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_nhu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 15,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>vu_dat@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "vu_dat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:vu_dat>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "vu_dat",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 30,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "LOCATED_AT:ba_lam>xom_bang@0",
+    "type": "LOCATED_AT",
+    "source": "ba_lam",
+    "target": "xom_bang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:den_cu>tram_can_con_lang@0",
+    "type": "LOCATED_AT",
+    "source": "den_cu",
+    "target": "tram_can_con_lang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_nhu>mieu_vong_nuoc@0",
+    "type": "LOCATED_AT",
+    "source": "doan_nhu",
+    "target": "mieu_vong_nuoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>tram_can_con_lang@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "tram_can_con_lang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:vu_dat>ben_lau_vet@0",
+    "type": "LOCATED_AT",
+    "source": "vu_dat",
+    "target": "ben_lau_vet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:ba_lam>so_loi_the@0",
+    "type": "HOLDS",
+    "source": "ba_lam",
+    "target": "so_loi_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>loi_nhan@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "loi_nhan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ba_lam>dan_xom_bang@0",
+    "type": "MEMBER_OF",
+    "source": "ba_lam",
+    "target": "dan_xom_bang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_nhu>dan_xom_bang@0",
+    "type": "MEMBER_OF",
+    "source": "doan_nhu",
+    "target": "dan_xom_bang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>nguoi_gac_dem@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "nguoi_gac_dem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:vu_dat>dan_xom_bang@0",
+    "type": "MEMBER_OF",
+    "source": "vu_dat",
+    "target": "dan_xom_bang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_1@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_2@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_3@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_3",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_4@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_4",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_5@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_5",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_6@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_6",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_7@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_7",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lam>fact_9@0",
+    "type": "KNOWS",
+    "source": "ba_lam",
+    "target": "fact_9",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_nhu>fact_1@0",
+    "type": "KNOWS",
+    "source": "doan_nhu",
+    "target": "fact_1",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_nhu>fact_2@0",
+    "type": "KNOWS",
+    "source": "doan_nhu",
+    "target": "fact_2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_nhu>fact_3@0",
+    "type": "KNOWS",
+    "source": "doan_nhu",
+    "target": "fact_3",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_nhu>fact_9@0",
+    "type": "KNOWS",
+    "source": "doan_nhu",
+    "target": "fact_9",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_dat>fact_2@0",
+    "type": "KNOWS",
+    "source": "vu_dat",
+    "target": "fact_2",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_dat>fact_3@0",
+    "type": "KNOWS",
+    "source": "vu_dat",
+    "target": "fact_3",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_dat>fact_8@0",
+    "type": "KNOWS",
+    "source": "vu_dat",
+    "target": "fact_8",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:vu_dat>fact_9@0",
+    "type": "KNOWS",
+    "source": "vu_dat",
+    "target": "fact_9",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:fact_1>nguoi_gac_dem@0",
+    "type": "ABOUT",
+    "source": "fact_1",
+    "target": "nguoi_gac_dem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_1>tram_can_con_lang@0",
+    "type": "ABOUT",
+    "source": "fact_1",
+    "target": "tram_can_con_lang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_2>dan_xom_bang@0",
+    "type": "ABOUT",
+    "source": "fact_2",
+    "target": "dan_xom_bang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_2>xom_bang@0",
+    "type": "ABOUT",
+    "source": "fact_2",
+    "target": "xom_bang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_3>nguoi_gac_dem@0",
+    "type": "ABOUT",
+    "source": "fact_3",
+    "target": "nguoi_gac_dem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_4>ba_lam@0",
+    "type": "ABOUT",
+    "source": "fact_4",
+    "target": "ba_lam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_4>loi_nhan@0",
+    "type": "ABOUT",
+    "source": "fact_4",
+    "target": "loi_nhan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_5>loi_nhan@0",
+    "type": "ABOUT",
+    "source": "fact_5",
+    "target": "loi_nhan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_5>so_loi_the@0",
+    "type": "ABOUT",
+    "source": "fact_5",
+    "target": "so_loi_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_6>mieu_vong_nuoc@0",
+    "type": "ABOUT",
+    "source": "fact_6",
+    "target": "mieu_vong_nuoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_6>so_loi_the@0",
+    "type": "ABOUT",
+    "source": "fact_6",
+    "target": "so_loi_the",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_7>mieu_vong_nuoc@0",
+    "type": "ABOUT",
+    "source": "fact_7",
+    "target": "mieu_vong_nuoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_7>tram_can_con_lang@0",
+    "type": "ABOUT",
+    "source": "fact_7",
+    "target": "tram_can_con_lang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_8>nguoi_gac_dem@0",
+    "type": "ABOUT",
+    "source": "fact_8",
+    "target": "nguoi_gac_dem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_8>vu_dat@0",
+    "type": "ABOUT",
+    "source": "fact_8",
+    "target": "vu_dat",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_9>tram_can_con_lang@0",
+    "type": "ABOUT",
+    "source": "fact_9",
+    "target": "tram_can_con_lang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Lê Minh Tâm",
+     "known_as": "Lê Minh Tâm"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [
+  {
+   "where": "setup:build",
+   "attempt": 1,
+   "code": "STORY_SETUP_INVALID",
+   "detail": "sai quy tắc sau 1 lượt sửa: plan ×1",
+   "problems": [
+    "bản kế hoạch: (gốc): Value error, hồi thứ [3] không có mốc nào kết thúc trong hồi"
+   ]
+  }
+ ],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "milestones": 1
+   },
+   "problems": [
+    "cần 3–5 mốc, có 6"
+   ]
+  }
+ ],
+ "quotes": []
+}

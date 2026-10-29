@@ -1135,6 +1135,16 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** không thêm tính năng. Câu `LLM_TIMEOUT` trong bảng mock phải sửa cùng `errors.py` (test bắt lệch).
 - **Người quyết:** Claude, từ review độc lập do writory-28 điều phối (29/10/2026), nhánh fix/review-d112-d117 · 29/10/2026
 
+## D-122 · Đề khởi tạo `setup-10`: ngoại hình chỉ tả điều nhìn thấy và phân biệt được nhau; bộ đếm mềm trong report (sửa điểm yếu đo ở D-120)
+- **Bối cảnh:** `evals/results/2026-10-29-setup9-check/notes.md`: ngoại hình `setup-9` không lộ bí mật nhưng 54/54 mở bằng "Trông", 43/54 tóc đen, vài chi tiết là thói quen thay vì hình dáng, ngoại hình nhân vật chính chép nghề từ quá khứ người chơi viết. Bộ xuất video cần các mặt khác nhau.
+- **Quyết định:**
+  - `setup-10`: chỉ tả điều nhìn thấy trong một khung hình (không thói quen, cử chỉ, tư thế; thương tật chỉ khi thấy được); không nêu nghề, quá khứ, tính cách; không mở bằng "Trông", mỗi người một cách mở; viết cả bộ cùng lúc rồi so, mỗi nhân vật (kể cả nhân vật chính) khác mọi người còn lại ở ít nhất hai đặc điểm trong khuôn mặt, tóc, vóc dáng, tuổi, và đừng cho cả bộ tóc đen. Nhân vật chính: người chơi chỉ cho biết tuổi, vóc dáng; không chép nghề hay quá khứ vào ngoại hình.
+  - Kiểm bằng code chỉ là đếm mềm (`setup.appearance_variety`, vào `report.json` và `summary.md` của bộ đo): số mở bằng "Trông", số mở trùng, phân bố màu tóc và số trùng. Không thêm `ProblemKind`, không vào lượt sửa D-54: lỗi thẩm mỹ không đáng đốt thêm một lượt sửa, và chưa biết ngưỡng.
+- **Hệ quả:**
+  - Màu tóc nhận bằng danh sách từ cố định nên chỉ là ước lượng; chữ lạ thành "không rõ". Đếm không biết hai mặt có thật sự khác nhau.
+  - Đo lại 5 đề x 1 seed (`evals/results/2026-10-29-setup10-check/`): hết mở bằng "Trông" và gần hết tóc đen, không còn thói quen hay nghề trong ngoại hình; còn lệch mới: khuôn câu giống nhau, tóc nâu thay tóc đen, "vết sẹo ở cằm" lặp giữa các truyện. Bộ đếm không bắt hai điều sau. Đề `build` dài thêm vài trăm token, chi phí khởi tạo khoảng +11%.
+- **Người quyết:** Claude (writory-28 giao việc 29/10/2026)
+
 ## D-123 · Bộ xuất kịch bản video: lệnh của admin, package `export/`, vai model `video`, trần chi phí ở limits.yaml (thực hiện D-118)
 - **Bối cảnh:** D-118 chọn nguồn là toàn bộ `truth` và đầu ra là danh sách shot kèm prompt; D-120 đã sinh `appearance` và `visual` ở khởi tạo. Chủ dự án quyết 29/10/2026 làm bộ xuất ngay, và chỉ admin cầm DB mới xuất được.
 - **Quyết định (phạm vi: Chủ dự án; thiết kế: Claude):**
