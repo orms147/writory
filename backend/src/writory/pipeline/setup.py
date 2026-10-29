@@ -71,7 +71,9 @@ log = logging.getLogger(__name__)
 # danh tính (D-61). setup-6: `known_by` chỉ gồm nhân vật khác, kể cả với bối cảnh chung (D-76).
 # setup-8: đồ vật có người giữ HOẶC nơi chốn, không cả hai (D-90). setup-9: ngoại hình nhân vật
 # (`appearance`, `protagonist_appearance`) và cảnh sắc nơi chốn (`visual`), nền cho xuất video (D-118).
-PROMPT_VERSION = "setup-9"
+# setup-10: ngoại hình chỉ tả điều nhìn thấy, không mở bằng "Trông", mỗi người khác những người còn lại
+# (D-122).
+PROMPT_VERSION = "setup-10"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -528,11 +530,18 @@ tới chương cuối, không chồng, không hở. Chương cuối của hồi 
 khoảng của độ dài truyện.
 - `characters`: các nhân vật khác: `name`, `aliases` (biệt danh, cách gọi khác; không có thì để \
 danh sách rỗng), `personality`, `backstory`, `appearance`: ngoại hình cố định để mọi cảnh tả khớp \
-nhau, 1–3 câu tiếng Việt gồm tuổi trông, vóc dáng, khuôn mặt, tóc, trang phục đặc trưng và một \
-dấu hiệu nhận diện (sẹo, nốt ruồi, món trang sức, dáng đi). Chỉ tả điều nhìn thấy, không tả tính \
-cách hay bí mật.
-- `protagonist_appearance`: ngoại hình của nhân vật chính, cùng cách viết như `appearance` ở trên, \
-hợp với tính cách và quá khứ người chơi đã chọn; không đổi những điều người chơi đã viết.
+nhau, 1–3 câu tiếng Việt, chỉ tả điều nhìn thấy trong một khung hình: tuổi, vóc dáng, khuôn mặt, \
+tóc (màu, kiểu, độ dài), trang phục đặc trưng (màu, chất liệu) và một dấu hiệu nhận diện nhìn \
+thấy (sẹo, nốt ruồi, món trang sức, hay thương tật thấy được như chân què, thiếu ngón). Không tả \
+thói quen, cử chỉ, tư thế hay điều lặp lại ("luôn", "thường", "hay"); không nêu nghề, quá khứ, \
+tính cách hay bí mật. Câu không mở bằng "Trông": mở bằng chính đặc điểm nổi nhất của người đó, \
+và mỗi người một cách mở khác nhau. Phân biệt: viết cả bộ cùng lúc rồi so với nhau (kể cả nhân \
+vật chính): mỗi nhân vật phải khác mọi người còn lại ở ít nhất hai đặc điểm trong khuôn mặt, \
+tóc, vóc dáng và tuổi. Đừng cho cả bộ cùng tóc đen: đổi màu, kiểu hay độ dài (nâu, bạc, hoa râm, \
+đỏ sẫm, xoăn, cạo trọc…), tóc đen chỉ dành cho một phần nhỏ.
+- `protagonist_appearance`: ngoại hình của nhân vật chính, theo đúng các luật trên và cũng phải \
+khác mọi nhân vật khác. Tính cách và quá khứ người chơi đã viết chỉ cho biết tuổi, vóc dáng; \
+không chép nghề hay quá khứ của họ vào ngoại hình, và không đổi những điều người chơi đã viết.
 - `locations`, `factions`, `items`: nơi chốn, phe phái, đồ vật quan trọng: `name`, `aliases`, \
 `description` (một câu). Riêng nơi chốn có thêm `visual`: cảnh sắc, 1–2 câu tiếng Việt về ánh \
 sáng, chất liệu và không khí của nơi đó.
@@ -792,6 +801,47 @@ def _named(label: str, x: OutCharacter | OutNamed, **props: Any) -> dict[str, An
     aliases = [a for a in x.aliases if a.strip()]
     return {"id": x.id, "label": label,
             "props": {"name": x.name, **({"aliases": aliases} if aliases else {}), **props}}
+
+
+# Màu tóc bộ đếm nhận ra (D-122). Khớp theo từ nguyên, nên "áo xanh" không tính; từ ghép xét trước.
+_HAIR_COMPOUNDS = ("hoa râm", "muối tiêu", "hạt dẻ")
+_HAIR_COLORS = ("đen", "nâu", "bạc", "trắng", "vàng", "đỏ", "xám", "hung")
+_HAIR_WINDOW_WORDS = 4  # số từ sau "tóc" được xét tìm màu
+
+
+def _hair_color(text: str) -> str:
+    """Màu tóc đầu tiên trong vài từ sau "tóc"; không có thì "không rõ"."""
+    words = unicodedata.normalize("NFC", text).lower().replace(",", " ").replace(".", " ").split()
+    for i, w in enumerate(words):
+        if w != "tóc":
+            continue
+        window = words[i + 1:i + 1 + _HAIR_WINDOW_WORDS]
+        for j, word in enumerate(window):
+            pair = " ".join(window[j:j + 2])
+            if pair in _HAIR_COMPOUNDS:
+                return pair
+            if word in _HAIR_COLORS:
+                return word
+    return "không rõ"
+
+
+def appearance_variety(package: ChangePackage) -> dict[str, Any]:
+    """Bộ đếm mềm cho report của bộ đo (D-122): các nhân vật có `appearance` mở đầu và màu tóc giống
+    nhau đến đâu. Không phải lỗi, không vào lượt sửa; chỉ có số, không chữ của truyện.
+
+    `opening_repeats` = số văn bản trừ số từ mở đầu khác nhau; `hair_repeats` tương tự theo màu tóc."""
+    looks = [str(n.props["appearance"]) for n in package.nodes
+             if n.label == "Character" and n.props.get("appearance")]
+    openings = [unicodedata.normalize("NFC", t).lower().split()[0].strip(",.;:") for t in looks]
+    hair = Counter(_hair_color(t) for t in looks)
+    return {
+        "characters": sum(n.label == "Character" for n in package.nodes),
+        "with_appearance": len(looks),
+        "starts_with_trong": openings.count("trông"),
+        "opening_repeats": len(openings) - len(set(openings)),
+        "hair": dict(sorted(hair.items(), key=lambda kv: (-kv[1], kv[0]))),
+        "hair_repeats": sum(hair.values()) - len(hair),
+    }
 
 
 def _looks(key: str, text: str) -> dict[str, str]:

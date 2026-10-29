@@ -1318,12 +1318,24 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         # lỗi theo loại, không id.
         "setup_repairs": {"used": len(run.setup_repairs),
                           "kinds": dict(sorted(repair_kinds.items()))},
+        # Ngoại hình của khởi tạo có phân biệt được nhau không: số đếm, không chữ (D-122).
+        "appearance_variety": (setup_mod.appearance_variety(run.packages[0])
+                               if 0 in run.packages else None),
         "chapters": run.attempts,
     }
 
 
 def _fmt_counts(counts: Mapping[str, int]) -> str:
     return ", ".join(f"{k} ×{v}" for k, v in counts.items()) or "—"
+
+
+def _variety_line(variety: Mapping[str, Any] | None) -> list[str]:
+    """Một dòng tóm tắt độ phân biệt của ngoại hình khởi tạo (D-122); không có ngoại hình thì không dòng."""
+    if not variety or not variety["with_appearance"]:
+        return []
+    return [(f"- Ngoại hình khởi tạo: {variety['with_appearance']}/{variety['characters']} nhân vật; "
+             f"mở bằng \"Trông\" {variety['starts_with_trong']}, mở trùng {variety['opening_repeats']}, "
+             f"màu tóc ({_fmt_counts(variety['hair'])}), trùng {variety['hair_repeats']}.")]
 
 
 def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
@@ -1354,6 +1366,7 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         (f"- Khởi tạo: lượt sửa {report['setup_repairs']['used']} "
          f"({_fmt_counts(report['setup_repairs']['kinds'])}); tự bấm thử lại "
          f"{report['player_retries_used']['setup']}."),
+        *_variety_line(report.get("appearance_variety")),
         (f"- Chi phí: {cost['total_usd']:.4f} USD (trần --budget: {meta['budget_usd']}); ước tính "
          f"cho lời gọi không rõ chi phí: {cost['estimated_unbilled_usd']:.4f} USD."),
         (f"- Trần config (USD): cảnh {limits['per_scene']}, chương {limits['per_chapter']}, "

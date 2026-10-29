@@ -102,6 +102,11 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
                      "summary": total - 1, "choices": total - 1,
                      "moderate": scenes + 1 + (total - 1)}
     assert report["setup_repairs"] == {"used": 0, "kinds": {}}
+    # Fixture khởi tạo không có ngoại hình: chỉ số đếm 0, không chữ (D-122).
+    assert report["appearance_variety"] == {
+        "characters": report["appearance_variety"]["characters"], "with_appearance": 0,
+        "starts_with_trong": 0, "opening_repeats": 0, "hair": {}, "hair_repeats": 0}
+    assert report["appearance_variety"]["characters"] > 0
     assert len(rows(out / "calls.jsonl")) == len(llm.calls)
 
     events = rows(out / "events.jsonl")
