@@ -1,0 +1,127 @@
+{
+  "bench": "run",
+  "label": "long-ky-ao-hanh-trinh-1",
+  "started": "2026-10-29T16:09:24+07:00",
+  "finished": "2026-10-29T16:32:01+07:00",
+  "status": "error",
+  "exit_code": 3,
+  "stop": {
+    "kind": "error",
+    "where": "chapter 14: choices",
+    "code": "RETRY_LIMIT_REACHED"
+  },
+  "dry_run": false,
+  "git": {
+    "commit": "7592dfca698f93ed3a8de283019f0949a350b3fd",
+    "dirty": false
+  },
+  "story_id": "run-20261029-long-ky-ao-hanh-trinh-1-8e6a8950",
+  "seed": 20261031,
+  "budget_usd": 0.35,
+  "chapters_arg": null,
+  "scenario": {
+    "path": "evals/scenarios/story_run/long-ky-ao-hanh-trinh.yaml",
+    "sha256": "58fecaaeebc4e624277991a9cdb50eda4c3b6349c5ed087877d11115877c2661",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "kỳ ảo phiêu lưu, hành trình qua nhiều vùng đất",
+        "era": "một lục địa bị chia cắt bởi những vùng đất khác hẳn nhau (rừng sương, sa mạc muối, cảng nổi, núi lửa ngủ), muốn qua phải đi từng chặng, mỗi chặng có luật riêng",
+        "voice": "nhanh, nhiều cảnh vật lạ, đối đáp có duyên, hơi hài hước trên nền nguy hiểm thật",
+        "darkness": "vừa phải, có mất mát và phản bội, không tả máu me"
+      },
+      "length_level": "long",
+      "naming": {
+        "names": "viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261031,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "fa18bc12ad6379036e5b52140896c0a4124669eacd1638807ec01f2c0b7d0baf",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "98da035b953f69950cbd871dca61f2f26aed573b6d07644c520c3faeb585a0ae",
+      "models.yaml": "c14db6788176dec1d3e61bf27768c6e6eed3f15bea82d86804d74e34dedff3ab",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "context_flags": {
+    "character_personality_max_chars": 240,
+    "previous_openings": 2,
+    "unplanned_chapter_goal": true
+  },
+  "setup_from": null,
+  "setup_only": false,
+  "overrides": {
+    "writer_model": null,
+    "writer_reasoning": null,
+    "outline_model": null,
+    "outline_reasoning": null
+  },
+  "prompt_versions": {
+    "setup": "setup-8",
+    "outline": "outline-10",
+    "writer": "writer-10",
+    "extract": "extract-7",
+    "choices": "choices-4"
+  },
+  "style_guide_sha256": "fa8fbc55c6e45be0c4ea2b0f6e757604074d10a00a253e287469bad11cd38512",
+  "style_guide_path": null,
+  "prompt_variant": null,
+  "prompt_versions_overridden": [],
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}
