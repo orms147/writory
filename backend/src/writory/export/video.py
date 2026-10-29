@@ -27,7 +27,7 @@ from collections.abc import AsyncIterator, Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from pathlib import Path
-from typing import Any
+from typing import Any, ClassVar
 
 from pydantic import BaseModel, SecretStr
 from pydantic_settings import BaseSettings, SettingsConfigDict
@@ -184,18 +184,23 @@ class DryRunLLM(FakeLLM):
     def __init__(self, *, cost_usd: float | None = DRY_RUN_COST_USD) -> None:
         super().__init__([], cost_usd=cost_usd)
 
-    @staticmethod
-    def reply(schema: str | None, text: str) -> dict[str, Any]:
+    # Tên trong lời thoại theo chữ của ngôn ngữ (SheetOutput kiểm bằng code, nên bản giả phải hợp lệ).
+    _NATIVE_NAME: ClassVar[dict[str, str]] = {"zh": "名", "ja": "名", "ko": "이름", "th": "ชื่อ"}
+
+    @classmethod
+    def reply(cls, schema: str | None, text: str, system: str = "") -> dict[str, Any]:
         if schema == "SheetOutput":
+            tag = re.search(r"\(([a-z]{2,3}(?:-[A-Za-z0-9]+)*)\) dialogue", system)
+            native = cls._NATIVE_NAME.get(tag.group(1).split("-")[0]) if tag else None
             head, _, tail = text.partition("Locations:")
 
             def ids(block: str) -> list[str]:
                 return re.findall(r"^- id: (\S+)", block, re.MULTILINE)
 
-            return {"characters": [{"id": i, "visual_en": f"dry-run look of {i}", "dialogue_name": i}
-                                   for i in ids(head)],
-                    "locations": [{"id": i, "visual_en": f"dry-run view of {i}", "dialogue_name": i}
-                                  for i in ids(tail)]}
+            return {"characters": [{"id": i, "visual_en": f"dry-run look of {i}",
+                                    "dialogue_name": native or i} for i in ids(head)],
+                    "locations": [{"id": i, "visual_en": f"dry-run view of {i}",
+                                   "dialogue_name": native or i} for i in ids(tail)]}
         if schema == "SceneOutput":
             cast = text.split("Characters you may use (id: name):", 1)[-1]
             people, _, places = cast.partition("Locations you may use (id: name):")
@@ -215,7 +220,8 @@ class DryRunLLM(FakeLLM):
         self.extras.append(extra)
         if response_schema is not None:
             self.schemas.append(response_schema)
-        body = self.reply(response_schema.__name__ if response_schema else None, messages[-1].content)
+        body = self.reply(response_schema.__name__ if response_schema else None, messages[-1].content,
+                          messages[0].content)
         text = json.dumps(body, ensure_ascii=False)
         chars = sum(len(m.content) for m in messages)
         usage = Usage(prompt_tokens=math.ceil(chars / EST_CHARS_PER_TOKEN),
@@ -239,6 +245,7 @@ class ShotOut:
     duration_s: int
     appears: list[str]
     appears_names: list[str]
+    appears_added: list[str]  # nhân vật có tên trong action_en mà model quên ghi vào appears: code bổ sung
     action_en: str
     dialogue: list[dict[str, str]]
     covers: str
@@ -384,12 +391,15 @@ async def _make_scene(
 
     out = SceneOut(chapter, scene, "ok")
     for i, shot in enumerate(draft.shots, 1):
+        added = shots.mentioned_not_shown(shot.action_en, shot.appears,
+                                          {c.id: c.name for c in people})
+        shot = shot.model_copy(update={"appears": [*shot.appears, *added]})
         place = sheet.locations.get(shot.location_id)
         out.shots.append(ShotOut(
             n=i, location_id=shot.location_id, location=place.name if place else None,
             time_of_day=shot.time_of_day, shot_size=shot.shot_size, camera_angle=shot.camera_angle,
             camera_move=shot.camera_move, duration_s=shot.duration_s, appears=list(shot.appears),
-            appears_names=[sheet.characters[a].name for a in shot.appears],
+            appears_names=[sheet.characters[a].name for a in shot.appears], appears_added=added,
             action_en=" ".join(shot.action_en.split()),
             dialogue=[{"speaker_id": d.speaker_id, "speaker": sheet.characters[d.speaker_id].name,
                        "text": " ".join(d.text.split()), "source_text": " ".join(d.source_text.split())}

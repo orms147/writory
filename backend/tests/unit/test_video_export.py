@@ -225,6 +225,24 @@ def test_sheet_checks_need_every_id_once_in_plain_english():
     assert any("thiếu" in p for p in shots.sheet_problems(sheet([], [("p", "y")]), ["a"], ["p"], max_chars=60))
 
 
+def test_dialogue_names_must_be_in_the_script_of_a_non_latin_language():
+    """zh, ja, ko, th: tên trong lời thoại viết bằng chữ của ngôn ngữ, không để nguyên tiếng Việt hay trộn chữ
+    (lần demo đầu có "白 kinh Luân"). Ngôn ngữ dùng chữ Latin thì không kiểm."""
+    def sheet(name):
+        return SheetOutput.model_validate({
+            "characters": [{"id": "a", "visual_en": "Tall man", "dialogue_name": name}],
+            "locations": [{"id": "p", "visual_en": "Hall", "dialogue_name": name}]})
+
+    def check(name, lang):
+        return shots.sheet_problems(sheet(name), ["a"], ["p"], max_chars=60, lang_tag=lang)
+
+    assert check("白敬伦", "zh") == [] and check("バク", "ja") == [] and check("백", "ko") == []
+    for bad in ("Bạch Kinh Luân", "白 kinh Luân", "Bai Jinglun"):
+        assert any("chữ của ngôn ngữ zh" in p for p in check(bad, "zh")), bad
+    assert check("Bạch Kinh Luân", "vi") == [] and check("Bach Jinglun", "en") == []
+    assert check("白敬伦", "zh-TW") == [] and check("Bạch", "zh-TW") != []
+
+
 def test_language_tags():
     assert shots.check_lang("zh") == "zh" and shots.check_lang("zh-TW") == "zh-TW"
     assert shots.lang_name("zh") == "Chinese (Mandarin)" and shots.lang_name("vi") == "Vietnamese"
@@ -251,6 +269,16 @@ async def make_sheet(llm, tmp_path, **kw):
     cast = sheets.read_cast(state())
     return await shots.make_sheet(llm, "m", cast=cast, chapters=SCENES, limits=cfg.limits.video_export,
                                   retries=cfg.limits.retries, **kw), cast
+
+
+async def test_a_chinese_sheet_with_vietnamese_names_is_retried(tmp_path):
+    latin = json.loads(sheet_json())
+    latin["characters"][0]["dialogue_name"] = "Lục Minh"
+    llm = FakeLLM.scripted([json.dumps(latin), sheet_json()])
+    cfg = config(tmp_path)
+    sheet = await shots.make_sheet(llm, "m", cast=sheets.read_cast(state()), chapters=SCENES,
+                                   limits=cfg.limits.video_export, retries=cfg.limits.retries, lang_tag="zh")
+    assert len(llm.calls) == 2 and sheet.characters["protagonist"].dialogue_name == "陆明"
 
 
 async def test_the_sheet_marks_old_characters_without_a_look_as_inferred(tmp_path):
@@ -367,6 +395,25 @@ async def test_the_whole_export_with_a_fake_model(tmp_path):
     assert "Chinese (Mandarin)" in llm.calls[1][0].content and "Chinese (Mandarin)" in llm.calls[0][0].content
     assert "never translate, romanize or abbreviate a name" in llm.calls[1][0].content
     assert "Lan" in llm.calls[3][-1].content  # cảnh 2 có Cô Lan (biệt danh)
+
+
+def test_a_name_in_the_action_is_found_as_a_whole_word_only():
+    names = {"lan": "Lan", "gu": "Lão Gù"}
+    assert shots.mentioned_not_shown("Lan opens the door.", ["gu"], names) == ["lan"]
+    assert shots.mentioned_not_shown("Lanterns sway over the Lanes.", [], names) == []
+    assert shots.mentioned_not_shown("Lão Gù, with Lan.", ["lan"], names) == ["gu"]
+    assert shots.mentioned_not_shown("She waits.", [], names) == []
+
+
+async def test_a_character_named_in_the_action_but_missing_from_appears_is_added_by_code(tmp_path):
+    forgetful = shot(appears=["protagonist"], covers="Cô Lan đứng ở cửa",
+                     action_en="Lan stands at the door while the protagonist waits.")
+    script = [sheet_json(), scene_json(shot_gu()), ALLOW, scene_json(forgetful), ALLOW, scene_json(), ALLOW]
+    export = await video.build_export(source(), config=config(tmp_path),
+                                      llm=FakeLLM.scripted(script), options=options())
+    kept, fixed = export.scenes[0].shots[0], export.scenes[1].shots[0]
+    assert kept.appears_added == [] and fixed.appears == ["protagonist", "lan"] and fixed.appears_added == ["lan"]
+    assert "Lan: Woman about thirty, black hair in a high bun, blue robe, small scar" in fixed.prompt_en
 
 
 async def test_the_written_files_have_the_warning_the_maps_and_every_prompt(tmp_path):
