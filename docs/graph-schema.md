@@ -26,7 +26,7 @@ Mọi nút có hai nhãn: `Entity` (nhãn chung, mang khoá) và một nhãn lo�
 | `Fact` | `text` | |
 | `Lie` | `chapter`, `content` | |
 | `Thread` | `description`, `planted_chapter`, `due_from_chapter`, `due_to_chapter` | |
-| `Chapter` | `number` | `title` |
+| `Chapter` | `number` | `title`, `milestones` (mốc đã diễn ra ở chương này, D-116), `milestone_quotes` |
 
 Thuộc tính do lớp `graph/` tự đặt, đầu vào không được ghi: `story_id`, `id`, `commit_id`, `closed_by_commit`, `valid_from_chapter`, `valid_to_chapter`.
 
@@ -93,7 +93,7 @@ Gói chương 0 là thế giới trước trang đầu, do `writory.pipeline.set
 
 ## Chương 1 trở đi (pipeline, D-36)
 Gói chương N do `writory.pipeline.chapter` dựng rồi ghi bằng `commit_chapter`:
-- **Nút:** nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Bộ trích được tạo nút `Fact` mới từ trang (D-93, mục dưới); ngoài đó bộ trích không tạo nút nào, chỉ tham chiếu id có sẵn (D-34). Lựa chọn nói dối ở cuối chương N−1, khi có người nghe, thêm nút `Lie` vào đầu gói chương N (mục "Tác động của lựa chọn", D-55).
+- **Nút:** nút `Chapter` id `ch<N>` (`number: N`), đích của `REVEALED_TO_PLAYER` và `RESOLVED_IN`. Id này phải chưa có trong truyện; pipeline kiểm và dừng nếu đã có. Nút có thể mang `milestones` (danh sách số thứ tự 1-based của mốc trong `story_plan` đã diễn ra trên trang của chương) và `milestone_quotes` (câu trích nguyên văn tương ứng, G3): mốc không phải nút, nên dấu nằm ở nút chương xảy ra, ghi cùng gói chương (D-6, D-116). Đọc bằng `GraphState.nodes(["ch1"…])` (`guard/plan.py` `milestones_done`); mốc đánh dấu hai lần thì chương đầu thắng. Nút `Chapter` không bao giờ vào `player_view`, nên kế hoạch vẫn ẩn. Bộ trích được tạo nút `Fact` mới từ trang (D-93, mục dưới); ngoài đó bộ trích không tạo nút nào, chỉ tham chiếu id có sẵn (D-34). Lựa chọn nói dối ở cuối chương N−1, khi có người nghe, thêm nút `Lie` vào đầu gói chương N (mục "Tác động của lựa chọn", D-55).
 - **Cạnh:** của bộ trích, từng cảnh một, cộng cạnh tự hé lộ, đã qua người canh. Cạnh người canh báo sai không vào gói, kèm `close` của cạnh cũ mà nó thay (cùng chỗ), nếu không cạnh cũ biến mất mà không có cạnh mới (D-92). `KNOWS` "được kể" mà người kể là nhân vật chưa `KNOWS` tới đích và điều kể nói về chính họ (có `ABOUT` tới họ, hay họ tham gia sự kiện đó) thì code thêm `KNOWS` người kể, `how` "tự biết": tự thú trên trang thì trang chứng minh họ biết. Người thứ ba kể bí mật của người khác thì người canh vẫn bắt `teller_does_not_know` (D-92). Gộp các cảnh theo trạng thái cuối chương: cùng id thì lấy cảnh sau; cạnh cảnh trước mở mà cảnh sau đóng thì không vào gói.
 - **Tự hé lộ (D-62):** sau bước trích, code thêm `REVEALED_TO_PLAYER` (tới `ch<N>`, `valid_from_chapter: N`) cho nút có tên mà tên hay biệt danh lớp truth có nguyên văn trong chữ cảnh, chưa có trong `player_view` (kể cả hé lộ bộ trích vừa ghi), không phải nhân vật chính, không nằm trong `protects` của bí mật còn hiệu lực. `quote` là câu chứa tên, `known_as` là chuỗi khớp trên trang. So khớp nghiêm (giữ dấu, trọn từ, chỉ chữ cái đầu tên nhiều từ được lệch hoa thường, tên phải có từ viết hoa); bỏ lần khớp nằm trong tên dài hơn của nút khác và chuỗi cũng là tên của nút khác (`safety/reveal.py`).
 

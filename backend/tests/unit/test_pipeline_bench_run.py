@@ -168,6 +168,9 @@ async def test_run_stops_after_the_last_chapter_and_compares_plan_with_result(tm
                      "status": "missed"}],
         "threads": [{"n": 1, "window": [total - 1, total], "resolved_chapter": None,
                      "status": "missed"}],
+        # Bộ trích giả không đánh dấu mốc nào; mốc nào đã qua hạn thì "missed" (D-116).
+        "milestones": [{"n": i, "window": [m.from_chapter, m.to_chapter], "done_chapter": None,
+                        "status": "missed"} for i, m in enumerate(run.plan.milestones, 1)],
     }
     summary = (out / "summary.md").read_text(encoding="utf-8")
     assert "## Kế hoạch so với kết quả" in summary and "Kết truyện: có" in summary

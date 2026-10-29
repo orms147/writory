@@ -575,6 +575,10 @@ _REJECT_REASONS = (
     "hết trần Fact mới", "ref phải dạng", "chữ phải một dòng", "chữ Fact không bám trang",
     "trùng Fact", "lộ bí mật hay tên đang giấu (G2)", "thiếu ABOUT", "thiếu KNOWS",
     "Fact mới",
+    # Mốc đã diễn ra (D-116)
+    "mốc đã xảy ra ở chương", "mốc không có trong danh sách chưa xảy ra",
+    "mốc đã đánh dấu trong cùng câu trả lời", "mốc thiếu câu trích (G3)",
+    "câu trích mốc không có nguyên văn trong chương (G3)",
 )
 
 
@@ -1210,6 +1214,13 @@ def plan_vs_result(progress: PlanProgress | None) -> dict[str, Any] | None:
              "status": _item_status(progress, t.resolved_chapter, t.from_chapter, t.to_chapter)}
             for i, t in enumerate(progress.threads, 1)
         ],
+        # Mốc: số thứ tự và chương xảy ra, không chữ mô tả (D-116)
+        "milestones": [
+            {"n": m.number, "window": window(m.from_chapter, m.to_chapter),
+             "done_chapter": m.done_chapter,
+             "status": _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter)}
+            for m in progress.milestones
+        ],
     }
 
 
@@ -1410,6 +1421,10 @@ def _plan_lines(report: dict[str, Any]) -> list[str]:
     lines += ["", "| Mạch phải gỡ | Hạn gỡ | Gỡ ở chương | Đánh giá |", "|---|---|---|---|"]
     lines += [f"| {t['n']} | {window(t['window'])} | {done(t['resolved_chapter'])} "
               f"| {_STATUS_TEXT[t['status']]} |" for t in plan["threads"]]
+    if plan.get("milestones"):  # D-116
+        lines += ["", "| Mốc | Khoảng | Xảy ra ở chương | Đánh giá |", "|---|---|---|---|"]
+        lines += [f"| {m['n']} | {window(m['window'])} | {done(m['done_chapter'])} "
+                  f"| {_STATUS_TEXT[m['status']]} |" for m in plan["milestones"]]
     return lines
 
 

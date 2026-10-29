@@ -1775,3 +1775,119 @@ async def test_protagonist_keeps_one_place_when_the_extractor_closes_it_without_
     assert "chapter_committed" in kinds(events)
     rows = store.state().edges_at("LOCATED_AT", 1, source_id="protagonist")
     assert [(r.id, r.target) for r in rows] == [(old.id, old.target)]
+
+
+# --- mốc đã diễn ra (D-116) --------------------------------------------------------------------------
+# Kế hoạch có hai mốc theo dõi (bước ngoặt chương 3-5, cao trào 6-8) và mốc kết ở chương 12.
+
+MS_PLAN = plan_with(milestones=[
+    {"kind": "turning_point", "goal": "Lan lộ ra là người biết chuyện thanh kiếm", "from_chapter": 3,
+     "to_chapter": 5},
+    {"kind": "climax", "goal": "Minh bỏ phố Bến Sương", "from_chapter": 6, "to_chapter": 8},
+    {"kind": "ending", "goal": "Minh chọn số phận Thanh Sương", "from_chapter": 12,
+     "to_chapter": 12},
+])
+MS_QUOTE = "Rồi cô hỏi, như vô tình"  # có nguyên văn trong SCENE_1
+MS_MARK = {"id": "m1", "quote": MS_QUOTE}
+
+
+def ms_script(first_extract, second_extract=EXTRACT_2):
+    return [outline_reply(), SCENE_1, first_extract, outline_reply(), SCENE_2, second_extract,
+            SUMMARY, choices_reply()]
+
+
+def ms_chapter_node(package, number=4):
+    return next(n for n in package.nodes if n.id == f"ch{number}")
+
+
+def extractor_calls(llm):
+    from writory.pipeline.extract import SYSTEM_PROMPT as extract_prompt
+
+    return [c for c in llm.calls if c[0].content.startswith(extract_prompt[:60])]
+
+
+async def test_a_milestone_marked_on_the_page_lands_on_the_chapter_node_and_stops_the_nudge(tmp_path):
+    store = MemoryStore()
+    script = ms_script(extract_reply(milestones=[MS_MARK]))
+    events, outcome, llm, _ = await run(script, tmp_path, store=store, plan=MS_PLAN)
+    assert kinds(events)[-1] == "choices_ready"
+    node = ms_chapter_node(store.commits[-1][2])
+    assert node.props["milestones"] == [1] and node.props["milestone_quotes"] == [MS_QUOTE]
+    # Cảnh 1: bộ trích nhận mốc 1 và 2 (mốc kết không theo dõi). Cảnh 2: mốc 1 đã xong ở cảnh trước.
+    first, second = extractor_calls(llm)
+    assert "- m1 | chương 3–5 | Lan lộ ra" in first[-1].content and "- m2 | chương 6–8" in first[-1].content
+    assert "- m1 |" not in second[-1].content and "- m2 | chương 6–8" in second[-1].content
+    # Dàn ý và đề viết của cảnh 2 ghi mốc 1 đã xảy ra ở chương 4 thay vì giục lại.
+    outline_two = calls_of(llm, "outline")[1][-1].content
+    assert "Mốc ĐÃ xảy ra rồi" in outline_two and "xảy ra ở chương 4" in outline_two
+    assert "Đang diễn ra (bước ngoặt" not in outline_two
+    assert outcome.committed
+
+
+async def test_the_next_chapter_does_not_nudge_the_milestone_again(tmp_path):
+    store = MemoryStore()
+    await run(ms_script(extract_reply(milestones=[MS_MARK])), tmp_path / "a", store=store,
+              plan=MS_PLAN)
+    # Bộ trích đánh dấu m1 lần nữa ở cảnh 1; cảnh 2 không thêm cạnh nào.
+    again = ms_script(extract_reply(milestones=[MS_MARK]), extract_reply())
+    events, outcome, llm, _ = await run(again, tmp_path / "b", store=store, plan=MS_PLAN,
+                                        req=request(commit_id="c-ch5"))
+    assert kinds(events)[-1] == "choices_ready"
+    outline_one = calls_of(llm, "outline")[0][-1].content
+    assert "xảy ra ở chương 4" in outline_one and "Đang diễn ra (bước ngoặt" not in outline_one
+    assert "- m1 |" not in extractor_calls(llm)[0][-1].content  # (c) chỉ đánh dấu một lần
+    reasons = [why for review in outcome.reviews for _, why in review.rejected]
+    assert any(r.startswith("mốc đã xảy ra ở chương 4, chỉ đánh dấu một lần") for r in reasons)
+    assert "milestones" not in ms_chapter_node(store.commits[-1][2], 5).props
+
+
+async def test_marks_are_not_tracked_when_the_lookahead_is_null(tmp_path):
+    store = MemoryStore()
+    script = ms_script(extract_reply(milestones=[MS_MARK]))
+    events, _, llm, _ = await run(script, tmp_path, store=store, plan=MS_PLAN,
+                                  limits={"context": {"milestone_lookahead": None}})
+    assert kinds(events)[-1] == "choices_ready"
+    assert "milestones" not in ms_chapter_node(store.commits[-1][2]).props
+    assert all("Mốc cốt truyện chưa xảy ra" not in c[-1].content for c in extractor_calls(llm))
+
+
+async def test_a_mark_from_a_draft_that_was_rewritten_is_not_recorded(tmp_path):
+    """(b) Cảnh viết lại: dấu của bản nháp bị trả lại không được ghi (D-6); chỉ dấu của bản được hiện."""
+    store = MemoryStore()
+    quote = CLICHE.rstrip(".")  # câu sáo ngữ chỉ có trong bản nháp bị trả lại
+    assert quote in SCENE_1_CLICHE and quote not in SCENE_1
+    script = [outline_reply(), SCENE_1_CLICHE, extract_reply(milestones=[{"id": "m1", "quote": quote}]),
+              SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    events, outcome, _, _ = await run(script, tmp_path, store=store, plan=MS_PLAN)
+    assert kinds(events)[-1] == "choices_ready"
+    assert [r.verdict for r in outcome.reviews][:2] == ["rewrite", "accept"]
+    assert "milestones" not in ms_chapter_node(store.commits[-1][2]).props
+
+
+async def test_a_chapter_that_is_blocked_writes_no_mark_anywhere(tmp_path):
+    store = MemoryStore()
+    before = list(store.packages)
+    leaky = extract_reply(milestones=[MS_MARK])
+    script = [outline_reply(), SCENE_1_LEAK, leaky, SCENE_1_LEAK, leaky]
+    events, outcome, _, _ = await run(script, tmp_path, store=store, plan=MS_PLAN)
+    assert kinds(events) == ["scene_blocked"] and not outcome.committed
+    assert store.commits == [] and store.packages == before
+    assert not any("milestones" in n.props for p in store.packages for n in p.nodes)
+
+
+async def test_milestone_text_and_quotes_never_reach_choices_or_the_notebook(tmp_path):
+    """G1: mô tả mốc và câu trích mốc chỉ ở đề của dàn ý, viết, bộ trích; không ở đề tạo lựa chọn,
+    người kể hay sổ tay (player_view)."""
+    store = MemoryStore()
+    events, _, llm, _ = await run(ms_script(extract_reply(milestones=[MS_MARK])), tmp_path,
+                                  store=store, plan=MS_PLAN)
+    assert kinds(events)[-1] == "choices_ready"
+    secret_bits = ("Lan lộ ra là người biết chuyện thanh kiếm", "Minh bỏ phố Bến Sương",
+                   "Mốc ĐÃ xảy ra", "chưa xảy ra (id |")
+    [choices_call] = calls_of(llm, "choices")
+    sent = "\n".join(m.content for m in choices_call)
+    assert not any(bit in sent for bit in secret_bits)
+    view = store.player_view(4)
+    shown = " ".join(f"{e.text} {' '.join(e.aliases)} {' '.join(e.quotes)}" for e in view.entries)
+    assert not any(bit in shown for bit in secret_bits)
+    assert all(e.kind != "Chapter" for e in view.entries)

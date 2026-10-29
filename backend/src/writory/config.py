@@ -127,6 +127,9 @@ class ContextLimits(_Section):
     page_quotes_neighbors: NonNegativeInt = 0  # đoạn liền sau mỗi đoạn trúng cũng lấy (D-96)
     forbidden_names_max: PositiveInt | None = None  # số nút tối đa trong mục tên cấm (D-94)
     standstill_chapters: PositiveInt | None = None  # nhân vật chính ở yên từng ấy chương (D-98)
+    # Theo dõi mốc đã diễn ra (D-116): bộ trích được đánh dấu mốc bắt đầu trong chừng ấy chương tới;
+    # null = tắt theo dõi (mục tiêu chương như trước, bộ trích không nhận mục mốc).
+    milestone_lookahead: PositiveInt | None = None
     # Từng ấy chương liền không đổi trạng thái nào thì đề đòi đổi (D-112); None = tắt.
     idle_chapters: PositiveInt | None = None
     # Ba cờ của đề v3 (D-110): mặc định pydantic là tắt; bật ở limits.yaml (D-111).
