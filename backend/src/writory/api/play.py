@@ -344,7 +344,8 @@ async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps
     await ensure_input_allowed(body.text, llm=client, config=config)
     result = await with_retries(lambda: classify_action(body.text, llm=client, config=config),
                                 max_retries=config.limits.retries.llm_transient,
-                                retry_on=RETRY_TRANSIENT)
+                                retry_on=RETRY_TRANSIENT,
+                                backoff=config.limits.retries.transient_backoff_seconds)
     ensure_in_story(result)
     text = body.text.strip()
     save_action(conn, story.id, chapter, source="custom", text=text)

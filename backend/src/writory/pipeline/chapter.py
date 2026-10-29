@@ -689,7 +689,8 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
 
     try:
         outline = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                          transient_retries=retries.llm_transient)
+                                          transient_retries=retries.llm_transient,
+                                          backoff=retries.transient_backoff_seconds)
         unplanned: list[str] = []
     except WritoryError as e:
         if e.code is not ErrorCode.RETRY_LIMIT_REACHED or not usable:
@@ -725,7 +726,8 @@ async def _write(state: _State, runtime: Runtime[_Deps]) -> dict:
     extra = reasoning_extra(tier.reasoning)
     result = await with_retries(lambda: d.llm.chat(tier.model, messages, extra=extra),
                                 max_retries=d.config.limits.retries.llm_transient,
-                                retry_on=RETRY_TRANSIENT)
+                                retry_on=RETRY_TRANSIENT,
+                                backoff=d.config.limits.retries.transient_backoff_seconds)
     if not result.text.strip():
         raise WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail="model viết trả văn bản rỗng")
     return {"draft": result.text, "finish_reason": result.finish_reason}
@@ -789,6 +791,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             milestones_done=dict(state["goals"].milestones_done),
         ),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
+        backoff=retries.transient_backoff_seconds,
     )
     base = d.store.state()
     earlier = _earlier_packages(state)

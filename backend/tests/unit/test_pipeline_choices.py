@@ -46,7 +46,6 @@ def test_exactly_three_choices_of_at_least_two_kinds():
 @pytest.mark.parametrize("bad", [
     draft("dialogue", listeners=["p1"]),  # lời thoại thiếu sắc thái
     draft("dialogue", tone="lie", listeners=["p1"]),  # nói dối thiếu nội dung
-    draft("dialogue", tone="lie", lie_content="x"),  # nói dối không có người nghe
     draft("action", tone="truth"),  # sắc thái chỉ cho lời thoại
     draft("inner", about=["p1"]),  # nội tâm thiếu cảm xúc
     draft("action", text="  "),
@@ -55,6 +54,14 @@ def test_choice_fields_must_match_kind(bad):
     with pytest.raises(ValidationError):
         ChoicesOutput.model_validate({"choices": [bad, draft(), draft("inner", about=["p1"],
                                                                      feeling="lo")]})
+
+
+def test_a_dialogue_without_listeners_passes_the_schema_so_resolve_can_drop_just_that_choice():
+    """D-123: người nghe ẩn danh không có mã trong sổ tay nên model không có gì để điền. Trước đây
+    pydantic bỏ cả bộ; nay `_resolve` bỏ riêng lựa chọn đó (D-121)."""
+    out = ChoicesOutput.model_validate({"choices": [
+        draft(), draft("dialogue", tone="silence"), draft("dialogue", tone="lie", lie_content="x")]})
+    assert out.choices[1].listeners == [] and out.choices[2].tone == "lie"
 
 
 def test_context_is_player_view_only_with_public_codes():
@@ -119,6 +126,7 @@ async def test_refs_resolve_to_entity_ids():
 
 
 FIXTURE = Path(__file__).parents[1] / "fixtures" / "llm" / "choices_unknown_ref_run_long_ky_ao_hanh_trinh_1.json"
+FIXTURE_SILENCE = FIXTURE.with_name("choices_silence_no_listener_run_long_after_ky_ao_ch10.json")
 GHOST = "mã người dẫn đầu chưa có trong sổ tay"  # chuỗi ref sai nguyên văn của model ở ch14
 
 
@@ -357,3 +365,17 @@ async def test_make_choices_sends_the_replaced_system_prompt_and_g1_still_holds(
     assert llm.calls[0][0].content.startswith("ĐỀ LỰA CHỌN BIẾN THỂ")
     for secret in TRUTH_AT_4:  # lớp truth vẫn không vào đề tạo lựa chọn
         assert secret not in sent
+
+
+async def test_the_real_rejected_body_of_ky_ao_ch10_now_gives_two_choices_not_an_error():
+    """Thân THẬT bị từ chối ở lượt long-after-ky-ao ch10 (rejected.jsonl, D-115): lời thoại im lặng
+    không người nghe làm pydantic bỏ cả bộ, hai lần liền, rồi cả lượt chạy tốn một lượt bấm thử lại."""
+    real = json.loads(FIXTURE_SILENCE.read_text(encoding="utf-8"))["real_body"]
+    ChoicesOutput.model_validate(real)  # trước đây: choices.1: value_error
+    refs = _refs_by_text()
+    raw = json.dumps(real, ensure_ascii=False).replace('"m30"', json.dumps(refs["Phạm Thị Lan"])
+                                                       ).replace('"m31"', json.dumps(refs["Trần Minh"]))
+    llm = ScriptedLLM([raw])
+    choices = await _make(llm)
+    assert len(llm.calls) == 1 and [c.kind for c in choices] == ["action", "inner"]
+    assert choices[0].about == ("lan",) and choices[1].about == ("minh",)

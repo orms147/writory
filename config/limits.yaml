@@ -7,7 +7,11 @@ cost_usd:
 retries:
   rewrite_per_scene: 1        # design §6.2
   extract_schema_retry: 1     # G11: chỉ cho lỗi JSON sai schema
-  llm_transient: 2            # lỗi mạng/model tạm thời (LLM_UNAVAILABLE), D-14
+  llm_transient: 3            # lỗi mạng/model tạm thời (LLM_UNAVAILABLE, LLM_TIMEOUT), D-14; 2 → 3 ở D-123
+  # Giây chờ trước lần thử lại thứ 1, 2, 3 của lỗi tạm, để một lần mạng chập vài chục giây không giết cả
+  # chương (D-123; tạm, D-47). Không áp cho 429 hay JSON sai schema. Xấu nhất một lời gọi:
+  # (1 + llm_transient) × llm_call.deadline_seconds + tổng các lần chờ.
+  transient_backoff_seconds: [2, 8, 30]
   setup_repair: 1             # build_story sai quy tắc: số lượt gọi model sửa, kèm danh sách lỗi (D-54)
 rate_limit:
   llm_calls_per_minute_per_user: 30

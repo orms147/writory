@@ -241,3 +241,122 @@ async def test_a_failing_hook_never_changes_the_outcome():
 
     with watch_rejections(broken):
         assert await with_retries(op, max_retries=1, retry_on=RETRY_SCHEMA) == "ok"
+
+
+# --- thử lại có chờ lùi cho lỗi tạm (D-123) ------------------------------------------------------
+
+
+def timeout() -> WritoryError:
+    return WritoryError(ErrorCode.LLM_TIMEOUT, detail="quá hạn")
+
+
+async def test_transient_errors_wait_longer_before_each_retry_using_the_schedule():
+    waits: list[float] = []
+
+    async def fake(seconds: float) -> None:
+        waits.append(seconds)
+
+    calls = []
+
+    async def op():
+        calls.append(1)
+        if len(calls) < 4:
+            raise unavailable() if len(calls) % 2 else timeout()
+        return "ok"
+
+    got = await with_retries(op, max_retries=3, retry_on=RETRY_TRANSIENT,
+                             backoff=(2, 8, 30), sleep=fake)
+    assert got == "ok" and waits == [2, 8, 30]
+
+
+async def test_a_schedule_shorter_than_the_retries_repeats_its_last_wait():
+    waits: list[float] = []
+
+    async def fake(seconds: float) -> None:
+        waits.append(seconds)
+
+    async def op():
+        raise unavailable()
+
+    with pytest.raises(WritoryError):
+        await with_retries(op, max_retries=3, retry_on=RETRY_TRANSIENT, backoff=(2, 8), sleep=fake)
+    assert waits == [2, 8, 8]  # không chờ sau lần thử cuối, vì không còn lần nào
+
+
+async def test_no_wait_for_schema_errors_rate_limits_or_without_a_schedule():
+    waits: list[float] = []
+
+    async def fake(seconds: float) -> None:
+        waits.append(seconds)
+
+    async def bad():
+        raise WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail="sai schema")
+
+    with pytest.raises(WritoryError):
+        await with_retries(bad, max_retries=2, retry_on=RETRY_SCHEMA, backoff=(2, 8), sleep=fake)
+
+    async def limited():
+        raise WritoryError(ErrorCode.LLM_RATE_LIMITED, detail="429")
+
+    with pytest.raises(WritoryError) as exc:
+        await with_retries(limited, max_retries=2, retry_on=RETRY_TRANSIENT, backoff=(2, 8),
+                           sleep=fake)
+    assert exc.value.code is ErrorCode.LLM_RATE_LIMITED  # không thử lại, không chờ
+
+    async def down():
+        raise unavailable()
+
+    with pytest.raises(WritoryError):
+        await with_retries(down, max_retries=2, retry_on=RETRY_TRANSIENT, sleep=fake)  # không lịch
+    assert waits == []
+
+
+async def test_json_retries_wait_only_in_the_transient_layer():
+    waits: list[float] = []
+
+    async def fake(seconds: float) -> None:
+        waits.append(seconds)
+
+    calls = []
+
+    async def op():
+        calls.append(1)
+        n = len(calls)
+        if n == 1:
+            raise WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail="sai schema")
+        if n == 2:
+            raise unavailable()
+        return "ok"
+
+    got = await with_json_retries(op, schema_retries=1, transient_retries=2, backoff=(2, 8),
+                                  sleep=fake)
+    assert got == "ok" and waits == [2]  # schema lần 1 không chờ; lỗi mạng chờ 2 giây
+
+
+async def test_production_waits_through_the_replaceable_sleep_and_tests_replace_it(slept):
+    """conftest thay `retry._sleep`: test không bao giờ chờ thật (§6), vẫn thấy số giây định chờ."""
+    calls = []
+
+    async def op():
+        calls.append(1)
+        if len(calls) < 3:
+            raise unavailable()
+        return "ok"
+
+    assert await with_retries(op, max_retries=2, retry_on=RETRY_TRANSIENT, backoff=(2, 8)) == "ok"
+    assert slept == [2, 8]
+
+
+def test_the_repo_schedule_covers_every_transient_retry():
+    """limits.yaml: mỗi lần thử lại lỗi tạm có một lần chờ riêng (D-123)."""
+    r = RETRIES
+    assert len(r.transient_backoff_seconds) == r.llm_transient >= 1
+    assert list(r.transient_backoff_seconds) == sorted(r.transient_backoff_seconds)  # lùi dần
+
+
+def test_the_worst_case_wait_fits_inside_what_a_player_will_sit_through():
+    """Xấu nhất một lời gọi: (1 + lần thử lại) hạn tổng (D-113) cộng các lần chờ lùi; ghi ở D-123."""
+    cfg = load_config()
+    worst = (1 + cfg.limits.retries.llm_transient) * cfg.limits.llm_call.require(
+        "deadline_seconds") + sum(cfg.limits.retries.transient_backoff_seconds)
+    assert worst <= 30 * 60  # nửa giờ
