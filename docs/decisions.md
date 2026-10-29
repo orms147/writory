@@ -1078,3 +1078,16 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Rà các truy vấn khác:** trong `backend/src/writory` chỉ có đúng một truy vấn dạng `*1..2` với gom; không có `shortestPath` hay `length(path)` ở nơi khác (notebook, bench_a không dùng Cypher).
 - **Hệ quả:** truyện đã chạy trước D-117 có thể có ngữ cảnh viết với nút lặp ở các chương nhiều nhân vật có mặt; kết quả đo cũ không đổi, nhưng token vào của vai dàn ý và viết có thể thấp hơn chút khi chạy lại. Chưa tra tài liệu Neo4j xác nhận nguyên nhân planner.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026), nhánh fix/neighbor-dupes · 29/10/2026
+
+## D-118 · Xuất kịch bản video: nguồn `truth`, danh sách shot kèm prompt, ngoại hình sinh lúc khởi tạo (bổ sung D-107)
+- **Bối cảnh:** chủ dự án yêu cầu làm phần nền của tính năng xuất kịch bản video (D-107) ngay sau đợt truyện dài, chạy song song nếu được.
+- **Quyết định (chủ dự án chọn, 29/10/2026):**
+  - Nguồn là toàn bộ lớp `truth`, kể cả bí mật và hậu trường, không chỉ `player_view`.
+  - Đầu ra là danh sách cảnh quay: mỗi cảnh chia shot (khung hình, góc máy, chuyển động, thời lượng, lời thoại), mỗi shot có một prompt video dán thẳng vào app.
+  - Prompt mô tả hình ảnh viết tiếng Anh. Lời thoại theo ngôn ngữ người xuất chọn, ví dụ tiếng Trung hay tiếng Việt.
+  - Ngoại hình nhân vật được sinh ở bước khởi tạo truyện và giữ cố định suốt truyện, để các shot khớp nhau.
+- **Hệ quả:**
+  - Bản xuất không đi qua đường của người chơi (sổ tay, người kể, lựa chọn), nên G1 không áp cho nó.
+  - Bản xuất có lộ bí mật. Vì vậy phải quyết khi làm: ai được xuất, và có cho xuất trước khi truyện kết không. Đề xuất của Claude: chỉ cho chủ truyện xuất, chỉ khi truyện đã kết, hoặc có cảnh báo lộ nội dung.
+  - Đổi bước khởi tạo (D-54) thì phải đo lại khởi tạo. Thư mục khởi tạo cũ không có ngoại hình, nên trường này là tuỳ chọn.
+- **Người quyết:** Chủ dự án (29/10/2026)
