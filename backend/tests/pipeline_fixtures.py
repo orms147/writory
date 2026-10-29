@@ -454,6 +454,9 @@ class OverlayStore:
     def delete_story(self) -> None:
         self.deleted = True
 
+    def scene_texts(self, number: int) -> list[str]:
+        return next((list(scenes) for n, scenes in self.commits if n == number), [])
+
     def chapter_texts(self, chapters) -> dict[int, str]:
         return {c: self.texts[c] for c in chapters if c in self.texts}
 
