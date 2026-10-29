@@ -351,7 +351,8 @@ async def ask_narrator_reply(
         )
         return output
 
-    output = await with_retries(call, max_retries=retries.llm_transient, retry_on=RETRY_TRANSIENT)
+    output = await with_retries(call, max_retries=retries.llm_transient, retry_on=RETRY_TRANSIENT,
+                                backoff=retries.transient_backoff_seconds)
     answer, blocked = _checked_answer(output, view, selection.refs, truth_names=truth_names,
                                       plan=plan, story_brief=story_brief)
     return NarratorReply(answer, output, blocked, tuple(sorted(selection.refs)), selection.total)

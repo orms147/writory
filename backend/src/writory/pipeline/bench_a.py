@@ -595,7 +595,8 @@ class Runner:
         try:
             output = await with_json_retries(
                 call, schema_retries=cfg.limits.retries.extract_schema_retry,
-                transient_retries=cfg.limits.retries.llm_transient)
+                transient_retries=cfg.limits.retries.llm_transient,
+                backoff=cfg.limits.retries.transient_backoff_seconds)
         except WritoryError as e:
             if gate.halted:
                 self._halt("budget", gate.halted)

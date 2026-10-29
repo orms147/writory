@@ -90,4 +90,5 @@ async def summarize_chapter(
         return _fit(text, max_chars)
 
     return await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                   transient_retries=retries.llm_transient)
+                                   transient_retries=retries.llm_transient,
+                                   backoff=retries.transient_backoff_seconds)

@@ -106,3 +106,35 @@ async def test_writer_reads_chapter_0_world_and_player_text_stays_wrapped(driver
     parts = render_writer_context(ctx)
     assert any(isinstance(p, UserAuthored) and p.text == PC.name for p in parts)
     assert not any(isinstance(p, str) and PC.name in p for p in parts)
+
+
+async def test_looks_from_setup_apply_and_reach_only_the_writer_context(driver, new_story_id):
+    """D-118: ngoại hình và cảnh sắc ghi được vào Neo4j, ngữ cảnh viết đọc được `appearance` sau cờ,
+    và người chơi (player_view, G1) không thấy gì."""
+    import json
+
+    data = json.loads(BUILD)
+    data["characters"] = [c | {"appearance": "Ngoài ba mươi, sẹo dưới mắt trái."}
+                          for c in data["characters"]]
+    data["locations"] = [x | {"visual": "Đèn dầu vàng đục, mùi cá khô."} for x in data["locations"]]
+    data["protagonist_appearance"] = "Hai mươi mốt, gầy cao, tay chai."
+    sid = new_story_id()
+    result = await build_story(
+        CHOICES, SettingOption(title="Bến sông", intro="Trấn nhỏ ven sông."),
+        PlotOption(title="Thanh kiếm", summary="Lần theo cái chết của cha."), PC,
+        llm=FakeLLM.scripted([json.dumps(data, ensure_ascii=False)]), config=CFG,
+        commit_id=f"{sid}-c0")
+    apply_package(driver, sid, result.package)
+
+    npc = next(n.id for n in result.package.nodes
+               if n.label == "Character" and n.id != PROTAGONIST_ID)
+    on = writer_context(driver, sid, 0, [PROTAGONIST_ID, npc], None, appearance_max_chars=200)
+    appearances = {c.id: c.appearance for c in on.present}
+    assert appearances[PROTAGONIST_ID] == "Hai mươi mốt, gầy cao, tay chai."
+    assert appearances[npc] == "Ngoài ba mươi, sẹo dưới mắt trái."
+    off = writer_context(driver, sid, 0, [PROTAGONIST_ID, npc], None)
+    assert all(c.appearance is None for c in off.present)
+
+    blob = repr(player_view(driver, sid, 0))
+    for text in ("sẹo dưới mắt", "gầy cao", "Đèn dầu"):
+        assert text not in blob

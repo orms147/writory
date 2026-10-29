@@ -860,7 +860,7 @@ async def test_other_rules_still_get_the_repair_and_the_dropped_knows_is_not_a_p
 def test_build_prompt_says_background_knowledge_is_not_known_by_the_protagonist():
     """Đề nói rõ: kể cả bối cảnh chung nhân vật chính hẳn đã biết, không ghi `protagonist` vào
     `known_by` (setup-6)."""
-    assert PROMPT_VERSION == "setup-8"
+    assert PROMPT_VERSION == "setup-10"
     assert f"`{PROTAGONIST_ID}`" in BUILD_TASK and "`known_by`" in BUILD_TASK
     assert "bối cảnh chung" in BUILD_TASK
     assert "chỉ ghi các nhân vật khác" in BUILD_TASK

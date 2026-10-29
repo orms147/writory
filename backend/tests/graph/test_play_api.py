@@ -456,7 +456,8 @@ async def test_second_concurrent_chapter_run_is_refused(pg, driver, story, tmp_p
 
 def test_lock_is_released_after_a_failed_run(pg, driver, story, tmp_path):
     sid = story()
-    llm = ScriptedLLM([unavailable(), unavailable(), unavailable(), *full_script()])
+    fails = 1 + load_config().limits.retries.llm_transient
+    llm = ScriptedLLM([*[unavailable() for _ in range(fails)], *full_script()])
     with TestClient(make_app(pg, driver, llm, tmp_path, own_conns=True)) as client:
         failed = sse(write_next(client, sid).text)
         assert kinds(failed) == ["error"]

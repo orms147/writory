@@ -201,6 +201,8 @@ class ChapterOutcome:
     error_detail: str | None = None  # chi tiết cho log máy chủ (đã redact); không tới người chơi
     reviews: list[ReviewRecord] = field(default_factory=list)  # mọi lượt soát, theo thứ tự
     cost_usd: float = 0.0
+    # Mục tiêu chương có câu đòi đổi pha (D-119); bộ đo ghi vào report.json.
+    phase_shift: bool = False
 
 
 # --- gói của chương ----------------------------------------------------------------------------
@@ -481,6 +483,7 @@ def _writer_context(d: _Deps, state: _State, present: Sequence[str]) -> WriterCo
         state["chapter"] - 1, present, d.plan,
         max_neighbors=d.config.limits.context.writer_max_neighbors,
         personality_max_chars=d.config.limits.context.character_personality_max_chars,
+        appearance_max_chars=d.config.limits.context.character_appearance_max_chars,
     )
     keep = d.config.limits.facts.writer_max_page_facts  # Fact sinh từ trang có trần (D-93)
     return replace(ctx, known_facts=cap_page_facts(ctx.known_facts, keep)) if keep else ctx
@@ -648,7 +651,8 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
                 done_extra=marked,
                 standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
                 unplanned_goal=d.config.limits.context.unplanned_chapter_goal,
-                idle_chapters=d.config.limits.context.idle_chapters)}
+                idle_chapters=d.config.limits.context.idle_chapters,
+                phase_shift_every=d.config.limits.context.phase_shift_every)}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -685,7 +689,8 @@ async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
 
     try:
         outline = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                          transient_retries=retries.llm_transient)
+                                          transient_retries=retries.llm_transient,
+                                          backoff=retries.transient_backoff_seconds)
         unplanned: list[str] = []
     except WritoryError as e:
         if e.code is not ErrorCode.RETRY_LIMIT_REACHED or not usable:
@@ -721,7 +726,8 @@ async def _write(state: _State, runtime: Runtime[_Deps]) -> dict:
     extra = reasoning_extra(tier.reasoning)
     result = await with_retries(lambda: d.llm.chat(tier.model, messages, extra=extra),
                                 max_retries=d.config.limits.retries.llm_transient,
-                                retry_on=RETRY_TRANSIENT)
+                                retry_on=RETRY_TRANSIENT,
+                                backoff=d.config.limits.retries.transient_backoff_seconds)
     if not result.text.strip():
         raise WritoryError(ErrorCode.LLM_BAD_RESPONSE, detail="model viết trả văn bản rỗng")
     return {"draft": result.text, "finish_reason": result.finish_reason}
@@ -785,6 +791,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             milestones_done=dict(state["goals"].milestones_done),
         ),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
+        backoff=retries.transient_backoff_seconds,
     )
     base = d.store.state()
     earlier = _earlier_packages(state)
@@ -1156,4 +1163,6 @@ class ChapterRun:
         out.summary_error = final.get("summary_error")
         out.summaries_missing = list(final.get("summaries_missing", []))
         out.reviews = list(final.get("reviews", []))
+        goals = final.get("goals")
+        out.phase_shift = goals is not None and goals.phase_shift is not None
         out.cost_usd = self._deps.llm.tracker.chapter_usd

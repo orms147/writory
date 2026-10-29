@@ -16,6 +16,7 @@ import pytest
 
 from tests.moderation_fixtures import ALLOW, moderation_reply
 from tests.pipeline_fixtures import (
+    APPEARANCES,
     CHAPTER,
     CLICHE,
     EXTRACT_1,
@@ -1619,6 +1620,31 @@ async def test_no_standstill_prompt_when_the_story_moved_recently(tmp_path):
     assert STALLED_NOTE not in calls_of(llm, "choices")[0][-1].content
 
 
+async def test_phase_shift_line_reaches_outline_and_writer_but_not_choices(tmp_path):
+    """Minh tới lò rèn ở chương 1 (nơi mới, đổi pha), viết chương 4: 3 chương, ngưỡng 3. Dàn ý và đề viết
+    có câu đòi đổi pha; đề tạo lựa chọn không có (G1: mục tiêu chương mang chữ lớp truth). Ngưỡng ở yên
+    đặt cao để chỉ còn câu đổi pha. Outcome ghi chương bật."""
+    events, outcome, llm, _ = await run(
+        full_script(), tmp_path, store=_store_where_minh_stays_since(1),
+        limits={"context": {"phase_shift_every": 3, "standstill_chapters": 99}})
+    assert kinds(events)[-1] == "choices_ready"
+    for role in ("outline", "writer"):
+        assert all("ĐỔI PHA" in c[-1].content and "Đã 3 chương" in c[-1].content
+                   for c in calls_of(llm, role)[:2]), role
+        assert all("PHẢI đổi tình thế" not in c[-1].content for c in calls_of(llm, role)), role
+    assert all("ĐỔI PHA" not in m.content for c in calls_of(llm, "choices") for m in c)
+    assert outcome.phase_shift is True
+
+
+async def test_no_phase_shift_line_by_default_or_when_it_is_not_yet_time(tmp_path):
+    for limits in ({}, {"context": {"phase_shift_every": 4, "standstill_chapters": 99}}):
+        _, outcome, llm, _ = await run(full_script(), tmp_path / str(len(limits)),
+                                       store=_store_where_minh_stays_since(1), limits=limits)
+        for role in ("outline", "writer"):
+            assert all("ĐỔI PHA" not in c[-1].content for c in calls_of(llm, role)), (limits, role)
+        assert outcome.phase_shift is False
+
+
 def test_standstill_threshold_is_in_config():
     assert load_config().limits.context.standstill_chapters >= 1  # D-98; số tạm, D-47
 
@@ -1891,3 +1917,36 @@ async def test_milestone_text_and_quotes_never_reach_choices_or_the_notebook(tmp
     shown = " ".join(f"{e.text} {' '.join(e.aliases)} {' '.join(e.quotes)}" for e in view.entries)
     assert not any(bit in shown for bit in secret_bits)
     assert all(e.kind != "Chapter" for e in view.entries)
+
+
+# --- ngoại hình nhân vật vào đề dàn ý và đề viết, sau cờ config (D-118) -----------------------------
+
+
+async def test_appearance_is_off_at_zero_and_the_store_is_asked_for_none(tmp_path):
+    _, _, llm, store = await run(full_script(), tmp_path)
+    assert set(store.appearance_args) == {0}
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            assert "ngoại hình:" not in call[-1].content
+
+
+async def test_appearance_reaches_outline_and_writer_but_never_the_other_roles(tmp_path):
+    """G1: ngoại hình là chữ lớp truth; chỉ hai vai được thấy truth (dàn ý, viết) nhận nó."""
+    _, _, llm, store = await run(
+        full_script(), tmp_path, limits={"context": {"character_appearance_max_chars": 80}})
+    assert set(store.appearance_args) == {80}
+    for role in ("outline", "writer"):
+        for call in calls_of(llm, role):
+            body = call[-1].content
+            assert f"ngoại hình: {APPEARANCES['lan']}" in body
+            assert f"ngoại hình: {APPEARANCES['ly_that']}" in body  # nhân vật lân cận
+    for role in ("choices", "extract", "summary", "moderate"):
+        for call in calls_of(llm, role):
+            seen = " ".join(m.content for m in call)
+            assert not any(t in seen for t in APPEARANCES.values())
+
+
+async def test_appearance_ceiling_is_the_configured_number(tmp_path):
+    _, _, _, store = await run(
+        full_script(), tmp_path, limits={"context": {"character_appearance_max_chars": 12}})
+    assert set(store.appearance_args) == {12}

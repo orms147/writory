@@ -1,0 +1,2221 @@
+{
+ "story_id": "run-20261029-setup9-long-tu-tien-s0-915fd32c",
+ "plan": {
+  "acts": [
+   {
+    "name": "Chiếu lệnh giữa sương",
+    "from_chapter": 1,
+    "to_chapter": 6
+   },
+   {
+    "name": "Những lời thề cũ",
+    "from_chapter": 7,
+    "to_chapter": 12
+   },
+   {
+    "name": "Ấn rạn, lòng người rạn",
+    "from_chapter": 13,
+    "to_chapter": 18
+   },
+   {
+    "name": "Quyền giữ ấn",
+    "from_chapter": 19,
+    "to_chapter": 24
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "pham_tu_nhan_sua_lenh",
+    "reveal_from_chapter": 7,
+    "reveal_to_chapter": 10,
+    "leak_terms": [
+     [
+      "Phạm Tử Nhân",
+      "sửa bản sao chiếu lệnh"
+     ],
+     [
+      "Phạm Tử Nhân",
+      "trả tiền cho một thư lại"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "sua_lenh_de_gianh_ben",
+    "reveal_from_chapter": 9,
+    "reveal_to_chapter": 14,
+    "leak_terms": [
+     [
+      "sửa bản sao chiếu lệnh",
+      "quyền kiểm soát thêm các bến neo"
+     ],
+     [
+      "Phạm Tử Nhân",
+      "giành quyền kiểm soát bến neo"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "nguoi_sua_chieu",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 10
+   },
+   {
+    "thread_id": "ten_tren_danh_sach",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 12
+   },
+   {
+    "thread_id": "ke_pha_tram",
+    "resolve_from_chapter": 8,
+    "resolve_to_chapter": 16
+   },
+   {
+    "thread_id": "phuong_an_chia_quyen",
+    "resolve_from_chapter": 13,
+    "resolve_to_chapter": 24
+   },
+   {
+    "thread_id": "loi_the_co",
+    "resolve_from_chapter": 11,
+    "resolve_to_chapter": 21
+   },
+   {
+    "thread_id": "so_phan_su_gia",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 18
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Bùi Hoài Cẩn xác nhận tin Trạm Thanh Tức thất thủ và nhận ra cuộc hòa đàm có thể bị biến thành cớ khai chiến.",
+    "from_chapter": 2,
+    "to_chapter": 4
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Bùi Hoài Cẩn tìm được chứng cứ đầu tiên cho thấy chiếu lệnh đã bị can thiệp.",
+    "from_chapter": 7,
+    "to_chapter": 9
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Danh sách trạm ấn làm lộ một mối liên hệ giữa cuộc tấn công và lợi ích của Phạm thị.",
+    "from_chapter": 10,
+    "to_chapter": 12
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Một biến cố tại tuyến phong ấn buộc các phe phải tạm gác tranh cãi để tránh ấn rạn rộng hơn.",
+    "from_chapter": 13,
+    "to_chapter": 15
+   },
+   {
+    "kind": "climax",
+    "goal": "Bùi Hoài Cẩn phải trình phương án phân quyền trước các phe đang đứng bên bờ giao chiến.",
+    "from_chapter": 19,
+    "to_chapter": 22
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Các phe quyết định có chấp nhận một cơ chế canh ấn luân phiên hay không.",
+    "from_chapter": 21,
+    "to_chapter": 23
+   },
+   {
+    "kind": "ending",
+    "goal": "Bùi Hoài Cẩn chứng kiến kết quả của thỏa thuận và lựa chọn cuối cùng về lòng trung thành của mình.",
+    "from_chapter": 24,
+    "to_chapter": 24
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 24,
+  "secrets": [
+   {
+    "fact_id": "pham_tu_nhan_sua_lenh",
+    "text": "Phạm Tử Nhân đã bí mật trả tiền cho một thư lại để sửa bản sao chiếu lệnh trước khi nó được đưa ra nghị sự.",
+    "user_authored": false,
+    "from_chapter": 7,
+    "to_chapter": 10,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "sua_lenh_de_gianh_ben",
+    "text": "Phạm Tử Nhân sửa bản sao chiếu lệnh để đòi quyền kiểm soát thêm các bến neo quanh tuyến phong ấn.",
+    "user_authored": false,
+    "from_chapter": 9,
+    "to_chapter": 14,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "nguoi_sua_chieu",
+    "description": "Ai đã sửa bản sao chiếu lệnh trước cuộc nghị sự?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 10,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ten_tren_danh_sach",
+    "description": "Vì sao tên người thuộc Phạm thị bị ghi khác nét mực trên danh sách?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 12,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ke_pha_tram",
+    "description": "Ai đã tổ chức cuộc tấn công khiến Trạm Thanh Tức thất thủ?",
+    "user_authored": false,
+    "from_chapter": 8,
+    "to_chapter": 16,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "phuong_an_chia_quyen",
+    "description": "Liệu Bùi Hoài Cẩn có thể đưa ra một phương án phân quyền canh ấn được các phe chấp nhận?",
+    "user_authored": false,
+    "from_chapter": 13,
+    "to_chapter": 24,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "loi_the_co",
+    "description": "Có cách nào để các phe tuân thủ những lời thề cũ mà không buộc một bên phải rời bỏ tuyến phong ấn?",
+    "user_authored": false,
+    "from_chapter": 11,
+    "to_chapter": 21,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "so_phan_su_gia",
+    "description": "Lão Thanh Nghi có được thả khỏi nơi giam giữ trước khi hòa đàm kết thúc không?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 18,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Bùi Hoài Cẩn xác nhận tin Trạm Thanh Tức thất thủ và nhận ra cuộc hòa đàm có thể bị biến thành cớ khai chiến.",
+    "from_chapter": 2,
+    "to_chapter": 4,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Bùi Hoài Cẩn tìm được chứng cứ đầu tiên cho thấy chiếu lệnh đã bị can thiệp.",
+    "from_chapter": 7,
+    "to_chapter": 9,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "turning_point",
+    "goal": "Danh sách trạm ấn làm lộ một mối liên hệ giữa cuộc tấn công và lợi ích của Phạm thị.",
+    "from_chapter": 10,
+    "to_chapter": 12,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "turning_point",
+    "goal": "Một biến cố tại tuyến phong ấn buộc các phe phải tạm gác tranh cãi để tránh ấn rạn rộng hơn.",
+    "from_chapter": 13,
+    "to_chapter": 15,
+    "done_chapter": null
+   },
+   {
+    "number": 5,
+    "kind": "climax",
+    "goal": "Bùi Hoài Cẩn phải trình phương án phân quyền trước các phe đang đứng bên bờ giao chiến.",
+    "from_chapter": 19,
+    "to_chapter": 22,
+    "done_chapter": null
+   },
+   {
+    "number": 6,
+    "kind": "turning_point",
+    "goal": "Các phe quyết định có chấp nhận một cơ chế canh ấn luân phiên hay không.",
+    "from_chapter": 21,
+    "to_chapter": 23,
+    "done_chapter": null
+   },
+   {
+    "number": 7,
+    "kind": "ending",
+    "goal": "Bùi Hoài Cẩn chứng kiến kết quả của thỏa thuận và lựa chọn cuối cùng về lòng trung thành của mình.",
+    "from_chapter": 24,
+    "to_chapter": 24,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261029-setup9-long-tu-tien-s0-915fd32c-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Bùi Hoài Cẩn",
+      "personality": "Kiên nhẫn, thực tế và có tài đọc ra điều người khác cố che giấu. Chàng ít khi bộc lộ cảm xúc, nhưng một khi đã hứa bảo vệ ai thì rất khó lay chuyển.",
+      "backstory": "Bùi Hoài Cẩn từng là người trông coi văn thư cho một tông môn lớn, nơi các lời thề cũ được ghi chép và truyền lại qua nhiều đời. Sau khi bất đồng với trưởng bối về cách xử lý một chiếu lệnh, chàng bị điều đến dự hòa đàm với vị thế thấp nhưng vẫn nắm rõ những ràng buộc giữa các phe. Tin trạm trấn ấn thất thủ khiến chàng nghi ngờ rằng những điều khoản đang được đem ra tranh luận không còn đủ sức giữ các bên đứng ngoài chiến sự.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Trông khoảng ba mươi, vóc người thanh gọn, mặt hơi dài với đôi mắt tĩnh, tóc đen buộc cao bằng dây vải; chàng mặc áo môn sinh màu tro viền xanh sẫm, bên hông đeo túi văn thư và có một vết chai ở ngón trỏ."
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "Đoàn trưởng lão"
+      ],
+      "personality": "Cẩn trọng, coi trọng phép tắc và thường dùng những câu hỏi ngắn để buộc đối phương tự bộc lộ sơ hở.",
+      "backstory": "Là trưởng lão của Tĩnh Huyền Tông, từng chép lại các lời thề trông coi phong ấn và được giao dẫn đoàn đến hòa đàm.",
+      "appearance": "Trông ngoài sáu mươi, người cao gầy, mặt dài với đôi mắt sâu, tóc bạc búi dưới trâm gỗ; ông thường mặc áo đạo bào xanh sẫm và có vết sẹo mảnh sát chân mày trái."
+     }
+    },
+    {
+     "id": "lao_thanh_nghi",
+     "label": "Character",
+     "props": {
+      "name": "Lão Thanh Nghi",
+      "aliases": [
+       "Sứ giả trạm ấn"
+      ],
+      "personality": "Điềm đạm, dè sẻn lời nói, chỉ trả lời đúng điều được hỏi.",
+      "backstory": "Là sứ giả của trạm trấn ấn Thanh Tức, vượt đường biển đến hòa đàm để báo tin trạm thất thủ.",
+      "appearance": "Trông khoảng bốn mươi, vóc người rắn chắc, mặt vuông rám nắng, tóc đen điểm bạc buộc thấp; ông mặc áo choàng xám phủ bụi muối và đeo một vòng đồng xước trên cổ tay."
+     }
+    },
+    {
+     "id": "pham_tu_nhan",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Tử Nhân",
+      "aliases": [
+       "Phạm gia chủ"
+      ],
+      "personality": "Sắc sảo, kiêu hãnh, giỏi biến một nhượng bộ nhỏ thành món nợ lớn.",
+      "backstory": "Là gia chủ Phạm thị, thế gia nắm nhiều bến neo và có quyền lợi lâu đời trên tuyến đường phong ấn.",
+      "appearance": "Trông ngoài bốn mươi, dáng cao đậm, mặt vuông sạch râu, tóc đen chải gọn dưới mão ngọc; ông mặc trường bào màu mực thêu chỉ bạc và đeo nhẫn ngọc trắng ở ngón cái."
+     }
+    },
+    {
+     "id": "le_tuyet_dung",
+     "label": "Character",
+     "props": {
+      "name": "Lê Tuyết Dung",
+      "aliases": [
+       "Lê chưởng môn"
+      ],
+      "personality": "Quyết đoán, giữ chữ tín nhưng không dễ tin người, thường đặt lợi ích của môn đồ lên trước danh tiếng.",
+      "backstory": "Là chưởng môn Vân Tê Cốc, phe chủ trương các tông môn phải cùng chia trách nhiệm trông coi ấn.",
+      "appearance": "Trông ngoài ba mươi, vóc người thanh mảnh, mặt trái xoan, tóc đen cài trâm bạc hình lá; bà mặc áo choàng trắng viền lam và có nốt ruồi nhỏ dưới khóe mắt phải."
+     }
+    },
+    {
+     "id": "tran_mac",
+     "label": "Character",
+     "props": {
+      "name": "Trần Mặc",
+      "aliases": [
+       "Thư lại nghị sự"
+      ],
+      "personality": "Nhẫn nại, kín đáo, giỏi nhớ từng câu chữ trong văn bản và biết khi nào nên im lặng.",
+      "backstory": "Là thư lại được cử ghi biên bản hòa đàm, từng phụ trách đối chiếu các chiếu lệnh chuyển quyền canh giữ.",
+      "appearance": "Trông khoảng hai mươi lăm, vóc người mảnh, mặt tái và hẹp, tóc đen buộc bằng dây vải; anh mặc áo nâu giản dị, luôn mang theo ống bút tre bên hông."
+     }
+    },
+    {
+     "id": "dao_van_chau",
+     "label": "Location",
+     "props": {
+      "name": "Vân Châu",
+      "aliases": [
+       "Quần đảo Vân Châu"
+      ],
+      "description": "Quần đảo nằm giữa những tuyến đường biển nối các vùng đất bị phong ấn.",
+      "visual": "Những đảo đá xám nổi lên giữa màn sương bạc, mái ngói đen và cầu gỗ ướt ánh lên dưới trời âm u. Gió biển mang vị muối, khiến mọi tiếng chuông đều nghe xa và lạnh."
+     }
+    },
+    {
+     "id": "thuy_nghi_cung",
+     "label": "Location",
+     "props": {
+      "name": "Thủy Nghị Cung",
+      "aliases": [
+       "Nghị cung"
+      ],
+      "description": "Đại điện trên đảo trung lập nơi các phe mở cuộc hòa đàm.",
+      "visual": "Cột đá xanh dựng trên nền gỗ sẫm, đèn lồng trắng hắt ánh sáng nhợt nhạt lên những tấm bình phong chạm sóng. Hơi ẩm từ biển len qua khe cửa, làm không khí trong điện lạnh như một lời cảnh cáo."
+     }
+    },
+    {
+     "id": "tram_thanh_tuc",
+     "label": "Location",
+     "props": {
+      "name": "Trạm Thanh Tức",
+      "aliases": [
+       "Trạm trấn ấn"
+      ],
+      "description": "Trạm canh giữ một đoạn tuyến phong ấn ngoài rìa quần đảo.",
+      "visual": "Tháp đá thấp đứng trên mỏm đảo trơ gió, quanh chân tháp là những cọc đồng xỉn màu và bậc đá nứt. Ánh sáng ở đây thường xanh tái, như bị sương mù hút mất."
+     }
+    },
+    {
+     "id": "ben_lac_nguyet",
+     "label": "Location",
+     "props": {
+      "name": "Bến Lạc Nguyệt",
+      "aliases": [
+       "Bến nghị sự"
+      ],
+      "description": "Bến thuyền lớn dưới chân Thủy Nghị Cung, nơi các đoàn sứ giả cập bờ.",
+      "visual": "Cầu tàu bằng đá đen vươn ra mặt nước lặng, hai bên treo đèn giấy vàng nhạt. Tiếng dây neo va vào cọc gỗ hòa cùng tiếng sóng, tạo nên vẻ yên ổn đầy gượng ép."
+     }
+    },
+    {
+     "id": "tinh_huyen_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Tĩnh Huyền Tông",
+      "aliases": [
+       "Tĩnh Huyền"
+      ],
+      "description": "Tông môn gìn giữ văn thư lời thề cổ, nay muốn duy trì quyền canh ấn theo chiếu lệnh hiện hành."
+     }
+    },
+    {
+     "id": "pham_thi",
+     "label": "Faction",
+     "props": {
+      "name": "Phạm thị",
+      "aliases": [
+       "Phạm gia"
+      ],
+      "description": "Thế gia sở hữu nhiều bến neo và chủ trương quyền giữ tuyến đường phải đi kèm quyền thu phí."
+     }
+    },
+    {
+     "id": "van_te_coc",
+     "label": "Faction",
+     "props": {
+      "name": "Vân Tê Cốc",
+      "aliases": [
+       "Vân Tê"
+      ],
+      "description": "Tông môn muốn lập cơ chế luân phiên canh giữ ấn để giảm quyền chi phối của từng thế gia."
+     }
+    },
+    {
+     "id": "danh_sach_tram_an",
+     "label": "Item",
+     "props": {
+      "name": "Danh sách người ở trạm",
+      "aliases": [
+       "Danh sách trạm ấn"
+      ],
+      "description": "Tờ danh sách ghi tên những người có mặt tại Trạm Thanh Tức khi nơi này thất thủ."
+     }
+    },
+    {
+     "id": "chieu_lenh_thanh_tuc",
+     "label": "Item",
+     "props": {
+      "name": "Chiếu lệnh Thanh Tức",
+      "aliases": [
+       "Chiếu lệnh trấn ấn"
+      ],
+      "description": "Văn bản đang có hiệu lực, giao quyền trông coi Trạm Thanh Tức cho Tĩnh Huyền Tông."
+     }
+    },
+    {
+     "id": "tram_that_thu",
+     "label": "Fact",
+     "props": {
+      "text": "Trạm Thanh Tức đã thất thủ trước khi cuộc hòa đàm bắt đầu."
+     }
+    },
+    {
+     "id": "danh_sach_duoc_giao",
+     "label": "Fact",
+     "props": {
+      "text": "Lão Thanh Nghi đã trao danh sách người ở trạm cho Bùi Hoài Cẩn trước khi bị bắt."
+     }
+    },
+    {
+     "id": "chieu_giao_tinh_huyen",
+     "label": "Fact",
+     "props": {
+      "text": "Chiếu lệnh hiện hành giao Tĩnh Huyền Tông quyền trông coi Trạm Thanh Tức."
+     }
+    },
+    {
+     "id": "phap_an_can_nguoi",
+     "label": "Fact",
+     "props": {
+      "text": "Phong ấn ở Thanh Tức cần người canh giữ thường trực để duy trì ổn định."
+     }
+    },
+    {
+     "id": "loi_the_tinh_huyen",
+     "label": "Fact",
+     "props": {
+      "text": "Tĩnh Huyền Tông đã thề không tự ý rời bỏ tuyến phong ấn được giao."
+     }
+    },
+    {
+     "id": "loi_the_van_te",
+     "label": "Fact",
+     "props": {
+      "text": "Vân Tê Cốc đã thề không để một thế gia độc chiếm quyền giữ các tuyến phong ấn."
+     }
+    },
+    {
+     "id": "pham_thi_giu_ben",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm thị đang kiểm soát phần lớn bến neo quanh tuyến đường qua Vân Châu."
+     }
+    },
+    {
+     "id": "chieu_len_tay",
+     "label": "Fact",
+     "props": {
+      "text": "Bùi Hoài Cẩn giữ bản chiếu lệnh Thanh Tức trong tay khi bước vào Thủy Nghị Cung."
+     }
+    },
+    {
+     "id": "danh_sach_co_ten_gia",
+     "label": "Fact",
+     "props": {
+      "text": "Danh sách người ở trạm có một tên thuộc gia tộc Phạm thị bị ghi bằng nét mực khác."
+     }
+    },
+    {
+     "id": "pham_tu_nhan_sua_lenh",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm Tử Nhân đã bí mật trả tiền cho một thư lại để sửa bản sao chiếu lệnh trước khi nó được đưa ra nghị sự."
+     }
+    },
+    {
+     "id": "sua_lenh_de_gianh_ben",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm Tử Nhân sửa bản sao chiếu lệnh để đòi quyền kiểm soát thêm các bến neo quanh tuyến phong ấn."
+     }
+    },
+    {
+     "id": "nguoi_sua_chieu",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã sửa bản sao chiếu lệnh trước cuộc nghị sự?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 10
+     }
+    },
+    {
+     "id": "ten_tren_danh_sach",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao tên người thuộc Phạm thị bị ghi khác nét mực trên danh sách?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "ke_pha_tram",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã tổ chức cuộc tấn công khiến Trạm Thanh Tức thất thủ?",
+      "planted_chapter": 0,
+      "due_from_chapter": 8,
+      "due_to_chapter": 16
+     }
+    },
+    {
+     "id": "phuong_an_chia_quyen",
+     "label": "Thread",
+     "props": {
+      "description": "Liệu Bùi Hoài Cẩn có thể đưa ra một phương án phân quyền canh ấn được các phe chấp nhận?",
+      "planted_chapter": 0,
+      "due_from_chapter": 13,
+      "due_to_chapter": 24
+     }
+    },
+    {
+     "id": "loi_the_co",
+     "label": "Thread",
+     "props": {
+      "description": "Có cách nào để các phe tuân thủ những lời thề cũ mà không buộc một bên phải rời bỏ tuyến phong ấn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 11,
+      "due_to_chapter": 21
+     }
+    },
+    {
+     "id": "so_phan_su_gia",
+     "label": "Thread",
+     "props": {
+      "description": "Lão Thanh Nghi có được thả khỏi nơi giam giữ trước khi hòa đàm kết thúc không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 18
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>protagonist@0",
+     "props": {
+      "kind": "thầy trò",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khuong@0",
+     "props": {
+      "kind": "thầy trò",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_tu_nhan",
+     "to": "le_tuyet_dung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_tu_nhan>le_tuyet_dung@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_tuyet_dung",
+     "to": "pham_tu_nhan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_tuyet_dung>pham_tu_nhan@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -40
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_mac",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_mac>doan_khuong@0",
+     "props": {
+      "kind": "đồng sự",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "tran_mac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>tran_mac@0",
+     "props": {
+      "kind": "đồng sự",
+      "score": 20
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "thuy_nghi_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>thuy_nghi_cung@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "thuy_nghi_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>thuy_nghi_cung@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_tu_nhan",
+     "to": "thuy_nghi_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_tu_nhan>thuy_nghi_cung@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "le_tuyet_dung",
+     "to": "thuy_nghi_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:le_tuyet_dung>thuy_nghi_cung@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_mac",
+     "to": "thuy_nghi_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_mac>thuy_nghi_cung@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lao_thanh_nghi",
+     "to": "thuy_nghi_cung",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lao_thanh_nghi>thuy_nghi_cung@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "danh_sach_tram_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>danh_sach_tram_an@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "chieu_lenh_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>chieu_lenh_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "tinh_huyen_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>tinh_huyen_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "tinh_huyen_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>tinh_huyen_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "pham_tu_nhan",
+     "to": "pham_thi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:pham_tu_nhan>pham_thi@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "le_tuyet_dung",
+     "to": "van_te_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:le_tuyet_dung>van_te_coc@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tran_mac",
+     "to": "tinh_huyen_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tran_mac>tinh_huyen_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tram_that_thu",
+     "to": "tram_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tram_that_thu>tram_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nghi",
+     "to": "tram_that_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nghi>tram_that_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "tram_that_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>tram_that_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_nhan",
+     "to": "tram_that_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_nhan>tram_that_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuyet_dung",
+     "to": "tram_that_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuyet_dung>tram_that_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "tram_that_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>tram_that_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "danh_sach_duoc_giao",
+     "to": "lao_thanh_nghi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:danh_sach_duoc_giao>lao_thanh_nghi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "danh_sach_duoc_giao",
+     "to": "danh_sach_tram_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:danh_sach_duoc_giao>danh_sach_tram_an@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nghi",
+     "to": "danh_sach_duoc_giao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nghi>danh_sach_duoc_giao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "danh_sach_duoc_giao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>danh_sach_duoc_giao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "danh_sach_duoc_giao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>danh_sach_duoc_giao@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "chieu_giao_tinh_huyen",
+     "to": "chieu_lenh_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chieu_giao_tinh_huyen>chieu_lenh_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chieu_giao_tinh_huyen",
+     "to": "tinh_huyen_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chieu_giao_tinh_huyen>tinh_huyen_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chieu_giao_tinh_huyen",
+     "to": "tram_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chieu_giao_tinh_huyen>tram_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "chieu_giao_tinh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>chieu_giao_tinh_huyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_nhan",
+     "to": "chieu_giao_tinh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_nhan>chieu_giao_tinh_huyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuyet_dung",
+     "to": "chieu_giao_tinh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuyet_dung>chieu_giao_tinh_huyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "chieu_giao_tinh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>chieu_giao_tinh_huyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "phap_an_can_nguoi",
+     "to": "tram_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phap_an_can_nguoi>tram_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "phap_an_can_nguoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>phap_an_can_nguoi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuyet_dung",
+     "to": "phap_an_can_nguoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuyet_dung>phap_an_can_nguoi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nghi",
+     "to": "phap_an_can_nguoi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nghi>phap_an_can_nguoi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_tinh_huyen",
+     "to": "tinh_huyen_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_tinh_huyen>tinh_huyen_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "loi_the_tinh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>loi_the_tinh_huyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_mac",
+     "to": "loi_the_tinh_huyen",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_mac>loi_the_tinh_huyen@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_van_te",
+     "to": "van_te_coc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_van_te>van_te_coc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuyet_dung",
+     "to": "loi_the_van_te",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuyet_dung>loi_the_van_te@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "pham_thi_giu_ben",
+     "to": "pham_thi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:pham_thi_giu_ben>pham_thi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "pham_thi_giu_ben",
+     "to": "dao_van_chau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:pham_thi_giu_ben>dao_van_chau@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_nhan",
+     "to": "pham_thi_giu_ben",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_nhan>pham_thi_giu_ben@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuyet_dung",
+     "to": "pham_thi_giu_ben",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuyet_dung>pham_thi_giu_ben@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "pham_thi_giu_ben",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>pham_thi_giu_ben@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "chieu_len_tay",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chieu_len_tay>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "chieu_len_tay",
+     "to": "chieu_lenh_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:chieu_len_tay>chieu_lenh_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "danh_sach_co_ten_gia",
+     "to": "danh_sach_tram_an",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:danh_sach_co_ten_gia>danh_sach_tram_an@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "danh_sach_co_ten_gia",
+     "to": "pham_thi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:danh_sach_co_ten_gia>pham_thi@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lao_thanh_nghi",
+     "to": "danh_sach_co_ten_gia",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lao_thanh_nghi>danh_sach_co_ten_gia@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "pham_tu_nhan_sua_lenh",
+     "to": "pham_tu_nhan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:pham_tu_nhan_sua_lenh>pham_tu_nhan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "pham_tu_nhan_sua_lenh",
+     "to": "chieu_lenh_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:pham_tu_nhan_sua_lenh>chieu_lenh_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_nhan",
+     "to": "pham_tu_nhan_sua_lenh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_nhan>pham_tu_nhan_sua_lenh@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "sua_lenh_de_gianh_ben",
+     "to": "pham_tu_nhan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:sua_lenh_de_gianh_ben>pham_tu_nhan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "sua_lenh_de_gianh_ben",
+     "to": "pham_thi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:sua_lenh_de_gianh_ben>pham_thi@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "sua_lenh_de_gianh_ben",
+     "to": "chieu_lenh_thanh_tuc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:sua_lenh_de_gianh_ben>chieu_lenh_thanh_tuc@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_nhan",
+     "to": "sua_lenh_de_gianh_ben",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_nhan>sua_lenh_de_gianh_ben@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Bùi Hoài Cẩn",
+      "known_as": "Bùi Hoài Cẩn"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ben_lac_nguyet": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Bến nghị sự"
+     ],
+     "name": "Bến Lạc Nguyệt",
+     "visual": "Cầu tàu bằng đá đen vươn ra mặt nước lặng, hai bên treo đèn giấy vàng nhạt. Tiếng dây neo va vào cọc gỗ hòa cùng tiếng sóng, tạo nên vẻ yên ổn đầy gượng ép.",
+     "description": "Bến thuyền lớn dưới chân Thủy Nghị Cung, nơi các đoàn sứ giả cập bờ."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "chieu_giao_tinh_huyen": {
+    "label": "Fact",
+    "props": {
+     "text": "Chiếu lệnh hiện hành giao Tĩnh Huyền Tông quyền trông coi Trạm Thanh Tức."
+    }
+   },
+   "chieu_len_tay": {
+    "label": "Fact",
+    "props": {
+     "text": "Bùi Hoài Cẩn giữ bản chiếu lệnh Thanh Tức trong tay khi bước vào Thủy Nghị Cung."
+    }
+   },
+   "chieu_lenh_thanh_tuc": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Chiếu lệnh trấn ấn"
+     ],
+     "name": "Chiếu lệnh Thanh Tức",
+     "description": "Văn bản đang có hiệu lực, giao quyền trông coi Trạm Thanh Tức cho Tĩnh Huyền Tông."
+    }
+   },
+   "danh_sach_co_ten_gia": {
+    "label": "Fact",
+    "props": {
+     "text": "Danh sách người ở trạm có một tên thuộc gia tộc Phạm thị bị ghi bằng nét mực khác."
+    }
+   },
+   "danh_sach_duoc_giao": {
+    "label": "Fact",
+    "props": {
+     "text": "Lão Thanh Nghi đã trao danh sách người ở trạm cho Bùi Hoài Cẩn trước khi bị bắt."
+    }
+   },
+   "danh_sach_tram_an": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "Danh sách trạm ấn"
+     ],
+     "name": "Danh sách người ở trạm",
+     "description": "Tờ danh sách ghi tên những người có mặt tại Trạm Thanh Tức khi nơi này thất thủ."
+    }
+   },
+   "dao_van_chau": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Quần đảo Vân Châu"
+     ],
+     "name": "Vân Châu",
+     "visual": "Những đảo đá xám nổi lên giữa màn sương bạc, mái ngói đen và cầu gỗ ướt ánh lên dưới trời âm u. Gió biển mang vị muối, khiến mọi tiếng chuông đều nghe xa và lạnh.",
+     "description": "Quần đảo nằm giữa những tuyến đường biển nối các vùng đất bị phong ấn."
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là trưởng lão của Tĩnh Huyền Tông, từng chép lại các lời thề trông coi phong ấn và được giao dẫn đoàn đến hòa đàm.",
+     "appearance": "Trông ngoài sáu mươi, người cao gầy, mặt dài với đôi mắt sâu, tóc bạc búi dưới trâm gỗ; ông thường mặc áo đạo bào xanh sẫm và có vết sẹo mảnh sát chân mày trái.",
+     "aliases": [
+      "Đoàn trưởng lão"
+     ],
+     "personality": "Cẩn trọng, coi trọng phép tắc và thường dùng những câu hỏi ngắn để buộc đối phương tự bộc lộ sơ hở.",
+     "name": "Đoàn Khương"
+    }
+   },
+   "ke_pha_tram": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã tổ chức cuộc tấn công khiến Trạm Thanh Tức thất thủ?",
+     "due_from_chapter": 8,
+     "due_to_chapter": 16
+    }
+   },
+   "lao_thanh_nghi": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là sứ giả của trạm trấn ấn Thanh Tức, vượt đường biển đến hòa đàm để báo tin trạm thất thủ.",
+     "appearance": "Trông khoảng bốn mươi, vóc người rắn chắc, mặt vuông rám nắng, tóc đen điểm bạc buộc thấp; ông mặc áo choàng xám phủ bụi muối và đeo một vòng đồng xước trên cổ tay.",
+     "aliases": [
+      "Sứ giả trạm ấn"
+     ],
+     "personality": "Điềm đạm, dè sẻn lời nói, chỉ trả lời đúng điều được hỏi.",
+     "name": "Lão Thanh Nghi"
+    }
+   },
+   "le_tuyet_dung": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là chưởng môn Vân Tê Cốc, phe chủ trương các tông môn phải cùng chia trách nhiệm trông coi ấn.",
+     "appearance": "Trông ngoài ba mươi, vóc người thanh mảnh, mặt trái xoan, tóc đen cài trâm bạc hình lá; bà mặc áo choàng trắng viền lam và có nốt ruồi nhỏ dưới khóe mắt phải.",
+     "aliases": [
+      "Lê chưởng môn"
+     ],
+     "personality": "Quyết đoán, giữ chữ tín nhưng không dễ tin người, thường đặt lợi ích của môn đồ lên trước danh tiếng.",
+     "name": "Lê Tuyết Dung"
+    }
+   },
+   "loi_the_co": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Có cách nào để các phe tuân thủ những lời thề cũ mà không buộc một bên phải rời bỏ tuyến phong ấn?",
+     "due_from_chapter": 11,
+     "due_to_chapter": 21
+    }
+   },
+   "loi_the_tinh_huyen": {
+    "label": "Fact",
+    "props": {
+     "text": "Tĩnh Huyền Tông đã thề không tự ý rời bỏ tuyến phong ấn được giao."
+    }
+   },
+   "loi_the_van_te": {
+    "label": "Fact",
+    "props": {
+     "text": "Vân Tê Cốc đã thề không để một thế gia độc chiếm quyền giữ các tuyến phong ấn."
+    }
+   },
+   "nguoi_sua_chieu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã sửa bản sao chiếu lệnh trước cuộc nghị sự?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 10
+    }
+   },
+   "pham_thi": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Phạm gia"
+     ],
+     "name": "Phạm thị",
+     "description": "Thế gia sở hữu nhiều bến neo và chủ trương quyền giữ tuyến đường phải đi kèm quyền thu phí."
+    }
+   },
+   "pham_thi_giu_ben": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm thị đang kiểm soát phần lớn bến neo quanh tuyến đường qua Vân Châu."
+    }
+   },
+   "pham_tu_nhan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là gia chủ Phạm thị, thế gia nắm nhiều bến neo và có quyền lợi lâu đời trên tuyến đường phong ấn.",
+     "appearance": "Trông ngoài bốn mươi, dáng cao đậm, mặt vuông sạch râu, tóc đen chải gọn dưới mão ngọc; ông mặc trường bào màu mực thêu chỉ bạc và đeo nhẫn ngọc trắng ở ngón cái.",
+     "aliases": [
+      "Phạm gia chủ"
+     ],
+     "personality": "Sắc sảo, kiêu hãnh, giỏi biến một nhượng bộ nhỏ thành món nợ lớn.",
+     "name": "Phạm Tử Nhân"
+    }
+   },
+   "pham_tu_nhan_sua_lenh": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm Tử Nhân đã bí mật trả tiền cho một thư lại để sửa bản sao chiếu lệnh trước khi nó được đưa ra nghị sự."
+    }
+   },
+   "phap_an_can_nguoi": {
+    "label": "Fact",
+    "props": {
+     "text": "Phong ấn ở Thanh Tức cần người canh giữ thường trực để duy trì ổn định."
+    }
+   },
+   "phuong_an_chia_quyen": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Liệu Bùi Hoài Cẩn có thể đưa ra một phương án phân quyền canh ấn được các phe chấp nhận?",
+     "due_from_chapter": 13,
+     "due_to_chapter": 24
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Bùi Hoài Cẩn từng là người trông coi văn thư cho một tông môn lớn, nơi các lời thề cũ được ghi chép và truyền lại qua nhiều đời. Sau khi bất đồng với trưởng bối về cách xử lý một chiếu lệnh, chàng bị điều đến dự hòa đàm với vị thế thấp nhưng vẫn nắm rõ những ràng buộc giữa các phe. Tin trạm trấn ấn thất thủ khiến chàng nghi ngờ rằng những điều khoản đang được đem ra tranh luận không còn đủ sức giữ các bên đứng ngoài chiến sự.",
+     "appearance": "Trông khoảng ba mươi, vóc người thanh gọn, mặt hơi dài với đôi mắt tĩnh, tóc đen buộc cao bằng dây vải; chàng mặc áo môn sinh màu tro viền xanh sẫm, bên hông đeo túi văn thư và có một vết chai ở ngón trỏ.",
+     "personality": "Kiên nhẫn, thực tế và có tài đọc ra điều người khác cố che giấu. Chàng ít khi bộc lộ cảm xúc, nhưng một khi đã hứa bảo vệ ai thì rất khó lay chuyển.",
+     "name": "Bùi Hoài Cẩn",
+     "is_protagonist": true
+    }
+   },
+   "so_phan_su_gia": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Lão Thanh Nghi có được thả khỏi nơi giam giữ trước khi hòa đàm kết thúc không?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 18
+    }
+   },
+   "sua_lenh_de_gianh_ben": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm Tử Nhân sửa bản sao chiếu lệnh để đòi quyền kiểm soát thêm các bến neo quanh tuyến phong ấn."
+    }
+   },
+   "ten_tren_danh_sach": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao tên người thuộc Phạm thị bị ghi khác nét mực trên danh sách?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 12
+    }
+   },
+   "thuy_nghi_cung": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Nghị cung"
+     ],
+     "name": "Thủy Nghị Cung",
+     "description": "Đại điện trên đảo trung lập nơi các phe mở cuộc hòa đàm.",
+     "visual": "Cột đá xanh dựng trên nền gỗ sẫm, đèn lồng trắng hắt ánh sáng nhợt nhạt lên những tấm bình phong chạm sóng. Hơi ẩm từ biển len qua khe cửa, làm không khí trong điện lạnh như một lời cảnh cáo."
+    }
+   },
+   "tinh_huyen_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Tĩnh Huyền"
+     ],
+     "name": "Tĩnh Huyền Tông",
+     "description": "Tông môn gìn giữ văn thư lời thề cổ, nay muốn duy trì quyền canh ấn theo chiếu lệnh hiện hành."
+    }
+   },
+   "tram_thanh_tuc": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Trạm trấn ấn"
+     ],
+     "name": "Trạm Thanh Tức",
+     "description": "Trạm canh giữ một đoạn tuyến phong ấn ngoài rìa quần đảo.",
+     "visual": "Tháp đá thấp đứng trên mỏm đảo trơ gió, quanh chân tháp là những cọc đồng xỉn màu và bậc đá nứt. Ánh sáng ở đây thường xanh tái, như bị sương mù hút mất."
+    }
+   },
+   "tram_that_thu": {
+    "label": "Fact",
+    "props": {
+     "text": "Trạm Thanh Tức đã thất thủ trước khi cuộc hòa đàm bắt đầu."
+    }
+   },
+   "tran_mac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là thư lại được cử ghi biên bản hòa đàm, từng phụ trách đối chiếu các chiếu lệnh chuyển quyền canh giữ.",
+     "appearance": "Trông khoảng hai mươi lăm, vóc người mảnh, mặt tái và hẹp, tóc đen buộc bằng dây vải; anh mặc áo nâu giản dị, luôn mang theo ống bút tre bên hông.",
+     "aliases": [
+      "Thư lại nghị sự"
+     ],
+     "personality": "Nhẫn nại, kín đáo, giỏi nhớ từng câu chữ trong văn bản và biết khi nào nên im lặng.",
+     "name": "Trần Mặc"
+    }
+   },
+   "van_te_coc": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Vân Tê"
+     ],
+     "name": "Vân Tê Cốc",
+     "description": "Tông môn muốn lập cơ chế luân phiên canh giữ ấn để giảm quyền chi phối của từng thế gia."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khuong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "thầy trò"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_khuong>tran_mac@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "tran_mac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "đồng sự"
+    }
+   },
+   {
+    "id": "RELATES_TO:le_tuyet_dung>pham_tu_nhan@0",
+    "type": "RELATES_TO",
+    "source": "le_tuyet_dung",
+    "target": "pham_tu_nhan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -40,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_tu_nhan>le_tuyet_dung@0",
+    "type": "RELATES_TO",
+    "source": "pham_tu_nhan",
+    "target": "le_tuyet_dung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -45,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "thầy trò"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_mac>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "tran_mac",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "đồng sự"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>thuy_nghi_cung@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "thuy_nghi_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lao_thanh_nghi>thuy_nghi_cung@0",
+    "type": "LOCATED_AT",
+    "source": "lao_thanh_nghi",
+    "target": "thuy_nghi_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:le_tuyet_dung>thuy_nghi_cung@0",
+    "type": "LOCATED_AT",
+    "source": "le_tuyet_dung",
+    "target": "thuy_nghi_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_tu_nhan>thuy_nghi_cung@0",
+    "type": "LOCATED_AT",
+    "source": "pham_tu_nhan",
+    "target": "thuy_nghi_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>thuy_nghi_cung@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "thuy_nghi_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_mac>thuy_nghi_cung@0",
+    "type": "LOCATED_AT",
+    "source": "tran_mac",
+    "target": "thuy_nghi_cung",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>chieu_lenh_thanh_tuc@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "chieu_lenh_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>danh_sach_tram_an@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "danh_sach_tram_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>tinh_huyen_tong@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "tinh_huyen_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:le_tuyet_dung>van_te_coc@0",
+    "type": "MEMBER_OF",
+    "source": "le_tuyet_dung",
+    "target": "van_te_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:pham_tu_nhan>pham_thi@0",
+    "type": "MEMBER_OF",
+    "source": "pham_tu_nhan",
+    "target": "pham_thi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>tinh_huyen_tong@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "tinh_huyen_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tran_mac>tinh_huyen_tong@0",
+    "type": "MEMBER_OF",
+    "source": "tran_mac",
+    "target": "tinh_huyen_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_khuong>chieu_giao_tinh_huyen@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "chieu_giao_tinh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>danh_sach_duoc_giao@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "danh_sach_duoc_giao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>loi_the_tinh_huyen@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "loi_the_tinh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>pham_thi_giu_ben@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "pham_thi_giu_ben",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>phap_an_can_nguoi@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "phap_an_can_nguoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>tram_that_thu@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "tram_that_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nghi>danh_sach_co_ten_gia@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nghi",
+    "target": "danh_sach_co_ten_gia",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nghi>danh_sach_duoc_giao@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nghi",
+    "target": "danh_sach_duoc_giao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nghi>phap_an_can_nguoi@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nghi",
+    "target": "phap_an_can_nguoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lao_thanh_nghi>tram_that_thu@0",
+    "type": "KNOWS",
+    "source": "lao_thanh_nghi",
+    "target": "tram_that_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuyet_dung>chieu_giao_tinh_huyen@0",
+    "type": "KNOWS",
+    "source": "le_tuyet_dung",
+    "target": "chieu_giao_tinh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuyet_dung>loi_the_van_te@0",
+    "type": "KNOWS",
+    "source": "le_tuyet_dung",
+    "target": "loi_the_van_te",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuyet_dung>pham_thi_giu_ben@0",
+    "type": "KNOWS",
+    "source": "le_tuyet_dung",
+    "target": "pham_thi_giu_ben",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuyet_dung>phap_an_can_nguoi@0",
+    "type": "KNOWS",
+    "source": "le_tuyet_dung",
+    "target": "phap_an_can_nguoi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuyet_dung>tram_that_thu@0",
+    "type": "KNOWS",
+    "source": "le_tuyet_dung",
+    "target": "tram_that_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_nhan>chieu_giao_tinh_huyen@0",
+    "type": "KNOWS",
+    "source": "pham_tu_nhan",
+    "target": "chieu_giao_tinh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_nhan>pham_thi_giu_ben@0",
+    "type": "KNOWS",
+    "source": "pham_tu_nhan",
+    "target": "pham_thi_giu_ben",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_nhan>pham_tu_nhan_sua_lenh@0",
+    "type": "KNOWS",
+    "source": "pham_tu_nhan",
+    "target": "pham_tu_nhan_sua_lenh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_nhan>sua_lenh_de_gianh_ben@0",
+    "type": "KNOWS",
+    "source": "pham_tu_nhan",
+    "target": "sua_lenh_de_gianh_ben",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_nhan>tram_that_thu@0",
+    "type": "KNOWS",
+    "source": "pham_tu_nhan",
+    "target": "tram_that_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>chieu_giao_tinh_huyen@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "chieu_giao_tinh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>danh_sach_duoc_giao@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "danh_sach_duoc_giao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>loi_the_tinh_huyen@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "loi_the_tinh_huyen",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_mac>tram_that_thu@0",
+    "type": "KNOWS",
+    "source": "tran_mac",
+    "target": "tram_that_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:chieu_giao_tinh_huyen>chieu_lenh_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "chieu_giao_tinh_huyen",
+    "target": "chieu_lenh_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chieu_giao_tinh_huyen>tinh_huyen_tong@0",
+    "type": "ABOUT",
+    "source": "chieu_giao_tinh_huyen",
+    "target": "tinh_huyen_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chieu_giao_tinh_huyen>tram_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "chieu_giao_tinh_huyen",
+    "target": "tram_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chieu_len_tay>chieu_lenh_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "chieu_len_tay",
+    "target": "chieu_lenh_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:chieu_len_tay>protagonist@0",
+    "type": "ABOUT",
+    "source": "chieu_len_tay",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:danh_sach_co_ten_gia>danh_sach_tram_an@0",
+    "type": "ABOUT",
+    "source": "danh_sach_co_ten_gia",
+    "target": "danh_sach_tram_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:danh_sach_co_ten_gia>pham_thi@0",
+    "type": "ABOUT",
+    "source": "danh_sach_co_ten_gia",
+    "target": "pham_thi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:danh_sach_duoc_giao>danh_sach_tram_an@0",
+    "type": "ABOUT",
+    "source": "danh_sach_duoc_giao",
+    "target": "danh_sach_tram_an",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:danh_sach_duoc_giao>lao_thanh_nghi@0",
+    "type": "ABOUT",
+    "source": "danh_sach_duoc_giao",
+    "target": "lao_thanh_nghi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_tinh_huyen>tinh_huyen_tong@0",
+    "type": "ABOUT",
+    "source": "loi_the_tinh_huyen",
+    "target": "tinh_huyen_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_van_te>van_te_coc@0",
+    "type": "ABOUT",
+    "source": "loi_the_van_te",
+    "target": "van_te_coc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:pham_thi_giu_ben>dao_van_chau@0",
+    "type": "ABOUT",
+    "source": "pham_thi_giu_ben",
+    "target": "dao_van_chau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:pham_thi_giu_ben>pham_thi@0",
+    "type": "ABOUT",
+    "source": "pham_thi_giu_ben",
+    "target": "pham_thi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:pham_tu_nhan_sua_lenh>chieu_lenh_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "pham_tu_nhan_sua_lenh",
+    "target": "chieu_lenh_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:pham_tu_nhan_sua_lenh>pham_tu_nhan@0",
+    "type": "ABOUT",
+    "source": "pham_tu_nhan_sua_lenh",
+    "target": "pham_tu_nhan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phap_an_can_nguoi>tram_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "phap_an_can_nguoi",
+    "target": "tram_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:sua_lenh_de_gianh_ben>chieu_lenh_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "sua_lenh_de_gianh_ben",
+    "target": "chieu_lenh_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:sua_lenh_de_gianh_ben>pham_thi@0",
+    "type": "ABOUT",
+    "source": "sua_lenh_de_gianh_ben",
+    "target": "pham_thi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:sua_lenh_de_gianh_ben>pham_tu_nhan@0",
+    "type": "ABOUT",
+    "source": "sua_lenh_de_gianh_ben",
+    "target": "pham_tu_nhan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tram_that_thu>tram_thanh_tuc@0",
+    "type": "ABOUT",
+    "source": "tram_that_thu",
+    "target": "tram_thanh_tuc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Bùi Hoài Cẩn",
+     "known_as": "Bùi Hoài Cẩn"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [
+  {
+   "where": "setup:build",
+   "attempt": 1,
+   "code": "STORY_SETUP_INVALID",
+   "detail": "sai quy tắc sau 1 lượt sửa: package ×1",
+   "problems": [
+    "gói chương 0: (gốc): Value error, id nút trùng trong gói: ['danh_sach_lac_nhai']"
+   ]
+  }
+ ],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "id": 1,
+    "package": 7
+   },
+   "problems": [
+    "các id 'ta_dật_chau', 'tạ_dật_châu' khác nhau nhưng đổi sang dạng ^[a-z0-9_]+$ đều ra 'ta_dat_chau': đặt cho mỗi thứ một id riêng",
+    "gói chương 0: nodes.5.id: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+    "gói chương 0: edges.13.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+    "gói chương 0: edges.19.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+    "gói chương 0: edges.27.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+    "gói chương 0: edges.34.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+    "gói chương 0: edges.40.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'",
+    "gói chương 0: edges.47.from: String should match pattern '^[A-Za-z0-9_.:\\->@]{1,128}$'"
+   ]
+  }
+ ],
+ "quotes": []
+}

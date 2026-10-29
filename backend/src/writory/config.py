@@ -73,6 +73,9 @@ class RetryLimits(_Strict):
     rewrite_per_scene: NonNegativeInt
     extract_schema_retry: NonNegativeInt
     llm_transient: NonNegativeInt
+    # Giây chờ trước lần thử lại thứ 1, 2, 3… của lỗi tạm (LLM_UNAVAILABLE, LLM_TIMEOUT); ngắn hơn số lần
+    # thử lại thì lặp lần cuối; rỗng = không chờ (D-123).
+    transient_backoff_seconds: list[NonNegativeFloat] = []
     # `build_story` sai quy tắc: số lượt gọi lại model kèm danh sách lỗi, riêng với thử lại JSON
     # sai schema (D-14, D-54).
     setup_repair: NonNegativeInt
@@ -134,9 +137,13 @@ class ContextLimits(_Section):
     idle_chapters: PositiveInt | None = None
     # Ba cờ của đề v3 (D-110): mặc định pydantic là tắt; bật ở limits.yaml (D-111).
     character_personality_max_chars: NonNegativeInt = 0  # tính cách NPC vào đề dàn ý và viết; 0 = tắt
+    character_appearance_max_chars: NonNegativeInt = 0  # ngoại hình NPC vào đề dàn ý và viết; 0 = tắt (D-118)
     previous_openings: NonNegativeInt = 0  # số chương gần nhất có câu mở đưa vào đề viết; 0 = tắt
     previous_opening_max_chars: PositiveInt | None = None  # độ dài tối đa một câu mở
     unplanned_chapter_goal: bool = False  # chương không có mốc vẫn phải đổi tình thế cụ thể
+    # Cứ từng ấy chương kể từ lần đổi pha trước (hoặc lần nhắc trước) thì mục tiêu chương đòi đổi pha
+    # (D-119); None = tắt, đề y hệt cũ.
+    phase_shift_every: PositiveInt | None = None
 
 
 class LLMCallLimits(_Section):

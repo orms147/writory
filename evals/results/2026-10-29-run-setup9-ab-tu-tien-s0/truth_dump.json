@@ -1,0 +1,1740 @@
+{
+ "story_id": "run-20261029-setup9-ab-tu-tien-s0-2b0fd4f6",
+ "plan": {
+  "acts": [
+   {
+    "name": "Trở lại thung lũng",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "name": "Những lời dò xét",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "name": "Đêm trước tiếp quản",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "name": "Lời hứa cuối",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "minh_vien_de_phu_bai",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Tạ Minh Viễn",
+      "cố ý để lại phù bài"
+     ],
+     [
+      "phù bài",
+      "dấu hiệu dẫn đến sổ kiểm kê"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "thanh_lam_sua_so",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Đoàn Thanh Lam",
+      "sửa sổ kiểm kê"
+     ],
+     [
+      "Đoàn Thanh Lam",
+      "người của Đại Tông Bạch Luân"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "nguoi_nhat_phu_bai",
+    "resolve_from_chapter": 1,
+    "resolve_to_chapter": 2
+   },
+   {
+    "thread_id": "so_kiem_ke_bi_sua",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 4
+   },
+   {
+    "thread_id": "so_phan_minh_vien",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 5
+   },
+   {
+    "thread_id": "trao_phu_bai",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6
+   },
+   {
+    "thread_id": "loi_hua_cu",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 6
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Tạ Duy Khiêm nhận ra phù bài trong tay Phạm Tiêu có thể khiến cả hai bị kéo vào cuộc tranh quyền.",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Tạ Duy Khiêm tìm được dấu vết nối phù bài với những dòng bất thường trong sổ kiểm kê.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Tạ Duy Khiêm phải quyết định có phơi bày việc Đoàn Thanh Lam sửa sổ trước khi người tiếp quản đến hay không.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Tạ Duy Khiêm lựa chọn người nhận phù bài và chấp nhận cái giá của lựa chọn ấy.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "minh_vien_de_phu_bai",
+    "text": "Tạ Minh Viễn cố ý để lại phù bài tại ruộng thuốc như dấu hiệu dẫn đến sổ kiểm kê linh thảo đã bị sửa.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "thanh_lam_sua_so",
+    "text": "Đoàn Thanh Lam đã sửa sổ kiểm kê để chuyển linh thảo cho người của Đại Tông Bạch Luân, đổi lấy lời hứa giữ nguyên chức vụ sau khi Thanh Khê giải tán.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "nguoi_nhat_phu_bai",
+    "description": "Phạm Tiêu đã nhặt phù bài của Tạ Minh Viễn ở đâu?",
+    "user_authored": false,
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "so_kiem_ke_bi_sua",
+    "description": "Ai đã sửa sổ kiểm kê linh thảo?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "so_phan_minh_vien",
+    "description": "Tạ Minh Viễn còn sống hay đã chết?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "trao_phu_bai",
+    "description": "Tạ Duy Khiêm sẽ trao phù bài cho ai?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "loi_hua_cu",
+    "description": "Tạ Duy Khiêm sẽ giữ lời hứa nào với Tạ Minh Viễn?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Tạ Duy Khiêm nhận ra phù bài trong tay Phạm Tiêu có thể khiến cả hai bị kéo vào cuộc tranh quyền.",
+    "from_chapter": 1,
+    "to_chapter": 1,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Tạ Duy Khiêm tìm được dấu vết nối phù bài với những dòng bất thường trong sổ kiểm kê.",
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Tạ Duy Khiêm phải quyết định có phơi bày việc Đoàn Thanh Lam sửa sổ trước khi người tiếp quản đến hay không.",
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Tạ Duy Khiêm lựa chọn người nhận phù bài và chấp nhận cái giá của lựa chọn ấy.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261029-setup9-ab-tu-tien-s0-2b0fd4f6-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Tạ Duy Khiêm",
+      "personality": "Nhẫn nại, ít bộc lộ cảm xúc và nhạy bén với những điều người khác cố tình bỏ qua. Anh thường chọn im lặng, nhưng một khi đã lên tiếng thì lời nói hiếm khi chỉ có một nghĩa.",
+      "backstory": "Tạ Duy Khiêm là đệ tử ngoại môn từng cùng Tạ Minh Viễn làm việc ở ruộng thuốc, trước khi người sư huynh ấy mất tích. Sau lần đó, anh bị chuyển sang một công việc xa khu thung lũng và không được biết thêm gì về vụ việc. Nay trở lại đúng lúc tông môn sắp bị hai đại tông tiếp quản, anh nhìn thấy phù bài của người cũ trong tay một đệ tử khác và phải cân nhắc xem nên giúp người ấy hay giữ khoảng cách để tránh bị cuốn vào cuộc thanh toán.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Trông khoảng hai mươi bốn tuổi, vóc người gầy chắc, gương mặt thanh và tóc đen buộc thấp sau gáy; anh mặc áo ngoại môn màu tro đã bạc ở vai, thường mang túi vải đựng dụng cụ ruộng thuốc bên hông."
+     }
+    },
+    {
+     "id": "ta_minh_vien",
+     "label": "Character",
+     "props": {
+      "name": "Tạ Minh Viễn",
+      "aliases": [
+       "Tạ sư huynh"
+      ],
+      "personality": "Điềm đạm, kín đáo, coi trọng lời hứa hơn sự an toàn của bản thân.",
+      "backstory": "Từng cùng Tạ Duy Khiêm làm việc ở ruộng thuốc. Anh mất tích sau khi phát hiện sổ kiểm kê linh thảo có chỗ bị sửa đổi.",
+      "appearance": "Trông khoảng hai mươi lăm tuổi, người cao gầy, mặt dài và tóc đen buộc gọn sau gáy; thường mặc áo môn sinh màu tro đã sờn, bên hông có một vết sẹo mảnh sát cổ tay."
+     }
+    },
+    {
+     "id": "doan_thanh_lam",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Thanh Lam",
+      "aliases": [
+       "Đoàn chấp sự"
+      ],
+      "personality": "Nói năng chừng mực, thực dụng, giỏi khiến người khác tự nói ra điều họ định giấu.",
+      "backstory": "Là chấp sự ngoại môn của Tông môn Thanh Khê, được giao quản lý việc kiểm kê trước ngày tiếp quản.",
+      "appearance": "Trông ngoài ba mươi, vóc người mảnh, gương mặt trái xoan và tóc đen vấn bằng trâm gỗ; áo dài xanh sẫm luôn phẳng phiu, trên ngón cái có chiếc nhẫn đồng."
+     }
+    },
+    {
+     "id": "luong_khac",
+     "label": "Character",
+     "props": {
+      "name": "Lương Khắc",
+      "aliases": [
+       "Lương đạo hữu"
+      ],
+      "personality": "Lịch thiệp, kiên nhẫn, thường nói như thể mọi việc đã được định đoạt.",
+      "backstory": "Là người được Đại Tông Vân Kiếm cử đến dò xét ruộng thuốc và chuẩn bị việc tiếp quản.",
+      "appearance": "Trông gần ba mươi tuổi, vai rộng, mặt vuông và tóc đen cắt gọn; mặc áo choàng màu ngà viền bạc, mang một thanh kiếm vỏ trắng có nút tua xanh."
+     }
+    },
+    {
+     "id": "pham_tieu",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Tiêu",
+      "aliases": [
+       "Tiểu Phạm"
+      ],
+      "personality": "Dễ lo lắng nhưng có lòng trắc ẩn, thường cân nhắc rất lâu trước khi chọn đứng về phía nào.",
+      "backstory": "Là đệ tử ngoại môn được giao chuyển giấy tờ giữa kho thuốc và khu nhà chấp sự; cậu là người nhặt được phù bài của Tạ Minh Viễn.",
+      "appearance": "Trông chừng mười chín tuổi, vóc nhỏ, mặt tròn và tóc đen cắt ngang gáy; mặc áo vải nâu rộng tay, cổ áo luôn cài lệch một khuy."
+     }
+    },
+    {
+     "id": "thung_lung_tram_suong",
+     "label": "Location",
+     "props": {
+      "name": "Thung lũng Trầm Sương",
+      "aliases": [
+       "Trầm Sương"
+      ],
+      "description": "Thung lũng hẻo lánh nơi Tông môn Thanh Khê dựng cơ nghiệp và trồng linh thảo.",
+      "visual": "Sương bạc thường phủ kín những triền dốc đá xám, khiến ánh sáng ban ngày nhợt nhạt và xa xăm. Không khí ẩm lạnh, thoảng mùi đất cũ."
+     }
+    },
+    {
+     "id": "ruong_thuoc_hoang",
+     "label": "Location",
+     "props": {
+      "name": "Ruộng thuốc Hoang",
+      "aliases": [
+       "ruộng thuốc"
+      ],
+      "description": "Khu ruộng thuốc bỏ hoang ở rìa thung lũng, nơi những luống cây úa xen với đất mới bị xới.",
+      "visual": "Các bờ luống bằng đất nện lở vụn dưới màn sương, lá thuốc xanh úa bắt ánh sáng mờ như phủ bụi. Hàng rào tre mục kêu khe khẽ mỗi khi gió luồn qua."
+     }
+    },
+    {
+     "id": "nha_chap_su",
+     "label": "Location",
+     "props": {
+      "name": "Nhà Chấp Sự",
+      "aliases": [
+       "nhà quản sự"
+      ],
+      "description": "Nơi lưu giữ giấy tờ và sổ sách của ngoại môn Tông môn Thanh Khê.",
+      "visual": "Căn nhà gỗ thấp có mái ngói sẫm, cửa sổ hẹp và giá sách ngả màu. Ánh đèn dầu vàng yếu hắt lên những mặt bàn đầy vết mực."
+     }
+    },
+    {
+     "id": "con_duong_da",
+     "label": "Location",
+     "props": {
+      "name": "Đường Đá Vọng",
+      "aliases": [
+       "đường lên cổng"
+      ],
+      "description": "Con đường đá nối ruộng thuốc với cổng ngoài của Tông môn Thanh Khê.",
+      "visual": "Những phiến đá đen ướt sương xếp men theo sườn dốc, hai bên cỏ dại mọc chen qua kẽ. Từ đây có thể nghe tiếng chuông cổng vọng xuống từng hồi thưa."
+     }
+    },
+    {
+     "id": "tong_mon_thanh_khe",
+     "label": "Faction",
+     "props": {
+      "name": "Tông môn Thanh Khê",
+      "aliases": [
+       "Thanh Khê"
+      ],
+      "description": "Tông môn nhỏ đang suy yếu, sắp phải giao quyền quản lý thung lũng cho hai đại tông."
+     }
+    },
+    {
+     "id": "dai_tong_van_kiem",
+     "label": "Faction",
+     "props": {
+      "name": "Đại Tông Vân Kiếm",
+      "aliases": [
+       "Vân Kiếm"
+      ],
+      "description": "Một đại tông phái muốn tiếp quản ruộng thuốc và quyền kiểm kê linh thảo trong thung lũng."
+     }
+    },
+    {
+     "id": "dai_tong_bach_luan",
+     "label": "Faction",
+     "props": {
+      "name": "Đại Tông Bạch Luân",
+      "aliases": [
+       "Bạch Luân"
+      ],
+      "description": "Một đại tông phái đang tranh phần quyền lợi còn lại trong cuộc tiếp quản thung lũng."
+     }
+    },
+    {
+     "id": "phu_bai_ta_minh_vien",
+     "label": "Item",
+     "props": {
+      "name": "Phù bài Tạ Minh Viễn",
+      "aliases": [
+       "phù bài"
+      ],
+      "description": "Phù bài bằng gỗ mun khắc tên Tạ Minh Viễn, món đồ cuối cùng xác nhận người mất tích từng thuộc ngoại môn."
+     }
+    },
+    {
+     "id": "so_kiem_ke_linh_thao",
+     "label": "Item",
+     "props": {
+      "name": "Sổ kiểm kê linh thảo",
+      "aliases": [
+       "sổ kiểm kê"
+      ],
+      "description": "Cuốn sổ ghi số lượng linh thảo từng được thu hoạch và chuyển khỏi ruộng thuốc."
+     }
+    },
+    {
+     "id": "tinh_the_tiep_quan",
+     "label": "Fact",
+     "props": {
+      "text": "Tông môn Thanh Khê sắp phải giao quyền quản lý thung lũng Trầm Sương cho Đại Tông Vân Kiếm và Đại Tông Bạch Luân."
+     }
+    },
+    {
+     "id": "ta_minh_vien_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Tạ Minh Viễn đã mất tích sau khi làm việc tại ruộng thuốc Hoang."
+     }
+    },
+    {
+     "id": "phat_hien_phu_bai",
+     "label": "Fact",
+     "props": {
+      "text": "Phạm Tiêu nhặt được phù bài Tạ Minh Viễn ở ruộng thuốc Hoang."
+     }
+    },
+    {
+     "id": "luong_thuoc_bi_nho",
+     "label": "Fact",
+     "props": {
+      "text": "Một luống linh thảo ở ruộng thuốc Hoang đã bị nhổ sạch trước khi cuộc kiểm kê bắt đầu."
+     }
+    },
+    {
+     "id": "so_sach_bi_sua",
+     "label": "Fact",
+     "props": {
+      "text": "Một số dòng trong sổ kiểm kê linh thảo đã bị sửa để che giấu lượng thuốc được chuyển khỏi ruộng."
+     }
+    },
+    {
+     "id": "minh_vien_de_phu_bai",
+     "label": "Fact",
+     "props": {
+      "text": "Tạ Minh Viễn cố ý để lại phù bài tại ruộng thuốc như dấu hiệu dẫn đến sổ kiểm kê linh thảo đã bị sửa."
+     }
+    },
+    {
+     "id": "thanh_lam_sua_so",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Thanh Lam đã sửa sổ kiểm kê để chuyển linh thảo cho người của Đại Tông Bạch Luân, đổi lấy lời hứa giữ nguyên chức vụ sau khi Thanh Khê giải tán."
+     }
+    },
+    {
+     "id": "nguoi_nhat_phu_bai",
+     "label": "Thread",
+     "props": {
+      "description": "Phạm Tiêu đã nhặt phù bài của Tạ Minh Viễn ở đâu?",
+      "planted_chapter": 0,
+      "due_from_chapter": 1,
+      "due_to_chapter": 2
+     }
+    },
+    {
+     "id": "so_kiem_ke_bi_sua",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã sửa sổ kiểm kê linh thảo?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "so_phan_minh_vien",
+     "label": "Thread",
+     "props": {
+      "description": "Tạ Minh Viễn còn sống hay đã chết?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "trao_phu_bai",
+     "label": "Thread",
+     "props": {
+      "description": "Tạ Duy Khiêm sẽ trao phù bài cho ai?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "loi_hua_cu",
+     "label": "Thread",
+     "props": {
+      "description": "Tạ Duy Khiêm sẽ giữ lời hứa nào với Tạ Minh Viễn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "ta_minh_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>ta_minh_vien@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 65
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "ta_minh_vien",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ta_minh_vien>protagonist@0",
+     "props": {
+      "kind": "bạn cũ",
+      "score": 65
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_thanh_lam",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_thanh_lam>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "pham_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>pham_tieu@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_tieu",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_tieu>protagonist@0",
+     "props": {
+      "kind": "đồng môn",
+      "score": 15
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_thanh_lam",
+     "to": "nha_chap_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_thanh_lam>nha_chap_su@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luong_khac",
+     "to": "con_duong_da",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luong_khac>con_duong_da@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_tieu",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_tieu>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "pham_tieu",
+     "to": "phu_bai_ta_minh_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:pham_tieu>phu_bai_ta_minh_vien@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "so_kiem_ke_linh_thao",
+     "to": "nha_chap_su",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:so_kiem_ke_linh_thao>nha_chap_su@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "tong_mon_thanh_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>tong_mon_thanh_khe@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ta_minh_vien",
+     "to": "tong_mon_thanh_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ta_minh_vien>tong_mon_thanh_khe@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_thanh_lam",
+     "to": "tong_mon_thanh_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_thanh_lam>tong_mon_thanh_khe@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "pham_tieu",
+     "to": "tong_mon_thanh_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:pham_tieu>tong_mon_thanh_khe@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luong_khac",
+     "to": "dai_tong_van_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luong_khac>dai_tong_van_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tinh_the_tiep_quan",
+     "to": "tong_mon_thanh_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tinh_the_tiep_quan>tong_mon_thanh_khe@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tinh_the_tiep_quan",
+     "to": "thung_lung_tram_suong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tinh_the_tiep_quan>thung_lung_tram_suong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tinh_the_tiep_quan",
+     "to": "dai_tong_van_kiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tinh_the_tiep_quan>dai_tong_van_kiem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tinh_the_tiep_quan",
+     "to": "dai_tong_bach_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tinh_the_tiep_quan>dai_tong_bach_luan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lam",
+     "to": "tinh_the_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lam>tinh_the_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_khac",
+     "to": "tinh_the_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_khac>tinh_the_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tieu",
+     "to": "tinh_the_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tieu>tinh_the_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ta_minh_vien_mat_tich",
+     "to": "ta_minh_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ta_minh_vien_mat_tich>ta_minh_vien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ta_minh_vien_mat_tich",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ta_minh_vien_mat_tich>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lam",
+     "to": "ta_minh_vien_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lam>ta_minh_vien_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tieu",
+     "to": "ta_minh_vien_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tieu>ta_minh_vien_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "phat_hien_phu_bai",
+     "to": "pham_tieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phat_hien_phu_bai>pham_tieu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "phat_hien_phu_bai",
+     "to": "phu_bai_ta_minh_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phat_hien_phu_bai>phu_bai_ta_minh_vien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "phat_hien_phu_bai",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:phat_hien_phu_bai>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tieu",
+     "to": "phat_hien_phu_bai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tieu>phat_hien_phu_bai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lam",
+     "to": "phat_hien_phu_bai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lam>phat_hien_phu_bai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "luong_thuoc_bi_nho",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:luong_thuoc_bi_nho>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lam",
+     "to": "luong_thuoc_bi_nho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lam>luong_thuoc_bi_nho@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tieu",
+     "to": "luong_thuoc_bi_nho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tieu>luong_thuoc_bi_nho@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "so_sach_bi_sua",
+     "to": "so_kiem_ke_linh_thao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:so_sach_bi_sua>so_kiem_ke_linh_thao@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "so_sach_bi_sua",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:so_sach_bi_sua>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ta_minh_vien",
+     "to": "so_sach_bi_sua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ta_minh_vien>so_sach_bi_sua@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lam",
+     "to": "so_sach_bi_sua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lam>so_sach_bi_sua@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "minh_vien_de_phu_bai",
+     "to": "ta_minh_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:minh_vien_de_phu_bai>ta_minh_vien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "minh_vien_de_phu_bai",
+     "to": "phu_bai_ta_minh_vien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:minh_vien_de_phu_bai>phu_bai_ta_minh_vien@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "minh_vien_de_phu_bai",
+     "to": "so_kiem_ke_linh_thao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:minh_vien_de_phu_bai>so_kiem_ke_linh_thao@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "minh_vien_de_phu_bai",
+     "to": "ruong_thuoc_hoang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:minh_vien_de_phu_bai>ruong_thuoc_hoang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ta_minh_vien",
+     "to": "minh_vien_de_phu_bai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ta_minh_vien>minh_vien_de_phu_bai@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_lam_sua_so",
+     "to": "doan_thanh_lam",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_lam_sua_so>doan_thanh_lam@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_lam_sua_so",
+     "to": "so_kiem_ke_linh_thao",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_lam_sua_so>so_kiem_ke_linh_thao@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_lam_sua_so",
+     "to": "dai_tong_bach_luan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_lam_sua_so>dai_tong_bach_luan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_lam_sua_so",
+     "to": "tong_mon_thanh_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_lam_sua_so>tong_mon_thanh_khe@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_thanh_lam",
+     "to": "thanh_lam_sua_so",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_thanh_lam>thanh_lam_sua_so@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Tạ Duy Khiêm",
+      "known_as": "Tạ Duy Khiêm"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "con_duong_da": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "đường lên cổng"
+     ],
+     "name": "Đường Đá Vọng",
+     "visual": "Những phiến đá đen ướt sương xếp men theo sườn dốc, hai bên cỏ dại mọc chen qua kẽ. Từ đây có thể nghe tiếng chuông cổng vọng xuống từng hồi thưa.",
+     "description": "Con đường đá nối ruộng thuốc với cổng ngoài của Tông môn Thanh Khê."
+    }
+   },
+   "dai_tong_bach_luan": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Bạch Luân"
+     ],
+     "name": "Đại Tông Bạch Luân",
+     "description": "Một đại tông phái đang tranh phần quyền lợi còn lại trong cuộc tiếp quản thung lũng."
+    }
+   },
+   "dai_tong_van_kiem": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Vân Kiếm"
+     ],
+     "name": "Đại Tông Vân Kiếm",
+     "description": "Một đại tông phái muốn tiếp quản ruộng thuốc và quyền kiểm kê linh thảo trong thung lũng."
+    }
+   },
+   "doan_thanh_lam": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là chấp sự ngoại môn của Tông môn Thanh Khê, được giao quản lý việc kiểm kê trước ngày tiếp quản.",
+     "appearance": "Trông ngoài ba mươi, vóc người mảnh, gương mặt trái xoan và tóc đen vấn bằng trâm gỗ; áo dài xanh sẫm luôn phẳng phiu, trên ngón cái có chiếc nhẫn đồng.",
+     "aliases": [
+      "Đoàn chấp sự"
+     ],
+     "personality": "Nói năng chừng mực, thực dụng, giỏi khiến người khác tự nói ra điều họ định giấu.",
+     "name": "Đoàn Thanh Lam"
+    }
+   },
+   "loi_hua_cu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tạ Duy Khiêm sẽ giữ lời hứa nào với Tạ Minh Viễn?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "luong_khac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là người được Đại Tông Vân Kiếm cử đến dò xét ruộng thuốc và chuẩn bị việc tiếp quản.",
+     "appearance": "Trông gần ba mươi tuổi, vai rộng, mặt vuông và tóc đen cắt gọn; mặc áo choàng màu ngà viền bạc, mang một thanh kiếm vỏ trắng có nút tua xanh.",
+     "aliases": [
+      "Lương đạo hữu"
+     ],
+     "personality": "Lịch thiệp, kiên nhẫn, thường nói như thể mọi việc đã được định đoạt.",
+     "name": "Lương Khắc"
+    }
+   },
+   "luong_thuoc_bi_nho": {
+    "label": "Fact",
+    "props": {
+     "text": "Một luống linh thảo ở ruộng thuốc Hoang đã bị nhổ sạch trước khi cuộc kiểm kê bắt đầu."
+    }
+   },
+   "minh_vien_de_phu_bai": {
+    "label": "Fact",
+    "props": {
+     "text": "Tạ Minh Viễn cố ý để lại phù bài tại ruộng thuốc như dấu hiệu dẫn đến sổ kiểm kê linh thảo đã bị sửa."
+    }
+   },
+   "nguoi_nhat_phu_bai": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Phạm Tiêu đã nhặt phù bài của Tạ Minh Viễn ở đâu?",
+     "due_from_chapter": 1,
+     "due_to_chapter": 2
+    }
+   },
+   "nha_chap_su": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "nhà quản sự"
+     ],
+     "name": "Nhà Chấp Sự",
+     "description": "Nơi lưu giữ giấy tờ và sổ sách của ngoại môn Tông môn Thanh Khê.",
+     "visual": "Căn nhà gỗ thấp có mái ngói sẫm, cửa sổ hẹp và giá sách ngả màu. Ánh đèn dầu vàng yếu hắt lên những mặt bàn đầy vết mực."
+    }
+   },
+   "pham_tieu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là đệ tử ngoại môn được giao chuyển giấy tờ giữa kho thuốc và khu nhà chấp sự; cậu là người nhặt được phù bài của Tạ Minh Viễn.",
+     "appearance": "Trông chừng mười chín tuổi, vóc nhỏ, mặt tròn và tóc đen cắt ngang gáy; mặc áo vải nâu rộng tay, cổ áo luôn cài lệch một khuy.",
+     "aliases": [
+      "Tiểu Phạm"
+     ],
+     "personality": "Dễ lo lắng nhưng có lòng trắc ẩn, thường cân nhắc rất lâu trước khi chọn đứng về phía nào.",
+     "name": "Phạm Tiêu"
+    }
+   },
+   "phat_hien_phu_bai": {
+    "label": "Fact",
+    "props": {
+     "text": "Phạm Tiêu nhặt được phù bài Tạ Minh Viễn ở ruộng thuốc Hoang."
+    }
+   },
+   "phu_bai_ta_minh_vien": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "phù bài"
+     ],
+     "name": "Phù bài Tạ Minh Viễn",
+     "description": "Phù bài bằng gỗ mun khắc tên Tạ Minh Viễn, món đồ cuối cùng xác nhận người mất tích từng thuộc ngoại môn."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Tạ Duy Khiêm là đệ tử ngoại môn từng cùng Tạ Minh Viễn làm việc ở ruộng thuốc, trước khi người sư huynh ấy mất tích. Sau lần đó, anh bị chuyển sang một công việc xa khu thung lũng và không được biết thêm gì về vụ việc. Nay trở lại đúng lúc tông môn sắp bị hai đại tông tiếp quản, anh nhìn thấy phù bài của người cũ trong tay một đệ tử khác và phải cân nhắc xem nên giúp người ấy hay giữ khoảng cách để tránh bị cuốn vào cuộc thanh toán.",
+     "appearance": "Trông khoảng hai mươi bốn tuổi, vóc người gầy chắc, gương mặt thanh và tóc đen buộc thấp sau gáy; anh mặc áo ngoại môn màu tro đã bạc ở vai, thường mang túi vải đựng dụng cụ ruộng thuốc bên hông.",
+     "personality": "Nhẫn nại, ít bộc lộ cảm xúc và nhạy bén với những điều người khác cố tình bỏ qua. Anh thường chọn im lặng, nhưng một khi đã lên tiếng thì lời nói hiếm khi chỉ có một nghĩa.",
+     "name": "Tạ Duy Khiêm",
+     "is_protagonist": true
+    }
+   },
+   "ruong_thuoc_hoang": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "ruộng thuốc"
+     ],
+     "name": "Ruộng thuốc Hoang",
+     "visual": "Các bờ luống bằng đất nện lở vụn dưới màn sương, lá thuốc xanh úa bắt ánh sáng mờ như phủ bụi. Hàng rào tre mục kêu khe khẽ mỗi khi gió luồn qua.",
+     "description": "Khu ruộng thuốc bỏ hoang ở rìa thung lũng, nơi những luống cây úa xen với đất mới bị xới."
+    }
+   },
+   "so_kiem_ke_bi_sua": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã sửa sổ kiểm kê linh thảo?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 4
+    }
+   },
+   "so_kiem_ke_linh_thao": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "sổ kiểm kê"
+     ],
+     "name": "Sổ kiểm kê linh thảo",
+     "description": "Cuốn sổ ghi số lượng linh thảo từng được thu hoạch và chuyển khỏi ruộng thuốc."
+    }
+   },
+   "so_phan_minh_vien": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tạ Minh Viễn còn sống hay đã chết?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "so_sach_bi_sua": {
+    "label": "Fact",
+    "props": {
+     "text": "Một số dòng trong sổ kiểm kê linh thảo đã bị sửa để che giấu lượng thuốc được chuyển khỏi ruộng."
+    }
+   },
+   "ta_minh_vien": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng cùng Tạ Duy Khiêm làm việc ở ruộng thuốc. Anh mất tích sau khi phát hiện sổ kiểm kê linh thảo có chỗ bị sửa đổi.",
+     "appearance": "Trông khoảng hai mươi lăm tuổi, người cao gầy, mặt dài và tóc đen buộc gọn sau gáy; thường mặc áo môn sinh màu tro đã sờn, bên hông có một vết sẹo mảnh sát cổ tay.",
+     "aliases": [
+      "Tạ sư huynh"
+     ],
+     "personality": "Điềm đạm, kín đáo, coi trọng lời hứa hơn sự an toàn của bản thân.",
+     "name": "Tạ Minh Viễn"
+    }
+   },
+   "ta_minh_vien_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Tạ Minh Viễn đã mất tích sau khi làm việc tại ruộng thuốc Hoang."
+    }
+   },
+   "thanh_lam_sua_so": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Thanh Lam đã sửa sổ kiểm kê để chuyển linh thảo cho người của Đại Tông Bạch Luân, đổi lấy lời hứa giữ nguyên chức vụ sau khi Thanh Khê giải tán."
+    }
+   },
+   "thung_lung_tram_suong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Trầm Sương"
+     ],
+     "name": "Thung lũng Trầm Sương",
+     "visual": "Sương bạc thường phủ kín những triền dốc đá xám, khiến ánh sáng ban ngày nhợt nhạt và xa xăm. Không khí ẩm lạnh, thoảng mùi đất cũ.",
+     "description": "Thung lũng hẻo lánh nơi Tông môn Thanh Khê dựng cơ nghiệp và trồng linh thảo."
+    }
+   },
+   "tinh_the_tiep_quan": {
+    "label": "Fact",
+    "props": {
+     "text": "Tông môn Thanh Khê sắp phải giao quyền quản lý thung lũng Trầm Sương cho Đại Tông Vân Kiếm và Đại Tông Bạch Luân."
+    }
+   },
+   "tong_mon_thanh_khe": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Khê"
+     ],
+     "name": "Tông môn Thanh Khê",
+     "description": "Tông môn nhỏ đang suy yếu, sắp phải giao quyền quản lý thung lũng cho hai đại tông."
+    }
+   },
+   "trao_phu_bai": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tạ Duy Khiêm sẽ trao phù bài cho ai?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_thanh_lam>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_thanh_lam",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_tieu>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "pham_tieu",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 15,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>pham_tieu@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "pham_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "đồng môn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>ta_minh_vien@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "ta_minh_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 65,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "RELATES_TO:ta_minh_vien>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "ta_minh_vien",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 65,
+     "kind": "bạn cũ"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_thanh_lam>nha_chap_su@0",
+    "type": "LOCATED_AT",
+    "source": "doan_thanh_lam",
+    "target": "nha_chap_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luong_khac>con_duong_da@0",
+    "type": "LOCATED_AT",
+    "source": "luong_khac",
+    "target": "con_duong_da",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_tieu>ruong_thuoc_hoang@0",
+    "type": "LOCATED_AT",
+    "source": "pham_tieu",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>ruong_thuoc_hoang@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:so_kiem_ke_linh_thao>nha_chap_su@0",
+    "type": "LOCATED_AT",
+    "source": "so_kiem_ke_linh_thao",
+    "target": "nha_chap_su",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:pham_tieu>phu_bai_ta_minh_vien@0",
+    "type": "HOLDS",
+    "source": "pham_tieu",
+    "target": "phu_bai_ta_minh_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_thanh_lam>tong_mon_thanh_khe@0",
+    "type": "MEMBER_OF",
+    "source": "doan_thanh_lam",
+    "target": "tong_mon_thanh_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luong_khac>dai_tong_van_kiem@0",
+    "type": "MEMBER_OF",
+    "source": "luong_khac",
+    "target": "dai_tong_van_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:pham_tieu>tong_mon_thanh_khe@0",
+    "type": "MEMBER_OF",
+    "source": "pham_tieu",
+    "target": "tong_mon_thanh_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>tong_mon_thanh_khe@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "tong_mon_thanh_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ta_minh_vien>tong_mon_thanh_khe@0",
+    "type": "MEMBER_OF",
+    "source": "ta_minh_vien",
+    "target": "tong_mon_thanh_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_thanh_lam>luong_thuoc_bi_nho@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lam",
+    "target": "luong_thuoc_bi_nho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lam>phat_hien_phu_bai@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lam",
+    "target": "phat_hien_phu_bai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lam>so_sach_bi_sua@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lam",
+    "target": "so_sach_bi_sua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lam>ta_minh_vien_mat_tich@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lam",
+    "target": "ta_minh_vien_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lam>thanh_lam_sua_so@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lam",
+    "target": "thanh_lam_sua_so",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_thanh_lam>tinh_the_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "doan_thanh_lam",
+    "target": "tinh_the_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luong_khac>tinh_the_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "luong_khac",
+    "target": "tinh_the_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tieu>luong_thuoc_bi_nho@0",
+    "type": "KNOWS",
+    "source": "pham_tieu",
+    "target": "luong_thuoc_bi_nho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tieu>phat_hien_phu_bai@0",
+    "type": "KNOWS",
+    "source": "pham_tieu",
+    "target": "phat_hien_phu_bai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tieu>ta_minh_vien_mat_tich@0",
+    "type": "KNOWS",
+    "source": "pham_tieu",
+    "target": "ta_minh_vien_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tieu>tinh_the_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "pham_tieu",
+    "target": "tinh_the_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ta_minh_vien>minh_vien_de_phu_bai@0",
+    "type": "KNOWS",
+    "source": "ta_minh_vien",
+    "target": "minh_vien_de_phu_bai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ta_minh_vien>so_sach_bi_sua@0",
+    "type": "KNOWS",
+    "source": "ta_minh_vien",
+    "target": "so_sach_bi_sua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:luong_thuoc_bi_nho>ruong_thuoc_hoang@0",
+    "type": "ABOUT",
+    "source": "luong_thuoc_bi_nho",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:minh_vien_de_phu_bai>phu_bai_ta_minh_vien@0",
+    "type": "ABOUT",
+    "source": "minh_vien_de_phu_bai",
+    "target": "phu_bai_ta_minh_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:minh_vien_de_phu_bai>ruong_thuoc_hoang@0",
+    "type": "ABOUT",
+    "source": "minh_vien_de_phu_bai",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:minh_vien_de_phu_bai>so_kiem_ke_linh_thao@0",
+    "type": "ABOUT",
+    "source": "minh_vien_de_phu_bai",
+    "target": "so_kiem_ke_linh_thao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:minh_vien_de_phu_bai>ta_minh_vien@0",
+    "type": "ABOUT",
+    "source": "minh_vien_de_phu_bai",
+    "target": "ta_minh_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phat_hien_phu_bai>pham_tieu@0",
+    "type": "ABOUT",
+    "source": "phat_hien_phu_bai",
+    "target": "pham_tieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phat_hien_phu_bai>phu_bai_ta_minh_vien@0",
+    "type": "ABOUT",
+    "source": "phat_hien_phu_bai",
+    "target": "phu_bai_ta_minh_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:phat_hien_phu_bai>ruong_thuoc_hoang@0",
+    "type": "ABOUT",
+    "source": "phat_hien_phu_bai",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:so_sach_bi_sua>ruong_thuoc_hoang@0",
+    "type": "ABOUT",
+    "source": "so_sach_bi_sua",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:so_sach_bi_sua>so_kiem_ke_linh_thao@0",
+    "type": "ABOUT",
+    "source": "so_sach_bi_sua",
+    "target": "so_kiem_ke_linh_thao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ta_minh_vien_mat_tich>ruong_thuoc_hoang@0",
+    "type": "ABOUT",
+    "source": "ta_minh_vien_mat_tich",
+    "target": "ruong_thuoc_hoang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ta_minh_vien_mat_tich>ta_minh_vien@0",
+    "type": "ABOUT",
+    "source": "ta_minh_vien_mat_tich",
+    "target": "ta_minh_vien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_lam_sua_so>dai_tong_bach_luan@0",
+    "type": "ABOUT",
+    "source": "thanh_lam_sua_so",
+    "target": "dai_tong_bach_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_lam_sua_so>doan_thanh_lam@0",
+    "type": "ABOUT",
+    "source": "thanh_lam_sua_so",
+    "target": "doan_thanh_lam",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_lam_sua_so>so_kiem_ke_linh_thao@0",
+    "type": "ABOUT",
+    "source": "thanh_lam_sua_so",
+    "target": "so_kiem_ke_linh_thao",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_lam_sua_so>tong_mon_thanh_khe@0",
+    "type": "ABOUT",
+    "source": "thanh_lam_sua_so",
+    "target": "tong_mon_thanh_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tinh_the_tiep_quan>dai_tong_bach_luan@0",
+    "type": "ABOUT",
+    "source": "tinh_the_tiep_quan",
+    "target": "dai_tong_bach_luan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tinh_the_tiep_quan>dai_tong_van_kiem@0",
+    "type": "ABOUT",
+    "source": "tinh_the_tiep_quan",
+    "target": "dai_tong_van_kiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tinh_the_tiep_quan>thung_lung_tram_suong@0",
+    "type": "ABOUT",
+    "source": "tinh_the_tiep_quan",
+    "target": "thung_lung_tram_suong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tinh_the_tiep_quan>tong_mon_thanh_khe@0",
+    "type": "ABOUT",
+    "source": "tinh_the_tiep_quan",
+    "target": "tong_mon_thanh_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Tạ Duy Khiêm",
+     "known_as": "Tạ Duy Khiêm"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [],
+ "quotes": []
+}
