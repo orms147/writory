@@ -1,0 +1,73 @@
+{
+ "_ghi_chú": "Dựng lại từ lỗi ghi trong evals/results/2026-10-29-run-long-ky-ao-hanh-trinh-1/truth_dump.json (errors, chương 14): thân trả lời của model không được lưu, chỉ có chuỗi ref sai. Lượt hai: ref 'mã người dẫn đầu chưa có trong sổ tay' (nguyên văn). Lượt một: listeners có mục không phải nhân vật.",
+ "second_round_unknown_ref": {
+  "choices": [
+   {
+    "kind": "action",
+    "text": "Đi theo đoàn người ra khỏi cổng thành.",
+    "tone": null,
+    "lie_content": null,
+    "listeners": [],
+    "about": [],
+    "feeling": null
+   },
+   {
+    "kind": "dialogue",
+    "text": "Hỏi người dẫn đầu ai đã ra lệnh khởi hành.",
+    "tone": "truth",
+    "lie_content": null,
+    "listeners": [
+     "mã người dẫn đầu chưa có trong sổ tay"
+    ],
+    "about": [],
+    "feeling": null
+   },
+   {
+    "kind": "inner",
+    "text": "Thầm cân nhắc có nên tin người dẫn đầu.",
+    "tone": null,
+    "lie_content": null,
+    "listeners": [],
+    "about": [
+     "{PROTAGONIST_REF}"
+    ],
+    "feeling": "nghi ngại"
+   }
+  ]
+ },
+ "first_round_listener_not_a_character": {
+  "choices": [
+   {
+    "kind": "action",
+    "text": "Tiếp tục theo đoàn.",
+    "tone": null,
+    "lie_content": null,
+    "listeners": [],
+    "about": [],
+    "feeling": null
+   },
+   {
+    "kind": "dialogue",
+    "text": "Hỏi về chuyến đi.",
+    "tone": "truth",
+    "lie_content": null,
+    "listeners": [
+     "{NON_CHARACTER_REF}"
+    ],
+    "about": [],
+    "feeling": null
+   },
+   {
+    "kind": "inner",
+    "text": "Thầm lo.",
+    "tone": null,
+    "lie_content": null,
+    "listeners": [],
+    "about": [
+     "{NON_CHARACTER_REF}"
+    ],
+    "feeling": "lo"
+   }
+  ]
+ }
+}

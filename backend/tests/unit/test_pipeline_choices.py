@@ -1,6 +1,7 @@
 """Tạo 3 lựa chọn cuối chương (design §6.2 bước 6, §6.3; D-37). G1: model chỉ nhận player_view."""
 
 import json
+from pathlib import Path
 
 import pytest
 from pydantic import ValidationError
@@ -117,22 +118,114 @@ async def test_refs_resolve_to_entity_ids():
     assert "lan" not in player.model_dump_json().replace("Lan", "")  # không lộ id
 
 
-async def test_unknown_ref_is_bad_response_and_retried_once():
+FIXTURE = Path(__file__).parents[1] / "fixtures" / "llm" / "choices_unknown_ref_run_long_ky_ao_hanh_trinh_1.json"
+GHOST = "mã người dẫn đầu chưa có trong sổ tay"  # chuỗi ref sai nguyên văn của model ở ch14
+
+
+def _fixture(name: str, refs: dict[str, str]) -> str:
+    """Mẫu trả lời dựng lại từ lỗi của lượt long-ky-ao-hanh-trinh-1 (thân trả lời không được lưu);
+    `{PROTAGONIST_REF}` và `{NON_CHARACTER_REF}` điền bằng mã thật của sổ tay thử."""
+    raw = json.dumps(json.loads(FIXTURE.read_text(encoding="utf-8"))[name], ensure_ascii=False)
+    return (raw.replace("{PROTAGONIST_REF}", refs["Trần Minh"])
+            .replace("{NON_CHARACTER_REF}", refs["lá thư gấp bốn"]))
+
+
+async def test_a_ref_outside_the_notebook_is_dropped_from_the_choice_not_the_whole_set(caplog):
+    """Hồi quy long-ky-ao-hanh-trinh-1 ch14: model gọi "người dẫn đầu" bằng một mã không có trong sổ
+    tay; truyện dừng hẳn vì cả bộ bị từ chối hai lần hai lượt. Bỏ riêng tham chiếu đó (G1: bỏ là
+    đúng hướng, không đoán thêm)."""
     refs = _refs_by_text()
-    bad = _reply(refs, **{"2": {"about": ["m999"]}})
-    llm = ScriptedLLM([bad, bad])
+    llm = ScriptedLLM([_fixture("second_round_unknown_ref", refs)])
+    with caplog.at_level("WARNING"):
+        choices = await _make(llm)
+    assert len(llm.calls) == 1 and len(choices) == 3
+    talk = choices[1]
+    assert talk.kind == "dialogue" and talk.listeners == () and talk.text.startswith("Hỏi người dẫn đầu")
+    assert choices[2].about == ("minh",)
+    assert GHOST not in caplog.text and "bỏ 1 tham chiếu" in caplog.text  # đếm, không ghi chữ
+
+
+async def test_a_listener_that_is_not_a_character_is_dropped_too():
+    refs = _refs_by_text()
+    # Lời thoại nói thật mất người nghe vẫn còn nguyên chữ; nội tâm có thể hướng tới một đồ vật nên giữ.
+    choices = await _make(ScriptedLLM([_fixture("first_round_listener_not_a_character", refs)]))
+    assert [c.kind for c in choices] == ["action", "dialogue", "inner"]
+    assert choices[1].listeners == () and len(choices[2].about) == 1
+
+
+async def test_a_lie_with_no_valid_listener_is_dropped_because_nobody_hears_it():
+    refs = _refs_by_text()
+    bad = _reply(refs, **{"1": {"listeners": [GHOST]}})
+    choices = await _make(ScriptedLLM([bad]))
+    assert [c.kind for c in choices] == ["action", "inner"] and all(c.lie is None for c in choices)
+
+
+async def test_an_inner_choice_with_no_valid_about_is_dropped():
+    bad = _reply(_refs_by_text(), **{"2": {"about": ["m999"]}})
+    choices = await _make(ScriptedLLM([bad]))
+    assert [c.kind for c in choices] == ["action", "dialogue"]
+
+
+async def test_an_action_keeps_its_text_and_loses_only_the_unknown_ref():
+    refs = _refs_by_text()
+    bad = _reply(refs, **{"0": {"about": [refs["Phạm Thị Lan"], "m999"]}})
+    choices = await _make(ScriptedLLM([bad]))
+    assert choices[0].about == ("lan",) and choices[0].text == "Ra bến tìm cai Khải."
+
+
+async def test_a_dropped_ref_never_becomes_a_node_id_in_what_the_player_gets():
+    refs = _refs_by_text()
+    choices = await _make(ScriptedLLM([_fixture("second_round_unknown_ref", refs)]))
+    ids = {i for c in choices for i in (*c.listeners, *c.about)}
+    assert ids <= {e.id for e in VIEW.entries}  # G1: chỉ id có trong player_view
+    assert GHOST not in json.dumps([c.for_player().model_dump() for c in choices],
+                                   ensure_ascii=False)
+
+
+async def test_a_set_that_cannot_be_saved_is_retried_with_a_fixed_note_and_then_succeeds():
+    refs = _refs_by_text()
+    hopeless = _reply(refs, **{"0": {"kind": "inner", "feeling": "lo", "about": [GHOST]},
+                               "1": {"listeners": [GHOST]}, "2": {"about": ["m999"]}})
+    llm = ScriptedLLM([hopeless, _reply(refs)])
+    choices = await _make(llm)
+    assert len(choices) == 3 and len(llm.calls) == 2
+    first, second = llm.calls
+    assert len(second) == len(first) + 1
+    note = second[-1]
+    assert note.role == "user" and "m1, m2" in note.content
+    assert GHOST not in note.content and "m999" not in note.content  # không dội lại chữ của model
+    assert [m.content for m in second[:-1]] == [m.content for m in first]
+
+
+async def test_a_set_that_cannot_be_saved_twice_is_still_the_old_error():
+    refs = _refs_by_text()
+    hopeless = _reply(refs, **{"0": {"kind": "inner", "feeling": "lo", "about": [GHOST]},
+                               "1": {"listeners": [GHOST]}, "2": {"about": ["m999"]}})
+    llm = ScriptedLLM([hopeless, hopeless])
     with pytest.raises(WritoryError) as exc:
         await _make(llm)
     assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED
     assert len(llm.calls) == 1 + RETRIES.extract_schema_retry
 
 
-async def test_listener_must_be_a_character():
+async def test_a_set_with_fewer_than_two_kinds_after_dropping_is_not_accepted():
     refs = _refs_by_text()
-    letter = refs["lá thư gấp bốn"]
-    bad = _reply(refs, **{"1": {"listeners": [letter]}})
+    # Hai lựa chọn còn lại cùng loại hành động: dưới ngưỡng MIN_KINDS, phải thử lại.
+    bad = _reply(refs, **{"1": {"kind": "action", "tone": None, "lie_content": None,
+                                "listeners": []},
+                          "2": {"about": ["m999"]}})
     with pytest.raises(WritoryError):
         await _make(ScriptedLLM([bad, bad]))
+
+
+async def test_leak_check_still_runs_on_a_salvaged_set():
+    """G2 không đổi: bộ đã cứu vẫn bị dò lộ trên chữ lựa chọn."""
+    refs = _refs_by_text()
+    leaky = json.loads(_fixture("second_round_unknown_ref", refs))
+    leaky["choices"][0]["text"] = "Lan là gián điệp, đi báo cho cai Khải."
+    with pytest.raises(WritoryError) as exc:
+        await _make(ScriptedLLM([json.dumps(leaky, ensure_ascii=False)]))
+    assert exc.value.code is ErrorCode.CHOICES_LEAK_BLOCKED
 
 
 async def test_leak_in_lie_content_blocks_all_choices():
