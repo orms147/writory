@@ -121,7 +121,7 @@ Người canh, bộ trích và lớp phủ `OverlayState` thấy các cạnh nà
 - lời nói dối chưa bị phát hiện, mà người nói hoặc người nghe đang có mặt;
 - bí mật trong `story_plan`, kèm trạng thái `not_yet` / `in_window` / `overdue` / `revealed` so với chương đang viết;
 - đồ vật quan trọng: người đang giữ hoặc nơi đang ở (mỗi đồ vật một chỗ), đồ vật đổi chỗ gần nhất đứng trước, có trần số đồ vật trong `graph/context.py` (D-90);
-- nút cách người có mặt 1–2 bước, theo cạnh còn hiệu lực. Không đi qua `REVEALED_TO_PLAYER` hay nút `Chapter`, không lặp lại nút đã nằm ở các mục trên, và giới hạn số nút bằng `limits.context.writer_max_neighbors`;
+- nút cách người có mặt 1–2 bước, theo cạnh còn hiệu lực. Không đi qua `REVEALED_TO_PLAYER` hay nút `Chapter`, không lặp lại nút đã nằm ở các mục trên, và mỗi nút đúng một lần với số bước nhỏ nhất (D-117), và giới hạn số nút bằng `limits.context.writer_max_neighbors`;
 - mạch đang mở, kèm cờ quá hạn.
 
 `render_writer_context` trả các phần để đưa vào `user_message`, chia hai mục: "Sự thật cần tôn trọng" (gồm cả người liên quan đã chết) và "Gợi ý có thể nhắc tới". Mọi chữ lấy từ một nút mang `user_authored: true` đều được bọc bằng `UserAuthored` (G4), ở bất kỳ vị trí nào: tên, biệt danh, nơi ở, đồ vật, người biết, người nói, người nghe, bí mật, mạch. Mỗi vị trí có test hồi quy. `render_writer_context` nhận thêm `reader_names` (id → tên người đọc biết, `ReaderName`) cho nút có tên đang bị cấm: cạnh tên thật ghi "người đọc biết là «…»; không viết tên thật", hoặc "tên chưa hé lộ" nếu nút chưa được hé lộ (D-91). Ngữ cảnh này chứa bí mật, nên không bao giờ được đi ra đường của người chơi.
