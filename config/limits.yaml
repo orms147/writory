@@ -42,9 +42,10 @@ context:
   # Nhân vật chính ở yên một nơi từng ấy chương trở lên thì mục tiêu chương và đề tạo lựa chọn đòi đổi
   # tình thế (D-98; tạm, D-47). long-tu-tien-1: ở Cốc Đèn từ chương 6, lặp cảnh từ chương 10.
   standstill_chapters: 4
-  # Từng ấy chương liền không có biến cố nào đổi trạng thái truyện (nơi ở, chủ đồ vật, cái chết, mạch
-  # gỡ, bí mật lộ) thì mục tiêu chương và đề tạo lựa chọn đòi đổi, như `standstill_chapters` nhưng không
-  # dựa vào một cạnh (D-112; tạm, D-47). Bỏ khoá hay null = tắt.
+  # Từng ấy chương liền không có biến cố nào đổi trạng thái truyện thì mục tiêu chương và đề tạo lựa
+  # chọn đòi đổi, như `standstill_chapters` nhưng không dựa vào một cạnh (D-112; tạm, D-47). Biến cố:
+  # người hay vật tới nơi mới, đồ vật đổi người giữ, có người chết. Mạch gỡ và bí mật lộ KHÔNG tính
+  # (xảy ra đúng lịch kế hoạch dù chương là thủ tục). Bỏ khoá hay null = tắt.
   idle_chapters: 4
   # Ba cờ của đề "v3" (D-110), BẬT làm mặc định theo D-111. Số là tạm (D-47): 240 ký tự đủ 1–2 câu
   # tính cách; hai chương gần nhất là hai câu mở gần nhất mà model không thấy trong tóm tắt.
