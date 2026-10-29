@@ -144,6 +144,9 @@ class LLMCallLimits(_Section):
     _path = "llm_call"
     _file = "limits.yaml"
     max_output_tokens: PositiveInt | None = None
+    # Hạn TỔNG của một lời gọi, giây (D-113): quá hạn thì LLM_TIMEOUT, coi như lỗi tạm. Khác hạn từng
+    # lần đọc/ghi của httpx, vốn không bắt được máy chủ nhỏ giọt byte hay kết nối chết không báo.
+    deadline_seconds: PositiveInt | None = None
 
 
 class ChapterEstimateLimits(_Section):

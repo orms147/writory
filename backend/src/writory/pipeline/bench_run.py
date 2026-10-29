@@ -85,6 +85,7 @@ from writory.llm.base import (
 )
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM
+from writory.llm.openrouter import call_deadline
 from writory.pipeline import choices as choices_mod
 from writory.pipeline import extract as extract_mod
 from writory.pipeline import scene as scene_mod
@@ -146,7 +147,8 @@ EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ABORT = 0, 1, 2, 3
 # Lỗi mà người chơi gặp thì bấm thử lại (câu G12 của các mã này đều bảo bấm thử lại).
 RETRYABLE = frozenset({
     ErrorCode.SCENE_LEAK_BLOCKED, ErrorCode.CHOICES_LEAK_BLOCKED, ErrorCode.LLM_BAD_RESPONSE,
-    ErrorCode.RETRY_LIMIT_REACHED, ErrorCode.LLM_UNAVAILABLE, ErrorCode.STORY_SETUP_INVALID,
+    ErrorCode.RETRY_LIMIT_REACHED, ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT,
+    ErrorCode.STORY_SETUP_INVALID,
 })
 RUN_ROLES = ("setup", *CHAPTER_ROLES, "writer")
 SETUP_STEPS = ("settings", "plots", "characters", "build")
@@ -1641,13 +1643,15 @@ class RunServices(BaseSettings):
     postgres_dsn: SecretStr
 
 
-def openrouter_client(env_file: Path, *, http: httpx.AsyncClient | None = None) -> LLMClient:
-    """Client thật, key của chủ dự án: chỉ OPENROUTER_API_KEY (biến môi trường hoặc `env_file`)."""
+def openrouter_client(env_file: Path, *, http: httpx.AsyncClient | None = None,
+                      deadline_s: float | None = None) -> LLMClient:
+    """Client thật, key của chủ dự án: chỉ OPENROUTER_API_KEY (biến môi trường hoặc `env_file`).
+    `deadline_s`: hạn tổng mỗi lời gọi (`limits.llm_call.deadline_seconds`, D-113)."""
     from writory.llm.openrouter import OpenRouterClient
 
     keys = load_keys(env_file, ["openrouter"])
     assert keys.openrouter_api_key is not None
-    return OpenRouterClient(keys.openrouter_api_key, http=http)
+    return OpenRouterClient(keys.openrouter_api_key, http=http, deadline_s=deadline_s)
 
 
 def resolve_out(args: argparse.Namespace) -> tuple[Path, str]:
@@ -1711,7 +1715,7 @@ async def _cli(args: argparse.Namespace) -> int:
         llm: LLMClient = DryRunLLM(level.chapters.min, milestones=level.milestones.min)
     else:
         http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
-        llm = openrouter_client(env_file, http=http)
+        llm = openrouter_client(env_file, http=http, deadline_s=call_deadline(config))
     try:
         conn = psycopg.connect(services.postgres_dsn.get_secret_value(), autocommit=True)
     except psycopg.Error as e:

@@ -37,6 +37,7 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.LLM_CONTENT_BLOCKED: 422,
     ErrorCode.LLM_REQUEST_INVALID: 502,
     ErrorCode.LLM_UNAVAILABLE: 503,
+    ErrorCode.LLM_TIMEOUT: 504,
     ErrorCode.LLM_BAD_RESPONSE: 502,
     ErrorCode.PLAYER_KEY_MISSING: 400,
     ErrorCode.PLAYER_KEY_UNREADABLE: 400,

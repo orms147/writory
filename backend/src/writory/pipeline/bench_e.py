@@ -1463,7 +1463,7 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     if opts.dry_run:
         return await run_bench(data, opts, config=config, config_dir=config_dir, argv=argv)
 
-    from writory.llm.openrouter import OpenRouterClient
+    from writory.llm.openrouter import OpenRouterClient, call_deadline
 
     keys = load_keys(Path(args.env_file), ["openrouter", *(["anthropic"] if opts.judge else [])])
     assert keys.openrouter_api_key is not None
@@ -1479,7 +1479,8 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
     try:
         return await run_bench(
-            data, opts, config=config, narrator=OpenRouterClient(keys.openrouter_api_key, http=http),
+            data, opts, config=config, narrator=OpenRouterClient(keys.openrouter_api_key, http=http,
+                                      deadline_s=call_deadline(config)),
             judge_client=judge, config_dir=config_dir, argv=argv,
             judge_workspace_id=keys.anthropic_workspace_id)
     finally:

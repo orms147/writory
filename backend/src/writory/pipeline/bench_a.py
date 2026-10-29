@@ -947,14 +947,15 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     if opts.dry_run:
         return await run_bench(data, opts, config=config, config_dir=config_dir, argv=argv)
 
-    from writory.llm.openrouter import OpenRouterClient
+    from writory.llm.openrouter import OpenRouterClient, call_deadline
 
     keys = load_keys(Path(args.env_file), ["openrouter"])
     assert keys.openrouter_api_key is not None
     http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
     try:
         return await run_bench(data, opts, config=config,
-                               answerer=OpenRouterClient(keys.openrouter_api_key, http=http),
+                               answerer=OpenRouterClient(keys.openrouter_api_key, http=http,
+                                                         deadline_s=call_deadline(config)),
                                config_dir=config_dir, argv=argv)
     finally:
         await http.aclose()

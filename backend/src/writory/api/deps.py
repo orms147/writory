@@ -59,7 +59,7 @@ from writory.guard.state import Neo4jState
 from writory.llm.base import GenerationCost, LLMClient
 from writory.llm.cost import CostEstimator, CostTracker, MeteredClient
 from writory.llm.ledger import CallCost, PendingEstimate, RecordingClient, settle_estimates
-from writory.llm.openrouter import OpenRouterClient
+from writory.llm.openrouter import OpenRouterClient, call_deadline
 from writory.llm.ratelimit import CallQuota, RateLimitedClient
 from writory.pipeline.choices import ChoicesOutput
 from writory.pipeline.extract import ExtractOutput
@@ -424,7 +424,8 @@ def get_llm_factory(request: Request) -> LLMFactory:
     http = getattr(request.app.state, "openrouter_http", None)
     if http is None:
         raise RuntimeError("app chưa có httpx client cho OpenRouter")
-    return lambda api_key: OpenRouterClient(api_key, http=http)
+    deadline = call_deadline(request.app.state.config)  # hạn tổng mỗi lời gọi (D-113)
+    return lambda api_key: OpenRouterClient(api_key, http=http, deadline_s=deadline)
 
 
 # --- giới hạn tần suất (G8, D-56) ---------------------------------------------------------------
