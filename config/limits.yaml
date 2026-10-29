@@ -68,6 +68,10 @@ llm_call:   # mọi lời gọi model trả bằng key người chơi (D-64)
   # Gửi làm max_tokens (gồm token suy luận), như max_tokens_per_call của bench_run (D-43); cũng
   # là chặn trên của chi phí ước tính khi lời gọi không có usage (huỷ, đứt, thiếu usage.cost).
   max_output_tokens: 16000
+  # Hạn TỔNG của một lời gọi (chat, stream, tra chi phí), giây (D-113; tạm, D-47). Quá hạn thì
+  # LLM_TIMEOUT, lớp thử lại xử như lỗi mạng. Đo long-tu-tien-3: 214 lời gọi xong, p50 9,8 s, p99
+  # 16,7 s, lâu nhất 111,5 s (dàn ý); một lời gọi khác treo 13121 s. 300 s là hơn 2,5 lần lâu nhất.
+  deadline_seconds: 300
 chapter_estimate:   # D-87: số hiện cho người chơi khi truyện chưa có chương nào để đo (tạm, D-47)
   # Bằng mức cao nhất của trung vị chi phí mỗi chương ở ba lần chạy đã đo (0,0076 đến 0,0100 USD:
   # evals/results/2026-10-21-run-tu-tien-4, -run-ky-ao-vua-2, -run-ky-ao-vua-1), vì lúc chơi còn có

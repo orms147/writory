@@ -24,13 +24,16 @@ Id generation và tra chi phí theo id (tra ngày 21/10/2026, D-64; chưa đối
   cấp hỗ trợ (api-reference/streaming).
 """
 
+import asyncio
 import json
 from collections.abc import AsyncIterator, Mapping
+from contextlib import AsyncExitStack, asynccontextmanager
 from typing import Any
 
 import httpx
 from pydantic import BaseModel, SecretStr
 
+from writory.config import AppConfig, LimitNotSetError
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import (
     ChatResult,
@@ -124,6 +127,42 @@ def _note_generation_id(value: object) -> str | None:
     return gen_id
 
 
+def call_deadline(config: AppConfig) -> int:
+    """Hạn tổng một lời gọi, giây (`limits.llm_call.deadline_seconds`, D-113). Chưa đặt (null) là lỗi,
+    không phải vô hạn: nơi dựng client gọi hàm này rồi truyền vào `deadline_s`."""
+    try:
+        return config.limits.llm_call.require("deadline_seconds")
+    except LimitNotSetError as e:
+        raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail=str(e)) from None
+
+
+class _Deadline:
+    """Hạn tổng của MỘT lời gọi, tính từ lúc tạo (D-113). `httpx.Timeout` chỉ là hạn từng lần đọc/ghi:
+    máy chủ nhỏ giọt byte (hay giữ kết nối bằng dòng chú thích) thì nó không bao giờ hết. Dùng
+    `asyncio.timeout_at` thật, nên test nhảy đồng hồ của vòng lặp thay vì chờ.
+
+    `step()` bọc từng lần chờ riêng (với stream, mỗi lần đọc một dòng): hết hạn thì huỷ đúng lần chờ
+    đó, không bao giờ huỷ mã của người dùng stream giữa hai lần `yield`."""
+
+    def __init__(self, seconds: float | None) -> None:
+        self.seconds = seconds
+        self._end = asyncio.get_running_loop().time() + seconds if seconds is not None else None
+
+    @asynccontextmanager
+    async def step(self) -> AsyncIterator[None]:
+        scope = asyncio.timeout_at(self._end) if self._end is not None else asyncio.timeout(None)
+        try:
+            async with scope:
+                yield
+        except TimeoutError:
+            # `TimeoutError` cũng là lớp con của OSError (lỗi socket): chỉ hạn của chính ta mới là
+            # LLM_TIMEOUT, còn lại để lớp mạng xử như cũ.
+            if not scope.expired():
+                raise
+            raise WritoryError(ErrorCode.LLM_TIMEOUT,
+                               detail=f"quá hạn tổng {self.seconds:g} giây") from None
+
+
 # Lỗi mạng: httpx bọc phần lớn, nhưng `ssl.SSLError` và lỗi socket (OSError) từ tầng anyio đi qua
 # không bọc; để lọt thì thành INTERNAL_ERROR, không thử lại (D-97, hồi quy long-tu-tien-1).
 _NETWORK_ERRORS = (httpx.HTTPError, OSError)
@@ -142,8 +181,12 @@ class OpenRouterClient(LLMClient):
         *,
         http: httpx.AsyncClient | None = None,
         base_url: str = DEFAULT_BASE_URL,
+        deadline_s: float | None = None,
     ) -> None:
+        """`deadline_s`: hạn tổng mỗi lời gọi (`call_deadline(config)`, D-113); None = không hạn tổng,
+        chỉ hạn từng lần đọc/ghi của httpx (các bộ đo cũ chưa nối)."""
         self._key = api_key
+        self._deadline_s = deadline_s
         self._http = http or httpx.AsyncClient(timeout=DEFAULT_TIMEOUT)
         base = base_url.rstrip("/")
         self._url = base + "/chat/completions"
@@ -202,9 +245,10 @@ class OpenRouterClient(LLMClient):
             model, messages, stream=False, response_schema=response_schema, extra=extra
         )
         _note_sent(True)
+        deadline = _Deadline(self._deadline_s)
         try:
             # Header trước thân: id generation có ngay khi nhà cung cấp nhận yêu cầu (D-64).
-            async with self._http.stream(
+            async with deadline.step(), self._http.stream(
                 "POST", self._url, json=body, headers=self._headers()
             ) as resp:
                 header_id = _note_generation_id(resp.headers.get("x-generation-id"))
@@ -242,13 +286,16 @@ class OpenRouterClient(LLMClient):
         usage: Usage | None = None
         gen_id: str | None = None
         _note_sent(True)
+        deadline = _Deadline(self._deadline_s)
         try:
-            async with self._http.stream(
-                "POST", self._url, json=body, headers=self._headers()
-            ) as resp:
+            async with AsyncExitStack() as stack:
+                async with deadline.step():
+                    resp = await stack.enter_async_context(self._http.stream(
+                        "POST", self._url, json=body, headers=self._headers()))
                 gen_id = _note_generation_id(resp.headers.get("x-generation-id"))
                 if resp.status_code != 200:
-                    raw = await resp.aread()
+                    async with deadline.step():
+                        raw = await resp.aread()
                     try:
                         data = json.loads(raw)
                     except ValueError:
@@ -256,7 +303,12 @@ class OpenRouterClient(LLMClient):
                     raise _error_from(resp.status_code, data) or _bad_response(
                         f"HTTP {resp.status_code}"
                     )
-                async for line in resp.aiter_lines():
+                lines = resp.aiter_lines()
+                while True:
+                    async with deadline.step():
+                        line = await anext(lines, None)  # None: hết thân phản hồi
+                    if line is None:
+                        break
                     if not line.startswith("data:"):
                         continue  # dòng trống, comment ": OPENROUTER PROCESSING", trường SSE khác
                     payload = line.removeprefix("data:").strip()
@@ -285,9 +337,11 @@ class OpenRouterClient(LLMClient):
         (404). Lỗi khác ra mã như lời gọi chat; không lỗi nào mang key (G7)."""
         if valid_generation_id(generation_id) is None:
             raise ValueError("id generation sai dạng")
+        deadline = _Deadline(self._deadline_s)
         try:
-            resp = await self._http.get(self._generation_url, params={"id": generation_id},
-                                        headers=self._headers())
+            async with deadline.step():
+                resp = await self._http.get(self._generation_url, params={"id": generation_id},
+                                            headers=self._headers())
         except _NETWORK_ERRORS as e:
             raise WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__) from None
         if resp.status_code == 404:

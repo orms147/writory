@@ -84,6 +84,7 @@ def maybe_billed(exc: BaseException, trace: CallTrace) -> bool:
     - Client báo chắc chưa gửi (lỗi kết nối): không.
     - Bị huỷ khi có thể đã gửi: có (lời gọi không stream bị huỷ vẫn bị tính đủ, docs OpenRouter).
     - Lỗi mạng sau khi gửi (LLM_UNAVAILABLE không kèm HTTP status): có.
+    - Quá hạn tổng sau khi gửi (LLM_TIMEOUT, D-113): có, như lời gọi bị huỷ.
     - Lỗi có HTTP status mà không có generation, và mọi lỗi khác (WRITORY_RATE_LIMITED chặn trước
       khi gọi, extra sai): không."""
     if trace.generation_id is not None:
@@ -91,6 +92,8 @@ def maybe_billed(exc: BaseException, trace: CallTrace) -> bool:
     if trace.sent is False:
         return False
     if isinstance(exc, asyncio.CancelledError):
+        return True
+    if isinstance(exc, WritoryError) and exc.code is ErrorCode.LLM_TIMEOUT:
         return True
     return (isinstance(exc, WritoryError) and exc.code is ErrorCode.LLM_UNAVAILABLE
             and not exc.detail.startswith("HTTP "))

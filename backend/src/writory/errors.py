@@ -26,6 +26,7 @@ class ErrorCode(StrEnum):
     LLM_CONTENT_BLOCKED = "LLM_CONTENT_BLOCKED"
     LLM_REQUEST_INVALID = "LLM_REQUEST_INVALID"
     LLM_UNAVAILABLE = "LLM_UNAVAILABLE"
+    LLM_TIMEOUT = "LLM_TIMEOUT"
     LLM_BAD_RESPONSE = "LLM_BAD_RESPONSE"
     PLAYER_KEY_MISSING = "PLAYER_KEY_MISSING"
     PLAYER_KEY_UNREADABLE = "PLAYER_KEY_UNREADABLE"
@@ -137,6 +138,10 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.LLM_UNAVAILABLE: PlayerMessage(
         "Model đang không phản hồi hoặc mạng tới OpenRouter bị gián đoạn.",
         "Đợi một lát rồi bấm thử lại.",
+    ),
+    ErrorCode.LLM_TIMEOUT: PlayerMessage(
+        "Model không trả lời trong thời gian cho phép nên hệ thống đã dừng chờ.",
+        "Đợi một lát rồi bấm thử lại. Phần đã lưu vẫn còn nguyên.",
     ),
     ErrorCode.LLM_BAD_RESPONSE: PlayerMessage(
         "Model trả về kết quả sai định dạng nên hệ thống không dùng được.",

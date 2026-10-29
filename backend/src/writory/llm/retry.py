@@ -10,7 +10,7 @@ from collections.abc import Awaitable, Callable
 
 from writory.errors import ErrorCode, WritoryError
 
-RETRY_TRANSIENT = frozenset({ErrorCode.LLM_UNAVAILABLE})
+RETRY_TRANSIENT = frozenset({ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT})
 RETRY_SCHEMA = frozenset({ErrorCode.LLM_BAD_RESPONSE})
 
 
