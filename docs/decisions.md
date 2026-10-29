@@ -1142,5 +1142,5 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Kiểm bằng code chỉ là đếm mềm (`setup.appearance_variety`, vào `report.json` và `summary.md` của bộ đo): số mở bằng "Trông", số mở trùng, phân bố màu tóc và số trùng. Không thêm `ProblemKind`, không vào lượt sửa D-54: lỗi thẩm mỹ không đáng đốt thêm một lượt sửa, và chưa biết ngưỡng.
 - **Hệ quả:**
   - Màu tóc nhận bằng danh sách từ cố định nên chỉ là ước lượng; chữ lạ thành "không rõ". Đếm không biết hai mặt có thật sự khác nhau.
-  - Đo lại khởi tạo 5 đề x 1 seed cùng PR (so với `setup-9`). Đề `build` dài thêm vài chục token.
+  - Đo lại 5 đề x 1 seed (`evals/results/2026-10-29-setup10-check/`): hết mở bằng "Trông" và gần hết tóc đen, không còn thói quen hay nghề trong ngoại hình; còn lệch mới: khuôn câu giống nhau, tóc nâu thay tóc đen, "vết sẹo ở cằm" lặp giữa các truyện. Bộ đếm không bắt hai điều sau. Đề `build` dài thêm vài trăm token, chi phí khởi tạo khoảng +11%.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026)
