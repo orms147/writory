@@ -616,6 +616,38 @@ def test_the_first_place_of_the_protagonist_needs_nothing_to_close():
     assert len(pkg.edges) == 1 and pkg.close == [] and rejected == []
 
 
+def test_going_away_and_coming_back_in_one_package_ends_where_it_started():
+    """Review D-121: [p→dien, p→ben_do] khi đang ở ben_do (đi rồi quay về) không được giữ `dien`."""
+    pkg, rejected = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="dien"),
+         _edge(type="LOCATED_AT", source="protagonist", target="ben_do")], [_HERE])
+    assert pkg.edges == [] and pkg.close == []
+    assert len(rejected) == 2 and all("LOCATED_AT" in d for d, _ in rejected)
+
+
+_ALSO = OpenEdge("also", "LOCATED_AT", "protagonist", "dien")  # đồ thị trước D-112: hai nơi cùng mở
+
+
+def test_with_two_open_places_restating_one_and_closing_the_other_keeps_that_close():
+    """Review D-121: nói lại ben_do + đóng dien thì chỉ còn ben_do, không để cả hai mở mãi."""
+    pkg, _ = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="ben_do")], [_HERE, _ALSO],
+        close=["also"])
+    assert pkg.edges == [] and [c.id for c in pkg.close] == ["also"]
+
+
+def test_with_two_open_places_a_close_of_the_last_open_one_is_still_refused():
+    pkg, rejected = _place_package([], [_HERE, _ALSO], close=["here", "also"])
+    assert [c.id for c in pkg.close] == ["here"]  # còn lại `also`
+    assert [d for d, _ in rejected] == ["close also"]
+
+
+def test_ending_in_one_of_two_open_places_closes_the_other():
+    pkg, _ = _place_package(
+        [_edge(type="LOCATED_AT", source="protagonist", target="dien")], [_HERE, _ALSO])
+    assert pkg.edges == [] and [c.id for c in pkg.close] == ["here"]
+
+
 def test_other_characters_keep_the_old_rules():
     there = OpenEdge("lan_here", "LOCATED_AT", "lan", "ben_do")
     pkg, rejected = _place_package([], [there], close=["lan_here"])

@@ -550,34 +550,50 @@ def _one_place_for_protagonist(
 ) -> tuple[list[EdgeSpec], list[CloseSpec]]:
     """Nhân vật chính luôn có đúng một nơi ở hiện tại sau mỗi gói (D-112, như D-90 cho đồ vật).
     long-tu-tien-2: bộ trích đóng nơi ở ở ch7 mà không mở cạnh mới, 11 chương không có nơi ở và cờ
-    `standstill` (D-98) mù. Làm bằng code vì model hay ghi cạnh mới mà quên đóng cạnh cũ, hoặc ngược lại:
-    - nơi mới thì đóng nơi cũ; hai nơi mới trong một gói thì giữ nơi ghi sau cùng;
-    - đóng nơi cũ mà không mở nơi mới thì giữ nơi cũ (bỏ lệnh đóng);
-    - nói lại nơi đang ở thì bỏ cạnh mới (nó đặt lại `valid_from`, cờ đếm lại từ đầu) và bỏ lệnh đóng."""
+    `standstill` (D-98) mù. Làm bằng code vì model hay ghi cạnh mới mà quên đóng cạnh cũ, hoặc ngược lại.
+    Nơi CUỐI của gói là cạnh `LOCATED_AT` ghi sau cùng của nhân vật chính (D-121, review):
+    - nơi cuối đang mở (nói lại, hay đi rồi quay về trong cùng gói): không đổi gì; bỏ mọi cạnh chuyển
+      và lệnh đóng nơi đó, vì cạnh mới đặt lại `valid_from` và làm cờ "ở yên" đếm lại từ đầu;
+    - nơi cuối mới: chỉ cạnh đó được giữ (các cạnh chuyển khác bỏ), mọi nơi đang mở đóng lại;
+    - không có cạnh chuyển: lệnh đóng chỉ được giữ chừng nào sau đó còn một nơi mở, nên lệnh đóng
+      nơi cuối cùng còn mở bị bỏ (giữ nơi cũ). Hai nơi cùng mở chỉ có ở đồ thị trước D-112."""
     here = [o for o in open_edges if o.type == "LOCATED_AT" and o.source == protagonist_id]
     desc = "LOCATED_AT {}→{}".format
     moves = [e for e in edges if e.type == "LOCATED_AT" and e.source == protagonist_id]
-    staying = {o.target: o for o in here}
-    kept_moves = []
-    for e in moves:
-        if e.target in staying:
-            rejected.append((desc(e.source, e.target), "đã ở nơi này (D-112)"))
-        else:
-            kept_moves.append(e)
-    for e in kept_moves[:-1]:
-        rejected.append((desc(e.source, e.target), "hai nơi ở cùng lúc: giữ nơi ghi sau cùng (D-112)"))
-    dropped = {id(e) for e in moves} - {id(e) for e in kept_moves[-1:]}
-    edges = [e for e in edges if id(e) not in dropped]
+    open_targets = {o.target for o in here}
     ids = {o.id for o in here}
-    if kept_moves:  # đi tới nơi mới: mọi nơi cũ đóng lại
+    if not moves:
+        remaining = set(ids)
+        kept: list[CloseSpec] = []
+        for c in close:
+            if c.id in ids and remaining <= {c.id}:
+                rejected.append((f"close {c.id}", "nhân vật chính phải có một nơi ở: giữ nơi cũ (D-112)"))
+                continue
+            remaining.discard(c.id)
+            kept.append(c)
+        return edges, kept
+    final = moves[-1]
+    if final.target in open_targets:  # kết thúc ở nơi đang ở: không đổi
+        stay = {o.id for o in here if o.target == final.target}
+        for e in moves:
+            rejected.append((desc(e.source, e.target), "kết thúc ở nơi đang ở: không đổi (D-121)"
+                             if e is final else "đi rồi quay về trong cùng gói: không đổi (D-121)"))
+        edges = [e for e in edges if all(e is not m for m in moves)]
+        for c in close:
+            if c.id in stay:
+                rejected.append((f"close {c.id}", "nhân vật chính phải có một nơi ở: giữ nơi cũ (D-112)"))
+        close = [c for c in close if c.id not in stay]
         have = {c.id for c in close}
-        close = [*close, *(CloseSpec(type="LOCATED_AT", id=o.id, valid_to_chapter=chapter)
-                           for o in here if o.id not in have)]
-        return edges, close
-    for c in close:
-        if c.id in ids:
-            rejected.append((f"close {c.id}", "nhân vật chính phải có một nơi ở: giữ nơi cũ (D-112)"))
-    return edges, [c for c in close if c.id not in ids]
+        return edges, [*close, *(CloseSpec(type="LOCATED_AT", id=o.id, valid_to_chapter=chapter)
+                                 for o in here if o.id not in stay and o.id not in have)]
+    for e in moves:
+        if e is not final:
+            rejected.append((desc(e.source, e.target),
+                             "hai nơi ở cùng lúc: giữ nơi ghi sau cùng (D-112)"))
+    edges = [e for e in edges if all(e is not m or m is final for m in moves)]
+    have = {c.id for c in close}
+    return edges, [*close, *(CloseSpec(type="LOCATED_AT", id=o.id, valid_to_chapter=chapter)
+                             for o in here if o.id not in have)]
 
 
 def without_facts(package: ChangePackage, fact_ids: set[str]) -> ChangePackage:

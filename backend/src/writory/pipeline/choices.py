@@ -233,11 +233,13 @@ def _bad(detail: str) -> WritoryError:
 
 
 def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str, str], *,
-             chapter: int = 0) -> list[Choice]:
+             chapter: int = 0, protagonist: str | None = None) -> list[Choice]:
     """Ref → id nút. Ref ngoài sổ tay (bịa ra, hoặc mô tả thay cho mã) hay người nghe không phải nhân
     vật thì bỏ RIÊNG tham chiếu đó, không đoán thêm (G1, D-114). Lựa chọn mất thứ nó bắt buộc phải có
     thì bỏ riêng lựa chọn đó: nội tâm không còn `about` (không có đích cho FEELS), lời nói dối không
-    còn người nghe (không ai nghe thì không phải lời dối). Còn dưới `MIN_CHOICES` lựa chọn hay dưới
+    còn người nghe (không ai nghe thì không phải lời dối); lời thoại thường mất hết người nghe cũng bỏ
+    (bất biến của `ChoiceDraft`: lời thoại có người nghe; D-121). Nhân vật chính không phải người nghe
+    lời của chính mình. Còn dưới `MIN_CHOICES` lựa chọn hay dưới
     `MIN_KINDS` loại thì không cứu được: sai schema (G11), để thử lại. Log chỉ ghi số, không ghi ref."""
 
     def known(values: list[str]) -> tuple[list[str], int]:
@@ -249,9 +251,10 @@ def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str,
     for draft in output.choices:
         about, lost_about = known(draft.about)
         heard, lost_heard = known(draft.listeners)
-        listeners = [i for i in heard if kinds[i] == "Character"]
+        listeners = [i for i in heard if kinds[i] == "Character" and i != protagonist]
         dropped_refs += lost_about + lost_heard + (len(heard) - len(listeners))
-        if (draft.kind == "inner" and not about) or (draft.tone == "lie" and not listeners):
+        if ((draft.kind == "inner" and not about)
+                or (draft.kind == "dialogue" and not listeners)):
             dropped_choices += 1
             continue
         lie = LieEffect(draft.lie_content.strip(), tuple(listeners)) if draft.tone == "lie" else None
@@ -338,7 +341,7 @@ async def make_choices(
         sent = [*messages, user_message(REF_NOTE)] if unusable else messages
         output, _ = await llm.chat_json(model, sent, ChoicesOutput, extra=extra)
         try:
-            return _resolve(output, refs, kinds, chapter=view.chapter)
+            return _resolve(output, refs, kinds, chapter=view.chapter, protagonist=protagonist_id)
         except WritoryError:
             unusable = True
             raise

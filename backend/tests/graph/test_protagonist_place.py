@@ -55,3 +55,27 @@ def test_moving_leaves_exactly_one_open_place_even_if_the_model_forgot_to_close(
     rows = state.edges_at("LOCATED_AT", 1, source_id="hero")
     assert [r.target for r in rows] == ["cho"]
     assert standstill(state, 3, 2).chapters == 2  # tính từ chương 1, không phải chương 0
+
+
+def test_idle_chapters_on_the_real_graph_counts_the_run_since_the_last_change(driver, new_story_id):
+    """D-121: `idle_chapters` đọc ba lần `ever=True` rồi tính trong Python; kết quả phải như cũ trên Neo4j."""
+    from writory.graph import CloseSpec
+    from writory.pipeline.pacing import Idle, idle_chapters
+
+    sid = new_story_id()
+    state = _start(driver, sid)
+    old = state.edges_at("LOCATED_AT", 0, source_id="hero")[0]
+    for chapter in range(1, 6):
+        move = chapter == 3
+        apply_package(driver, sid, ChangePackage.model_validate({
+            "commit_id": f"c{chapter}",
+            "nodes": [{"id": f"ch{chapter}", "label": "Chapter", "props": {"number": chapter}}],
+            "edges": ([{"type": "LOCATED_AT", "from": "hero", "to": "cho", "valid_from_chapter": 3}]
+                      if move else []),
+            "close": ([CloseSpec(type="LOCATED_AT", id=old.id, valid_to_chapter=3).model_dump(
+                by_alias=True)] if move else []),
+        }))
+    assert idle_chapters(state, 6, 2) == Idle(2)  # ch4, ch5; ch3 đổi nơi
+    assert idle_chapters(state, 6, 3) is None
+    assert idle_chapters(state, 4, 1) is None  # chương 3 vừa đổi nơi
+    assert idle_chapters(state, 3, 2) == Idle(2)  # ch1, ch2 trước khi đi
