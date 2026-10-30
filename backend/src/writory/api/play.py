@@ -18,7 +18,8 @@
   được ghi; bước ghi (`commit_chapter`) chạy đồng bộ nên không bị cắt giữa chừng. Chương đã ghi
   mà chưa kịp có lựa chọn: tạo lại bằng `POST /stories/{id}/choices`.
 - G8: một truyện chỉ một lần viết chương cùng lúc (`db.job_lock` trong `get_chapter_job`); lần
-  thứ hai báo STORY_BUSY, không gọi model.
+  thứ hai báo STORY_BUSY, không gọi model. Chọn lựa chọn và ô tự viết giữ cùng khoá đó, ở phạm vi
+  `function`: khoá nhả trước khi phản hồi đi, vì giao diện gửi lệnh viết chương ngay sau phản hồi.
 - G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động.
 - Chọn lựa chọn lưu hành động cho chương sau; khi viết chương đó, lời nói dối (`Lie`, `TOLD`, `TOLD_TO`,
   `ABOUT`) và nội tâm (`FEELS`) của lựa chọn được ghi vào gói của chính chương đó (D-55).
@@ -317,10 +318,13 @@ def _not_finished(story, plan: StoryPlan) -> int:
     return chapter
 
 
-@router.post("/{story_id}/choice", response_model=ActionOut)
+@router.post("/{story_id}/choice", response_model=ActionOut,
+             dependencies=[Depends(deps.lock_story, scope="function")])
 def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn,
                 plan: Plan) -> ActionOut:
-    """Chọn một lựa chọn của chương hiện tại bằng id mờ. Chọn lại được tới khi viết chương sau."""
+    """Chọn một lựa chọn của chương hiện tại bằng id mờ. Chọn lại được tới khi viết chương sau.
+    Giữ khoá của truyện như ô tự viết: đang viết chương thì STORY_BUSY, hành động đang dẫn chương
+    đó không bị ghi đè (G11, D-46)."""
     chapter = _not_finished(story, plan)
     record = load_choice(conn, story.id, chapter, body.choice_id) if chapter >= 1 else None
     if record is None:
@@ -332,7 +336,7 @@ def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn,
 
 
 @router.post("/{story_id}/action", response_model=ActionOut,
-             dependencies=[Depends(deps.lock_story)])
+             dependencies=[Depends(deps.lock_story, scope="function")])
 async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps.PgConn,
                         config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ActionOut:
     """Ô tự viết: kiểm độ dài, kiểm duyệt nội dung (G9, D-57), rồi phân loại ý định bằng model có

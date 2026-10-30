@@ -24,6 +24,7 @@ from tests.api_fixtures import (
     KeyedFactory,
     asgi_request,
     dev_settings,
+    lock_is_free,
     own_connections,
 )
 from tests.moderation_fixtures import ModeratedLLM, moderation_reply
@@ -536,6 +537,61 @@ async def test_second_concurrent_option_generation_is_refused(pg, driver, create
     assert status == 200, body
     assert len(json.loads(body)["settings"]) == 3
     assert len(fake.calls) == 1
+
+
+def session_at_characters(pg, created) -> str:
+    """Phiên đã chọn bối cảnh và hướng, đã có 3 nhân vật chờ chọn (ghi thẳng vào Postgres)."""
+    sid = f"setup-{uuid.uuid4().hex[:16]}"
+    created[0].append(sid)
+    create_setup(pg, sid, owner_id=DEV_OWNER_ID, choices={
+        "tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "protagonist",
+        "naming": {"names": "han_viet", "places": "hu_cau"}})
+    for step in ("settings", "plots"):
+        save_setup_options(pg, sid, step, json.loads(options(step))["options"])
+        choose_setup_option(pg, sid, step, 0)
+    save_setup_options(pg, sid, "characters", json.loads(options("characters"))["options"])
+    return sid
+
+
+EDITED = {"index": 1, "name": "Lục Vân Phi"}
+
+
+def test_character_choice_is_refused_while_the_session_is_busy(pg, driver, created,
+                                                              isolated_postgres):
+    """Hồi quy (rà soát 30/10/2026, G8, G11, D-46): chọn nhân vật gọi model kiểm duyệt mà không
+    giữ khoá của phiên. Giữ khoá trên một kết nối khác, rồi chọn: STORY_BUSY, không lời gọi
+    kiểm duyệt nào, phiên không đổi."""
+    sid = session_at_characters(pg, created)
+    app = make_app(pg, driver, FakeLLM.scripted([]), own_conns=True)
+    with (psycopg.connect(isolated_postgres, autocommit=True) as holder,
+          job_lock(holder, "setup", sid),
+          TestClient(app, raise_server_exceptions=False) as client):
+        resp = client.put(f"/setup/{sid}/characters", json=EDITED)
+    assert (resp.status_code, resp.json()) == (
+        409, WritoryError(ErrorCode.STORY_BUSY).player_payload())
+    assert app.state.moderated.moderation_calls == []
+    with TestClient(make_app(pg, driver, FakeLLM.scripted([]))) as client:
+        body = client.get(f"/setup/{sid}").json()
+    assert (body["character_index"], body["protagonist"]) == (None, None)
+
+
+async def test_character_choice_frees_the_setup_lock_before_answering(pg, driver, created):
+    """Giao diện gửi `POST .../finalize` ngay khi chọn nhân vật xong (`SetupSession`): khoá của
+    phiên phải nhả trước khi phản hồi đi, không thì lần chốt có thể nhận STORY_BUSY oan."""
+    sid = session_at_characters(pg, created)
+    app = make_app(pg, driver, FakeLLM.scripted([]), own_conns=True)
+    free: list[bool] = []
+
+    def on_send(message) -> None:
+        if message["type"] == "http.response.start":
+            free.append(lock_is_free("setup", sid))
+
+    status, body = await asyncio.wait_for(
+        asgi_request(app, "PUT", f"/setup/{sid}/characters", EDITED, on_send=on_send), timeout=30)
+    assert status == 200, body
+    assert json.loads(body)["step"] == "finalize"
+    assert len(app.state.moderated.moderation_calls) == VOTES
+    assert free == [True]
 
 
 def test_graph_failure_at_chapter_0_leaves_no_story(pg, driver, created, monkeypatch):

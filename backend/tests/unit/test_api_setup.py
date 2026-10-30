@@ -6,7 +6,7 @@ Luồng đủ trên Postgres + Neo4j: tests/graph/test_setup_api.py.
 import pytest
 from fastapi.testclient import TestClient
 
-from tests.api_fixtures import dev_settings
+from tests.api_fixtures import dev_settings, offline
 from writory.api import create_app, deps
 from writory.config import load_config
 from writory.errors import ErrorCode, WritoryError
@@ -31,6 +31,8 @@ async def ok() -> bool:
 def client():
     app = create_app(dev_settings(), health_checks={"neo4j": ok}, config=CFG)
     app.dependency_overrides[deps.get_pg_conn] = lambda: None  # không được dùng tới
+    # Khoá của phiên (cần Postgres) chạy trước khi kiểm thân yêu cầu: thay bằng bản không làm gì.
+    offline(app)
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c
 

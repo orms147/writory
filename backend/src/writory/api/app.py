@@ -12,12 +12,16 @@ dựa vào điều đó (`deps.api_guard`).
 file app cần và áp lại chương kẹt `pending` (`prepare_storage`, D-105) trước khi nhận yêu cầu đầu;
 không có trang OpenAPI. Sau reverse
 proxy, chỉ tin header địa chỉ máy và scheme từ `TRUSTED_PROXIES` (`deps.client_address`).
+
+Log (G7): từ lúc khởi động tới lúc dừng, mọi record được redact ngay lúc tạo
+(`safety.redact.redacting_log_records`), và log `writory.*` ra stderr cả khi uvicorn chạy với cấu
+hình log mặc định (`app_log_output`).
 """
 
 import asyncio
 import logging
-from collections.abc import AsyncIterator, Awaitable, Callable
-from contextlib import asynccontextmanager
+from collections.abc import AsyncIterator, Awaitable, Callable, Iterator
+from contextlib import asynccontextmanager, contextmanager
 
 import httpx
 import psycopg
@@ -42,7 +46,7 @@ from writory.config import (
 )
 from writory.llm.openrouter import DEFAULT_TIMEOUT
 from writory.safety.crypto import KeyCipher
-from writory.safety.redact import install_log_redaction, redact
+from writory.safety.redact import redact, redacting_log_records
 
 log = logging.getLogger(__name__)
 
@@ -50,12 +54,41 @@ log = logging.getLogger(__name__)
 PLAYER_ROUTERS = (stories_router, play_router, setup_router, keys_router, public_config_router,
                   auth_router)
 
-# Logger của uvicorn có handler riêng và không truyền record lên root, nên phải gắn riêng (G7).
-UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")
+APP_LOG_FORMAT = "%(levelname)s %(name)s: %(message)s"
 _HEALTH_TIMEOUT_S = 3.0
 
 HealthCheck = Callable[[], Awaitable[bool]]
 StorageSetup = Callable[[Settings], None]
+
+
+@contextmanager
+def app_log_output() -> Iterator[None]:
+    """Log của app ra được stderr dưới cấu hình log mặc định của uvicorn (lệnh trong
+    deploy/backend.Dockerfile, không `--log-config`). Cấu hình đó chỉ có handler cho logger
+    `uvicorn*`: root không có handler nào, nên record `writory.*` rơi vào `logging.lastResort`
+    (chỉ từ WARNING, không có tên logger) và dòng INFO (migration, áp lại chương pending) mất.
+
+    Root chưa có handler thì gắn một handler ra stderr cho root và cho logger `writory` ghi từ
+    INFO (thư viện vẫn từ WARNING như mặc định); hết khối thì gỡ. Root đã có handler (`--log-config`
+    riêng, pytest) thì giữ nguyên cấu hình đó. Redaction không nằm ở handler này mà ở
+    `redacting_log_records` (G7)."""
+    root = logging.getLogger()
+    if root.handlers:
+        yield
+        return
+    handler = logging.StreamHandler()
+    handler.setFormatter(logging.Formatter(APP_LOG_FORMAT))
+    app_logger = logging.getLogger("writory")
+    set_level = app_logger.level == logging.NOTSET
+    root.addHandler(handler)
+    if set_level:
+        app_logger.setLevel(logging.INFO)
+    try:
+        yield
+    finally:
+        root.removeHandler(handler)
+        if set_level:
+            app_logger.setLevel(logging.NOTSET)
 
 
 def prepare_storage(settings: Settings) -> None:
@@ -152,27 +185,27 @@ def create_app(
 
     @asynccontextmanager
     async def lifespan(app: FastAPI) -> AsyncIterator[None]:
-        for name in ("", *UVICORN_LOGGERS):
-            install_log_redaction(logging.getLogger(name or None))
-        if prod:
-            await asyncio.to_thread(storage_setup, settings)
-        app.state.health_checks = (
-            health_checks
-            if health_checks is not None
-            else _default_health_checks(app, settings)
-        )
-        if app.state.player_routes_enabled:
-            # Một httpx client cho mọi client OpenRouter (mỗi client mang key một người chơi).
-            app.state.openrouter_http = httpx.AsyncClient(timeout=DEFAULT_TIMEOUT)
-        try:
-            yield
-        finally:
-            driver = getattr(app.state, "neo4j_driver", None)
-            if driver is not None:
-                driver.close()
-            http = getattr(app.state, "openrouter_http", None)
-            if http is not None:
-                await http.aclose()
+        # G7: redact mọi record từ đây tới khi app dừng, dù record tới handler nào.
+        with redacting_log_records(), app_log_output():
+            if prod:
+                await asyncio.to_thread(storage_setup, settings)
+            app.state.health_checks = (
+                health_checks
+                if health_checks is not None
+                else _default_health_checks(app, settings)
+            )
+            if app.state.player_routes_enabled:
+                # Một httpx client cho mọi client OpenRouter (mỗi client mang key một người chơi).
+                app.state.openrouter_http = httpx.AsyncClient(timeout=DEFAULT_TIMEOUT)
+            try:
+                yield
+            finally:
+                driver = getattr(app.state, "neo4j_driver", None)
+                if driver is not None:
+                    driver.close()
+                http = getattr(app.state, "openrouter_http", None)
+                if http is not None:
+                    await http.aclose()
 
     # Prod không có trang OpenAPI (D-103): repo công khai, nhưng không cần mở thêm cửa.
     docs = {"docs_url": None, "redoc_url": None, "openapi_url": None} if prod else {}

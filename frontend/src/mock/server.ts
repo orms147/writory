@@ -521,7 +521,7 @@ export function createMockServer(options: MockOptions = {}) {
       }
     }
 
-    return errorResponse('REQUEST_INVALID');
+    return errorResponse('ROUTE_NOT_FOUND');
   }
 
   return {
