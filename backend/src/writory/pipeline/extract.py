@@ -51,9 +51,9 @@ from writory.safety.wrap import (
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
 # Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
-# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116). extract-9 thử rồi không gộp (D-129).
-# extract-10: hé lộ lần hai dưới tên chính, cạnh hé lộ đang hiệu lực ghi tên người chơi biết (D-136).
-PROMPT_VERSION = "extract-10"
+# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116). extract-9 (D-129) và extract-10 (hé lộ lần
+# hai dưới tên chính, D-136) đã thử, không gộp: chữ đề lưu ở evals/results của từng lần đo.
+PROMPT_VERSION = "extract-8"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -160,7 +160,7 @@ class OpenEdge:
     source: str
     target: str
     # `known_as` của cạnh hé lộ (REVEALED_TO_PLAYER, KNOWS của nhân vật chính tới nút có tên): tên
-    # người chơi đang biết, cho luật hé lộ lần hai và cho đề (D-136). None với mọi cạnh khác.
+    # người chơi đang biết, cho luật hé lộ lần hai (D-136). Không vào đề. None với mọi cạnh khác.
     known_as: str | None = None
 
 
@@ -196,8 +196,7 @@ Mốc cốt truyện (`milestones`):
 - `quote` bắt buộc: chép NGUYÊN VĂN một đoạn ngắn trong chương cho thấy điều đó đã xảy ra. Mỗi mốc chỉ ghi một lần. Không có mục mốc thì `milestones` rỗng.
 
 Hé lộ cho người chơi:
-- Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ trước chương này thì không ghi lại, trừ trường hợp tên thật nói ra sau, ở dưới.
-- Tên thật nói ra sau: nhân vật, nơi chốn, đồ vật hay phe đã hé lộ mà người chơi mới biết dưới tên khác (cạnh hé lộ đang hiệu lực ghi "người chơi biết là"), nay trang gọi đúng TÊN CHÍNH của nó trong danh mục (tên đứng trước phần "gọi là") và cho thấy rõ tên đó là của chính thực thể ấy, thì ghi thêm một cạnh REVEALED_TO_PLAYER tới nút chương này, `known_as` là tên chính đó, chép y nguyên trong `quote`. Biệt danh, chức danh hay cách gọi khác thì không ghi lại.
+- Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ ở chương trước thì không ghi lại.
 - Không đánh dấu hé lộ một bí mật mà trang chỉ gợi ý hay để người đọc đoán. Chỉ ghi khi trang nói rõ điều đó.
 
 Nhân vật chính biết gì (KNOWS):
@@ -293,20 +292,8 @@ def build_messages(
     ]
     for e in entities:
         parts += _entity_line(e)
-    parts.append("Cạnh đang hiệu lực trước chương này (id | kiểu | từ → tới | với cạnh hé lộ: tên "
-                 "người chơi biết):")
-    authored = {e.id for e in entities if e.user_authored}
-    for o in open_edges:
-        head = f"- {o.id} | {o.type} | {o.source} → {o.target}"
-        if o.known_as is None:
-            parts.append(head)
-        elif (o.source if o.type == "REVEALED_TO_PLAYER" else o.target) in authored:
-            # Tên người chơi viết (nhân vật chính, D-48): khối dữ liệu (G4).
-            parts += [f"{head} | người chơi biết là:", UserAuthored(o.known_as, "known_as")]
-        else:
-            parts.append(f"{head} | người chơi biết là: " + escape_text(o.known_as))
-    if not open_edges:
-        parts.append("- (không có)")
+    parts.append("Cạnh đang hiệu lực trước chương này (id | kiểu | từ → tới):")
+    parts += [f"- {o.id} | {o.type} | {o.source} → {o.target}" for o in open_edges] or ["- (không có)"]
     parts += _thread_lines(threads)
     parts += _milestone_lines(milestones)
     if fact_rules is not None and fact_rules.max_new > 0:

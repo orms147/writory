@@ -1,6 +1,6 @@
 """Hé lộ lần hai dưới tên chính (D-136, D-17): nút có tên người chơi đã biết dưới một tên khác (biệt
-danh trước), nay trang nói ra tên chính lớp truth (tên thật sau). Bộ trích được ghi thêm một cạnh
-`REVEALED_TO_PLAYER` (`extract-10`), code tự hé lộ tên chính có nguyên văn trên trang; cả hai cùng một
+danh trước), nay trang nói ra tên chính lớp truth (tên thật sau). Code tự hé lộ tên chính có nguyên văn
+trên trang; cạnh hé lộ lần hai bộ trích ghi (đề vẫn là `extract-8`) qua cùng một
 luật (`safety.reveal.new_name_problem`). Không nhận: tên người chơi đã biết, biệt danh hay chức danh
 khác (sổ tay đổi tên hiện liên tục), nút đã hé lộ ở chính chương này (mỗi nút một cạnh hé lộ mỗi
 chương), nút có tên đang được kế hoạch bảo vệ mà bí mật chưa có trong player_view (D-61). Không mạng,
@@ -42,7 +42,6 @@ from writory.pipeline.extract import (
 )
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.reveal import auto_reveals, new_name_problem
-from writory.safety.wrap import OPEN_TAG_START
 
 NICK = "gã lái đò mặt sẹo"
 REAL = "Lý Thất"
@@ -233,29 +232,20 @@ def test_the_sample_story_gold_second_reveal_passes():
     assert rejected == [] and [e.props["known_as"] for e in package.edges] == [REAL]
 
 
-# --- đề bộ trích (extract-10) -------------------------------------------------------------------
+# --- đề bộ trích: giữ extract-8 ----------------------------------------------------------------
 
 
-def test_the_prompt_lists_the_names_the_player_knows():
+def test_the_extractor_prompt_stays_extract_8():
+    """Đề `extract-10` (cho ghi hé lộ lần hai) ra tín hiệu xấu ở lần phát lại khai trước, không gộp
+    (D-136, `evals/results/2026-10-30-reveal-new-name/`). `known_as` của cạnh đang hiệu lực chỉ cho
+    luật của code, không vào đề."""
     messages = build_messages(chapter=5, chapter_id="ch5", protagonist_id="minh", chapter_text=PAGE,
                               entities=ENTITIES, open_edges=EARLIER)
-    user = messages[-1].content
-    assert f"REVEALED_TO_PLAYER | ly_that → ch4 | người chơi biết là: {NICK}" in user
-    assert PROMPT_VERSION == "extract-10"
-    assert "tên chính" in SYSTEM_PROMPT and "Đã hé lộ ở chương trước thì không ghi lại." not in (
-        SYSTEM_PROMPT)
-
-
-def test_a_known_name_the_player_wrote_is_data_in_the_prompt():
-    """G4: tên người chơi viết (nhân vật chính, `user_authored`) vào đề trong khối dữ liệu."""
-    entities = [Entity("minh", "Character", "Kẻ <b>Lạ</b>", user_authored=True), *ENTITIES[1:]]
-    edges = [OpenEdge("REVEALED_TO_PLAYER:minh>ch0@0", "REVEALED_TO_PLAYER", "minh", "ch0",
-                      known_as="Kẻ <b>Lạ</b>")]
-    user = build_messages(chapter=5, chapter_id="ch5", protagonist_id="minh", chapter_text=PAGE,
-                          entities=entities, open_edges=edges)[-1].content
-    assert "<b>" not in user
-    assert (f'minh → ch0 | người chơi biết là:\n\n{OPEN_TAG_START} source="known_as">\n'
-            "Kẻ &lt;b&gt;Lạ&lt;/b&gt;\n") in user
+    assert PROMPT_VERSION == "extract-8"
+    assert "Đã hé lộ ở chương trước thì không ghi lại." in SYSTEM_PROMPT
+    assert "người chơi biết là" not in messages[-1].content
+    lines = messages[-1].content.splitlines()
+    assert f"- {EARLIER[0].id} | REVEALED_TO_PLAYER | ly_that → ch4" in lines
 
 
 # --- đường đi một chương ------------------------------------------------------------------------

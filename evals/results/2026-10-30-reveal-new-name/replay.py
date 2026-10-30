@@ -8,6 +8,10 @@ Thư mục kết quả: `--out` (mặc định cùng thư mục với file này)
 dòng: ca, bản đề, hé lộ lần hai nhận và bỏ, hé lộ lần đầu, nhóm lý do bị bỏ, token, chi phí),
 `calls.jsonl` và `meta.json`. Không ghi chữ chương, không ghi key (G7).
 
+`extract-10` không gộp vào main (D-136): chữ đề lưu ở `extract10_system_prompt.txt`; dòng cạnh hé lộ có
+"người chơi biết là" do `build_messages` của code extract-10 sinh, nên chạy lại đúng như lần đo cần checkout
+commit 79a343f (nhánh feature/reveal-new-name). Ở commit sau, `build_case` dừng ở assert đề `extract-10`.
+
 Trần chi phí như `../2026-10-30-extract-milestone-kind/replay.py`: dừng trước lời gọi tiếp theo nếu chi
 tiêu thật + 1,5 × lời gọi đắt nhất đã thấy (hoặc ước tính tối đa của lời gọi đầu) vượt `--budget`.
 """
