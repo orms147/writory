@@ -65,7 +65,7 @@ flowchart TD
   m_guard["guard/: người canh bằng code"]
   m_quality["quality/: kiểm văn bằng code"]
   m_safety["safety/: bọc chữ, dò lộ, kiểm duyệt, phân loại, mã hoá key"]
-  m_llm["llm/: client OpenRouter, trần chi phí, nhật ký"]
+  m_llm["llm/: client OpenRouter (và Meta cho bộ đo), trần chi phí, nhật ký"]
   m_db["db/: Postgres"]
   m_graph["graph/: lớp DUY NHẤT có Cypher"]
   m_export["export/: xuất kịch bản video, chỉ admin chạy bằng lệnh"]
@@ -380,6 +380,7 @@ flowchart LR
 ```
 
 - **Chồng client** được dựng ở `api/deps.py` `PlayerLLM.open`: `OpenRouterClient` bọc trong `RateLimitedClient`, rồi `RecordingClient`. `metered()` bọc thêm `MeteredClient`; `ChapterRun` tự bọc `MeteredClient` quanh client của `open()`. **Thử lại lỗi tạm có chờ lùi (D-123):** `llm/retry.py` chờ `retries.transient_backoff_seconds` giữa các lần thử lại của `LLM_UNAVAILABLE`/`LLM_TIMEOUT` (không áp cho 429 hay JSON sai schema); chờ qua `retry._sleep`, test thay hàm này. **Hạn tổng mỗi lời gọi (D-113):** `OpenRouterClient(deadline_s=...)` lấy `limits.llm_call.deadline_seconds`; `chat`, `stream` (mỗi lần chờ một dòng) và `generation_cost` quá hạn thì ra `LLM_TIMEOUT`, lỗi tạm cho lớp thử lại, tính tiền ước tính như lời gọi bị huỷ. `httpx.Timeout` chỉ là hạn từng lần đọc/ghi nên không bắt được máy chủ nhỏ giọt byte.
+- **Chồng client của bộ đo (D-140).** Bộ đo không dựng `OpenRouterClient` riêng: `llm/provider.py` `bench_llm(config, env_file, ...)` chọn theo tiền tố id model trong config. Chỉ có model OpenRouter thì ra `OpenRouterClient`, chỉ có model `meta/...` thì ra `MetaClient` (`llm/meta.py`), trộn thì `RoutingClient`. Bộ đo tự bọc tiếp `BudgetedClient` hay `MeteredClient` như trước. Sản phẩm không đi qua đây và từ chối model Meta (`config.product_model_problems`). Mặc định ngoài Meta là OpenRouter, nên bộ đo cũ không đổi.
 - **Thử lại** (`llm/retry.py`) nằm ở nơi gọi, không nằm trong client. `RETRY_TRANSIENT` dùng cho lỗi mạng, `RETRY_SCHEMA` cho JSON sai schema; số lượt nằm trong `limits.retries`. Mỗi lượt thử lại đi qua đủ chồng client, nên vẫn bị kiểm trần, vẫn xin lượt và vẫn được ghi. HTTP 409 và lỗi socket tầng thấp được tính là lỗi tạm (D-94, D-97).
 - **Trần (G8, D-10).** `CostTracker.ensure_budget` kiểm trần truyện, chương, cảnh (`limits.cost_usd`); trần chưa đặt là lỗi. `MeteredClient` kiểm trước mỗi lời gọi và cộng sau, nên lời gọi cuối có thể vượt trần đúng bằng chi phí của nó. Mọi lời gọi `chat_json` gửi kèm `max_tokens`; `stream()` thì không, nhưng hiện chưa đường nào của app dùng nó. Lời gọi không có usage thì ghi chi phí tối đa ước tính, rồi tra lại số thật sau (D-64).
 - **Khoá chạy đôi (D-46, D-56).** `db/locks.py` `job_lock` dùng `pg_try_advisory_lock`, không chờ; đang có người giữ thì trả `STORY_BUSY` mà không gọi model. Khoá viết chương được giữ tới khi stream dừng và `ChapterRun.aclose()` xong (D-63).

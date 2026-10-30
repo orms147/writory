@@ -1,0 +1,137 @@
+{
+  "bench": "run",
+  "label": "meta-thu",
+  "started": "2026-10-30T22:49:16+07:00",
+  "finished": "2026-10-30T22:50:24+07:00",
+  "status": "error",
+  "exit_code": 3,
+  "stop": {
+    "kind": "error",
+    "where": "setup:build",
+    "code": "COST_LIMIT_CHAPTER"
+  },
+  "dry_run": false,
+  "git": {
+    "commit": "65384bed2836308c2b4095a84db4025be31a2091",
+    "dirty": false
+  },
+  "provider": "meta",
+  "story_id": "run-20261030-meta-thu-4544fdb4",
+  "seed": 20261020,
+  "budget_usd": 0.8,
+  "chapters_arg": null,
+  "scenario": {
+    "path": "evals/scenarios/story_run/tu-tien-ngan.yaml",
+    "sha256": "b72d3e0ae04af209600252339e8141bc2df1d03494a934e9c37d3e4d01d1d848",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "tu tiên",
+        "era": "loạn thế, các đại tông môn tranh đoạt linh mạch",
+        "voice": "căng thẳng, nhiều mưu tính và đối đáp sắc",
+        "darkness": "vừa phải, có phản bội và chết chóc, không tả máu me"
+      },
+      "length_level": "short",
+      "naming": {
+        "names": "han_viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261020,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        },
+        "deepseek/deepseek-v4-flash": {
+          "in": 0.091,
+          "out": 0.182
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "evals/config/meta",
+    "sha256": {
+      "combined": "90c2d99eeae4f07e27df1d653890ae062a47648cccd914d35cfd77d0353b42e0",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "aa2bc11704634ff81f39ee7c8511c75185c14de10ddb0bda0723a2e152740410",
+      "models.yaml": "8a19abfd2d2f45d3a88e0c121693645847594f7a06944a6cd30a116ef60a7eb6",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "overreach": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "context_flags": {
+    "character_personality_max_chars": 240,
+    "previous_openings": 2,
+    "unplanned_chapter_goal": true,
+    "phase_shift_every": null
+  },
+  "setup_from": null,
+  "setup_only": true,
+  "overrides": {
+    "writer_model": null,
+    "writer_reasoning": null,
+    "outline_model": null,
+    "outline_reasoning": null
+  },
+  "prompt_versions": {
+    "setup": "setup-11",
+    "outline": "outline-13",
+    "writer": "writer-13",
+    "extract": "extract-8",
+    "choices": "choices-5"
+  },
+  "style_guide_sha256": "fa8fbc55c6e45be0c4ea2b0f6e757604074d10a00a253e287469bad11cd38512",
+  "style_guide_path": null,
+  "prompt_variant": null,
+  "prompt_versions_overridden": [],
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}

@@ -1,0 +1,2572 @@
+{
+ "story_id": "run-20261030-meta-thu-2-9dd36479",
+ "plan": {
+  "acts": [
+   {
+    "name": "Thành đóng cổng",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Tin bị bán",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Lối ra sau dịch quán",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_thu_co_dieu_khoan_nhuong_mach",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "phong thư nghị hòa",
+      "nhường mạch Tuyền Khê"
+     ],
+     [
+      "thư nghị hòa",
+      "điều khoản ẩn"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_ton_ban_tin_cho_thanh_ha",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Tôn Ngọc Đường",
+      "bán tin"
+     ],
+     [
+      "Tôn Ngọc Đường",
+      "Thanh Hà Tông"
+     ]
+    ],
+    "protects": [
+     "ton_ngoc_duong"
+    ]
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "thread_bi_mat_phong_thu",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6,
+    "answered_by": [
+     "fact_thu_co_dieu_khoan_nhuong_mach"
+    ]
+   },
+   {
+    "thread_id": "thread_ke_ban_tin",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 5,
+    "answered_by": [
+     "fact_ton_ban_tin_cho_thanh_ha"
+    ]
+   },
+   {
+    "thread_id": "thread_dua_dong_mon_thoat_thanh",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6,
+    "answered_by": []
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Sứ giả của Huyền Âm Tông và Thanh Hà Tông cùng đòi gặp riêng Hàn Trọng Sơn để dò hỏi về phong thư nghị hòa.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Hàn Trọng Sơn phát hiện có kẻ trong thành bán tin về lối ra qua trạm gác cũ.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Hàn Trọng Sơn phải đánh lạc hướng hai tông môn để đưa Liễu Thanh Vận rời dịch quán trong đêm.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Hàn Trọng Sơn đưa được Liễu Thanh Vận qua trạm gác cũ và quyết định số phận của phong thư nghị hòa trước khi rời thành.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "fact_thu_co_dieu_khoan_nhuong_mach",
+    "text": "Phong thư nghị hòa chứa điều khoản ẩn nhường mạch Tuyền Khê cho Thanh Hà Tông.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "fact_ton_ban_tin_cho_thanh_ha",
+    "text": "Kẻ bán tin trong thành Thạch Môn chính là Tôn Ngọc Đường đang ngầm bán tin cho Thanh Hà Tông.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "thread_bi_mat_phong_thu",
+    "description": "Phong thư nghị hòa thật sự chứa điều khoản gì khiến sứ giả hai bên đều muốn đọc trước?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_ke_ban_tin",
+    "description": "Kẻ nào trong thành Thạch Môn đang bán tin về Hàn Trọng Sơn cho các tông môn?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_dua_dong_mon_thoat_thanh",
+    "description": "Hàn Trọng Sơn có đưa được Liễu Thanh Vận ra khỏi thành qua trạm gác cũ trước khi đan dược cạn hết không?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Sứ giả của Huyền Âm Tông và Thanh Hà Tông cùng đòi gặp riêng Hàn Trọng Sơn để dò hỏi về phong thư nghị hòa.",
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "done_chapter": null,
+    "candidate_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Hàn Trọng Sơn phát hiện có kẻ trong thành bán tin về lối ra qua trạm gác cũ.",
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "done_chapter": null,
+    "candidate_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Hàn Trọng Sơn phải đánh lạc hướng hai tông môn để đưa Liễu Thanh Vận rời dịch quán trong đêm.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null,
+    "candidate_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Hàn Trọng Sơn đưa được Liễu Thanh Vận qua trạm gác cũ và quyết định số phận của phong thư nghị hòa trước khi rời thành.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null,
+    "candidate_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261030-meta-thu-2-9dd36479-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Hàn Trọng Sơn",
+      "personality": "Thẳng thắn, nóng nảy và trọng nghĩa khí, không giỏi vòng vo nhưng rất nhạy với nguy hiểm ngoài thực địa. Chàng dễ mất kiên nhẫn trước những lời thương nghị nửa vời, song khi đã nhận lời đưa ai ra khỏi thành thì dù bị truy đuổi cũng không bỏ người lại giữa đường.",
+      "backstory": "Hàn Trọng Sơn từng là đệ tử tuần sơn của Huyền Âm Tông, vì một lần cãi lệnh trưởng bối mà bị điều sang làm việc truyền tin. Chàng từng đóng tại trạm gác cũ ngoài thành Thạch Môn nên còn nhớ địa thế và những đường mòn ít người qua lại quanh đó. Khi được cử mang thư nghị hòa vào thành, chàng lại gặp đồng môn trọng thương đang mắc kẹt tại dịch quán, khiến chuyến truyền tin vốn đơn giản trở thành việc buộc chàng phải tìm lối thoát trong lúc bị cả hai phe theo dõi.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Gương mặt góc cạnh với sống mũi thẳng và vết sẹo nhỏ ở đuôi mày phải là điểm nhận diện rõ nhất trên người chàng. Hàn Trọng Sơn khoảng hai mươi bảy tuổi, thân hình cao lớn rắn chắc, mái tóc đen dài buộc cao bằng dây vải xám, mặc áo đệ tử truyền tin màu than của Huyền Âm Tông với ống tay bó gọn."
+     }
+    },
+    {
+     "id": "lieu_thanh_van",
+     "label": "Character",
+     "props": {
+      "name": "Liễu Thanh Vận",
+      "aliases": [
+       "Thanh Vận sư muội"
+      ],
+      "personality": "Điềm tĩnh, cứng cỏi và biết giữ bí mật, càng đau càng ít than vãn. Nàng nói năng sắc sảo khi cần che giấu nỗi sợ, nhưng rất sợ trở thành gánh nặng cho đồng môn.",
+      "backstory": "Là đệ tử y đường của Huyền Âm Tông, vào thành Thạch Môn để lấy đan dược thì bị thương trong đêm hai đội tuần tra chạm mặt nhau ngoài thành. Nàng được đưa vào dịch quán và từ đó không thể tự rời thành.",
+      "appearance": "Khuôn mặt trái xoan nhợt nhạt với đôi mày mảnh và gò má trái có nốt ruồi nhỏ là dấu hiệu nổi bật nhất. Nàng khoảng hai mươi hai tuổi, vóc người mảnh khảnh, mái tóc nâu sẫm dài tới thắt lưng thường tết thành một bím lỏng, mặc áo vải thô màu chàm sẫm thêu viền bạc đã sờn ở cổ tay."
+     }
+    },
+    {
+     "id": "trieu_canh_minh",
+     "label": "Character",
+     "props": {
+      "name": "Triệu Cảnh Minh",
+      "aliases": [
+       "Triệu sứ giả"
+      ],
+      "personality": "Lịch thiệp, kiên nhẫn và giỏi dùng lời lẽ nửa thật nửa dò xét để buộc người khác lộ ý. Hắn không dễ nổi giận, nhưng mỗi câu hỏi đều nhằm tìm điểm yếu của đối phương.",
+      "backstory": "Là sứ giả của Thanh Hà Tông tới thành Thạch Môn để bàn việc nghị hòa, nhưng tông môn của hắn đang kiệt quệ vì linh mạch suy yếu nên hắn chịu áp lực phải giành lợi thế trước. Hắn tới thành cùng đội tuần tra và bị giữ lại sau khi cổng thành đóng.",
+      "appearance": "Chiếc trán cao và hàng lông mày rậm gần như nối liền khiến gương mặt hắn dễ nhận ra từ xa. Hắn khoảng ba mươi lăm tuổi, thân hình cao gầy, tóc đen điểm bạc hai bên thái dương được búi gọn sau gáy, mặc trường bào màu lục sẫm thêu mây trắng và đeo nhẫn ngọc xanh ở ngón cái tay phải."
+     }
+    },
+    {
+     "id": "doan_van_khiem",
+     "label": "Character",
+     "props": {
+      "name": "Doãn Văn Khiêm",
+      "aliases": [
+       "Doãn sứ giả"
+      ],
+      "personality": "Trầm tĩnh, đa nghi và quen nói vòng qua nhiều lớp nghĩa trước khi chạm vào điều thật sự muốn. Hắn coi trọng mệnh lệnh của tông môn hơn tình đồng môn và sẵn sàng hy sinh một người để giữ thế cục.",
+      "backstory": "Là sứ giả do Huyền Âm Tông cử tới thành Thạch Môn, bề ngoài phụ trách việc tiếp nhận thư nghị hòa từ đệ tử truyền tin. Hắn hiểu rõ nội tình trong tông hơn vẻ ngoài chậm rãi vẫn thể hiện và luôn muốn kiểm soát việc mở thư.",
+      "appearance": "Đôi mắt một mí hẹp dài dưới cặp kính gọng đồng là điểm đầu tiên đập vào mắt người đối diện. Hắn khoảng bốn mươi tuổi, vóc người tầm thước hơi gù vai, tóc hoa râm chải ngược và cắt ngắn sát gáy, mặc áo dài màu xám tro bằng vải gai mịn, trên tai trái đeo một khuyên bạc nhỏ hình vòng khuyết."
+     }
+    },
+    {
+     "id": "ton_ngoc_duong",
+     "label": "Character",
+     "props": {
+      "name": "Tôn Ngọc Đường",
+      "aliases": [
+       "Tôn chủ quán"
+      ],
+      "personality": "Vui vẻ, khéo miệng và nhớ rất dai những điều người khác vô tình nói ra. Hắn tỏ ra chỉ ham linh thạch, nhưng khi bị dồn ép sẽ chọn phe nào giúp môn phái cũ của mình có cơ hội sống sót.",
+      "backstory": "Là chủ dịch quán trong thành Thạch Môn đã nhiều năm, quen biết lính gác và người của cả hai tông môn. Gia đình hắn từng thuộc một môn phái nhỏ đã tan rã vì mất linh mạch, nên hắn luôn tìm đường sống riêng giữa các thế lực lớn.",
+      "appearance": "Nụ cười rộng trên khuôn mặt tròn phúc hậu làm hắn trông hiền lành hơn tuổi bốn mươi tám. Hắn có thân hình thấp đậm, đầu cạo trọc bóng loáng chỉ còn vòng tóc bạc quanh tai, mặc tạp dề vải thô màu nâu đất bên ngoài áo ngắn tay màu vàng nhạt, ngón trỏ tay trái thiếu một đốt."
+     }
+    },
+    {
+     "id": "nghiem_thach_son",
+     "label": "Character",
+     "props": {
+      "name": "Nghiêm Thạch Sơn",
+      "aliases": [
+       "Nghiêm đội trưởng"
+      ],
+      "personality": "Nguyên tắc, quyết đoán và ghét bị các tông môn xem thường. Nàng nói ngắn, hỏi thẳng và chỉ nới tay khi tin rằng việc đó không kéo thành vào cuộc chiến.",
+      "backstory": "Là đội trưởng đội tuần thành của thành Thạch Môn, chịu trách nhiệm đóng cổng và giữ thành trung lập khi hai tông môn đối峙 ngoài thành. Nàng từng chứng kiến một thành nhỏ bị cuốn vào tranh đoạt linh mạch nên quyết không để Thạch Môn thành chiến trường.",
+      "appearance": "Vết sẹo mờ chạy dọc cằm trái khiến khuôn mặt vuông vức của nàng càng thêm cứng rắn. Nàng khoảng ba mươi tuổi, thân hình cao lớn vai rộng, mái tóc đỏ sẫm ngắn ngang vai được cột chặt sau đầu, mặc giáp da màu đen sẫm có phù hiệu đá xám trên ngực và đeo bao tay da nứt ở tay phải."
+     }
+    },
+    {
+     "id": "thanh_thach_mon",
+     "label": "Location",
+     "props": {
+      "name": "Thành Thạch Môn",
+      "aliases": [
+       "Thạch Môn"
+      ],
+      "description": "Thành trung lập bị phong tỏa giữa lúc Huyền Âm Tông và Thanh Hà Tông đối峙 vì linh mạch.",
+      "visual": "Tường đá xám cao phủ rêu ẩm, cổng gỗ bọc sắt đóng kín dưới nắng sớm nhợt nhạt, trong thành là những mái ngói tối màu san sát và không khí căng thẳng như trước cơn giông."
+     }
+    },
+    {
+     "id": "dich_quan_thach_mon",
+     "label": "Location",
+     "props": {
+      "name": "Dịch Quán Thạch Môn",
+      "aliases": [
+       "dịch quán"
+      ],
+      "description": "Nơi Liễu Thanh Vận đang dưỡng thương và cũng là chỗ hai bên sứ giả thường qua lại dò xét.",
+      "visual": "Sân trong lát đá ướt hơi sương, hành lang gỗ cũ kê những chậu thuốc đắng, ánh đèn dầu vàng mờ hắt qua cửa giấy khiến căn phòng dưỡng thương luôn nửa sáng nửa tối."
+     }
+    },
+    {
+     "id": "tram_gac_cu",
+     "label": "Location",
+     "props": {
+      "name": "Trạm Gác Cũ Vân Bình",
+      "aliases": [
+       "trạm gác cũ"
+      ],
+      "description": "Trạm gác bỏ hoang ngoài thành mà Hàn Trọng Sơn từng đóng giữ và còn nhớ đường mòn quanh đó.",
+      "visual": "Tháp gỗ nghiêng ngả giữa lau sậy và đá vụn, sương lạnh quẩn quanh bậc thềm gãy, chỉ còn ánh trăng và tiếng gió luồn qua khe ván cũ trong đêm."
+     }
+    },
+    {
+     "id": "cong_chinh_thach_mon",
+     "label": "Location",
+     "props": {
+      "name": "Cổng Chính Thạch Môn",
+      "aliases": [
+       "cổng chính"
+      ],
+      "description": "Cổng thành duy nhất đang bị đội tuần thành canh giữ nghiêm ngặt từ khi phong tỏa.",
+      "visual": "Cánh cổng sắt nặng nề khép chặt dưới bóng tường cao, đuốc cháy hai bên làm nổi rõ những vệt xước cũ trên mặt đá và sắc mặt căng thẳng của lính gác."
+     }
+    },
+    {
+     "id": "huyen_am_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Âm Tông",
+      "aliases": [
+       "Huyền Âm"
+      ],
+      "description": "Tông môn của Hàn Trọng Sơn đang suy yếu vì linh khí mỏng dần nhưng vẫn cố giữ vị thế qua việc nghị hòa."
+     }
+    },
+    {
+     "id": "thanh_ha_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Hà Tông",
+      "aliases": [
+       "Thanh Hà"
+      ],
+      "description": "Tông môn đối địch đang tranh đoạt linh mạch với Huyền Âm Tông và muốn đọc thư nghị hòa trước để chiếm lợi thế."
+     }
+    },
+    {
+     "id": "doi_tuan_thanh",
+     "label": "Faction",
+     "props": {
+      "name": "Đội Tuần Thành Thạch Môn",
+      "aliases": [
+       "lính tuần thành"
+      ],
+      "description": "Lực lượng giữ thành Thạch Môn trung lập, chịu trách nhiệm phong tỏa cổng thành và tra xét người ra vào."
+     }
+    },
+    {
+     "id": "phong_thu_nghi_hoa",
+     "label": "Item",
+     "props": {
+      "name": "Phong Thư Nghị Hòa",
+      "aliases": [
+       "phong thư"
+      ],
+      "description": "Phong thư niêm phong của Huyền Âm Tông mà sứ giả hai bên đều muốn đọc trước."
+     }
+    },
+    {
+     "id": "binh_dan_treo_mang",
+     "label": "Item",
+     "props": {
+      "name": "Bình Đan Treo Mạng",
+      "aliases": [
+       "đan treo mạng"
+      ],
+      "description": "Số đan dược ít ỏi còn lại chỉ đủ giúp Liễu Thanh Vận cầm cự thêm vài đêm."
+     }
+    },
+    {
+     "id": "lenh_bai_tuan_thanh",
+     "label": "Item",
+     "props": {
+      "name": "Lệnh Bài Tuần Thành",
+      "aliases": [
+       "lệnh bài tuần thành"
+      ],
+      "description": "Lệnh bài bằng đá xám cho phép đội tuần thành mở cổng phụ trong lúc phong tỏa."
+     }
+    },
+    {
+     "id": "mach_tuyen_khe",
+     "label": "Item",
+     "props": {
+      "name": "Mạch Tuyền Khê",
+      "aliases": [
+       "mạch nhỏ Tuyền Khê"
+      ],
+      "description": "Nhánh linh mạch đang bị hai tông môn tranh đoạt và là điều khoản ẩn trong thư nghị hòa."
+     }
+    },
+    {
+     "id": "fact_linh_khi_suy_yeu",
+     "label": "Fact",
+     "props": {
+      "text": "Linh khí trong thiên hạ ngày càng mỏng khiến các tông môn phải tranh đoạt linh mạch để tồn tại."
+     }
+    },
+    {
+     "id": "fact_thanh_trung_lap",
+     "label": "Fact",
+     "props": {
+      "text": "Thành Thạch Môn xưa nay không thuộc về tông môn nào."
+     }
+    },
+    {
+     "id": "fact_thanh_dong_cong",
+     "label": "Fact",
+     "props": {
+      "text": "Thành Thạch Môn đã đóng cổng sau khi đội tuần tra của Huyền Âm Tông và Thanh Hà Tông cùng xuất hiện ngoài thành trong một đêm."
+     }
+    },
+    {
+     "id": "fact_protagonist_giu_thu",
+     "label": "Fact",
+     "props": {
+      "text": "Hàn Trọng Sơn đang giữ phong thư nghị hòa của Huyền Âm Tông."
+     }
+    },
+    {
+     "id": "fact_lieu_trong_thuong",
+     "label": "Fact",
+     "props": {
+      "text": "Liễu Thanh Vận đang trọng thương và mắc kẹt tại dịch quán."
+     }
+    },
+    {
+     "id": "fact_dan_can_dan",
+     "label": "Fact",
+     "props": {
+      "text": "Đan dược cứu trị trong thành Thạch Môn đang cạn dần."
+     }
+    },
+    {
+     "id": "fact_protagonist_nho_tram_cu",
+     "label": "Fact",
+     "props": {
+      "text": "Hàn Trọng Sơn từng đóng tại trạm gác cũ ngoài thành Thạch Môn nên còn nhớ địa thế quanh đó."
+     }
+    },
+    {
+     "id": "fact_loi_sau_dich_quan",
+     "label": "Fact",
+     "props": {
+      "text": "Một lối mòn ít người qua lại nối từ sau dịch quán tới trạm gác cũ ngoài thành Thạch Môn."
+     }
+    },
+    {
+     "id": "fact_thu_co_dieu_khoan_nhuong_mach",
+     "label": "Fact",
+     "props": {
+      "text": "Phong thư nghị hòa chứa điều khoản ẩn nhường mạch Tuyền Khê cho Thanh Hà Tông."
+     }
+    },
+    {
+     "id": "fact_doan_biet_dieu_khoan_an",
+     "label": "Fact",
+     "props": {
+      "text": "Doãn Văn Khiêm biết điều khoản ẩn trong phong thư nghị hòa từ trước khi tới thành Thạch Môn."
+     }
+    },
+    {
+     "id": "fact_doan_nhan_lenh_giu_bi_mat_thu",
+     "label": "Fact",
+     "props": {
+      "text": "Doãn Văn Khiêm nhận lệnh giữ kín điều khoản ẩn trong phong thư dù phải để đệ tử truyền tin chịu nghi ngờ."
+     }
+    },
+    {
+     "id": "fact_ton_ban_tin_cho_thanh_ha",
+     "label": "Fact",
+     "props": {
+      "text": "Kẻ bán tin trong thành Thạch Môn chính là Tôn Ngọc Đường đang ngầm bán tin cho Thanh Hà Tông."
+     }
+    },
+    {
+     "id": "fact_ton_muon_cuu_mon_phai_cu",
+     "label": "Fact",
+     "props": {
+      "text": "Tôn Ngọc Đường bán tin vì muốn Thanh Hà Tông để lại một nhánh linh mạch nhỏ cho môn phái cũ của hắn."
+     }
+    },
+    {
+     "id": "fact_tram_gac_co_nguoi_theo_doi",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Hà Tông đã cho người theo dõi trạm gác cũ sau khi nhận được tin bán ra từ trong thành."
+     }
+    },
+    {
+     "id": "fact_nghiem_giu_trung_lap",
+     "label": "Fact",
+     "props": {
+      "text": "Nghiêm Thạch Sơn quyết giữ thành Thạch Môn trung lập dù phải đối đầu với cả hai tông môn."
+     }
+    },
+    {
+     "id": "thread_bi_mat_phong_thu",
+     "label": "Thread",
+     "props": {
+      "description": "Phong thư nghị hòa thật sự chứa điều khoản gì khiến sứ giả hai bên đều muốn đọc trước?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "thread_ke_ban_tin",
+     "label": "Thread",
+     "props": {
+      "description": "Kẻ nào trong thành Thạch Môn đang bán tin về Hàn Trọng Sơn cho các tông môn?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "thread_dua_dong_mon_thoat_thanh",
+     "label": "Thread",
+     "props": {
+      "description": "Hàn Trọng Sơn có đưa được Liễu Thanh Vận ra khỏi thành qua trạm gác cũ trước khi đan dược cạn hết không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "thread_long_tin_tuan_thanh",
+     "label": "Thread",
+     "props": {
+      "description": "Hàn Trọng Sơn có giữ được lòng tin của Nghiêm Thạch Sơn để đội tuần thành không truy bắt đoàn người rời thành không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 3
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "lieu_thanh_van",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>lieu_thanh_van@0",
+     "props": {
+      "kind": "bạn",
+      "score": 75
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "lieu_thanh_van",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:lieu_thanh_van>protagonist@0",
+     "props": {
+      "kind": "bạn",
+      "score": 75
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "trieu_canh_minh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>trieu_canh_minh@0",
+     "props": {
+      "kind": "thù",
+      "score": -35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "trieu_canh_minh",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:trieu_canh_minh>protagonist@0",
+     "props": {
+      "kind": "thù",
+      "score": -30
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_van_khiem",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_van_khiem>protagonist@0",
+     "props": {
+      "kind": "thầy trò",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_van_khiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_van_khiem@0",
+     "props": {
+      "kind": "thầy trò",
+      "score": -10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "trieu_canh_minh",
+     "to": "doan_van_khiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:trieu_canh_minh>doan_van_khiem@0",
+     "props": {
+      "kind": "thù",
+      "score": -45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_van_khiem",
+     "to": "trieu_canh_minh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_van_khiem>trieu_canh_minh@0",
+     "props": {
+      "kind": "thù",
+      "score": -45
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "ton_ngoc_duong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ton_ngoc_duong>protagonist@0",
+     "props": {
+      "kind": "bạn",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "ton_ngoc_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>ton_ngoc_duong@0",
+     "props": {
+      "kind": "bạn",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nghiem_thach_son",
+     "to": "trieu_canh_minh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nghiem_thach_son>trieu_canh_minh@0",
+     "props": {
+      "kind": "thù",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nghiem_thach_son",
+     "to": "doan_van_khiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nghiem_thach_son>doan_van_khiem@0",
+     "props": {
+      "kind": "thù",
+      "score": -20
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "lieu_thanh_van",
+     "to": "dich_quan_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:lieu_thanh_van>dich_quan_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "trieu_canh_minh",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:trieu_canh_minh>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_van_khiem",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_van_khiem>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ton_ngoc_duong",
+     "to": "dich_quan_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ton_ngoc_duong>dich_quan_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nghiem_thach_son",
+     "to": "cong_chinh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nghiem_thach_son>cong_chinh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "phong_thu_nghi_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>phong_thu_nghi_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "lieu_thanh_van",
+     "to": "binh_dan_treo_mang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:lieu_thanh_van>binh_dan_treo_mang@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "nghiem_thach_son",
+     "to": "lenh_bai_tuan_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:nghiem_thach_son>lenh_bai_tuan_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "huyen_am_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>huyen_am_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "lieu_thanh_van",
+     "to": "huyen_am_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:lieu_thanh_van>huyen_am_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_van_khiem",
+     "to": "huyen_am_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_van_khiem>huyen_am_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "trieu_canh_minh",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:trieu_canh_minh>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "nghiem_thach_son",
+     "to": "doi_tuan_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:nghiem_thach_son>doi_tuan_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_linh_khi_suy_yeu",
+     "to": "huyen_am_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_linh_khi_suy_yeu>huyen_am_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_linh_khi_suy_yeu",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_linh_khi_suy_yeu>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lieu_thanh_van",
+     "to": "fact_linh_khi_suy_yeu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lieu_thanh_van>fact_linh_khi_suy_yeu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_canh_minh",
+     "to": "fact_linh_khi_suy_yeu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_canh_minh>fact_linh_khi_suy_yeu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_linh_khi_suy_yeu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_linh_khi_suy_yeu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_linh_khi_suy_yeu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_linh_khi_suy_yeu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghiem_thach_son",
+     "to": "fact_linh_khi_suy_yeu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghiem_thach_son>fact_linh_khi_suy_yeu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_trung_lap",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_trung_lap>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lieu_thanh_van",
+     "to": "fact_thanh_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lieu_thanh_van>fact_thanh_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_canh_minh",
+     "to": "fact_thanh_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_canh_minh>fact_thanh_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_thanh_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_thanh_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_thanh_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_thanh_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghiem_thach_son",
+     "to": "fact_thanh_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghiem_thach_son>fact_thanh_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_dong_cong",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_dong_cong>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_dong_cong",
+     "to": "huyen_am_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_dong_cong>huyen_am_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thanh_dong_cong",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thanh_dong_cong>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lieu_thanh_van",
+     "to": "fact_thanh_dong_cong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lieu_thanh_van>fact_thanh_dong_cong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_canh_minh",
+     "to": "fact_thanh_dong_cong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_canh_minh>fact_thanh_dong_cong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_thanh_dong_cong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_thanh_dong_cong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_thanh_dong_cong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_thanh_dong_cong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nghiem_thach_son",
+     "to": "fact_thanh_dong_cong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nghiem_thach_son>fact_thanh_dong_cong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_protagonist_giu_thu",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_protagonist_giu_thu>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_protagonist_giu_thu",
+     "to": "phong_thu_nghi_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_protagonist_giu_thu>phong_thu_nghi_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lieu_thanh_van",
+     "to": "fact_protagonist_giu_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lieu_thanh_van>fact_protagonist_giu_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_canh_minh",
+     "to": "fact_protagonist_giu_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_canh_minh>fact_protagonist_giu_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_protagonist_giu_thu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_protagonist_giu_thu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lieu_trong_thuong",
+     "to": "lieu_thanh_van",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lieu_trong_thuong>lieu_thanh_van@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_lieu_trong_thuong",
+     "to": "dich_quan_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_lieu_trong_thuong>dich_quan_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_lieu_trong_thuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_lieu_trong_thuong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_lieu_trong_thuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_lieu_trong_thuong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_dan_can_dan",
+     "to": "binh_dan_treo_mang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_dan_can_dan>binh_dan_treo_mang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "lieu_thanh_van",
+     "to": "fact_dan_can_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:lieu_thanh_van>fact_dan_can_dan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_dan_can_dan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_dan_can_dan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_protagonist_nho_tram_cu",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_protagonist_nho_tram_cu>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_protagonist_nho_tram_cu",
+     "to": "tram_gac_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_protagonist_nho_tram_cu>tram_gac_cu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_loi_sau_dich_quan",
+     "to": "tram_gac_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_loi_sau_dich_quan>tram_gac_cu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_loi_sau_dich_quan",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_loi_sau_dich_quan>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thu_co_dieu_khoan_nhuong_mach",
+     "to": "phong_thu_nghi_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thu_co_dieu_khoan_nhuong_mach>phong_thu_nghi_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_thu_co_dieu_khoan_nhuong_mach",
+     "to": "mach_tuyen_khe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_thu_co_dieu_khoan_nhuong_mach>mach_tuyen_khe@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_thu_co_dieu_khoan_nhuong_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_thu_co_dieu_khoan_nhuong_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_biet_dieu_khoan_an",
+     "to": "doan_van_khiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_biet_dieu_khoan_an>doan_van_khiem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_biet_dieu_khoan_an",
+     "to": "phong_thu_nghi_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_biet_dieu_khoan_an>phong_thu_nghi_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_nhan_lenh_giu_bi_mat_thu",
+     "to": "doan_van_khiem",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_nhan_lenh_giu_bi_mat_thu>doan_van_khiem@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_doan_nhan_lenh_giu_bi_mat_thu",
+     "to": "huyen_am_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_doan_nhan_lenh_giu_bi_mat_thu>huyen_am_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_ton_ban_tin_cho_thanh_ha",
+     "to": "ton_ngoc_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_ton_ban_tin_cho_thanh_ha>ton_ngoc_duong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_ton_ban_tin_cho_thanh_ha",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_ton_ban_tin_cho_thanh_ha>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_ton_muon_cuu_mon_phai_cu",
+     "to": "ton_ngoc_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_ton_muon_cuu_mon_phai_cu>ton_ngoc_duong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tram_gac_co_nguoi_theo_doi",
+     "to": "tram_gac_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tram_gac_co_nguoi_theo_doi>tram_gac_cu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_tram_gac_co_nguoi_theo_doi",
+     "to": "thanh_ha_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_tram_gac_co_nguoi_theo_doi>thanh_ha_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_canh_minh",
+     "to": "fact_tram_gac_co_nguoi_theo_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_canh_minh>fact_tram_gac_co_nguoi_theo_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_tram_gac_co_nguoi_theo_doi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_tram_gac_co_nguoi_theo_doi@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nghiem_giu_trung_lap",
+     "to": "nghiem_thach_son",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nghiem_giu_trung_lap>nghiem_thach_son@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_nghiem_giu_trung_lap",
+     "to": "thanh_thach_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_nghiem_giu_trung_lap>thanh_thach_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_canh_minh",
+     "to": "fact_nghiem_giu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_canh_minh>fact_nghiem_giu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_van_khiem",
+     "to": "fact_nghiem_giu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_van_khiem>fact_nghiem_giu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "ton_ngoc_duong",
+     "to": "fact_nghiem_giu_trung_lap",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ton_ngoc_duong>fact_nghiem_giu_trung_lap@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Hàn Trọng Sơn",
+      "known_as": "Hàn Trọng Sơn"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "binh_dan_treo_mang": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "đan treo mạng"
+     ],
+     "name": "Bình Đan Treo Mạng",
+     "description": "Số đan dược ít ỏi còn lại chỉ đủ giúp Liễu Thanh Vận cầm cự thêm vài đêm."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "cong_chinh_thach_mon": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "cổng chính"
+     ],
+     "name": "Cổng Chính Thạch Môn",
+     "description": "Cổng thành duy nhất đang bị đội tuần thành canh giữ nghiêm ngặt từ khi phong tỏa.",
+     "visual": "Cánh cổng sắt nặng nề khép chặt dưới bóng tường cao, đuốc cháy hai bên làm nổi rõ những vệt xước cũ trên mặt đá và sắc mặt căng thẳng của lính gác."
+    }
+   },
+   "dich_quan_thach_mon": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "dịch quán"
+     ],
+     "name": "Dịch Quán Thạch Môn",
+     "description": "Nơi Liễu Thanh Vận đang dưỡng thương và cũng là chỗ hai bên sứ giả thường qua lại dò xét.",
+     "visual": "Sân trong lát đá ướt hơi sương, hành lang gỗ cũ kê những chậu thuốc đắng, ánh đèn dầu vàng mờ hắt qua cửa giấy khiến căn phòng dưỡng thương luôn nửa sáng nửa tối."
+    }
+   },
+   "doan_van_khiem": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là sứ giả do Huyền Âm Tông cử tới thành Thạch Môn, bề ngoài phụ trách việc tiếp nhận thư nghị hòa từ đệ tử truyền tin. Hắn hiểu rõ nội tình trong tông hơn vẻ ngoài chậm rãi vẫn thể hiện và luôn muốn kiểm soát việc mở thư.",
+     "appearance": "Đôi mắt một mí hẹp dài dưới cặp kính gọng đồng là điểm đầu tiên đập vào mắt người đối diện. Hắn khoảng bốn mươi tuổi, vóc người tầm thước hơi gù vai, tóc hoa râm chải ngược và cắt ngắn sát gáy, mặc áo dài màu xám tro bằng vải gai mịn, trên tai trái đeo một khuyên bạc nhỏ hình vòng khuyết.",
+     "aliases": [
+      "Doãn sứ giả"
+     ],
+     "personality": "Trầm tĩnh, đa nghi và quen nói vòng qua nhiều lớp nghĩa trước khi chạm vào điều thật sự muốn. Hắn coi trọng mệnh lệnh của tông môn hơn tình đồng môn và sẵn sàng hy sinh một người để giữ thế cục.",
+     "name": "Doãn Văn Khiêm"
+    }
+   },
+   "doi_tuan_thanh": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "lính tuần thành"
+     ],
+     "name": "Đội Tuần Thành Thạch Môn",
+     "description": "Lực lượng giữ thành Thạch Môn trung lập, chịu trách nhiệm phong tỏa cổng thành và tra xét người ra vào."
+    }
+   },
+   "fact_dan_can_dan": {
+    "label": "Fact",
+    "props": {
+     "text": "Đan dược cứu trị trong thành Thạch Môn đang cạn dần."
+    }
+   },
+   "fact_doan_biet_dieu_khoan_an": {
+    "label": "Fact",
+    "props": {
+     "text": "Doãn Văn Khiêm biết điều khoản ẩn trong phong thư nghị hòa từ trước khi tới thành Thạch Môn."
+    }
+   },
+   "fact_doan_nhan_lenh_giu_bi_mat_thu": {
+    "label": "Fact",
+    "props": {
+     "text": "Doãn Văn Khiêm nhận lệnh giữ kín điều khoản ẩn trong phong thư dù phải để đệ tử truyền tin chịu nghi ngờ."
+    }
+   },
+   "fact_lieu_trong_thuong": {
+    "label": "Fact",
+    "props": {
+     "text": "Liễu Thanh Vận đang trọng thương và mắc kẹt tại dịch quán."
+    }
+   },
+   "fact_linh_khi_suy_yeu": {
+    "label": "Fact",
+    "props": {
+     "text": "Linh khí trong thiên hạ ngày càng mỏng khiến các tông môn phải tranh đoạt linh mạch để tồn tại."
+    }
+   },
+   "fact_loi_sau_dich_quan": {
+    "label": "Fact",
+    "props": {
+     "text": "Một lối mòn ít người qua lại nối từ sau dịch quán tới trạm gác cũ ngoài thành Thạch Môn."
+    }
+   },
+   "fact_nghiem_giu_trung_lap": {
+    "label": "Fact",
+    "props": {
+     "text": "Nghiêm Thạch Sơn quyết giữ thành Thạch Môn trung lập dù phải đối đầu với cả hai tông môn."
+    }
+   },
+   "fact_protagonist_giu_thu": {
+    "label": "Fact",
+    "props": {
+     "text": "Hàn Trọng Sơn đang giữ phong thư nghị hòa của Huyền Âm Tông."
+    }
+   },
+   "fact_protagonist_nho_tram_cu": {
+    "label": "Fact",
+    "props": {
+     "text": "Hàn Trọng Sơn từng đóng tại trạm gác cũ ngoài thành Thạch Môn nên còn nhớ địa thế quanh đó."
+    }
+   },
+   "fact_thanh_dong_cong": {
+    "label": "Fact",
+    "props": {
+     "text": "Thành Thạch Môn đã đóng cổng sau khi đội tuần tra của Huyền Âm Tông và Thanh Hà Tông cùng xuất hiện ngoài thành trong một đêm."
+    }
+   },
+   "fact_thanh_trung_lap": {
+    "label": "Fact",
+    "props": {
+     "text": "Thành Thạch Môn xưa nay không thuộc về tông môn nào."
+    }
+   },
+   "fact_thu_co_dieu_khoan_nhuong_mach": {
+    "label": "Fact",
+    "props": {
+     "text": "Phong thư nghị hòa chứa điều khoản ẩn nhường mạch Tuyền Khê cho Thanh Hà Tông."
+    }
+   },
+   "fact_ton_ban_tin_cho_thanh_ha": {
+    "label": "Fact",
+    "props": {
+     "text": "Kẻ bán tin trong thành Thạch Môn chính là Tôn Ngọc Đường đang ngầm bán tin cho Thanh Hà Tông."
+    }
+   },
+   "fact_ton_muon_cuu_mon_phai_cu": {
+    "label": "Fact",
+    "props": {
+     "text": "Tôn Ngọc Đường bán tin vì muốn Thanh Hà Tông để lại một nhánh linh mạch nhỏ cho môn phái cũ của hắn."
+    }
+   },
+   "fact_tram_gac_co_nguoi_theo_doi": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Hà Tông đã cho người theo dõi trạm gác cũ sau khi nhận được tin bán ra từ trong thành."
+    }
+   },
+   "huyen_am_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Huyền Âm"
+     ],
+     "name": "Huyền Âm Tông",
+     "description": "Tông môn của Hàn Trọng Sơn đang suy yếu vì linh khí mỏng dần nhưng vẫn cố giữ vị thế qua việc nghị hòa."
+    }
+   },
+   "lenh_bai_tuan_thanh": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "lệnh bài tuần thành"
+     ],
+     "name": "Lệnh Bài Tuần Thành",
+     "description": "Lệnh bài bằng đá xám cho phép đội tuần thành mở cổng phụ trong lúc phong tỏa."
+    }
+   },
+   "lieu_thanh_van": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là đệ tử y đường của Huyền Âm Tông, vào thành Thạch Môn để lấy đan dược thì bị thương trong đêm hai đội tuần tra chạm mặt nhau ngoài thành. Nàng được đưa vào dịch quán và từ đó không thể tự rời thành.",
+     "appearance": "Khuôn mặt trái xoan nhợt nhạt với đôi mày mảnh và gò má trái có nốt ruồi nhỏ là dấu hiệu nổi bật nhất. Nàng khoảng hai mươi hai tuổi, vóc người mảnh khảnh, mái tóc nâu sẫm dài tới thắt lưng thường tết thành một bím lỏng, mặc áo vải thô màu chàm sẫm thêu viền bạc đã sờn ở cổ tay.",
+     "aliases": [
+      "Thanh Vận sư muội"
+     ],
+     "personality": "Điềm tĩnh, cứng cỏi và biết giữ bí mật, càng đau càng ít than vãn. Nàng nói năng sắc sảo khi cần che giấu nỗi sợ, nhưng rất sợ trở thành gánh nặng cho đồng môn.",
+     "name": "Liễu Thanh Vận"
+    }
+   },
+   "mach_tuyen_khe": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "mạch nhỏ Tuyền Khê"
+     ],
+     "name": "Mạch Tuyền Khê",
+     "description": "Nhánh linh mạch đang bị hai tông môn tranh đoạt và là điều khoản ẩn trong thư nghị hòa."
+    }
+   },
+   "nghiem_thach_son": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là đội trưởng đội tuần thành của thành Thạch Môn, chịu trách nhiệm đóng cổng và giữ thành trung lập khi hai tông môn đối峙 ngoài thành. Nàng từng chứng kiến một thành nhỏ bị cuốn vào tranh đoạt linh mạch nên quyết không để Thạch Môn thành chiến trường.",
+     "aliases": [
+      "Nghiêm đội trưởng"
+     ],
+     "appearance": "Vết sẹo mờ chạy dọc cằm trái khiến khuôn mặt vuông vức của nàng càng thêm cứng rắn. Nàng khoảng ba mươi tuổi, thân hình cao lớn vai rộng, mái tóc đỏ sẫm ngắn ngang vai được cột chặt sau đầu, mặc giáp da màu đen sẫm có phù hiệu đá xám trên ngực và đeo bao tay da nứt ở tay phải.",
+     "personality": "Nguyên tắc, quyết đoán và ghét bị các tông môn xem thường. Nàng nói ngắn, hỏi thẳng và chỉ nới tay khi tin rằng việc đó không kéo thành vào cuộc chiến.",
+     "name": "Nghiêm Thạch Sơn"
+    }
+   },
+   "phong_thu_nghi_hoa": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "phong thư"
+     ],
+     "name": "Phong Thư Nghị Hòa",
+     "description": "Phong thư niêm phong của Huyền Âm Tông mà sứ giả hai bên đều muốn đọc trước."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Hàn Trọng Sơn từng là đệ tử tuần sơn của Huyền Âm Tông, vì một lần cãi lệnh trưởng bối mà bị điều sang làm việc truyền tin. Chàng từng đóng tại trạm gác cũ ngoài thành Thạch Môn nên còn nhớ địa thế và những đường mòn ít người qua lại quanh đó. Khi được cử mang thư nghị hòa vào thành, chàng lại gặp đồng môn trọng thương đang mắc kẹt tại dịch quán, khiến chuyến truyền tin vốn đơn giản trở thành việc buộc chàng phải tìm lối thoát trong lúc bị cả hai phe theo dõi.",
+     "appearance": "Gương mặt góc cạnh với sống mũi thẳng và vết sẹo nhỏ ở đuôi mày phải là điểm nhận diện rõ nhất trên người chàng. Hàn Trọng Sơn khoảng hai mươi bảy tuổi, thân hình cao lớn rắn chắc, mái tóc đen dài buộc cao bằng dây vải xám, mặc áo đệ tử truyền tin màu than của Huyền Âm Tông với ống tay bó gọn.",
+     "personality": "Thẳng thắn, nóng nảy và trọng nghĩa khí, không giỏi vòng vo nhưng rất nhạy với nguy hiểm ngoài thực địa. Chàng dễ mất kiên nhẫn trước những lời thương nghị nửa vời, song khi đã nhận lời đưa ai ra khỏi thành thì dù bị truy đuổi cũng không bỏ người lại giữa đường.",
+     "name": "Hàn Trọng Sơn",
+     "is_protagonist": true
+    }
+   },
+   "thanh_ha_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Hà"
+     ],
+     "name": "Thanh Hà Tông",
+     "description": "Tông môn đối địch đang tranh đoạt linh mạch với Huyền Âm Tông và muốn đọc thư nghị hòa trước để chiếm lợi thế."
+    }
+   },
+   "thanh_thach_mon": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Thạch Môn"
+     ],
+     "name": "Thành Thạch Môn",
+     "description": "Thành trung lập bị phong tỏa giữa lúc Huyền Âm Tông và Thanh Hà Tông đối峙 vì linh mạch.",
+     "visual": "Tường đá xám cao phủ rêu ẩm, cổng gỗ bọc sắt đóng kín dưới nắng sớm nhợt nhạt, trong thành là những mái ngói tối màu san sát và không khí căng thẳng như trước cơn giông."
+    }
+   },
+   "thread_bi_mat_phong_thu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Phong thư nghị hòa thật sự chứa điều khoản gì khiến sứ giả hai bên đều muốn đọc trước?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "thread_dua_dong_mon_thoat_thanh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Hàn Trọng Sơn có đưa được Liễu Thanh Vận ra khỏi thành qua trạm gác cũ trước khi đan dược cạn hết không?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "thread_ke_ban_tin": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Kẻ nào trong thành Thạch Môn đang bán tin về Hàn Trọng Sơn cho các tông môn?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 5
+    }
+   },
+   "thread_long_tin_tuan_thanh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Hàn Trọng Sơn có giữ được lòng tin của Nghiêm Thạch Sơn để đội tuần thành không truy bắt đoàn người rời thành không?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 3
+    }
+   },
+   "ton_ngoc_duong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là chủ dịch quán trong thành Thạch Môn đã nhiều năm, quen biết lính gác và người của cả hai tông môn. Gia đình hắn từng thuộc một môn phái nhỏ đã tan rã vì mất linh mạch, nên hắn luôn tìm đường sống riêng giữa các thế lực lớn.",
+     "aliases": [
+      "Tôn chủ quán"
+     ],
+     "appearance": "Nụ cười rộng trên khuôn mặt tròn phúc hậu làm hắn trông hiền lành hơn tuổi bốn mươi tám. Hắn có thân hình thấp đậm, đầu cạo trọc bóng loáng chỉ còn vòng tóc bạc quanh tai, mặc tạp dề vải thô màu nâu đất bên ngoài áo ngắn tay màu vàng nhạt, ngón trỏ tay trái thiếu một đốt.",
+     "personality": "Vui vẻ, khéo miệng và nhớ rất dai những điều người khác vô tình nói ra. Hắn tỏ ra chỉ ham linh thạch, nhưng khi bị dồn ép sẽ chọn phe nào giúp môn phái cũ của mình có cơ hội sống sót.",
+     "name": "Tôn Ngọc Đường"
+    }
+   },
+   "tram_gac_cu": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "trạm gác cũ"
+     ],
+     "name": "Trạm Gác Cũ Vân Bình",
+     "visual": "Tháp gỗ nghiêng ngả giữa lau sậy và đá vụn, sương lạnh quẩn quanh bậc thềm gãy, chỉ còn ánh trăng và tiếng gió luồn qua khe ván cũ trong đêm.",
+     "description": "Trạm gác bỏ hoang ngoài thành mà Hàn Trọng Sơn từng đóng giữ và còn nhớ đường mòn quanh đó."
+    }
+   },
+   "trieu_canh_minh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là sứ giả của Thanh Hà Tông tới thành Thạch Môn để bàn việc nghị hòa, nhưng tông môn của hắn đang kiệt quệ vì linh mạch suy yếu nên hắn chịu áp lực phải giành lợi thế trước. Hắn tới thành cùng đội tuần tra và bị giữ lại sau khi cổng thành đóng.",
+     "appearance": "Chiếc trán cao và hàng lông mày rậm gần như nối liền khiến gương mặt hắn dễ nhận ra từ xa. Hắn khoảng ba mươi lăm tuổi, thân hình cao gầy, tóc đen điểm bạc hai bên thái dương được búi gọn sau gáy, mặc trường bào màu lục sẫm thêu mây trắng và đeo nhẫn ngọc xanh ở ngón cái tay phải.",
+     "aliases": [
+      "Triệu sứ giả"
+     ],
+     "personality": "Lịch thiệp, kiên nhẫn và giỏi dùng lời lẽ nửa thật nửa dò xét để buộc người khác lộ ý. Hắn không dễ nổi giận, nhưng mỗi câu hỏi đều nhằm tìm điểm yếu của đối phương.",
+     "name": "Triệu Cảnh Minh"
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_van_khiem>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_van_khiem",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "thầy trò"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_van_khiem>trieu_canh_minh@0",
+    "type": "RELATES_TO",
+    "source": "doan_van_khiem",
+    "target": "trieu_canh_minh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -45,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:lieu_thanh_van>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "lieu_thanh_van",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 75,
+     "kind": "bạn"
+    }
+   },
+   {
+    "id": "RELATES_TO:nghiem_thach_son>doan_van_khiem@0",
+    "type": "RELATES_TO",
+    "source": "nghiem_thach_son",
+    "target": "doan_van_khiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:nghiem_thach_son>trieu_canh_minh@0",
+    "type": "RELATES_TO",
+    "source": "nghiem_thach_son",
+    "target": "trieu_canh_minh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_van_khiem@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_van_khiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -10,
+     "kind": "thầy trò"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>lieu_thanh_van@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "lieu_thanh_van",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 75,
+     "kind": "bạn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>ton_ngoc_duong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "ton_ngoc_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "bạn"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>trieu_canh_minh@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "trieu_canh_minh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -35,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:ton_ngoc_duong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "ton_ngoc_duong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "bạn"
+    }
+   },
+   {
+    "id": "RELATES_TO:trieu_canh_minh>doan_van_khiem@0",
+    "type": "RELATES_TO",
+    "source": "trieu_canh_minh",
+    "target": "doan_van_khiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -45,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:trieu_canh_minh>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "trieu_canh_minh",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -30,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_van_khiem>thanh_thach_mon@0",
+    "type": "LOCATED_AT",
+    "source": "doan_van_khiem",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:lieu_thanh_van>dich_quan_thach_mon@0",
+    "type": "LOCATED_AT",
+    "source": "lieu_thanh_van",
+    "target": "dich_quan_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nghiem_thach_son>cong_chinh_thach_mon@0",
+    "type": "LOCATED_AT",
+    "source": "nghiem_thach_son",
+    "target": "cong_chinh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>thanh_thach_mon@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:ton_ngoc_duong>dich_quan_thach_mon@0",
+    "type": "LOCATED_AT",
+    "source": "ton_ngoc_duong",
+    "target": "dich_quan_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:trieu_canh_minh>thanh_thach_mon@0",
+    "type": "LOCATED_AT",
+    "source": "trieu_canh_minh",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:lieu_thanh_van>binh_dan_treo_mang@0",
+    "type": "HOLDS",
+    "source": "lieu_thanh_van",
+    "target": "binh_dan_treo_mang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:nghiem_thach_son>lenh_bai_tuan_thanh@0",
+    "type": "HOLDS",
+    "source": "nghiem_thach_son",
+    "target": "lenh_bai_tuan_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>phong_thu_nghi_hoa@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "phong_thu_nghi_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_van_khiem>huyen_am_tong@0",
+    "type": "MEMBER_OF",
+    "source": "doan_van_khiem",
+    "target": "huyen_am_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:lieu_thanh_van>huyen_am_tong@0",
+    "type": "MEMBER_OF",
+    "source": "lieu_thanh_van",
+    "target": "huyen_am_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:nghiem_thach_son>doi_tuan_thanh@0",
+    "type": "MEMBER_OF",
+    "source": "nghiem_thach_son",
+    "target": "doi_tuan_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>huyen_am_tong@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "huyen_am_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:trieu_canh_minh>thanh_ha_tong@0",
+    "type": "MEMBER_OF",
+    "source": "trieu_canh_minh",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_lieu_trong_thuong@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_lieu_trong_thuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_linh_khi_suy_yeu@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_linh_khi_suy_yeu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_nghiem_giu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_nghiem_giu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_protagonist_giu_thu@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_protagonist_giu_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_thanh_dong_cong@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_thanh_dong_cong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_thanh_trung_lap@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_thanh_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_van_khiem>fact_thu_co_dieu_khoan_nhuong_mach@0",
+    "type": "KNOWS",
+    "source": "doan_van_khiem",
+    "target": "fact_thu_co_dieu_khoan_nhuong_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lieu_thanh_van>fact_dan_can_dan@0",
+    "type": "KNOWS",
+    "source": "lieu_thanh_van",
+    "target": "fact_dan_can_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lieu_thanh_van>fact_linh_khi_suy_yeu@0",
+    "type": "KNOWS",
+    "source": "lieu_thanh_van",
+    "target": "fact_linh_khi_suy_yeu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lieu_thanh_van>fact_protagonist_giu_thu@0",
+    "type": "KNOWS",
+    "source": "lieu_thanh_van",
+    "target": "fact_protagonist_giu_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lieu_thanh_van>fact_thanh_dong_cong@0",
+    "type": "KNOWS",
+    "source": "lieu_thanh_van",
+    "target": "fact_thanh_dong_cong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:lieu_thanh_van>fact_thanh_trung_lap@0",
+    "type": "KNOWS",
+    "source": "lieu_thanh_van",
+    "target": "fact_thanh_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghiem_thach_son>fact_linh_khi_suy_yeu@0",
+    "type": "KNOWS",
+    "source": "nghiem_thach_son",
+    "target": "fact_linh_khi_suy_yeu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghiem_thach_son>fact_thanh_dong_cong@0",
+    "type": "KNOWS",
+    "source": "nghiem_thach_son",
+    "target": "fact_thanh_dong_cong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nghiem_thach_son>fact_thanh_trung_lap@0",
+    "type": "KNOWS",
+    "source": "nghiem_thach_son",
+    "target": "fact_thanh_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_dan_can_dan@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_dan_can_dan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_lieu_trong_thuong@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_lieu_trong_thuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_linh_khi_suy_yeu@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_linh_khi_suy_yeu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_nghiem_giu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_nghiem_giu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_thanh_dong_cong@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_thanh_dong_cong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_thanh_trung_lap@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_thanh_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ton_ngoc_duong>fact_tram_gac_co_nguoi_theo_doi@0",
+    "type": "KNOWS",
+    "source": "ton_ngoc_duong",
+    "target": "fact_tram_gac_co_nguoi_theo_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_canh_minh>fact_linh_khi_suy_yeu@0",
+    "type": "KNOWS",
+    "source": "trieu_canh_minh",
+    "target": "fact_linh_khi_suy_yeu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_canh_minh>fact_nghiem_giu_trung_lap@0",
+    "type": "KNOWS",
+    "source": "trieu_canh_minh",
+    "target": "fact_nghiem_giu_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_canh_minh>fact_protagonist_giu_thu@0",
+    "type": "KNOWS",
+    "source": "trieu_canh_minh",
+    "target": "fact_protagonist_giu_thu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_canh_minh>fact_thanh_dong_cong@0",
+    "type": "KNOWS",
+    "source": "trieu_canh_minh",
+    "target": "fact_thanh_dong_cong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_canh_minh>fact_thanh_trung_lap@0",
+    "type": "KNOWS",
+    "source": "trieu_canh_minh",
+    "target": "fact_thanh_trung_lap",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_canh_minh>fact_tram_gac_co_nguoi_theo_doi@0",
+    "type": "KNOWS",
+    "source": "trieu_canh_minh",
+    "target": "fact_tram_gac_co_nguoi_theo_doi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:fact_dan_can_dan>binh_dan_treo_mang@0",
+    "type": "ABOUT",
+    "source": "fact_dan_can_dan",
+    "target": "binh_dan_treo_mang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_biet_dieu_khoan_an>doan_van_khiem@0",
+    "type": "ABOUT",
+    "source": "fact_doan_biet_dieu_khoan_an",
+    "target": "doan_van_khiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_biet_dieu_khoan_an>phong_thu_nghi_hoa@0",
+    "type": "ABOUT",
+    "source": "fact_doan_biet_dieu_khoan_an",
+    "target": "phong_thu_nghi_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_nhan_lenh_giu_bi_mat_thu>doan_van_khiem@0",
+    "type": "ABOUT",
+    "source": "fact_doan_nhan_lenh_giu_bi_mat_thu",
+    "target": "doan_van_khiem",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_doan_nhan_lenh_giu_bi_mat_thu>huyen_am_tong@0",
+    "type": "ABOUT",
+    "source": "fact_doan_nhan_lenh_giu_bi_mat_thu",
+    "target": "huyen_am_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lieu_trong_thuong>dich_quan_thach_mon@0",
+    "type": "ABOUT",
+    "source": "fact_lieu_trong_thuong",
+    "target": "dich_quan_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_lieu_trong_thuong>lieu_thanh_van@0",
+    "type": "ABOUT",
+    "source": "fact_lieu_trong_thuong",
+    "target": "lieu_thanh_van",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_linh_khi_suy_yeu>huyen_am_tong@0",
+    "type": "ABOUT",
+    "source": "fact_linh_khi_suy_yeu",
+    "target": "huyen_am_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_linh_khi_suy_yeu>thanh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "fact_linh_khi_suy_yeu",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_loi_sau_dich_quan>thanh_thach_mon@0",
+    "type": "ABOUT",
+    "source": "fact_loi_sau_dich_quan",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_loi_sau_dich_quan>tram_gac_cu@0",
+    "type": "ABOUT",
+    "source": "fact_loi_sau_dich_quan",
+    "target": "tram_gac_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nghiem_giu_trung_lap>nghiem_thach_son@0",
+    "type": "ABOUT",
+    "source": "fact_nghiem_giu_trung_lap",
+    "target": "nghiem_thach_son",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_nghiem_giu_trung_lap>thanh_thach_mon@0",
+    "type": "ABOUT",
+    "source": "fact_nghiem_giu_trung_lap",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_protagonist_giu_thu>phong_thu_nghi_hoa@0",
+    "type": "ABOUT",
+    "source": "fact_protagonist_giu_thu",
+    "target": "phong_thu_nghi_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_protagonist_giu_thu>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_protagonist_giu_thu",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_protagonist_nho_tram_cu>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_protagonist_nho_tram_cu",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_protagonist_nho_tram_cu>tram_gac_cu@0",
+    "type": "ABOUT",
+    "source": "fact_protagonist_nho_tram_cu",
+    "target": "tram_gac_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_dong_cong>huyen_am_tong@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_dong_cong",
+    "target": "huyen_am_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_dong_cong>thanh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_dong_cong",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_dong_cong>thanh_thach_mon@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_dong_cong",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thanh_trung_lap>thanh_thach_mon@0",
+    "type": "ABOUT",
+    "source": "fact_thanh_trung_lap",
+    "target": "thanh_thach_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thu_co_dieu_khoan_nhuong_mach>mach_tuyen_khe@0",
+    "type": "ABOUT",
+    "source": "fact_thu_co_dieu_khoan_nhuong_mach",
+    "target": "mach_tuyen_khe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_thu_co_dieu_khoan_nhuong_mach>phong_thu_nghi_hoa@0",
+    "type": "ABOUT",
+    "source": "fact_thu_co_dieu_khoan_nhuong_mach",
+    "target": "phong_thu_nghi_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_ton_ban_tin_cho_thanh_ha>thanh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "fact_ton_ban_tin_cho_thanh_ha",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_ton_ban_tin_cho_thanh_ha>ton_ngoc_duong@0",
+    "type": "ABOUT",
+    "source": "fact_ton_ban_tin_cho_thanh_ha",
+    "target": "ton_ngoc_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_ton_muon_cuu_mon_phai_cu>ton_ngoc_duong@0",
+    "type": "ABOUT",
+    "source": "fact_ton_muon_cuu_mon_phai_cu",
+    "target": "ton_ngoc_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tram_gac_co_nguoi_theo_doi>thanh_ha_tong@0",
+    "type": "ABOUT",
+    "source": "fact_tram_gac_co_nguoi_theo_doi",
+    "target": "thanh_ha_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_tram_gac_co_nguoi_theo_doi>tram_gac_cu@0",
+    "type": "ABOUT",
+    "source": "fact_tram_gac_co_nguoi_theo_doi",
+    "target": "tram_gac_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Hàn Trọng Sơn",
+     "known_as": "Hàn Trọng Sơn"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [],
+ "thread_shifts": [],
+ "answers_dropped": [],
+ "quotes": []
+}

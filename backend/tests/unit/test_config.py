@@ -91,10 +91,11 @@ def test_bad_schema_reports_file_and_field(config_dir, file, old, new, expect_in
     assert expect_in_msg in msg
 
 
-def test_missing_file_reports_path(config_dir: Path):
+def test_a_file_missing_from_the_dir_is_taken_from_the_repo_config(config_dir: Path):
+    """D-140: thư mục config của bộ đo chỉ cần chứa phần khác `config/`. Thư mục không có file nào mới là lỗi
+    (`test_meta_config.py`), và file CÓ mặt mà hỏng vẫn báo đúng tên file (các test quanh đây)."""
     (config_dir / "models.yaml").unlink()
-    with pytest.raises(ConfigError, match="models.yaml"):
-        load_config(config_dir)
+    assert load_config(config_dir).models == load_config().models
 
 
 def test_invalid_yaml_reports_file(config_dir: Path):

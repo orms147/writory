@@ -223,6 +223,14 @@ Giới hạn: một thế giới, vài chương, một hay hai giám khảo (hai
 
 **Nhiễu của giám khảo và ngưỡng A/B:** chấm lại cùng gói truyện thêm ít nhất hai lần (`pack` cùng `--seed` và cùng thứ tự `--run`, thư mục mới mỗi lần, chỉ `judge`). σ là độ lệch chuẩn gộp của điểm trung bình solo mỗi truyện qua các lần; chênh tối thiểu giữa hai hệ là t(0,975; df) × σ × √(2/k), với df = số truyện × (số lần − 1) và k = số lần chấm lấy trung bình mỗi truyện. Đo này chỉ là nhiễu chấm lại cùng văn, chưa gồm nhiễu giữa các lần viết. Kết quả và ngưỡng đề xuất: `evals/results/2026-10-28-judge-noise-sonnet-2/notes.md`.
 
+## Chạy bộ đo bằng model Meta (D-140)
+Chủ dự án có credit Meta, nên các bộ đo chạy được bằng Muse Wonder thay OpenRouter. Cách chọn là **config**, không phải cờ: thêm `--config-dir evals/config/meta` (thư mục chỉ có `models.yaml` và `limits.yaml` với phần khác `config/`; loader gộp từng khoá vào `config/`) và `--env-file` trỏ tới file có `META_API_KEY`. Id model trong đó có tiền tố `meta/`, nên `llm/provider.py` `bench_llm` dựng `MetaClient`. Giá (để tính chi phí từ token và giữ chỗ trần) ở `models.prices` của chính file đó.
+- **Chạy được:** `bench_run`, `bench_a`, `bench_e`, `bench_g5`, `bench_g6`, `bench_g9` và `writory.export.video`. Chưa: bài C, bài D, bài F (bài F chọn giám khảo riêng ở `judge.yaml`).
+- **Key và trần:** chỉ đòi `META_API_KEY` khi mọi model là Meta (trộn với OpenRouter thì đòi cả hai). `--budget` vẫn là trần USD; Meta không báo chi phí nên chi phí thật là token x giá trong config.
+- **Kết quả:** `meta.json` (hay `result.json` của bộ guardrail, `script.json` của bộ xuất) có `provider` và model từng vai.
+- **Đọc kết quả:** số đo bằng Muse không so thẳng với số đo bằng Luna, và không dùng để chọn model cho sản phẩm (D-102).
+- Ví dụ thử đường đi (khởi tạo một đề, tối đa vài lời gọi): `cd backend && uv run python -m writory.pipeline.bench_run --label meta-thu --setup-only --config-dir ../evals/config/meta --env-file <.env> --budget <USD>`.
+
 ## Chạy cả truyện
 Mốc tuần 2 (design §12). Không phải một bài chấm điểm: lệnh đi hết đường người chơi trên một truyện để đo chi phí theo vai, đếm lỗi, và để đọc tay. Cách làm: D-42, D-43. Code: `writory.pipeline.bench_run`.
 - **Đề** (khai trước, `evals/scenarios/story_run/`; đã chạy thật thì không sửa đè, tăng `version` hoặc thêm file đề): tag, độ dài, quy ước tên, seed, số cảnh mỗi chương, số lần tự bấm thử lại, `max_tokens_per_call`, giá USD/1M token của mọi model config đang dùng (chỉ để giữ chỗ ngân sách). Đề mặc định: `tu-tien-ngan.yaml`. Đề Truyện vừa cho mốc chạy liền 10 chương: `ky-ao-vua.yaml`. Đề Truyện dài (mức chưa mở cho người chơi, D-88): `long-tu-tien.yaml`; `--dry-run` dựng kế hoạch giả đủ số mốc của mức đề chọn.

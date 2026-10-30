@@ -32,7 +32,14 @@ from typing import Any
 
 import yaml
 
-from writory.config import REPO_ROOT, AppConfig, CostLimits, Settings, load_config
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    CostLimits,
+    config_sources,
+    load_config,
+)
 from writory.errors import WritoryError
 from writory.llm.base import LLMClient, Message
 from writory.safety.bench_g5 import (
@@ -172,9 +179,9 @@ def _print(result: G6Result, cost_text: str) -> None:
 
 async def _main(args: argparse.Namespace) -> int:
     from writory.llm.cost import CostTracker, MeteredClient
-    from writory.llm.openrouter import OpenRouterClient
+    from writory.llm.provider import bench_llm
 
-    config = load_config()
+    config = load_config(args.config_dir)
     doc = load_set(args.cases)
     if args.dry_run:
         fake = DryRunClient(_oracle(doc), config=config)
@@ -183,16 +190,15 @@ async def _main(args: argparse.Namespace) -> int:
                        f"USD (token ra giả định {DRY_RUN_COMPLETION_TOKENS} mỗi lời gọi)")
         return 0
     cap = args.budget if args.budget is not None else config.limits.cost_usd.require("per_story")
-    key = Settings().openrouter_api_key
-    if key is None:
-        raise SystemExit("thiếu OPENROUTER_API_KEY (key của chủ dự án cho bộ đo)")
     tracker = CostTracker(CostLimits(per_scene=cap, per_chapter=cap, per_story=cap))
-    result = await score(doc, llm=MeteredClient(OpenRouterClient(key), tracker), config=config)
+    llm = bench_llm(config, args.env_file, models=[config.models.roles.overreach])
+    result = await score(doc, llm=MeteredClient(llm, tracker), config=config)
     _print(result, f"chi phí {tracker.story_usd:.4f} USD")
     if args.out:
         meta = {
-            **run_meta([REPO_ROOT / "config" / "models.yaml",
-                        REPO_ROOT / "config" / "limits.yaml"], args.cases),
+            **run_meta([*config_sources(args.config_dir, "models.yaml"),
+                        *config_sources(args.config_dir, "limits.yaml")], args.cases,
+                       config=config, models=[config.models.roles.overreach]),
             "model": config.models.roles.overreach,
             "reasoning": config.models.role_reasoning.overreach,
             "prompt": PROMPT_VERSION,
@@ -214,6 +220,10 @@ def build_parser() -> argparse.ArgumentParser:
                         help="bộ câu (mặc định evals/redteam/g6_overreach.yaml)")
     parser.add_argument("--budget", type=positive_float,
                         help="trần chi phí của lần chạy, USD (mặc định limits.cost_usd.per_story)")
+    parser.add_argument("--config-dir", type=Path, default=REPO_CONFIG_DIR,
+                        help="thư mục config (D-140: evals/config/meta dùng model Meta); mặc định config/")
+    parser.add_argument("--env-file", type=Path, default=REPO_ROOT / ".env",
+                        help="file .env chứa key của chủ dự án (OPENROUTER_API_KEY hay META_API_KEY)")
     parser.add_argument("--dry-run", action="store_true",
                         help="không gọi model: đếm lời gọi và ước tính chi phí")
     return parser

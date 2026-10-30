@@ -44,7 +44,14 @@ from typing import Any, Literal
 import httpx
 from pydantic import BaseModel, ConfigDict
 
-from writory.config import REPO_CONFIG_DIR, REPO_ROOT, AppConfig, ConfigError, LimitNotSetError
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    ConfigError,
+    LimitNotSetError,
+    config_bytes,
+)
 from writory.config import load_config as load_app_config
 from writory.errors import ErrorCode, WritoryError
 from writory.guard.state import GraphState
@@ -58,6 +65,7 @@ from writory.llm.base import (
     role_extra,
 )
 from writory.llm.cost import CostTracker, MeteredClient
+from writory.llm.provider import llm_identity
 from writory.llm.retry import with_json_retries
 from writory.pipeline import bench_a_narrator as narr
 from writory.pipeline.bench_a_data import (
@@ -89,7 +97,7 @@ from writory.pipeline.bench_a_systems import (
     context_rolling,
 )
 from writory.pipeline.bench_e import TYPICAL_NARRATOR_OUTPUT_TOKENS
-from writory.pipeline.bench_run import BudgetedClient, StepTracker
+from writory.pipeline.bench_run import BudgetedClient, StepTracker, merged_prices
 from writory.pipeline.narrator import BlockReason, NarratorOutput
 from writory.pipeline.summary import SummaryOutput, summarize_chapter
 from writory.quality.bench_d import (
@@ -99,7 +107,6 @@ from writory.quality.bench_d import (
     Store,
     _now,
     git_state,
-    load_keys,
 )
 from writory.safety.redact import install_log_redaction, redact
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
@@ -415,8 +422,8 @@ def run_problems(config: AppConfig, data: BenchData, systems: Sequence[str] = SY
     for role in roles:
         try:
             model = require_model(config.models.roles, role)
-            if model not in data.run.prices:
-                problems.append(f"run.yaml không có giá (prices) cho model vai {role} {model}: cần "
+            if model not in merged_prices(config, data.run.prices):
+                problems.append(f"run.yaml và config/models.yaml không có giá (prices) cho model vai {role} {model}: cần "
                                 "để giữ chỗ ngân sách")
         except WritoryError as e:
             problems.append(e.detail)
@@ -453,8 +460,9 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "dry_run": opts.dry_run,
         "fake": opts.fake if opts.dry_run else None,
         "data_sha256": dict(data.hashes),
-        "config_sha256": {n: _sha256((config_dir / n).read_bytes())
+        "config_sha256": {n: _sha256(config_bytes(config_dir, n))
                           for n in ("models.yaml", "limits.yaml")},
+        "provider": llm_identity(config, [models.roles.narrator, models.roles.summary])["provider"],
         "answerer": {"model": models.roles.narrator, "reasoning": models.role_reasoning.narrator},
         "summarizer": {"model": models.roles.summary, "reasoning": models.role_reasoning.summary,
                        "prompt": SUMMARY_PROMPT_VERSION},
@@ -533,7 +541,8 @@ class Runner:
             self._log(f"!! DỪNG ({kind}): {message}")
 
     def _gate(self, calls: list[dict[str, Any]], chapter: int, attempt: int = 1) -> BudgetedClient:
-        gate = BudgetedClient(self.answerer, budget=self.budget, prices=self.data.run.prices,
+        gate = BudgetedClient(self.answerer, budget=self.budget,
+                              prices=merged_prices(self.config, self.data.run.prices),
                               max_tokens=self.data.run.max_tokens_per_call,
                               tracker=StepTracker(self.config.limits.cost_usd),
                               record=calls.append, clock=self._clock)
@@ -967,7 +976,8 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int,
     `systems` rỗng: các hệ đang bật trong run.yaml."""
     systems = resolve_systems(data.run, systems)
     model = require_model(config.models.roles, "narrator")
-    price = data.run.prices[model]
+    prices = merged_prices(config, data.run.prices)
+    price = prices[model]
     cap = config.limits.context.summary_max_chars or 1000
     fake_summaries = {k: "x" * cap for k in range(1, max(data.chapters))}
     builder = ContextBuilder(data, data.state_at, fake_summaries)
@@ -999,7 +1009,7 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int,
         lines.append(f"| {LABELS[s]} | {len(questions) * samples} | "
                      f"{round(sum(chars) / len(chars))} | {tokens_in} / {tokens_out} | {usd:.4f} |")
     if "rolling" in systems:
-        sprice = data.run.prices.get(require_model(config.models.roles, "summary"), price)
+        sprice = prices.get(require_model(config.models.roles, "summary"), price)
         sums = sum(math.ceil(len(data.story[k]) / EST_CHARS_PER_TOKEN) for k in fake_summaries)
         usd = (sums * sprice.input + TYPICAL_SUMMARY_OUTPUT_TOKENS * len(fake_summaries)
                * sprice.output) / 1e6
@@ -1050,16 +1060,14 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     if opts.dry_run:
         return await run_bench(data, opts, config=config, config_dir=config_dir, argv=argv)
 
-    from writory.llm.openrouter import OpenRouterClient, call_deadline
+    from writory.llm.openrouter import call_deadline
+    from writory.llm.provider import bench_llm
 
-    keys = load_keys(Path(args.env_file), ["openrouter"])
-    assert keys.openrouter_api_key is not None
     http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
     try:
-        return await run_bench(data, opts, config=config,
-                               answerer=OpenRouterClient(keys.openrouter_api_key, http=http,
-                                                         deadline_s=call_deadline(config)),
-                               config_dir=config_dir, argv=argv)
+        answerer = bench_llm(config, Path(args.env_file), http=http, deadline_s=call_deadline(config),
+                             models=[m for m in (config.models.roles.narrator, config.models.roles.summary) if m])
+        return await run_bench(data, opts, config=config, answerer=answerer, config_dir=config_dir, argv=argv)
     finally:
         await http.aclose()
 

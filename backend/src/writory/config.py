@@ -6,7 +6,7 @@ hàm đó báo lỗi rõ ràng chứ không coi là vô hạn.
 
 from ipaddress import IPv4Network, IPv6Network, ip_network
 from pathlib import Path
-from typing import Annotated, Literal, Self
+from typing import Annotated, Any, Literal, Self
 
 import yaml
 from pydantic import (
@@ -265,6 +265,14 @@ class RoleModels(_Section):
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
 
+# Model Meta chỉ cho bộ đo (D-140): id trong config có tiền tố này, và `llm/meta.py` bỏ nó khi gửi. Sản phẩm cho
+# người chơi chạy bằng key OpenRouter của họ nên không nhận model mang tiền tố này.
+META_MODEL_PREFIX = "meta/"
+
+
+def is_meta_model(model: str | None) -> bool:
+    return bool(model) and model.startswith(META_MODEL_PREFIX)
+
 
 class RoleReasoning(_Strict):
     """Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model."""
@@ -297,6 +305,9 @@ class ModelPrice(_Strict):
     model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
     input: NonNegativeFloat = Field(alias="in")
     output: NonNegativeFloat = Field(alias="out")
+    # Giá token vào đọc từ cache (USD / 1 triệu token); null = tính như token vào thường. Chỉ model Meta của bộ đo
+    # cần: chi phí của nó tính từ token x giá chứ không có `usage.cost` (D-140).
+    cached_in: NonNegativeFloat | None = None
 
 
 class ModelsConfig(_Strict):
@@ -513,13 +524,46 @@ _FILES: dict[str, tuple[str, type[BaseModel]]] = {
 }
 
 
-def _load_file(path: Path, schema: type[BaseModel]) -> BaseModel:
+CONFIG_FILE_NAMES = tuple(name for name, _ in _FILES.values())
+
+
+def _read_yaml(path: Path) -> Any:
     try:
-        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+        return yaml.safe_load(path.read_text(encoding="utf-8"))
     except OSError as e:
         raise ConfigError(f"{path.name}: không đọc được file ({path}): {e}") from e
     except yaml.YAMLError as e:
         raise ConfigError(f"{path.name}: YAML không hợp lệ: {e}") from e
+
+
+def _deep_merge(base: Any, over: Any) -> Any:
+    """Gộp từng khoá: hai bên đều là bảng thì gộp tiếp, còn lại (số, chuỗi, null, danh sách) bên `over` thay."""
+    if isinstance(base, dict) and isinstance(over, dict):
+        return {**base, **{k: _deep_merge(base[k], v) if k in base else v for k, v in over.items()}}
+    return over
+
+
+def config_sources(config_dir: Path, name: str) -> tuple[Path, ...]:
+    """Các file tạo nên config `name` của `config_dir`, theo thứ tự gộp. Thư mục config ĐỦ file (mọi file của
+    `config/`, như bản sao để thử) đứng một mình, như trước. Thư mục THIẾU file là thư mục của bộ đo, chỉ chứa phần
+    KHÁC `config/` (D-140, ví dụ `evals/config/meta`): `config/<name>` là nền, file cùng tên trong thư mục (nếu có)
+    đè từng khoá lên nền, nên số ở `limits.yaml` vẫn một chỗ."""
+    own = config_dir / name
+    if config_dir == REPO_CONFIG_DIR or all((config_dir / n).exists() for n in CONFIG_FILE_NAMES):
+        return (own,)
+    return (REPO_CONFIG_DIR / name, own) if own.exists() else (REPO_CONFIG_DIR / name,)
+
+
+def config_bytes(config_dir: Path, name: str) -> bytes:
+    """Nội dung các nguồn của config `name`, để băm: đổi nền hay phần đè đều đổi hash."""
+    return b"\n".join(path.read_bytes() for path in config_sources(config_dir, name))
+
+
+def _load_file(config_dir: Path, name: str, schema: type[BaseModel]) -> BaseModel:
+    raw: Any = None
+    for path in config_sources(config_dir, name):
+        loaded = _read_yaml(path)
+        raw = loaded if raw is None else _deep_merge(raw, loaded) if loaded is not None else raw
     try:
         return schema.model_validate(raw)
     except ValidationError as e:
@@ -527,12 +571,24 @@ def _load_file(path: Path, schema: type[BaseModel]) -> BaseModel:
             f"{'.'.join(str(p) for p in err['loc']) or '(gốc)'}: {err['msg']}"
             for err in e.errors()
         )
-        raise ConfigError(f"{path.name}: sai schema: {problems}") from e
+        raise ConfigError(f"{name}: sai schema: {problems}") from e
 
 
 def load_config(config_dir: Path = REPO_CONFIG_DIR) -> AppConfig:
-    parts = {key: _load_file(config_dir / name, schema) for key, (name, schema) in _FILES.items()}
+    if config_dir != REPO_CONFIG_DIR and not any(config_dir.glob("*.yaml")):
+        # Không để đường dẫn gõ sai lặng lẽ thành config/ thật.
+        raise ConfigError(f"{config_dir}: không có file config nào (*.yaml)")
+    parts = {key: _load_file(config_dir, name, schema) for key, (name, schema) in _FILES.items()}
     return AppConfig(**parts)
+
+
+def product_model_problems(config: AppConfig) -> list[str]:
+    """Chỗ nào trong config của sản phẩm có model Meta (D-140). Rỗng là đủ. Người chơi chạy bằng key OpenRouter của
+    họ (D-2); model Meta chỉ bộ đo dùng, bằng key của chủ dự án."""
+    problems = [f"roles.{role}: {model}" for role, model in config.models.roles.model_dump().items()
+                if is_meta_model(model)]
+    problems += [f"writer_tiers[{t.id}]: {t.model}" for t in config.models.writer_tiers if is_meta_model(t.model)]
+    return problems
 
 
 # --- biến môi trường -------------------------------------------------------------------
