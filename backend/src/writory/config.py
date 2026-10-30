@@ -16,6 +16,7 @@ from pydantic import (
     Field,
     NonNegativeFloat,
     NonNegativeInt,
+    PositiveFloat,
     PositiveInt,
     SecretStr,
     ValidationError,
@@ -157,6 +158,9 @@ class VideoExportLimits(_Section):
     shot_seconds_max: PositiveInt | None = None
     max_output_tokens: PositiveInt | None = None  # `max_tokens` của mỗi lời gọi
     visual_max_chars: PositiveInt | None = None  # mô tả tiếng Anh cố định của một nhân vật hay nơi chốn
+    # Tốc độ thoại tối đa theo thẻ ngôn ngữ chính: chữ mỗi giây (zh, ja) hay từ mỗi giây (ngôn ngữ khác). Ngôn
+    # ngữ không khai thì không kiểm (D-127).
+    dialogue_max_per_second: dict[str, PositiveFloat] | None = None
 
     @model_validator(mode="after")
     def _seconds_ordered(self) -> Self:

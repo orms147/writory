@@ -83,6 +83,14 @@ video_export:
   shot_seconds_max: 12
   max_output_tokens: 6000    # `max_tokens` của mỗi lời gọi (gồm token suy luận)
   visual_max_chars: 300      # mô tả tiếng Anh cố định của một nhân vật hay nơi chốn
+  # Tốc độ thoại tối đa của một shot (D-127; số tạm, D-47): zh, ja tính chữ mỗi giây (không tính dấu câu),
+  # ngôn ngữ khác tính từ mỗi giây. Thoại của shot vượt tốc độ này nhân thời lượng thì model làm lại, rồi code
+  # tách shot. Thẻ ngôn ngữ không có ở đây thì không kiểm.
+  dialogue_max_per_second:
+    zh: 5
+    ja: 6
+    vi: 5
+    en: 3.5
 facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; số tạm, D-47). 0 = tắt
   max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
   text_max_chars: 160          # chữ của Fact: một câu ngắn
