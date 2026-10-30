@@ -1,0 +1,217 @@
+{
+ "$defs": {
+  "ExtractedEdge": {
+   "additionalProperties": false,
+   "properties": {
+    "type": {
+     "enum": [
+      "RELATES_TO",
+      "LOCATED_AT",
+      "HOLDS",
+      "MEMBER_OF",
+      "PARTICIPATED_IN",
+      "DIED_IN",
+      "KNOWS",
+      "TOLD",
+      "TOLD_TO",
+      "ABOUT",
+      "RESOLVED_IN",
+      "REVEALED_TO_PLAYER"
+     ],
+     "title": "Type",
+     "type": "string"
+    },
+    "source": {
+     "title": "Source",
+     "type": "string"
+    },
+    "target": {
+     "title": "Target",
+     "type": "string"
+    },
+    "kind": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Kind"
+    },
+    "score": {
+     "anyOf": [
+      {
+       "type": "integer"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Score"
+    },
+    "how": {
+     "anyOf": [
+      {
+       "enum": [
+        "chứng kiến",
+        "được kể",
+        "suy ra",
+        "tự biết",
+        "tự làm"
+       ],
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "How"
+    },
+    "told_by": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Told By"
+    },
+    "quote": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Quote"
+    },
+    "known_as": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Known As"
+    },
+    "role": {
+     "anyOf": [
+      {
+       "type": "string"
+      },
+      {
+       "type": "null"
+      }
+     ],
+     "title": "Role"
+    }
+   },
+   "required": [
+    "type",
+    "source",
+    "target",
+    "kind",
+    "score",
+    "how",
+    "told_by",
+    "quote",
+    "known_as",
+    "role"
+   ],
+   "title": "ExtractedEdge",
+   "type": "object"
+  },
+  "ExtractedMilestone": {
+   "additionalProperties": false,
+   "description": "Mốc cốt truyện đã diễn ra trên trang (D-116): `id` dạng `m<số>` trong mục \"Mốc cốt truyện chưa\nxảy ra\", `quote` là câu nguyên văn cho thấy điều mốc mô tả đã xảy ra.",
+   "properties": {
+    "id": {
+     "title": "Id",
+     "type": "string"
+    },
+    "quote": {
+     "title": "Quote",
+     "type": "string"
+    }
+   },
+   "required": [
+    "id",
+    "quote"
+   ],
+   "title": "ExtractedMilestone",
+   "type": "object"
+  },
+  "NewFact": {
+   "additionalProperties": false,
+   "description": "Sự thật mới từ trang (D-93). `ref` là nhãn tạm cho các cạnh trong cùng đầu ra; id do code sinh.",
+   "properties": {
+    "ref": {
+     "title": "Ref",
+     "type": "string"
+    },
+    "text": {
+     "title": "Text",
+     "type": "string"
+    },
+    "quote": {
+     "title": "Quote",
+     "type": "string"
+    }
+   },
+   "required": [
+    "ref",
+    "text",
+    "quote"
+   ],
+   "title": "NewFact",
+   "type": "object"
+  }
+ },
+ "additionalProperties": false,
+ "properties": {
+  "edges": {
+   "items": {
+    "$ref": "#/$defs/ExtractedEdge"
+   },
+   "title": "Edges",
+   "type": "array"
+  },
+  "close": {
+   "items": {
+    "type": "string"
+   },
+   "title": "Close",
+   "type": "array"
+  },
+  "new_facts": {
+   "items": {
+    "$ref": "#/$defs/NewFact"
+   },
+   "title": "New Facts",
+   "type": "array"
+  },
+  "milestones": {
+   "items": {
+    "$ref": "#/$defs/ExtractedMilestone"
+   },
+   "title": "Milestones",
+   "type": "array"
+  }
+ },
+ "required": [
+  "edges",
+  "close",
+  "new_facts",
+  "milestones"
+ ],
+ "title": "ExtractOutput",
+ "type": "object"
+}
