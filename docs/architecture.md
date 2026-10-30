@@ -202,7 +202,7 @@ stateDiagram-v2
 | Node | Hàm | Việc chính | Vai model |
 |---|---|---|---|
 | `start` | `_start` | `_preflight` (mọi model và ngưỡng phải đặt, `ensure_budget`); chương `pending` thì `CHAPTER_PENDING`; quá chương cuối thì `STORY_COMPLETE`; dựng danh mục thực thể, tác động của lựa chọn dẫn tới chương (`_choice_prelude`, D-55), tóm tắt chương trước, kho đoạn trang nếu bật (D-85) | |
-| `context` | `_context` | `writer_context` ở chương trước (lớp `truth`); mục tiêu chương `chapter_goals` (D-49) trên nền đã commit cộng các cảnh trước; mốc đã diễn ra (dấu ở nút `Chapter`, cộng mốc các cảnh trước của chương) thì ghi "đã xảy ra" thay vì giục lại (D-116) | |
+| `context` | `_context` | `writer_context` ở chương trước (lớp `truth`); mục tiêu chương `chapter_goals` (D-49) trên nền đã commit cộng các cảnh trước; mốc đã diễn ra (dấu ở nút `Chapter`, cộng mốc các cảnh trước của chương) thì ghi "đã xảy ra" thay vì giục lại (D-116); cao trào có dấu trước khoảng chỉ là ứng viên, cao trào đã xong thì mục tiêu vài chương sau đòi viết hậu quả (D-142) | |
 | `outline` | `_outline` | dàn ý cảnh; cảnh cuối mà chưa dàn ý nào định gỡ mạch đến hạn thì thử lại (D-82); id lạ bị lọc (G11) | `outline` |
 | `write` | `_write` | văn cảnh, hoặc viết lại kèm lỗi của bản trước | model viết theo `writer_tier` |
 | `review` | `_review` | chuỗi kiểm ở bảng dưới, rồi ra `verdict` | `extract`, `moderate`; `overreach` chỉ khi hành động tự viết dẫn tới chương vượt luật (D-138) |

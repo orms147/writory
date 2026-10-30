@@ -1982,3 +1982,63 @@ async def test_appearance_ceiling_is_the_configured_number(tmp_path):
     _, _, _, store = await run(
         full_script(), tmp_path, limits={"context": {"character_appearance_max_chars": 12}})
     assert set(store.appearance_args) == {12}
+
+
+# --- cao trào bằng code (D-142) ------------------------------------------------------------------------
+
+CL_PLAN = plan_with(milestones=[
+    {"kind": "turning_point", "goal": "Lan lộ ra là người biết chuyện thanh kiếm", "from_chapter": 3,
+     "to_chapter": 4},
+    {"kind": "climax", "goal": "Minh bỏ phố Bến Sương", "from_chapter": 6, "to_chapter": 8},
+    {"kind": "ending", "goal": "Minh chọn số phận Thanh Sương", "from_chapter": 12,
+     "to_chapter": 12},
+])
+CL_EARLY = {"id": "m2", "quote": MS_QUOTE}  # cao trào khoảng 6-8 mà bộ trích đánh dấu ở chương 4
+CL_INSIDE_PLAN = plan_with(milestones=[
+    {"kind": "turning_point", "goal": "Lan lộ ra là người biết chuyện thanh kiếm", "from_chapter": 3,
+     "to_chapter": 4},
+    {"kind": "climax", "goal": "Minh bỏ phố Bến Sương", "from_chapter": 4, "to_chapter": 4},
+    {"kind": "ending", "goal": "Minh chọn số phận Thanh Sương", "from_chapter": 12,
+     "to_chapter": 12},
+])
+
+
+async def test_an_early_climax_mark_is_a_candidate_the_extractor_may_mark_again(tmp_path):
+    store = MemoryStore()
+    await run(ms_script(extract_reply(milestones=[CL_EARLY])), tmp_path / "a", store=store,
+              plan=CL_PLAN)
+    assert ms_chapter_node(store.commits[-1][2]).props["milestones"] == [2]  # dấu vẫn được ghi
+    again = ms_script(extract_reply(), extract_reply())
+    _, _, llm, _ = await run(again, tmp_path / "b", store=store, plan=CL_PLAN,
+                             req=request(commit_id="c-ch5"))
+    outline = calls_of(llm, "outline")[0][-1].content
+    assert "CHƯA tính là đã xảy ra" in outline and "dấu sớm ở chương 4" in outline
+    assert "Mốc ĐÃ xảy ra rồi" not in outline.split("Mốc cốt truyện")[1]
+    assert "- m2 | chương 6–8" in extractor_calls(llm)[0][-1].content  # chưa xong: còn được đánh dấu
+
+
+async def test_the_chapter_after_a_climax_asks_for_consequences_not_for_a_pause(tmp_path):
+    store = MemoryStore()
+    await run(ms_script(extract_reply(milestones=[CL_EARLY])), tmp_path / "a", store=store,
+              plan=CL_INSIDE_PLAN)
+    again = ms_script(extract_reply(), extract_reply())
+    _, _, llm, _ = await run(again, tmp_path / "b", store=store, plan=CL_INSIDE_PLAN,
+                             req=request(commit_id="c-ch5"))
+    for role in ("outline", "writer"):
+        body = calls_of(llm, role)[0][-1].content
+        assert "HẬU QUẢ của nó" in body and "xảy ra ở chương 4" in body, role
+    # Chỉ hai vai thấy truth nhận mục tiêu chương (G1).
+    for role in ("choices", "extract", "summary", "moderate"):
+        for call in calls_of(llm, role):
+            assert "HẬU QUẢ của nó" not in " ".join(m.content for m in call), role
+
+
+async def test_aftermath_off_leaves_a_done_climax_outside_its_window_unlisted(tmp_path):
+    store = MemoryStore()
+    await run(ms_script(extract_reply(milestones=[CL_EARLY])), tmp_path / "a", store=store,
+              plan=CL_INSIDE_PLAN)
+    again = ms_script(extract_reply(), extract_reply())
+    _, _, llm, _ = await run(again, tmp_path / "b", store=store, plan=CL_INSIDE_PLAN,
+                             req=request(commit_id="c-ch5"),
+                             limits={"context": {"climax_aftermath_chapters": None}})
+    assert "HẬU QUẢ của nó" not in calls_of(llm, "outline")[0][-1].content
