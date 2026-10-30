@@ -143,5 +143,76 @@ def test_round_two_hard_cases_cover_seen_only_others_pay_and_real_exposure():
     assert not any(rewrite(c) for c in by_tag["exposure-cost"] + by_tag["real-cost"])
     # Hai thế giới (phố bến sông không phép, thế giới tu tiên).
     assert {c["action"] for c in round2} >= {"doi-linh"} and len({c["action"] for c in round2}) >= 2
-    old_ids = {c["id"] for c in CASES if "round2" not in c["tags"]}
+    old_ids = {c["id"] for c in CASES if not {"round2", "round3"} & set(c["tags"])}
     assert len(old_ids) == 24 and not {c["id"] for c in round2} & old_ids
+
+
+# --- vòng ba (D-146): hậu quả của việc thử, và cái giá chỉ được nhắc --------------------------------
+
+ROUND3 = [c for c in CASES if "round3" in c["tags"]]
+
+
+def _fold(text: str) -> str:
+    import unicodedata
+
+    plain = unicodedata.normalize("NFD", text.lower()).replace("đ", "d")
+    return "".join(ch for ch in plain if not unicodedata.combining(ch))
+
+
+def _shingles(text: str, n: int = 4) -> set[tuple[str, ...]]:
+    import re
+
+    words = re.sub(r"[^\w\s]", " ", _fold(text)).split()
+    return {tuple(words[i:i + n]) for i in range(max(len(words) - n + 1, 0))}
+
+
+def test_round_three_cases_cover_the_attempt_that_hurts_and_the_cost_that_is_only_mentioned():
+    assert len(ROUND3) >= 9 and all(c["set"] == "hard" for c in ROUND3)
+    by_tag: dict[str, list[dict]] = {}
+    for c in ROUND3:
+        for tag in c["tags"]:
+            by_tag.setdefault(tag, []).append(c)
+    assert {"failed-after-try", "mention-only", "control"} <= set(by_tag)
+    tried = by_tag["failed-after-try"]
+    assert len(tried) >= 4 and all(c["expected"] == "failed" for c in tried)
+    # Chỉ vượt luật thế giới mới đổi quyết định giữa `failed` và `cost` (cost bị viết lại).
+    assert all(c["feasibility"] == "beyond_world_rules" for c in tried)
+    assert any(c.get("earlier_refs") for c in tried)  # một ca có cú ngã nằm ở cảnh trước
+    mentioned = by_tag["mention-only"]
+    assert len(mentioned) >= 3 and all(c["expected"] == "granted" for c in mentioned)
+    assert all(c["feasibility"] == "beyond_character" for c in mentioned)
+    assert all(rewrite(c) for c in mentioned)
+    # Hai ca đối chứng chống sửa quá tay: giá thật vẫn là `cost`, điều bất khả xảy ra một phần vẫn là `cost`.
+    controls = by_tag["control"]
+    assert {c["feasibility"] for c in controls} == {"beyond_character", "beyond_world_rules"}
+    assert all(c["expected"] == "cost" for c in controls)
+    assert {c["action"] for c in ROUND3} >= {"doi-linh", "chem-nguyen-anh"}
+
+
+def test_round_three_cases_are_new_and_the_prompt_does_not_echo_any_case():
+    """Ca vòng ba viết bằng chữ khác các ca phát triển (hai ca ổn định sai ở lần đo đầu) và các ca cũ;
+    đề `overreach-3` nêu quy tắc chung, không chép cụm của ca nào (cụm bốn từ)."""
+    from writory.safety.overreach import SYSTEM_PROMPT
+
+    def case_text(c: dict) -> str:
+        inputs = case_inputs(c, DOC)
+        return " ".join([inputs["action"], *inputs["earlier"], inputs["scene_text"]])
+
+    prompt = _shingles(SYSTEM_PROMPT)
+    others = [c for c in CASES if "round3" not in c["tags"]]
+    dev_ids = {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}
+    for case in CASES:
+        if case["id"] in dev_ids or "round3" in case["tags"]:  # ca cũ khác cố ý bắt chước giọng đề (tấn công)
+            assert not prompt & _shingles(case_text(case)), case["id"]
+    def page_text(c: dict) -> str:
+        """Văn của ca trừ câu hành động và đoạn mở đầu của cảnh (dựng tình huống, dùng chung giữa các ca:
+        cùng một cuộc vây lính, khác kết quả); phần so là diễn biến và kết quả."""
+        inputs = case_inputs(c, DOC)
+        outcome = inputs["scene_text"].split("\n\n", 1)[-1]
+        return " ".join([*inputs["earlier"], outcome])
+
+    old = set().union(*(_shingles(page_text(c)) for c in others))
+    for case in ROUND3:
+        assert len(_shingles(page_text(case)) & old) <= 2, case["id"]
+    dev = {c["id"] for c in CASES if c["id"] in {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}}
+    assert dev == {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}  # ca phát triển còn nguyên
