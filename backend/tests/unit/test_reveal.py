@@ -41,7 +41,7 @@ def tt3_reveals(text: str = TT3_SCENE, view: PlayerView | None = None, skip=None
     state = tt3_state()
     view = view or player_view_of(state, 1)
     return auto_reveals(text, chapter=1, chapter_id="ch1", names=state.named_nodes(), view=view,
-                        skip={PROTAGONIST_ID} if skip is None else skip)
+                        skip={PROTAGONIST_ID} if skip is None else skip, no_new_name=())
 
 
 def test_tu_tien_3_scene_names_are_not_blocked():
@@ -135,7 +135,7 @@ def reveal(text: str, names=NAMES) -> dict[str, str]:
     view = PlayerView("s", 1, (), ())
     return {e.source: e.props["known_as"]
             for e in auto_reveals(text, chapter=1, chapter_id="ch1", names=names, view=view,
-                                  skip={PROTAGONIST_ID})}
+                                  skip={PROTAGONIST_ID}, no_new_name=())}
 
 
 @pytest.mark.parametrize("text", [
@@ -159,7 +159,7 @@ def test_long_sentence_quote_is_cut_at_word_boundaries_and_stays_verbatim():
     filler = " ".join(["mưa"] * 80)
     text = f"Ngoài hiên {filler} rồi Đoàn Khương bước vào giữa sân và {filler} mãi không dứt."
     [edge] = auto_reveals(text, chapter=2, chapter_id="ch2", names={"a": ("Đoàn Khương",)},
-                          view=PlayerView("s", 2, (), ()), skip=())
+                          view=PlayerView("s", 2, (), ()), skip=(), no_new_name=())
     quote = edge.props["quote"]
     assert quote_in_text(quote, text) and "Đoàn Khương" in quote
     assert len(quote) <= 200

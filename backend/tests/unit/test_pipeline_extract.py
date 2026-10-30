@@ -135,7 +135,7 @@ async def test_extract_changes_end_to_end_with_fake_model():
     fake = FakeLLM.scripted([json.dumps(reply, ensure_ascii=False)])
     result = await extract_changes(fake, "m", chapter=2, chapter_id="ch2", commit_id="c2",
                                    protagonist_id=PROTAGONIST, chapter_text=text,
-                                   entities=entities, open_edges=open_edges)
+                                   entities=entities, open_edges=open_edges, locked=())
     assert len(result.package.edges) == 1 and result.package.close[0].id == "holds_sword_gu"
     assert fake.schemas == [ExtractOutput]
 
@@ -146,7 +146,7 @@ async def test_extract_changes_raises_bad_response_on_invalid_json():
     with pytest.raises(WritoryError) as exc:
         await extract_changes(fake, "m", chapter=1, chapter_id="ch1", commit_id="c1",
                               protagonist_id=PROTAGONIST, chapter_text=text,
-                              entities=entities, open_edges=open_edges)
+                              entities=entities, open_edges=open_edges, locked=())
     assert exc.value.code == ErrorCode.LLM_BAD_RESPONSE
 
 
@@ -306,7 +306,7 @@ async def test_extract_changes_passes_threads_to_the_prompt():
     fake = FakeLLM.scripted([json.dumps({"edges": [], "close": []})])
     await extract_changes(fake, "m", chapter=2, chapter_id="ch2", commit_id="c2",
                           protagonist_id=PROTAGONIST, chapter_text=text, entities=entities,
-                          open_edges=open_edges, threads=[_thread("t_sealed_letter", "due")])
+                          open_edges=open_edges, threads=[_thread("t_sealed_letter", "due")], locked=())
     assert "- t_sealed_letter | chương 2–6 | đến hạn ở chương này" in fake.calls[0][-1].content
 
 
@@ -365,7 +365,7 @@ async def test_extract_changes_drops_the_early_resolution_from_the_model_reply()
     result = await extract_changes(
         FakeLLM.scripted([reply]), "m", chapter=8, chapter_id="ch8", commit_id="c",
         protagonist_id="protagonist", chapter_text=_RES_TEXT, entities=_RES_ENTITIES,
-        open_edges=[], threads=[_thread("dau_vet_dau_gia", "later", low=9, high=12)])
+        open_edges=[], threads=[_thread("dau_vet_dau_gia", "later", low=9, high=12)], locked=())
     assert result.package.edges == [] and len(result.rejected) == 1
     assert "D-84" in result.rejected[0][1]
 
@@ -737,7 +737,7 @@ async def test_extract_changes_returns_the_accepted_marks_and_the_rejected_ones(
     got = await extract_changes(
         llm, "m", chapter=2, chapter_id="ch2", commit_id="c", protagonist_id=PROTAGONIST,
         chapter_text=_MS_TEXT, entities=entities, open_edges=open_edges, milestones=_PENDING,
-        milestones_done={})
+        milestones_done={}, locked=())
     assert got.milestones == (MilestoneMark(2, "Minh bước xuống bậc thang đá"),)
     assert any(r[0] == "mốc m3" for r in got.rejected)
     assert "m2 | chương 3–4" in llm.calls[0][1].content

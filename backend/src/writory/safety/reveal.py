@@ -6,8 +6,13 @@ bảo vệ. Tên khác của lớp truth được phép xuất hiện trên tran
 hay biệt danh xuất hiện nguyên văn trong chữ cảnh, chưa có trong player_view và bộ trích chưa hé lộ:
 - `quote` là câu chứa tên, nguyên văn (G3); `known_as` đúng chuỗi đã khớp (D-17);
 - `valid_from_chapter` là chương đang viết (D-21);
-- không đụng nhân vật chính và nút có tên bị bảo vệ (`skip`), nút đã hé lộ, nút không có tên
-  (Thread, Fact...: `names` chỉ có nút có tên).
+- không đụng nhân vật chính và nút có tên bị bảo vệ (`skip`), nút không có tên (Thread, Fact...:
+  `names` chỉ có nút có tên).
+
+Nút đã hé lộ chỉ được thêm TÊN CHÍNH lớp truth (`name`) mà người chơi chưa biết: biệt danh trước, tên
+thật sau (D-17, D-136). Luật chung với bộ trích, `new_name_problem`: không nhận tên người chơi đã biết,
+biệt danh hay chức danh (sổ tay sẽ đổi tên hiện theo từng cách gọi), nút trong `no_new_name` (tên đang
+được bảo vệ ở đường người chơi, hay nút đã hé lộ ở chính chương này).
 
 So khớp nghiêm hơn bộ dò lộ, vì khớp nhầm ở đây là hé lộ nhầm một nút: giữ dấu, phân biệt hoa
 thường, theo ranh giới từ. Chỉ chữ cái đầu của tên nhiều từ được lệch hoa thường ("Kho kiếm cụ" khớp
@@ -43,6 +48,27 @@ def known_as_conflicts(
         other for other, forms in names.items()
         if other != node_id and any(name_key(f) == key for f in forms)
     )
+
+
+def new_name_problem(
+    known_as: str, node_id: str, *, names: Mapping[str, Sequence[str]], shown: Collection[str],
+    locked: Collection[str],
+) -> str | None:
+    """Lý do không nhận `known_as` làm tên mới cho một nút ĐÃ có trong player_view (D-136); None là
+    nhận. `names`: id → (name, *aliases) lớp truth. `shown`: các tên người chơi đang biết của nút.
+    `locked`: nút có tên đang được kế hoạch bảo vệ ở đường người chơi (bí mật chưa có trong
+    player_view, D-61): tên mới sẽ nối hai tên trong sổ tay, đúng điều bí mật giấu. So bằng
+    `name_key` như bộ dò lộ. Chỉ tên chính: biệt danh hay chức danh làm tên hiện đổi theo từng cách gọi
+    của trang (đếm trên các lượt đã lưu, D-136)."""
+    key = name_key(known_as)
+    if key in {name_key(s) for s in shown}:
+        return "người chơi đã biết nút này dưới tên đó"
+    forms = names.get(node_id) or ()
+    if not forms or key != name_key(forms[0]):
+        return "hé lộ lần hai chỉ nhận tên chính lớp truth của nút (D-17)"
+    if node_id in locked:
+        return "tên mới của nút có tên đang được bảo vệ (D-61)"
+    return None
 
 
 def _has_proper_word(form: str) -> bool:
@@ -108,11 +134,14 @@ def auto_reveals(
     names: Mapping[str, Sequence[str]],
     view: PlayerView,
     skip: Collection[str],
+    no_new_name: Collection[str],
 ) -> list[EdgeSpec]:
     """Cạnh `REVEALED_TO_PLAYER` cho nút có tên mà chữ cảnh nêu (xem đầu file). `names`: id →
     (name, *aliases) lớp truth của MỌI nút có tên (`named_nodes`, không phải `leak_names`), để
     tìm được chuỗi mơ hồ và tên lồng nhau. `view`: player_view gồm cả các hé lộ bộ trích vừa ghi
-    cho cảnh này. `skip`: nhân vật chính và nút có tên bị bảo vệ. Xếp theo vị trí trên trang."""
+    cho cảnh này. `skip`: nhân vật chính và nút có tên bị bảo vệ. `no_new_name`: nút đã hé lộ không
+    được thêm tên (bắt buộc, không mặc định: nút đang được bảo vệ ở đường người chơi, và nút đã hé lộ
+    ở chương này). Xếp theo vị trí trên trang."""
     text = unicodedata.normalize("NFC", text)
     matches: list[_Match] = []
     for node_id, forms in names.items():
@@ -122,11 +151,14 @@ def auto_reveals(
                 continue
             matches += [_Match(m.start(), m.end(), node_id, i == 0, " ".join(m.group().split()))
                         for m in pattern.finditer(text)]
-    already = {e.id for e in view.entries} | set(skip)
+    shown = {e.id: (e.text, *e.aliases) for e in view.entries}
     best: dict[str, _Match] = {}
     for x in matches:
-        if (x.node_id in already or any(x.inside(y) for y in matches)
+        if (x.node_id in skip or any(x.inside(y) for y in matches)
                 or known_as_conflicts(x.matched, x.node_id, names)):
+            continue
+        if x.node_id in shown and new_name_problem(
+                x.matched, x.node_id, names=names, shown=shown[x.node_id], locked=no_new_name):
             continue
         if x.node_id not in best or x.rank() < best[x.node_id].rank():
             best[x.node_id] = x
