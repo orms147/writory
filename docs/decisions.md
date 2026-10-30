@@ -1201,3 +1201,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Code tách có thể làm cảnh vượt `max_shots_per_scene`: trần này ràng buộc model, không ràng buộc phép tách. Các phần của một shot tách có cùng `action_en` và cùng nhân vật xuất hiện, nên hai prompt liên tiếp giống nhau ngoài thời lượng và lời thoại; video ra có thể lặp hành động.
   - Chưa đo với model thật: demo thật chạy lại sau khi chuỗi A/B xong. Đếm trên demo cũ bằng code không gọi model: `evals/results/2026-10-30-video-dialogue-pace/`. Con số 22 ở D-125 đếm cả dấu câu; số của phép kiểm mới ở thư mục đó.
 - **Người quyết:** Claude (writory-28 giao việc 30/10/2026), nhánh feature/video-dialogue-pace · 30/10/2026
+
+## D-128 · Bảng đầu mút cạnh dùng chung cho khởi tạo và bộ trích; ngữ cảnh viết bỏ qua cạnh sai đầu mút
+- **Bối cảnh:** lượt A/B đổi pha `psab-b1` (D-119) kẹt vĩnh viễn ở chương 12: bộ trích chương 11 ghi `HOLDS` từ một nhân vật tới một Fact do chính nó tạo ở chương 10 (D-93). Chỉ khởi tạo kiểm nhãn hai đầu (`setup._ENDPOINTS`); bộ trích không kiểm. Ngữ cảnh viết đọc tên của "đồ vật đang giữ", Fact không có tên, `UserAuthored(None)` làm sập đề dàn ý trước mọi lời gọi model. Người chơi thật cũng gặp được. Kiểm đếm trên 67 truyện trong Neo4j máy dev: 2 cạnh sai, ca trên và một `KNOWS → Thread` (20/10).
+- **Quyết định:**
+  - Một bảng `graph/schema.py` `EDGE_ENDPOINTS` cho MỌI kiểu cạnh, theo cột "Từ → tới" của `docs/graph-schema.md`; có assert mọi kiểu cạnh có luật. Khởi tạo lấy bốn kiểu khai tự do từ bảng chung, `KNOWS`/`ABOUT` hẹp hơn ở chương 0 (có test "không bao giờ rộng hơn").
+  - Bộ trích (`extract.to_package`) bỏ cạnh sai đầu mút, lý do riêng "đầu mút sai loại nút" (bộ đo đếm riêng).
+  - Ngữ cảnh viết chỉ đọc `HOLDS` tới `Item`, `LOCATED_AT` tới `Location`, người giữ là `Character`; mảnh chữ `None` bị bỏ, không bao giờ vào `UserAuthored`. Truyện đã có cạnh sai vẫn viết tiếp được.
+  - `graph.edge_endpoint_violations(driver, story_id)` đếm cạnh sai (chỉ kiểu cạnh và nhãn), có graph test trên truyện mẫu.
+  - `KNOWS` giữ như code hiện hành: tới Fact/Lie/Event và tới nút có tên (bộ trích có đường KNOWS của nhân vật chính kèm `known_as`, D-17). `docs/graph-schema.md` chỉ ghi Fact/Lie/Event; dữ liệu thật không có KNOWS nào tới nút có tên. Mâu thuẫn tài liệu–code này chưa quyết, để chủ dự án chọn.
+- **Hệ quả:** cạnh sai cũ không bị xoá khỏi đồ thị, chỉ bị bỏ qua khi đọc. Bộ trích mất cạnh model ghi sai thay vì ghi rác. `psab-b1` chạy tiếp từ chương 12 bằng `--resume --resume-allow-drift` trên commit có bản sửa (ghi trong notes A/B).
+- **Người quyết:** Claude (session 3 tìm và sửa, writory-35 hoàn tất), nhánh fix/edge-endpoint-labels · 30/10/2026

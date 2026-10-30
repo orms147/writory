@@ -10,7 +10,13 @@ from dataclasses import dataclass
 
 from neo4j import Driver, RoutingControl
 
-from writory.graph.schema import EDGE_TYPES, ENTITY, NAMED_LABELS, RESERVED_PROPS
+from writory.graph.schema import (
+    EDGE_TYPES,
+    ENTITY,
+    NAMED_LABELS,
+    RESERVED_PROPS,
+    endpoint_problem,
+)
 from writory.graph.story import require_chapter, require_story_id
 
 # Điều kiện "cạnh r còn hiệu lực ở chương $chapter", dùng chung cho mọi truy vấn.
@@ -266,6 +272,36 @@ def edges_at(
         )
         for r in rows
     ]
+
+
+@dataclass(frozen=True)
+class EndpointViolation:
+    """Một tổ hợp (kiểu cạnh, nhãn nguồn, nhãn đích) trái bảng `EDGE_ENDPOINTS`, kèm số cạnh."""
+
+    type: str
+    source_label: str
+    target_label: str
+    count: int
+
+
+def edge_endpoint_violations(driver: Driver, story_id: str) -> list[EndpointViolation]:
+    """Kiểm đếm cạnh sai đầu mút trong cả truyện (D-128), kể cả cạnh đã đóng. Dùng cho test và bộ đo;
+    chỉ có kiểu cạnh và nhãn, không chữ của truyện."""
+    rows = _read(
+        driver,
+        f"""
+        MATCH (a:{ENTITY} {{story_id: $story_id}})-[r]->(b:{ENTITY} {{story_id: $story_id}})
+        RETURN type(r) AS type, [l IN labels(a) WHERE l <> '{ENTITY}'][0] AS source_label,
+               [l IN labels(b) WHERE l <> '{ENTITY}'][0] AS target_label, count(r) AS count
+        """,
+        story_id,
+    )
+    return sorted(
+        (EndpointViolation(r["type"], r["source_label"], r["target_label"], r["count"])
+         for r in rows if r["type"] in EDGE_TYPES
+         and endpoint_problem(r["type"], r["source_label"], r["target_label"])),
+        key=lambda v: (v.type, v.source_label, v.target_label),
+    )
 
 
 def node_labels(driver: Driver, story_id: str, ids: list[str]) -> dict[str, str]:

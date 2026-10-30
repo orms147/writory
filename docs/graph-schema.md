@@ -36,6 +36,8 @@ Thuộc tính do lớp `graph/` tự đặt, đầu vào không được ghi: `s
 ## Cạnh
 Mọi cạnh có `story_id`, `id` (tự sinh `KIỂU:từ>tới@chương` nếu không khai), `commit_id`, `valid_from_chapter`, và có thể có `valid_to_chapter`, `closed_by_commit`.
 
+Cột "Từ → tới" là luật bằng code: `graph/schema.py` `EDGE_ENDPOINTS`, một bảng cho khởi tạo (thu hẹp ở chương 0) và bộ trích; bộ trích bỏ cạnh sai đầu mút với lý do riêng, ngữ cảnh viết chỉ đọc cạnh đúng nhãn đầu mút, `edge_endpoint_violations` đếm cạnh sai trong một truyện (D-128).
+
 | Kiểu | Từ → tới | Thuộc tính | Nghĩa |
 |---|---|---|---|
 | `RELATES_TO` | Character → Character | `kind`, `score` (−100…100) | B là gì của A; có hướng |

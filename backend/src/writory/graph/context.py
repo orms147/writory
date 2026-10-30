@@ -311,9 +311,10 @@ def writer_context(
 
     chars = read(f"""
         MATCH (n:{ENTITY}:Character {{story_id: $story_id}}) WHERE n.id IN $present
-        OPTIONAL MATCH (n)-[r:LOCATED_AT]->(loc:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
+        OPTIONAL MATCH (n)-[r:LOCATED_AT]->(loc:{ENTITY}:Location {{story_id: $story_id}})
+          WHERE {VALID_AT}
         WITH n, collect(loc) AS locs
-        OPTIONAL MATCH (n)-[r:HOLDS]->(item:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
+        OPTIONAL MATCH (n)-[r:HOLDS]->(item:{ENTITY}:Item {{story_id: $story_id}}) WHERE {VALID_AT}
         WITH n, locs, collect(item) AS items
         RETURN n.id AS id, n.name AS name, coalesce(n.aliases, []) AS aliases,
                n.personality AS personality, n.appearance AS appearance,
@@ -435,10 +436,12 @@ def writer_context(
                  r["since"], r["holder_id"], r["place_id"])
         for r in read(f"""
             MATCH (i:{ENTITY}:Item {{story_id: $story_id}})
-            OPTIONAL MATCH (h:{ENTITY} {{story_id: $story_id}})-[r:HOLDS]->(i) WHERE {VALID_AT}
+            OPTIONAL MATCH (h:{ENTITY}:Character {{story_id: $story_id}})-[r:HOLDS]->(i)
+              WHERE {VALID_AT}
             WITH i, collect({{id: h.id, name: h.name, ua: coalesce(h.user_authored, false),
                               since: r.valid_from_chapter}})[0] AS hold
-            OPTIONAL MATCH (i)-[r:LOCATED_AT]->(l:{ENTITY} {{story_id: $story_id}}) WHERE {VALID_AT}
+            OPTIONAL MATCH (i)-[r:LOCATED_AT]->(l:{ENTITY}:Location {{story_id: $story_id}})
+              WHERE {VALID_AT}
             WITH i, hold, collect({{id: l.id, name: l.name, ua: coalesce(l.user_authored, false),
                                     since: r.valid_from_chapter}})[0] AS loc
             WITH i, hold, loc, CASE WHEN hold.name IS NULL THEN loc ELSE hold END AS cur
@@ -497,6 +500,11 @@ class _Parts:
         current = ""
         for piece in pieces:
             text, ua = piece if isinstance(piece, tuple) else (piece, False)
+            if text is None:
+                # Nút thiếu tên/chữ (cạnh sai đầu mút đã nằm trong đồ thị, D-128): bỏ mảnh, không
+                # bao giờ đưa None vào UserAuthored. Log chỉ có số.
+                log.warning("ngữ cảnh viết: bỏ một mảnh thiếu chữ")
+                continue
             if ua:
                 self._buf.append(current)
                 current = ""

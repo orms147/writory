@@ -586,7 +586,8 @@ def player_action_text(choice: PlayerChoice) -> str:
 
 
 _REJECT_REASONS = (
-    "id không có trong danh mục", "câu trích không có nguyên văn trong chương (G3)",
+    "id không có trong danh mục", "đầu mút sai loại nút",  # D-128
+    "câu trích không có nguyên văn trong chương (G3)",
     "nhân vật chính biết mà không có câu trích (G3)", "hé lộ nút có tên mà thiếu known_as (D-17)",
     "trùng cạnh trong cùng gói", "không phải cạnh đang hiệu lực",
     "known_as là tên của nút khác",  # D-62
