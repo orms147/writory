@@ -123,3 +123,25 @@ def test_dry_run_makes_no_paid_call(capsys, monkeypatch):
     assert bench_g6.main(["--dry-run"]) == 0
     out = capsys.readouterr().out
     assert f"cả bộ: đúng {len(CASES)}/{len(CASES)}" in out and f"{len(CASES)} lời gọi" in out
+
+
+def test_round_two_hard_cases_cover_seen_only_others_pay_and_real_exposure():
+    """D-141: người chấm tính nhầm cái giá là thứ người khác trả, hay chỉ là bị nhìn thấy. Ca mới
+    (không sửa nhãn ca cũ): thấy nhưng không hậu quả, người khác gánh, và bị lộ có hậu quả thật."""
+    round2 = [c for c in CASES if "round2" in c["tags"]]
+    assert len(round2) >= 8 and all(c["set"] == "hard" for c in round2)
+    by_tag: dict[str, list[dict]] = {}
+    for c in round2:
+        for tag in c["tags"]:
+            by_tag.setdefault(tag, []).append(c)
+    assert {"seen-only", "unrelated-cost", "exposure-cost", "real-cost"} <= set(by_tag)
+    assert all(c["expected"] == "granted" for c in by_tag["seen-only"] + by_tag["unrelated-cost"])
+    assert all(c["expected"] == "cost" for c in by_tag["exposure-cost"] + by_tag["real-cost"])
+    # Ca sai ở vòng một cần phải viết lại (vượt sức nhân vật: granted thì viết lại, cost thì qua).
+    assert all(c["feasibility"] == "beyond_character" for c in by_tag["seen-only"])
+    assert all(rewrite(c) for c in by_tag["seen-only"] + by_tag["unrelated-cost"])
+    assert not any(rewrite(c) for c in by_tag["exposure-cost"] + by_tag["real-cost"])
+    # Hai thế giới (phố bến sông không phép, thế giới tu tiên).
+    assert {c["action"] for c in round2} >= {"doi-linh"} and len({c["action"] for c in round2}) >= 2
+    old_ids = {c["id"] for c in CASES if "round2" not in c["tags"]}
+    assert len(old_ids) == 24 and not {c["id"] for c in round2} & old_ids

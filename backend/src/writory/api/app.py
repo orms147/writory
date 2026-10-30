@@ -179,7 +179,7 @@ def create_app(
     config = config if config is not None else load_config()
     meta = product_model_problems(config)
     if meta:  # người chơi dùng key OpenRouter của họ; model Meta chỉ cho bộ đo (D-140)
-        raise ConfigError("config của app có model Meta (chỉ bộ đo được dùng): " + "; ".join(meta))
+        raise ConfigError("config của app có model của bộ đo (Meta, Anthropic API; chỉ bộ đo được dùng): " + "; ".join(meta))
     prod = settings.app_env == "prod"
     if prod:
         problems = prod_problems(settings)

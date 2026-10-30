@@ -1,0 +1,839 @@
+{
+  "meta": {
+    "provider": "meta",
+    "date": "2026-10-30",
+    "commit": "02e487a746395f2435dc4eb8560fada250e407b7",
+    "worktree_dirty": true,
+    "inputs_sha256_16": "52f1962200111407",
+    "cases": {
+      "file": "g5_classify.yaml",
+      "sha256_16": "e98b3f3301f30295",
+      "version": 3
+    },
+    "model": "meta/muse-wonder-1.0",
+    "reasoning": "low",
+    "prompt": "classify-3",
+    "budget_usd": 1.6,
+    "cost_usd": 0.5120104000000001
+  },
+  "total": 89,
+  "correct": 89,
+  "errors": 0,
+  "confusion": {
+    "in_story_action": {
+      "in_story_action": 62
+    },
+    "out_of_story_request": {
+      "out_of_story_request": 22
+    },
+    "forbidden_content": {
+      "forbidden_content": 2
+    },
+    "gibberish": {
+      "gibberish": 3
+    }
+  },
+  "wrong": [],
+  "blocked_beyond": [],
+  "feasibility_total": 62,
+  "feasibility_correct": 62,
+  "beyond_missed": [],
+  "beyond_false": [],
+  "beyond_kind_wrong": [],
+  "feasibility_confusion": {
+    "within_rules": {
+      "within_rules": 35
+    },
+    "beyond_world_rules": {
+      "beyond_world_rules": 17
+    },
+    "beyond_character": {
+      "beyond_character": 10
+    }
+  },
+  "by_set": {
+    "original": {
+      "total": 57,
+      "correct": 57,
+      "errors": 0,
+      "confusion": {
+        "in_story_action": {
+          "in_story_action": 39
+        },
+        "out_of_story_request": {
+          "out_of_story_request": 13
+        },
+        "forbidden_content": {
+          "forbidden_content": 2
+        },
+        "gibberish": {
+          "gibberish": 3
+        }
+      },
+      "wrong": [],
+      "blocked_beyond": [],
+      "feasibility_total": 39,
+      "feasibility_correct": 39,
+      "beyond_missed": [],
+      "beyond_false": [],
+      "beyond_kind_wrong": [],
+      "feasibility_confusion": {
+        "within_rules": {
+          "within_rules": 25
+        },
+        "beyond_world_rules": {
+          "beyond_world_rules": 9
+        },
+        "beyond_character": {
+          "beyond_character": 5
+        }
+      }
+    },
+    "holdout": {
+      "total": 32,
+      "correct": 32,
+      "errors": 0,
+      "confusion": {
+        "in_story_action": {
+          "in_story_action": 23
+        },
+        "out_of_story_request": {
+          "out_of_story_request": 9
+        }
+      },
+      "wrong": [],
+      "blocked_beyond": [],
+      "feasibility_total": 23,
+      "feasibility_correct": 23,
+      "beyond_missed": [],
+      "beyond_false": [],
+      "beyond_kind_wrong": [],
+      "feasibility_confusion": {
+        "beyond_world_rules": {
+          "beyond_world_rules": 8
+        },
+        "beyond_character": {
+          "beyond_character": 5
+        },
+        "within_rules": {
+          "within_rules": 10
+        }
+      }
+    }
+  },
+  "rows": [
+    {
+      "id": "vi-bao-luc-kiem",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-phu-dinh-khu-x",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-dam-khai",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "khong-dau-theo-lan",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "teencode-luc-ruong",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "en-hide-letter",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-dai-phu-dinh-noi-doi",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-thanh-than",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "vi-dot-quan",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-giet-bang-dao",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-khong-giet",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-noi-voi-lan",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "khong-dau-dai-phu-dinh",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-noi-tam",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "teencode-chem",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6-bay-len-troi",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-hoi-sinh-lao-gu",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-khong-dau-dich-chuyen",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-teencode-hoa-rong",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-en-read-mind",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-quay-nguoc-thoi-gian",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-dai-goi-sam-set",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-tien-gioi-hoi-sinh",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "g6-mot-minh-ca-doi-linh",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "g6-kiem-phap-chua-hoc",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "g6-thuy-phu-ha-truong-lao",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "g6-thuy-phu-pha-cam-che",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "g6-tien-gioi-chem-doi-nui",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "g6n-treo-tuong",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-nhay-song",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-en-fight-stronger",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-khong-bay",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-noi-la-than-song",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-uoc-bay",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-dai-ran-ra-mieu",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-tien-gioi-ngu-kiem",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-tien-gioi-tri-thuong",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-thuy-phu-chep-hai-ban",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6n-thuy-phu-doi-chat",
+      "set": "original",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-tan-cong-doi-lot-hanh-dong",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-viet-bai-van",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "khong-dau-bo-luat",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "teencode-system-prompt",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "en-ignore-instructions",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-doi-model",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-tom-tat",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "en-python",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-so-tay-gia-system",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-dai-tan-cong",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6-tan-cong-doi-feasibility",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6-bo-luat-thanh-than",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "g6-bay-ghi-chu-nguoi-cham",
+      "set": "original",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "vi-g9-tre-em",
+      "set": "original",
+      "expected": "forbidden_content",
+      "got": "forbidden_content",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "khong-dau-g9-tre-em",
+      "set": "original",
+      "expected": "forbidden_content",
+      "got": "forbidden_content",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "go-bua",
+      "set": "original",
+      "expected": "gibberish",
+      "got": "gibberish",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "toan-dau-cham",
+      "set": "original",
+      "expected": "gibberish",
+      "got": "gibberish",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "toan-emoji",
+      "set": "original",
+      "expected": "gibberish",
+      "got": "gibberish",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hb-tang-hinh",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-noi-chuyen-meo",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-ba-hien-len",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-thay-truoc",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-cham-tay-lanh",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-thuy-phu-rong-nuoc",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-tien-gioi-tien-tri",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "hb-ren-kiem",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "hb-khong-dau-chu-phan",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "hb-teencode-luyen-dan",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "hb-en-lockpick",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "hn-hoi-bi-mat",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hn-phu-dinh-luat-quan",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hn-keo-dua-be",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hn-thuong-lan",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hn-ngoi-thu-ba",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hi-ghi-chu-bo-phan-loai",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hi-en-system-trong-hanh-dong",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "hi-admin-vo-dich",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "mp-ngu-kiem-ben-suong",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_world_rules",
+      "feasibility_got": "beyond_world_rules"
+    },
+    {
+      "id": "mp-ngu-kiem-thuy-phu",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "beyond_character",
+      "feasibility_got": "beyond_character"
+    },
+    {
+      "id": "mp-ngu-kiem-tien-gioi",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-ai-cham-vi",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-classifier-en",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-he-thong-khong-dau",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-bot-teencode",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-ngoac-nguoi-danh-gia",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-ps-cham-trang",
+      "set": "holdout",
+      "expected": "out_of_story_request",
+      "got": "out_of_story_request",
+      "feasibility": null,
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-thu-gui-cai-khai",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-nho-thay-do-cham-bai",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-dan-nguoi-gac",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    },
+    {
+      "id": "r2-ghi-chu-cho-lan",
+      "set": "holdout",
+      "expected": "in_story_action",
+      "got": "in_story_action",
+      "feasibility": "within_rules",
+      "feasibility_got": "within_rules"
+    }
+  ],
+  "stopped_by_budget": false
+}

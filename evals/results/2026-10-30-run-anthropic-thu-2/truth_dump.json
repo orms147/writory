@@ -1,0 +1,1215 @@
+{
+ "story_id": "run-20261030-anthropic-thu-2-42ec2b41",
+ "plan": {
+  "acts": [
+   {
+    "name": "Mở đầu",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Phát triển",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Cao trào",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "name": "Kết",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "f_khach_la",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Ôn Tiên Sinh",
+      "chưởng môn Thanh Lam"
+     ],
+     [
+      "lạc khách",
+      "Tống Minh Đình"
+     ]
+    ],
+    "protects": [
+     "tong_minh_dinh"
+    ]
+   },
+   {
+    "fact_id": "f_danh_sach",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Doãn Tư Mẫn",
+      "danh sách"
+     ],
+     [
+      "Huyền Thiên Các",
+      "danh sách"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "th_khach_la",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 5,
+    "answered_by": [
+     "f_khach_la"
+    ]
+   },
+   {
+    "thread_id": "th_danh_sach",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6,
+    "answered_by": [
+     "f_danh_sach"
+    ]
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Người lạ gọi đúng tên Hàn Vân Ngọc và nói như đã từng gặp, buộc Cung Thiên Tịch phải ra mặt chặn hắn lại.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Ôn Tiên Sinh tiết lộ mình biết chuyện linh mạch, khiến Hàn Vân Ngọc phải chọn tin hay nghi ngờ.",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "kind": "climax",
+    "goal": "Danh sách cần diệt trừ bị lộ ra giữa Lâm Thủy Đình, và giao tranh bùng nổ giữa các phe.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Cung Thiên Tịch quyết định đứng về phía ai, và yến tiệc khép lại với một kết cục đã định.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "f_khach_la",
+    "text": "Người lạ mặt tự xưng Ôn Tiên Sinh thật ra là Tống Minh Đình, chưởng môn Thanh Lam Phái, và ông chưa chết.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "f_danh_sach",
+    "text": "Doãn Tư Mẫn lập danh sách cần diệt trừ theo lệnh của Huyền Thiên Các.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "th_khach_la",
+    "description": "Người lạ mặt tên thật là ai?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "th_danh_sach",
+    "description": "Ai là người lập danh sách cần diệt trừ?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Người lạ gọi đúng tên Hàn Vân Ngọc và nói như đã từng gặp, buộc Cung Thiên Tịch phải ra mặt chặn hắn lại.",
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "done_chapter": null,
+    "candidate_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Ôn Tiên Sinh tiết lộ mình biết chuyện linh mạch, khiến Hàn Vân Ngọc phải chọn tin hay nghi ngờ.",
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "done_chapter": null,
+    "candidate_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Danh sách cần diệt trừ bị lộ ra giữa Lâm Thủy Đình, và giao tranh bùng nổ giữa các phe.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null,
+    "candidate_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Cung Thiên Tịch quyết định đứng về phía ai, và yến tiệc khép lại với một kết cục đã định.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null,
+    "candidate_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261030-anthropic-thu-2-42ec2b41-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Cung Thiên Tịch",
+      "personality": "Thẳng thắn, nóng tính, dễ mất kiên nhẫn khi bị vòng vo, nhưng rất trung thành với những người mình tin. Ánh mắt sắc và phản ứng nhanh khi có chuyện bất thường.",
+      "backstory": "Nàng là đệ tử ngoại môn của Thanh Lam Phái, lớn lên trong cảnh tranh đoạt linh mạch giữa các môn phái. Sau biến cố ở Bạch Thủy Cốc, nàng bị điều đến hộ tống trong yến tiệc và được dặn không được rời mắt khỏi khách khứa. Nàng chưa biết mình đang canh giữ điều gì.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Thân hình thanh gọn, cao hơn đa số nữ tu cùng lứa, hai mươi hai tuổi. Khuôn mặt sắc cạnh với đôi mắt đen dài, tóc đen buộc cao bằng dải vải đỏ thẫm."
+     }
+    },
+    {
+     "id": "han_van_ngoc",
+     "label": "Character",
+     "props": {
+      "name": "Hàn Vân Ngọc",
+      "aliases": [
+       "Hàn nhị công tử"
+      ],
+      "personality": "Ôn hòa bên ngoài nhưng cẩn trọng, ít nói, quen giấu cảm xúc trong con mắt dè chừng của gia tộc.",
+      "backstory": "Con trai thứ của một gia tộc tu tiên nhỏ ở Bạch Thủy Cốc, không được trọng vọng, được mời đến yến tiệc cầu hòa như một quân cờ để lấp chỗ trống.",
+      "appearance": "Chàng trai hai mươi ba tuổi, gầy và xương xẩu, làn da xanh xao như ít thấy nắng. Tóc nâu hạt dẻ buộc hờ bằng dải lụa xanh lam."
+     }
+    },
+    {
+     "id": "tong_minh_dinh",
+     "label": "Character",
+     "props": {
+      "name": "Tống Minh Đình",
+      "aliases": [
+       "lạc khách",
+       "Ôn Tiên Sinh"
+      ],
+      "personality": "Điềm đạm, nói năng vòng vèo và thích thử lòng người, nhưng quyết đoán khi đến lúc.",
+      "backstory": "Từng là chưởng môn Thanh Lam Phái. Sau vụ ám sát giữa đường, người đời tin ông đã chết, còn ông lặng lẽ trở lại Bạch Thủy Cốc dưới một cái tên khác.",
+      "appearance": "Người đàn ông ngoài bốn mươi, một vết sẹo dài chạy từ thái dương xuống má trái. Tóc bạc phơ búi bằng trâm gỗ mun, mặc áo xám tro không thêu hoa văn."
+     }
+    },
+    {
+     "id": "luong_binh",
+     "label": "Character",
+     "props": {
+      "name": "Lương Bình",
+      "aliases": [
+       "Bình bà"
+      ],
+      "personality": "Khéo léo, nhún nhường, nói nhỏ và nhìn người khác lâu hơn mức cần thiết.",
+      "backstory": "Người hầu trong phủ đã nhiều năm, nhưng thực chất là tai mắt của Huyền Thiên Các, luôn chờ lệnh để gieo nghi ngờ.",
+      "appearance": "Người phụ nữ ngoài ba mươi, khuôn mặt tròn đầy, tóc hung đỏ cắt ngang vai. Mặc áo vải thô màu nâu đất, không trang sức."
+     }
+    },
+    {
+     "id": "doan_tu_man",
+     "label": "Character",
+     "props": {
+      "name": "Doãn Tư Mẫn",
+      "aliases": [
+       "Doãn cô nương"
+      ],
+      "personality": "Sắc sảo, lạnh lùng, thích nắm thóp người khác bằng lời lẽ mềm mỏng.",
+      "backstory": "Trưởng sứ của Huyền Thiên Các tại yến tiệc, người chủ trương loại bỏ những kẻ có thể cản trở việc tranh đoạt linh mạch.",
+      "appearance": "Nữ tu khoảng ba mươi lăm tuổi, dáng cao ráo, môi tô son đỏ sẫm. Tóc xoăn dài buông một bên vai, khoác áo tím thẫm thêu chỉ bạc."
+     }
+    },
+    {
+     "id": "trinh_hieu",
+     "label": "Character",
+     "props": {
+      "name": "Trịnh Hiếu",
+      "aliases": [
+       "Hiếu lão"
+      ],
+      "personality": "Trầm ổn, ưa đối đáp bằng tục ngữ và ẩn ý, ít khi nói thẳng điều mình muốn.",
+      "backstory": "Trưởng lão Vạn Linh Môn, theo phe chủ hòa vì môn phái đã kiệt quệ sau nhiều năm chiến tranh.",
+      "appearance": "Cái đầu cạo trọc, râu bạc dài đến ngực. Khuôn mặt đầy nếp nhăn, cổ tay đeo chuỗi hạt gỗ đào sẫm màu."
+     }
+    },
+    {
+     "id": "lam_thuy_dinh",
+     "label": "Location",
+     "props": {
+      "name": "Lâm Thủy Đình",
+      "aliases": [
+       "đình bên hồ"
+      ],
+      "description": "Đình tiệc dựng bên mặt hồ trong phủ ở Bạch Thủy Cốc, nơi diễn ra yến tiệc cầu hòa.",
+      "visual": "Ánh đèn lồng đỏ hắt lên mặt nước, cột gỗ lim đen bóng và rèm lụa mỏng bay theo gió. Không khí nồng mùi rượu và khói hương, đặc quánh sự dè chừng."
+     }
+    },
+    {
+     "id": "tay_vien",
+     "label": "Location",
+     "props": {
+      "name": "Tây Viện",
+      "aliases": [
+       "viện phía tây"
+      ],
+      "description": "Khu viện vắng ở phía tây phủ, nơi các khách không được phép đặt chân tới.",
+      "visual": "Lối đá xanh rêu, dây leo phủ kín tường rào thấp. Ban đêm chỉ có vài ngọn đèn đá lập lòe giữa sương."
+     }
+    },
+    {
+     "id": "thanh_lam_phai",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Lam Phái",
+      "aliases": [
+       "Thanh Lam"
+      ],
+      "description": "Đại môn phái trong Bạch Thủy Cốc, nơi Cung Thiên Tịch làm đệ tử ngoại môn."
+     }
+    },
+    {
+     "id": "huyen_thien_cac",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Thiên Các",
+      "aliases": [
+       "Huyền Các"
+      ],
+      "description": "Thế lực tranh giành linh mạch, thường dùng mưu kế và ám tuyến để đạt mục đích."
+     }
+    },
+    {
+     "id": "van_linh_mon",
+     "label": "Faction",
+     "props": {
+      "name": "Vạn Linh Môn",
+      "aliases": [
+       "Linh Môn"
+      ],
+      "description": "Môn phái đã kiệt quệ sau nhiều năm chiến loạn, đang tìm đường hòa hoãn."
+     }
+    },
+    {
+     "id": "danh_sach_diet",
+     "label": "Item",
+     "props": {
+      "name": "Danh sách cần diệt trừ",
+      "aliases": [
+       "danh sách đen"
+      ],
+      "description": "Mảnh giấy ghi tên những người bị coi là cần loại bỏ, được giấu kín trong tay áo của một khách dự tiệc."
+     }
+    },
+    {
+     "id": "f_khach_la",
+     "label": "Fact",
+     "props": {
+      "text": "Người lạ mặt tự xưng Ôn Tiên Sinh thật ra là Tống Minh Đình, chưởng môn Thanh Lam Phái, và ông chưa chết."
+     }
+    },
+    {
+     "id": "f_danh_sach",
+     "label": "Fact",
+     "props": {
+      "text": "Doãn Tư Mẫn lập danh sách cần diệt trừ theo lệnh của Huyền Thiên Các."
+     }
+    },
+    {
+     "id": "f_linh_mach",
+     "label": "Fact",
+     "props": {
+      "text": "Ba phái Thanh Lam, Huyền Thiên Các và Vạn Linh Môn đang tranh nhau một linh mạch ở Bạch Thủy Cốc."
+     }
+    },
+    {
+     "id": "f_luong_binh",
+     "label": "Fact",
+     "props": {
+      "text": "Lương Bình là tai mắt của Huyền Thiên Các trong phủ."
+     }
+    },
+    {
+     "id": "f_ban_do",
+     "label": "Fact",
+     "props": {
+      "text": "Hàn Vân Ngọc giữ một mảnh bản đồ chỉ đường tới linh mạch, do mẫu thân để lại."
+     }
+    },
+    {
+     "id": "th_khach_la",
+     "label": "Thread",
+     "props": {
+      "description": "Người lạ mặt tên thật là ai?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "th_danh_sach",
+     "label": "Thread",
+     "props": {
+      "description": "Ai là người lập danh sách cần diệt trừ?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "th_linh_mach",
+     "label": "Thread",
+     "props": {
+      "description": "Linh mạch Bạch Thủy sẽ về tay ai?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "han_van_ngoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>han_van_ngoc@0",
+     "props": {
+      "kind": "người được canh giữ",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luong_binh",
+     "to": "han_van_ngoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luong_binh>han_van_ngoc@0",
+     "props": {
+      "kind": "người hầu",
+      "score": 40
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tong_minh_dinh",
+     "to": "doan_tu_man",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tong_minh_dinh>doan_tu_man@0",
+     "props": {
+      "kind": "thù",
+      "score": -70
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_tu_man",
+     "to": "tong_minh_dinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_tu_man>tong_minh_dinh@0",
+     "props": {
+      "kind": "thù",
+      "score": -60
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "trinh_hieu",
+     "to": "doan_tu_man",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:trinh_hieu>doan_tu_man@0",
+     "props": {
+      "kind": "đồng minh",
+      "score": 30
+     }
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_tu_man",
+     "to": "huyen_thien_cac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_tu_man>huyen_thien_cac@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "trinh_hieu",
+     "to": "van_linh_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:trinh_hieu>van_linh_mon@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tong_minh_dinh",
+     "to": "thanh_lam_phai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tong_minh_dinh>thanh_lam_phai@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "thanh_lam_phai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>thanh_lam_phai@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "han_van_ngoc",
+     "to": "lam_thuy_dinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:han_van_ngoc>lam_thuy_dinh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "lam_thuy_dinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>lam_thuy_dinh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tong_minh_dinh",
+     "to": "lam_thuy_dinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tong_minh_dinh>lam_thuy_dinh@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_tu_man",
+     "to": "lam_thuy_dinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_tu_man>lam_thuy_dinh@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "doan_tu_man",
+     "to": "danh_sach_diet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:doan_tu_man>danh_sach_diet@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_khach_la",
+     "to": "tong_minh_dinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_khach_la>tong_minh_dinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_khach_la",
+     "to": "thanh_lam_phai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_khach_la>thanh_lam_phai@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tong_minh_dinh",
+     "to": "f_khach_la",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tong_minh_dinh>f_khach_la@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_danh_sach",
+     "to": "doan_tu_man",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_danh_sach>doan_tu_man@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_danh_sach",
+     "to": "huyen_thien_cac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_danh_sach>huyen_thien_cac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_danh_sach",
+     "to": "danh_sach_diet",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_danh_sach>danh_sach_diet@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_tu_man",
+     "to": "f_danh_sach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_tu_man>f_danh_sach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_linh_mach",
+     "to": "thanh_lam_phai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_linh_mach>thanh_lam_phai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_linh_mach",
+     "to": "huyen_thien_cac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_linh_mach>huyen_thien_cac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_linh_mach",
+     "to": "van_linh_mon",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_linh_mach>van_linh_mon@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "trinh_hieu",
+     "to": "f_linh_mach",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trinh_hieu>f_linh_mach@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_luong_binh",
+     "to": "luong_binh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_luong_binh>luong_binh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_luong_binh",
+     "to": "huyen_thien_cac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_luong_binh>huyen_thien_cac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_tu_man",
+     "to": "f_luong_binh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_tu_man>f_luong_binh@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "f_ban_do",
+     "to": "han_van_ngoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:f_ban_do>han_van_ngoc@0",
+     "props": {}
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Cung Thiên Tịch",
+      "known_as": "Cung Thiên Tịch"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "danh_sach_diet": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "danh sách đen"
+     ],
+     "name": "Danh sách cần diệt trừ",
+     "description": "Mảnh giấy ghi tên những người bị coi là cần loại bỏ, được giấu kín trong tay áo của một khách dự tiệc."
+    }
+   },
+   "doan_tu_man": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng sứ của Huyền Thiên Các tại yến tiệc, người chủ trương loại bỏ những kẻ có thể cản trở việc tranh đoạt linh mạch.",
+     "appearance": "Nữ tu khoảng ba mươi lăm tuổi, dáng cao ráo, môi tô son đỏ sẫm. Tóc xoăn dài buông một bên vai, khoác áo tím thẫm thêu chỉ bạc.",
+     "aliases": [
+      "Doãn cô nương"
+     ],
+     "personality": "Sắc sảo, lạnh lùng, thích nắm thóp người khác bằng lời lẽ mềm mỏng.",
+     "name": "Doãn Tư Mẫn"
+    }
+   },
+   "f_ban_do": {
+    "label": "Fact",
+    "props": {
+     "text": "Hàn Vân Ngọc giữ một mảnh bản đồ chỉ đường tới linh mạch, do mẫu thân để lại."
+    }
+   },
+   "f_danh_sach": {
+    "label": "Fact",
+    "props": {
+     "text": "Doãn Tư Mẫn lập danh sách cần diệt trừ theo lệnh của Huyền Thiên Các."
+    }
+   },
+   "f_khach_la": {
+    "label": "Fact",
+    "props": {
+     "text": "Người lạ mặt tự xưng Ôn Tiên Sinh thật ra là Tống Minh Đình, chưởng môn Thanh Lam Phái, và ông chưa chết."
+    }
+   },
+   "f_linh_mach": {
+    "label": "Fact",
+    "props": {
+     "text": "Ba phái Thanh Lam, Huyền Thiên Các và Vạn Linh Môn đang tranh nhau một linh mạch ở Bạch Thủy Cốc."
+    }
+   },
+   "f_luong_binh": {
+    "label": "Fact",
+    "props": {
+     "text": "Lương Bình là tai mắt của Huyền Thiên Các trong phủ."
+    }
+   },
+   "han_van_ngoc": {
+    "label": "Character",
+    "props": {
+     "backstory": "Con trai thứ của một gia tộc tu tiên nhỏ ở Bạch Thủy Cốc, không được trọng vọng, được mời đến yến tiệc cầu hòa như một quân cờ để lấp chỗ trống.",
+     "appearance": "Chàng trai hai mươi ba tuổi, gầy và xương xẩu, làn da xanh xao như ít thấy nắng. Tóc nâu hạt dẻ buộc hờ bằng dải lụa xanh lam.",
+     "aliases": [
+      "Hàn nhị công tử"
+     ],
+     "personality": "Ôn hòa bên ngoài nhưng cẩn trọng, ít nói, quen giấu cảm xúc trong con mắt dè chừng của gia tộc.",
+     "name": "Hàn Vân Ngọc"
+    }
+   },
+   "huyen_thien_cac": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Huyền Các"
+     ],
+     "name": "Huyền Thiên Các",
+     "description": "Thế lực tranh giành linh mạch, thường dùng mưu kế và ám tuyến để đạt mục đích."
+    }
+   },
+   "lam_thuy_dinh": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "đình bên hồ"
+     ],
+     "name": "Lâm Thủy Đình",
+     "description": "Đình tiệc dựng bên mặt hồ trong phủ ở Bạch Thủy Cốc, nơi diễn ra yến tiệc cầu hòa.",
+     "visual": "Ánh đèn lồng đỏ hắt lên mặt nước, cột gỗ lim đen bóng và rèm lụa mỏng bay theo gió. Không khí nồng mùi rượu và khói hương, đặc quánh sự dè chừng."
+    }
+   },
+   "luong_binh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Người hầu trong phủ đã nhiều năm, nhưng thực chất là tai mắt của Huyền Thiên Các, luôn chờ lệnh để gieo nghi ngờ.",
+     "appearance": "Người phụ nữ ngoài ba mươi, khuôn mặt tròn đầy, tóc hung đỏ cắt ngang vai. Mặc áo vải thô màu nâu đất, không trang sức.",
+     "aliases": [
+      "Bình bà"
+     ],
+     "personality": "Khéo léo, nhún nhường, nói nhỏ và nhìn người khác lâu hơn mức cần thiết.",
+     "name": "Lương Bình"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Nàng là đệ tử ngoại môn của Thanh Lam Phái, lớn lên trong cảnh tranh đoạt linh mạch giữa các môn phái. Sau biến cố ở Bạch Thủy Cốc, nàng bị điều đến hộ tống trong yến tiệc và được dặn không được rời mắt khỏi khách khứa. Nàng chưa biết mình đang canh giữ điều gì.",
+     "appearance": "Thân hình thanh gọn, cao hơn đa số nữ tu cùng lứa, hai mươi hai tuổi. Khuôn mặt sắc cạnh với đôi mắt đen dài, tóc đen buộc cao bằng dải vải đỏ thẫm.",
+     "personality": "Thẳng thắn, nóng tính, dễ mất kiên nhẫn khi bị vòng vo, nhưng rất trung thành với những người mình tin. Ánh mắt sắc và phản ứng nhanh khi có chuyện bất thường.",
+     "name": "Cung Thiên Tịch",
+     "is_protagonist": true
+    }
+   },
+   "tay_vien": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "viện phía tây"
+     ],
+     "name": "Tây Viện",
+     "visual": "Lối đá xanh rêu, dây leo phủ kín tường rào thấp. Ban đêm chỉ có vài ngọn đèn đá lập lòe giữa sương.",
+     "description": "Khu viện vắng ở phía tây phủ, nơi các khách không được phép đặt chân tới."
+    }
+   },
+   "th_danh_sach": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai là người lập danh sách cần diệt trừ?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "th_khach_la": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Người lạ mặt tên thật là ai?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 5
+    }
+   },
+   "th_linh_mach": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Linh mạch Bạch Thủy sẽ về tay ai?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 6
+    }
+   },
+   "thanh_lam_phai": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Lam"
+     ],
+     "name": "Thanh Lam Phái",
+     "description": "Đại môn phái trong Bạch Thủy Cốc, nơi Cung Thiên Tịch làm đệ tử ngoại môn."
+    }
+   },
+   "tong_minh_dinh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng là chưởng môn Thanh Lam Phái. Sau vụ ám sát giữa đường, người đời tin ông đã chết, còn ông lặng lẽ trở lại Bạch Thủy Cốc dưới một cái tên khác.",
+     "appearance": "Người đàn ông ngoài bốn mươi, một vết sẹo dài chạy từ thái dương xuống má trái. Tóc bạc phơ búi bằng trâm gỗ mun, mặc áo xám tro không thêu hoa văn.",
+     "aliases": [
+      "lạc khách",
+      "Ôn Tiên Sinh"
+     ],
+     "personality": "Điềm đạm, nói năng vòng vèo và thích thử lòng người, nhưng quyết đoán khi đến lúc.",
+     "name": "Tống Minh Đình"
+    }
+   },
+   "trinh_hieu": {
+    "label": "Character",
+    "props": {
+     "backstory": "Trưởng lão Vạn Linh Môn, theo phe chủ hòa vì môn phái đã kiệt quệ sau nhiều năm chiến tranh.",
+     "appearance": "Cái đầu cạo trọc, râu bạc dài đến ngực. Khuôn mặt đầy nếp nhăn, cổ tay đeo chuỗi hạt gỗ đào sẫm màu.",
+     "aliases": [
+      "Hiếu lão"
+     ],
+     "personality": "Trầm ổn, ưa đối đáp bằng tục ngữ và ẩn ý, ít khi nói thẳng điều mình muốn.",
+     "name": "Trịnh Hiếu"
+    }
+   },
+   "van_linh_mon": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Linh Môn"
+     ],
+     "name": "Vạn Linh Môn",
+     "description": "Môn phái đã kiệt quệ sau nhiều năm chiến loạn, đang tìm đường hòa hoãn."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_tu_man>tong_minh_dinh@0",
+    "type": "RELATES_TO",
+    "source": "doan_tu_man",
+    "target": "tong_minh_dinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -60,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:luong_binh>han_van_ngoc@0",
+    "type": "RELATES_TO",
+    "source": "luong_binh",
+    "target": "han_van_ngoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 40,
+     "kind": "người hầu"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>han_van_ngoc@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "han_van_ngoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "người được canh giữ"
+    }
+   },
+   {
+    "id": "RELATES_TO:tong_minh_dinh>doan_tu_man@0",
+    "type": "RELATES_TO",
+    "source": "tong_minh_dinh",
+    "target": "doan_tu_man",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -70,
+     "kind": "thù"
+    }
+   },
+   {
+    "id": "RELATES_TO:trinh_hieu>doan_tu_man@0",
+    "type": "RELATES_TO",
+    "source": "trinh_hieu",
+    "target": "doan_tu_man",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 30,
+     "kind": "đồng minh"
+    }
+   },
+   {
+    "id": "LOCATED_AT:doan_tu_man>lam_thuy_dinh@0",
+    "type": "LOCATED_AT",
+    "source": "doan_tu_man",
+    "target": "lam_thuy_dinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:han_van_ngoc>lam_thuy_dinh@0",
+    "type": "LOCATED_AT",
+    "source": "han_van_ngoc",
+    "target": "lam_thuy_dinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>lam_thuy_dinh@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "lam_thuy_dinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tong_minh_dinh>lam_thuy_dinh@0",
+    "type": "LOCATED_AT",
+    "source": "tong_minh_dinh",
+    "target": "lam_thuy_dinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:doan_tu_man>danh_sach_diet@0",
+    "type": "HOLDS",
+    "source": "doan_tu_man",
+    "target": "danh_sach_diet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_tu_man>huyen_thien_cac@0",
+    "type": "MEMBER_OF",
+    "source": "doan_tu_man",
+    "target": "huyen_thien_cac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>thanh_lam_phai@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "thanh_lam_phai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tong_minh_dinh>thanh_lam_phai@0",
+    "type": "MEMBER_OF",
+    "source": "tong_minh_dinh",
+    "target": "thanh_lam_phai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:trinh_hieu>van_linh_mon@0",
+    "type": "MEMBER_OF",
+    "source": "trinh_hieu",
+    "target": "van_linh_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_tu_man>f_danh_sach@0",
+    "type": "KNOWS",
+    "source": "doan_tu_man",
+    "target": "f_danh_sach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_tu_man>f_luong_binh@0",
+    "type": "KNOWS",
+    "source": "doan_tu_man",
+    "target": "f_luong_binh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tong_minh_dinh>f_khach_la@0",
+    "type": "KNOWS",
+    "source": "tong_minh_dinh",
+    "target": "f_khach_la",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trinh_hieu>f_linh_mach@0",
+    "type": "KNOWS",
+    "source": "trinh_hieu",
+    "target": "f_linh_mach",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:f_ban_do>han_van_ngoc@0",
+    "type": "ABOUT",
+    "source": "f_ban_do",
+    "target": "han_van_ngoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_danh_sach>danh_sach_diet@0",
+    "type": "ABOUT",
+    "source": "f_danh_sach",
+    "target": "danh_sach_diet",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_danh_sach>doan_tu_man@0",
+    "type": "ABOUT",
+    "source": "f_danh_sach",
+    "target": "doan_tu_man",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_danh_sach>huyen_thien_cac@0",
+    "type": "ABOUT",
+    "source": "f_danh_sach",
+    "target": "huyen_thien_cac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_khach_la>thanh_lam_phai@0",
+    "type": "ABOUT",
+    "source": "f_khach_la",
+    "target": "thanh_lam_phai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_khach_la>tong_minh_dinh@0",
+    "type": "ABOUT",
+    "source": "f_khach_la",
+    "target": "tong_minh_dinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_linh_mach>huyen_thien_cac@0",
+    "type": "ABOUT",
+    "source": "f_linh_mach",
+    "target": "huyen_thien_cac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_linh_mach>thanh_lam_phai@0",
+    "type": "ABOUT",
+    "source": "f_linh_mach",
+    "target": "thanh_lam_phai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_linh_mach>van_linh_mon@0",
+    "type": "ABOUT",
+    "source": "f_linh_mach",
+    "target": "van_linh_mon",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_luong_binh>huyen_thien_cac@0",
+    "type": "ABOUT",
+    "source": "f_luong_binh",
+    "target": "huyen_thien_cac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:f_luong_binh>luong_binh@0",
+    "type": "ABOUT",
+    "source": "f_luong_binh",
+    "target": "luong_binh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Cung Thiên Tịch",
+     "known_as": "Cung Thiên Tịch"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [],
+ "thread_shifts": [],
+ "answers_dropped": [],
+ "quotes": []
+}
