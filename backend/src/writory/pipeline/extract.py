@@ -27,13 +27,16 @@ from writory.graph.package import (
     CloseSpec,
     EdgeSpec,
     NodeSpec,
+    join_quote_parts,
     quote_in_text,
+    quote_parts,
+    quote_parts_in_text,
     relation_problem,
 )
 from writory.graph.schema import NAMED_LABELS, endpoint_problem, protagonist_problem
 from writory.guard.state import GraphState, OverlayState, player_view_of
 from writory.llm.base import ChatResult, LLMClient
-from writory.pipeline.pacing import PendingMilestone, ThreadGoal
+from writory.pipeline.pacing import KIND_TEXT, PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.leak import leak_names, unquoted_leaks
@@ -52,8 +55,14 @@ from writory.safety.wrap import (
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
 # Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
 # "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116). extract-9 (D-129) và extract-10 (hé lộ lần
-# hai dưới tên chính, D-136) đã thử, không gộp: chữ đề lưu ở evals/results của từng lần đo.
-PROMPT_VERSION = "extract-8"
+# hai dưới tên chính, D-136) đã thử, không gộp: chữ đề lưu ở evals/results của từng lần đo. extract-11:
+# dòng mốc có loại, cao trào đòi cả hậu quả, câu trích mốc nhiều đoạn nguyên văn `quotes` (D-139).
+PROMPT_VERSION = "extract-11"
+
+# Câu trích nhiều đoạn của mốc (D-139): tối đa ngần này đoạn, và khi có hơn một đoạn thì mỗi đoạn ít
+# nhất ngần này chữ (tách theo khoảng trắng), để không ghép được câu không có trên trang từ mảnh vụn.
+MILESTONE_QUOTE_MAX_PARTS = 3
+MILESTONE_PART_MIN_WORDS = 4
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
 ExtractEdgeType = Literal[
@@ -89,20 +98,35 @@ class NewFact(_Out):
     quote: str
 
 
+# Docstring của các lớp đầu ra vào schema gửi model (`description`), nên viết cho model đọc.
 class ExtractedMilestone(_Out):
     """Mốc cốt truyện đã diễn ra trên trang (D-116): `id` dạng `m<số>` trong mục "Mốc cốt truyện chưa
-    xảy ra", `quote` là câu nguyên văn cho thấy điều mốc mô tả đã xảy ra."""
+    xảy ra", `quotes` là các đoạn nguyên văn trong chương, theo thứ tự xuất hiện, cho thấy điều mốc mô
+    tả đã xảy ra (D-139)."""
 
     id: str
-    quote: str
+    quotes: list[str]
+
+    @model_validator(mode="before")
+    @classmethod
+    def _single_quote(cls, data: Any) -> Any:
+        """Trả lời theo schema trước D-139 (`quote` một chuỗi: fixture, bài C, lần đo cũ) là một đoạn."""
+        if isinstance(data, dict) and "quote" in data and "quotes" not in data:
+            return {**{k: v for k, v in data.items() if k != "quote"}, "quotes": [data["quote"]]}
+        return data
 
 
 @dataclass(frozen=True)
 class MilestoneMark:
-    """Mốc đã qua kiểm của code: số thứ tự 1-based trong kế hoạch và câu trích có thật (G3)."""
+    """Mốc đã qua kiểm của code: số thứ tự 1-based trong kế hoạch và câu trích có thật (G3). `quote`
+    là chuỗi lưu ở `milestone_quotes`: câu nhiều đoạn nối bằng `graph.package.QUOTE_PART_SEP` (D-139)."""
 
     number: int
     quote: str
+
+    @property
+    def parts(self) -> tuple[str, ...]:
+        return tuple(quote_parts(self.quote))
 
 
 class ExtractOutput(_Out):
@@ -191,9 +215,11 @@ Kiểu cạnh:
 - REVEALED_TO_PLAYER (thực thể → nút chương này): điều người chơi được thấy trên trang ở chương này, theo góc nhìn nhân vật chính.
 
 Mốc cốt truyện (`milestones`):
-- Mục "Mốc cốt truyện chưa xảy ra" (nếu có) liệt kê các mốc của bản kế hoạch chưa được đánh dấu: id `m<số>`, khoảng chương dự kiến, điều mốc mô tả. Khoảng chương chỉ là dự kiến: mốc có thể đã xảy ra sớm hơn.
+- Mục "Mốc cốt truyện chưa xảy ra" (nếu có) liệt kê các mốc của bản kế hoạch chưa được đánh dấu: id `m<số>`, loại (bước ngoặt hay cao trào), khoảng chương dự kiến, điều mốc mô tả. Khoảng chương chỉ là dự kiến: mốc có thể đã xảy ra sớm hơn.
 - Ghi một mốc vào `milestones` CHỈ KHI trang chương này cho thấy điều mốc mô tả đã diễn ra thật (hành động đã làm, sự kiện đã xảy ra), không phải dự định, nguy cơ, lời hứa hay gợi ý. Mốc có nhiều vế thì chỉ ghi khi các vế chính đều đã xảy ra. Chưa chắc thì không ghi.
-- `quote` bắt buộc: chép NGUYÊN VĂN một đoạn ngắn trong chương cho thấy điều đó đã xảy ra. Mỗi mốc chỉ ghi một lần. Không có mục mốc thì `milestones` rỗng.
+- Mốc loại bước ngoặt: ghi khi điều mốc mô tả đã diễn ra, không cần chờ hậu quả.
+- Mốc loại cao trào: chỉ ghi khi trang cho thấy cả cao trào (quyết định dứt khoát, cuộc đối mặt hay sự thật được nói ra, đúng điều mốc mô tả) LẪN hậu quả của nó: điều đã đổi hẳn VÌ cao trào ấy (cái giá đã trả, đường lui đã mất, quan hệ đã đổi, nhân vật đã bỏ đi hay đổi phe). Mối nguy có từ trước chỉ tiếp diễn hay lớn thêm thì không phải hậu quả; quyết định tạm, có điều kiện, chỉ cho bước trước mắt thì chưa phải cao trào. Chưa thấy hậu quả trên trang thì chưa ghi. Cao trào đã diễn ra trước đoạn văn này mà nay trang mới cho thấy hậu quả, và nói rõ hậu quả đến từ cao trào nào, thì ghi lúc đó.
+- `quotes` bắt buộc: 1 đến {max_parts} đoạn, mỗi đoạn chép NGUYÊN VĂN một chỗ liền mạch trong chương, các đoạn theo thứ tự xuất hiện trong chương. Thường một đoạn là đủ. Điều cần thấy nằm ở những chỗ cách nhau (như cao trào và hậu quả của nó) thì chép mỗi chỗ thành một đoạn riêng, mỗi đoạn ít nhất {min_words} chữ; không ghép các chỗ vào một đoạn, không thêm dấu ba chấm hay "[...]", không thêm, bớt hay đổi chữ nào, kể cả chữ nhỏ như "đã", "nữa". Mỗi mốc chỉ ghi một lần. Không có mục mốc thì `milestones` rỗng.
 
 Hé lộ cho người chơi:
 - Mỗi thực thể trong danh mục xuất hiện trên trang LẦN ĐẦU ở chương này (chưa có cạnh REVEALED_TO_PLAYER trong danh sách cạnh đang hiệu lực) thì ghi một cạnh REVEALED_TO_PLAYER tới nút chương này. Đã hé lộ ở chương trước thì không ghi lại.
@@ -227,7 +253,8 @@ Sự thật mới (`new_facts`):
 - Không ghi REVEALED_TO_PLAYER cho sự thật mới: code tự ghi. Số sự thật mới tối đa cho chương này ghi ở cuối đề; có thể để `new_facts` rỗng.
 
 Không ghi trùng: mỗi bộ (kiểu, từ, tới) chỉ một cạnh.
-"""
+""".replace("{max_parts}", str(MILESTONE_QUOTE_MAX_PARTS)).replace(
+    "{min_words}", str(MILESTONE_PART_MIN_WORDS))
 
 
 def _entity_line(e: Entity) -> list[str | UserAuthored]:
@@ -255,11 +282,12 @@ def _milestone_lines(milestones: Sequence[PendingMilestone]) -> list[str | UserA
     không có mục."""
     if not milestones:
         return []
-    parts: list[str | UserAuthored] = ["Mốc cốt truyện chưa xảy ra (id | khoảng chương | mô tả):"]
+    parts: list[str | UserAuthored] = [
+        "Mốc cốt truyện chưa xảy ra (id | loại | khoảng chương | mô tả):"]
     for m in milestones:
         window = f"chương {m.from_chapter}" if m.from_chapter == m.to_chapter else (
             f"chương {m.from_chapter}–{m.to_chapter}")
-        parts.append(f"- m{m.number} | {window} | " + escape_text(m.goal))
+        parts.append(f"- m{m.number} | {KIND_TEXT[m.kind]} | {window} | " + escape_text(m.goal))
     return parts
 
 
@@ -748,8 +776,10 @@ def accept_milestones(
     chapter_text: str,
 ) -> tuple[list[MilestoneMark], list[tuple[str, str]]]:
     """Mốc bộ trích đánh dấu mà code nhận (D-116): id có trong mục "chưa xảy ra", chưa đánh dấu (ở
-    chương trước hay trong cùng câu trả lời), và `quote` nguyên văn trong chương (G3). Mô tả bị bỏ
-    chỉ có id mốc, không chữ của model."""
+    chương trước hay trong cùng câu trả lời), và câu trích có thật (G3). Câu trích 1 đến
+    `MILESTONE_QUOTE_MAX_PARTS` đoạn (D-139): mỗi đoạn nguyên văn trong chương, các đoạn đúng thứ tự,
+    không chồng nhau; có hơn một đoạn thì mỗi đoạn ít nhất `MILESTONE_PART_MIN_WORDS` chữ. Mô tả bị
+    bỏ chỉ có id mốc, không chữ của model."""
     allowed = {p.number for p in pending}
     marks: list[MilestoneMark] = []
     rejected: list[tuple[str, str]] = []
@@ -763,12 +793,19 @@ def accept_milestones(
             rejected.append((desc, "mốc không có trong danh sách chưa xảy ra"))
         elif any(m.number == number for m in marks):
             rejected.append((desc, "mốc đã đánh dấu trong cùng câu trả lời"))
-        elif not item.quote.strip():
+        elif not any(q.strip() for q in item.quotes):
             rejected.append((desc, "mốc thiếu câu trích (G3)"))
-        elif not quote_in_text(item.quote, chapter_text):
+        elif len(item.quotes) > MILESTONE_QUOTE_MAX_PARTS:
+            rejected.append((desc, "câu trích mốc có quá nhiều đoạn (G3)"))
+        elif len(item.quotes) > 1 and any(len(q.split()) < MILESTONE_PART_MIN_WORDS
+                                          for q in item.quotes):
+            rejected.append((desc, "đoạn trích mốc quá ngắn (G3)"))
+        elif not all(quote_in_text(q, chapter_text) for q in item.quotes):
             rejected.append((desc, "câu trích mốc không có nguyên văn trong chương (G3)"))
+        elif not quote_parts_in_text(item.quotes, chapter_text):
+            rejected.append((desc, "các đoạn trích mốc sai thứ tự hay chồng nhau (G3)"))
         else:
-            marks.append(MilestoneMark(number, item.quote.strip()))
+            marks.append(MilestoneMark(number, join_quote_parts(item.quotes)))
     return marks, rejected
 
 

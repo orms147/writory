@@ -24,9 +24,12 @@ from writory.graph import (
     ChangePackage,
     MissingEntityError,
     item_holder,
+    join_quote_parts,
+    quote_parts,
     read_sample,
     story_snapshot,
 )
+from writory.guard.state import Neo4jState
 
 pytestmark = pytest.mark.graph
 
@@ -129,6 +132,35 @@ def test_protagonist_knows_without_quote_rejected(pg, driver, new_db_story_id):
     with pytest.raises(ChapterQuoteError):
         commit_chapter(pg, driver, sid, 2, [SAMPLE.chapters[2].text], bad)
     assert _state(pg, driver, sid) == before
+
+
+def _with_milestone_quote(package: ChangePackage, number: int, quote: str) -> ChangePackage:
+    nodes = [n.model_copy(update={"props": {**n.props, "milestones": [1], "milestone_quotes": [quote]}})
+             if n.id == f"ch{number}" else n for n in package.nodes]
+    return package.model_copy(update={"nodes": nodes})
+
+
+def test_milestone_quote_in_parts_is_checked_at_commit_and_read_back_from_neo4j(
+        pg, driver, new_db_story_id):
+    """G3 cho câu trích nhiều đoạn của mốc (D-139): các đoạn sai thứ tự thì không ghi gì; đúng thứ tự
+    trong văn chương thì ghi, và Neo4j trả lại đúng chuỗi đã lưu, tách lại được thành các đoạn."""
+    sid = new_db_story_id()
+    _story_with(pg, driver, sid, 2)
+    parts = ["Trước canh hai, Lan rủ Minh đi dọc bờ sông.",
+             "lời nói dối ấy giờ không rút lại được nữa."]
+    package = SAMPLE.chapters[3].package
+    before = _state(pg, driver, sid)
+    with pytest.raises(ChapterQuoteError):
+        commit_chapter(pg, driver, sid, 3, _scenes(3),
+                       _with_milestone_quote(package, 3, join_quote_parts(parts[::-1])))
+    assert _state(pg, driver, sid) == before
+
+    commit_chapter(pg, driver, sid, 3, _scenes(3),
+                   _with_milestone_quote(package, 3, join_quote_parts(parts)))
+    row = Neo4jState(driver, sid).nodes(["ch3"])["ch3"]
+    assert row.props["milestones"] == [1]
+    assert row.props["milestone_quotes"] == [join_quote_parts(parts)]
+    assert quote_parts(row.props["milestone_quotes"][0]) == parts
 
 
 def test_graph_failure_midway_keeps_story_state(pg, driver, new_db_story_id):

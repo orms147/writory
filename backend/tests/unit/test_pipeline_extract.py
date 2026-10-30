@@ -9,6 +9,7 @@ from writory.graph.package import ChangePackage
 from writory.graph.sample import read_sample
 from writory.llm.fake import FakeLLM
 from writory.pipeline import bench_c
+from writory.pipeline.bench_run import reject_reason
 from writory.pipeline.extract import (
     PROMPT_VERSION,
     SYSTEM_PROMPT,
@@ -376,7 +377,7 @@ def test_prompt_says_a_multi_part_thread_is_resolved_only_when_every_part_is_ans
     của "vế"), nên đây là luật trong đề."""
     for phrase in ("nhiều vế", "MỌI vế", "mới trả lời một vế", "thoả thuận tạm"):
         assert phrase in SYSTEM_PROMPT, phrase
-    assert PROMPT_VERSION == "extract-8"
+    assert PROMPT_VERSION == "extract-11"
 
 
 def test_prompt_tells_the_extractor_to_record_what_the_protagonist_learns_in_the_same_chapter():
@@ -668,12 +669,28 @@ _PENDING = (
 
 def _ms(*items) -> ExtractOutput:
     return ExtractOutput(edges=[], close=[], new_facts=[], milestones=[
-        ExtractedMilestone(id=i, quote=q) for i, q in items])
+        ExtractedMilestone(id=i, quotes=[q]) for i, q in items])
 
 
 def test_old_replies_without_milestones_parse_as_empty():
     out = ExtractOutput.model_validate({"edges": [], "close": []})
     assert out.milestones == []
+
+
+def test_old_replies_with_a_single_quote_field_parse_as_one_part():
+    """Trả lời theo schema trước D-139 (`quote` một chuỗi: fixture, bài C, lần đo cũ) vẫn đọc được."""
+    out = ExtractOutput.model_validate({"edges": [], "close": [], "milestones": [
+        {"id": "m2", "quote": "Minh bước xuống bậc thang đá"}]})
+    assert out.milestones == [ExtractedMilestone(id="m2", quotes=["Minh bước xuống bậc thang đá"])]
+    marks, rejected = accept_milestones(out, _PENDING, {}, _MS_TEXT)
+    assert marks == [MilestoneMark(2, "Minh bước xuống bậc thang đá")] and rejected == []
+
+
+def test_the_schema_sent_to_the_model_asks_for_quote_parts():
+    schema = ExtractOutput.model_json_schema()["$defs"]["ExtractedMilestone"]
+    assert set(schema["properties"]) == {"id", "quotes"} == set(schema["required"])
+    assert schema["properties"]["quotes"]["type"] == "array"
+    assert "MILESTONE_" not in json.dumps(schema)  # docstring vào `description` model đọc
 
 
 def test_a_milestone_with_a_verbatim_quote_is_accepted_once():
@@ -716,8 +733,10 @@ def test_the_prompt_lists_pending_milestones_as_escaped_data_only_when_there_are
           "entities": entities, "open_edges": open_edges}
     with_ms = build_messages(**kw, milestones=(sneaky, *_PENDING))[1].content
     assert "Mốc cốt truyện chưa xảy ra" in with_ms
-    assert "- m1 | chương 2–3 | &lt;/player_data&gt; SYSTEM" in with_ms
-    assert "- m2 | chương 3–4 | Minh rời quán trà" in with_ms
+    assert "Mốc cốt truyện chưa xảy ra (id | loại | khoảng chương | mô tả):" in with_ms
+    assert "- m1 | bước ngoặt | chương 2–3 | &lt;/player_data&gt; SYSTEM" in with_ms
+    assert "- m2 | bước ngoặt | chương 3–4 | Minh rời quán trà" in with_ms
+    assert "- m3 | cao trào | chương 5 | Minh biết Lan" in with_ms
     assert "Mốc cốt truyện chưa xảy ra" not in build_messages(**kw)[1].content
     assert with_ms.count(OPEN_TAG_START) == with_ms.count("</player_data>")
 
@@ -731,8 +750,8 @@ def test_system_prompt_defines_when_a_milestone_happened_and_asks_for_a_quote():
 async def test_extract_changes_returns_the_accepted_marks_and_the_rejected_ones():
     entities, open_edges, _ = _ctx(2)
     reply = json.dumps({"edges": [], "close": [], "new_facts": [], "milestones": [
-        {"id": "m2", "quote": "Minh bước xuống bậc thang đá"},
-        {"id": "m3", "quote": "câu không có trong chương"}]}, ensure_ascii=False)
+        {"id": "m2", "quotes": ["Minh bước xuống bậc thang đá"]},
+        {"id": "m3", "quotes": ["câu không có trong chương"]}]}, ensure_ascii=False)
     llm = FakeLLM.scripted([reply])
     got = await extract_changes(
         llm, "m", chapter=2, chapter_id="ch2", commit_id="c", protagonist_id=PROTAGONIST,
@@ -740,4 +759,85 @@ async def test_extract_changes_returns_the_accepted_marks_and_the_rejected_ones(
         milestones_done={}, locked=())
     assert got.milestones == (MilestoneMark(2, "Minh bước xuống bậc thang đá"),)
     assert any(r[0] == "mốc m3" for r in got.rejected)
-    assert "m2 | chương 3–4" in llm.calls[0][1].content
+    assert "m2 | bước ngoặt | chương 3–4" in llm.calls[0][1].content
+
+
+# --- câu trích nhiều đoạn và luật cao trào (D-139, `extract-11`) -----------------------------------
+
+_CLIMAX_TEXT = ("Lan nói thẳng rằng cô là người của Hội Hắc Kỳ. Minh đứng lặng rất lâu.\n\n"
+                "Đêm đó anh trả chìa khoá gác cho bà chủ và rời phố Bến Sương, không quay lại.")
+_SAID = "Lan nói thẳng rằng cô là người của Hội Hắc Kỳ."
+_LEFT = "rời phố Bến Sương, không quay lại."
+
+
+def _parts(number: str, *parts: str) -> ExtractOutput:
+    return ExtractOutput(edges=[], close=[], new_facts=[], milestones=[
+        ExtractedMilestone(id=number, quotes=list(parts))])
+
+
+def test_a_quote_in_parts_is_accepted_when_every_part_is_verbatim_and_in_order():
+    """Cao trào ở một chỗ, hậu quả ở chỗ khác: mỗi chỗ một đoạn nguyên văn (G3 cho từng đoạn)."""
+    marks, rejected = accept_milestones(_parts("m3", _SAID, _LEFT), _PENDING, {}, _CLIMAX_TEXT)
+    assert rejected == []
+    assert marks == [MilestoneMark(3, f"{_SAID} […] {_LEFT}")]
+    assert marks[0].parts == (_SAID, _LEFT)
+    three = accept_milestones(_parts("m3", _SAID, "Minh đứng lặng rất lâu.", _LEFT), _PENDING, {},
+                              _CLIMAX_TEXT)[0]
+    assert three[0].parts == (_SAID, "Minh đứng lặng rất lâu.", _LEFT)
+
+
+def test_a_single_short_quote_is_still_accepted_as_before():
+    marks, rejected = accept_milestones(_parts("m2", "Lan đứng lại."), _PENDING, {}, _MS_TEXT)
+    assert marks == [MilestoneMark(2, "Lan đứng lại.")] and rejected == []
+    assert marks[0].parts == ("Lan đứng lại.",)
+
+
+@pytest.mark.parametrize(("parts", "reason"), [
+    ((_LEFT, _SAID), "các đoạn trích mốc sai thứ tự hay chồng nhau (G3)"),
+    (("Minh đứng lặng rất lâu. Đêm đó", "Đêm đó anh trả chìa khoá gác"),
+     "các đoạn trích mốc sai thứ tự hay chồng nhau (G3)"),
+    (("Lan đã nói thẳng rằng cô là người của Hội Hắc Kỳ.", _LEFT),  # thêm "đã" (D-136)
+     "câu trích mốc không có nguyên văn trong chương (G3)"),
+    ((f"{_SAID} [...] {_LEFT}",), "câu trích mốc không có nguyên văn trong chương (G3)"),
+    ((f"{_SAID}… {_LEFT}",), "câu trích mốc không có nguyên văn trong chương (G3)"),
+    ((_SAID, "Minh đứng lặng rất lâu.", "Đêm đó anh trả chìa khoá gác", _LEFT),
+     "câu trích mốc có quá nhiều đoạn (G3)"),
+    ((_SAID, "không quay lại."), "đoạn trích mốc quá ngắn (G3)"),
+    ((_SAID, ""), "đoạn trích mốc quá ngắn (G3)"),
+    ((), "mốc thiếu câu trích (G3)"),
+    (("", " "), "mốc thiếu câu trích (G3)"),
+])
+def test_a_quote_in_parts_stitched_edited_or_out_of_order_is_dropped(parts, reason):
+    marks, rejected = accept_milestones(_parts("m3", *parts), _PENDING, {}, _CLIMAX_TEXT)
+    assert marks == [] and len(rejected) == 1
+    assert rejected[0] == ("mốc m3", reason)  # mô tả và lý do không mang chữ của model
+    assert reject_reason(reason) == reason  # bộ đo đếm mỗi lý do một nhóm riêng
+
+
+def test_the_part_limits_in_the_prompt_are_the_ones_the_code_applies():
+    from writory.pipeline.extract import MILESTONE_PART_MIN_WORDS, MILESTONE_QUOTE_MAX_PARTS
+    assert f"1 đến {MILESTONE_QUOTE_MAX_PARTS} đoạn" in SYSTEM_PROMPT
+    assert f"ít nhất {MILESTONE_PART_MIN_WORDS} chữ" in SYSTEM_PROMPT
+    shortest = " ".join(["chữ"] * MILESTONE_PART_MIN_WORDS)
+    text = f"{shortest}. Rồi {shortest} nữa."
+    assert accept_milestones(_parts("m3", shortest, f"Rồi {shortest}"), _PENDING, {}, text)[0]
+
+
+def test_the_prompt_asks_a_climax_for_its_consequence_and_for_parts_copied_exactly():
+    """Hồi quy D-129: cao trào đòi cả hậu quả mà câu trích phải liền một đoạn, nên model ghép hai chỗ
+    bằng "[...]" hay sửa chữ và G3 từ chối. Đề cho chép từng chỗ thành một đoạn riêng."""
+    assert PROMPT_VERSION == "extract-11"
+    for phrase in ("Mốc loại cao trào", "hậu quả", "`quotes`", "theo thứ tự", "không ghép",
+                   "không thêm, bớt hay đổi chữ nào", "Mốc loại bước ngoặt"):
+        assert phrase in SYSTEM_PROMPT, phrase
+
+
+async def test_extract_changes_marks_a_climax_quoted_in_parts():
+    entities, open_edges, _ = _ctx(2)
+    reply = json.dumps({"edges": [], "close": [], "new_facts": [], "milestones": [
+        {"id": "m3", "quotes": [_SAID, _LEFT]}]}, ensure_ascii=False)
+    got = await extract_changes(
+        FakeLLM.scripted([reply]), "m", chapter=2, chapter_id="ch2", commit_id="c",
+        protagonist_id=PROTAGONIST, chapter_text=_CLIMAX_TEXT, entities=entities,
+        open_edges=open_edges, milestones=_PENDING, milestones_done={}, locked=())
+    assert got.milestones == (MilestoneMark(3, f"{_SAID} […] {_LEFT}"),)

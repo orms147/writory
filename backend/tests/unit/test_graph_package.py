@@ -9,7 +9,10 @@ from writory.graph import (
     EdgeSpec,
     NodeSpec,
     chapter_rule_problems,
+    join_quote_parts,
     quote_in_text,
+    quote_parts,
+    quote_parts_in_text,
     quote_problems,
     read_sample,
 )
@@ -84,6 +87,42 @@ def test_quote_in_text_normalizes_unicode_and_whitespace():
     assert quote_in_text(decomposed, text)
     assert not quote_in_text("Em tên Lan, Phạm Thị Hoa.", text)
     assert not quote_in_text("", text)
+
+
+# --- câu trích nhiều đoạn (mốc cốt truyện, D-139) ------------------------------------------------
+
+_PAGE = ("Minh mở cửa hầm. Gió lạnh tràn vào. Anh bước xuống bậc đá, không quay lại.\n\n"
+         "Phía sau, cửa đóng sập.")
+
+
+@pytest.mark.parametrize("parts", [
+    ["Minh mở cửa hầm.", "Phía sau, cửa đóng sập."],
+    ["Minh mở cửa hầm.", "Gió lạnh tràn vào.", "Phía sau, cửa đóng sập."],
+    ["Minh mở cửa hầm."],  # một đoạn: đúng như quote_in_text
+    ["Minh mở  cửa hầm.", unicodedata.normalize("NFD", "Phía sau, cửa đóng sập.")],  # chuẩn hoá
+])
+def test_quote_parts_each_verbatim_and_in_order_are_on_the_page(parts):
+    assert quote_parts_in_text(parts, _PAGE)
+
+
+@pytest.mark.parametrize("parts", [
+    ["Phía sau, cửa đóng sập.", "Minh mở cửa hầm."],  # sai thứ tự
+    ["Minh đã mở cửa hầm.", "Phía sau, cửa đóng sập."],  # thêm một chữ nhỏ (D-136: "đã")
+    ["Minh mở cửa hầm. Gió lạnh", "Gió lạnh tràn vào."],  # hai đoạn chồng lên nhau
+    ["Minh mở cửa hầm. [...] Phía sau, cửa đóng sập."],  # ghép hai chỗ trong một đoạn
+    ["Minh mở cửa hầm.", ""],
+    [],
+])
+def test_quote_parts_stitched_edited_or_out_of_order_are_not_on_the_page(parts):
+    assert not quote_parts_in_text(parts, _PAGE)
+
+
+def test_a_stored_quote_keeps_its_parts_and_a_single_quote_is_one_part():
+    stored = join_quote_parts(["Minh mở cửa hầm.", " Phía sau, cửa đóng sập. "])
+    assert stored == "Minh mở cửa hầm. […] Phía sau, cửa đóng sập."
+    assert quote_parts(stored) == ["Minh mở cửa hầm.", "Phía sau, cửa đóng sập."]
+    assert join_quote_parts(["Minh mở cửa hầm."]) == "Minh mở cửa hầm."
+    assert quote_parts("Minh mở cửa hầm.") == ["Minh mở cửa hầm."]  # câu lưu trước D-139
 
 
 def test_known_as_must_be_inside_quote():

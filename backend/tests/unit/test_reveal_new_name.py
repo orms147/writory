@@ -1,6 +1,6 @@
 """Hé lộ lần hai dưới tên chính (D-136, D-17): nút có tên người chơi đã biết dưới một tên khác (biệt
 danh trước), nay trang nói ra tên chính lớp truth (tên thật sau). Code tự hé lộ tên chính có nguyên văn
-trên trang; cạnh hé lộ lần hai bộ trích ghi (đề vẫn là `extract-8`) qua cùng một
+trên trang; cạnh hé lộ lần hai bộ trích ghi (đề vẫn dặn không ghi lại nút đã hé lộ) qua cùng một
 luật (`safety.reveal.new_name_problem`). Không nhận: tên người chơi đã biết, biệt danh hay chức danh
 khác (sổ tay đổi tên hiện liên tục), nút đã hé lộ ở chính chương này (mỗi nút một cạnh hé lộ mỗi
 chương), nút có tên đang được kế hoạch bảo vệ mà bí mật chưa có trong player_view (D-61). Không mạng,
@@ -232,16 +232,16 @@ def test_the_sample_story_gold_second_reveal_passes():
     assert rejected == [] and [e.props["known_as"] for e in package.edges] == [REAL]
 
 
-# --- đề bộ trích: giữ extract-8 ----------------------------------------------------------------
+# --- đề bộ trích: vẫn không cho ghi hé lộ lần hai ---------------------------------------------------
 
 
-def test_the_extractor_prompt_stays_extract_8():
+def test_the_extractor_prompt_still_says_not_to_reveal_again():
     """Đề `extract-10` (cho ghi hé lộ lần hai) ra tín hiệu xấu ở lần phát lại khai trước, không gộp
-    (D-136, `evals/results/2026-10-30-reveal-new-name/`). `known_as` của cạnh đang hiệu lực chỉ cho
-    luật của code, không vào đề."""
+    (D-136, `evals/results/2026-10-30-reveal-new-name/`); `extract-11` (D-139) chỉ đổi phần mốc. `known_as`
+    của cạnh đang hiệu lực chỉ cho luật của code, không vào đề."""
     messages = build_messages(chapter=5, chapter_id="ch5", protagonist_id="minh", chapter_text=PAGE,
                               entities=ENTITIES, open_edges=EARLIER)
-    assert PROMPT_VERSION == "extract-8"
+    assert PROMPT_VERSION == "extract-11"
     assert "Đã hé lộ ở chương trước thì không ghi lại." in SYSTEM_PROMPT
     assert "người chơi biết là" not in messages[-1].content
     lines = messages[-1].content.splitlines()

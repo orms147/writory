@@ -610,6 +610,9 @@ _REJECT_REASONS = (
     "mốc đã xảy ra ở chương", "mốc không có trong danh sách chưa xảy ra",
     "mốc đã đánh dấu trong cùng câu trả lời", "mốc thiếu câu trích (G3)",
     "câu trích mốc không có nguyên văn trong chương (G3)",
+    # Câu trích mốc nhiều đoạn (D-139)
+    "câu trích mốc có quá nhiều đoạn (G3)", "đoạn trích mốc quá ngắn (G3)",
+    "các đoạn trích mốc sai thứ tự hay chồng nhau (G3)",
 )
 
 

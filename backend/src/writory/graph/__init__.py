@@ -18,7 +18,10 @@ from writory.graph.package import (
     EdgeSpec,
     NodeSpec,
     chapter_rule_problems,
+    join_quote_parts,
     quote_in_text,
+    quote_parts,
+    quote_parts_in_text,
     quote_problems,
 )
 from writory.graph.player_view import (
@@ -96,6 +99,7 @@ __all__ = [
     "find_characters",
     "is_alive",
     "item_holder",
+    "join_quote_parts",
     "knows",
     "load_sample_story",
     "named_nodes",
@@ -108,6 +112,8 @@ __all__ = [
     "public_entries",
     "public_lies",
     "quote_in_text",
+    "quote_parts",
+    "quote_parts_in_text",
     "quote_problems",
     "read_sample",
     "relationship",
