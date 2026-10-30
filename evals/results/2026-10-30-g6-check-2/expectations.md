@@ -59,3 +59,10 @@ Chung: lời gọi lỗi tối đa 1 mỗi lệnh; chạm trần thì không k�
 
 ## Ghi lại
 `g5/result.json`, `g6/result.json` (meta: ngày, commit, hash đầu vào, hash và `version` bộ câu, model, mức suy luận, `prompt`, `budget_usd`, `cost_usd`; chỉ số cả bộ và `by_set`; từng câu ở `rows`), rồi `notes.md` đối chiếu với các luật trên.
+
+## Bổ sung trước khi chạy (30/10/2026, sau D-140; commit này đi trước lời gọi đầu)
+Chủ dự án quyết dùng Meta làm model đo chính; Luna (OpenRouter) chỉ xác nhận nhỏ trước khi đề (`classify-3`, `overreach-2`) vào sản phẩm.
+- **Lượt Meta (quyết định):** hai lệnh dưới đây với `--config-dir ../evals/config/meta --env-file C:/Work/AI/WriTory/.env`, ra `evals/results/2026-10-30-g6-check-2/meta/g5` và `.../meta/g6`. Model `meta/muse-wonder-1.0` (vai `classify`, `overreach`), giá niêm yết 4 USD vào, 0,2 USD vào đã cache, 20 USD ra mỗi triệu token. Trần: G6 `--budget 0.35`, G5 `--budget 0.70` (tổng cùng G9 là trần cứng 1,50 USD của cả đợt Meta). Chạy khô với config Meta: G5 89 lời gọi ~1,48 USD, G6 32 lời gọi ~0,42 USD (300 token ra mỗi lời gọi; cao hơn thật ở Luna cỡ 5 lần, Muse có thể tốn thêm token suy luận, chưa đo). **Chạm trần của một lệnh thì các luật của lệnh đó không kết luận** (G5: R1 đến R3, N1; G6: P1, P2, M1), không chạy lại vượt trần mà báo điều phối. Thứ tự chạy: G9 `setup`, G6, G5.
+- **Luật R1 đến R3, N1, P1, P2, M1 ở trên áp trên lượt Meta.** Thay đổi duy nhất so với khai ban đầu là model; ngưỡng không đổi.
+- **Lượt Luna (xác nhận):** cùng hai lệnh, config và OpenRouter mặc định, ra `.../luna/g5` và `.../luna/g6`; trần chung 0,06 USD OpenRouter cho cả ba bộ: G5 0,03, G6 0,01 (G9 0,02). Luật xác nhận **L-G6**: với mỗi luật R1, R2, P1, P2, số câu sai của Luna trừ số câu sai của Meta **không quá 1** (R1: câu ghi chú không bị chặn trên 6; R2: câu gần nhãn bị chặn hay sai `feasibility` trên 4; P1: `rewrite_missed` trên 5; P2: `false_rewrite` trên 3). Tệ hơn Meta quá 1 ở một luật nào thì Luna **không xác nhận** và `classify-3`/`overreach-2` không được gộp vào sản phẩm. Luna chạm trần thì không xác nhận.
+- Mọi kết luận cuối ở `notes.md`: luật nào áp trên lượt nào, số thật, chi phí thật từng lượt.
