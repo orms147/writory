@@ -99,7 +99,6 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
 STORY_ID = "bench-a-sample"  # story_id trên Neo4j của truyện mẫu
 RUN_STORY_ID = "bench-a-run"  # story_id trên Neo4j của truyện do pipeline viết (D-83)
-SystemName = Literal["graph", "graph_quotes", "none", "rolling", "rag", "full"]
 
 ANSWER_PROMPT_VERSION = "a-answer-1"  # đổi chữ prompt thì tăng số: kết quả cũ không còn so được
 EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ABORT = 0, 1, 2, 3
