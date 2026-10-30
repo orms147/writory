@@ -44,6 +44,15 @@ describe('lần viết chương qua SSE (máy chủ giả)', () => {
     expect(run.committed).toBe(false);
   });
 
+  it('cảnh chiều theo hành động vượt luật: scene_blocked với mã riêng (G6, D-137)', async () => {
+    withMock({ fault: 'SCENE_OVERREACH_BLOCKED' });
+    startRun('s-haidang', 1);
+    await until('s-haidang', () => getRun('s-haidang')?.status !== 'running');
+    const run = getRun('s-haidang')!;
+    expect(run.blocked?.code).toBe('SCENE_OVERREACH_BLOCKED');
+    expect(run.committed).toBe(false);
+  });
+
   it('lỗi trước khi mở luồng (JSON có status) thành lỗi của lần viết', async () => {
     withMock({ fault: 'COST_LIMIT_STORY' });
     startRun('s-haidang', 1);

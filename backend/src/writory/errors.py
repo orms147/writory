@@ -43,6 +43,7 @@ class ErrorCode(StrEnum):
     ACTION_UNCLEAR = "ACTION_UNCLEAR"
     INTERNAL_ERROR = "INTERNAL_ERROR"
     SCENE_LEAK_BLOCKED = "SCENE_LEAK_BLOCKED"
+    SCENE_OVERREACH_BLOCKED = "SCENE_OVERREACH_BLOCKED"
     NARRATOR_QUESTION_EMPTY = "NARRATOR_QUESTION_EMPTY"
     NARRATOR_QUESTION_TOO_LONG = "NARRATOR_QUESTION_TOO_LONG"
     NARRATOR_LIMIT_REACHED = "NARRATOR_LIMIT_REACHED"
@@ -217,6 +218,14 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.SCENE_LEAK_BLOCKED: PlayerMessage(
         "Cảnh vừa viết không qua được bước kiểm tra cuối nên hệ thống không hiện nó.",
         "Bấm thử lại để viết lại cảnh này.",
+    ),
+    # G6 (D-137): mọi bản viết của cảnh đều để hành động vượt luật thành công trọn vẹn. Chỉ khi đó
+    # là lỗi chặn duy nhất; có lỗi chặn khác thì vẫn là SCENE_LEAK_BLOCKED (câu trung tính).
+    ErrorCode.SCENE_OVERREACH_BLOCKED: PlayerMessage(
+        "Hành động bạn tự viết vượt luật của thế giới truyện hoặc sức của nhân vật, mà hệ thống "
+        "chưa viết được cảnh để nó thất bại hay phải trả giá, nên không hiện cảnh này. Chưa có gì "
+        "được lưu.",
+        "Bấm thử lại để viết lại, hoặc quay về lựa chọn để chọn hay viết hành động khác.",
     ),
     # Hỏi người kể (design §6.6, D-40). Câu trung tính: không nói gì về điều người chơi chưa biết.
     ErrorCode.NARRATOR_QUESTION_EMPTY: PlayerMessage(

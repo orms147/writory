@@ -4,7 +4,8 @@
 # E, các lần chạy truyện) là của Luna, nên D-33, D-35, D-43 và D-47 đúng trở lại.
 
 # Vai giữ trí nhớ: cố định, người chơi không đổi được.
-# Người canh bản 1 chỉ kiểm bằng code nên không có vai ở đây; phần LLM để bản sau (D-88).
+# Người canh bản 1 chỉ kiểm bằng code nên không có vai ở đây; phần LLM để bản sau (D-88). Riêng G6 có vai
+# `overreach` (D-137, thay một phần D-88): một lời gọi enum ở bước soát cảnh, không phải người canh.
 roles:
   outline: openai/gpt-6-luna    # dàn ý cảnh (tạm, D-47)
   extract: openai/gpt-6-luna   # trích thay đổi -> JSON (D-35, bài C v2)
@@ -15,6 +16,10 @@ roles:
   summary: openai/gpt-6-luna    # tóm tắt chương vừa ghi cho đề các chương sau (D-49; tạm, D-47)
   moderate: openai/gpt-6-luna   # kiểm duyệt nội dung đầu vào và đầu ra, G9 (D-57; tạm, D-47)
   video: openai/gpt-6-luna      # bộ xuất kịch bản video: mô tả cố định, chia shot, dịch thoại (D-125; tạm, D-47)
+  # Chấm trang có để hành động vượt luật của người chơi thành công trọn vẹn không, G6 (D-137). Chỉ gọi ở
+  # chương mà hành động tự viết bị bộ phân loại chấm vượt luật. Model như các vai khác (tạm, Claude chọn,
+  # chờ chủ dự án duyệt).
+  overreach: openai/gpt-6-luna
 
 # Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model.
 role_reasoning:
@@ -27,6 +32,7 @@ role_reasoning:
   summary: low
   moderate: low
   video: low
+  overreach: low
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
 # D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).

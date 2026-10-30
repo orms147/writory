@@ -725,3 +725,60 @@ def test_the_milestone_lookahead_is_in_config():
     from writory.config import load_config
 
     assert load_config().limits.context.milestone_lookahead == 4  # D-116; số tạm, D-47
+
+
+# --- hành động vượt luật của người chơi (G6, D-137) ----------------------------------------------
+
+
+@pytest.mark.parametrize(("feasibility", "key"), [
+    ("beyond_world_rules", "overreach_world"),
+    ("beyond_character", "overreach_character"),
+])
+def test_a_beyond_rules_action_adds_exactly_its_overreach_sentence(feasibility, key):
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+    from writory.safety.classify import Feasibility
+
+    plain = _text(render_chapter_goals(chapter_goals(PLAN, 2, through(1)), scene=1, scene_count=2))
+    goals = chapter_goals(PLAN, 2, through(1), overreach=Feasibility(feasibility))
+    assert goals.overreach is Feasibility(feasibility)
+    text = _text(render_chapter_goals(goals, scene=2, scene_count=2))
+    assert GOAL_DEFAULTS[key] in text
+    assert "thất bại" in GOAL_DEFAULTS[key] and "cái giá" in GOAL_DEFAULTS[key]
+    other = _text(render_chapter_goals(chapter_goals(PLAN, 2, through(1)), scene=2, scene_count=2))
+    assert text.replace(f"- {GOAL_DEFAULTS[key]}\n", "") == other
+    assert plain != text
+
+
+def test_a_within_rules_action_or_none_leaves_the_goals_unchanged():
+    from writory.safety.classify import Feasibility
+
+    plain = chapter_goals(PLAN, 2, through(1))
+    within = chapter_goals(PLAN, 2, through(1), overreach=Feasibility.WITHIN_RULES)
+    assert plain.overreach is None and within.overreach is None
+    assert (_text(render_chapter_goals(within, scene=1, scene_count=2))
+            == _text(render_chapter_goals(plain, scene=1, scene_count=2)))
+
+
+def test_the_overreach_sentence_holds_in_the_final_chapter_too():
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+    from writory.safety.classify import Feasibility
+
+    goals = chapter_goals(PLAN, 6, through(5), overreach=Feasibility.BEYOND_CHARACTER)
+    assert goals.final
+    assert GOAL_DEFAULTS["overreach_character"] in _text(
+        render_chapter_goals(goals, scene=2, scene_count=2))
+
+
+def test_the_overreach_sentences_can_be_replaced_for_the_bench_and_load_as_a_variant(tmp_path):
+    """Như các câu khác của mục tiêu chương (D-109): khoá của GOAL_DEFAULTS, không chỗ điền."""
+    from writory.pipeline.prompt_variants import load_prompt_variant
+    from writory.safety.classify import Feasibility
+
+    goals = chapter_goals(PLAN, 2, through(1), overreach=Feasibility.BEYOND_WORLD_RULES)
+    text = _text(render_chapter_goals(goals, scene=1, scene_count=2,
+                                      texts={"overreach_world": "MỚI: cho nó thất bại."}))
+    assert "- MỚI: cho nó thất bại." in text
+    folder = tmp_path / "g6"
+    folder.mkdir()
+    (folder / "goals.yaml").write_text('overreach_world: "Thất bại."\n', encoding="utf-8")
+    assert load_prompt_variant("g6", root=tmp_path).goal_texts == {"overreach_world": "Thất bại."}

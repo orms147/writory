@@ -7,6 +7,7 @@ export type ErrorGroup =
   | 'credits'
   | 'cost'
   | 'leak'
+  | 'overreach'
   | 'retry_limit'
   | 'rate'
   | 'action_input'
@@ -30,6 +31,8 @@ const GROUP_OF: Record<string, ErrorGroup> = {
   COST_LIMIT_CHAPTER: 'cost',
   COST_LIMIT_STORY: 'cost',
   SCENE_LEAK_BLOCKED: 'leak',
+  // G6 (D-137): hành động tự viết vượt luật mà mọi bản viết đều chiều theo; có thể đổi hành động.
+  SCENE_OVERREACH_BLOCKED: 'overreach',
   CHOICES_LEAK_BLOCKED: 'leak',
   RETRY_LIMIT_REACHED: 'retry_limit',
   LLM_RATE_LIMITED: 'rate',
@@ -74,6 +77,7 @@ export const GROUP_KICKER: Record<ErrorGroup, string> = {
   credits: 'Credit OpenRouter',
   cost: 'Trần chi phí',
   leak: 'Viết cảnh',
+  overreach: 'Viết cảnh',
   retry_limit: 'Viết cảnh',
   rate: 'Giới hạn tần suất',
   action_input: 'Ô tự viết',
@@ -116,6 +120,7 @@ export const GROUP_ACTIONS: Record<ErrorGroup, ErrorAction[]> = {
   credits: ['retry', 'open_openrouter'],
   cost: ['retry', 'new_story'],
   leak: ['retry'],
+  overreach: ['retry', 'back_to_choices'],
   retry_limit: ['back_to_choices', 'home'],
   rate: ['retry'],
   action_input: [],

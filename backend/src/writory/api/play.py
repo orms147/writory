@@ -20,7 +20,9 @@
 - G8: một truyện chỉ một lần viết chương cùng lúc (`db.job_lock` trong `get_chapter_job`); lần
   thứ hai báo STORY_BUSY, không gọi model. Chọn lựa chọn và ô tự viết giữ cùng khoá đó, ở phạm vi
   `function`: khoá nhả trước khi phản hồi đi, vì giao diện gửi lệnh viết chương ngay sau phản hồi.
-- G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động.
+- G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động. Cùng lời
+  gọi chấm `feasibility` (G6, D-137), lưu cùng hành động; viết chương sau thì nó vào
+  `ChapterRequest.feasibility`. Lựa chọn có sẵn luôn trong luật (lưu NULL).
 - Chọn lựa chọn lưu hành động cho chương sau; khi viết chương đó, lời nói dối (`Lie`, `TOLD`, `TOLD_TO`,
   `ABOUT`) và nội tâm (`FEELS`) của lựa chọn được ghi vào gói của chính chương đó (D-55).
 Mount theo chế độ đăng nhập (`deps.api_guard`, D-41, D-89).
@@ -75,7 +77,12 @@ from writory.pipeline.events import (
 from writory.pipeline.pacing import stalled_after
 from writory.pipeline.store import GraphStore
 from writory.pipeline.story_plan import StoryPlan
-from writory.safety.classify import check_action_text, classify_action, ensure_in_story
+from writory.safety.classify import (
+    Feasibility,
+    check_action_text,
+    classify_action,
+    ensure_in_story,
+)
 from writory.safety.leak import leak_names
 from writory.safety.moderate import Source, ensure_input_allowed, moderate
 from writory.safety.redact import redact
@@ -149,6 +156,13 @@ def _picked_choice(conn, story_id: str, chapter: int, action: ActionRecord | Non
     return choice_from_record(record)
 
 
+def _feasibility(action: ActionRecord | None) -> Feasibility | None:
+    """G6 (D-137): chỉ hành động tự viết có giá trị; NULL (lựa chọn, hay hàng cũ) là trong luật."""
+    if action is None or action.source != "custom" or action.feasibility is None:
+        return None
+    return Feasibility(action.feasibility)
+
+
 def _has_pending(conn, story_id: str) -> bool:
     return any(r.status == "pending" for r in chapter_records(conn, story_id))
 
@@ -201,7 +215,7 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
             present_ids=(), scene_count=config.story_lengths.scenes_per_chapter.min,
             story_brief=brief, player_action=None if action is None else action.text,
             choice=_picked_choice(conn, story.id, committed, action),
-            darkness_level=story.darkness_level,
+            darkness_level=story.darkness_level, feasibility=_feasibility(action),
         )
         run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
                          config=config, plan=plan, tracker=tracker)
@@ -338,19 +352,22 @@ def pick_choice(body: ChoiceIn, story: deps.OwnedStory, conn: deps.PgConn,
 @router.post("/{story_id}/action", response_model=ActionOut,
              dependencies=[Depends(deps.lock_story, scope="function")])
 async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps.PgConn,
-                        config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> ActionOut:
+                        config: deps.Config, plan: Plan, llm: deps.PlayerLLMs,
+                        brief: deps.StoryBrief) -> ActionOut:
     """Ô tự viết: kiểm độ dài, kiểm duyệt nội dung (G9, D-57), rồi phân loại ý định bằng model có
     đầu ra enum (G5), trước khi lưu. Bị chặn ở bước nào thì không lưu và không tới bước sau.
-    Truyện đã kết thì báo trước khi gọi model (G8)."""
+    Truyện đã kết thì báo trước khi gọi model (G8). Bộ phân loại nhận thiết lập truyện người chơi
+    đã đọc để chấm `feasibility` (G6, D-137), lưu cùng hành động; không ra phản hồi."""
     chapter = _not_finished(story, plan) + 1
     check_action_text(body.text, config)
     client = llm.metered(story_id=story.id, chapter=chapter)
     await ensure_input_allowed(body.text, llm=client, config=config)
-    result = await with_retries(lambda: classify_action(body.text, llm=client, config=config),
-                                max_retries=config.limits.retries.llm_transient,
-                                retry_on=RETRY_TRANSIENT,
-                                backoff=config.limits.retries.transient_backoff_seconds)
+    result = await with_retries(
+        lambda: classify_action(body.text, story_brief=brief, llm=client, config=config),
+        max_retries=config.limits.retries.llm_transient, retry_on=RETRY_TRANSIENT,
+        backoff=config.limits.retries.transient_backoff_seconds)
     ensure_in_story(result)
     text = body.text.strip()
-    save_action(conn, story.id, chapter, source="custom", text=text)
+    save_action(conn, story.id, chapter, source="custom", text=text,
+                feasibility=result.feasibility.value)
     return ActionOut(for_chapter=chapter, source="custom", text=text)

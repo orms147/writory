@@ -31,6 +31,9 @@ describe('nhóm lỗi theo code', () => {
     expect(GROUP_ACTIONS[errorGroup('LLM_INSUFFICIENT_CREDITS')]).toEqual(['retry', 'open_openrouter']);
     expect(GROUP_ACTIONS[errorGroup('COST_LIMIT_CHAPTER')]).toEqual(['retry', 'new_story']);
     expect(GROUP_ACTIONS[errorGroup('RETRY_LIMIT_REACHED')]).toEqual(['back_to_choices', 'home']);
+    // Cảnh chiều theo hành động vượt luật (G6, D-137): thử lại hoặc quay về đổi hành động.
+    expect(GROUP_ACTIONS[errorGroup('SCENE_OVERREACH_BLOCKED')]).toEqual(['retry', 'back_to_choices']);
+    expect(GROUP_ACTIONS[errorGroup('SCENE_LEAK_BLOCKED')]).toEqual(['retry']);
     // Quá hạn tổng một lời gọi (D-113): chữ là message của máy chủ, bố cục chung "Thử lại · Về tủ truyện".
     expect(errorGroup('LLM_TIMEOUT')).toBe('generic');
     expect(GROUP_ACTIONS[errorGroup('STORY_BUSY')]).toEqual(['reload']);
