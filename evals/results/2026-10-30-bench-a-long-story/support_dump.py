@@ -17,5 +17,6 @@ for qf in ("questions.yaml", "questions-ky-ao-vua-1.yaml", "questions-ky-ao-vua-
                 out[f"{qf}:{q.id}:{system}"] = [context_supports(q, ctx, data), len(ctx.text)]
             except Exception as e:  # noqa: BLE001
                 out[f"{qf}:{q.id}:{system}"] = [f"error {type(e).__name__}", 0]
-json.dump(out, open(sys.argv[1], "w", encoding="utf-8"), ensure_ascii=False, indent=0, sort_keys=True)
+with open(sys.argv[1], "w", encoding="utf-8") as fh:
+    json.dump(out, fh, ensure_ascii=False, indent=0, sort_keys=True)
 print(len(out))
