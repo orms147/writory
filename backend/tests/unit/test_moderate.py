@@ -15,6 +15,8 @@ from writory.llm.fake import FakeLLM
 from writory.llm.ratelimit import RateLimitedClient
 from writory.safety.categories import Category, Intensity
 from writory.safety.moderate import (
+    _CHOICES_FRAME,
+    _SETUP_FRAME,
     LINES_HEADER_RE,
     PROMPT_VERSION,
     ChoicesModerationOutput,
@@ -22,6 +24,7 @@ from writory.safety.moderate import (
     ModerationOutput,
     Source,
     Verdict,
+    _system_prompt,
     darkness_brief,
     decide,
     ensure_input_allowed,
@@ -529,4 +532,76 @@ async def test_scene_is_still_one_flat_call():
 
 
 def test_prompt_version_names_the_calling_method():
-    assert PROMPT_VERSION == "moderate-2"
+    assert PROMPT_VERSION == "moderate-3"
+
+
+# --- lựa chọn khởi tạo (D-137): một lời gọi, mỗi lựa chọn một dòng --------------------------------
+
+SETUP = ("Bến Sương · Phố cảng sương mù, một xác thuyền trôi về lúc nửa đêm.\n"
+         "Đèo Gió · Trạm dịch trên đèo, lão chủ trạm biến mất.\n"
+         "Chợ Đêm · Phiên chợ ma họp dưới chân thành cũ.")
+
+
+async def test_setup_options_are_one_call_with_one_numbered_line_per_option():
+    llm = FakeLLM.scripted([lines_answer(3)])
+    result = await moderate(SETUP, source=Source.SETUP, llm=llm, config=CFG)
+    assert result.verdict is Verdict.ALLOW
+    assert result.line_verdicts == (Verdict.ALLOW,) * 3
+    assert llm.schemas == [ChoicesModerationOutput]
+    assert llm.extras == [role_extra(CFG.models, "moderate")]
+    [messages] = llm.calls
+    [system] = [m.content for m in messages if m.role == "system"]
+    [user] = [m.content for m in messages if m.role == "user"]
+    head, block = user.split("<player_data", 1)
+    assert LINES_HEADER_RE.search(head).group(1) == "3"
+    assert user.count("<player_data") == 1 and user.rstrip().endswith(CLOSE_TAG)
+    for i, line in enumerate(SETUP.split("\n"), 1):
+        assert f"[{i}] {line}" in block
+    # G4: chữ model viết cũng chỉ nằm trong khối dữ liệu, không bao giờ ở vai system.
+    assert "Bến Sương" not in system and "<player_data" not in system
+    # Khung riêng của lựa chọn khởi tạo, không phải khung bộ lựa chọn cuối chương.
+    assert _SETUP_FRAME in system and _CHOICES_FRAME not in system
+    assert MOD.categories[Category.GORE].description in system
+    assert MOD.intensity_scale[Intensity.STRONG] in system
+
+
+def test_setup_prompt_differs_from_the_choices_prompt_only_by_its_frame():
+    """Đề của các nguồn cũ không đổi (bộ đo G9 đã đo đúng đề đó); nguồn mới chỉ khác khung."""
+    choices = _system_prompt(MOD, Source.CHOICES)
+    assert _system_prompt(MOD, Source.SETUP).replace(_SETUP_FRAME, _CHOICES_FRAME) == choices
+    for source in (Source.INPUT, Source.SCENE, Source.CHOICES):
+        assert _SETUP_FRAME not in _system_prompt(MOD, source)
+
+
+@pytest.mark.parametrize(("level", "expected"), [
+    ("light", (Verdict.ALLOW, Verdict.OVER_DARKNESS, Verdict.HARD_BLOCKED)),
+    ("dark", (Verdict.ALLOW, Verdict.ALLOW, Verdict.HARD_BLOCKED)),
+])
+async def test_setup_gives_one_verdict_per_line_at_the_chosen_darkness_level(level, expected):
+    llm = FakeLLM.scripted([lines_answer(3, {2: [finding(Category.GORE, "mild")],
+                                             3: [finding(Category.SEXUAL_MINORS, "mild")]})])
+    result = await moderate(SETUP, source=Source.SETUP, llm=llm, config=CFG,
+                            darkness_level=level)
+    assert result.line_verdicts == expected
+    assert result.verdict is Verdict.HARD_BLOCKED and result.lines == (3,)
+
+
+async def test_choices_also_report_one_verdict_per_line():
+    llm = FakeLLM.scripted([lines_answer(3, {2: [finding(Category.REAL_WORLD_HARM)]})])
+    result = await moderate(CHOICES, source=Source.CHOICES, llm=llm, config=CFG)
+    assert result.line_verdicts == (Verdict.ALLOW, Verdict.BLOCKED, Verdict.ALLOW)
+
+
+async def test_flat_sources_have_no_line_verdicts():
+    llm = FakeLLM.scripted([answer()])
+    result = await moderate("Một đoạn văn.", source=Source.SCENE, llm=llm, config=CFG)
+    assert result.line_verdicts == ()
+
+
+async def test_setup_answer_must_cover_every_line_exactly_once():
+    retries = CFG.limits.retries.extract_schema_retry
+    bad = json.dumps({"lines": [{"line": 1, "findings": []}], "reason": "x"})
+    llm = FakeLLM.scripted([bad] * (retries + 1))
+    with pytest.raises(WritoryError) as exc:
+        await moderate(SETUP, source=Source.SETUP, llm=llm, config=CFG)
+    assert exc.value.code is ErrorCode.RETRY_LIMIT_REACHED

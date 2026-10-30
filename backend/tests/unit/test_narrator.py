@@ -11,10 +11,12 @@ import logging
 import re
 import unicodedata
 from collections import Counter
+from functools import partial
 
 import pytest
 import yaml
 
+from tests.moderation_fixtures import ModeratedLLM, moderation_reply
 from writory.config import REPO_ROOT, AppConfig, CostLimits, ModelPrice, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import (
@@ -43,7 +45,9 @@ from writory.pipeline.narrator import (
     source_chapters,
 )
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety.categories import Category
 from writory.safety.leak import check_leaks, strip_diacritics
+from writory.safety.moderate import ModerationResult, Source, Verdict, moderate
 from writory.safety.wrap import CLOSE_TAG
 
 SAMPLE = read_sample()
@@ -128,6 +132,10 @@ class MemoryQuota:
 
     async def asked(self, story_id: str, chapter: int) -> int:
         return self.taken[(story_id, chapter)]
+
+    async def release(self, story_id: str, chapter: int) -> None:
+        if self.taken[(story_id, chapter)] > 0:
+            self.taken[(story_id, chapter)] -= 1
 
 
 def metered(fake: FakeLLM, cap: float = 1.0) -> MeteredClient:
@@ -945,6 +953,139 @@ async def test_gate_is_optional_for_the_bench_path():
         "Lão Gù chết ở đâu?", v, llm=metered(fake), config=CFG,
         truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=MemoryQuota())
     assert out.blocked is None
+
+
+# --- kiểm duyệt câu trả lời (G9, D-137): cổng `moderate_answer` ------------------------------------
+
+
+class AnswerGate:
+    """Cổng kiểm duyệt câu trả lời giả: ghi lại chữ được kiểm, trả kết luận `verdict`, hoặc ném
+    `error` (kiểm duyệt không trả lời được)."""
+
+    def __init__(self, verdict: Verdict = Verdict.ALLOW, *, error: Exception | None = None):
+        self.texts: list[str] = []
+        self.verdict = verdict
+        self.error = error
+
+    async def __call__(self, text: str) -> ModerationResult:
+        self.texts.append(text)
+        if self.error is not None:
+            raise self.error
+        cats = () if self.verdict is Verdict.ALLOW else (Category.GORE,)
+        return ModerationResult(self.verdict, cats, (), "lý do", votes=(self.verdict,))
+
+
+async def ask_answer_gated(question, chapter, fake, gate, *, quota=None, input_gate=None):
+    return await ask_narrator(
+        question, view(chapter), llm=metered(fake), config=CFG,
+        truth_names=state(chapter).named_nodes(), plan=PLAN, story_brief="",
+        quota=quota if quota is not None else MemoryQuota(), moderate=input_gate,
+        moderate_answer=gate,
+    )
+
+
+GU_DEATH = "Lão Gù chết sau miếu Bà — máu loang trên áo."
+
+
+async def test_the_answer_shown_is_exactly_the_text_that_was_moderated():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, GU_DEATH, [ref(v, "e_gu_death")])])
+    gate, input_gate = AnswerGate(), Gate()
+    out = await ask_answer_gated("Lão Gù chết ở đâu?", 3, fake, gate, input_gate=input_gate)
+    # Chữ sau mọi phép kiểm của code (đã chuẩn hoá dấu gạch, D-31): đúng chữ người chơi nhận.
+    assert gate.texts == [out.answer] == ["Lão Gù chết sau miếu Bà - máu loang trên áo."]
+    assert input_gate.texts == ["Lão Gù chết ở đâu?"]  # câu hỏi vẫn qua cổng đầu vào như cũ
+
+
+@pytest.mark.parametrize("verdict", [Verdict.OVER_DARKNESS, Verdict.BLOCKED,
+                                     Verdict.HARD_BLOCKED])
+async def test_a_blocked_answer_is_never_returned_and_gives_the_turn_back(verdict, caplog):
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, GU_DEATH, [ref(v, "e_gu_death")])])
+    quota = MemoryQuota()
+    with caplog.at_level(logging.INFO, logger="writory.pipeline.narrator"), \
+            pytest.raises(WritoryError) as exc:
+        await ask_answer_gated("Lão Gù chết ở đâu?", 3, fake, AnswerGate(verdict), quota=quota)
+    assert exc.value.code is ErrorCode.NARRATOR_ANSWER_BLOCKED
+    # Câu hỏi của người chơi không có lỗi: như câu hỏi bị chặn (D-57), không mất lượt.
+    assert quota.taken[(STORY, 3)] == 0
+    # G12: câu trung tính; lỗi và log không có chữ của câu trả lời hay câu hỏi.
+    payload = exc.value.player_payload()
+    assert set(payload) == {"code", "message"}
+    for text in (payload["message"], str(exc.value), caplog.text):
+        assert "miếu Bà" not in text and "Lão Gù chết ở đâu" not in text
+    assert verdict.value in caplog.text and "gore" in caplog.text
+
+
+async def test_a_blocked_answer_gives_back_only_its_own_turn():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, GU_DEATH, [ref(v, "e_gu_death")])] * 2)
+    quota = MemoryQuota()
+    await ask_answer_gated("Lão Gù chết ở đâu?", 3, fake, AnswerGate(), quota=quota)
+    with pytest.raises(WritoryError):
+        await ask_answer_gated("Lão Gù chết ở đâu?", 3, fake, AnswerGate(Verdict.BLOCKED),
+                               quota=quota)
+    assert quota.taken[(STORY, 3)] == 1  # câu trước đã hiện vẫn tính lượt
+
+
+@pytest.mark.parametrize("error", [WritoryError(ErrorCode.LLM_UNAVAILABLE),
+                                   WritoryError(ErrorCode.RETRY_LIMIT_REACHED)])
+async def test_answer_moderation_that_cannot_answer_fails_closed(error):
+    """Fail closed: không kiểm được thì không hiện. Lỗi lời gọi không trả lại lượt (D-40)."""
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, GU_DEATH, [ref(v, "e_gu_death")])])
+    quota = MemoryQuota()
+    with pytest.raises(WritoryError) as exc:
+        await ask_answer_gated("Lão Gù chết ở đâu?", 3, fake, AnswerGate(error=error),
+                               quota=quota)
+    assert exc.value.code is error.code
+    assert quota.taken[(STORY, 3)] == 1
+
+
+@pytest.mark.parametrize(("chapter", "output"), [
+    pytest.param(3, NarratorOutput(known=False, answer=None, entry_ids=[]), id="not-known"),
+    pytest.param(4, None, id="leak"),
+    pytest.param(3, NarratorOutput(known=True, answer="Chưa có ghi chép nào nói Lão Gù chết ở "
+                                   "đâu.", entry_ids=["m1"]), id="meta-hedge"),
+])
+async def test_the_gate_only_sees_text_that_would_be_shown(chapter, output):
+    """Câu code đã thay bằng NOT_KNOWN (không biết, lộ G2, úp mở D-78) không hiện, nên không tốn
+    lời gọi kiểm duyệt; người chơi nhận NOT_KNOWN như cũ."""
+    if output is None:  # dẫn mục "gã lái đò" và nói thẳng tên thật chưa hé lộ
+        output = NarratorOutput(known=True, answer="Gã đó là Lý Thất.",
+                                entry_ids=[ref(view(4), "ly_that")])
+    fake = FakeLLM.scripted([output.model_dump_json()])
+    gate = AnswerGate(Verdict.HARD_BLOCKED)
+    out = await ask_answer_gated("Hỏi gì đó?", chapter, fake, gate)
+    assert out.answer == NOT_KNOWN and gate.texts == []
+
+
+async def test_empty_notebook_needs_no_answer_moderation():
+    gate = AnswerGate(Verdict.HARD_BLOCKED)
+    out = await ask_answer_gated("Lan là ai?", 0, FakeLLM.scripted([]), gate)
+    assert out.answer == NOT_KNOWN and gate.texts == []
+
+
+async def test_answer_moderation_reaches_the_moderation_model_as_wrapped_data():
+    """Đường thật: cổng là `safety.moderate.moderate` (nguồn `scene`, mức u tối của truyện) qua cùng
+    MeteredClient; câu trả lời chỉ nằm trong khối dữ liệu (G4)."""
+    v = view(3)
+    llm = ModeratedLLM(FakeLLM.scripted([reply(True, GU_DEATH, [ref(v, "e_gu_death")])]),
+                       [moderation_reply(("gore", "mild"))])
+    client = metered(llm)
+    quota = MemoryQuota()
+    with pytest.raises(WritoryError) as exc:
+        await ask_narrator(
+            "Lão Gù chết ở đâu?", v, llm=client, config=CFG,
+            truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=quota,
+            moderate_answer=partial(moderate, source=Source.SCENE, llm=client, config=CFG,
+                                    darkness_level="light"))
+    assert exc.value.code is ErrorCode.NARRATOR_ANSWER_BLOCKED and not quota.taken[(STORY, 3)]
+    [messages] = llm.moderation_calls
+    system = " ".join(m.content for m in messages if m.role == "system")
+    [user] = [m.content for m in messages if m.role == "user"]
+    assert "miếu Bà" not in system and "miếu Bà" in html.unescape(user)
+    assert user.count("<player_data") == 1 and user.rstrip().endswith(CLOSE_TAG)
 
 
 # --- phạm vi của người kể: mọi bí mật chưa có trong player_view (D-61) ---------------------------

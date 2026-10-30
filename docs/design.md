@@ -79,7 +79,7 @@ Lưu ý: 300.000 ký tự tiếng Việt ước khoảng 100.000 token (chưa đ
 6. **3 nhân vật chính** → chọn một; sửa được tên, tính cách, quá khứ. Những gì người chơi sửa là chữ người chơi: vào prompt như dữ liệu, không như lệnh (G4).
 7. (Bản 3) Luật thế giới, kiểu kết thúc, định mệnh/tự do, bí mật của nhân vật chính, kẻ thù định mệnh, nhập nhân vật bằng đoạn văn (§5).
 
-Người chơi đọc các lựa chọn ở bước 4–6, nên chúng không được chứa bí mật hay cú lật nào.
+Người chơi đọc các lựa chọn ở bước 4–6, nên chúng không được chứa bí mật hay cú lật nào. Chúng cũng qua kiểm duyệt nội dung (G9) ở mức u tối đã chọn trước khi hiện; lựa chọn bị chặn không hiện, nên một bước có thể chỉ còn hai lựa chọn (D-137).
 
 Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1) và đồ thị ban đầu (thế giới trước trang đầu, gọi là chương 0). Người chơi không thấy bản kế hoạch, và ở chương 0 người chơi chưa đọc trang nào: sổ tay chỉ có nhân vật chính họ vừa chọn, mọi điều khác hiện dần từ chương 1 (D-74). Luật của đồ thị ban đầu: `docs/graph-schema.md`, mục Chương 0 (D-38).
 
@@ -198,6 +198,7 @@ Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ �
 - Người chơi gọi một người, nơi hay vật bằng chữ khác sổ tay thì người kể vẫn nhận ra. Câu hỏi chỉ biết được một phần thì người kể nói phần đã biết, không đoán phần còn lại (D-77).
 - Câu trả lời kèm số câu hỏi còn lại của chương và nguồn: các chương mà người chơi đã biết những mục sổ tay câu trả lời dựa vào (D-65).
 - Số câu hỏi mỗi chương có trần (`config/limits.yaml`, G8). Hết lượt thì báo bằng câu trung tính; sang chương sau thì có lượt mới.
+- Câu trả lời qua kiểm duyệt nội dung (G9) ở mức u tối của truyện trước khi hiện. Bị chặn thì báo lỗi bằng câu trung tính, câu hỏi đó không bị tính lượt (D-137).
 
 ## 7. Đồ thị thế giới
 

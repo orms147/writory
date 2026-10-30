@@ -52,7 +52,11 @@ from writory.db.keys import delete_player_key, load_player_key, save_player_key
 from writory.db.library import StorySummaryRecord, owned_story_summaries
 from writory.db.locks import StoryBusyError, job_lock
 from writory.db.migrate import migrate
-from writory.db.narrator import narrator_questions_asked, take_narrator_question
+from writory.db.narrator import (
+    narrator_questions_asked,
+    release_narrator_question,
+    take_narrator_question,
+)
 from writory.db.plans import (
     create_story_with_plan,
     discard_story,
@@ -134,6 +138,7 @@ __all__ = [
     "reconcile_idle_stories",
     "reconcile_pending",
     "record_cost",
+    "release_narrator_question",
     "save_action",
     "save_chapter_summary",
     "save_choices",

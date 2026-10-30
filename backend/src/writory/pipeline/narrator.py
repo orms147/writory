@@ -18,6 +18,11 @@
 - G8: lời gọi phải qua `MeteredClient`; số câu hỏi mỗi chương có trần, giữ lượt trước khi gọi.
 - G9, D-57: cổng `moderate` (kiểm duyệt đầu vào) chạy sau các kiểm tra độ dài và sau lối tắt sổ
   tay trống, trước khi giữ lượt và trước model người kể: câu bị chặn không mất lượt.
+- G9, D-137: cổng `moderate_answer` (kiểm duyệt đầu ra) chạy trên đúng chữ sẽ hiện, sau mọi phép
+  kiểm trên (G2, mã mục, úp mở): câu code đã thay bằng `NOT_KNOWN` không hiện nên không cần kiểm.
+  Bị chặn thì trả lại lượt đã giữ (`NarratorQuota.release`; câu hỏi của người chơi không có lỗi,
+  như câu hỏi bị chặn không mất lượt) rồi NARRATOR_ANSWER_BLOCKED. Kiểm duyệt lỗi thì ném lỗi
+  nguyên (fail closed), không trả lại lượt (D-40).
 
 `ask_narrator` là đường của người chơi. `ask_narrator_reply` chạy đúng các bước đó, và trả thêm
 câu thô của model cùng lý do code thay bằng `NOT_KNOWN`, cho bài đo E (D-53). `ask_narrator` chỉ
@@ -54,6 +59,7 @@ from writory.pipeline.notebook import (
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import normalize_dashes
 from writory.safety.leak import check_leaks
+from writory.safety.moderate import ModerationResult, Verdict
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_message
 
 log = logging.getLogger(__name__)
@@ -174,11 +180,18 @@ def source_chapters(view: PlayerView, refs: Iterable[str]) -> list[int]:
 # phải truyền; bài đo E (đo người kể, không đo kiểm duyệt) không truyền.
 InputGate = Callable[[str], Awaitable[None]]
 
+# Cổng kiểm duyệt câu trả lời (G9, D-137): nhận đúng chữ sẽ hiện, trả kết luận. Đường của người chơi
+# phải truyền (`moderate` nguồn `scene`, mức u tối của truyện); bài đo E không truyền.
+AnswerGate = Callable[[str], Awaitable[ModerationResult]]
+
 
 class NarratorQuota(Protocol):
-    """Bộ đếm câu hỏi theo truyện và chương. Trả False khi đã dùng đủ `limit` lượt."""
+    """Bộ đếm câu hỏi theo truyện và chương. `take` trả False khi đã dùng đủ `limit` lượt.
+    `release` trả lại một lượt đã giữ, chỉ dùng khi câu trả lời bị kiểm duyệt chặn (D-137)."""
 
     async def take(self, story_id: str, chapter: int, limit: int) -> bool: ...
+
+    async def release(self, story_id: str, chapter: int) -> None: ...
 
 
 class NarratorCounter(NarratorQuota, Protocol):
@@ -285,17 +298,20 @@ async def ask_narrator(
     story_brief: str,
     quota: NarratorQuota,
     moderate: InputGate | None = None,
+    moderate_answer: AnswerGate | None = None,
 ) -> NarratorAnswer:
     """Câu trả lời hiện cho người chơi: chữ của model đã qua các phép kiểm, hoặc `NOT_KNOWN`, kèm
     mã các mục đã dẫn (`NarratorAnswer`).
 
     `view`: player_view ở chương đã commit (`db.committed_player_view`). `truth_names`, `plan` và
     `story_brief` (thiết lập truyện người chơi đã đọc, D-52) chỉ dùng cho bộ dò lộ (G2), không bao
-    giờ vào context của model.
+    giờ vào context của model. `moderate`, `moderate_answer`: cổng kiểm duyệt câu hỏi và câu trả
+    lời (G9, D-57, D-137); đường của người chơi phải truyền cả hai.
     """
     reply = await ask_narrator_reply(question, view, llm=llm, config=config,
                                      truth_names=truth_names, plan=plan, story_brief=story_brief,
-                                     quota=quota, moderate=moderate)
+                                     quota=quota, moderate=moderate,
+                                     moderate_answer=moderate_answer)
     return player_answer(reply)
 
 
@@ -310,6 +326,7 @@ async def ask_narrator_reply(
     story_brief: str,
     quota: NarratorQuota,
     moderate: InputGate | None = None,
+    moderate_answer: AnswerGate | None = None,
 ) -> NarratorReply:
     """Như `ask_narrator`, kèm câu thô của model và lý do bị thay. Câu thô có thể chứa bí mật:
     chỉ bộ đo đọc nó, không bao giờ trả cho người chơi hay ghi vào log."""
@@ -356,7 +373,25 @@ async def ask_narrator_reply(
                                 backoff=retries.transient_backoff_seconds)
     answer, blocked = _checked_answer(output, view, selection.refs, truth_names=truth_names,
                                       plan=plan, story_brief=story_brief)
+    if blocked is None and moderate_answer is not None:
+        await _ensure_answer_allowed(answer, moderate_answer, quota=quota, view=view)
     return NarratorReply(answer, output, blocked, tuple(sorted(selection.refs)), selection.total)
+
+
+async def _ensure_answer_allowed(answer: str, gate: AnswerGate, *, quota: NarratorQuota,
+                                 view: PlayerView) -> None:
+    """Kiểm duyệt đúng chữ sẽ hiện (G9, D-137). Lỗi của cổng ném ra nguyên: không kiểm được thì
+    không hiện, và lượt không trả lại, như lỗi lời gọi người kể (D-40). Bị chặn: trả lại lượt vừa
+    giữ rồi NARRATOR_ANSWER_BLOCKED. Log chỉ ghi kết luận và loại, không ghi chữ (G12)."""
+    result = await gate(answer)
+    if result.verdict is Verdict.ALLOW:
+        return
+    await quota.release(view.story_id, view.chapter)
+    cats = ", ".join(c.value for c in result.categories)
+    log.warning("người kể: chương %d, kiểm duyệt chặn câu trả lời (%s [%s]); trả lại lượt",
+                view.chapter, result.verdict.value, cats)
+    raise WritoryError(ErrorCode.NARRATOR_ANSWER_BLOCKED,
+                       detail=f"chương {view.chapter}: kiểm duyệt {result.verdict.value} [{cats}]")
 
 
 def _checked_answer(

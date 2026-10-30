@@ -26,3 +26,9 @@ def test_router_errors_have_the_same_text_and_status_in_the_mock_table():
     """Lớp mock trả ROUTE_NOT_FOUND cho đường dẫn nó không biết, như máy chủ (`api/errors.py`)."""
     for code in (ErrorCode.ROUTE_NOT_FOUND, ErrorCode.METHOD_NOT_ALLOWED):
         assert _mock(code) == (MESSAGES[code].text(), HTTP_STATUS[code]), code.value
+
+
+def test_moderation_errors_of_setup_and_narrator_are_in_the_mock_table():
+    """Mã mới của kiểm duyệt đầu ra (D-137): giao diện chạy với máy chủ giả cũng hiện đúng câu."""
+    for code in (ErrorCode.SETUP_OPTIONS_BLOCKED, ErrorCode.NARRATOR_ANSWER_BLOCKED):
+        assert _mock(code) == (MESSAGES[code].text(), HTTP_STATUS[code]), code.value
