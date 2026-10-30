@@ -1,6 +1,6 @@
 # Khai trước: phát lại bộ trích `extract-8` và `extract-9` trên chương đã lưu
 
-Khai TRƯỚC khi gọi model thật (commit này đi trước mọi lời gọi). Mục đích: đo thay đổi D-127 (dòng mốc có loại, cao trào đòi hậu quả đã diễn ra) mà không viết lại cả truyện. Nguồn chương và đồ thị: `evals/results/2026-10-29-run-long-after-tu-tien/` và `…-after-ky-ao-2/` (lượt chạy sau D-116, bộ trích `extract-8`).
+Khai TRƯỚC khi gọi model thật (commit này đi trước mọi lời gọi). Mục đích: đo thay đổi D-129 (dòng mốc có loại, cao trào đòi hậu quả đã diễn ra) mà không viết lại cả truyện. Nguồn chương và đồ thị: `evals/results/2026-10-29-run-long-after-tu-tien/` và `…-after-ky-ao-2/` (lượt chạy sau D-116, bộ trích `extract-8`).
 
 ## Cách phát lại
 - Mỗi ca = một chương đã ghi. Đề dựng lại từ `truth_dump.json`: danh mục thực thể và cạnh đang hiệu lực đến hết chương trước, mạch phải gỡ, mốc chưa xảy ra và mốc đã xong tính bằng `chapter_goals` (cờ `milestone_lookahead` của config), luật Fact mới của config. Chữ chương là toàn bộ chương (`chapters/chNN.md`, bỏ tiêu đề và phần lựa chọn), **một lời gọi cho cả chương**, khác sản phẩm (mỗi cảnh một lời gọi, cảnh sau thấy mốc cảnh trước đã đánh dấu). Không có nút `Lie` của lựa chọn dẫn tới chương (tác động lựa chọn) trong danh mục.

@@ -48,7 +48,7 @@ from writory.safety.wrap import (
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
 # Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
 # "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116). extract-9: dòng mốc có loại, cao trào đòi
-# hậu quả đã diễn ra trên trang (D-127).
+# hậu quả đã diễn ra trên trang (D-129).
 PROMPT_VERSION = "extract-9"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.

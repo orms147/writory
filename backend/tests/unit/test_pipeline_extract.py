@@ -744,7 +744,7 @@ async def test_extract_changes_returns_the_accepted_marks_and_the_rejected_ones(
 
 
 def test_each_pending_milestone_line_carries_its_kind():
-    """D-127: bộ trích phải biết mốc là bước ngoặt hay cao trào (đề dàn ý/viết vốn đã biết)."""
+    """D-129: bộ trích phải biết mốc là bước ngoặt hay cao trào (đề dàn ý/viết vốn đã biết)."""
     entities, open_edges, text = _ctx(2)
     kw = {"chapter": 2, "chapter_id": "ch2", "protagonist_id": PROTAGONIST, "chapter_text": text,
           "entities": entities, "open_edges": open_edges}
