@@ -48,6 +48,7 @@ from pydantic.types import SecretStr
 from writory.config import REPO_ROOT, ConfigError, load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.cost import EST_CHARS_PER_TOKEN
+from writory.llm.meta import META_BASE_URL, meta_error
 from writory.pipeline.bench_run import RunScenario
 from writory.pipeline.setup import CharacterOption, PlotOption, SettingOption, story_brief
 from writory.quality import (
@@ -661,7 +662,6 @@ class AnthropicProvider:
         return judge_estimate(request)
 
 
-META_BASE_URL = "https://api.meta.ai/v1"
 _META_STOP = {"stop": "end_turn", "length": "max_tokens", "content_filter": "refusal"}
 
 
@@ -719,14 +719,9 @@ class MetaProvider:
     def _error(resp: httpx.Response, secret: str) -> WritoryError:
         try:
             body = resp.json()
-            message = body["error"]["message"] if isinstance(body.get("error"), dict) else resp.text
-        except (ValueError, KeyError, AttributeError):
-            message = resp.text
-        status = resp.status_code
-        code = {401: ErrorCode.LLM_AUTH_FAILED, 403: ErrorCode.LLM_AUTH_FAILED,
-                429: ErrorCode.LLM_RATE_LIMITED}.get(status)
-        code = code or (ErrorCode.LLM_UNAVAILABLE if status >= 500 else ErrorCode.LLM_REQUEST_INVALID)
-        return WritoryError(code, detail=scrub(f"HTTP {status}: {message}", secret)[:400])
+        except ValueError:
+            body = None
+        return meta_error(resp.status_code, body, resp.text, secret)
 
     def cost(self, usage: Mapping[str, int]) -> float:
         price = self.spec.price

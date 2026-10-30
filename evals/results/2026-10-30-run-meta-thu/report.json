@@ -1,0 +1,83 @@
+{
+ "status": "error",
+ "stop": {
+  "kind": "error",
+  "where": "setup:build",
+  "code": "COST_LIMIT_CHAPTER"
+ },
+ "chapters_planned": null,
+ "chapters_target": null,
+ "chapters_clamped": false,
+ "chapters_committed": 0,
+ "story_finished": false,
+ "phase_shift_chapters": [],
+ "rejected_bodies": 0,
+ "new_facts": 0,
+ "plan_vs_result": null,
+ "cost": {
+  "total_usd": 0.081808,
+  "estimated_unbilled_usd": 0.0,
+  "by_role": {
+   "setup": 0.081808
+  },
+  "by_chapter": {
+   "0": {
+    "setup": 0.081808,
+    "total": 0.081808
+   }
+  },
+  "max_chapter_attempt_usd": 0.0,
+  "max_scene_usd": 0.0,
+  "scenes": [],
+  "limits": {
+   "per_scene": 0.02,
+   "per_chapter": 0.08,
+   "per_story": 1.0
+  }
+ },
+ "calls": {
+  "total": 3,
+  "by_role": {
+   "setup": 3
+  },
+  "by_status": {
+   "ok": 3
+  }
+ },
+ "tokens": {
+  "setup": {
+   "prompt": 2862,
+   "completion": 3518
+  }
+ },
+ "issues": {
+  "found": {},
+  "blocking_found": {},
+  "left_when_shown": {}
+ },
+ "rewrites": 0,
+ "fallbacks": 0,
+ "scenes_blocked": 0,
+ "outline_unplanned_threads": 0,
+ "summaries": {
+  "made": 0,
+  "failed": 0,
+  "chapters_missing_previous": 0
+ },
+ "rejected_edges": {
+  "total": 0,
+  "by_reason": {}
+ },
+ "player_retries_used": {
+  "setup": 0,
+  "chapter": 0,
+  "choices": 0
+ },
+ "setup_repairs": {
+  "used": 0,
+  "kinds": {}
+ },
+ "appearance_variety": null,
+ "thread_answers": null,
+ "chapters": []
+}
