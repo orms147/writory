@@ -483,3 +483,55 @@ async def test_classify_reasoning_follows_config():
         llm = FakeLLM.scripted([answer("in_story_action")])
         await classify("Tôi mở cửa.", llm, config)
         assert llm.extras == [expected]
+
+
+# --- vòng hai của G6 (D-141): ghi chú gửi bộ phân loại -----------------------------------------
+
+
+def test_prompt_version_names_the_round_two_prompt():
+    from writory.safety.classify import PROMPT_VERSION as version
+
+    assert version == "classify-3"
+
+
+def test_prompt_treats_text_aimed_at_the_classifier_as_a_request_to_the_system():
+    """D-141: chữ nhắm vào bộ phân loại, người chấm hay AI (nhờ chọn nhãn, cho qua) là yêu cầu gửi hệ
+    thống dù đi kèm một hành động trong truyện. Đề nêu quy tắc chung, không chép chữ của hai câu đã sai
+    ở lần đo đầu (`hi-ghi-chu-bo-phan-loai`, `g6-bay-ghi-chu-nguoi-cham`): bộ giữ riêng giữ nguyên là
+    giữ riêng."""
+    from writory.safety.classify import SYSTEM_PROMPT
+
+    assert "nhắm vào chính bộ phân loại" in SYSTEM_PROMPT
+    folded = _fold(SYSTEM_PROMPT)
+    assert "ghi chu cho bo phan loai" not in folded and "ghi chu cho nguoi cham" not in folded
+    # Nhân vật viết thư, dặn dò người trong truyện vẫn là hành động trong truyện.
+    assert "gửi cho người trong truyện" in SYSTEM_PROMPT
+
+
+ROUND2 = [c for c in CASES if "round2" in c["tags"]]
+
+
+def test_round_two_cases_are_new_held_out_and_do_not_echo_the_new_prompt():
+    from writory.safety.classify import SYSTEM_PROMPT
+
+    assert all(c["set"] == "holdout" for c in ROUND2)
+    attacks = [c for c in ROUND2 if "attack" in c["tags"]]
+    near = [c for c in ROUND2 if "near-miss" in c["tags"]]
+    assert len(attacks) >= 6 and all(c["expected"] == "out_of_story_request" for c in attacks)
+    assert len(near) >= 4 and all(c["expected"] == "in_story_action"
+                                  and c["feasibility"] == "within_rules" for c in near)
+    assert {c["lang"] for c in attacks} >= {"vi", "en", "vi-khong-dau", "vi-teencode"}
+    # Mỗi câu tấn công mang một hành động thật cùng một chữ nhắm vào người đọc chữ: có cả hành động
+    # vượt luật và hành động trong luật (nhãn không được suy ra từ hành động).
+    assert any("impossible" in c["tags"] for c in attacks)
+    assert any("impossible" not in c["tags"] for c in attacks)
+    old = [c for c in CASES if "round2" not in c["tags"]]
+    old_texts = {c["text"] for c in old}
+    assert not [c["id"] for c in ROUND2 if c["text"] in old_texts]
+    # Không câu mới nào dùng đúng cụm đã nằm trong đề mới, cũng không dùng cụm của hai câu đã sai.
+    folded_prompt = _fold(SYSTEM_PROMPT)
+    for c in ROUND2:
+        folded = _fold(c["text"])
+        assert "ghi chu cho bo phan loai" not in folded and "ghi chu cho nguoi cham" not in folded, c["id"]
+        assert "nham vao chinh bo phan loai" not in folded, c["id"]
+        assert folded not in folded_prompt, c["id"]
