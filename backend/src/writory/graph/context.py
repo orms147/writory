@@ -457,7 +457,9 @@ def writer_context(
             """, max_items=MAX_ITEMS)
     )
 
-    shown |= {f.id for f in facts} | {lie.id for lie in lies} | {i.id for i in items}
+    # Bí mật kế hoạch đã ở mục "Sự thật cần tôn trọng" (kể cả "KHÔNG để lộ"): không gợi ý nhắc lại (D-28).
+    shown |= ({f.id for f in facts} | {lie.id for lie in lies} | {i.id for i in items}
+              | {s.fact_id for s in secrets})
     neighbors = _neighbors(read, max_neighbors, shown, personality_max_chars, appearance_max_chars)
 
     threads = tuple(

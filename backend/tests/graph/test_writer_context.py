@@ -437,3 +437,12 @@ def test_the_sample_story_has_no_edge_with_a_wrong_endpoint(driver, sample_story
     from writory.graph import edge_endpoint_violations
 
     assert edge_endpoint_violations(driver, sample_story_id) == []
+
+
+def test_a_plan_secret_is_never_repeated_as_a_neighbor_hint(driver, sample_story_id):
+    """D-28: hàng xóm 1–2 bước không lặp nút đã ở phần sự thật. Bí mật kế hoạch nằm ở mục
+    "KHÔNG để lộ"; trước đây bí mật chưa ai có mặt biết (f_lan_killed_gu, cách minh hai bước qua
+    lan) còn hiện lại ở "Gợi ý có thể nhắc tới", tức vừa cấm vừa gợi ý nhắc."""
+    ctx = writer_context(driver, sample_story_id, 4, ["minh"], PLAN)
+    assert {s.fact_id for s in ctx.secrets} == {"f_lan_spy", "f_lan_killed_gu"}
+    assert not {n.id for n in ctx.neighbors} & {"f_lan_spy", "f_lan_killed_gu"}
