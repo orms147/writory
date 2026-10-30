@@ -1260,3 +1260,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bộ xuất lấy hạn qua `llm.openrouter.call_deadline` trước khi đọc key; `main` đổi stdout/stderr sang UTF-8 như `bench_run`.
 - **Hệ quả:** bộ trích mất thêm cạnh model ghi sai (bộ đo đếm hai lý do mới). Cạnh sai đã nằm trong đồ thị không bị xoá; quan hệ thiếu `score` cũ vẫn in "None". Mạch hiện QUÁ HẠN sớm hơn một chương so với trước.
 - **Người quyết:** Claude (sửa theo review, giao việc 30/10/2026), nhánh fix/graph-review · 30/10/2026
+
+## D-134 · Sổ tay không hiện chữ lớp truth nói hơn câu trích: lọc cạnh hé lộ nút chữ sau người canh (bổ sung D-61, D-93; vá lỗ ghi ở D-132)
+- **Bối cảnh:** lỗ G2 trên sổ tay tìm ra ở review D-132 (test `xfail` ở `backend/tests/unit/test_notebook_fact_protected_name.py`). Nút chữ (Fact, Event, Lie) vào `player_view` hiện bằng chữ lớp truth. Bộ trích hé lộ một Fact không bí mật mà chữ có tên đang được bảo vệ (D-61) bằng câu trích có thật nhưng không nêu tên: `to_package` và người canh nhận, sổ tay hiện tên, `_seen_text` tính tên đó là đã thấy nên bộ dò lộ thôi cấm, ở cả cảnh lẫn đường người chơi. Cùng lỗ với tên thật sau biệt danh (luật a), nhóm `leak_terms` của bí mật khác, và `KNOWS` của nhân vật chính.
+- **Quyết định:**
+  - `safety.leak.unquoted_leaks`: điều bộ dò lộ `player_path` chặn trong chữ nút (tên theo `forbidden_names`, nhóm `leak_terms`) mà không câu trích nào của nút nói ra. Nhóm `leak_terms` của chính bí mật đang hé lộ không tính (người canh quyết khoảng lộ); tên bí mật đó bảo vệ thì vẫn tính.
+  - `extract.drop_unquoted_leaks`, trong `_review` sau người canh: so với `player_view` trước cảnh (không tính hé lộ khác cùng gói, để hai nút chữ không mở khoá cho nhau), bỏ `REVEALED_TO_PLAYER` từ nút và `KNOWS` của nhân vật chính tới nút, lý do riêng "chữ sổ tay có tên hay bí mật mà câu trích không nói (G2)" (bộ đo đếm riêng). Fact mới (D-93) đi cùng phép lọc, thay bước dò lộ riêng trước đây, giữ lý do cũ. Cảnh không bị viết lại.
+  - Không đổi `_seen_text`: nó đúng là thứ sổ tay hiện. Bỏ chữ Fact khỏi đó không vá được sổ tay, lại làm bộ dò cấm tên mà sổ tay đang hiện.
+  - Không làm trong `to_package` hay trước người canh: cần `player_view` và kế hoạch, và lọc trước người canh thì người canh mất hé lộ bí mật mà nó phải chặn khi lộ sớm.
+- **Hệ quả:** hé lộ bí mật danh tính mà câu trích không nêu tên bị bỏ; bí mật coi như chưa lộ, cảnh sau ghi lại được. Fact mới có tên cấm mà câu trích nêu tên nay được giữ; Fact mới chỉ được mở khoá nhờ hé lộ khác cùng gói nay bị bỏ. Gói nạp thẳng bằng `apply_package` (truyện mẫu) không qua phép lọc. Chưa đo trên lần chạy thật bao nhiêu cạnh bị bỏ.
+- **Người quyết:** Claude (giao việc 30/10/2026), nhánh fix/notebook-protected-name · 30/10/2026

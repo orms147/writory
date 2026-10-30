@@ -3,7 +3,8 @@
 "Người chơi đã thấy gì" (`_seen_text`, một chỗ duy nhất) gồm `PlayerView` (G1, D-16: chữ hiện, biệt
 danh, mọi câu trích, nội dung lời nói dối của nhân vật chính) và thiết lập truyện người chơi đã đọc
 lúc khởi tạo (`story_brief`: bối cảnh, hướng truyện, nhân vật chính đã chọn; D-52). Bộ dò không đọc
-cạnh đồ thị.
+cạnh đồ thị. Chữ lớp truth của Fact, Event, Lie trong player_view tính là đã thấy vì sổ tay hiện nó;
+pipeline chỉ cho nút chữ vào player_view khi chữ đó không nói hơn câu trích (`unquoted_leaks`, D-134).
 
 Chuỗi cấm, tạo từ player_view, thiết lập truyện, tên lớp truth và story_plan (D-61):
 1. Tên bí mật, chỉ hai loại, và chỉ khi tên đó có ít nhất một từ viết hoa (tên riêng) mà người chơi
@@ -260,6 +261,43 @@ def check_leaks(
                     hits.append(LeakHit(LeakKind.SECRET, " + ".join(group), start, end,
                                         _excerpt(text, start, end)))
     return sorted(hits, key=lambda h: (h.start, h.end))
+
+
+def _group_in_one_sentence(flat: str, group: Sequence[str]) -> bool:
+    patterns = [_pattern(p) for p in group]
+    return any(all(p.search(s.group()) for p in patterns) for s in _SENTENCE.finditer(flat))
+
+
+def unquoted_leaks(
+    text: str,
+    quotes: Sequence[str],
+    *,
+    node_id: str,
+    view: PlayerView,
+    truth_names: Mapping[str, tuple[str, ...]],
+    plan: StoryPlan,
+    story_brief: str,
+) -> list[str]:
+    """Điều bộ dò lộ đường người chơi (`player_path`) chặn trong `text`, chữ lớp truth của một nút
+    chữ (Fact, Event, Lie) sắp vào player_view, mà không câu trích nào trong `quotes` nói ra (D-134).
+    Sổ tay hiện nguyên chữ này và `_seen_text` tính nó là đã thấy, nên chữ đó không được nói hơn
+    trang: tên bị cấm (luật a, b ở đầu file) phải có trong một câu trích; nhóm `leak_terms` của bí
+    mật còn hiệu lực phải cùng nằm trong một câu của một câu trích. Nhóm của chính bí mật `node_id`
+    không tính: hé lộ bí mật là việc của cảnh, người canh (`_early_reveal`) quyết khoảng lộ; tên bí
+    mật đó bảo vệ thì vẫn tính. `view`: player_view TRƯỚC gói đang xét. Trả các cụm trúng (lớp
+    truth: không vào log hay lý do bị bỏ)."""
+    flat = strip_diacritics(unicodedata.normalize("NFC", text))
+    said = [strip_diacritics(unicodedata.normalize("NFC", q)) for q in quotes]
+    out = [f.term for f in forbidden_names(truth_names=truth_names, view=view, plan=plan,
+                                           story_brief=story_brief, scope="player_path")
+           if _pattern(f.term).search(flat) and not any(_pattern(f.term).search(q) for q in said)]
+    for secret in active_secrets(plan, view, "player_path"):
+        if secret.fact_id == node_id:
+            continue
+        out += [" + ".join(group) for group in secret.leak_terms
+                if _group_in_one_sentence(flat, group)
+                and not any(_group_in_one_sentence(q, group) for q in said)]
+    return out
 
 
 def ensure_no_leak(
