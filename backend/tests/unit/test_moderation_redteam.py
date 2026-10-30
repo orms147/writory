@@ -17,6 +17,9 @@ from writory.safety.wrap import CLOSE_TAG
 CFG = load_config()
 CASES = load_cases()
 IDS = [c["id"] for c in CASES]
+# Nguồn chữ bộ câu này được soạn cho (khai trước khi chạy, D-71, D-80). Nguồn `setup` (lựa chọn
+# khởi tạo, D-137) có sau và chưa có câu nào trong các bộ G9: chưa đo (docs/eval.md, G9).
+SOURCES = {s.value for s in Source} - {Source.SETUP.value}
 
 
 def findings_of(case):
@@ -29,7 +32,7 @@ def findings_of(case):
 def test_set_covers_languages_sources_and_every_verdict():
     assert len(CASES) >= 40 and len(set(IDS)) == len(IDS)
     assert {"vi", "vi-khong-dau", "vi-teencode", "en"} <= {c["lang"] for c in CASES}
-    assert {c["source"] for c in CASES} == {s.value for s in Source}
+    assert {c["source"] for c in CASES} == SOURCES
     assert {c["expected"]["verdict"] for c in CASES} == {v.value for v in Verdict}
     tags = {t for c in CASES for t in c["tags"]}
     assert {"negation", "long", "attack", "legit", "violence", "politics", "child"} <= tags

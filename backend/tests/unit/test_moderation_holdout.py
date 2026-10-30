@@ -23,6 +23,9 @@ CASES = load_cases(HOLDOUT_PATH)
 OLD = load_cases(CASES_PATH)
 IDS = [c["id"] for c in CASES]
 OUTPUT = {Source.SCENE.value, Source.CHOICES.value}
+# Nguồn chữ bộ câu này được soạn cho (khai trước khi chạy, D-71, D-80). Nguồn `setup` (lựa chọn
+# khởi tạo, D-137) có sau và chưa có câu nào trong các bộ G9: chưa đo (docs/eval.md, G9).
+SOURCES = {s.value for s in Source} - {Source.SETUP.value}
 
 
 def findings_of(case):
@@ -68,7 +71,7 @@ def test_covers_every_category_on_both_input_and_output():
 
 
 def test_covers_every_source_verdict_language_and_darkness_level():
-    assert {c["source"] for c in CASES} == {s.value for s in Source}
+    assert {c["source"] for c in CASES} == SOURCES
     assert {c["expected"]["verdict"] for c in CASES} == {v.value for v in Verdict}
     assert {"vi", "vi-khong-dau", "vi-teencode", "en"} <= {c["lang"] for c in CASES}
     levels = Counter(c["darkness_level"] for c in CASES if "darkness_level" in c)
@@ -92,7 +95,7 @@ def test_has_many_legit_dark_fiction_cases_in_every_source_and_they_all_expect_a
     """Nửa còn lại của bộ câu: chặn nhầm cũng là lỗi."""
     legit = [c for c in CASES if "legit" in c["tags"]]
     assert len(legit) >= 30
-    assert {c["source"] for c in legit} == {s.value for s in Source}
+    assert {c["source"] for c in legit} == SOURCES
     for case in legit:
         assert case["expected"]["verdict"] == "allow", case["id"]
     for case in CASES:

@@ -12,7 +12,8 @@ def take_narrator_question(
     """Giữ một lượt hỏi ở chương `chapter` nếu còn lượt; trả False khi đã dùng đủ `limit`.
 
     Một câu lệnh: kiểm và tăng cùng lúc, nên hai yêu cầu đồng thời không vượt được `limit`.
-    Lượt đã giữ không trả lại, kể cả khi lời gọi model sau đó lỗi (D-40)."""
+    Lượt đã giữ không trả lại, kể cả khi lời gọi model sau đó lỗi (D-40); chỉ câu trả lời bị kiểm
+    duyệt chặn mới trả lại lượt (`release_narrator_question`, D-137)."""
     require_story_id(story_id)
     require_chapter(chapter)
     if limit <= 0:
@@ -29,6 +30,19 @@ def take_narrator_question(
     except psycopg.errors.ForeignKeyViolation as exc:
         raise StoryNotFoundError(f"không có truyện {story_id}") from exc
     return row is not None
+
+
+def release_narrator_question(conn: psycopg.Connection, story_id: str, chapter: int) -> None:
+    """Trả lại một lượt đã giữ ở chương `chapter`, không xuống dưới 0. Chỉ cho câu trả lời người
+    kể bị kiểm duyệt chặn (G9, D-137): câu hỏi của người chơi không có lỗi, như câu hỏi bị chặn
+    không mất lượt (D-57). Một câu lệnh; chương chưa hỏi câu nào thì không có gì để trả."""
+    require_story_id(story_id)
+    require_chapter(chapter)
+    conn.execute(
+        "UPDATE narrator_questions SET asked = asked - 1, updated_at = now() "
+        "WHERE story_id = %s AND chapter = %s AND asked > 0",
+        (story_id, chapter),
+    )
 
 
 def narrator_questions_asked(conn: psycopg.Connection, story_id: str, chapter: int) -> int:

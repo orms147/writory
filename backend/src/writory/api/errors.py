@@ -67,10 +67,12 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.NARRATOR_QUESTION_EMPTY: 422,
     ErrorCode.NARRATOR_QUESTION_TOO_LONG: 422,
     ErrorCode.NARRATOR_LIMIT_REACHED: 429,
+    ErrorCode.NARRATOR_ANSWER_BLOCKED: 502,  # G9, D-137: như SCENE_LEAK_BLOCKED
     ErrorCode.WRITORY_RATE_LIMITED: 429,  # G8: giới hạn mỗi phút của WriTory, chưa có bộ đếm
     # Khởi tạo truyện (D-39): kết quả của model không dùng được, giống LLM_BAD_RESPONSE.
     ErrorCode.STORY_SETUP_INVALID: 502,
     ErrorCode.STORY_LENGTH_NOT_OPEN: 422,  # D-88: mức độ dài chưa mở cho người chơi
+    ErrorCode.SETUP_OPTIONS_BLOCKED: 502,  # G9, D-137: như CHOICES_LEAK_BLOCKED
     ErrorCode.CHOICES_LEAK_BLOCKED: 502,  # D-37: như SCENE_LEAK_BLOCKED
     ErrorCode.INPUT_BLOCKED: 422,  # G9, D-57: chữ người chơi bị kiểm duyệt chặn
     # Phiên khởi tạo (D-44)

@@ -27,7 +27,7 @@ from tests.api_fixtures import (
     lock_is_free,
     own_connections,
 )
-from tests.moderation_fixtures import ModeratedLLM, moderation_reply
+from tests.moderation_fixtures import ModeratedLLM, lines_reply, moderation_reply
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.config import load_config
@@ -52,7 +52,7 @@ from writory.errors import ErrorCode, WritoryError
 from writory.graph import delete_story, node_rows, player_view, story_snapshot
 from writory.llm.fake import FakeLLM
 from writory.pipeline.setup import PROTAGONIST_ID
-from writory.safety.moderate import darkness_brief
+from writory.safety.moderate import ChoicesModerationOutput, darkness_brief
 from writory.safety.wrap import CLOSE_TAG
 
 pytestmark = pytest.mark.graph
@@ -67,6 +67,8 @@ TRUTH = ("f_nguyet_hoa_huyet_y", "f_ha_lao_giet_cha", "Huyết Y Môn", "Hà Bá
 START = {"tags": {"genre": "kiếm hiệp", "era": "cổ đại", "voice": "trầm"},
          "length_level": "short", "darkness_level": "light"}
 VOTES = load_config().moderation.input_votes  # mỗi đầu vào được kiểm ngần ấy lần (D-79)
+ALLOW_TAGS = [moderation_reply()] * VOTES  # tag sạch qua đủ `input_votes` lần kiểm
+OPTION_STEPS = 3  # bối cảnh, hướng, nhân vật: mỗi bước một lời gọi kiểm duyệt bộ lựa chọn (D-137)
 
 
 def options(kind: str, tag: str = "") -> str:
@@ -237,10 +239,12 @@ def test_full_setup_creates_story_with_hidden_plan(pg, driver, created):
                         rf'{re.escape(CLOSE_TAG)}', user, flags=re.DOTALL)
     assert blocks == [ATTACK]
     # G8: 4 lời gọi khởi tạo và lời gọi kiểm duyệt (tag, phần sửa nhân vật, mỗi đầu vào
-    # `input_votes` lần; G9, D-57, D-79) ghi vào nhật ký, gắn vào truyện vừa tạo.
+    # `input_votes` lần; G9, D-57, D-79; bộ lựa chọn của mỗi bước một lần, D-137) ghi vào nhật
+    # ký, gắn vào truyện vừa tạo.
     rows = pg.execute("SELECT role, story_id FROM llm_costs WHERE setup_session_id = %s",
                       (sid,)).fetchall()
-    assert sorted(rows) == sorted([("setup", story_id)] * 4 + [("moderate", story_id)] * 2 * VOTES)
+    assert sorted(rows) == sorted([("setup", story_id)] * 4
+                                  + [("moderate", story_id)] * (2 * VOTES + OPTION_STEPS))
 
 
 def test_finalize_twice_returns_the_same_story(pg, driver, created):
@@ -677,18 +681,21 @@ def test_clean_tags_are_moderated_when_options_are_generated_and_not_again(pg, d
         sid = start(client, created)["session_id"]
         assert client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).status_code == 200
         assert client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).status_code == 200  # trả lại bộ đã có
-    calls = app.state.moderated.moderation_calls
-    assert len(calls) == VOTES  # kiểm `input_votes` lần (D-79), một lần cho cả bộ tag
-    for messages in calls:
+    *tag_calls, options_call = app.state.moderated.moderation_calls
+    assert len(tag_calls) == VOTES  # kiểm `input_votes` lần (D-79), một lần cho cả bộ tag
+    for messages in tag_calls:
         for tag in ("kiếm hiệp", "cổ đại", "trầm", "vừa"):
             assert tag in messages[-1].content
+    assert "Bối cảnh 0" in options_call[-1].content  # rồi bộ lựa chọn vừa tạo (D-137)
     assert len(fake.calls) == 1  # bộ đã có thì không gọi model lần nữa, cũng không kiểm duyệt lại
 
 
 def test_blocked_character_edit_is_refused_and_changes_nothing(pg, driver, created):
     fake = FakeLLM.scripted([options("settings"), options("plots"), options("characters")])
-    # Tag sạch qua `input_votes` lần kiểm, rồi phần sửa nhân vật bị chặn ở lần kiểm đầu (D-79).
-    block = [moderation_reply()] * VOTES + [moderation_reply(("real_world_harm", "strong"))]
+    # Tag sạch qua `input_votes` lần kiểm, bộ lựa chọn của ba bước sạch (D-137), rồi phần sửa
+    # nhân vật bị chặn ở lần kiểm đầu (D-79).
+    block = [*ALLOW_TAGS, *[moderation_reply()] * OPTION_STEPS,
+             moderation_reply(("real_world_harm", "strong"))]
     app = make_app(pg, driver, fake, moderation=block)
     with TestClient(app, raise_server_exceptions=False) as client:
         sid = to_characters(client, created)
@@ -737,3 +744,102 @@ def test_story_without_a_chosen_darkness_level_stores_the_default(pg, driver, cr
         done = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).json()
     created[1].append(done["story_id"])
     assert get_story(pg, done["story_id"]).darkness_level == default
+
+
+# --- kiểm duyệt lựa chọn khởi tạo (G9, D-137) ------------------------------------------------------
+
+HARD = ("sexual_minors", "mild")
+BLOCK = ("real_world_harm", "strong")
+
+
+def test_every_generating_step_moderates_its_own_options_once(pg, driver, created):
+    fake = FakeLLM.scripted(script())
+    app = make_app(pg, driver, fake)
+    with TestClient(app) as client:
+        sid = to_finalize(client, created)
+        done = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).json()
+        created[1].append(done["story_id"])
+    record = app.state.moderated.script
+    calls = [c for c, schema in zip(record.moderation_calls, record.moderation_schemas,
+                                    strict=True) if schema is ChoicesModerationOutput]
+    assert len(calls) == OPTION_STEPS  # chốt không trả chữ model nào mới, nên không kiểm thêm
+    for call, kind in zip(calls, ("Bối cảnh", "Hướng", "Lục Vân"), strict=True):
+        system = " ".join(m.content for m in call if m.role == "system")
+        user = call[-1].content
+        assert user.count("<player_data") == 1 and user.rstrip().endswith(CLOSE_TAG)
+        for i in range(3):
+            assert f"{kind} {i}" in user and f"{kind} {i}" not in system
+
+
+def test_a_blocked_option_is_never_returned_or_saved(pg, driver, created):
+    fake = FakeLLM.scripted([options("settings")])
+    app = make_app(pg, driver, fake, moderation=[*ALLOW_TAGS, lines_reply(3, {2: [HARD]})])
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = start(client, created)["session_id"]
+        resp = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
+        again = client.get(f"/setup/{sid}")
+        third = client.put(f"/setup/{sid}/settings", json={"index": 2})
+        second = client.put(f"/setup/{sid}/settings", json={"index": 1})
+    assert resp.status_code == 200
+    for body in (resp, again):
+        assert [o["title"] for o in body.json()["settings"]] == ["Bối cảnh 0", "Bối cảnh 2"]
+        assert "Bối cảnh 1" not in body.text and "Trấn ven sông thứ 1." not in body.text
+    # Chỉ còn hai lựa chọn: số thứ tự 2 không còn, số thứ tự 1 là "Bối cảnh 2".
+    assert third.status_code == 409 and third.json()["code"] == "SETUP_STEP_NOT_READY"
+    assert second.status_code == 200 and second.json()["setting_index"] == 1
+    assert len(fake.calls) == 1
+
+
+@pytest.mark.parametrize(("darkness", "titles"), [
+    ("light", ["Bối cảnh 1", "Bối cảnh 2"]),
+    ("dark", ["Bối cảnh 0", "Bối cảnh 1", "Bối cảnh 2"]),
+])
+def test_options_are_moderated_at_the_darkness_level_the_player_chose(pg, driver, created,
+                                                                     darkness, titles):
+    """Máu me tả lướt vượt trần của mức "Nhẹ", nằm trong trần của mức "Đậm" (D-67)."""
+    fake = FakeLLM.scripted([options("settings")])
+    app = make_app(pg, driver, fake,
+                   moderation=[*ALLOW_TAGS, lines_reply(3, {1: [("gore", "mild")]})])
+    with TestClient(app) as client:
+        resp = client.post("/setup", json={**START, "darkness_level": darkness})
+        sid = resp.json()["session_id"]
+        created[0].append(sid)
+        body = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS).json()
+    assert [o["title"] for o in body["settings"]] == titles
+
+
+def test_too_few_clean_options_regenerate_once_then_fail_and_save_nothing(pg, driver, created):
+    two_blocked = lines_reply(3, {1: [BLOCK], 3: [HARD]})
+    fake = FakeLLM.scripted([options("settings"), options("settings", " mới"),
+                             options("settings", " lần ba")])
+    app = make_app(pg, driver, fake, moderation=[
+        *ALLOW_TAGS, two_blocked, two_blocked,  # lần đầu và lần tạo lại đều còn một lựa chọn
+        *ALLOW_TAGS, lines_reply(3)])  # người chơi bấm thử lại: tag kiểm lại, bộ mới sạch
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = start(client, created)["session_id"]
+        resp = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
+        body = client.get(f"/setup/{sid}").json()
+        retry = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
+    assert (resp.status_code, resp.json()) == (
+        502, WritoryError(ErrorCode.SETUP_OPTIONS_BLOCKED).player_payload())
+    assert "Bối cảnh" not in resp.text
+    assert body["settings"] is None and body["step"] == "settings"
+    assert retry.status_code == 200
+    assert [o["title"] for o in retry.json()["settings"]] == [
+        f"Bối cảnh {i} lần ba" for i in range(3)]
+    assert len(fake.calls) == 3
+
+
+def test_option_moderation_that_fails_saves_nothing(pg, driver, created):
+    """Fail closed: kiểm duyệt không trả lời được thì không lưu, không trả bộ chưa kiểm."""
+    tries = 1 + load_config().limits.retries.llm_transient
+    down = [WritoryError(ErrorCode.LLM_UNAVAILABLE)] * tries
+    fake = FakeLLM.scripted([options("settings")])
+    app = make_app(pg, driver, fake, moderation=[*ALLOW_TAGS, *down])
+    with TestClient(app, raise_server_exceptions=False) as client:
+        sid = start(client, created)["session_id"]
+        resp = client.post(f"/setup/{sid}/settings", headers=JSON_HEADERS)
+        body = client.get(f"/setup/{sid}").json()
+    # Hết lượt thử lại lỗi mạng (D-14): lỗi có mã, không có bộ lựa chọn nào.
+    assert (resp.status_code, resp.json()["code"]) == (503, "RETRY_LIMIT_REACHED")
+    assert "Bối cảnh" not in resp.text and body["settings"] is None
