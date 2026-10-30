@@ -507,7 +507,7 @@ class GraphRunStore(GraphStore):
     def scene_texts(self, number: int) -> list[str]:
         from writory.db import chapter_scenes
 
-        return list(chapter_scenes(self._conn, self.story_id, number))
+        return list(chapter_scenes(self._conn, self.story_id, number) or [])  # None: chương chưa commit
 
 
 # --- ghi đè đề (D-109) -------------------------------------------------------------------------
