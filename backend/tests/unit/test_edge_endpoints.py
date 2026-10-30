@@ -25,6 +25,7 @@ def test_endpoint_problem_follows_the_table_in_graph_schema_md():
           ("LOCATED_AT", "Character", "Location"), ("MEMBER_OF", "Character", "Faction"),
           ("RELATES_TO", "Character", "Character"), ("KNOWS", "Character", "Fact"),
           ("KNOWS", "Character", "Lie"), ("KNOWS", "Character", "Event"),
+          ("KNOWS", "Character", "Location"),  # known_as (D-17), xem D-128
           ("ABOUT", "Fact", "Thread"), ("ABOUT", "Lie", "Character"),
           ("RESOLVED_IN", "Thread", "Chapter"), ("REVEALED_TO_PLAYER", "Location", "Chapter"),
           ("TOLD", "Character", "Lie"), ("TOLD_TO", "Lie", "Character"),
@@ -35,8 +36,7 @@ def test_endpoint_problem_follows_the_table_in_graph_schema_md():
     bad = [("HOLDS", "Character", "Fact"), ("HOLDS", "Item", "Item"),
            ("LOCATED_AT", "Character", "Character"), ("LOCATED_AT", "Fact", "Location"),
            ("MEMBER_OF", "Character", "Location"), ("RELATES_TO", "Character", "Faction"),
-           ("KNOWS", "Character", "Thread"), ("KNOWS", "Character", "Location"),
-           ("KNOWS", "Fact", "Fact"),
+           ("KNOWS", "Character", "Thread"), ("KNOWS", "Fact", "Fact"),
            ("ABOUT", "Character", "Fact"), ("RESOLVED_IN", "Fact", "Chapter"),
            ("RESOLVED_IN", "Thread", "Fact"), ("REVEALED_TO_PLAYER", "Fact", "Fact"),
            ("TOLD", "Character", "Fact"), ("DIED_IN", "Character", "Location"),
