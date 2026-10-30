@@ -507,7 +507,7 @@ class GraphRunStore(GraphStore):
     def scene_texts(self, number: int) -> list[str]:
         from writory.db import chapter_scenes
 
-        return list(chapter_scenes(self._conn, self.story_id, number))
+        return list(chapter_scenes(self._conn, self.story_id, number) or [])  # None: chương chưa commit
 
 
 # --- ghi đè đề (D-109) -------------------------------------------------------------------------
@@ -1592,7 +1592,10 @@ def plan_vs_result(progress: PlanProgress | None) -> dict[str, Any] | None:
         "milestones": [
             {"n": m.number, "window": window(m.from_chapter, m.to_chapter),
              "done_chapter": m.done_chapter,
-             "status": _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter)}
+             "status": _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter),
+             # Cao trào có dấu trước khoảng, chưa xong (D-142); khoá chỉ có khi có.
+             **({"candidate_chapter": m.candidate_chapter} if m.candidate_chapter is not None
+                else {})}
             for m in progress.milestones
         ],
     }

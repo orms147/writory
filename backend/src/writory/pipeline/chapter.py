@@ -668,6 +668,7 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
                 d.plan, state["chapter"], before,
                 milestone_lookahead=d.config.limits.context.milestone_lookahead,
                 done_extra=marked,
+                climax_aftermath=d.config.limits.context.climax_aftermath_chapters,
                 standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
                 unplanned_goal=d.config.limits.context.unplanned_chapter_goal,
                 idle_chapters=d.config.limits.context.idle_chapters,

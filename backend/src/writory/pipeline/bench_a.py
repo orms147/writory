@@ -107,8 +107,6 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
 STORY_ID = "bench-a-sample"  # story_id trên Neo4j của truyện mẫu
 RUN_STORY_ID = "bench-a-run"  # story_id trên Neo4j của truyện do pipeline viết (D-83)
-SystemName = Literal["graph", "graph_quotes", "none", "rolling", "rag", "full", "narrator",
-                     "narrator_pages"]
 # Sáu hệ bộ nhớ cộng hai hệ người kể (chỉ chạy khi nêu tên, D-143).
 ALL_SYSTEMS = (*SYSTEMS, *narr.NARRATOR_SYSTEMS)
 LABELS = SYSTEM_LABELS | narr.NARRATOR_LABELS

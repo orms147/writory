@@ -157,6 +157,9 @@ class ContextLimits(_Section):
     # Cứ từng ấy chương kể từ lần đổi pha trước (hoặc lần nhắc trước) thì mục tiêu chương đòi đổi pha
     # (D-119); None = tắt, đề y hệt cũ.
     phase_shift_every: PositiveInt | None = None
+    # Cao trào đã xong ở chương d: mục tiêu các chương d..d+N đòi viết hậu quả, kể cả khi khoảng của mốc đã
+    # qua (D-142); None = chỉ trong khoảng của mốc.
+    climax_aftermath_chapters: PositiveInt | None = None
 
 
 class VideoExportLimits(_Section):
