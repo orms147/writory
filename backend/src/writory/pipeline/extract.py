@@ -31,9 +31,12 @@ from writory.graph.package import (
     relation_problem,
 )
 from writory.graph.schema import NAMED_LABELS, endpoint_problem, protagonist_problem
+from writory.guard.state import GraphState, OverlayState, player_view_of
 from writory.llm.base import ChatResult, LLMClient
 from writory.pipeline.pacing import PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
+from writory.pipeline.story_plan import StoryPlan
+from writory.safety.leak import leak_names, unquoted_leaks
 from writory.safety.reveal import known_as_conflicts, new_name_problem
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -702,6 +705,48 @@ def without_facts(package: ChangePackage, fact_ids: set[str]) -> ChangePackage:
     return package.model_copy(update={
         "nodes": [n for n in package.nodes if n.id not in fact_ids],
         "edges": [e for e in package.edges if not {e.source, e.target} & fact_ids]})
+
+
+# Lý do bỏ cạnh của `drop_unquoted_leaks` (D-134); bộ đo đếm riêng (`bench_run._REJECT_REASONS`).
+UNQUOTED_LEAK = "chữ sổ tay có tên hay bí mật mà câu trích không nói (G2)"
+NEW_FACT_LEAK = "lộ bí mật hay tên đang giấu (G2)"  # Fact mới (D-93): bỏ cả nút
+
+
+def drop_unquoted_leaks(
+    package: ChangePackage, *, before: GraphState, chapter: int, protagonist_id: str,
+    plan: StoryPlan, story_brief: str,
+) -> tuple[ChangePackage, list[tuple[str, str]]]:
+    """G2 trên sổ tay (D-134). Nút chữ (Fact, Event, Lie) mà gói đưa vào player_view hiện bằng chữ lớp
+    truth của nút, không bằng chữ trang. Chữ đó có điều bộ dò lộ đường người chơi chặn so với
+    player_view trước gói (`before`: nền đã commit + các cảnh trước), mà câu trích của nút không nói
+    ra (`safety.leak.unquoted_leaks`), thì bỏ cạnh đưa nút vào: `REVEALED_TO_PLAYER` từ nút và `KNOWS`
+    của nhân vật chính tới nút. Fact mới (D-93) thì bỏ cả nút và mọi cạnh của nó. Cảnh không bị viết
+    lại: trang không sai, chỉ cạnh bộ trích ghi là sai.
+
+    So với player_view trước cả gói, không tính hé lộ khác cùng gói: hai nút chữ không mở khoá tên
+    cho nhau, và người canh cắt cạnh nào sau đó cũng không làm lộ. Nơi gọi chạy hàm này SAU người
+    canh, để người canh vẫn thấy mọi hé lộ bộ trích ghi (bí mật lộ sớm là lỗi chặn)."""
+    view = player_view_of(before, chapter)
+    old = {e.id for e in view.entries}
+    after = OverlayState(before, [package])
+    names = leak_names(after)
+    leaking = {e.id for e in player_view_of(after, chapter).entries
+               if e.id not in old and e.kind not in NAMED_LABELS
+               and unquoted_leaks(e.text, e.quotes, node_id=e.id, view=view, truth_names=names,
+                                  plan=plan, story_brief=story_brief)}
+    if not leaking:
+        return package, []
+    new = leaking & {n.id for n in package.nodes}
+    rejected = [(f"Fact mới {i}", NEW_FACT_LEAK) for i in sorted(new)]
+    package = without_facts(package, new)
+    held = leaking - new
+    gone = [e for e in package.edges
+            if (e.type == "REVEALED_TO_PLAYER" and e.source in held)
+            or (e.type == "KNOWS" and e.source == protagonist_id and e.target in held)]
+    rejected += [(f"{e.type} {e.source}→{e.target}", UNQUOTED_LEAK) for e in gone]
+    return (package.model_copy(update={"edges": [e for e in package.edges
+                                                 if all(e is not g for g in gone)]}),
+            rejected)
 
 
 def orphan_facts(package: ChangePackage) -> set[str]:

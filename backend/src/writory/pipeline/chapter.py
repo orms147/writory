@@ -58,6 +58,7 @@ from writory.pipeline.extract import (
     FactRules,
     MilestoneMark,
     OpenEdge,
+    drop_unquoted_leaks,
     extract_changes,
     orphan_facts,
     without_facts,
@@ -800,20 +801,6 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     base = d.store.state()
     earlier = _earlier_packages(state)
 
-    # 2b. Chữ của Fact mới cũng tới người chơi (sổ tay, người kể): dò lộ G2 như mọi chữ từ player_view,
-    # với mọi bí mật chưa có trong player_view. Lộ thì bỏ Fact, không chặn cảnh (D-93).
-    new_ids = {n.id for n in result.package.nodes if n.label == "Fact"}
-    if new_ids:
-        rest = OverlayState(base, [*earlier, without_facts(result.package, new_ids)])
-        view_before = player_view_of(rest, chapter)
-        leaking = {n.id for n in result.package.nodes if n.id in new_ids and check_leaks(
-            str(n.props["text"]), view=view_before, truth_names=leak_names(rest), plan=d.plan,
-            story_brief=d.request.story_brief, scope="player_path")}
-        if leaking:
-            result.package = without_facts(result.package, leaking)
-            result.rejected.extend((f"Fact mới {i}", "lộ bí mật hay tên đang giấu (G2)")
-                                   for i in sorted(leaking))
-
     # 3. Tự hé lộ (D-62): nút có tên mà trang nêu, chưa có trong player_view (kể cả hé lộ bộ trích
     # vừa ghi), không phải nhân vật chính hay tên đang được kế hoạch bảo vệ (D-61).
     extracted = OverlayState(base, [*earlier, result.package])
@@ -839,6 +826,14 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     issues += [ReviewIssue("guard", g.kind.value, g.severity is Severity.BLOCK, g.detail)
                for g in guard]
     package = _prune(scene_package, {i for g in guard for i in g.ids}, _edge_ends(state))
+
+    # 4b. Chữ lớp truth sổ tay sẽ hiện (Fact, Event, Lie mới vào player_view, kể cả Fact mới D-93) không
+    # được nói tên hay bí mật mà câu trích của nó không nói (G2, D-134). Sau người canh, để người canh
+    # vẫn thấy mọi hé lộ bộ trích ghi. Lộ thì bỏ cạnh (Fact mới: bỏ cả Fact), không chặn cảnh.
+    package, held = drop_unquoted_leaks(package, before=OverlayState(base, earlier),
+                                        chapter=chapter, protagonist_id=state["protagonist"],
+                                        plan=d.plan, story_brief=d.request.story_brief)
+    result.rejected.extend(held)
     orphans = orphan_facts(package)  # Fact mới mất hết KNOWS vào tay người canh (D-93)
     if orphans:
         package = without_facts(package, orphans)

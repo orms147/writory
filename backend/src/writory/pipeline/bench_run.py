@@ -601,6 +601,7 @@ _REJECT_REASONS = (
     "tên mới của nút có tên đang được bảo vệ (D-61)",
     "đã hé lộ ở chương này: tên mới ghi ở chương sau (D-136)",
     "gỡ mạch mà không có câu trích (D-82)",
+    "chữ sổ tay có tên hay bí mật mà câu trích không nói (G2)",  # D-134
     # Fact mới (D-93)
     "hết trần Fact mới", "ref phải dạng", "chữ phải một dòng", "chữ Fact không bám trang",
     "trùng Fact", "lộ bí mật hay tên đang giấu (G2)", "thiếu ABOUT", "thiếu KNOWS",
