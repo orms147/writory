@@ -3,6 +3,9 @@
 Chạy từ `backend/` (một mình, không song song với lượt khác dùng cùng key):
     uv run python ../evals/results/2026-10-30-climax-milestone-2/replay.py --dry-run
     uv run python ../evals/results/2026-10-30-climax-milestone-2/replay.py --budget 0.10
+Đo thêm trên ca đối chứng (bổ sung cuối `expectations.md`): lần 3 đến 6, ghi vào thư mục con:
+    uv run python ../evals/results/2026-10-30-climax-milestone-2/replay.py --only 2- --first-rep 3 \
+        --repeats 4 --budget 0.08 --out ../evals/results/2026-10-30-climax-milestone-2/control-n6
 
 Thư mục kết quả: `--out` (mặc định cùng thư mục với file này). Ghi `results.jsonl` (mỗi lời gọi một
 dòng: ca, bản đề, lần, mốc nhận, mốc model trả, lý do bị từ chối, token, chi phí), `calls.jsonl` và
@@ -80,7 +83,14 @@ REPEATS = 2
 RETRY_WAIT_S = 10
 TRANSIENT = {ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT}
 V8, V11 = "extract-8", "extract-11"
-ORDER = [(V8, 1), (V11, 1), (V8, 2), (V11, 2)]
+
+
+def order(first_rep: int, repeats: int) -> list[tuple[str, int]]:
+    """Thứ tự lời gọi của một ca: xen kẽ 8, 11 ở mỗi lần (mặc định lần 1, 2 như khai trước)."""
+    return [(v, r) for r in range(first_rep, first_rep + repeats) for v in (V8, V11)]
+
+
+assert order(1, REPEATS) == [(V8, 1), (V11, 1), (V8, 2), (V11, 2)]
 
 PROMPT_8 = (HERE / "extract8_system_prompt.txt").read_text(encoding="utf-8")
 PROMPT_11 = (HERE / "extract11_system_prompt.txt").read_text(encoding="utf-8")
@@ -272,7 +282,10 @@ async def main() -> int:
     ap.add_argument("--out", default=str(HERE))
     ap.add_argument("--env-file", default="C:/Work/AI/WriTory/.env")
     ap.add_argument("--only", help="chỉ chạy các nhóm có tiền tố này, ví dụ 1-")
+    ap.add_argument("--first-rep", type=int, default=1, help="số của lần đầu (đo thêm: 3)")
+    ap.add_argument("--repeats", type=int, default=REPEATS, help="số lần mỗi bản đề mỗi ca")
     args = ap.parse_args()
+    calls_order = order(args.first_rep, args.repeats)
     out = Path(args.out)
     if not args.dry_run and (out / "results.jsonl").exists():
         print("results.jsonl đã có: không ghi đè; chọn --out khác")
@@ -320,7 +333,7 @@ async def main() -> int:
     for case in cases:
         if dry is not None:
             dry.case = case
-        for version, rep in ORDER:
+        for version, rep in calls_order:
             current.clear()
             current.update({"run": case.run, "chapter": case.chapter, "version": version, "rep": rep,
                             "group": case.group})
@@ -353,7 +366,8 @@ async def main() -> int:
             "config_sha256": cfg_hash["combined"], "budget_usd": args.budget,
             "spent_usd": round(llm.spent, 6), "calls": llm.calls, "halted": llm.halted,
             "unknown_cost_calls": llm.unknown_cost_calls, "failed": failed,
-            "skipped": skipped, "versions": [V8, V11], "repeats": REPEATS,
+            "skipped": skipped, "versions": [V8, V11], "repeats": args.repeats,
+            "first_rep": args.first_rep, "only": args.only,
             "prompt_sha256": {V8: _sha(PROMPT_8), V11: _sha(PROMPT_11)},
             "cases": [list(c) for c in CASES],
         }, ensure_ascii=False, indent=1), encoding="utf-8")

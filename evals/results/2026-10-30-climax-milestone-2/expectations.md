@@ -45,3 +45,24 @@ Lần thử trước (`extract-9`, D-129, `../2026-10-30-extract-milestone-kind/
   - xấu: không gộp `extract-11`; code câu trích nhiều đoạn cũng không gộp (schema gửi model là một phần của đề: không có đề xin nhiều đoạn thì code đó không có đường vào); PR chỉ còn kết quả đo, như D-129;
   - không xác định: không gộp mặc định, ghi lại và hỏi chủ dự án.
 - Không sửa đề lần hai trong PR này để cho khớp.
+
+## Bổ sung 30/10/2026: đo thêm ca đối chứng (bổ sung sau kết quả "không xác định", chủ dự án chọn đo thêm)
+Khai TRƯỚC mọi lời gọi của lần đo thêm (commit chứa phần này đi trước lời gọi đầu). Phần trên giữ nguyên. Kết quả lần chạy đầu (`notes.md`) giữ nguyên: K1, K2, K4, K5 đúng; K3 sai (đối chứng 5/8 so với 6/8). Lần đo thêm chỉ để quyết K3.
+
+**Cách chạy.** Chỉ 4 ca đối chứng, theo thứ tự ưu tiên ky-ao ch16, tu-tien ch11, ky-ao ch10, tu-tien ch5. Mỗi ca thêm lần 3 đến 6 cho mỗi bản đề, xen kẽ 8, 11 như trước: 32 lời gọi. Cùng code đề, schema, cách dựng đề và cách chấm của lần chạy đầu (`replay.py`, thêm `--first-rep`/`--repeats`, mặc định như cũ). Ghi vào `control-n6/`. Lệnh (từ `backend/`): `uv run python ../evals/results/2026-10-30-climax-milestone-2/replay.py --only 2- --first-rep 3 --repeats 4 --budget 0.08 --out ../evals/results/2026-10-30-climax-milestone-2/control-n6`. Trần cứng 0,08 USD; ước tính 0,04–0,05 USD (lần chạy đầu: trung bình 0,00239 USD cho lời gọi chưa có cache, 0,00075 cho lời gọi có cache).
+
+**Gộp.** Mỗi bản đề, mỗi ca: lần 1–2 (lần chạy đầu) cộng lần 3–6, tức 6 lần mỗi ca, 24 lần gộp mỗi bản đề. Chỉ tính cặp (ca, lần) mà cả hai bản đề đều chạy; trần cắt thì bỏ cả cặp. Tính bằng `pool.py`.
+- **Nhận đúng** (R) = số lần code nhận đúng mốc gốc của chương đó. R8, R11 là tổng gộp; R8(16), R11(16) là riêng ky-ao ch16 (cao trào đúng hạn, rủi ro chính của luật "đòi hậu quả").
+- **Dấu sai** của `extract-11`: dấu được nhận của một mốc không phải mốc gốc của chương, hoặc dấu của mốc gốc mà đọc tay thấy câu trích (hay một đoạn) không cho thấy điều mốc mô tả. Mọi dấu được nhận của `extract-11` ở lần 3–6 đều được đọc tay và ghi vào `notes.md`.
+
+**Luật quyết của phần đo thêm.**
+- **Tốt** nếu cả bốn điều đều đúng: R11 ≥ R8 − 1; R11(16) ≥ R8(16) − 1; `extract-11` không có dấu sai; số câu trích mốc bị G3 từ chối của `extract-11` trên 24 lần gộp ≤ của `extract-8`.
+- **Xấu** nếu có một trong các điều: R11 ≤ R8 − 4; R11(16) ≤ R8(16) − 3; `extract-11` có ít nhất một dấu sai.
+- **Không xác định** trong mọi trường hợp còn lại, và khi còn ít hơn 20 cặp gộp mỗi bản đề (trần cắt).
+- Lý do chọn ngưỡng (suy luận, không phải kiểm định): với 24 lần và tỉ lệ nhận khoảng 0,7, độ lệch chuẩn của hiệu R11 − R8 vào khoảng 3 dấu, nên chênh 1 là trong nhiễu (biên chấp nhận nhỏ), chênh 4 trở lên khó do nhiễu riêng. Ở một ca 6 lần, chênh 3 là một nửa số lần.
+
+**Kết luận chung.** K1, K2, K4, K5 đã đúng ở lần chạy đầu, nên phần đo thêm quyết cả phép đo:
+- tốt: đề nghị gộp `extract-11` cùng code câu trích nhiều đoạn (D-139 ghi kết quả);
+- xấu: không gộp; gỡ code và đề khỏi PR, giữ kết quả đo; D-139 ghi "đã thử, không dùng", như D-129;
+- không xác định: không gộp, xử lý như xấu (gỡ code, giữ kết quả đo), D-139 ghi "đã thử, chưa phân biệt được, không dùng"; chủ dự án có thể quyết khác.
+- Không sửa đề trong PR này để cho khớp, và không đo thêm lần nữa trong PR này.
