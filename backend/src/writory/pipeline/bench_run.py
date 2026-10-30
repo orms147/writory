@@ -596,6 +596,7 @@ _REJECT_REASONS = (
     "trùng cạnh trong cùng gói", "không phải cạnh đang hiệu lực",
     "known_as là tên của nút khác",  # D-62
     "gỡ mạch mà không có câu trích (D-82)",
+    "chữ sổ tay có tên hay bí mật mà câu trích không nói (G2)",  # D-134
     # Fact mới (D-93)
     "hết trần Fact mới", "ref phải dạng", "chữ phải một dòng", "chữ Fact không bám trang",
     "trùng Fact", "lộ bí mật hay tên đang giấu (G2)", "thiếu ABOUT", "thiếu KNOWS",
