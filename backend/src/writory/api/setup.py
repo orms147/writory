@@ -1,9 +1,10 @@
 """Router `setup`: khởi tạo truyện (design §4.1; D-38, D-39, D-45).
 
-Máy chủ giữ 3 lựa chọn của mỗi bước (`setup_sessions`); trình duyệt chỉ gửi số thứ tự 0–2, cộng phần
-sửa tên, tính cách, quá khứ của nhân vật chính. Thứ tự: tạo phiên → bối cảnh → hướng → nhân vật →
-chốt. POST một bước = lấy lựa chọn đã có, hoặc tạo nếu chưa có (chỉ khi đó mới gọi model); PUT một
-bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau bị xoá).
+Máy chủ giữ các lựa chọn của mỗi bước (`setup_sessions`; 3, hoặc ít hơn khi kiểm duyệt bỏ bớt,
+D-137); trình duyệt chỉ gửi số thứ tự 0–2, cộng phần sửa tên, tính cách, quá khứ của nhân vật
+chính. Thứ tự: tạo phiên → bối cảnh → hướng → nhân vật → chốt. POST một bước = lấy lựa chọn đã có,
+hoặc tạo nếu chưa có (chỉ khi đó mới gọi model); PUT một bước = chọn theo số thứ tự (đổi lựa chọn
+thì các bước sau bị xoá).
 
 - G1: phản hồi là `SetupOut` (danh sách trắng): không bản kế hoạch, bí mật hay id lớp truth.
 - G4: tag và phần sửa nhân vật là chữ người chơi; pipeline bọc chúng như dữ liệu.
@@ -11,6 +12,12 @@ bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau
 - G9, D-57: tag tự gõ được kiểm duyệt ngay trước lần tạo bối cảnh đầu (lời gọi model đầu tiên của
   phiên), và phần người chơi sửa của nhân vật chính được kiểm duyệt trước khi lưu. Bị chặn thì
   không lưu và không gọi model nào khác.
+- G9, D-137: bộ lựa chọn model vừa tạo ở mỗi bước qua kiểm duyệt đầu ra trước khi lưu hay trả về
+  (`moderated_options`): một lời gọi chấm từng lựa chọn, ở mức u tối của phiên. Lựa chọn bị chặn
+  (chặn cứng, chặn, vượt trần) bị bỏ; còn dưới `MIN_SETUP_OPTIONS` thì tạo lại bước đó, tối đa
+  `SETUP_REGENERATIONS` lần, rồi SETUP_OPTIONS_BLOCKED. Kiểm duyệt lỗi thì ném lỗi, không lưu gì.
+  Chốt (`finalize`) không trả chữ model nào mới: thiết lập truyện dựng từ lựa chọn đã kiểm và chữ
+  người chơi đã kiểm.
 - Gọi model bằng key người chơi (`deps.PlayerLLM`), ghi nhật ký theo phiên rồi gắn vào truyện (G8).
   Thử lại lỗi mạng theo từng lời gọi model, trong pipeline (D-14, D-105), không bọc cả bước.
 - Mức u tối (D-67): một khoá của `moderation.darkness_levels`, chọn lúc tạo phiên (bỏ trống thì mức
@@ -18,10 +25,13 @@ bước = chọn theo số thứ tự (đổi lựa chọn thì các bước sau
 Mount theo chế độ đăng nhập (`deps.api_guard`, D-41, D-89).
 """
 
+import logging
 import uuid
-from collections.abc import Iterator
+from collections.abc import Awaitable, Callable, Iterator
+from functools import partial
 
 from fastapi import APIRouter, Depends
+from pydantic import BaseModel
 
 from writory.api import deps
 from writory.api.schemas import CharacterChoiceIn, OptionChoiceIn, SetupOut, SetupStartIn
@@ -40,6 +50,7 @@ from writory.db import (
     start_story,
 )
 from writory.errors import ErrorCode, WritoryError
+from writory.llm.base import LLMClient
 from writory.pipeline.setup import (
     CharacterOption,
     Naming,
@@ -54,9 +65,17 @@ from writory.pipeline.setup import (
     propose_settings,
     story_brief,
 )
-from writory.safety.moderate import ensure_input_allowed
+from writory.safety.moderate import Source, Verdict, ensure_input_allowed, moderate
+
+log = logging.getLogger(__name__)
 
 router = APIRouter(prefix="/setup", dependencies=[Depends(deps.api_guard)])
+
+# Kiểm duyệt lựa chọn khởi tạo (G9, D-137). Còn ít nhất ngần ấy lựa chọn sau khi bỏ lựa chọn bị chặn
+# thì hiện số còn lại (như `pipeline.choices.MIN_CHOICES`, D-114); không thì tạo lại cả bước, tối
+# đa `SETUP_REGENERATIONS` lần (giới hạn cứng, G8), mỗi lần một lời gọi tạo và một lời gọi kiểm.
+MIN_SETUP_OPTIONS = 2
+SETUP_REGENERATIONS = 1
 
 _PREVIOUS: dict[SetupStep, SetupStep | None] = {
     "settings": None, "plots": "settings", "characters": "plots"}
@@ -129,6 +148,44 @@ def lock_setup(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> Iterato
         yield
 
 
+def option_line(option: BaseModel) -> str:
+    """Mọi chữ người chơi đọc của một lựa chọn khởi tạo, trên đúng một dòng (xuống dòng bên trong
+    gộp thành khoảng trắng): kiểm duyệt chấm mỗi dòng là một lựa chọn (D-79, D-137)."""
+    return " · ".join(" ".join(str(value).split()) for value in option.model_dump().values())
+
+
+async def moderated_options[O: BaseModel](
+    propose: Callable[[], Awaitable[list[O]]], *, llm: LLMClient, config: AppConfig,
+    darkness_level: str | None, step: str,
+) -> list[O]:
+    """Tạo bộ lựa chọn của một bước (`propose`) rồi kiểm duyệt nó (G9, D-137): một lời gọi
+    `moderate` nguồn `setup` cho cả bộ, mỗi lựa chọn một dòng, ở mức u tối của phiên (None = mức
+    mặc định). Lựa chọn nào không được cho qua (chặn cứng, chặn, vượt trần) bị bỏ, không bao giờ
+    trả về. Còn ít nhất `MIN_SETUP_OPTIONS` thì trả các lựa chọn còn lại, theo thứ tự cũ. Không thì
+    tạo lại cả bước (bộ mới thay hẳn bộ cũ), tối đa `SETUP_REGENERATIONS` lần, rồi
+    SETUP_OPTIONS_BLOCKED. `llm` là MeteredClient của bước (G8): lời gọi kiểm duyệt tính vào trần và
+    bộ đếm lời gọi. Lỗi của lời gọi kiểm duyệt ném ra nguyên (fail closed). Log chỉ có bước, số
+    lựa chọn và số lượt; loại và số dòng do `moderate` ghi, không ghi chữ."""
+    tries = 1 + SETUP_REGENERATIONS
+    for attempt in range(1, tries + 1):
+        options = await propose()
+        result = await moderate("\n".join(option_line(o) for o in options), source=Source.SETUP,
+                                llm=llm, config=config, darkness_level=darkness_level)
+        kept = [o for o, verdict in zip(options, result.line_verdicts, strict=True)
+                if verdict is Verdict.ALLOW]
+        if len(kept) >= MIN_SETUP_OPTIONS:
+            if len(kept) < len(options):
+                log.info("khởi tạo %s: bỏ %d/%d lựa chọn bị kiểm duyệt chặn", step,
+                         len(options) - len(kept), len(options))
+            return kept
+        log.warning("khởi tạo %s: còn %d/%d lựa chọn sau kiểm duyệt (lượt %d/%d)", step,
+                    len(kept), len(options), attempt, tries)
+    raise WritoryError(
+        ErrorCode.SETUP_OPTIONS_BLOCKED,
+        detail=f"bước {step}: dưới {MIN_SETUP_OPTIONS} lựa chọn sau {tries} lượt tạo",
+    )
+
+
 async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: AppConfig,
                    llm: deps.PlayerLLM) -> SetupOut:
     rec = get_setup(conn, session_id, owner_id=owner)
@@ -144,15 +201,20 @@ async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: A
         await ensure_input_allowed(_tags_text(choices.tags), llm=client, config=config)
 
     # Thử lại mạng nằm ở từng lời gọi model trong pipeline (`pipeline.setup._ask`, D-14, D-105).
+    propose: Callable[[], Awaitable[list]]
     if step == "settings":
-        options = await propose_settings(choices, llm=client, config=config)
+        propose = partial(propose_settings, choices, llm=client, config=config)
     else:
         setting = SettingOption.model_validate(rec.chosen("settings"))
         if step == "plots":
-            options = await propose_plots(choices, setting, llm=client, config=config)
+            propose = partial(propose_plots, choices, setting, llm=client, config=config)
         else:
             plot = PlotOption.model_validate(rec.chosen("plots"))
-            options = await propose_characters(choices, setting, plot, llm=client, config=config)
+            propose = partial(propose_characters, choices, setting, plot, llm=client,
+                              config=config)
+    # Chỉ lựa chọn đã qua kiểm duyệt đầu ra được lưu và trả về (G9, D-137); lỗi thì không lưu gì.
+    options = await moderated_options(propose, llm=client, config=config,
+                                      darkness_level=choices.darkness_level, step=step)
     rec = save_setup_options(conn, rec.id, step, [o.model_dump() for o in options])
     return SetupOut.from_record(rec)
 

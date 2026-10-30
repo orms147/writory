@@ -139,7 +139,11 @@ sequenceDiagram
   A->>M: kiểm duyệt tag tự gõ, vai moderate
   A->>S: propose_settings
   S->>M: vai setup, JSON theo schema
-  A->>D: save_setup_options, máy chủ giữ các lựa chọn
+  A->>M: kiểm duyệt bộ vừa tạo, vai moderate, nguồn setup, mỗi lựa chọn một dòng
+  alt còn dưới MIN_SETUP_OPTIONS lựa chọn được cho qua
+    A->>S: tạo lại bước, tối đa SETUP_REGENERATIONS lần, rồi SETUP_OPTIONS_BLOCKED
+  end
+  A->>D: save_setup_options, chỉ các lựa chọn được cho qua
   B->>A: PUT /setup/sid/settings, chỉ gửi số thứ tự
   Note over B,A: plots và characters đi cùng một cách. PUT characters có thể kèm phần sửa, phần sửa được kiểm duyệt
   B->>A: POST /setup/sid/finalize
@@ -161,6 +165,7 @@ sequenceDiagram
 ```
 
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
+- Lựa chọn do model tạo qua kiểm duyệt đầu ra trước khi lưu hay trả về (`api/setup.moderated_options`, G9, D-137): một lời gọi cho cả bộ ở mức u tối của phiên; lựa chọn bị chặn bị bỏ, nên một bước có thể chỉ còn hai lựa chọn. Kiểm duyệt lỗi thì không lưu gì. Chốt không trả chữ model nào mới.
 - `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Mạch phải gỡ khai bí mật trả lời nó (`answered_by`); khoảng gỡ bắt đầu trước khoảng lộ của bí mật đó thì code dời trên cả `story_plan` lẫn nút `Thread`, không tốn lượt sửa (`story_plan.align_thread_windows`, D-135); id fact thường (không phải bí mật) trong `answered_by` thì code bỏ, cũng không tốn lượt sửa. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
 - Bước dựng cũng sinh ngoại hình cố định cho nhân vật (`appearance`, kể cả nhân vật chính qua `protagonist_appearance`) và cảnh sắc cho nơi chốn (`visual`), nền cho xuất kịch bản video (D-118, D-120). Chúng là thuộc tính tuỳ chọn trên nút, lớp `truth`; `story_plan` không đổi. Ngữ cảnh viết đọc `appearance` của người có mặt và nhân vật lân cận khi `limits.context.character_appearance_max_chars` > 0; `visual` chưa vào đề nào của đường viết; đề bảng mô tả của bộ xuất video đọc nó (`export/shots.py` `sheet_messages`).
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
@@ -326,9 +331,9 @@ flowchart LR
 | `extract` | danh mục mọi nút, cạnh đang mở, mạch phải gỡ kèm hạn, văn cảnh (bọc) | có | `ExtractOutput`, rồi `to_package` | `pipeline/extract.py` `extract_changes` |
 | `summary` | chỉ chữ chương đã hiện (bọc) | không | `SummaryOutput` | `pipeline/summary.py` `summarize_chapter` |
 | `choices` | sổ tay dựng từ `player_view` (mã công khai), cảnh cuối đã hiện, cờ đứng yên chỉ đúng hay sai (D-98: ở yên một nơi; D-112: nhiều chương liền không đổi trạng thái nào) | không | `ChoicesOutput`; tham chiếu ngoài sổ tay bị bỏ riêng, không bỏ cả bộ (D-114) | `pipeline/choices.py` `make_choices`, từ `_choices` và `POST /stories/{id}/choices` |
-| `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput` | `pipeline/narrator.py` `ask_narrator_reply` |
+| `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput`; câu sắp hiện qua dò lộ, lưới úp mở rồi kiểm duyệt, bị chặn thì `NARRATOR_ANSWER_BLOCKED` và trả lại lượt (D-137) | `pipeline/narrator.py` `ask_narrator_reply` |
 | `classify` | chỉ chữ ô tự viết (bọc) | không | `Classification`, nhãn enum (G5) | `safety/classify.py` `classify_action` |
-| `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn (bọc) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
+| `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn, lựa chọn khởi tạo, câu trả lời người kể (bọc; D-137) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
 | `video` | nhân vật (ngoại hình, tính cách, quá khứ), nơi chốn, quan hệ, nơi của nhân vật chính, chữ cảnh đã ghi (chữ truyện và chữ người chơi bọc G4) | có, toàn bộ, kể cả bí mật; chỉ lệnh admin, không có đường tới người chơi (D-118, D-125) | `SheetOutput`, `SceneOutput` | `export/shots.py` `make_sheet`, `make_scene_shots`, gọi từ `export/video.py` |
 
 Model của từng vai và danh sách mức model viết: `config/models.yaml` (`roles`, `writer_tiers`).

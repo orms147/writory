@@ -212,24 +212,26 @@ def test_key_routes_not_mounted_when_dev_flag_off():
 def test_narrator_uses_stored_player_key_and_records_cost():
     v = view(3)
     # Cùng key người chơi, cùng ghi nhật ký: kiểm duyệt đầu vào `input_votes` lần (G9, D-57, D-79),
-    # rồi người kể.
+    # rồi người kể, rồi kiểm duyệt câu trả lời (D-137).
     fake = FakeLLM.scripted(
-        [*VOTES, reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])], cost_usd=0.0012)
+        [*VOTES, reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")]), ALLOW],
+        cost_usd=0.0012)
     app, store, ledger, factory = build(fake=fake)
     store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
     with TestClient(app) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
     assert resp.json()["answer"] == "Lão Gù chết sau miếu Bà."
     assert factory.keys == [FAKE_KEY]  # key giải mã chỉ đi tới client model
-    *moderated, (answered, *_) = ledger.rows
-    assert len(moderated) == len(VOTES)
+    *asked, (answered, *_), checked = ledger.rows
+    moderated = [*asked, checked]
+    assert len(moderated) == len(VOTES) + 1
     for entry, *where in moderated:
         assert (entry.role, entry.model, entry.cost_usd) == (
             "moderate", CFG.models.roles.moderate, 0.0012)
         assert tuple(where) == ("s1", None, 3)  # story_id, setup_id, chapter
     assert (answered.role, answered.model, answered.cost_usd) == (
         "narrator", CFG.models.roles.narrator, 0.0012)
-    assert fake.schemas == [ModerationOutput] * len(VOTES) + [NarratorOutput]
+    assert fake.schemas == [ModerationOutput] * len(VOTES) + [NarratorOutput, ModerationOutput]
 
 
 def test_narrator_without_stored_key_fails_closed():
@@ -282,13 +284,14 @@ def broken(detail: str = "ReadError") -> WritoryError:
 def test_every_player_call_is_sent_with_the_output_cap():
     v = view(3)
     fake = FakeLLM.scripted([*VOTES, reply(True, "Lão Gù chết sau miếu Bà.",
-                                           [ref(v, "e_gu_death")])], cost_usd=0.001)
+                                           [ref(v, "e_gu_death")]), ALLOW], cost_usd=0.001)
     app, store, _, _ = build(fake=fake)
     store.save(cipher_of(app).encrypt(SecretStr(FAKE_KEY)))
     with TestClient(app) as client:
         client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
     cap = CFG.limits.llm_call.max_output_tokens
-    assert [e["max_tokens"] for e in fake.extras] == [cap] * (len(VOTES) + 1)
+    # Câu hỏi `input_votes` lần, người kể, rồi câu trả lời (D-137).
+    assert [e["max_tokens"] for e in fake.extras] == [cap] * (len(VOTES) + 2)
 
 
 @pytest.mark.parametrize("role", ["moderate", "narrator"])
@@ -335,8 +338,8 @@ class LookupLLM(FakeLLM):
 def test_estimates_with_a_generation_id_are_settled_before_the_next_call():
     v = view(3)
     actual = GenerationCost(cost_usd=0.0007, prompt_tokens=900, completion_tokens=300)
-    fake = LookupLLM([*VOTES, reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])],
-                     costs={"gen-done": actual, "gen-later": None})
+    fake = LookupLLM([*VOTES, reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")]),
+                      ALLOW], costs={"gen-done": actual, "gen-later": None})
     ledger = MemoryCostLedger()
     for gen_id in ("gen-done", "gen-later"):  # hai lời gọi bị huỷ ở yêu cầu trước
         ledger.record(CostEntry("writer", "m", 0, 0, 0.0095, estimated=True,
