@@ -551,7 +551,9 @@ def wrong_answer(q: Question, names: Mapping[str, Sequence[str]]) -> str:
 def support_keys(spec: Mapping[str, Any], state: GraphState, chapter: int) -> set[str]:
     """Khoá `Context.facts` mà ngữ cảnh của hệ đồ thị phải có để trả lời câu có `derive` này.
     Cạnh: `edge_key`; trạng thái sống/chết: `status:<id>`; nút lời nói dối: `lie:<id>`; sự kiện:
-    `node:<id>`; thực thể được nối: `entity:<id>` (cũng là bằng chứng "không có cạnh")."""
+    `node:<id>` (Event: khối sự kiện; Fact: dòng "đã biết" mang chữ của nó, D-144); thực thể được nối:
+    `entity:<id>`; "không có cạnh nào": `complete:<id>`, chỉ có khi danh sách của thực thể không bị cắt
+    bởi trần dòng (D-144)."""
     op = spec["op"]
 
     def keys_of(edges: Sequence[Any]) -> set[str]:
@@ -563,7 +565,7 @@ def support_keys(spec: Mapping[str, Any], state: GraphState, chapter: int) -> se
         return keys_of(state.edges_at("HOLDS", chapter, source_id=spec["holder"]))
     if op == "edge_exists":
         edges = state.edges_at(spec["type"], chapter, source_id=spec["from"], target_id=spec["to"])
-        return keys_of(edges) or {f"entity:{spec['from']}"}
+        return keys_of(edges) or {f"complete:{spec['from']}"}
     if op == "edge_sources":
         return keys_of(state.edges_at(spec["type"], chapter, target_id=spec["to"]))
     if op == "edge_targets":

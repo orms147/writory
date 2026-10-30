@@ -14,7 +14,10 @@ truyện (`pipeline.bench_run`).
 - Mốc "đã diễn ra" ở chương N (D-116): bộ trích đánh dấu bằng câu trích có thật, dấu nằm ở thuộc
   tính `milestones` (số thứ tự 1-based trong kế hoạch) của nút `Chapter` của chương xảy ra. Mốc
   không phải nút (không đổi khởi tạo hay `story_plan`), nên không đọc được từ cạnh; mốc đánh dấu hai
-  lần thì chương đầu thắng.
+  lần thì chương đầu thắng. Riêng mốc `climax` (D-142): dấu ghi ở chương nhỏ hơn `from_chapter` của
+  mốc chỉ là ứng viên (`candidate_chapter`), chưa tính xong; dấu đầu tiên từ `from_chapter` trở đi mới
+  là xong. Lý do: dấu sớm của cao trào hay là một quyết định nhỏ khớp chữ của mốc (tu-tiên m6 ở ch19,
+  khoảng 20–22, D-129); coi nó là xong thì cao trào thật không bao giờ được giục.
 - Bí mật hay mạch mà nút chưa có trong đồ thị ở chương N (gieo sau) thì bỏ qua: chưa có gì để
   lộ hay gỡ. Khởi tạo đã kiểm mọi id của kế hoạch có nút ở chương 0 (D-38).
 
@@ -73,6 +76,8 @@ class MilestoneProgress:
     from_chapter: int
     to_chapter: int
     done_chapter: int | None
+    # Cao trào có dấu trước khoảng của mốc và chưa có dấu xác nhận (D-142); None khi không có hay đã xong.
+    candidate_chapter: int | None = None
 
 
 @dataclass(frozen=True)
@@ -92,18 +97,32 @@ def _int(value: object) -> int | None:
     return value if isinstance(value, int) and not isinstance(value, bool) else None
 
 
-def milestones_done(plan: StoryPlan, state: GraphState, chapter: int) -> dict[int, int]:
-    """Số thứ tự mốc -> chương xảy ra, theo dấu trên nút `Chapter` ch1..chN của `state` (D-116).
-    Số không phải mốc của kế hoạch bị bỏ."""
+def is_candidate_mark(plan: StoryPlan, number: int, chapter: int) -> bool:
+    """Dấu của mốc `number` ở `chapter` chỉ là ứng viên: mốc cao trào mà dấu ghi trước khoảng (D-142)."""
+    m = plan.milestones[number - 1]
+    return m.kind == "climax" and chapter < m.from_chapter
+
+
+def milestone_marks(plan: StoryPlan, state: GraphState,
+                    chapter: int) -> tuple[dict[int, int], dict[int, int]]:
+    """(xong, ứng viên): số thứ tự mốc -> chương, theo dấu trên nút `Chapter` ch1..chN của `state`
+    (D-116, D-142). Số không phải mốc của kế hoạch bị bỏ. Mốc đã xong vẫn có thể còn dấu ứng viên cũ."""
     rows = state.nodes([f"ch{n}" for n in range(1, chapter + 1)])
     done: dict[int, int] = {}
+    candidates: dict[int, int] = {}
     for n in range(1, chapter + 1):
         row = rows.get(f"ch{n}")
         marks = row.props.get("milestones") if row is not None else None
         for number in marks if isinstance(marks, list) else []:
-            if _int(number) is not None and 1 <= number <= len(plan.milestones):
-                done.setdefault(number, n)
-    return done
+            if _int(number) is None or not 1 <= number <= len(plan.milestones):
+                continue
+            (candidates if is_candidate_mark(plan, number, n) else done).setdefault(number, n)
+    return done, candidates
+
+
+def milestones_done(plan: StoryPlan, state: GraphState, chapter: int) -> dict[int, int]:
+    """Số thứ tự mốc -> chương xong (D-116, D-142): không gồm ứng viên."""
+    return milestone_marks(plan, state, chapter)[0]
 
 
 def plan_progress(plan: StoryPlan, state: GraphState, chapter: int) -> PlanProgress:
@@ -129,8 +148,9 @@ def plan_progress(plan: StoryPlan, state: GraphState, chapter: int) -> PlanProgr
         threads.append(ThreadProgress(
             t.thread_id, str(row.props.get("description", "")),
             row.props.get("user_authored") is True, low, high, min(resolved, default=None)))
-    done = milestones_done(plan, state, chapter)
+    done, candidates = milestone_marks(plan, state, chapter)
     milestones = tuple(
-        MilestoneProgress(i, m.kind, m.goal, m.from_chapter, m.to_chapter, done.get(i))
+        MilestoneProgress(i, m.kind, m.goal, m.from_chapter, m.to_chapter, done.get(i),
+                          candidates.get(i) if i not in done else None)
         for i, m in enumerate(plan.milestones, 1))
     return PlanProgress(chapter, plan.total_chapters, secrets, tuple(threads), milestones)
