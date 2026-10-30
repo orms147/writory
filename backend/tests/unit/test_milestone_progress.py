@@ -77,3 +77,18 @@ def test_report_lists_each_milestone_with_its_window_and_the_chapter_it_happened
         {"n": 5, "window": [8, 9], "done_chapter": None, "status": "pending"},
     ]
     assert "mô tả" not in str(got)  # file chung không mang chữ lớp truth
+
+
+def test_plan_vs_result_lists_the_candidate_chapter_only_for_an_unconfirmed_early_climax():
+    from writory.guard.plan import MilestoneProgress, PlanProgress
+    from writory.pipeline.bench_run import plan_vs_result
+
+    progress = PlanProgress(7, 12, (), (), (
+        MilestoneProgress(1, "turning_point", "x", 3, 5, 4),
+        MilestoneProgress(2, "climax", "y", 9, 11, None, 7),
+        MilestoneProgress(3, "climax", "z", 10, 11, None)))
+    got = plan_vs_result(progress)["milestones"]
+    assert got[0] == {"n": 1, "window": [3, 5], "done_chapter": 4, "status": "on_time"}
+    assert got[1] == {"n": 2, "window": [9, 11], "done_chapter": None, "status": "pending",
+                      "candidate_chapter": 7}
+    assert "candidate_chapter" not in got[2]

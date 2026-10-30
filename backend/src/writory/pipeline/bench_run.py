@@ -1592,7 +1592,10 @@ def plan_vs_result(progress: PlanProgress | None) -> dict[str, Any] | None:
         "milestones": [
             {"n": m.number, "window": window(m.from_chapter, m.to_chapter),
              "done_chapter": m.done_chapter,
-             "status": _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter)}
+             "status": _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter),
+             # Cao trào có dấu trước khoảng, chưa xong (D-142); khoá chỉ có khi có.
+             **({"candidate_chapter": m.candidate_chapter} if m.candidate_chapter is not None
+                else {})}
             for m in progress.milestones
         ],
     }
