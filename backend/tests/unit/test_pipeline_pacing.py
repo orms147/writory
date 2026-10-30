@@ -634,7 +634,10 @@ def test_plan_progress_reads_the_marks_on_chapter_nodes():
 
     state = through(3, mark(1, 1), mark(2, 2, 1), mark(3, 3))
     got = {m.number: m.done_chapter for m in plan_progress(PLAN, state, 4).milestones}
-    assert got == {1: 1, 2: 2, 3: 3, 4: None}  # mốc đánh dấu hai lần: chương đầu thắng
+    # Mốc đánh dấu hai lần: chương đầu thắng. Cao trào (mốc 3, khoảng 5–5) có dấu ở ch3 trước khoảng
+    # chỉ là ứng viên, chưa xong (D-142).
+    assert got == {1: 1, 2: 2, 3: None, 4: None}
+    assert plan_progress(PLAN, state, 4).milestones[2].candidate_chapter == 3
     assert [m.kind for m in plan_progress(PLAN, state, 4).milestones] == [
         "turning_point", "turning_point", "climax", "ending"]
 
@@ -643,7 +646,9 @@ def test_plan_progress_ignores_marks_that_are_not_plan_milestones():
     from writory.guard.plan import plan_progress
 
     got = plan_progress(PLAN, through(2, mark(1, 0, 9, 3)), 3).milestones
-    assert [(m.number, m.done_chapter) for m in got] == [(1, None), (2, None), (3, 1), (4, None)]
+    # Mốc 3 là cao trào (khoảng 5–5): dấu ở ch1 chỉ là ứng viên (D-142). Số 0 và 9 không phải mốc.
+    assert [(m.number, m.done_chapter, m.candidate_chapter) for m in got] == [
+        (1, None, None), (2, None, None), (3, None, 1), (4, None, None)]
 
 
 def test_a_milestone_that_happened_early_is_listed_as_done_not_open():
@@ -658,8 +663,8 @@ def test_without_a_mark_the_same_milestone_is_due_as_before():
 
 
 def test_next_milestone_skips_the_ones_already_done():
-    goals = goals_for(3, mark(2, 3))  # m3 (chương 5) đã xảy ra ở chương 2
-    assert statuses(goals) == [(2, "open", None), (4, "next", None)]
+    goals = goals_for(2, mark(1, 2))  # m2 (chương 3-4, bước ngoặt) đã xảy ra ở chương 1
+    assert statuses(goals) == [(1, "due", None), (3, "next", None)]
 
 
 def test_a_done_milestone_whose_window_has_not_started_is_not_listed():
