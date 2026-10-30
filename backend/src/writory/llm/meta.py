@@ -190,7 +190,12 @@ class MetaClient(LLMClient):
         fresh = prompt - (cached or 0)
         cost = (fresh * price.input + (cached or 0) * (price.input if price.cached_in is None else price.cached_in)
                 + completion * price.output) / 1e6
-        return Usage(prompt_tokens=prompt, completion_tokens=completion, cost_usd=cost, cached_tokens=cached)
+        out = raw.get("completion_tokens_details")
+        reasoning = out.get("reasoning_tokens") if isinstance(out, dict) else None
+        if not (isinstance(reasoning, int) and not isinstance(reasoning, bool) and reasoning >= 0):
+            reasoning = None
+        return Usage(prompt_tokens=prompt, completion_tokens=completion, cost_usd=cost, cached_tokens=cached,
+                     reasoning_tokens=reasoning)
 
     async def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
         result = await self.chat(model, messages)

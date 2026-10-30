@@ -49,7 +49,7 @@ from writory.config import (
     REPO_ROOT,
     AppConfig,
     CostLimits,
-    config_file,
+    config_sources,
     load_config,
 )
 from writory.errors import ErrorCode, WritoryError
@@ -291,8 +291,8 @@ async def _main(args: argparse.Namespace) -> int:
     _print(result, f"chi phí {tracker.story_usd:.4f} USD")
     if args.out:
         meta = {
-            **run_meta([config_file(args.config_dir, "models.yaml"),
-                        config_file(args.config_dir, "limits.yaml")], args.cases,
+            **run_meta([*config_sources(args.config_dir, "models.yaml"),
+                        *config_sources(args.config_dir, "limits.yaml")], args.cases,
                        config=config, models=[config.models.roles.classify]),
             "model": config.models.roles.classify,
             "reasoning": config.models.role_reasoning.classify,

@@ -75,12 +75,13 @@ from pydantic import (
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from writory.config import (
+    CONFIG_FILE_NAMES,
     REPO_CONFIG_DIR,
     REPO_ROOT,
     AppConfig,
     ConfigError,
     ReasoningEffort,
-    config_files,
+    config_bytes,
     load_config,
 )
 from writory.errors import ErrorCode, WritoryError
@@ -236,8 +237,9 @@ def repo_path(path: Path) -> str:
 
 
 def config_sha256(config_dir: Path) -> dict[str, str]:
-    """Hash các file config CÓ HIỆU LỰC của thư mục (D-140): file thiếu ở thư mục bộ đo thì lấy của config/."""
-    files = {name: _sha256(path.read_bytes()) for name, path in sorted(config_files(config_dir).items())}
+    """Hash config ĐÃ GỘP của thư mục (D-140): nền `config/` và phần đè trong thư mục bộ đo, nên đổi bên nào
+    cũng đổi hash."""
+    files = {name: _sha256(config_bytes(config_dir, name)) for name in sorted(CONFIG_FILE_NAMES)}
     combined = hashlib.sha256("".join(f"{k}:{v}\n" for k, v in files.items()).encode())
     return {"combined": combined.hexdigest(), **files}
 
@@ -471,6 +473,7 @@ class BudgetedClient(LLMClient):
             "status": "ok", "served_model": result.model, "finish_reason": result.finish_reason,
             "cost_usd": cost, "cost_estimated_usd": estimate if cost is None else None,
             "prompt_tokens": result.usage.prompt_tokens,
+            "reasoning_tokens": result.usage.reasoning_tokens,  # None = nhà cung cấp không báo (D-140)
             "completion_tokens": result.usage.completion_tokens,
             "cached_tokens": result.usage.cached_tokens,  # D-96; None = phản hồi không báo
             "latency_s": round(self._clock() - started, 3),

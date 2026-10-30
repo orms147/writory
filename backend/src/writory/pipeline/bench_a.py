@@ -46,7 +46,7 @@ from writory.config import (
     AppConfig,
     ConfigError,
     LimitNotSetError,
-    config_file,
+    config_bytes,
 )
 from writory.config import load_config as load_app_config
 from writory.errors import ErrorCode, WritoryError
@@ -436,7 +436,7 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "dry_run": opts.dry_run,
         "fake": opts.fake if opts.dry_run else None,
         "data_sha256": dict(data.hashes),
-        "config_sha256": {n: _sha256(config_file(config_dir, n).read_bytes())
+        "config_sha256": {n: _sha256(config_bytes(config_dir, n))
                           for n in ("models.yaml", "limits.yaml")},
         "provider": llm_identity(config, [models.roles.narrator, models.roles.summary])["provider"],
         "answerer": {"model": models.roles.narrator, "reasoning": models.role_reasoning.narrator},

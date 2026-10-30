@@ -6,7 +6,7 @@ hàm đó báo lỗi rõ ràng chứ không coi là vô hạn.
 
 from ipaddress import IPv4Network, IPv6Network, ip_network
 from pathlib import Path
-from typing import Annotated, Literal, Self
+from typing import Annotated, Any, Literal, Self
 
 import yaml
 from pydantic import (
@@ -511,13 +511,46 @@ _FILES: dict[str, tuple[str, type[BaseModel]]] = {
 }
 
 
-def _load_file(path: Path, schema: type[BaseModel]) -> BaseModel:
+CONFIG_FILE_NAMES = tuple(name for name, _ in _FILES.values())
+
+
+def _read_yaml(path: Path) -> Any:
     try:
-        raw = yaml.safe_load(path.read_text(encoding="utf-8"))
+        return yaml.safe_load(path.read_text(encoding="utf-8"))
     except OSError as e:
         raise ConfigError(f"{path.name}: không đọc được file ({path}): {e}") from e
     except yaml.YAMLError as e:
         raise ConfigError(f"{path.name}: YAML không hợp lệ: {e}") from e
+
+
+def _deep_merge(base: Any, over: Any) -> Any:
+    """Gộp từng khoá: hai bên đều là bảng thì gộp tiếp, còn lại (số, chuỗi, null, danh sách) bên `over` thay."""
+    if isinstance(base, dict) and isinstance(over, dict):
+        return {**base, **{k: _deep_merge(base[k], v) if k in base else v for k, v in over.items()}}
+    return over
+
+
+def config_sources(config_dir: Path, name: str) -> tuple[Path, ...]:
+    """Các file tạo nên config `name` của `config_dir`, theo thứ tự gộp. Thư mục config ĐỦ file (mọi file của
+    `config/`, như bản sao để thử) đứng một mình, như trước. Thư mục THIẾU file là thư mục của bộ đo, chỉ chứa phần
+    KHÁC `config/` (D-140, ví dụ `evals/config/meta`): `config/<name>` là nền, file cùng tên trong thư mục (nếu có)
+    đè từng khoá lên nền, nên số ở `limits.yaml` vẫn một chỗ."""
+    own = config_dir / name
+    if config_dir == REPO_CONFIG_DIR or all((config_dir / n).exists() for n in CONFIG_FILE_NAMES):
+        return (own,)
+    return (REPO_CONFIG_DIR / name, own) if own.exists() else (REPO_CONFIG_DIR / name,)
+
+
+def config_bytes(config_dir: Path, name: str) -> bytes:
+    """Nội dung các nguồn của config `name`, để băm: đổi nền hay phần đè đều đổi hash."""
+    return b"\n".join(path.read_bytes() for path in config_sources(config_dir, name))
+
+
+def _load_file(config_dir: Path, name: str, schema: type[BaseModel]) -> BaseModel:
+    raw: Any = None
+    for path in config_sources(config_dir, name):
+        loaded = _read_yaml(path)
+        raw = loaded if raw is None else _deep_merge(raw, loaded) if loaded is not None else raw
     try:
         return schema.model_validate(raw)
     except ValidationError as e:
@@ -525,27 +558,14 @@ def _load_file(path: Path, schema: type[BaseModel]) -> BaseModel:
             f"{'.'.join(str(p) for p in err['loc']) or '(gốc)'}: {err['msg']}"
             for err in e.errors()
         )
-        raise ConfigError(f"{path.name}: sai schema: {problems}") from e
-
-
-def config_file(config_dir: Path, name: str) -> Path:
-    """File config `name` của `config_dir`. Thư mục config của bộ đo chỉ cần chứa phần KHÁC `config/` (ví dụ
-    `evals/config/meta/models.yaml`, D-140): file không có ở đó thì lấy từ `config/`, để số trong `limits.yaml`
-    vẫn chỉ ở một chỗ."""
-    path = config_dir / name
-    return path if config_dir == REPO_CONFIG_DIR or path.exists() else REPO_CONFIG_DIR / name
-
-
-def config_files(config_dir: Path) -> dict[str, Path]:
-    """Các file config có hiệu lực của `config_dir` (theo tên, đúng thứ tự `_FILES`)."""
-    return {name: config_file(config_dir, name) for name, _ in _FILES.values()}
+        raise ConfigError(f"{name}: sai schema: {problems}") from e
 
 
 def load_config(config_dir: Path = REPO_CONFIG_DIR) -> AppConfig:
     if config_dir != REPO_CONFIG_DIR and not any(config_dir.glob("*.yaml")):
         # Không để đường dẫn gõ sai lặng lẽ thành config/ thật.
         raise ConfigError(f"{config_dir}: không có file config nào (*.yaml)")
-    parts = {key: _load_file(config_file(config_dir, name), schema) for key, (name, schema) in _FILES.items()}
+    parts = {key: _load_file(config_dir, name, schema) for key, (name, schema) in _FILES.items()}
     return AppConfig(**parts)
 
 

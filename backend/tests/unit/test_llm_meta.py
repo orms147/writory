@@ -20,7 +20,8 @@ PRICES = {MODEL: ModelPrice.model_validate({"in": 4.0, "cached_in": 0.2, "out": 
 MSGS = [Message(role="system", content="luật"), Message(role="user", content="viết")]
 
 
-def completion(text="Xin chào", *, prompt=10, completion_tokens=5, cached=None, usage=True, **message) -> dict:
+def completion(text="Xin chào", *, prompt=10, completion_tokens=5, cached=None, reasoning=None, usage=True,
+               **message) -> dict:
     body: dict = {
         "id": "x", "model": "muse-wonder-1.0",
         "choices": [{"index": 0, "finish_reason": "stop",
@@ -29,7 +30,9 @@ def completion(text="Xin chào", *, prompt=10, completion_tokens=5, cached=None,
     if usage:
         body["usage"] = {"prompt_tokens": prompt, "completion_tokens": completion_tokens,
                          "total_tokens": prompt + completion_tokens,
-                         **({"prompt_tokens_details": {"cached_tokens": cached}} if cached is not None else {})}
+                         **({"prompt_tokens_details": {"cached_tokens": cached}} if cached is not None else {}),
+                         **({"completion_tokens_details": {"reasoning_tokens": reasoning}}
+                            if reasoning is not None else {})}
     return body
 
 
@@ -224,3 +227,13 @@ async def test_stream_is_one_call_without_streaming_because_the_stream_usage_is_
     assert [type(e) for e in events] == [TextDelta, StreamDone] and events[0].text == "Một mạch"
     assert events[1].usage.cost_usd == pytest.approx((100 * 4.0 + 50 * 20.0) / 1e6)
     assert not sent(seen).get("stream")
+
+
+async def test_the_reasoning_tokens_are_reported_when_meta_gives_them_and_none_when_it_does_not():
+    with_it, _ = client_with(lambda r: httpx.Response(200, json=completion(completion_tokens=900, reasoning=700)))
+    result = await with_it.chat(MODEL, MSGS)
+    assert result.usage.reasoning_tokens == 700 and result.usage.completion_tokens == 900
+    without, _ = client_with(lambda r: httpx.Response(200, json=completion()))
+    assert (await without.chat(MODEL, MSGS)).usage.reasoning_tokens is None
+    # Token suy luận đã nằm trong completion_tokens và tính giá token ra: không cộng thêm.
+    assert result.usage.cost_usd == pytest.approx((10 * 4.0 + 900 * 20.0) / 1e6)

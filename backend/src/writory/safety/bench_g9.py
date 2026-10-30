@@ -44,7 +44,7 @@ from writory.config import (
     REPO_ROOT,
     AppConfig,
     CostLimits,
-    config_file,
+    config_sources,
     load_config,
 )
 from writory.errors import ErrorCode, WritoryError
@@ -159,8 +159,8 @@ async def run_bench(
     `budget` chỉ để ghi lại (trần do `tracker` thi hành)."""
     result = await score(load_cases(cases_path), llm=llm, config=config, repeat=repeat)
     if out:
-        inputs = [cases_path, *(config_file(config_dir, n) for n in ("models.yaml", "moderation.yaml",
-                                                                    "limits.yaml"))]
+        inputs = [cases_path, *(p for n in ("models.yaml", "moderation.yaml", "limits.yaml")
+                                for p in config_sources(config_dir, n))]
         meta = {
             "date": date.today().isoformat(),
             "commit": _git("rev-parse", "HEAD"),

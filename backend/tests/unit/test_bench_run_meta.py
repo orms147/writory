@@ -76,11 +76,19 @@ def test_a_model_with_no_price_anywhere_is_still_reported_before_the_first_call(
     assert any(META in p and "prices" in p for p in bench_run.run_problems(config, bare))
 
 
-def test_the_config_hash_covers_the_files_that_are_in_effect_so_a_meta_run_hashes_the_meta_models():
-    hashed = bench_run.config_sha256(META_DIR)
-    assert hashed["models.yaml"] == sha(META_DIR / "models.yaml") != bench_run.config_sha256(REPO_CONFIG_DIR)["models.yaml"]
-    assert hashed["limits.yaml"] == sha(REPO_CONFIG_DIR / "limits.yaml")
-    assert set(bench_run.config_sha256(REPO_CONFIG_DIR)) == set(hashed)
+def test_the_config_hash_covers_the_merged_config_so_a_meta_run_hashes_both_sources():
+    from writory.config import config_bytes
+
+    repo, meta = bench_run.config_sha256(REPO_CONFIG_DIR), bench_run.config_sha256(META_DIR)
+    assert set(repo) == set(meta)
+    assert meta["models.yaml"] == sha_bytes(config_bytes(META_DIR, "models.yaml")) != repo["models.yaml"]
+    assert meta["limits.yaml"] == sha_bytes(config_bytes(META_DIR, "limits.yaml")) != repo["limits.yaml"]
+    assert meta["quality.yaml"] == repo["quality.yaml"] == sha(REPO_CONFIG_DIR / "quality.yaml")
+    assert config_bytes(META_DIR, "limits.yaml").startswith((REPO_CONFIG_DIR / "limits.yaml").read_bytes())
+
+
+def sha_bytes(raw: bytes) -> str:
+    return hashlib.sha256(raw.replace(b"\n", b"\n")).hexdigest()
 
 
 def test_the_real_client_follows_the_config_the_run_was_started_with(tmp_path):
@@ -106,3 +114,29 @@ def test_bench_a_and_e_need_no_meta_price_in_their_run_yaml_when_the_config_has_
     bare = make_config(tmp_path / "bare", models={**META_MODELS, "prices": {}})
     assert any("prices" in p for p in bench_a.run_problems(bare, load_a()))
     assert any("prices" in p for p in bench_e.run_problems(bare, bench_e.load_data()))
+
+
+async def test_calls_jsonl_keeps_the_reasoning_tokens_of_a_call_when_the_provider_reports_them(tmp_path):
+    from writory.llm.base import ChatResult, LLMClient, Message, Usage
+    from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker
+    from writory.quality.bench_d import Budget
+
+    class Inner(LLMClient):
+        def __init__(self, reasoning):
+            self.reasoning = reasoning
+
+        async def chat(self, model, messages, *, response_schema=None, extra=None):
+            return ChatResult(text="x", usage=Usage(prompt_tokens=1, completion_tokens=9, cost_usd=0.001,
+                                                    reasoning_tokens=self.reasoning))
+
+        async def stream(self, model, messages):
+            raise NotImplementedError
+            yield
+
+    rows: list[dict] = []
+    config = meta_config(tmp_path)
+    for reasoning in (7, None):
+        client = BudgetedClient(Inner(reasoning), budget=Budget("t", 1.0), prices={META: Price(input=4, output=20)},
+                                max_tokens=100, tracker=StepTracker(config.limits.cost_usd), record=rows.append)
+        await client.chat(META, [Message(role="user", content="x")])
+    assert [r["reasoning_tokens"] for r in rows] == [7, None]
