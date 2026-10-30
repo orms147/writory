@@ -353,7 +353,7 @@ flowchart LR
   pq --> prompt
   pv["player_view"] -->|select_notebook| nb["Phần sổ tay gửi người kể"]
   nb --> narr["Đề người kể"]
-  pages -->|committed_page_texts, chương 1..N; select_passages, chỉ khi bật narrator_pages.top_k| np["Đoạn trên trang cho người kể"]
+  pages -->|committed_page_texts chương 1..N, select_passages khi bật narrator_pages| np["Đoạn trên trang cho người kể"]
   np --> narr
   pq -.->|cùng code passages.py| benchA["Bài A: hệ rag, graph_quotes, narrator_pages"]
 ```
