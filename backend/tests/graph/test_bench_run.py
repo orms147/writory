@@ -144,9 +144,53 @@ def test_resume_is_refused_before_anything_is_written_when_the_story_is_gone(
     delete_story(driver, sid)
     with pytest.raises(StoryNotFoundError):
         get_story(pg, sid)
-    code2 = bench_run.main(["--dry-run", "--scenario", str(tmp_path / "scenario.yaml"),
-                            "--config-dir", str(tmp_path / "config"),
-                            "--out", str(tmp_path / "out2"), "--resume", str(tmp_path / "out"),
-                            "--env-file", str(tmp_path / "khong-co.env")])
+    code2 = _resume_main(tmp_path, "--dry-run", "--chapters", "3")
     assert code1 == bench_run.EXIT_OK and code2 == bench_run.EXIT_CONFIG
     assert not (tmp_path / "out2").exists()
+
+
+def _resume_main(tmp_path, *extra: str) -> int:
+    """Chạy tiếp `out` vào `out2` qua dòng lệnh; thêm `--dry-run` hay không là việc của test."""
+    return bench_run.main(["--scenario", str(tmp_path / "scenario.yaml"),
+                           "--config-dir", str(tmp_path / "config"),
+                           "--out", str(tmp_path / "out2"), "--resume", str(tmp_path / "out"),
+                           "--env-file", str(tmp_path / "khong-co.env"), *extra])
+
+
+def test_a_dry_run_resume_of_a_real_run_never_touches_the_real_story(
+        tmp_path, services_env, pg, driver):
+    """D-130: `--resume <thư mục thật> --dry-run --resume-allow-drift` từng cho model giả viết vào
+    story_id thật rồi xoá truyện đó lúc xong (dry-run không --keep-story). Nay từ chối trước khi ghi."""
+    code1, meta1 = _cli(tmp_path, "--chapters", "1", "--keep-story")
+    sid = meta1["story_id"]
+    try:
+        meta1["dry_run"] = False  # thư mục của một lượt thật
+        (tmp_path / "out" / "meta.json").write_text(json.dumps(meta1, ensure_ascii=False),
+                                                    encoding="utf-8")
+        before = story_snapshot(driver, sid)
+        code2 = _resume_main(tmp_path, "--dry-run", "--resume-allow-drift", "--chapters", "3")
+        assert code1 == bench_run.EXIT_OK and code2 == bench_run.EXIT_CONFIG
+        assert not (tmp_path / "out2").exists()
+        assert get_story(pg, sid) is not None and current_chapter(pg, sid) == 1
+        assert story_snapshot(driver, sid).node_count == before.node_count
+    finally:
+        delete_story_record(pg, sid)
+        delete_story(driver, sid)
+
+
+def test_resume_refuses_a_story_with_a_chapter_stuck_pending(tmp_path, services_env, pg, driver):
+    """D-130: chương `pending` (tiến trình chết lúc ghi) thì từ chối ngay, không tự sửa kho."""
+    code1, meta1 = _cli(tmp_path, "--chapters", "1", "--keep-story")
+    sid = meta1["story_id"]
+    try:
+        pg.execute("INSERT INTO chapters (story_id, commit_id, number, status, scenes) "
+                   "VALUES (%s, %s, 2, 'pending', %s)",
+                   (sid, f"{sid}-ch2", json.dumps(["Chương ghi dở."])))
+        code2 = _resume_main(tmp_path, "--dry-run", "--keep-story", "--chapters", "3")
+        assert code1 == bench_run.EXIT_OK and code2 == bench_run.EXIT_CONFIG
+        assert not (tmp_path / "out2").exists()
+        assert [(r.number, r.status) for r in chapter_records(pg, sid)] == [
+            (0, "committed"), (1, "committed"), (2, "pending")]  # kho giữ nguyên
+    finally:
+        delete_story_record(pg, sid)
+        delete_story(driver, sid)
