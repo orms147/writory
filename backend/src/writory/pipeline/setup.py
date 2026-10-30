@@ -50,7 +50,7 @@ from writory.graph.package import (
     EdgeSpec,
     chapter_rule_problems,
 )
-from writory.graph.schema import NAMED_LABELS
+from writory.graph.schema import EDGE_ENDPOINTS, NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
 from writory.llm.retry import with_json_retries
@@ -952,11 +952,11 @@ def _check_build(
 
 # Nhãn và cạnh dùng ở chương 0, kèm nhãn hai đầu hợp lệ (docs/graph-schema.md, mục Chương 0).
 INITIAL_LABELS = frozenset({"Character", "Location", "Item", "Faction", "Fact", "Thread"})
+# Lấy từ bảng chung `graph.schema.EDGE_ENDPOINTS` (D-128). Bốn kiểu cạnh model khai tự do dùng đúng bảng
+# chung; KNOWS và ABOUT hẹp hơn vì chương 0 chỉ có `known_by` (Character → Fact) và `about` của Fact
+# (tới nút có tên hoặc Fact; chưa có Lie, Event).
 _ENDPOINTS: dict[str, tuple[frozenset[str], frozenset[str]]] = {
-    "RELATES_TO": (frozenset({"Character"}), frozenset({"Character"})),
-    "LOCATED_AT": (frozenset({"Character", "Item"}), frozenset({"Location"})),
-    "HOLDS": (frozenset({"Character"}), frozenset({"Item"})),
-    "MEMBER_OF": (frozenset({"Character"}), frozenset({"Faction"})),
+    **{t: EDGE_ENDPOINTS[t] for t in ("RELATES_TO", "LOCATED_AT", "HOLDS", "MEMBER_OF")},
     "KNOWS": (frozenset({"Character"}), frozenset({"Fact"})),
     "ABOUT": (frozenset({"Fact"}), NAMED_LABELS | {"Fact"}),
 }

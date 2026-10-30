@@ -35,6 +35,7 @@ from writory.graph.player_view import (
 )
 from writory.graph.queries import (
     EdgeRow,
+    EndpointViolation,
     EntityRef,
     GraphIntegrityError,
     Knowledge,
@@ -42,6 +43,7 @@ from writory.graph.queries import (
     NodeRow,
     Relation,
     ThreadInfo,
+    edge_endpoint_violations,
     edges_at,
     find_characters,
     is_alive,
@@ -64,6 +66,7 @@ __all__ = [
     "CloseSpec",
     "CommitConflictError",
     "EdgeRow",
+    "EndpointViolation",
     "EdgeSpec",
     "EntityRef",
     "GraphIntegrityError",
@@ -87,6 +90,7 @@ __all__ = [
     "chapter_rule_problems",
     "delete_commit",
     "delete_story",
+    "edge_endpoint_violations",
     "edges_at",
     "ensure_schema",
     "find_characters",

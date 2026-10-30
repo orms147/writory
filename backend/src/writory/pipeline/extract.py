@@ -29,7 +29,7 @@ from writory.graph.package import (
     NodeSpec,
     quote_in_text,
 )
-from writory.graph.schema import NAMED_LABELS
+from writory.graph.schema import NAMED_LABELS, endpoint_problem
 from writory.llm.base import ChatResult, LLMClient
 from writory.pipeline.pacing import PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
@@ -454,6 +454,12 @@ def to_package(
         missing = [i for i in (x.source, x.target, x.told_by) if i is not None and i not in known]
         if missing:
             rejected.append((desc, f"id không có trong danh mục: {missing}"))
+            continue
+        wrong_ends = endpoint_problem(x.type, known[x.source].label, known[x.target].label)
+        if wrong_ends:
+            # Bảng đầu mút chung với khởi tạo (D-128): Fact của chương trước làm đích HOLDS đã làm sập
+            # ngữ cảnh viết ở chương sau (psab-b1).
+            rejected.append((desc, f"đầu mút sai loại nút: {wrong_ends}"))
             continue
         if x.type == "KNOWS" and (x.source, x.target) in open_knows:
             # Hai KNOWS đang hiệu lực giữa cùng hai nút làm hỏng truy vấn một-cạnh (D-95).
