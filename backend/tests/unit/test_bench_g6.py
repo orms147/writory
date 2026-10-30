@@ -2,6 +2,7 @@
 model. Đo với model thật: `writory.safety.bench_g6` (docs/eval.md, mục Red-team)."""
 
 import json
+from pathlib import Path
 
 import yaml
 
@@ -189,16 +190,18 @@ def test_round_three_cases_cover_the_attempt_that_hurts_and_the_cost_that_is_onl
     assert {c["action"] for c in ROUND3} >= {"doi-linh", "chem-nguyen-anh"}
 
 
+OVERREACH3_PROMPT = (Path(__file__).parents[3] / "evals" / "results" / "2026-10-31-g6-check-3"
+                     / "overreach3_system_prompt.txt")  # đề đã thử, không dùng (D-146)
+
+
 def test_round_three_cases_are_new_and_the_prompt_does_not_echo_any_case():
     """Ca vòng ba viết bằng chữ khác các ca phát triển (hai ca ổn định sai ở lần đo đầu) và các ca cũ;
-    đề `overreach-3` nêu quy tắc chung, không chép cụm của ca nào (cụm bốn từ)."""
-    from writory.safety.overreach import SYSTEM_PROMPT
-
+    đề `overreach-3` (đã thử, lưu ở file cạnh notes) nêu quy tắc chung, không chép cụm của ca nào (cụm bốn từ)."""
     def case_text(c: dict) -> str:
         inputs = case_inputs(c, DOC)
         return " ".join([inputs["action"], *inputs["earlier"], inputs["scene_text"]])
 
-    prompt = _shingles(SYSTEM_PROMPT)
+    prompt = _shingles(OVERREACH3_PROMPT.read_text(encoding="utf-8"))
     others = [c for c in CASES if "round3" not in c["tags"]]
     dev_ids = {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}
     for case in CASES:

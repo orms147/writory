@@ -30,3 +30,6 @@ Khai trước: `expectations.md` (cùng thư mục, commit `91d75a9` trước l�
 - Ca `round3` do Claude viết sau khi biết điểm yếu; đúng 5/5 ở cả 9 ca cho thấy đề xử được các dạng đã nêu và không sửa quá tay ở hai ca đối chứng, không chứng minh G6 kín.
 - Năm lượt: chỉ đủ nói một ca ra cùng kết luận nhiều lần hay không.
 - Không sửa đề trong PR này (luật khai trước). Gợi ý cho một quyết định sau, cần khai trước và đo lại: bỏ riêng câu về "cảnh trước" trong (i) (hoặc nói rõ nó chỉ áp cho hậu quả của việc thử khi điều muốn không xảy ra, còn cái giá của điều đã xảy ra ở cảnh trước vẫn tính), rồi chạy lại bộ này trên Luna.
+
+## Sau đo: quyết định (điều phối, 31/10/2026)
+Không gộp `overreach-3` (D-146 "đã thử, không dùng"): sản phẩm giữ `overreach-2`. Chữ của đề đã đo nằm ở `overreach3_system_prompt.txt` cạnh file này (mã không còn nó; `meta.prompt` trong `result.json` ghi `overreach-3`). Các ca `round3` giữ trong `g6_overreach.yaml` v3. Bước kế (D-147): thu hẹp câu về "cảnh trước", khai trước, đo lại cùng bộ trên Luna.
