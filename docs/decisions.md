@@ -1213,6 +1213,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** cạnh sai cũ không bị xoá khỏi đồ thị, chỉ bị bỏ qua khi đọc. Bộ trích mất cạnh model ghi sai thay vì ghi rác. `psab-b1` chạy tiếp từ chương 12 bằng `--resume --resume-allow-drift` trên commit có bản sửa (ghi trong notes A/B).
 - **Người quyết:** Claude (session 3 tìm và sửa, writory-35 hoàn tất), nhánh fix/edge-endpoint-labels · 30/10/2026
 
+## D-129 · Thử cho bộ trích thấy loại của mốc và luật cao trào đòi hậu quả (`extract-9`): không dùng
+- **Bối cảnh:** `evals/results/2026-10-29-milestone-diagnosis/notes.md`. Tu-tiên m6 (cao trào) bị đánh dấu xong ở ch19 vì một quyết định nhỏ khớp chữ của mốc. Bộ trích không thấy loại của mốc (`_milestone_lines` chỉ in id, khoảng chương, mô tả), trong khi đề dàn ý và đề viết có loại.
+- **Đã thử:** dòng mốc của bộ trích thêm cột loại; đề `extract-9` thêm luật: mốc cao trào chỉ ghi khi trang cho thấy bước ngoặt đã diễn ra và hậu quả của nó. Không làm cổng code theo khoảng chương (D-116 cố ý không cổng).
+- **Đo:** phát lại bộ trích hai bản đề trên chương đã lưu, kỳ vọng khai trước: `evals/results/2026-10-30-extract-milestone-kind/` (`expectations.md`, `notes.md`; chữ đề `extract9_system_prompt.txt`, code ở commit 7ea8812 của nhánh).
+- **Quyết định:** **không gộp** `extract-9`; bộ trích giữ `extract-8`. Luật khai trước ra tín hiệu xấu: không sửa được hai ca mục tiêu, làm mất dấu đúng ở hai ca đối chứng. Theo luật, không sửa đề lần hai trong nhánh này.
+- **Hệ quả:** lỗi dấu cao trào sớm (tu-tiên m6) vẫn còn. Suy luận chưa kiểm: luật đòi hai điều (quyết định và hậu quả) trong khi câu trích phải là một đoạn liền (G3), nên model ghép hai đoạn và bị từ chối. Lần thử sau (một câu trích liền, hay cho phép câu trích riêng cho hậu quả) cần phép đo khai trước mới.
+- **Người quyết:** Claude (writory-35, theo luật khai trước), 30/10/2026
+
 ## D-130 · `bench_run --resume`: `dry_run` khác lần đầu luôn từ chối, `--chapters` kế thừa, drift cộng dồn (thay thế phần dry_run của D-124)
 - **Bối cảnh:** review D-124 (30/10/2026). Nặng nhất: `dry_run` chỉ là một khoá drift, nên `--resume <thư mục thật> --dry-run --resume-allow-drift` cho model giả viết vào `story_id` thật, và vì dry-run mặc định không `--keep-story`, `_finish` xoá luôn truyện thật. Còn lại: summary.md không nói lượt đã ghép (dòng đầu chỉ có commit, config của lượt cuối); drift chỉ so với lượt liền trước và không mang sang lượt sau; quên `--chapters` thì chạy tới hết kế hoạch; chương kẹt `pending` chỉ lộ ra khi đã chạy (`CHAPTER_PENDING`); `bench_d._maybe_billed` không tính `LLM_TIMEOUT` như `llm/cost.maybe_billed` (D-113), nên trần và số đã tiêu hụt; sao chép phần cũ hỏng giữa chừng thì chạy lại cùng nhãn nối thêm một bản (đếm đôi chi phí).
 - **Quyết định (`pipeline/bench_run.py`):**

@@ -1,0 +1,188 @@
+{
+  "bench": "run",
+  "label": "psab-b1-r3",
+  "started": "2026-10-30T08:43:15+07:00",
+  "finished": "2026-10-30T08:51:06+07:00",
+  "status": "done",
+  "exit_code": 0,
+  "stop": null,
+  "dry_run": false,
+  "git": {
+    "commit": "d9163115540a3fb9429df3d23ccbe6bc701f336e",
+    "dirty": false
+  },
+  "story_id": "run-20261029-psab-b1-c1e0f7ae",
+  "seed": 20261031,
+  "budget_usd": 0.25,
+  "chapters_arg": 16,
+  "scenario": {
+    "path": "evals/scenarios/story_run/long-ky-ao-hanh-trinh.yaml",
+    "sha256": "58fecaaeebc4e624277991a9cdb50eda4c3b6349c5ed087877d11115877c2661",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "kỳ ảo phiêu lưu, hành trình qua nhiều vùng đất",
+        "era": "một lục địa bị chia cắt bởi những vùng đất khác hẳn nhau (rừng sương, sa mạc muối, cảng nổi, núi lửa ngủ), muốn qua phải đi từng chặng, mỗi chặng có luật riêng",
+        "voice": "nhanh, nhiều cảnh vật lạ, đối đáp có duyên, hơi hài hước trên nền nguy hiểm thật",
+        "darkness": "vừa phải, có mất mát và phản bội, không tả máu me"
+      },
+      "length_level": "long",
+      "naming": {
+        "names": "viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261031,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "psab-config-ps5",
+    "sha256": {
+      "combined": "2c4fa9ce7f631ed6e6cc8a2f7f332fa26e31c4378e89fb7f49fb0266034a1438",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "f325c5a7f4eefaaf5ad2b451354295db766219b2e4d8e4f397ce92eaeb8d525d",
+      "models.yaml": "703d6ab6d840f9801512b492252a4ae2e5d24afc5b4c6d7c4c9e1cdd2401a1cc",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "context_flags": {
+    "character_personality_max_chars": 240,
+    "previous_openings": 2,
+    "unplanned_chapter_goal": true,
+    "phase_shift_every": 5
+  },
+  "setup_from": "evals/results/2026-10-29-run-long-ky-ao-hanh-trinh-1",
+  "setup_only": false,
+  "overrides": {
+    "writer_model": null,
+    "writer_reasoning": null,
+    "outline_model": null,
+    "outline_reasoning": null
+  },
+  "prompt_versions": {
+    "setup": "setup-10",
+    "outline": "outline-11",
+    "writer": "writer-11",
+    "extract": "extract-8",
+    "choices": "choices-5"
+  },
+  "style_guide_sha256": "fa8fbc55c6e45be0c4ea2b0f6e757604074d10a00a253e287469bad11cd38512",
+  "style_guide_path": null,
+  "prompt_variant": null,
+  "prompt_versions_overridden": [],
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  },
+  "resumed_from": "evals/results/2026-10-30-run-psab-b1-r2",
+  "resume_points": [
+    {
+      "chapter": 12,
+      "at": "2026-10-30T00:01:24+07:00",
+      "spent_usd_before": 0.112716,
+      "from_commit": "d9a196a63bcde0a3381da2873ac70272b2b559fd",
+      "previous_stop": {
+        "kind": "error",
+        "where": "chapter 12",
+        "code": "INTERNAL_ERROR"
+      }
+    },
+    {
+      "chapter": 12,
+      "at": "2026-10-30T00:01:26+07:00",
+      "spent_usd_before": 0.112716,
+      "from_commit": "d9a196a63bcde0a3381da2873ac70272b2b559fd",
+      "previous_stop": {
+        "kind": "error",
+        "where": "chapter 12",
+        "code": "INTERNAL_ERROR"
+      }
+    },
+    {
+      "chapter": 12,
+      "at": "2026-10-30T08:43:15+07:00",
+      "spent_usd_before": 0.112716,
+      "from_commit": "d9a196a63bcde0a3381da2873ac70272b2b559fd",
+      "previous_stop": {
+        "kind": "error",
+        "where": "chapter 12",
+        "code": "INTERNAL_ERROR"
+      }
+    }
+  ],
+  "resume_drift": [
+    {
+      "key": "git.commit",
+      "was": "d9a196a63bcde0a3381da2873ac70272b2b559fd",
+      "now": "d9163115540a3fb9429df3d23ccbe6bc701f336e"
+    },
+    {
+      "key": "config.sha256",
+      "was": {
+        "combined": "e41337d6de425cf02fb1a13334eba915224fd427e55d4f902ceb3ec327a50196",
+        "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+        "limits.yaml": "ee389aa988f82f52c962a2e8983f82fdd3b17f268c9723eff5bc8dc09df9211b",
+        "models.yaml": "c14db6788176dec1d3e61bf27768c6e6eed3f15bea82d86804d74e34dedff3ab",
+        "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+        "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+        "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+      },
+      "now": {
+        "combined": "2c4fa9ce7f631ed6e6cc8a2f7f332fa26e31c4378e89fb7f49fb0266034a1438",
+        "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+        "limits.yaml": "f325c5a7f4eefaaf5ad2b451354295db766219b2e4d8e4f397ce92eaeb8d525d",
+        "models.yaml": "703d6ab6d840f9801512b492252a4ae2e5d24afc5b4c6d7c4c9e1cdd2401a1cc",
+        "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+        "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+        "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+      }
+    }
+  ]
+}
