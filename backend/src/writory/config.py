@@ -261,6 +261,20 @@ def is_meta_model(model: str | None) -> bool:
     return bool(model) and model.startswith(META_MODEL_PREFIX)
 
 
+# Model Claude gọi thẳng Anthropic API, chỉ cho bộ đo (D-145). KHÁC `anthropic/` của OpenRouter: sản phẩm vẫn có thể
+# dùng các model Claude qua OpenRouter, nên tiền tố của bộ đo không được đè lên không gian tên đó.
+ANTHROPIC_MODEL_PREFIX = "anthropic-api/"
+
+
+def is_anthropic_model(model: str | None) -> bool:
+    return bool(model) and model.startswith(ANTHROPIC_MODEL_PREFIX)
+
+
+def is_bench_only_model(model: str | None) -> bool:
+    """Model chỉ bộ đo dùng (Meta, Anthropic API): sản phẩm cho người chơi từ chối."""
+    return is_meta_model(model) or is_anthropic_model(model)
+
+
 class RoleReasoning(_Strict):
     """Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model."""
 
@@ -285,6 +299,17 @@ class WriterTier(_Strict):
     reasoning: ReasoningEffort | None = None
 
 
+class LongPromptPrice(_Strict):
+    """Bảng giá áp cho cả lời gọi khi tổng token vào vượt `over_tokens` (D-145). USD / 1 triệu token."""
+
+    model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
+    over_tokens: PositiveInt
+    input: NonNegativeFloat = Field(alias="in")
+    output: NonNegativeFloat = Field(alias="out")
+    cached_in: NonNegativeFloat | None = None
+    cache_write_in: NonNegativeFloat | None = None
+
+
 class ModelPrice(_Strict):
     """USD / 1 triệu token. Chỉ để ước tính chi phí tối đa của lời gọi không có usage (D-64);
     chi phí thật luôn lấy từ `usage.cost` hoặc tra lại theo id generation."""
@@ -295,6 +320,10 @@ class ModelPrice(_Strict):
     # Giá token vào đọc từ cache (USD / 1 triệu token); null = tính như token vào thường. Chỉ model Meta của bộ đo
     # cần: chi phí của nó tính từ token x giá chứ không có `usage.cost` (D-140).
     cached_in: NonNegativeFloat | None = None
+    # Giá ghi cache (USD / 1 triệu token); null = tính như token vào thường. Chỉ model Anthropic của bộ đo (D-145).
+    cache_write_in: NonNegativeFloat | None = None
+    # Bảng giá cho prompt dài (Claude Haiku 5.5: trên 100 nghìn token vào, giá cao hơn cho CẢ lời gọi); null = một bảng giá.
+    long_prompt: "LongPromptPrice | None" = None
 
 
 class ModelsConfig(_Strict):
@@ -570,11 +599,12 @@ def load_config(config_dir: Path = REPO_CONFIG_DIR) -> AppConfig:
 
 
 def product_model_problems(config: AppConfig) -> list[str]:
-    """Chỗ nào trong config của sản phẩm có model Meta (D-140). Rỗng là đủ. Người chơi chạy bằng key OpenRouter của
-    họ (D-2); model Meta chỉ bộ đo dùng, bằng key của chủ dự án."""
+    """Chỗ nào trong config của sản phẩm có model của bộ đo (Meta, D-140; Anthropic API, D-145). Rỗng là đủ. Người
+    chơi chạy bằng key OpenRouter của họ (D-2); các model đó chỉ bộ đo dùng, bằng key của chủ dự án."""
     problems = [f"roles.{role}: {model}" for role, model in config.models.roles.model_dump().items()
-                if is_meta_model(model)]
-    problems += [f"writer_tiers[{t.id}]: {t.model}" for t in config.models.writer_tiers if is_meta_model(t.model)]
+                if is_bench_only_model(model)]
+    problems += [f"writer_tiers[{t.id}]: {t.model}" for t in config.models.writer_tiers
+                 if is_bench_only_model(t.model)]
     return problems
 
 
