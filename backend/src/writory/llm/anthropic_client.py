@@ -15,9 +15,13 @@ thật của lớp này:
 - `usage` có `input_tokens` (chưa cache), `cache_read_input_tokens`, `cache_creation_input_tokens`, `output_tokens` (gồm
   token suy luận, không tách riêng). Chi phí = token x giá trong config; bảng giá dài áp cho CẢ lời gọi khi prompt vượt
   ngưỡng (`ModelPrice.long_prompt`).
+- Schema quá lớn cho structured output (lượt thử thật: `BuildOutput` bị 400 "compiled grammar is too large"): client
+  lùi về schema trong `system`, không dùng `output_config.format`, và nhớ tên schema đó để lần sau đi thẳng; pydantic
+  vẫn kiểm câu trả lời (G11). Lời gọi 400 chưa tạo ra gì nên không bị tính tiền.
 - Thử lại do dự án làm (`llm/retry.py`): SDK dựng với `max_retries=0`.
 """
 
+import json
 from collections.abc import AsyncIterator, Mapping
 from typing import Any
 
@@ -102,6 +106,7 @@ class AnthropicClient(LLMClient):
         self._workspace_id = workspace_id
         self._deadline_s = deadline_s
         self._default_max_tokens = default_max_tokens
+        self._prompt_schemas: set[str] = set()  # schema bị từ chối là quá lớn: đưa vào system, không vào format
         if sdk is None:
             try:
                 import anthropic
@@ -123,7 +128,7 @@ class AnthropicClient(LLMClient):
         return price
 
     def _params(self, model: str, messages: list[Message], response_schema: type[BaseModel] | None,
-                extra: Mapping[str, Any] | None, *, stream: bool = False) -> dict[str, Any]:
+                extra: Mapping[str, Any] | None, *, stream: bool = False, in_prompt: bool = False) -> dict[str, Any]:
         extra = dict(extra or {})
         clash = sorted(set(extra) & _CORE)
         if clash:
@@ -137,6 +142,10 @@ class AnthropicClient(LLMClient):
         if messages and messages[-1].role == "assistant":
             raise ValueError("AnthropicClient không nhận prefill: lượt cuối của messages phải là user")
         system = "\n\n".join(m.content for m in messages if m.role == "system")
+        if in_prompt and response_schema is not None:
+            schema = json.dumps(response_schema.model_json_schema(), ensure_ascii=False, separators=(",", ":"))
+            system += ("\n\nTrả lời CHỈ bằng một đối tượng JSON hợp lệ với JSON Schema sau, không thêm chữ nào khác, "
+                       f"không dùng khối mã:\n{schema}")
         params: dict[str, Any] = {
             "model": model.removeprefix(ANTHROPIC_MODEL_PREFIX),
             "max_tokens": extra.get("max_tokens", self._default_max_tokens),
@@ -151,7 +160,7 @@ class AnthropicClient(LLMClient):
             params["thinking"] = {"type": "disabled"}
         elif effort is not None:
             output["effort"] = _EFFORT[str(effort)]
-        if response_schema is not None:
+        if response_schema is not None and not in_prompt:
             output["format"] = {"type": "json_schema", "schema": strict_schema(response_schema)}
         if output:
             params["output_config"] = output
@@ -176,18 +185,27 @@ class AnthropicClient(LLMClient):
                    response_schema: type[BaseModel] | None = None,
                    extra: Mapping[str, Any] | None = None) -> ChatResult:
         price = self._price(model)
-        params = self._params(model, messages, response_schema, extra)
         secret = self._key.get_secret_value()
-        _note_sent(True)
-        deadline = _Deadline(self._deadline_s)
-        try:
-            async with deadline.step():
-                msg = await self._sdk.messages.create(**params, **self._options())
-        except WritoryError:
-            raise
-        except Exception as e:  # noqa: BLE001 — lỗi SDK; `anthropic_error` ném lại cái không nhận ra
-            raise anthropic_error(e, secret) from None
-        return self._result(msg, price)
+        name = response_schema.__name__ if response_schema is not None else None
+        in_prompt = name in self._prompt_schemas
+        for _attempt in range(2):
+            params = self._params(model, messages, response_schema, extra, in_prompt=in_prompt)
+            _note_sent(True)
+            deadline = _Deadline(self._deadline_s)
+            try:
+                async with deadline.step():
+                    msg = await self._sdk.messages.create(**params, **self._options())
+            except WritoryError:
+                raise
+            except Exception as e:  # noqa: BLE001 — lỗi SDK; `anthropic_error` ném lại cái không nhận ra
+                err = anthropic_error(e, secret)
+                if name is None or in_prompt or "grammar is too large" not in err.detail:
+                    raise err from None
+                self._prompt_schemas.add(name)  # thử lại một lần với schema trong system
+                in_prompt = True
+                continue
+            return self._result(msg, price)
+        raise AssertionError("không tới được")  # pragma: no cover — vòng lặp luôn return hoặc raise
 
     def _result(self, msg: Any, price: ModelPrice) -> ChatResult:
         if msg.stop_reason == "refusal":

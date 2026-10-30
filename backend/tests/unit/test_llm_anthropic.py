@@ -271,3 +271,41 @@ async def test_stream_yields_the_text_then_one_done_with_the_usage_priced():
     assert [type(e) for e in got] == [TextDelta, TextDelta, StreamDone]
     assert "".join(e.text for e in got[:2]) == "Một mạch" and body(seen)["stream"] is True
     assert got[2].usage.cost_usd == pytest.approx((100 * 0.10 + 50 * 0.50) / 1e6)
+
+
+# --- schema quá lớn cho structured output: lùi về schema trong prompt ----------------------------------
+
+GRAMMAR_ERROR = {"type": "error", "error": {"type": "invalid_request_error", "message": (
+    "The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or "
+    "reduce the number of strict tools.")}}
+GOOD = json.dumps({"title": "t", "count": 2, "inner": {"note": "n"}, "tags": []})
+
+
+async def test_a_schema_too_large_for_structured_output_falls_back_to_the_schema_in_the_prompt():
+    """Lượt thử thật (D-145): BuildOutput bị 400 `compiled grammar is too large`. Lời gọi 400 không bị tính tiền; client
+    thử lại không có `output_config.format`, đưa schema vào `system`, pydantic vẫn kiểm câu trả lời (G11)."""
+    def handler(request):
+        return (400, GRAMMAR_ERROR) if "format" in (json.loads(request.content).get("output_config") or {}) else reply(GOOD)
+
+    client, seen = client_with(handler)
+    value, _ = await client.chat_json(MODEL, MSGS, Out, extra={"reasoning": {"effort": "low"}})
+    assert value.count == 2 and len(seen) == 2
+    first, second = json.loads(seen[0].content), json.loads(seen[1].content)
+    assert "format" in first["output_config"]
+    assert second["output_config"] == {"effort": "low"} and "format" not in second["output_config"]
+    assert second["system"].startswith("luật") and '"count"' in second["system"] and "JSON" in second["system"]
+    # Schema đã biết là quá lớn thì lần sau đi thẳng, không tốn thêm một lời gọi 400.
+    await client.chat_json(MODEL, MSGS, Out)
+    assert len(seen) == 3 and "format" not in (json.loads(seen[2].content).get("output_config") or {})
+
+
+async def test_other_bad_requests_do_not_trigger_the_fallback_and_a_plain_chat_never_does():
+    other = {"type": "error", "error": {"type": "invalid_request_error", "message": "max_tokens too large"}}
+    client, seen = client_with(lambda r: (400, other))
+    with pytest.raises(WritoryError) as caught:
+        await client.chat_json(MODEL, MSGS, Out)
+    assert caught.value.code is ErrorCode.LLM_REQUEST_INVALID and len(seen) == 1
+    client2, seen2 = client_with(lambda r: (400, GRAMMAR_ERROR))
+    with pytest.raises(WritoryError):
+        await client2.chat(MODEL, MSGS)      # không có schema: không có gì để lùi
+    assert len(seen2) == 1
