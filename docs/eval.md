@@ -27,6 +27,14 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   | `full` nhét cả truyện | chương 1..N nguyên văn |
 
   Mọi hệ đã chạy thật; lần đầu năm hệ (chưa có `graph_quotes`) trên truyện mẫu: `evals/results/2026-10-21-memory-lan-1/`. Bỏ trống `--systems` thì chạy mọi hệ đang bật trong `run.yaml`; `graph_quotes` là hệ tuỳ chọn (`graph_quotes.enabled`, mặc định bật), tắt thì chọn nó bằng `--systems` là lỗi.
+- **Hai hệ người kể (D-143)**, `src/writory/pipeline/bench_a_narrator.py`: không thuộc bộ mặc định, chỉ chạy khi nêu tên ở `--systems`, chỉ trên truyện do pipeline viết (`story: run`; bộ dò lộ cần kế hoạch và thiết lập truyện, đọc từ `truth_dump.json`, `setup.json`, `meta.json` như bài E). Khác sáu hệ trên: không dùng model trả lời chung mà gọi đúng `ask_narrator_reply` của sản phẩm (sổ tay từ `player_view` ở chương N, mã công khai, kiểm mã mục, bộ dò lộ, lưới úp mở; không kiểm duyệt, không trần số câu), model là vai `narrator`.
+
+  | Hệ (`--systems`) | Ngữ cảnh |
+  |---|---|
+  | `narrator` | đề `narrator-3`: chỉ sổ tay (`limits.narrator_pages.top_k` ép về 0) |
+  | `narrator_pages` | đề `narrator-4`: sổ tay cộng đoạn BM25 theo câu hỏi trên văn chương 1..N, số trong `limits.narrator_pages` (phải đang bật) |
+
+  `player_view` dựng bằng gói trong bộ nhớ (`OverlayState`), không cần Neo4j; không có hệ đồ thị thì lệnh không mở Neo4j. "Bạn chưa biết điều này." tính là kiêng. Câu văn xuôi của người kể chấm bằng cùng code: câu có/không đọc từ đầu tiên, nên câu không mở bằng "Có"/"Không" tính sai ở cả hai hệ (đọc tay các lượt `parsed: null`). Mỗi lượt ghi thêm `narrator_prompt`, câu thô, lý do code chặn (`blocked`), đoạn đã gửi, và lộ theo bộ chấm chặt của bài E (`final_leaks`, mỗi chuỗi kèm `on_page`: có trong văn chương 1..N không). `summary.md` có mục "Người kể: lý do chặn và lộ". Dấu vân tay ghi đề của từng hệ, băm chữ hai đề, `narrator_pages` và hash `setup.json`, `meta.json`. Model giả: `oracle` trả đáp án khi mọi câu trích bằng chứng nằm trong sổ tay hay đoạn nó nhận, nên số của nó là trần chứng cứ nguyên văn (thấp hơn trần thật của `narrator`, vì sổ tay ghi lại bằng chữ khác trang). Lượt đo khai trước: `evals/results/2026-10-30-narrator-passages/expectations.md`.
 - **Chấm:** bằng code (`bench_a_data.py`), không giám khảo LLM. Bốn dạng đáp án: tập thực thể (khớp tên và biệt danh, nhắc lại tên đã có trong câu hỏi không bị trừ), có/không, chọn một, nhóm từ khoá. Trả "Không biết" tính riêng (kiêng), không tính đúng. Độ đúng chia cho số lượt đã khai; lượt lỗi hay chưa chạy tính chưa đúng.
 - **Khung kiểm (không gọi model thật):** model giả `oracle` chỉ trả đúng khi ngữ cảnh nó nhận **đủ chứng cứ**. Hai hệ đồ thị đủ khi phần đồ thị đủ khoá và đồ thị cho đúng đáp án, hoặc khi câu trích trên trang có trong chữ của chúng (chữ có cả chương N; D-81, D-83); hệ khác đủ khi có câu trích. Trên truyện mẫu oracle ra 100% ở `graph`, `graph_quotes` và `full`, thấp ở hệ khác. Trên truyện do pipeline viết chỉ `full` chắc 100%; số của hai hệ đồ thị là trần của chúng khi đọc hoàn hảo trên đồ thị bộ trích đã dựng. `null` ra 0% và toàn kiêng; `wrong` ra 0% không kiêng. Test: ngữ cảnh mỗi hệ không chứa chương sau N, hai hệ đồ thị cho cùng ngữ cảnh trên Neo4j và trên gói trong bộ nhớ, và không có Cypher riêng.
 - **Chỉ số:** độ đúng chung, theo nhóm, theo khoảng cách, kèm `n` và khoảng tin cậy Wilson; số lần kiêng; ngữ cảnh trung bình; chi phí trả lời, chi phí dựng bộ nhớ (tóm tắt) và USD mỗi câu, tách theo hệ.
@@ -45,8 +53,11 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
   uv run python -m writory.pipeline.bench_a plan --questions-file questions-ky-ao-vua-1.yaml
   uv run python -m writory.pipeline.bench_a run --dry-run --label ky-ao-vua-1-khung --questions-file questions-ky-ao-vua-1.yaml
   uv run python -m writory.pipeline.bench_a run --label ky-ao-vua-1 --questions-file questions-ky-ao-vua-1.yaml --budget <USD>
+  # hai hệ người kể (D-143), chỉ khi nêu tên, chỉ truyện do pipeline viết:
+  uv run python -m writory.pipeline.bench_a plan --questions-file questions-ky-ao-vua-1-facts.yaml --systems narrator,narrator_pages --samples 3
+  uv run python -m writory.pipeline.bench_a run --dry-run --label nguoi-ke-khung --questions-file questions-ky-ao-vua-1-facts.yaml --systems narrator,narrator_pages
   uv run pytest tests/unit/test_bench_a_data.py tests/unit/test_bench_a_systems.py tests/unit/test_bench_a_run.py \
-      tests/unit/test_bench_a_pipeline_story.py
+      tests/unit/test_bench_a_pipeline_story.py tests/unit/test_bench_a_narrator.py
   uv run pytest -m graph tests/graph/test_bench_a_graph_parity.py            # cần docker compose up -d
   ```
   Chạy thật cần `OPENROUTER_API_KEY` trong `.env` và Neo4j đang chạy (`docker compose up -d`; kết nối theo `NEO4J_URI`/`NEO4J_USER`/`NEO4J_PASSWORD`): lệnh nạp truyện (truyện mẫu, hoặc các gói chương của lượt chạy pipeline) vào một `story_id` riêng rồi xoá khi xong. `--graph-backend memory` đọc đồ thị từ gói trong bộ nhớ, không cần Neo4j. Đổi `--fake`, đề hay cấu hình thì dùng nhãn mới (lệnh từ chối ghi tiếp lên kết quả khác đề). Cần chủ dự án duyệt trước lần chạy thật.
@@ -139,18 +150,18 @@ uv run python -m writory.quality.bench_d exclude --out <thư mục kết quả> 
     - `plan-*.yaml` có `run_dir` (thư mục kết quả của `pipeline.bench_run`): kế hoạch (cả `leak_terms` do model khởi tạo đặt), gói thay đổi từng chương và thiết lập truyện (`story_brief`, dựng lại bằng `pipeline.setup.story_brief`) lấy từ `truth_dump.json`, `setup.json`, `meta.json` của thư mục đó; khai thêm `plan` hay `story_brief` là lỗi. Câu hỏi của truyện như vậy phải khai trước, trong file riêng (hiện có `questions-tu-tien-1.yaml` và `plan-tu-tien-1.yaml` cho `evals/results/2026-10-20-run-tu-tien-1/`).
   - `run.yaml`: số lần hỏi mỗi câu, `max_tokens_per_call`, giá để giữ chỗ ngân sách, giám khảo (model, effort, lời dặn, tiêu chí). Model người kể lấy từ `config/models.yaml` (`roles.narrator`).
   - Đề không load được khi mục của `grounds` không có trong sổ tay ở chương đó, khi `expect_terms` không có trong chữ sổ tay của các mục đó, hay khi số câu khác `counts`.
-- **Chạy:** câu ở chương N được hỏi với sổ tay là player_view của truyện tới hết chương N (`OverlayState` từ gói dựng tay hoặc từ `truth_dump.json`), qua `pipeline.narrator.ask_narrator_reply` và `MeteredClient`, đúng đường của người chơi, kể cả truy hồi sổ tay lớn (D-59). Không áp trần số câu mỗi chương.
-- **Ghi hai thứ cho mỗi lượt:** câu thô của model (`known`, `answer`, `entry_ids`) trước khi code thay bằng NOT_KNOWN, và câu cuối người chơi thấy, kèm lý do bị thay (`model_not_known`, `empty_answer`, `no_entries`, `unknown_ref`, `leak`, và `meta_hedge`: câu nói về việc thiếu thông tin, D-78). Danh sách lý do trong `summary.md` đọc từ `pipeline/narrator.BlockReason`.
+- **Chạy:** câu ở chương N được hỏi với sổ tay là player_view của truyện tới hết chương N (`OverlayState` từ gói dựng tay hoặc từ `truth_dump.json`), qua `pipeline.narrator.ask_narrator_reply` và `MeteredClient`, đúng đường của người chơi, kể cả truy hồi sổ tay lớn (D-59). Không áp trần số câu mỗi chương. Người kể nhận văn đã hiện của truyện như khi chơi (D-143; `chNN.md` của truyện mẫu, `chapters/chNN.md` của truyện do pipeline viết, đều có trong hash của `meta.json`), nên đề là `narrator-4` khi `limits.narrator_pages.top_k` > 0 và `narrator-3` khi 0.
+- **Ghi hai thứ cho mỗi lượt** (cộng các đoạn trên trang đã gửi, `passages`, và cỡ context, `prompt_chars`; D-143): câu thô của model (`known`, `answer`, `entry_ids`) trước khi code thay bằng NOT_KNOWN, và câu cuối người chơi thấy, kèm lý do bị thay (`model_not_known`, `empty_answer`, `no_entries`, `unknown_ref`, `leak`, và `meta_hedge`: câu nói về việc thiếu thông tin, D-78). Danh sách lý do trong `summary.md` đọc từ `pipeline/narrator.BlockReason`.
 - **Chấm bằng code** (`Scorer`), chặt hơn lớp chặn đang đo:
   - chuỗi cấm gồm tên lớp truth đầy đủ (`named_nodes` của mọi chương, không dùng `leak_names`): `check_leaks` với `scope="player_path"` như người kể, cộng luật tên trước D-61 (mọi tên, biệt danh có từ viết hoa người chơi chưa thấy); `leak_terms` của kế hoạch cộng nhóm và bí mật trong `score`; tên thật của nút có tên chưa hé lộ ở chương đó, kể cả tên chữ thường, trừ tên đã nằm trong chữ sổ tay hay thiết lập truyện người chơi đọc;
   - bí mật thêm trong `score` được phép có khoảng lộ sau chương cuối, để giữ cách nói mà `leak_terms` của kế hoạch không có tới hết truyện. Từ D-61 người kể đã dò mọi bí mật chưa hé lộ, bất kể khoảng lộ;
-  - **lộ ở câu cuối** phải bằng 0; khác 0 là lỗi nghiêm trọng, lệnh trả mã 4. Lượt chỉ nhắc lại chữ của câu hỏi được đánh dấu `echo` nhưng vẫn tính;
+  - **lộ ở câu cuối** phải bằng 0; khác 0 là lỗi nghiêm trọng, lệnh trả mã 4. Lượt chỉ nhắc lại chữ của câu hỏi được đánh dấu `echo` nhưng vẫn tính; chuỗi trúng có trong văn các chương người chơi đã đọc được đánh dấu `on_page` (D-143) nhưng vẫn tính;
   - **lộ ở câu thô**: model tự nói ra bao nhiêu, trước lớp code;
   - loại b–f: tỉ lệ đúng NOT_KNOWN, tách "model tự giữ" (`known = false`) với "code chặn" theo lý do;
-  - loại a: tỉ lệ trả lời đúng (dẫn đúng mục, đủ cụm). Lượt bị code chặn mà model đã dẫn đúng mục là ứng viên chặn oan, cần đọc tay;
+  - loại a: tỉ lệ trả lời đúng (dẫn đúng mục, hoặc dẫn một đoạn trên trang có đủ `expect_terms` (D-143), và đủ cụm). Lượt bị code chặn mà model đã dẫn đúng mục là ứng viên chặn oan, cần đọc tay;
   - tỉ lệ kèm khoảng tin cậy 95% (Wilson) trên lượt, theo loại và theo chương;
   - nhóm `pad: true`: phần sổ tay gửi so với sổ tay đầy đủ, tỉ lệ truy hồi (mục căn cứ có trong phần đã gửi), tỉ lệ đạt khi đã gửi đủ căn cứ, và danh sách câu truy hồi trượt (mục "Sổ tay lớn" của `summary.md`).
-- **Giám khảo** (tuỳ chọn, `--judge`): Claude qua Anthropic SDK, chỉ chấm câu cuối khác NOT_KNOWN.
+- **Giám khảo** (tuỳ chọn, `--judge`): Claude qua Anthropic SDK, chỉ chấm câu cuối khác NOT_KNOWN. Giám khảo chỉ thấy sổ tay, nên lệnh từ chối `--judge` khi bật đoạn trên trang (D-143); chạy giám khảo thì dùng config tắt (`--config-dir` có `narrator_pages.top_k: 0`).
   - Thấy sổ tay, câu hỏi và câu trả lời, bọc trong khối và escape. Không thấy lớp truth hay tên model người kể.
   - Hai tiêu chí nhị phân trong `run.yaml` (vượt sổ tay; gợi ý, úp mở), mỗi tiêu chí kèm câu trích; code kiểm câu trích có trong câu trả lời.
   - Một lần chấm mỗi lượt, không fallbacks. Lượt bị từ chối ghi riêng.
@@ -158,7 +169,7 @@ uv run python -m writory.quality.bench_d exclude --out <thư mục kết quả> 
 - **Kết quả** `evals/results/<ngày>-narrator-<nhãn>/`:
   - `results.jsonl`: mỗi lượt một dòng (câu thô, câu cuối, lý do, chuỗi trúng, chi phí từng lời gọi);
   - `judge.jsonl`, `errors.jsonl`, `summary.md`;
-  - `meta.json`: commit, sha256 của đề, file red-team, nguồn truyện (graph.yaml hoặc các file của thư mục chạy truyện) và config, tên file đề nếu khác mặc định, tham số sổ tay đệm, model và mức suy luận, phiên bản đề người kể (`narrator_prompt`, `pipeline/narrator.PROMPT_VERSION`, D-77), trần, từng lần chạy.
+  - `meta.json`: commit, sha256 của đề, file red-team, nguồn truyện (graph.yaml hoặc các file của thư mục chạy truyện) và config, tên file đề nếu khác mặc định, tham số sổ tay đệm, model và mức suy luận, phiên bản đề người kể (`narrator_prompt`: `narrator-3` hay `narrator-4` theo `limits.narrator_pages`, `pipeline/narrator.prompt_version`, D-77, D-143) và số đoạn trên trang (`narrator_pages`), trần, từng lần chạy.
 
   Chạy lại vào cùng thư mục thì chạy tiếp các lượt chưa có; đề hay config đã khác thì từ chối. Kết quả dry-run (`*-dryrun/`) không commit. Bí mật của truyện mẫu vốn đã công khai trong repo (`graph.yaml`), nên kết quả ghi nguyên chữ câu trả lời.
 - **Key:** chỉ đọc `OPENROUTER_API_KEY`, và `ANTHROPIC_API_KEY` khi có `--judge` (biến môi trường hoặc `--env-file`). **Trần:** chạy thật bắt buộc `--budget` (USD), thêm `--budget-anthropic` khi có `--judge`. Trần tính cả các lần chạy trước trong cùng thư mục; trước mỗi lời gọi, code giữ chỗ chi phí tối đa của lời gọi đó.
@@ -167,6 +178,7 @@ uv run python -m writory.quality.bench_d exclude --out <thư mục kết quả> 
 
 Lệnh (chạy trong `backend/`):
 ```bash
+# --judge chỉ chạy được khi tắt đoạn trên trang (D-143): thêm --config-dir <thư mục config có narrator_pages.top_k: 0>
 uv run python -m writory.pipeline.bench_e plan --judge                          # ước tính chi phí, không gọi model
 uv run python -m writory.pipeline.bench_e run --label thu --dry-run --judge     # oracle, không mạng
 uv run python -m writory.pipeline.bench_e run --label thu --dry-run --fake leaker

@@ -27,6 +27,15 @@ narrator_notebook:   # sổ tay lớn thì người kể chỉ nhận phần li�
   max_chars: 16000       # tính trên chữ sổ tay đã dựng cho model
   recent_entries: 10     # luôn kèm bấy nhiêu mục (và lời nói dối) gần đây nhất
   keyword_entries: 8     # số mục thêm theo từ khoá khi tên không trùng
+# Đoạn đã hiện trên trang cho người kể (D-143; tạm, Claude, chờ chủ dự án duyệt): BM25 theo câu hỏi trên văn
+# các chương đã ghi, như hệ `graph_quotes` của bài A. Đề người kể `narrator-4`. `top_k: 0` là TẮT: đề
+# `narrator-3`, không đọc văn chương. Cỡ đoạn và đoạn kế như `context.page_quotes_*` (D-85, D-96); số đoạn và
+# trần ký tự chọn bằng độ phủ câu trích bằng chứng, không gọi model (evals/results/2026-10-30-narrator-passages/).
+narrator_pages:
+  top_k: 4
+  chunk_chars: 500
+  max_chars: 3600
+  neighbors: 1
 context:
   writer_max_neighbors: 30  # số nút lân cận tối đa trong ngữ cảnh model viết (D-28; tạm, D-47)
   summary_max_chars: 800    # độ dài tối đa của tóm tắt một chương (D-49; tạm)

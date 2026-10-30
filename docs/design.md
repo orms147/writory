@@ -197,7 +197,8 @@ Người chơi trả bằng key riêng nhưng **không tự chọn model tuỳ �
 - Câu hỏi về thế giới, không mất lượt.
 - Chỉ trả lời từ **lớp người chơi biết** (§7). Câu chưa được hé lộ → "Bạn chưa biết điều này." Không gợi ý, không úp mở về sự tồn tại của bí mật: sổ tay không trả lời thẳng được câu hỏi (có phải không, ai làm, nội dung gì, vì sao) thì cũng là câu đó, không kể mục lân cận thay vào. Câu trả lời nói về việc thiếu thông tin ("chưa có nội dung được ghi lại") bị code đổi thành câu đó (D-78).
 - Người chơi gọi một người, nơi hay vật bằng chữ khác sổ tay thì người kể vẫn nhận ra. Câu hỏi chỉ biết được một phần thì người kể nói phần đã biết, không đoán phần còn lại (D-77).
-- Câu trả lời kèm số câu hỏi còn lại của chương và nguồn: các chương mà người chơi đã biết những mục sổ tay câu trả lời dựa vào (D-65).
+- Người kể đọc sổ tay và vài đoạn văn người chơi đã đọc trên trang, tìm theo câu hỏi, để trả lời cả điều trang đã kể mà sổ tay chưa ghi (truyện dài; D-143). Đoạn chỉ lấy từ các chương đã hiện; câu trả lời vẫn qua các phép kiểm như trên.
+- Câu trả lời kèm số câu hỏi còn lại của chương và nguồn: các chương mà người chơi đã biết những mục sổ tay, hay đã đọc những đoạn, mà câu trả lời dựa vào (D-65, D-143).
 - Số câu hỏi mỗi chương có trần (`config/limits.yaml`, G8). Hết lượt thì báo bằng câu trung tính; sang chương sau thì có lượt mới.
 - Câu trả lời qua kiểm duyệt nội dung (G9) ở mức u tối của truyện trước khi hiện. Bị chặn thì báo lỗi bằng câu trung tính, câu hỏi đó không bị tính lượt (D-137).
 

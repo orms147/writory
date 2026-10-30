@@ -17,7 +17,6 @@
 
 import hashlib
 import json
-import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from pathlib import Path
@@ -37,7 +36,11 @@ from writory.pipeline.bench_a_systems import (
     edge_key,
     flat,
 )
-from writory.pipeline.bench_e_story import run_packages
+from writory.pipeline.bench_e_story import (  # noqa: F401 — tên cũ vẫn dùng được từ đây
+    CHOICES_HEADING,
+    run_chapter_text,
+    run_packages,
+)
 from writory.pipeline.bench_run import Price
 from writory.quality.bench_d import _parse_yaml
 
@@ -260,20 +263,8 @@ def load_data(data_dir: Path = DATA_DIR, *, sample_dir: Path | None = None,
 
 
 # --- truyện do pipeline viết (D-83) -----------------------------------------------------------------
-
-CHOICES_HEADING = "## Lựa chọn cuối chương"
-# Dòng của lệnh chạy, không phải văn: tiêu đề chương và ghi chú in nghiêng của `bench_run`.
-_HARNESS_LINE = re.compile(
-    r"^(# Chương \d+|_(Trạng thái: .*|Lựa chọn dẫn tới chương này: .*|Hết truyện\.)_)$")
-
-
-def run_chapter_text(raw: str) -> str:
-    """Văn một chương trong chapters/chNN.md của `bench_run`: bỏ tiêu đề, ghi chú in nghiêng của
-    lệnh chạy (trạng thái, lựa chọn dẫn tới chương, hết truyện) và mục lựa chọn cuối chương. Giữ
-    nguyên chữ của các cảnh và dòng ngắt cảnh."""
-    body = raw.replace("\r\n", "\n").split(f"\n{CHOICES_HEADING}\n", 1)[0]
-    kept = [line for line in body.split("\n") if not _HARNESS_LINE.match(line.strip())]
-    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip() + "\n"
+# Văn chương: `bench_e_story.run_chapter_text`, dùng chung với bài E (người kể đọc đoạn trên trang,
+# D-143).
 
 
 def _resolve_run_dir(value: str) -> Path:
