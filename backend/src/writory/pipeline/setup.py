@@ -29,6 +29,11 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
 - D-76: `protagonist` trong `known_by` (KNOWS của nhân vật chính ở chương 0) thì code bỏ
   (`drop_protagonist_knows`) sau chuẩn hoá id, trước mọi phép kiểm; không tính là lỗi, không tốn
   lượt sửa. Log chỉ có số cạnh bị bỏ.
+- D-135: mạch phải gỡ khai bí mật trả lời nó (`answered_by`). Khoảng gỡ bắt đầu trước khoảng lộ
+  của bí mật thì code dời (`story_plan.align_thread_windows`) cả trên kế hoạch lẫn nút `Thread`,
+  không tốn lượt sửa; các lần dời ở `StorySetup.shifts`, log chỉ có số mạch. Id một fact thường
+  (đã khai, không phải bí mật) thì code bỏ khỏi `answered_by` như D-76 (`drop_plain_fact_answers`,
+  `StorySetup.dropped_answers`); id không phải fact nào là lỗi `answered_by`, đi lượt sửa.
 """
 
 import logging
@@ -55,7 +60,12 @@ from writory.graph.schema import EDGE_ENDPOINTS, NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
 from writory.llm.retry import with_json_retries
-from writory.pipeline.story_plan import MilestoneKind, StoryPlan
+from writory.pipeline.story_plan import (
+    MilestoneKind,
+    StoryPlan,
+    WindowShift,
+    align_thread_windows,
+)
 from writory.safety.moderate import darkness_brief
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -73,8 +83,9 @@ log = logging.getLogger(__name__)
 # setup-8: đồ vật có người giữ HOẶC nơi chốn, không cả hai (D-90). setup-9: ngoại hình nhân vật
 # (`appearance`, `protagonist_appearance`) và cảnh sắc nơi chốn (`visual`), nền cho xuất video (D-118).
 # setup-10: ngoại hình chỉ tả điều nhìn thấy, không mở bằng "Trông", mỗi người khác những người còn lại
-# (D-122).
-PROMPT_VERSION = "setup-10"
+# (D-122). setup-11: mạch phải gỡ khai bí mật trả lời nó (`answered_by`), khoảng gỡ không bắt đầu
+# trước khoảng lộ của bí mật đó (D-135).
+PROMPT_VERSION = "setup-11"
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -242,12 +253,17 @@ class OutAct(_Out):
     to_chapter: int
 
 
-def _fill_looks(data: Any, field: str) -> Any:
-    """Trường ngoại hình/cảnh sắc bắt buộc trong schema gửi model, nhưng trả lời cũ (fixture, thư mục
-    `--setup-from` cũ) chưa có thì coi là chuỗi rỗng (D-118)."""
+def _fill_missing(data: Any, field: str, empty: Any) -> Any:
+    """Trường mới bắt buộc trong schema gửi model, nhưng trả lời cũ (fixture, câu trả lời đã lưu)
+    chưa có thì coi là giá trị rỗng `empty`."""
     if isinstance(data, dict):
-        return {field: "", **data}
+        return {field: empty, **data}
     return data
+
+
+def _fill_looks(data: Any, field: str) -> Any:
+    """Ngoại hình/cảnh sắc (D-118): trả lời cũ chưa có thì là chuỗi rỗng."""
+    return _fill_missing(data, field, "")
 
 
 class OutCharacter(_Out):
@@ -305,6 +321,12 @@ class OutThread(_Out):
     due_from_chapter: int
     due_to_chapter: int
     must_resolve: bool
+    answered_by: list[str]  # fact_id bí mật trả lời câu hỏi chính (D-135); chỉ dùng khi must_resolve
+
+    @model_validator(mode="before")
+    @classmethod
+    def _old_replies(cls, data: Any) -> Any:
+        return _fill_missing(data, "answered_by", [])
 
 
 class OutSecret(_Out):
@@ -343,8 +365,14 @@ class BuildOutput(_Out):
 
 @dataclass(frozen=True)
 class StorySetup:
+    """`shifts`: khoảng gỡ code đã dời để mạch không gỡ trước khoảng lộ của bí mật trả lời nó;
+    `dropped_answers`: các cặp (mạch, fact thường) code đã bỏ khỏi `answered_by` (D-135). Cả hai có
+    id lớp truth: chỉ cho bộ đo (truth_dump), không vào log hay API."""
+
     plan: StoryPlan
     package: ChangePackage
+    shifts: tuple[WindowShift, ...] = ()
+    dropped_answers: tuple[tuple[str, str], ...] = ()
 
 
 # --- lỗi của build_story (D-54) ------------------------------------------------------------------
@@ -354,6 +382,7 @@ ProblemKind = Literal[
     "package", "plan",  # pydantic của gói chương 0, của bản kế hoạch
     "chapter_0", "nodes", "protagonist", "edges", "player_view",  # luật của gói chương 0
     "acts", "length", "milestones", "pacing", "secrets", "threads",  # luật của bản kế hoạch
+    "answered_by",  # mạch phải gỡ khai bí mật không có trong kế hoạch (D-135)
 ]
 
 
@@ -414,8 +443,8 @@ def normalize_id(raw: str) -> str:
 
 def _map_ids(data: dict[str, Any], fn: Callable[[str], str]) -> None:
     """Áp `fn` tại chỗ lên mọi id của đầu ra model (dạng dict): chỗ khai (`_ID_SECTIONS`) và chỗ
-    nhắc tới (`about`, `known_by`, from/to của cạnh, `fact_id` và `protects` của bí mật). Id mạch
-    của kế hoạch lấy từ chỗ khai của mạch."""
+    nhắc tới (`about`, `known_by`, from/to của cạnh, `fact_id` và `protects` của bí mật,
+    `answered_by` của mạch). Id mạch của kế hoạch lấy từ chỗ khai của mạch."""
     for section in _ID_SECTIONS:
         for x in data[section]:
             x["id"] = fn(x["id"])
@@ -427,6 +456,8 @@ def _map_ids(data: dict[str, Any], fn: Callable[[str], str]) -> None:
     for s in data["secrets"]:
         s["fact_id"] = fn(s["fact_id"])
         s["protects"] = [fn(i) for i in s["protects"]]
+    for t in data["threads"]:
+        t["answered_by"] = [fn(i) for i in t["answered_by"]]
 
 
 def normalize_ids(output: BuildOutput) -> tuple[BuildOutput, list[SetupProblem]]:
@@ -481,6 +512,30 @@ def drop_protagonist_knows(output: BuildOutput) -> tuple[BuildOutput, int]:
     return BuildOutput.model_validate(data), dropped
 
 
+# --- id fact thường trong `answered_by` (D-135, chủ dự án chọn sau phép đo) -----------------------
+# Đo `setup-11` (evals/results/2026-10-30-setup11-check/notes.md): ở 2/5 lượt model ghi id một fact
+# thường (đúng là câu trả lời, nhưng không phải bí mật) vào `answered_by`, mỗi lượt tốn lượt sửa duy
+# nhất. Fact thường không có khoảng lộ nên bỏ liên kết không mất gì cho việc dời; fact vẫn còn.
+
+
+def drop_plain_fact_answers(
+    output: BuildOutput,
+) -> tuple[BuildOutput, tuple[tuple[str, str], ...]]:
+    """Bỏ khỏi `answered_by` của mạch phải gỡ các id là Fact đã khai trong câu trả lời mà không phải
+    bí mật. Trả đầu ra mới và các cặp (mạch, fact) đã bỏ. Id không phải Fact nào thì giữ, để phép
+    kiểm báo lỗi: nó có thể là id bí mật viết sai, bỏ đi thì mất một liên kết thật mà không ai biết."""
+    plain = {f.id for f in output.facts} - {s.fact_id for s in output.secrets}
+    dropped = tuple(dict.fromkeys((t.id, i) for t in output.threads if t.must_resolve
+                                  for i in t.answered_by if i in plain))
+    if not dropped:
+        return output, ()
+    data = output.model_dump()
+    for t in data["threads"]:
+        if t["must_resolve"]:
+            t["answered_by"] = [i for i in t["answered_by"] if i not in plain]
+    return BuildOutput.model_validate(data), dropped
+
+
 # --- prompt ----------------------------------------------------------------------------------
 
 _COMMON = """Bạn là người thiết kế truyện cho WriTory, trò chơi truyện tương tác tiếng Việt: người \
@@ -523,7 +578,7 @@ khai lại nhân vật chính trong `characters`, không đổi tên, tính các
 
 Định danh `id`: chỉ gồm chữ cái ASCII thường không dấu, chữ số và dấu gạch dưới, đúng dạng \
 `{SAFE_ID_PATTERN}`: không dấu tiếng Việt, không khoảng trắng, không ký tự nào khác. Ví dụ: \
-{_ID_EXAMPLES_TEXT}. Id duy nhất trong cả truyện. Mọi id nhắc tới trong `about`, `known_by`, `edges`, `secrets` phải là id đã khai trong \
+{_ID_EXAMPLES_TEXT}. Id duy nhất trong cả truyện. Mọi id nhắc tới trong `about`, `known_by`, `edges`, `secrets`, `answered_by` phải là id đã khai trong \
 cùng câu trả lời, viết y hệt.
 
 Các phần:
@@ -559,7 +614,12 @@ trên trang khi truyện kể tới. Fact chỉ nhân vật chính biết thì �
 `due_to_chapter`) trong số chương của truyện, `must_resolve` là true nếu mạch phải gỡ trước khi \
 kết. Mạch phải gỡ thì phải gỡ xong trong đúng khoảng này. Mỗi mạch phải gỡ hỏi đúng một câu hỏi \
 chính (một việc phải xảy ra hoặc một điều phải biết): mô tả không ghép hai việc bằng "và" hay dấu \
-chấm phẩy, việc thứ hai thì làm thành mạch khác. Mạch xong khi câu hỏi chính ấy có câu trả lời.
+chấm phẩy, việc thứ hai thì làm thành mạch khác. Mạch xong khi câu hỏi chính ấy có câu trả lời. \
+`answered_by`: với mạch phải gỡ, `fact_id` của các bí mật trong `secrets` mà câu trả lời của câu \
+hỏi chính nằm trong đó, tức người chơi chỉ có câu trả lời khi bí mật ấy lộ; không bí mật nào trả \
+lời mạch, hay mạch không phải gỡ, thì để danh sách rỗng. Chỉ ghi `fact_id` đã khai trong \
+`secrets`, không ghi fact thường. Mạch có `answered_by` thì `due_from_chapter` không nhỏ hơn \
+`reveal_from_chapter` của bí mật nào trong đó: chưa được lộ đáp án thì chưa gỡ được mạch.
 - `milestones`: các mốc chính của cốt truyện, ẩn với người chơi: `kind` là `turning_point` (bước \
 ngoặt), `climax` (cao trào) hoặc `ending` (kết); `goal`: một câu, điều phải xảy ra ở mốc đó; \
 `from_chapter`, `to_chapter`: khoảng chương mốc phải xảy ra. Mỗi hồi có ít nhất một mốc có \
@@ -760,6 +820,12 @@ async def build_story(
         output, setup, problems = _check_build(output, protagonist=pc, commit_id=commit_id,
                                                level=level)
         if setup is not None:
+            if setup.dropped_answers:  # chỉ số, không id (G12)
+                log.info("khởi tạo: bỏ %d id fact thường khỏi answered_by (D-135)",
+                         len(setup.dropped_answers))
+            if setup.shifts:  # chỉ số mạch, không id (G12)
+                log.info("khởi tạo: dời khoảng gỡ của %d mạch cho khỏi bắt đầu trước khoảng "
+                         "lộ của bí mật trả lời nó (D-135)", len(setup.shifts))
             return setup
         if repairs >= limit:
             log.warning("khởi tạo: kế hoạch vẫn sai quy tắc sau %d lượt sửa (%s)", repairs,
@@ -782,7 +848,8 @@ def build_task(level: LengthLevel) -> str:
 
 REPAIR_INTRO = ("Câu trả lời trước của bạn bị trả lại vì sai quy tắc. Đây là câu trả lời đó, các "
                 "id sai dạng đã được hệ thống đổi sang dạng đúng (trừ những id trùng nhau sau khi "
-                "đổi):")
+                "đổi), và khoảng gỡ của mạch bắt đầu trước khoảng lộ của bí mật trong "
+                "`answered_by` đã được dời để bắt đầu từ chương đầu của khoảng lộ đó:")
 REPAIR_TASK = ("Trả lại toàn bộ câu trả lời theo đúng schema và mọi luật ở trên, sửa hết các lỗi "
                "này; phần không có lỗi thì giữ nguyên.")
 
@@ -889,13 +956,32 @@ def to_story_setup(
 def _check_build(
     output: BuildOutput, *, protagonist: CharacterOption, commit_id: str, level: LengthLevel
 ) -> tuple[BuildOutput, StorySetup | None, list[SetupProblem]]:
-    """(đầu ra đã chuẩn hoá id và bỏ KNOWS của nhân vật chính, kết quả nếu không có lỗi nào, danh
-    sách lỗi)."""
+    """(đầu ra đã chuẩn hoá id, bỏ KNOWS của nhân vật chính và dời khoảng gỡ theo bí mật trả lời
+    (D-135), kết quả nếu không có lỗi nào, danh sách lỗi)."""
     output, problems = normalize_ids(output)
     output, dropped = drop_protagonist_knows(output)
     if dropped:
         # Chỉ số cạnh và loại, không id hay chữ của fact (G12).
         log.info("khởi tạo: bỏ %d cạnh KNOWS của nhân vật chính ở chương 0 (D-76)", dropped)
+    output, dropped_answers = drop_plain_fact_answers(output)  # D-135, trước mọi phép kiểm
+    plan_problems: list[SetupProblem] = []
+    plan = _validated(StoryPlan, {
+        "acts": [a.model_dump() for a in output.acts],
+        "secrets": [s.model_dump() for s in output.secrets],
+        # Khoảng phải gỡ = khoảng dự kiến gỡ của chính mạch đó (một nguồn: đầu ra của model).
+        "must_resolve_threads": [
+            {"thread_id": t.id, "resolve_from_chapter": t.due_from_chapter,
+             "resolve_to_chapter": t.due_to_chapter,
+             "answered_by": list(dict.fromkeys(t.answered_by))}  # id trùng: gộp, không phải lỗi
+            for t in output.threads if t.must_resolve
+        ],
+        "milestones": [m.model_dump() for m in output.milestones],
+    }, "bản kế hoạch", "plan", plan_problems)
+    shifts: tuple[WindowShift, ...] = ()
+    if plan is not None:
+        # D-135: trước mọi phép kiểm, để luật nhịp kiểm đúng hạn sau khi dời.
+        plan, shifts = align_thread_windows(plan, max_due_per_chapter=level.max_due_per_chapter)
+        output = _shift_threads(output, shifts)
     pc = _clean_protagonist(protagonist)
     nodes: list[dict[str, Any]] = [{
         "id": PROTAGONIST_ID, "label": "Character",
@@ -934,22 +1020,26 @@ def _check_build(
 
     package = _validated(ChangePackage, {"commit_id": commit_id, "nodes": nodes, "edges": edges},
                          "gói chương 0", "package", problems)
-    plan = _validated(StoryPlan, {
-        "acts": [a.model_dump() for a in output.acts],
-        "secrets": [s.model_dump() for s in output.secrets],
-        # Khoảng phải gỡ = khoảng dự kiến gỡ của chính mạch đó (một nguồn: đầu ra của model).
-        "must_resolve_threads": [
-            {"thread_id": t.id, "resolve_from_chapter": t.due_from_chapter,
-             "resolve_to_chapter": t.due_to_chapter}
-            for t in output.threads if t.must_resolve
-        ],
-        "milestones": [m.model_dump() for m in output.milestones],
-    }, "bản kế hoạch", "plan", problems)
+    problems += plan_problems
     if package is not None and plan is not None:
         problems += _initial_problems(plan, package, level=level)
     if problems or package is None or plan is None:
         return output, None, problems
-    return output, StorySetup(plan=plan, package=package), []
+    return output, StorySetup(plan=plan, package=package, shifts=shifts,
+                              dropped_answers=dropped_answers), []
+
+
+def _shift_threads(output: BuildOutput, shifts: Sequence[WindowShift]) -> BuildOutput:
+    """Ghi khoảng gỡ đã dời (D-135) vào đầu ra, để nút `Thread` và câu trả lời trước của lượt sửa
+    cùng khoảng với kế hoạch (một nguồn, D-49)."""
+    if not shifts:
+        return output
+    after = {s.thread_id: s.after for s in shifts}
+    data = output.model_dump()
+    for t in data["threads"]:
+        if t["id"] in after:
+            t["due_from_chapter"], t["due_to_chapter"] = after[t["id"]]
+    return BuildOutput.model_validate(data)
 
 
 # Nhãn và cạnh dùng ở chương 0, kèm nhãn hai đầu hợp lệ (docs/graph-schema.md, mục Chương 0).
@@ -1177,6 +1267,17 @@ def _plan_problems(
     for t in plan.thread_ids:
         if t not in threads:
             add("threads", f"mạch {t} không có nút Thread trong gói")
+    secret_ids = {s.fact_id for s in plan.secrets}
+    for t in plan.must_resolve_threads:  # D-135: chỉ bí mật của kế hoạch mới có khoảng lộ để so
+        for fact_id in t.answered_by:
+            if fact_id in secret_ids:
+                continue
+            # Fact thường đã bị `drop_plain_fact_answers` bỏ trước khi tới đây (D-135); nhánh đó chỉ
+            # còn cho kế hoạch dựng ngoài `build_story`.
+            what = ("là fact nhưng không phải bí mật" if labels.get(fact_id) == "Fact"
+                    else "không phải id của bí mật hay fact nào đã khai")
+            add("answered_by", f"mạch {t.thread_id}: answered_by có {fact_id}, {what}; chỉ ghi "
+                               "fact_id của bí mật trong `secrets`, hoặc để danh sách rỗng")
     for tid, props in threads.items():
         planted = props.get("planted_chapter")
         low, high = props.get("due_from_chapter"), props.get("due_to_chapter")

@@ -1,0 +1,124 @@
+{
+  "bench": "run",
+  "label": "setup11-ab-ky-ao",
+  "started": "2026-10-30T10:56:40+07:00",
+  "finished": "2026-10-30T10:57:29+07:00",
+  "status": "done",
+  "exit_code": 0,
+  "stop": null,
+  "dry_run": false,
+  "git": {
+    "commit": "1cc8eacc1e0abca443fe5abea61ea9dee95d630b",
+    "dirty": false
+  },
+  "story_id": "run-20261030-setup11-ab-ky-ao-06254491",
+  "seed": 20261029,
+  "budget_usd": 0.018,
+  "chapters_arg": null,
+  "scenario": {
+    "path": "evals/scenarios/story_run/ab-ky-ao.yaml",
+    "sha256": "7b1d86e0688fc8a28c29b8db52acd5837efaa7e5c50f574c9fbae4b15ef3206b",
+    "content": {
+      "version": 1,
+      "tags": {
+        "genre": "kỳ ảo dân gian",
+        "era": "các làng ven đầm lầy giữ lời thề cổ với một vị thuỷ thần đang ngủ; năm nay thần trở mình",
+        "voice": "u tối, giàu hình ảnh, câu ngắn, đối thoại giản dị",
+        "darkness": "vừa phải, có mất mát và chết chóc, không tả máu me"
+      },
+      "length_level": "short",
+      "naming": {
+        "names": "viet",
+        "places": "hu_cau"
+      },
+      "pov": "protagonist",
+      "writer_tier": null,
+      "darkness_level": null,
+      "seed": 20261029,
+      "scene_count": 2,
+      "player_retries": 1,
+      "max_tokens_per_call": 16000,
+      "prices": {
+        "openai/gpt-6-luna": {
+          "in": 0.1,
+          "out": 0.5
+        }
+      }
+    }
+  },
+  "config": {
+    "dir": "config",
+    "sha256": {
+      "combined": "194e9aa655c67f9d1041f05b3735c87aa7051436e9217a9b5905778067497518",
+      "guard.yaml": "0f233f7f3bfd231da329ecad15b3a1750d95ad7300f6b49ae984b278612e99fb",
+      "limits.yaml": "80ff404e669fdd4ce695e80802f989f6f34af02b478f8dc3bc1de3ffeb46a9e8",
+      "models.yaml": "703d6ab6d840f9801512b492252a4ae2e5d24afc5b4c6d7c4c9e1cdd2401a1cc",
+      "moderation.yaml": "e034a30cb8cbae8bb31e090156e1c6afa091658eebb7fe13870d4b521898efda",
+      "quality.yaml": "eea3d6f43f40e5642d0555283baccd1994a4a907f50b559ee11fd7453c0f3d18",
+      "story_lengths.yaml": "a44fefa85feb0180a4d2fcc21668cd2ba6aece5c1f0f3a81e66c16a95c1e911a"
+    }
+  },
+  "models": {
+    "setup": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "outline": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "extract": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "summary": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "choices": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "moderate": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "writer": {
+      "tier": "standard",
+      "model": "openai/gpt-6-luna",
+      "reasoning": "none"
+    }
+  },
+  "max_tokens_per_call": 16000,
+  "page_quotes_top_k": 0,
+  "context_flags": {
+    "character_personality_max_chars": 240,
+    "previous_openings": 2,
+    "unplanned_chapter_goal": true,
+    "phase_shift_every": null
+  },
+  "setup_from": null,
+  "setup_only": true,
+  "overrides": {
+    "writer_model": null,
+    "writer_reasoning": null,
+    "outline_model": null,
+    "outline_reasoning": null
+  },
+  "prompt_versions": {
+    "setup": "setup-11",
+    "outline": "outline-11",
+    "writer": "writer-11",
+    "extract": "extract-8",
+    "choices": "choices-5"
+  },
+  "style_guide_sha256": "fa8fbc55c6e45be0c4ea2b0f6e757604074d10a00a253e287469bad11cd38512",
+  "style_guide_path": null,
+  "prompt_variant": null,
+  "prompt_versions_overridden": [],
+  "cost_limits": {
+    "per_scene": 0.02,
+    "per_chapter": 0.08,
+    "per_story": 1.0
+  }
+}
