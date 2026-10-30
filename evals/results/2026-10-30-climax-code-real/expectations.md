@@ -100,3 +100,6 @@ uv run python -m writory.pipeline.bench_run --scenario ../evals/scenarios/story_
   # Pha 2: --scenario .../long-tu-tien.yaml --setup-from ../evals/results/2026-10-29-run-long-tu-tien-3 --chapters 24 \
   #        --budget 23 --config-dir ../evals/config/meta --label ckr-tu-treat
   ```
+
+## Trần `--budget` nâng lên (30/10/2026, điều phối quyết, ghi TRƯỚC lời gọi đầu tiên)
+Lý do (điều phối): trần 14 và 23 sát ước tính trên (13,9 và 22,5); lượt bị cắt giữa chừng tốn tiền hơn là nâng trần một chút. **Trần mới:** ky-ao `ctrl` 16, ky-ao `treat` 16, tu-tien `treat` 26, chấm (b) 3; **tổng trần 61 USD Meta** (trước đó 54). Ước tính chi phí không đổi (37 / 45 / 52 USD); chỉ thêm khoảng đệm cho giữ chỗ ngân sách. Chạm trần thì vẫn dừng và báo điều phối, không tự nâng thêm. Các lệnh ở mục trên dùng `--budget 16`, `16`, `26` thay cho `14`, `14`, `23`.
