@@ -1212,3 +1212,11 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - `KNOWS` giữ như code hiện hành: tới Fact/Lie/Event và tới nút có tên (bộ trích có đường KNOWS của nhân vật chính kèm `known_as`, D-17). `docs/graph-schema.md` chỉ ghi Fact/Lie/Event; dữ liệu thật không có KNOWS nào tới nút có tên. Mâu thuẫn tài liệu–code này chưa quyết, để chủ dự án chọn.
 - **Hệ quả:** cạnh sai cũ không bị xoá khỏi đồ thị, chỉ bị bỏ qua khi đọc. Bộ trích mất cạnh model ghi sai thay vì ghi rác. `psab-b1` chạy tiếp từ chương 12 bằng `--resume --resume-allow-drift` trên commit có bản sửa (ghi trong notes A/B).
 - **Người quyết:** Claude (session 3 tìm và sửa, writory-35 hoàn tất), nhánh fix/edge-endpoint-labels · 30/10/2026
+
+## D-129 · Thử cho bộ trích thấy loại của mốc và luật cao trào đòi hậu quả (`extract-9`): không dùng
+- **Bối cảnh:** `evals/results/2026-10-29-milestone-diagnosis/notes.md`. Tu-tiên m6 (cao trào) bị đánh dấu xong ở ch19 vì một quyết định nhỏ khớp chữ của mốc. Bộ trích không thấy loại của mốc (`_milestone_lines` chỉ in id, khoảng chương, mô tả), trong khi đề dàn ý và đề viết có loại.
+- **Đã thử:** dòng mốc của bộ trích thêm cột loại; đề `extract-9` thêm luật: mốc cao trào chỉ ghi khi trang cho thấy bước ngoặt đã diễn ra và hậu quả của nó. Không làm cổng code theo khoảng chương (D-116 cố ý không cổng).
+- **Đo:** phát lại bộ trích hai bản đề trên chương đã lưu, kỳ vọng khai trước: `evals/results/2026-10-30-extract-milestone-kind/` (`expectations.md`, `notes.md`; chữ đề `extract9_system_prompt.txt`, code ở commit 7ea8812 của nhánh).
+- **Quyết định:** **không gộp** `extract-9`; bộ trích giữ `extract-8`. Luật khai trước ra tín hiệu xấu: không sửa được hai ca mục tiêu, làm mất dấu đúng ở hai ca đối chứng. Theo luật, không sửa đề lần hai trong nhánh này.
+- **Hệ quả:** lỗi dấu cao trào sớm (tu-tiên m6) vẫn còn. Suy luận chưa kiểm: luật đòi hai điều (quyết định và hậu quả) trong khi câu trích phải là một đoạn liền (G3), nên model ghép hai đoạn và bị từ chối. Lần thử sau (một câu trích liền, hay cho phép câu trích riêng cho hậu quả) cần phép đo khai trước mới.
+- **Người quyết:** Claude (writory-35, theo luật khai trước), 30/10/2026
