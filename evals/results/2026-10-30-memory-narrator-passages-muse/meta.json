@@ -1,0 +1,107 @@
+{
+  "bench": "A",
+  "created": "2026-10-30T23:56:23+07:00",
+  "versions": {
+    "questions": 1,
+    "run": 2
+  },
+  "status": "CHỦ DỰ ÁN DUYỆT 22/10/2026",
+  "story": "evals/results/2026-10-22-new-facts-replay-1",
+  "fingerprint": {
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions-ky-ao-vua-1-facts.yaml": "721cde65c918b855b5f5129b0536bc205dae39cd01656099b3b9b565be643081",
+      "run.yaml": "d5e6d10153b697353ff6154f9e5f741afd4db2471c37420ee64978ebbb040814",
+      "run/truth_dump.json": "c398266a99436f7cafcebda0d598add29c224da447db87cb53d3942565479bb9",
+      "run/chapters/ch01.md": "bb10d749af77d19352437020d971635f930a1043ea243dd7e7afc634f65f76e4",
+      "run/chapters/ch02.md": "6362b3884b609bff51d048e3148014a77a8ff823d9f8f79a0950ba8326092f51",
+      "run/chapters/ch03.md": "9b94c0ccbfc7401c0d05ff9ac3e556ae338767e9020310023570440eaf14d436",
+      "run/chapters/ch04.md": "e65142520e23f697f1552aa9b845961b425abd898b2ba4b3f7a314a1a96a1565",
+      "run/chapters/ch05.md": "a0becfa315201d4cedbb933a139f4c8b2ded76ea80b256838405ec85cc3f9747",
+      "run/chapters/ch06.md": "aa243829145987fe85ed4cc36f537094b2999b7368f25d535bbe0025740fd7d4",
+      "run/chapters/ch07.md": "02e0af32e74a39bb703704e91df492531a83bf5b8934ad09e2836b0a5d3383bc",
+      "run/chapters/ch08.md": "ba728d363b50f002b14245de7cca7d943cc5783faa959d76999f554ae6903c3e",
+      "run/chapters/ch09.md": "20fbe00eb026755cb0c9fcd6d07796f0bcfab7940ff9567fd3c87dbdb9ca5a4b",
+      "run/chapters/ch10.md": "54026dda3ab150af200207aeb5ca046d1d64b9c24ade2e58ed1305a1baab11eb"
+    },
+    "config_sha256": {
+      "models.yaml": "210914ccaadeb09712130aa372c9c8aff802bbccc79586c54e8d680746a3dd94",
+      "limits.yaml": "376e09a93349e2997dd3ae49a7d046d337b386376f801534f3e4aca5ff6b7e78"
+    },
+    "provider": "meta",
+    "answerer": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low"
+    },
+    "summarizer": {
+      "model": "meta/muse-wonder-1.0",
+      "reasoning": "low",
+      "prompt": "summary-2"
+    },
+    "answer_prompt": "a-answer-1",
+    "answer_prompt_sha256": "aaf69478cfd41c7b47a6db2d70f3a1f4df84bdea22c0d0d55291ce7556bea0be",
+    "page_quotes": {
+      "neighbors": 1,
+      "max_chars": 2400
+    },
+    "graph_style": "base",
+    "narrator_prompts": {
+      "narrator": "narrator-3",
+      "narrator_pages": "narrator-4"
+    },
+    "narrator_prompt_sha256": "79dc0154030099e15a8ca38a73668ca7bd0c75eb16f48991f9bf1827811873bc",
+    "narrator_pages": {
+      "top_k": 4,
+      "chunk_chars": 500,
+      "max_chars": 3600,
+      "neighbors": 1
+    },
+    "narrator_story_sha256": {
+      "run/setup.json": "cd387673330b90c43d08123f3fe5eaafbe4cbed406884ba610c7911778c8df1d",
+      "run/meta.json": "8b442e788691a59ce84c1f72267130be1b1a69617c74f28cb11e426372893bb7"
+    }
+  },
+  "runs": [
+    {
+      "started": "2026-10-30T23:56:23+07:00",
+      "commit": "f431a6f4652015070284ca0041e40e1bca40412c",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "narrator-passages-muse",
+        "--config-dir",
+        "../evals/config/meta",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env",
+        "--questions-file",
+        "questions-ky-ao-vua-1-facts.yaml",
+        "--systems",
+        "narrator,narrator_pages",
+        "--samples",
+        "2",
+        "--budget",
+        "8.00"
+      ],
+      "samples": 2,
+      "concurrency": 4,
+      "systems": [
+        "narrator",
+        "narrator_pages"
+      ],
+      "graph_backend": "memory",
+      "questions": "all",
+      "budget": 8.0,
+      "page_quotes": {
+        "neighbors": 1,
+        "max_chars": 2400
+      },
+      "graph_style": "base",
+      "finished": "2026-10-30T23:59:55+07:00",
+      "wall_s": 212.1,
+      "stopped": null,
+      "spent_usd": 1.741907
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "bench_a": {
+    "narrator": {
+      "expected": 39,
+      "rows": 39,
+      "correct": 13,
+      "abstained": 26,
+      "wrong": 0,
+      "final_leaks": 0,
+      "off_page_leaks": 0,
+      "blocked": {
+        "model_not_known": 26
+      },
+      "bool_unparsed": 0,
+      "cost_usd": 0.013542
+    },
+    "narrator_pages": {
+      "expected": 39,
+      "rows": 39,
+      "correct": 27,
+      "abstained": 12,
+      "wrong": 0,
+      "final_leaks": 1,
+      "off_page_leaks": 0,
+      "blocked": {
+        "model_not_known": 12
+      },
+      "bool_unparsed": 0,
+      "cost_usd": 0.019434
+    }
+  },
+  "bench_e": {
+    "2026-10-31-narrator-passages-luna-tu-tien-1": {
+      "rows": 39,
+      "final_leaks": 0,
+      "raw_leaks": 0,
+      "blocked": {
+        "model_not_known": 23
+      },
+      "cost_usd": 0.011269
+    }
+  },
+  "rules": {
+    "1_correct_margin": true,
+    "2_wrong_not_much_more": true,
+    "3_no_off_page_leak": true,
+    "4_bench_e_no_final_leak": true,
+    "complete": true
+  },
+  "keep_narrator_4": true
+}
