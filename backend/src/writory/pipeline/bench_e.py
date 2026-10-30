@@ -57,13 +57,21 @@ from pydantic import (
     model_validator,
 )
 
-from writory.config import REPO_CONFIG_DIR, REPO_ROOT, AppConfig, ConfigError, LimitNotSetError
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    ConfigError,
+    LimitNotSetError,
+    config_bytes,
+)
 from writory.config import load_config as load_app_config
 from writory.errors import ErrorCode, WritoryError
 from writory.graph import PlayerEntry, PlayerLie, PlayerView, public_entries, public_lies
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import ChatResult, LLMClient, Message, StreamEvent, Usage, require_model
 from writory.llm.cost import CostTracker, MeteredClient
+from writory.llm.provider import llm_identity
 from writory.pipeline.bench_e_story import (
     PadSpec,
     Story,
@@ -71,7 +79,7 @@ from writory.pipeline.bench_e_story import (
     load_sample_story,
     pad_view,
 )
-from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker
+from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker, merged_prices
 from writory.pipeline.narrator import (
     NOT_KNOWN,
     NOTEBOOK_NOTICE,
@@ -523,8 +531,8 @@ def run_problems(config: AppConfig, data: BenchData) -> list[str]:
     problems: list[str] = []
     try:
         model = require_model(config.models.roles, "narrator")
-        if model not in data.run.prices:
-            problems.append(f"run.yaml không có giá (prices) cho model người kể {model}: cần để "
+        if model not in merged_prices(config, data.run.prices):
+            problems.append(f"run.yaml và config/models.yaml không có giá (prices) cho model người kể {model}: cần để "
                             "giữ chỗ ngân sách")
     except WritoryError as e:
         problems.append(e.detail)
@@ -837,7 +845,8 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "dry_run": opts.dry_run,
         "fake": opts.fake if opts.dry_run else None,
         "data_sha256": dict(data.hashes),
-        "config_sha256": {n: _sha256(_read(config_dir / n)) for n in ("models.yaml", "limits.yaml")},
+        "config_sha256": {n: _sha256(config_bytes(config_dir, n)) for n in ("models.yaml", "limits.yaml")},
+        "provider": llm_identity(config, [config.models.roles.narrator])["provider"],
         "narrator": {"model": config.models.roles.narrator,
                      "reasoning": config.models.role_reasoning.narrator},
         "narrator_prompt": PROMPT_VERSION,  # D-77
@@ -915,7 +924,7 @@ class Runner:
         state, text = self.data.state_for(q), self.data.texts[q.id]
         calls: list[dict[str, Any]] = []
         gate = BudgetedClient(self.narrator, budget=self.budgets["openrouter"],
-                              prices=self.data.run.prices,
+                              prices=merged_prices(self.config, self.data.run.prices),
                               max_tokens=self.data.run.max_tokens_per_call,
                               tracker=StepTracker(self.config.limits.cost_usd),
                               record=calls.append, clock=self._clock)
@@ -1367,7 +1376,7 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
 
 def plan_text(data: BenchData, config: AppConfig, *, samples: int, judge: bool) -> str:
     model = require_model(config.models.roles, "narrator")
-    price = data.run.prices[model]
+    price = merged_prices(config, data.run.prices)[model]
     schema_chars = len(json.dumps(NarratorOutput.model_json_schema(), ensure_ascii=False))
     typ = worst = 0.0
     for q in data.questions.questions:
@@ -1466,10 +1475,10 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
     if opts.dry_run:
         return await run_bench(data, opts, config=config, config_dir=config_dir, argv=argv)
 
-    from writory.llm.openrouter import OpenRouterClient, call_deadline
+    from writory.llm.openrouter import call_deadline
+    from writory.llm.provider import bench_llm
 
-    keys = load_keys(Path(args.env_file), ["openrouter", *(["anthropic"] if opts.judge else [])])
-    assert keys.openrouter_api_key is not None
+    keys = load_keys(Path(args.env_file), ["anthropic"] if opts.judge else [])
     judge: Any = None
     if opts.judge:
         try:
@@ -1481,9 +1490,10 @@ async def _cmd_run(args: argparse.Namespace, argv: Sequence[str]) -> int:
                                          max_retries=0, timeout=600.0)
     http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
     try:
+        narrator = bench_llm(config, Path(args.env_file), http=http, deadline_s=call_deadline(config),
+                             models=[require_model(config.models.roles, "narrator")])
         return await run_bench(
-            data, opts, config=config, narrator=OpenRouterClient(keys.openrouter_api_key, http=http,
-                                      deadline_s=call_deadline(config)),
+            data, opts, config=config, narrator=narrator,
             judge_client=judge, config_dir=config_dir, argv=argv,
             judge_workspace_id=keys.anthropic_workspace_id)
     finally:

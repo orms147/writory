@@ -60,7 +60,8 @@ from writory.llm.base import (
 )
 from writory.llm.cost import maybe_billed
 from writory.llm.fake import FakeLLM
-from writory.quality.bench_d import EST_CHARS_PER_TOKEN, Budget, BudgetExceeded, load_keys
+from writory.llm.provider import llm_identity
+from writory.quality.bench_d import EST_CHARS_PER_TOKEN, Budget, BudgetExceeded
 from writory.safety.moderate import Source, Verdict, moderate
 from writory.safety.redact import install_log_redaction, redact
 
@@ -322,6 +323,9 @@ async def build_export(
         "chapters": numbers, "sheets_only": options.sheets_only, "dry_run": options.dry_run,
         "moderation": options.moderate and not options.sheets_only,
         "model": options.model, "prompt_version": shots.PROMPT_VERSION, "generated": date.today().isoformat(),
+        # Nhà cung cấp của các model đã gọi (D-140); None khi không gọi model (`--sheets-only`).
+        "provider": None if options.model is None else llm_identity(
+            config, [options.model, *filter(None, [config.models.roles.moderate])])["provider"],
         "calls": 0, "cost_usd": 0.0, "budget_usd": options.budget_usd,
     }
     export = Export(meta, [], [], chapters_json)
@@ -708,12 +712,12 @@ async def run(args: argparse.Namespace, *, source: StorySource | None = None,
                 if args.dry_run:
                     inner = DryRunLLM()
                 else:
-                    from writory.llm.openrouter import OpenRouterClient, call_deadline
+                    from writory.llm.openrouter import call_deadline
+                    from writory.llm.provider import bench_llm
 
                     deadline = call_deadline(config)  # chưa đặt: CONFIG_LIMIT_NOT_SET (D-113)
-                    keys = load_keys(Path(args.env_file), ["openrouter"])
-                    assert keys.openrouter_api_key is not None
-                    inner = OpenRouterClient(keys.openrouter_api_key, deadline_s=deadline)
+                    inner = bench_llm(config, Path(args.env_file), deadline_s=deadline,
+                                      models=[options.model, *filter(None, [config.models.roles.moderate])])
             client = ExportClient(
                 inner, budget=Budget("export", math.inf if budget is None else budget),
                 prices=config.models.prices, max_tokens=limits.require("max_output_tokens"),

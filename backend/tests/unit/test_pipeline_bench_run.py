@@ -26,7 +26,7 @@ from writory.pipeline.bench_run import (
     StoryRun,
     load_scenario,
     models_in_use,
-    openrouter_client,
+    real_llm,
 )
 from writory.pipeline.scene import SceneOutline
 from writory.quality import check_scene
@@ -569,7 +569,8 @@ async def test_unset_config_fails_before_the_first_call_and_lists_every_gap(tmp_
     roles = repo.models.roles.model_copy(update={"setup": None})
     cost = repo.limits.cost_usd.model_copy(update={"per_story": None})
     config = repo.model_copy(update={
-        "models": repo.models.model_copy(update={"roles": roles}),
+        # Giá thiếu ở cả config lẫn đề (D-140: config/models.yaml là chỗ khai giá thứ hai).
+        "models": repo.models.model_copy(update={"roles": roles, "prices": {}}),
         "limits": repo.limits.model_copy(update={"cost_usd": cost}),
     })
     scenario = scenario_for(repo, prices={"khac/model": {"in": 0.1, "out": 0.5}})
@@ -637,7 +638,7 @@ async def test_key_is_never_written_to_results_or_logs(tmp_path, monkeypatch, ca
     # RETRY_LIMIT_REACHED; lệnh "bấm thử lại" như người chơi.
     fails = config.limits.retries.llm_transient + 1
     http = httpx.AsyncClient(transport=_transport(DryRunLLM(total), seen, fails=fails))
-    client = openrouter_client(tmp_path / "none.env", http=http)
+    client = real_llm(config, tmp_path / "none.env", http=http)
     assert isinstance(client, OpenRouterClient)
     run, _, _, out = make_run(tmp_path, llm=client, config=config, chapters=1, budget_usd=1.0)
     run.options.dry_run = False
@@ -664,7 +665,7 @@ def test_real_client_reads_only_the_openrouter_key(tmp_path, monkeypatch):
     env = tmp_path / ".env"
     env.write_text("ANTHROPIC_API_KEY=sk-ant-khong-dung\n", encoding="utf-8")
     with pytest.raises(ConfigError, match="OPENROUTER_API_KEY") as exc:
-        openrouter_client(env)
+        real_llm(load_config(), env)
     assert "sk-ant" not in str(exc.value)
 
 

@@ -1,0 +1,8 @@
+# Trần chi phí cho bộ đo chạy bằng model Meta (D-140): CHỈ bộ đo dùng (`--config-dir evals/config/meta`), không
+# ảnh hưởng người chơi. Số tạm, Claude chọn (D-47): `config/limits.yaml` đặt trần theo giá Luna; Muse Wonder đắt đúng
+# 40 lần (vào 4 so với 0,10, ra 20 so với 0,50 USD / 1 triệu token), nên mỗi trần nhân 40. Các khoá khác của
+# limits.yaml lấy từ `config/` (loader gộp từng khoá). Trần thật của một lượt chạy vẫn là `--budget`.
+cost_usd:
+  per_scene: 0.80
+  per_chapter: 3.20
+  per_story: 40.0
