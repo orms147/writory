@@ -219,9 +219,9 @@ stateDiagram-v2
 |---|---|---|---|
 | 1 | Kiểm văn: độ dài, lặp, sáo ngữ, chữ khác hệ, lời thoại, ngôi kể; lọt suy luận hay chữ của prompt | `quality/checks.py` `check_scene`, `check_meta_leak` | viết lại; riêng `META_LEAK` là chặn (D-30). Bản bị cắt vì quá dài thêm lỗi `truncated`, mức viết lại |
 | 2 | Trích thay đổi: model `extract`, rồi code bỏ từng cạnh sai luật (id lạ, câu trích không nguyên văn G3, gỡ mạch không có câu trích hay chưa tới khoảng gỡ, `known_as` trùng tên nút khác…); cùng lời gọi, bộ trích đánh dấu mốc kế hoạch đã diễn ra, code chỉ nhận mốc có trong mục "chưa xảy ra", chưa đánh dấu, kèm câu trích nguyên văn (D-116) | `pipeline/extract.py` `extract_changes`, `to_package` | cạnh sai bị bỏ, không thành lỗi của cảnh |
-| 2b | Dò lộ trên chữ Fact mới, `scope="player_path"` | `safety/leak.py` `check_leaks` | Fact lộ bị bỏ, không chặn cảnh (D-93) |
 | 3 | Tự hé lộ nút có tên mà trang nêu nguyên văn | `safety/reveal.py` `auto_reveals` | thêm cạnh, không thành lỗi (D-62) |
 | 4 | Người canh trên nền đã commit, cộng các cảnh trước, cộng cảnh này | `guard/rules.py` `check_scene_package` | `early_reveal` là chặn; các loại khác là viết lại. Cạnh bị báo bị cắt bằng `_prune` (D-92) |
+| 4b | Chữ sổ tay sẽ hiện: chữ lớp truth của nút chữ (Fact, Event, Lie, kể cả Fact mới) mà gói đưa vào `player_view` không được có tên bị cấm hay nhóm `leak_terms` (`scope="player_path"`) mà câu trích của nút không nói. Sau người canh, để người canh vẫn thấy mọi hé lộ | `pipeline/extract.py` `drop_unquoted_leaks`, `safety/leak.py` `unquoted_leaks` | cạnh đưa nút vào bị bỏ, Fact mới bị bỏ cả nút; không chặn cảnh (D-93, D-134) |
 | 5 | Dò lộ trên chữ cảnh, `scope="scene"` | `safety/leak.py` `check_leaks` | chặn |
 | 6 | Kiểm duyệt nội dung G9, ở mức u tối của truyện | `safety/moderate.py` `moderate`, `decide` | chặn |
 
@@ -307,7 +307,7 @@ flowchart LR
   page --> v_choices
   leak{{"Bộ dò lộ check_leaks, bằng code"}}
   v_writer -->|chữ cảnh| leak
-  v_extract -->|chữ Fact mới| leak
+  v_extract -->|chữ lớp truth sổ tay sẽ hiện| leak
   v_choices --> leak
   v_narrator --> leak
   plan -.->|tên lớp truth, bí mật: chỉ cho bộ dò, không vào prompt| leak
