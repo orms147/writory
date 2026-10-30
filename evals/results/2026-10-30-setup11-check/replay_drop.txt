@@ -1,0 +1,63 @@
+# code 24f62cf (trước khi bỏ id fact thường)
+setup prompt: setup-11; bỏ id fact thường: chưa
+
+## setup11-ab-ky-ao
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: không có lượt sửa
+  không có id fact thường nào để phát lại: đường mới không đổi gì ở lượt này
+
+## setup11-ab-trinh-tham
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: không có lượt sửa
+  không có id fact thường nào để phát lại: đường mới không đổi gì ở lượt này
+
+## setup11-ab-tu-tien
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: ["cạnh KNOWS:trieu_khuong>doan_khuong_ra_lenh_lap_cua@0 trỏ tới nút không có trong gói: ['trieu_khuong']"]
+  không có id fact thường nào để phát lại: đường mới không đổi gì ở lượt này
+
+## setup11-long-ky-ao-hanh-trinh
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: ['mạch thread_vet_truot: answered_by có fact_06, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng', 'mạch thread_so_gieng: answered_by có fact_09, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng']
+  lần dựng đầu dựng lại (2 id fact thường): lỗi = ['mạch thread_vet_truot: answered_by có fact_06, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng', 'mạch thread_so_gieng: answered_by có fact_09, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng']
+    trùng đúng danh sách lỗi đã ghi: True -> code này còn cần lượt sửa
+
+## setup11-long-tu-tien
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: ['mạch ke_giu_an_vo_dien: answered_by có ky_van_thuong_duoi_lop_mat_na, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng', 'mạch cai_gia_cung_co: answered_by có nghi_thuc_can_cai_gia, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng']
+  lần dựng đầu dựng lại (2 id fact thường): lỗi = ['mạch ke_giu_an_vo_dien: answered_by có ky_van_thuong_duoi_lop_mat_na, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng', 'mạch cai_gia_cung_co: answered_by có nghi_thuc_can_cai_gia, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng']
+    trùng đúng danh sách lỗi đã ghi: True -> code này còn cần lượt sửa
+
+
+# code a248b42 (sau khi bỏ id fact thường)
+setup prompt: setup-11; bỏ id fact thường: có
+
+## setup11-ab-ky-ao
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: không có lượt sửa
+  không có id fact thường nào để phát lại: đường mới không đổi gì ở lượt này
+
+## setup11-ab-trinh-tham
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: không có lượt sửa
+  không có id fact thường nào để phát lại: đường mới không đổi gì ở lượt này
+
+## setup11-ab-tu-tien
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: ["cạnh KNOWS:trieu_khuong>doan_khuong_ra_lenh_lap_cua@0 trỏ tới nút không có trong gói: ['trieu_khuong']"]
+  không có id fact thường nào để phát lại: đường mới không đổi gì ở lượt này
+
+## setup11-long-ky-ao-hanh-trinh
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: ['mạch thread_vet_truot: answered_by có fact_06, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng', 'mạch thread_so_gieng: answered_by có fact_09, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng']
+  lần dựng đầu dựng lại (2 id fact thường): lỗi = []
+    không lỗi -> tránh được lượt sửa; bỏ (('thread_vet_truot', 'fact_06'), ('thread_so_gieng', 'fact_09'))
+    kế hoạch giống kế hoạch đã lưu: True; gói giống gói đã lưu: True
+
+## setup11-long-tu-tien
+  dựng lại câu trả lời đã nhận khớp kế hoạch + gói đã lưu: True
+  lỗi lượt sửa đã ghi: ['mạch ke_giu_an_vo_dien: answered_by có ky_van_thuong_duoi_lop_mat_na, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng', 'mạch cai_gia_cung_co: answered_by có nghi_thuc_can_cai_gia, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng']
+  lần dựng đầu dựng lại (2 id fact thường): lỗi = []
+    không lỗi -> tránh được lượt sửa; bỏ (('ke_giu_an_vo_dien', 'ky_van_thuong_duoi_lop_mat_na'), ('cai_gia_cung_co', 'nghi_thuc_can_cai_gia'))
+    kế hoạch giống kế hoạch đã lưu: True; gói giống gói đã lưu: True
+

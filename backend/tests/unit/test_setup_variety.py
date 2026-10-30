@@ -23,8 +23,8 @@ def _appearance_part() -> str:
     return BUILD_TASK[start:end]
 
 
-def test_prompt_version_is_setup_10():
-    assert PROMPT_VERSION == "setup-10"
+def test_prompt_version_is_setup_11():
+    assert PROMPT_VERSION == "setup-11"
 
 
 def test_prompt_asks_for_what_is_seen_not_habits_or_the_player_s_past():

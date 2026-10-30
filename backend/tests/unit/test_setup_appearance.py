@@ -89,7 +89,7 @@ def test_schema_requires_the_new_fields_so_the_model_must_answer_them():
 
 
 def test_prompt_version_and_task_ask_for_looks_in_vietnamese_with_the_required_parts():
-    assert PROMPT_VERSION == "setup-10"
+    assert PROMPT_VERSION == "setup-11"
     for phrase in ("appearance", "visual", "protagonist_appearance", "tuổi", "vóc dáng",
                    "khuôn mặt", "tóc", "trang phục", "dấu hiệu nhận diện", "ánh sáng", "chất liệu",
                    "không khí"):

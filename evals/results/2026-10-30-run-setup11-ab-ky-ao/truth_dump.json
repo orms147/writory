@@ -1,0 +1,1562 @@
+{
+ "story_id": "run-20261030-setup11-ab-ky-ao-06254491",
+ "plan": {
+  "acts": [
+   {
+    "name": "Tiếng gọi dưới bến",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "name": "Những lời bất thuận",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "name": "Nước dâng trong miếu",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "name": "Lời thề mới",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "vinh_cat_trong",
+    "reveal_from_chapter": 2,
+    "reveal_to_chapter": 3,
+    "leak_terms": [
+     [
+      "Lê Vĩnh",
+      "giấu Trống Lễ"
+     ],
+     [
+      "ông Vĩnh",
+      "giấu chiếc trống"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "vinh_so_le",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Lê Vĩnh",
+      "sợ buổi lễ"
+     ],
+     [
+      "ông Vĩnh",
+      "không muốn lời thề"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "tim_trong",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 2,
+    "answered_by": [
+     "vinh_cat_trong"
+    ]
+   },
+   {
+    "thread_id": "nguoi_giau_trong",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4,
+    "answered_by": [
+     "vinh_cat_trong"
+    ]
+   },
+   {
+    "thread_id": "ly_do_giau_trong",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 5,
+    "answered_by": [
+     "vinh_so_le"
+    ]
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Nguyễn An lần theo tiếng gọi và tìm được dấu vết dẫn tới nơi cất Trống Lễ.",
+    "from_chapter": 1,
+    "to_chapter": 1
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Trống Lễ được tìm thấy và Lê Vĩnh bị nhận ra là người đã giấu nó.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Dân làng phải đối diện nỗi sợ của mình và cùng quyết định có đánh trống trong miếu hay không.",
+    "from_chapter": 4,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Nguyễn An cùng dân làng thực hiện lựa chọn cuối cùng về cách giữ lời thề.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "vinh_cat_trong",
+    "text": "Lê Vĩnh đã giấu Trống Lễ trong một hốc đất bên Lối Lau.",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "vinh_so_le",
+    "text": "Lê Vĩnh giấu trống vì tin rằng buổi lễ sẽ buộc làng tiếp tục một lời thề khiến họ không được rời bỏ đầm, dù nguồn cá đang cạn.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "tim_trong",
+    "description": "Trống Lễ đang ở đâu?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 2,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "nguoi_giau_trong",
+    "description": "Ai đã giấu Trống Lễ?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "ly_do_giau_trong",
+    "description": "Vì sao Lê Vĩnh giấu Trống Lễ?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Nguyễn An lần theo tiếng gọi và tìm được dấu vết dẫn tới nơi cất Trống Lễ.",
+    "from_chapter": 1,
+    "to_chapter": 1,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Trống Lễ được tìm thấy và Lê Vĩnh bị nhận ra là người đã giấu nó.",
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Dân làng phải đối diện nỗi sợ của mình và cùng quyết định có đánh trống trong miếu hay không.",
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Nguyễn An cùng dân làng thực hiện lựa chọn cuối cùng về cách giữ lời thề.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261030-setup11-ab-ky-ao-06254491-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn An",
+      "personality": "Điềm đạm, kiên nhẫn và thường nghe hết lời người khác trước khi đáp. Khi đã nhận trách nhiệm, An khó lòng bỏ dở dù lòng còn nhiều ngờ vực.",
+      "backstory": "An lớn lên trong một gia đình đặt lờ ở Rạch Mù, quen nhìn con nước đổi màu qua từng mùa. Sau đêm nước tràn qua sân, An được giao mang chiếc trống thất lạc về miếu trước buổi họp làng. Tiếng gọi vọng lên từ những vũng nước nông khiến chuyến đi ấy trở nên khó phớt lờ.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Gương mặt trái xoan, vóc người thanh mảnh, khoảng hai mươi tuổi. Mái tóc nâu sẫm dài quá vai, buộc thấp bằng sợi vải xám; An mặc áo vải màu đất và có nốt ruồi nhỏ sát cằm."
+     }
+    },
+    {
+     "id": "ba_lien",
+     "label": "Character",
+     "props": {
+      "name": "Bà Liên",
+      "aliases": [
+       "bà từ"
+      ],
+      "personality": "Cứng rắn, coi trọng lời hứa và sự yên ổn của làng; khi bất đồng, bà thường nói thẳng điều mình lo sợ.",
+      "backstory": "Bà Liên trông nom miếu từ khi người giữ miếu trước qua đời. Bà từng chứng kiến một mùa nước dâng khiến nhiều nhà phải bỏ đi, nên không muốn dân làng xem nhẹ lời thề.",
+      "appearance": "Gương mặt vuông với nếp nhăn sâu, vóc người thấp đậm, khoảng ngoài sáu mươi tuổi. Tóc bạc cuộn gọn sau gáy, bà mặc áo nâu sẫm bằng vải thô và đeo một chiếc vòng đồng cũ."
+     }
+    },
+    {
+     "id": "le_vinh",
+     "label": "Character",
+     "props": {
+      "name": "Lê Vĩnh",
+      "aliases": [
+       "ông Vĩnh"
+      ],
+      "personality": "Thực tế, ít kiên nhẫn với chuyện không thể kiểm chứng, nhưng không muốn người trong làng bị bỏ mặc.",
+      "backstory": "Lê Vĩnh từng dẫn nhiều chuyến đổi cá lấy gạo qua các lạch quanh đầm. Khi bến cạn dần, ông thay mặt một số hộ đặt lờ lên tiếng đòi sửa lại cách giữ lời thề.",
+      "appearance": "Gương mặt dài, hàm nhọn và vóc người gầy cao, trạc năm mươi tuổi. Tóc hoa râm cắt sát hai bên, ông mặc áo chàm bạc màu và có một vết sẹo mảnh ngang lông mày trái."
+     }
+    },
+    {
+     "id": "doan_mai",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Mai",
+      "aliases": [
+       "Mai"
+      ],
+      "personality": "Tò mò, nhanh trí và hay hỏi đến cùng khi một lời giải thích có chỗ chưa khớp.",
+      "backstory": "Đoàn Mai sống cùng mẹ gần rìa đầm và thường phụ người lớn kiểm tra lờ. Cô biết những lối đi giữa lau sậy, kể cả vài lối đã bị nước lấp.",
+      "appearance": "Đôi mắt tròn trên gương mặt trái xoan, vóc người nhỏ nhắn, khoảng mười bảy tuổi. Mái tóc nâu đỏ xoăn ngắn chạm cằm, cô mặc áo xanh rêu bằng vải dệt thô và đeo khuyên bạc nhỏ ở tai phải."
+     }
+    },
+    {
+     "id": "rach_mu",
+     "label": "Location",
+     "props": {
+      "name": "Rạch Mù",
+      "aliases": [
+       "làng"
+      ],
+      "description": "Ngôi làng ven đầm nơi các hộ sống bằng nghề đặt lờ và đổi cá lấy gạo.",
+      "visual": "Những mái nhà thấp nép giữa lau sậy, đường đất sẫm nước dưới ánh trời chì. Mùi bùn và khói bếp quẩn trong không khí ẩm."
+     }
+    },
+    {
+     "id": "ben_can",
+     "label": "Location",
+     "props": {
+      "name": "Bến Cạn",
+      "aliases": [
+       "bến làng"
+      ],
+      "description": "Bến đất cũ nơi dân làng thường đưa cá lên bờ.",
+      "visual": "Bậc gỗ xám lộ ra trên lớp bùn nứt, vài vũng nước đọng phản chiếu một khoảng trời trắng đục. Lau khô rạp xuống trong gió lạnh."
+     }
+    },
+    {
+     "id": "mieu_thuy",
+     "label": "Location",
+     "props": {
+      "name": "Miếu Thủy",
+      "aliases": [
+       "miếu"
+      ],
+      "description": "Ngôi miếu nhỏ bên mép đầm, nơi dân làng cất đồ dùng trong lễ thề.",
+      "visual": "Tường đất phủ rêu sẫm, mái lá đen bóng vì ẩm, ánh sáng lọt qua cửa hẹp thành một vệt xanh xám. Không khí bên trong lạnh và nặng mùi bùn."
+     }
+    },
+    {
+     "id": "loi_lau",
+     "label": "Location",
+     "props": {
+      "name": "Lối Lau",
+      "aliases": [
+       "đường qua lau"
+      ],
+      "description": "Lối đất hẹp nối làng với miếu, men qua những vạt lau sát đầm.",
+      "visual": "Lau cao che khuất hai bên lối đi, thân cây quệt vào nhau thành tiếng khô khốc. Nước nông nằm rải rác trên nền đất tối."
+     }
+    },
+    {
+     "id": "dan_rach_mu",
+     "label": "Faction",
+     "props": {
+      "name": "Dân Rạch Mù",
+      "aliases": [
+       "dân làng"
+      ],
+      "description": "Những hộ trong làng dựa vào nghề đặt lờ và cùng gìn giữ lời thề với vị thủy thần."
+     }
+    },
+    {
+     "id": "hoi_giu_mieu",
+     "label": "Faction",
+     "props": {
+      "name": "Hội Giữ Miếu",
+      "aliases": [
+       "người giữ miếu"
+      ],
+      "description": "Nhóm người thay phiên trông coi miếu và gìn giữ những vật dùng trong lễ thề."
+     }
+    },
+    {
+     "id": "trong_le",
+     "label": "Item",
+     "props": {
+      "name": "Trống Lễ",
+      "aliases": [
+       "chiếc trống"
+      ],
+      "description": "Chiếc trống gỗ bọc da dùng để mở đầu lễ thề của dân làng."
+     }
+    },
+    {
+     "id": "loi_the_co",
+     "label": "Fact",
+     "props": {
+      "text": "Dân Rạch Mù có lệ đánh trống tại miếu để nhắc lại lời thề với vị thủy thần đang ngủ dưới đầm."
+     }
+    },
+    {
+     "id": "ben_cang_can",
+     "label": "Fact",
+     "props": {
+      "text": "Bến Cạn đã lộ bùn nứt qua nhiều mùa nước."
+     }
+    },
+    {
+     "id": "nuoc_tran_san",
+     "label": "Fact",
+     "props": {
+      "text": "Đêm trước khi câu chuyện bắt đầu, nước đầm tràn qua một số sân nhà ở Rạch Mù."
+     }
+    },
+    {
+     "id": "trong_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Trống Lễ đã bị đưa khỏi miếu trong đêm nước tràn qua làng."
+     }
+    },
+    {
+     "id": "vinh_cat_trong",
+     "label": "Fact",
+     "props": {
+      "text": "Lê Vĩnh đã giấu Trống Lễ trong một hốc đất bên Lối Lau."
+     }
+    },
+    {
+     "id": "vinh_so_le",
+     "label": "Fact",
+     "props": {
+      "text": "Lê Vĩnh giấu trống vì tin rằng buổi lễ sẽ buộc làng tiếp tục một lời thề khiến họ không được rời bỏ đầm, dù nguồn cá đang cạn."
+     }
+    },
+    {
+     "id": "tieng_goi_vung_nuoc",
+     "label": "Fact",
+     "props": {
+      "text": "Từ sau đêm nước tràn, tiếng gọi tên người vọng lên từ những vũng nước nông quanh làng."
+     }
+    },
+    {
+     "id": "tim_trong",
+     "label": "Thread",
+     "props": {
+      "description": "Trống Lễ đang ở đâu?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 2
+     }
+    },
+    {
+     "id": "nguoi_giau_trong",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã giấu Trống Lễ?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "ly_do_giau_trong",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao Lê Vĩnh giấu Trống Lễ?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "loi_goi_tu_vung",
+     "label": "Thread",
+     "props": {
+      "description": "Điều gì gây ra tiếng gọi vọng lên từ những vũng nước nông?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "ba_lien",
+     "to": "le_vinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:ba_lien>le_vinh@0",
+     "props": {
+      "kind": "bất đồng",
+      "score": -25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_vinh",
+     "to": "ba_lien",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_vinh>ba_lien@0",
+     "props": {
+      "kind": "bất đồng",
+      "score": -20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_mai",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_mai>protagonist@0",
+     "props": {
+      "kind": "bạn",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_mai@0",
+     "props": {
+      "kind": "bạn",
+      "score": 35
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "ba_lien",
+     "to": "mieu_thuy",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:ba_lien>mieu_thuy@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "le_vinh",
+     "to": "ben_can",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:le_vinh>ben_can@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_mai",
+     "to": "rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_mai>rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "trong_le",
+     "to": "loi_lau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:trong_le>loi_lau@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "ba_lien",
+     "to": "hoi_giu_mieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:ba_lien>hoi_giu_mieu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "dan_rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>dan_rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "le_vinh",
+     "to": "dan_rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:le_vinh>dan_rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_mai",
+     "to": "dan_rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_mai>dan_rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_co",
+     "to": "rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_co>rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_co",
+     "to": "mieu_thuy",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_co>mieu_thuy@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_co",
+     "to": "trong_le",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_co>trong_le@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_the_co",
+     "to": "dan_rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_the_co>dan_rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lien",
+     "to": "loi_the_co",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lien>loi_the_co@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_vinh",
+     "to": "loi_the_co",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_vinh>loi_the_co@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mai",
+     "to": "loi_the_co",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mai>loi_the_co@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ben_cang_can",
+     "to": "ben_can",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ben_cang_can>ben_can@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ben_cang_can",
+     "to": "rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ben_cang_can>rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lien",
+     "to": "ben_cang_can",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lien>ben_cang_can@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_vinh",
+     "to": "ben_cang_can",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_vinh>ben_cang_can@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mai",
+     "to": "ben_cang_can",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mai>ben_cang_can@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "nuoc_tran_san",
+     "to": "rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:nuoc_tran_san>rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lien",
+     "to": "nuoc_tran_san",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lien>nuoc_tran_san@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_vinh",
+     "to": "nuoc_tran_san",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_vinh>nuoc_tran_san@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mai",
+     "to": "nuoc_tran_san",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mai>nuoc_tran_san@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "trong_mat_tich",
+     "to": "trong_le",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:trong_mat_tich>trong_le@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "trong_mat_tich",
+     "to": "mieu_thuy",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:trong_mat_tich>mieu_thuy@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "ba_lien",
+     "to": "trong_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:ba_lien>trong_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_vinh",
+     "to": "trong_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_vinh>trong_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "vinh_cat_trong",
+     "to": "le_vinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:vinh_cat_trong>le_vinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "vinh_cat_trong",
+     "to": "trong_le",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:vinh_cat_trong>trong_le@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "vinh_cat_trong",
+     "to": "loi_lau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:vinh_cat_trong>loi_lau@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_vinh",
+     "to": "vinh_cat_trong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_vinh>vinh_cat_trong@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "vinh_so_le",
+     "to": "le_vinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:vinh_so_le>le_vinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "vinh_so_le",
+     "to": "trong_le",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:vinh_so_le>trong_le@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "vinh_so_le",
+     "to": "dan_rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:vinh_so_le>dan_rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_vinh",
+     "to": "vinh_so_le",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_vinh>vinh_so_le@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "tieng_goi_vung_nuoc",
+     "to": "rach_mu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tieng_goi_vung_nuoc>rach_mu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "tieng_goi_vung_nuoc",
+     "to": "loi_lau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:tieng_goi_vung_nuoc>loi_lau@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_mai",
+     "to": "tieng_goi_vung_nuoc",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_mai>tieng_goi_vung_nuoc@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Nguyễn An",
+      "known_as": "Nguyễn An"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ba_lien": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bà Liên trông nom miếu từ khi người giữ miếu trước qua đời. Bà từng chứng kiến một mùa nước dâng khiến nhiều nhà phải bỏ đi, nên không muốn dân làng xem nhẹ lời thề.",
+     "appearance": "Gương mặt vuông với nếp nhăn sâu, vóc người thấp đậm, khoảng ngoài sáu mươi tuổi. Tóc bạc cuộn gọn sau gáy, bà mặc áo nâu sẫm bằng vải thô và đeo một chiếc vòng đồng cũ.",
+     "aliases": [
+      "bà từ"
+     ],
+     "personality": "Cứng rắn, coi trọng lời hứa và sự yên ổn của làng; khi bất đồng, bà thường nói thẳng điều mình lo sợ.",
+     "name": "Bà Liên"
+    }
+   },
+   "ben_can": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "bến làng"
+     ],
+     "name": "Bến Cạn",
+     "visual": "Bậc gỗ xám lộ ra trên lớp bùn nứt, vài vũng nước đọng phản chiếu một khoảng trời trắng đục. Lau khô rạp xuống trong gió lạnh.",
+     "description": "Bến đất cũ nơi dân làng thường đưa cá lên bờ."
+    }
+   },
+   "ben_cang_can": {
+    "label": "Fact",
+    "props": {
+     "text": "Bến Cạn đã lộ bùn nứt qua nhiều mùa nước."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "dan_rach_mu": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "dân làng"
+     ],
+     "name": "Dân Rạch Mù",
+     "description": "Những hộ trong làng dựa vào nghề đặt lờ và cùng gìn giữ lời thề với vị thủy thần."
+    }
+   },
+   "doan_mai": {
+    "label": "Character",
+    "props": {
+     "backstory": "Đoàn Mai sống cùng mẹ gần rìa đầm và thường phụ người lớn kiểm tra lờ. Cô biết những lối đi giữa lau sậy, kể cả vài lối đã bị nước lấp.",
+     "appearance": "Đôi mắt tròn trên gương mặt trái xoan, vóc người nhỏ nhắn, khoảng mười bảy tuổi. Mái tóc nâu đỏ xoăn ngắn chạm cằm, cô mặc áo xanh rêu bằng vải dệt thô và đeo khuyên bạc nhỏ ở tai phải.",
+     "aliases": [
+      "Mai"
+     ],
+     "personality": "Tò mò, nhanh trí và hay hỏi đến cùng khi một lời giải thích có chỗ chưa khớp.",
+     "name": "Đoàn Mai"
+    }
+   },
+   "hoi_giu_mieu": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "người giữ miếu"
+     ],
+     "name": "Hội Giữ Miếu",
+     "description": "Nhóm người thay phiên trông coi miếu và gìn giữ những vật dùng trong lễ thề."
+    }
+   },
+   "le_vinh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lê Vĩnh từng dẫn nhiều chuyến đổi cá lấy gạo qua các lạch quanh đầm. Khi bến cạn dần, ông thay mặt một số hộ đặt lờ lên tiếng đòi sửa lại cách giữ lời thề.",
+     "appearance": "Gương mặt dài, hàm nhọn và vóc người gầy cao, trạc năm mươi tuổi. Tóc hoa râm cắt sát hai bên, ông mặc áo chàm bạc màu và có một vết sẹo mảnh ngang lông mày trái.",
+     "aliases": [
+      "ông Vĩnh"
+     ],
+     "personality": "Thực tế, ít kiên nhẫn với chuyện không thể kiểm chứng, nhưng không muốn người trong làng bị bỏ mặc.",
+     "name": "Lê Vĩnh"
+    }
+   },
+   "loi_goi_tu_vung": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Điều gì gây ra tiếng gọi vọng lên từ những vũng nước nông?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 5
+    }
+   },
+   "loi_lau": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "đường qua lau"
+     ],
+     "name": "Lối Lau",
+     "visual": "Lau cao che khuất hai bên lối đi, thân cây quệt vào nhau thành tiếng khô khốc. Nước nông nằm rải rác trên nền đất tối.",
+     "description": "Lối đất hẹp nối làng với miếu, men qua những vạt lau sát đầm."
+    }
+   },
+   "loi_the_co": {
+    "label": "Fact",
+    "props": {
+     "text": "Dân Rạch Mù có lệ đánh trống tại miếu để nhắc lại lời thề với vị thủy thần đang ngủ dưới đầm."
+    }
+   },
+   "ly_do_giau_trong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao Lê Vĩnh giấu Trống Lễ?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 5
+    }
+   },
+   "mieu_thuy": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "miếu"
+     ],
+     "name": "Miếu Thủy",
+     "description": "Ngôi miếu nhỏ bên mép đầm, nơi dân làng cất đồ dùng trong lễ thề.",
+     "visual": "Tường đất phủ rêu sẫm, mái lá đen bóng vì ẩm, ánh sáng lọt qua cửa hẹp thành một vệt xanh xám. Không khí bên trong lạnh và nặng mùi bùn."
+    }
+   },
+   "nguoi_giau_trong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã giấu Trống Lễ?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "nuoc_tran_san": {
+    "label": "Fact",
+    "props": {
+     "text": "Đêm trước khi câu chuyện bắt đầu, nước đầm tràn qua một số sân nhà ở Rạch Mù."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "An lớn lên trong một gia đình đặt lờ ở Rạch Mù, quen nhìn con nước đổi màu qua từng mùa. Sau đêm nước tràn qua sân, An được giao mang chiếc trống thất lạc về miếu trước buổi họp làng. Tiếng gọi vọng lên từ những vũng nước nông khiến chuyến đi ấy trở nên khó phớt lờ.",
+     "appearance": "Gương mặt trái xoan, vóc người thanh mảnh, khoảng hai mươi tuổi. Mái tóc nâu sẫm dài quá vai, buộc thấp bằng sợi vải xám; An mặc áo vải màu đất và có nốt ruồi nhỏ sát cằm.",
+     "personality": "Điềm đạm, kiên nhẫn và thường nghe hết lời người khác trước khi đáp. Khi đã nhận trách nhiệm, An khó lòng bỏ dở dù lòng còn nhiều ngờ vực.",
+     "name": "Nguyễn An",
+     "is_protagonist": true
+    }
+   },
+   "rach_mu": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "làng"
+     ],
+     "name": "Rạch Mù",
+     "visual": "Những mái nhà thấp nép giữa lau sậy, đường đất sẫm nước dưới ánh trời chì. Mùi bùn và khói bếp quẩn trong không khí ẩm.",
+     "description": "Ngôi làng ven đầm nơi các hộ sống bằng nghề đặt lờ và đổi cá lấy gạo."
+    }
+   },
+   "tieng_goi_vung_nuoc": {
+    "label": "Fact",
+    "props": {
+     "text": "Từ sau đêm nước tràn, tiếng gọi tên người vọng lên từ những vũng nước nông quanh làng."
+    }
+   },
+   "tim_trong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Trống Lễ đang ở đâu?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 2
+    }
+   },
+   "trong_le": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc trống"
+     ],
+     "name": "Trống Lễ",
+     "description": "Chiếc trống gỗ bọc da dùng để mở đầu lễ thề của dân làng."
+    }
+   },
+   "trong_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Trống Lễ đã bị đưa khỏi miếu trong đêm nước tràn qua làng."
+    }
+   },
+   "vinh_cat_trong": {
+    "label": "Fact",
+    "props": {
+     "text": "Lê Vĩnh đã giấu Trống Lễ trong một hốc đất bên Lối Lau."
+    }
+   },
+   "vinh_so_le": {
+    "label": "Fact",
+    "props": {
+     "text": "Lê Vĩnh giấu trống vì tin rằng buổi lễ sẽ buộc làng tiếp tục một lời thề khiến họ không được rời bỏ đầm, dù nguồn cá đang cạn."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:ba_lien>le_vinh@0",
+    "type": "RELATES_TO",
+    "source": "ba_lien",
+    "target": "le_vinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -25,
+     "kind": "bất đồng"
+    }
+   },
+   {
+    "id": "RELATES_TO:doan_mai>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_mai",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "bạn"
+    }
+   },
+   {
+    "id": "RELATES_TO:le_vinh>ba_lien@0",
+    "type": "RELATES_TO",
+    "source": "le_vinh",
+    "target": "ba_lien",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -20,
+     "kind": "bất đồng"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_mai@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "bạn"
+    }
+   },
+   {
+    "id": "LOCATED_AT:ba_lien>mieu_thuy@0",
+    "type": "LOCATED_AT",
+    "source": "ba_lien",
+    "target": "mieu_thuy",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_mai>rach_mu@0",
+    "type": "LOCATED_AT",
+    "source": "doan_mai",
+    "target": "rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:le_vinh>ben_can@0",
+    "type": "LOCATED_AT",
+    "source": "le_vinh",
+    "target": "ben_can",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>rach_mu@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:trong_le>loi_lau@0",
+    "type": "LOCATED_AT",
+    "source": "trong_le",
+    "target": "loi_lau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:ba_lien>hoi_giu_mieu@0",
+    "type": "MEMBER_OF",
+    "source": "ba_lien",
+    "target": "hoi_giu_mieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_mai>dan_rach_mu@0",
+    "type": "MEMBER_OF",
+    "source": "doan_mai",
+    "target": "dan_rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:le_vinh>dan_rach_mu@0",
+    "type": "MEMBER_OF",
+    "source": "le_vinh",
+    "target": "dan_rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>dan_rach_mu@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "dan_rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:ba_lien>ben_cang_can@0",
+    "type": "KNOWS",
+    "source": "ba_lien",
+    "target": "ben_cang_can",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lien>loi_the_co@0",
+    "type": "KNOWS",
+    "source": "ba_lien",
+    "target": "loi_the_co",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lien>nuoc_tran_san@0",
+    "type": "KNOWS",
+    "source": "ba_lien",
+    "target": "nuoc_tran_san",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:ba_lien>trong_mat_tich@0",
+    "type": "KNOWS",
+    "source": "ba_lien",
+    "target": "trong_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mai>ben_cang_can@0",
+    "type": "KNOWS",
+    "source": "doan_mai",
+    "target": "ben_cang_can",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mai>loi_the_co@0",
+    "type": "KNOWS",
+    "source": "doan_mai",
+    "target": "loi_the_co",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mai>nuoc_tran_san@0",
+    "type": "KNOWS",
+    "source": "doan_mai",
+    "target": "nuoc_tran_san",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_mai>tieng_goi_vung_nuoc@0",
+    "type": "KNOWS",
+    "source": "doan_mai",
+    "target": "tieng_goi_vung_nuoc",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_vinh>ben_cang_can@0",
+    "type": "KNOWS",
+    "source": "le_vinh",
+    "target": "ben_cang_can",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_vinh>loi_the_co@0",
+    "type": "KNOWS",
+    "source": "le_vinh",
+    "target": "loi_the_co",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_vinh>nuoc_tran_san@0",
+    "type": "KNOWS",
+    "source": "le_vinh",
+    "target": "nuoc_tran_san",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_vinh>trong_mat_tich@0",
+    "type": "KNOWS",
+    "source": "le_vinh",
+    "target": "trong_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_vinh>vinh_cat_trong@0",
+    "type": "KNOWS",
+    "source": "le_vinh",
+    "target": "vinh_cat_trong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_vinh>vinh_so_le@0",
+    "type": "KNOWS",
+    "source": "le_vinh",
+    "target": "vinh_so_le",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:ben_cang_can>ben_can@0",
+    "type": "ABOUT",
+    "source": "ben_cang_can",
+    "target": "ben_can",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ben_cang_can>rach_mu@0",
+    "type": "ABOUT",
+    "source": "ben_cang_can",
+    "target": "rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_co>dan_rach_mu@0",
+    "type": "ABOUT",
+    "source": "loi_the_co",
+    "target": "dan_rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_co>mieu_thuy@0",
+    "type": "ABOUT",
+    "source": "loi_the_co",
+    "target": "mieu_thuy",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_co>rach_mu@0",
+    "type": "ABOUT",
+    "source": "loi_the_co",
+    "target": "rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_the_co>trong_le@0",
+    "type": "ABOUT",
+    "source": "loi_the_co",
+    "target": "trong_le",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:nuoc_tran_san>rach_mu@0",
+    "type": "ABOUT",
+    "source": "nuoc_tran_san",
+    "target": "rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tieng_goi_vung_nuoc>loi_lau@0",
+    "type": "ABOUT",
+    "source": "tieng_goi_vung_nuoc",
+    "target": "loi_lau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:tieng_goi_vung_nuoc>rach_mu@0",
+    "type": "ABOUT",
+    "source": "tieng_goi_vung_nuoc",
+    "target": "rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:trong_mat_tich>mieu_thuy@0",
+    "type": "ABOUT",
+    "source": "trong_mat_tich",
+    "target": "mieu_thuy",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:trong_mat_tich>trong_le@0",
+    "type": "ABOUT",
+    "source": "trong_mat_tich",
+    "target": "trong_le",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:vinh_cat_trong>le_vinh@0",
+    "type": "ABOUT",
+    "source": "vinh_cat_trong",
+    "target": "le_vinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:vinh_cat_trong>loi_lau@0",
+    "type": "ABOUT",
+    "source": "vinh_cat_trong",
+    "target": "loi_lau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:vinh_cat_trong>trong_le@0",
+    "type": "ABOUT",
+    "source": "vinh_cat_trong",
+    "target": "trong_le",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:vinh_so_le>dan_rach_mu@0",
+    "type": "ABOUT",
+    "source": "vinh_so_le",
+    "target": "dan_rach_mu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:vinh_so_le>le_vinh@0",
+    "type": "ABOUT",
+    "source": "vinh_so_le",
+    "target": "le_vinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:vinh_so_le>trong_le@0",
+    "type": "ABOUT",
+    "source": "vinh_so_le",
+    "target": "trong_le",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Nguyễn An",
+     "known_as": "Nguyễn An"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [],
+ "thread_shifts": [
+  {
+   "thread_id": "tim_trong",
+   "before": [
+    1,
+    2
+   ],
+   "after": [
+    2,
+    2
+   ],
+   "secrets": [
+    "vinh_cat_trong"
+   ],
+   "end_moved": false
+  }
+ ],
+ "quotes": []
+}
