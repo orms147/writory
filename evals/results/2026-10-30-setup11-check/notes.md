@@ -68,3 +68,25 @@ Lần dời duy nhất: ab-ky-ao, mạch "Trống Lễ đang ở đâu?" 1–2 �
 - Mẫu 5 lượt, một seed mỗi đề. 2/5 lượt có lỗi `answered_by` nằm sát ngưỡng khai trước (1/5); cả hai ở đề dài, nơi số mạch vượt xa số bí mật.
 - Chưa đo khoảng gỡ đã dời có làm dàn ý bớt giục gỡ mạch trước khi bí mật lộ không (chỉ có một lần dời ở đây).
 - Đánh giá C4 do một người đọc (Claude); hai liên kết sát ranh giới quyết định đạt hay trượt.
+
+## Sau quyết định chủ dự án (30/10/2026): bỏ id fact thường bằng code, đánh giá bằng phát lại
+Phần trên giữ nguyên: **C2 trượt trên `setup-11` như đã chạy.** Chủ dự án chọn đường 2. Ở bước dựng, code bỏ khỏi `answered_by` của mạch phải gỡ những id là fact đã khai mà không phải bí mật, trước mọi phép kiểm, không tốn lượt sửa (`setup.drop_plain_fact_answers`, như D-76). Id không phải fact nào vẫn đi lượt sửa (lý do ở D-135). Report có thêm `thread_answers.dropped`; các cặp (mạch, fact) có id ở `truth_dump.json` (`answers_dropped`). Đề vẫn là `setup-11`, chữ không đổi.
+
+Cách sửa này **chỉ được kiểm bằng phát lại, không gọi model** (`replay_drop.py`, đầu ra `replay_drop.txt`: code `24f62cf` trước khi sửa, `a248b42` sau khi sửa). Câu trả lời thô của lần dựng đầu **không được lưu**: `calls.jsonl` không có thân, không có `rejected.jsonl`, đề lượt sửa không lưu. Vì vậy script dựng lại:
+- **Câu trả lời đã nhận:** kế hoạch + gói chương 0 đổi ngược về dạng đầu ra model, lấy lại khoảng gỡ trước khi dời. Đi qua code thì ra **đúng** kế hoạch và gói đã lưu ở cả năm lượt, nên phép dựng lại là trung thực.
+- **Lần dựng đầu:** câu trả lời đã nhận cộng các id `answered_by` mà danh sách lỗi của lượt sửa nêu tên. Danh sách đó là đủ: lỗi `answered_by` chỉ được kiểm khi kế hoạch và gói đã qua pydantic, nên mọi lỗi quy tắc khác của lần dựng đầu cũng có trong danh sách. Trên code trước khi sửa, lần dựng đầu dựng lại ra **đúng từng chữ** danh sách lỗi đã ghi ở hai lượt.
+
+| Lượt | Lượt sửa đã chạy | Code mới |
+|---|---|---|
+| ab-tu-tien | 1 (`edges`) | không đổi: lỗi không dính `answered_by`, vẫn cần lượt sửa |
+| ab-ky-ao | 0 | không đổi |
+| ab-trinh-tham | 0 | không đổi |
+| long-tu-tien | 1 (`answered_by` ×2) | **tránh được**: bỏ 2 id fact thường, không còn lỗi |
+| long-ky-ao-hanh-trinh | 1 (`answered_by` ×2) | **tránh được**: bỏ 2 id fact thường, không còn lỗi |
+
+Ở cả hai lượt tránh được, kế hoạch và gói mà code mới nhận từ lần dựng đầu dựng lại giống hệt bản đã lưu (cùng liên kết bí mật, cùng khoảng, không lần dời nào).
+
+Đọc được, có giới hạn:
+- Lượt cần sửa vì `answered_by` từ 2/5 xuống 0/5; lượt cần sửa nói chung từ 3/5 xuống 1/5 (còn lỗi `edges` của ab-tu-tien). Chi phí tránh được khoảng 0.003 USD mỗi lượt sửa (lần dựng thứ hai: khoảng 9 100 token vào, 4 500 token ra).
+- "Kế hoạch cuối không đổi" chỉ đúng **với lần dựng đầu dựng lại**. Lần dựng đầu thật có thể khác câu trả lời đã nhận ở chỗ khác, vì lượt sửa viết lại cả câu trả lời: token ra của lần dựng đầu là 5880 và 6016, của lượt sửa là 4550 và 4502. Điều chắc chắn là lần dựng đầu thật không có lỗi quy tắc nào khác, nên code mới nhận nó ngay mà không cần lượt sửa. Nó có giống hệt bản đã lưu không thì không biết.
+- Chưa đo lại bằng model thật. Muốn có số thật thì phải chạy lại năm lượt (khoảng 0.03 USD) với luật khai trước mới.
