@@ -60,5 +60,45 @@ Cộng lại: ở bốn ca đối chứng, `extract-8` nhận đúng mốc gốc
 - Phát lại một lời gọi cho cả chương, khác sản phẩm (mỗi cảnh một lời gọi); danh mục không có `Lie` của lựa chọn (`expectations.md`).
 - Lời gọi lặp (lần 2) rẻ hơn khoảng ba lần (trung bình 0,00075 so với 0,00239 USD mỗi lời gọi) nhờ cache phía nhà cung cấp: ở mọi lời gọi lần 2, `cached_tokens` trong `calls.jsonl` gần bằng `prompt_tokens`.
 
+## Quyết định sau lần chạy đầu
+Theo luật khai trước, kết quả là không xác định, nên mặc định không gộp. Chủ dự án chọn đo thêm trên ca đối chứng (30/10/2026). Luật của lần đo thêm được khai trước ở cuối `expectations.md` (commit `b1f5b2d`, trước mọi lời gọi của lần đo thêm).
+
+## Đo thêm ca đối chứng, n=6 (`control-n6/`)
+- **Commit của lần chạy:** `b1f5b2dc6122e9f60533d99a6d195566881ba38f` (`control-n6/meta.json`, `dirty: false`). Nhánh đã gộp origin/main (D-138) giữa hai lần chạy.
+- **Config:** sha256 gộp `13c01f720c75f52bd4f5ec290b6c292c00abb5635d39fd496226d2267d8bfc6a`. Khác lần chạy đầu chỉ ở `config/models.yaml`, chỗ thêm vai `overreach` của D-138 (`git diff 3be4885 b1f5b2d -- config`); vai `extract` không đổi model, không đổi mức suy luận.
+- **Đề:** sha256 của chữ đề hai bản đề trùng lần chạy đầu. Số token đề của từng ca và từng bản đề cũng trùng đúng lần chạy đầu (`calls.jsonl` của hai thư mục), nên phần đề dựng từ dữ liệu cũng không đổi. Đây là suy từ số token, không phải so từng byte.
+- **Model:** `openai/gpt-6-luna`, `reasoning.effort: low`.
+- **Chi:** 32 lời gọi, 0,035138 USD. Không lời gọi nào hỏng, không dừng vì trần (trần 0,08). Cả phép đo D-139: 0,112143 USD đã biết (0,014295 lần chạy hỏng, 0,06271 lần chạy đầu, 0,035138 lần đo thêm), cộng một lời gọi không rõ chi phí của lần chạy hỏng (nhiều nhất cỡ 0,0033).
+- **Lệnh:** như phần bổ sung của `expectations.md` (`--only 2- --first-rep 3 --repeats 4 --budget 0.08 --out …/control-n6`).
+
+### Gộp lần 1–6 (`python evals/results/2026-10-30-climax-milestone-2/pool.py`)
+| Ca | `extract-8` nhận đúng | `extract-11` nhận đúng |
+|---|---|---|
+| ky-ao ch16 (m6 cao trào) | 6/6 | 3/6 |
+| tu-tien ch11 (m4 bước ngoặt) | 6/6 | 5/6 |
+| ky-ao ch10 (m5 bước ngoặt) | 6/6 | 6/6 |
+| tu-tien ch5 (m3 bước ngoặt) | 3/6 | 4/6 |
+| **Gộp** | **21/24** | **18/24** |
+
+Không bản đề nào có dấu của mốc khác mốc gốc ở chương đối chứng. Câu trích mốc bị G3 từ chối: 0 và 0. Mọi lời gọi đều có cặp, đủ 24 cặp gộp mỗi bản đề.
+
+### Luật của lần đo thêm (áp đúng như khai)
+- **Tốt: không đạt.** R11 − R8 = 18 − 21 = −3, không ≥ −1. R11(16) − R8(16) = 3 − 6 = −3, không ≥ −1.
+- **Xấu: đạt.** R11(16) = 3 ≤ R8(16) − 3 = 3. Điều R11 ≤ R8 − 4 thì không đạt (−3).
+- **Kết luận: tín hiệu xấu.** Theo khai trước: không gộp `extract-11`; gỡ code và đề khỏi PR, giữ kết quả đo; D-139 ghi "đã thử, không dùng".
+- Điều "dấu sai" của phần bổ sung viết chưa rõ: "câu trích (hay một đoạn) không cho thấy điều mốc mô tả" đọc được theo cả câu hay theo từng đoạn. Đọc theo cả câu thì `extract-11` không có dấu sai nào. Đọc theo từng đoạn thì có đoạn chỉ là ngữ cảnh (xem dưới). Kết luận không đổi theo cách đọc, vì riêng điều của ky-ao ch16 đã đủ để là xấu.
+
+### Đọc tay (lần 3–6)
+**Đã kiểm:**
+- ky-ao ch16, `extract-11`: lần 3 và 5 nhận m6 bằng dòng 31 (Tạ Vân nói ra Đoàn Khương đứng sau vụ bắt) cộng dòng 49 (Mai Thảo thôi chờ Tạ Vân giúp). Đúng. Lần 4 và 6 model không trả mốc nào, dù hậu quả có trên trang (dòng 41, 49, 61). `extract-8` nhận m6 cả 4 lần bằng dòng 31.
+- tu-tien ch11, `extract-11`: nhận m4 cả 4 lần bằng dòng 99 ("Ta là người đưa tin của Minh Ước Giữ Ấn…"). Lần 6 thêm đoạn thứ hai là dòng 101–107 (Thẩm Mặc Ngôn đòi hộp, Ninh Tuyết Anh giữ hộp): một đoạn liền nhiều dòng, nguyên văn, nhưng chỉ là ngữ cảnh, không nói điều mốc m4 mô tả.
+- ky-ao ch10, `extract-11`: nhận m5 cả 4 lần, 2 hay 3 đoạn: dòng 77 (ô sổ bị cạo, viết đè) và dòng 79; lần 3 và 5 có thêm câu dẫn dòng 75 "Một dòng khiến tôi dừng lại.", câu này tự nó không nói điều mốc mô tả.
+- tu-tien ch5: `extract-11` nhận m3 ở lần 4, 5, 6 bằng dòng 37 (có lần thêm dòng 35); `extract-8` nhận ở lần 4, 5, 6 bằng câu của lượt gốc ở dòng 37. Ở lần 3 cả hai bản đề đều không trả mốc nào.
+
+**Suy luận (chưa kiểm):**
+- Luật "cao trào phải có cả hậu quả" làm mất dấu cao trào kiểu đối mặt với sự thật một nửa số lần (ky-ao ch16: 3/6 so với 6/6), dù hậu quả có trên trang. Model hình như không chắc "thôi chờ giúp, bỏ đi, xoá dấu" có tính là "điều đã đổi hẳn" không, nên bỏ mốc. Đó cũng là chỗ `extract-9` hỏng ở D-129. Hai lần thử với hai cách viết luật cùng hỏng ở ca này.
+- Câu trích nhiều đoạn chạy đúng như thiết kế: 0 lần G3 từ chối trên 36 lời gọi `extract-11` (20 lần chạy đầu, 16 lần đo thêm), ở ca đối chứng không có dấu sai về mốc, không có dấu của mốc khác. Nhưng model dùng nhiều đoạn cả khi một đoạn là đủ, và có đoạn chỉ là ngữ cảnh: trần số đoạn và số chữ tối thiểu chặn được câu ghép từ mảnh vụn, không chặn được đoạn thừa.
+- Ở bước ngoặt, `extract-11` ngang `extract-8` (15/18 so với 15/18 trên ba ca bước ngoặt gộp lại). Phần mất nằm gần hết ở ca cao trào.
+
 ## Quyết định sau phép đo
-Theo luật khai trước (không xác định): không gộp mặc định. PR giữ code và đề `extract-11` để chủ dự án quyết một trong ba: gộp `extract-11` (hai ca mục tiêu đúng, không có dương tính giả, nhưng ở đối chứng nhận đúng 5/8 so với 6/8), không dùng (gỡ code khỏi PR, giữ kết quả đo như D-129), hay đo thêm (tăng n trên cùng các ca, cần duyệt chi phí).
+Theo luật khai trước của lần đo thêm (tín hiệu xấu): không gộp `extract-11` và code câu trích nhiều đoạn; bộ trích giữ `extract-8` (D-139). PR chỉ còn kết quả đo này. Chữ đề `extract-11` ở `extract11_system_prompt.txt`. Code (schema `quotes`, `graph.quote_parts_in_text`, cách lưu, test) ở commit `b1f5b2d` của nhánh `feature/climax-milestone-2`: `replay.py` dùng code đó, nên chạy lại đúng như lần đo cần checkout commit này; `pool.py` chỉ đọc `results.jsonl`.
