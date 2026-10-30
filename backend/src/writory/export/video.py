@@ -263,6 +263,8 @@ class ShotOut:
     covers: str
     covers_verified: bool
     prompt_en: str | None  # None: bị giữ lại vì kiểm duyệt chặn cứng (G9)
+    split_by_code: bool = False  # code sửa vì lời thoại dày hơn thời lượng: tách shot hay kéo dài (D-127)
+    pace_over: bool = False  # lời thoại vẫn dày hơn nhịp cho phép (một lượt thoại dài hơn mọi shot)
 
 
 @dataclass
@@ -404,14 +406,14 @@ async def _make_scene(
     try:
         draft = await shots.make_scene_shots(
             llm, model, messages, characters=sorted(names), locations=[loc.id for loc in places],
-            limits=limits, retries=retries, names=known_names, extra=extra)
+            limits=limits, retries=retries, names=known_names, extra=extra, lang_tag=options.dialogue_lang)
     except WritoryError as e:
         if e.code is ErrorCode.COST_LIMIT_STORY:
             return SceneOut(chapter, scene, "skipped_budget")
         return SceneOut(chapter, scene, "error", error=e.code.value)
 
     out = SceneOut(chapter, scene, "ok")
-    for i, shot in enumerate(draft.shots, 1):
+    for i, (shot, by_code) in enumerate(zip(draft.shots, draft.split_by_code, strict=True), 1):
         added = shots.mentioned_not_shown(shot.action_en, shot.appears,
                                           {c.id: c.name for c in people})
         shot = shot.model_copy(update={"appears": [*shot.appears, *added]})
@@ -426,7 +428,9 @@ async def _make_scene(
                        "text": " ".join(d.text.split()), "source_text": " ".join(d.source_text.split())}
                       for d in shot.dialogue],
             covers=shot.covers, covers_verified=quote_in_text(shot.covers, text),
-            prompt_en=shots.assemble_prompt(shot, sheet=sheet, lang_tag=options.dialogue_lang)))
+            prompt_en=shots.assemble_prompt(shot, sheet=sheet, lang_tag=options.dialogue_lang),
+            split_by_code=by_code,
+            pace_over=shots.pace_exceeded(shot, limits, options.dialogue_lang)))
     if options.moderate:
         await _moderate_scene(out, llm=llm, config=config)
     return out
@@ -532,6 +536,12 @@ def render_markdown(export: Export) -> str:
                     out.append(f"- {d['speaker']}: \"{d['text']}\" (original: \"{d['source_text']}\")")
                 if not s.covers_verified:
                     out.append("- *Note: the quoted source phrase was not found verbatim in the scene.*")
+                if s.split_by_code:
+                    out.append("- *Note: dialogue pace fixed by code (the shot was split or lengthened to fit "
+                               "its lines).*")
+                if s.pace_over:
+                    out.append("- *Note: the dialogue is denser than the pace limit; one line is longer than "
+                               "any shot can carry.*")
                 out += ["", _fence(s.prompt_en or "[withheld: moderation hard block]")]
     return "\n".join(out) + "\n"
 

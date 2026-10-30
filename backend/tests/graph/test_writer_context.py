@@ -382,3 +382,58 @@ def test_looks_never_reach_the_player_view_after_being_revealed(driver, new_stor
     assert "Lan" in blob  # nút đã hé lộ
     for secret in ("Nhỏ nhắn", "Cao gầy", "Đèn dầu"):
         assert secret not in blob
+
+
+# --- cạnh sai đầu mút đã nằm trong đồ thị (D-128, ca psab-b1) -----------------------------------
+
+
+def _apply_misplaced_edges(driver, sid):
+    """Đồ thị của psab-b1 sau chương 11: HOLDS tới một Fact do bộ trích tạo ở chương 10."""
+    from writory.graph import ChangePackage, apply_package
+
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character", "props": {"name": "Thảo", "is_protagonist": True,
+                                                            "user_authored": True}},
+            {"id": "yen", "label": "Character", "props": {"name": "Phụng Yên"}},
+            {"id": "paper", "label": "Item", "props": {"name": "Tờ giấy"}},
+            {"id": "pier", "label": "Location", "props": {"name": "Bến cảng"}},
+            {"id": "fact_c10s1_1", "label": "Fact", "props": {"text": "Phụng Yên giấu tờ giấy"}}],
+        "edges": [
+            {"type": "HOLDS", "from": "yen", "to": "fact_c10s1_1", "valid_from_chapter": 0},
+            {"type": "LOCATED_AT", "from": "yen", "to": "hero", "valid_from_chapter": 0},
+            {"type": "HOLDS", "from": "yen", "to": "paper", "valid_from_chapter": 0},
+            {"type": "LOCATED_AT", "from": "paper", "to": "fact_c10s1_1", "valid_from_chapter": 0},
+            {"type": "LOCATED_AT", "from": "hero", "to": "pier", "valid_from_chapter": 0}],
+    }))
+
+
+def test_misplaced_edges_in_the_graph_are_ignored_by_the_writer_context(driver, new_story_id):
+    sid = new_story_id()
+    _apply_misplaced_edges(driver, sid)
+    ctx = writer_context(driver, sid, 0, ["hero", "yen"], None)
+    by_id = {c.id: c for c in ctx.present}
+    assert [t.value for t in by_id["yen"].holds] == ["Tờ giấy"]  # chỉ cạnh HOLDS tới một Item
+    assert by_id["yen"].location is None  # LOCATED_AT tới nhân vật không phải nơi chốn
+    assert by_id["hero"].location is not None and by_id["hero"].location.value == "Bến cảng"
+    text = " ".join(str(p) for p in render_writer_context(ctx))  # không sập vì None
+    assert "Tờ giấy" in text and "giấu tờ giấy" not in text.split("Nhân vật có mặt")[1].split("##")[0]
+    assert all(i.holder is None or i.holder.value for i in ctx.items)
+
+
+def test_edge_endpoint_violations_counts_only_the_bad_combinations(driver, new_story_id):
+    from writory.graph import edge_endpoint_violations
+
+    sid = new_story_id()
+    _apply_misplaced_edges(driver, sid)
+    assert sorted((v.type, v.source_label, v.target_label, v.count)
+                  for v in edge_endpoint_violations(driver, sid)) == [
+        ("HOLDS", "Character", "Fact", 1), ("LOCATED_AT", "Character", "Character", 1),
+        ("LOCATED_AT", "Item", "Fact", 1)]
+
+
+def test_the_sample_story_has_no_edge_with_a_wrong_endpoint(driver, sample_story_id):
+    from writory.graph import edge_endpoint_violations
+
+    assert edge_endpoint_violations(driver, sample_story_id) == []
