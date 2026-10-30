@@ -44,8 +44,7 @@ EDGE_ENDPOINTS: dict[str, tuple[frozenset[str] | None, frozenset[str] | None]] =
     "MEMBER_OF": (frozenset({"Character"}), frozenset({"Faction"})),
     "PARTICIPATED_IN": (frozenset({"Character"}), frozenset({"Event"})),
     "DIED_IN": (frozenset({"Character"}), frozenset({"Event"})),
-    # Tới nút có tên: bộ trích có đường KNOWS của nhân vật chính kèm `known_as` (D-17, test
-    # `test_known_as_conflict_…`); docs/graph-schema.md chỉ ghi Fact/Lie/Event, chưa thống nhất (D-128).
+    # Nhân vật chính tới nút có tên, kèm `known_as` (D-17; `graph.commit.needs_known_as`).
     "KNOWS": (frozenset({"Character"}), frozenset({"Fact", "Lie", "Event"}) | NAMED_LABELS),
     "FEELS": (frozenset({"Character"}), None),
     "TOLD": (frozenset({"Character"}), frozenset({"Lie"})),

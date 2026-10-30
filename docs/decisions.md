@@ -1209,7 +1209,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bộ trích (`extract.to_package`) bỏ cạnh sai đầu mút, lý do riêng "đầu mút sai loại nút" (bộ đo đếm riêng).
   - Ngữ cảnh viết chỉ đọc `HOLDS` tới `Item`, `LOCATED_AT` tới `Location`, người giữ là `Character`; mảnh chữ `None` bị bỏ, không bao giờ vào `UserAuthored`. Truyện đã có cạnh sai vẫn viết tiếp được.
   - `graph.edge_endpoint_violations(driver, story_id)` đếm cạnh sai (chỉ kiểu cạnh và nhãn), có graph test trên truyện mẫu.
-  - `KNOWS` giữ như code hiện hành: tới Fact/Lie/Event và tới nút có tên (bộ trích có đường KNOWS của nhân vật chính kèm `known_as`, D-17). `docs/graph-schema.md` chỉ ghi Fact/Lie/Event; dữ liệu thật không có KNOWS nào tới nút có tên. Mâu thuẫn tài liệu–code này chưa quyết, để chủ dự án chọn.
+  - `KNOWS` tới Fact/Lie/Event và, từ nhân vật chính, tới nút có tên kèm `known_as`, đúng D-17 và đoạn `known_as` của `docs/graph-schema.md`; dòng `KNOWS` của bảng Cạnh trước ghi thiếu, đã sửa (chủ dự án giao Claude chọn, 30/10/2026). Dữ liệu thật chưa có KNOWS nào tới nút có tên.
 - **Hệ quả:** cạnh sai cũ không bị xoá khỏi đồ thị, chỉ bị bỏ qua khi đọc. Bộ trích mất cạnh model ghi sai thay vì ghi rác. `psab-b1` chạy tiếp từ chương 12 bằng `--resume --resume-allow-drift` trên commit có bản sửa (ghi trong notes A/B).
 - **Người quyết:** Claude (session 3 tìm và sửa, writory-35 hoàn tất), nhánh fix/edge-endpoint-labels · 30/10/2026
 

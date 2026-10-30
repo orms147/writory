@@ -46,7 +46,7 @@ Cột "Từ → tới" là luật bằng code: `graph/schema.py` `EDGE_ENDPOINTS
 | `MEMBER_OF` | Character → Faction | | |
 | `PARTICIPATED_IN` | Character → Event | `role` | |
 | `DIED_IN` | Character → Event | | chết trong sự kiện |
-| `KNOWS` | Character → Fact/Lie/Event | `how`, `told_by`, `quote`, `known_as`, `by_choice` | biết từ `valid_from_chapter`. Tới `Lie` = biết đó là lời dối. `how` thuộc `KNOWS_HOW`; `được kể` bắt buộc có `told_by` (D-22) |
+| `KNOWS` | Character → Fact/Lie/Event; nhân vật chính → nút có tên (kèm `known_as`, D-17) | `how`, `told_by`, `quote`, `known_as`, `by_choice` | biết từ `valid_from_chapter`. Tới `Lie` = biết đó là lời dối. `how` thuộc `KNOWS_HOW`; `được kể` bắt buộc có `told_by` (D-22) |
 | `FEELS` | nhân vật chính → bất kỳ | `feeling` | cảm xúc thầm từ lựa chọn nội tâm (D-55). Cảm xúc mới về cùng đích đóng cạnh cũ |
 | `TOLD` | Character → Lie | | người nói |
 | `TOLD_TO` | Lie → Character | | người nghe |
