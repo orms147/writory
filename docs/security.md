@@ -16,6 +16,7 @@ Nguyên tắc chung: **an toàn nằm trong code, không nằm trong prompt.** P
 | T6 | Lộ dữ liệu giữa người dùng | truy vấn đồ thị quên lọc `story_id` |
 | T7 | Ghi dữ liệu hỏng vào đồ thị | JSON trích sai schema, thực thể bịa, ghi nửa chừng |
 | T8 | Dùng tài khoản của người khác | đoán hay trộm mã mời, trộm token phiên, trang khác gửi yêu cầu kèm cookie của người chơi (CSRF), gọi API truyện của người khác bằng `story_id` |
+| T9 | Lộ truth qua bản xuất kịch bản video (D-125) | bản xuất dựng từ toàn bộ lớp `truth`, nên có bí mật; lọt tới người chơi, vào git hoặc bị ai đó chạy được |
 
 ## Guardrail
 
@@ -52,6 +53,15 @@ Bảng này chỉ trỏ tới code và test, không chép lại cách làm.
 G1 với ngoại hình và cảnh sắc của khởi tạo (D-120, lớp `truth`): `test_pipeline_chapter.py::test_appearance_reaches_outline_and_writer_but_never_the_other_roles` (context của lựa chọn, trích, tóm tắt, kiểm duyệt không có chữ ngoại hình), `test_setup_appearance.py::test_looks_never_reach_the_player_view`, và ở Neo4j `tests/graph/test_writer_context.py::test_looks_never_reach_the_player_view_after_being_revealed`.
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
+
+## Bản xuất kịch bản video (D-125, T9)
+Bản xuất đọc toàn bộ `truth` (D-118), nên G1 không áp cho nó; thay vào đó có các ràng buộc sau, đều có test (`backend/tests/unit/test_video_export_security.py`, `test_video_export.py`):
+- Không có đường nào tới người chơi: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới export hay video, và không file nào ngoài `export/` nhập `writory.export`. Chạy được chỉ khi có `POSTGRES_DSN` và `NEO4J_*` của máy (admin cầm DB).
+- Chỉ đọc: mã nguồn `export/` không có hàm ghi nào của `db/` hay `graph/`, không có `execute_write` hay câu lệnh ghi.
+- Không lọt vào git: mặc định ghi `exports/` (`.gitignore`; test chạy `git check-ignore`). Bản demo là kết quả đo, được commit ở `evals/results/` có cảnh báo lộ bí mật ở đầu, theo quyết định của chủ dự án.
+- Cả bốn file (`script.md`, `script.json`, `prompts.txt`, `calls.jsonl`) mở đầu bằng cảnh báo lộ bí mật (`video.WARNING`; test đọc từng file). Ghi qua thư mục tạm rồi đổi tên; thư mục đã có kết quả thì bị từ chối trước mọi lời gọi tốn tiền, nên một lần chạy sau không đè bản xuất đã trả tiền.
+- G4: chữ truyện và chữ người chơi vào model qua `UserAuthored`, không vào system: tên, nơi chốn, dòng quan hệ, vị trí, đoạn trích truyện (test có tên người chơi độc hại ở từng chỗ). G7: chỉ key của chủ dự án từ môi trường, không đọc key người chơi đã mã hoá; nhật ký lời gọi chỉ có số liệu (test: không có chữ truyện, tên hay mô tả trong `calls.jsonl`). G8: `--budget` bắt buộc, không vượt `limits.video_export.max_budget_usd`, giữ chỗ trước mỗi lời gọi (như D-10: tổng chỉ vượt khi nhà cung cấp tính cao hơn ước tính), lời gọi lỗi tính theo `maybe_billed`, hết trần thì dừng (mã thoát 2, kể cả khi hết ở lời gọi bảng). G9: kiểm duyệt prompt cuối mặc định bật và fail-closed: cảnh có mức BLOCKED hay HARD_BLOCKED, hoặc không kiểm duyệt được, thì bị giữ lại, không có chữ model sinh nào của cảnh trong ba file; chỉ mức OVER_DARKNESS (quá trần u tối) thì giữ cảnh và đánh dấu để admin quyết; `--no-moderate` in cảnh báo. G12: lỗi dữ liệu có mã `EXPORT_*` và câu tiếng Việt, không in thân lỗi của driver (có thể chứa DSN).
+- Chưa giải quyết: bộ kiểm duyệt viết cho chữ tiếng Việt, chưa đo trên prompt tiếng Anh; admin chịu trách nhiệm về nội dung trước khi đưa sang app video.
 
 ## Đăng nhập bằng mã mời (D-89)
 Chống T8. Đăng nhập chỉ ở `AUTH_MODE=invite`; chế độ `dev` không đăng nhập như trước (D-41, D-44). Riêng chống CSRF chạy ở cả hai chế độ.

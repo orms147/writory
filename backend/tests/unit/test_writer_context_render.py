@@ -334,3 +334,14 @@ def test_clip_appearance_follows_the_same_rule_as_personality():
     assert clip_appearance("  Cao   gầy,\n tóc bạc.  ", 100) == "Cao gầy, tóc bạc."
     cut = clip_appearance("Cao gầy, tóc bạc, áo chàm sờn vai, sẹo dưới mắt trái.", 20)
     assert cut is not None and len(cut) <= 20 and cut.endswith("…")
+
+
+def test_a_piece_without_text_is_skipped_never_wrapped(caplog):
+    """D-128: một mảnh chữ None (nút thiếu tên) không được vào UserAuthored; bỏ mảnh đó."""
+    from writory.graph.context import _Parts
+
+    parts = _Parts()
+    with caplog.at_level("WARNING"):
+        parts.line("- ", (None, True), " — còn sống")
+    assert all(isinstance(p, str) or p.text is not None for p in parts.done())
+    assert "thiếu chữ" in caplog.text

@@ -59,29 +59,29 @@ class ChoiceDraft(BaseModel):
     tone: Tone | None  # chỉ cho lời thoại
     lie_content: str | None  # tone = lie: nội dung lời nói dối
     listeners: list[str]  # ref người nghe; chỉ cho lời thoại (rỗng được ở schema; `_resolve` quyết)
-    about: list[str]  # ref các mục lựa chọn nói tới
+    about: list[str]  # ref các mục lựa chọn nói tới (rỗng được; nội tâm không có đích thì không ghi FEELS)
     feeling: str | None  # chỉ cho nội tâm: cảm xúc hay ý định thầm
 
-    @model_validator(mode="after")
-    def _consistent(self) -> Self:
+    def defect(self) -> str | None:
+        """Lý do lựa chọn này không dùng được (trường không khớp loại), hoặc None. KHÔNG ném ở schema:
+        sai một lựa chọn thì `_resolve` bỏ RIÊNG lựa chọn đó, không bỏ cả bộ rồi thử lại (D-114, D-121,
+        D-123, D-126). Nội tâm không có `about` không phải lỗi: ý định thầm có thể hướng tới điều không
+        có trong sổ tay (D-126). Lời thoại không người nghe thì `_resolve` bỏ sau khi lọc ref."""
         if not self.text.strip():
-            raise ValueError("text rỗng")
+            return "text rỗng"
         if self.kind == "dialogue":
-            # Người nghe có thể rỗng: người nghe ẩn danh ("người tuần") không có mã trong sổ tay. Lời thoại
-            # không còn người nghe thì `_resolve` bỏ RIÊNG lựa chọn đó, không bỏ cả bộ (D-121, D-123).
             if self.tone is None:
-                raise ValueError("lời thoại phải có tone")
-            lie = bool(self.lie_content and self.lie_content.strip())
-            if (self.tone == "lie") != lie:
-                raise ValueError("lie_content có khi và chỉ khi tone = lie")
+                return "lời thoại phải có tone"
+            if (self.tone == "lie") != bool(self.lie_content and self.lie_content.strip()):
+                return "lie_content có khi và chỉ khi tone = lie"
         elif self.tone is not None or self.lie_content is not None or self.listeners:
-            raise ValueError("tone, lie_content, listeners chỉ dùng cho lời thoại")
+            return "tone, lie_content, listeners chỉ dùng cho lời thoại"
         if self.kind == "inner":
-            if not (self.feeling and self.feeling.strip()) or not self.about:
-                raise ValueError("nội tâm phải có feeling và about")
+            if not (self.feeling and self.feeling.strip()):
+                return "nội tâm phải có feeling"
         elif self.feeling is not None:
-            raise ValueError("feeling chỉ dùng cho nội tâm")
-        return self
+            return "feeling chỉ dùng cho nội tâm"
+        return None
 
 
 class ChoicesOutput(BaseModel):
@@ -237,11 +237,11 @@ def _bad(detail: str) -> WritoryError:
 def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str, str], *,
              chapter: int = 0, protagonist: str | None = None) -> list[Choice]:
     """Ref → id nút. Ref ngoài sổ tay (bịa ra, hoặc mô tả thay cho mã) hay người nghe không phải nhân
-    vật thì bỏ RIÊNG tham chiếu đó, không đoán thêm (G1, D-114). Lựa chọn mất thứ nó bắt buộc phải có
-    thì bỏ riêng lựa chọn đó: nội tâm không còn `about` (không có đích cho FEELS), lời nói dối không
-    còn người nghe (không ai nghe thì không phải lời dối); lời thoại thường mất hết người nghe cũng bỏ
-    (bất biến của `ChoiceDraft`: lời thoại có người nghe; D-121). Nhân vật chính không phải người nghe
-    lời của chính mình. Còn dưới `MIN_CHOICES` lựa chọn hay dưới
+    vật thì bỏ RIÊNG tham chiếu đó, không đoán thêm (G1, D-114). Lựa chọn sai trường theo loại của nó
+    (`ChoiceDraft.defect`) bỏ riêng lựa chọn đó (D-126), cũng như lời thoại mất hết người nghe (lời
+    nói dối không ai nghe không phải lời dối; lời thoại thường cũng bỏ vì lời thoại có người nghe,
+    D-121). Nội tâm mất `about` thì GIỮ, chỉ không ghi cạnh `FEELS` (D-126, thay phần này của D-114).
+    Nhân vật chính không phải người nghe lời của chính mình. Còn dưới `MIN_CHOICES` lựa chọn hay dưới
     `MIN_KINDS` loại thì không cứu được: sai schema (G11), để thử lại. Log chỉ ghi số, không ghi ref."""
 
     def known(values: list[str]) -> tuple[list[str], int]:
@@ -251,12 +251,14 @@ def _resolve(output: ChoicesOutput, refs: Mapping[str, str], kinds: Mapping[str,
     choices: list[Choice] = []
     dropped_refs = dropped_choices = 0
     for draft in output.choices:
+        if draft.defect() is not None:
+            dropped_choices += 1
+            continue
         about, lost_about = known(draft.about)
         heard, lost_heard = known(draft.listeners)
         listeners = [i for i in heard if kinds[i] == "Character" and i != protagonist]
         dropped_refs += lost_about + lost_heard + (len(heard) - len(listeners))
-        if ((draft.kind == "inner" and not about)
-                or (draft.kind == "dialogue" and not listeners)):
+        if draft.kind == "dialogue" and not listeners:
             dropped_choices += 1
             continue
         lie = LieEffect(draft.lie_content.strip(), tuple(listeners)) if draft.tone == "lie" else None

@@ -33,6 +33,43 @@ NODE_LABELS: tuple[str, ...] = get_args(NodeLabel)
 NAMED_LABELS = frozenset({"Character", "Location", "Item", "Faction"})
 EDGE_TYPES: tuple[str, ...] = get_args(EdgeType)
 
+# Nhãn hai đầu hợp lệ của từng kiểu cạnh (docs/graph-schema.md, bảng Cạnh): (nhãn nguồn, nhãn đích),
+# None = nhãn nào cũng được. MỘT bảng cho khởi tạo (`pipeline/setup.py`, thu hẹp cho chương 0) và bộ
+# trích (`pipeline/extract.py`), để kiểu cạnh mới không lọt lại: psab-b1 (D-128) bộ trích ghi HOLDS từ
+# nhân vật tới một Fact, ngữ cảnh viết đọc tên của Fact rồi sập. Phần kiểm thật là `endpoint_problem`.
+EDGE_ENDPOINTS: dict[str, tuple[frozenset[str] | None, frozenset[str] | None]] = {
+    "RELATES_TO": (frozenset({"Character"}), frozenset({"Character"})),
+    "LOCATED_AT": (frozenset({"Character", "Item"}), frozenset({"Location"})),
+    "HOLDS": (frozenset({"Character"}), frozenset({"Item"})),
+    "MEMBER_OF": (frozenset({"Character"}), frozenset({"Faction"})),
+    "PARTICIPATED_IN": (frozenset({"Character"}), frozenset({"Event"})),
+    "DIED_IN": (frozenset({"Character"}), frozenset({"Event"})),
+    # Tới nút có tên: bộ trích có đường KNOWS của nhân vật chính kèm `known_as` (D-17, test
+    # `test_known_as_conflict_…`); docs/graph-schema.md chỉ ghi Fact/Lie/Event, chưa thống nhất (D-128).
+    "KNOWS": (frozenset({"Character"}), frozenset({"Fact", "Lie", "Event"}) | NAMED_LABELS),
+    "FEELS": (frozenset({"Character"}), None),
+    "TOLD": (frozenset({"Character"}), frozenset({"Lie"})),
+    "TOLD_TO": (frozenset({"Lie"}), frozenset({"Character"})),
+    "ABOUT": (frozenset({"Fact", "Event", "Lie"}), None),
+    "RESOLVED_IN": (frozenset({"Thread"}), frozenset({"Chapter"})),
+    "REVEALED_TO_PLAYER": (None, frozenset({"Chapter"})),
+}
+assert set(EDGE_ENDPOINTS) == set(EDGE_TYPES)
+
+
+def endpoint_problem(etype: str, source_label: str, target_label: str) -> str | None:
+    """Lý do cạnh `etype` không nối được nhãn nguồn với nhãn đích, hoặc None nếu hợp lệ. Chỉ nêu kiểu cạnh
+    và nhãn, không chữ của truyện."""
+    sources, targets = EDGE_ENDPOINTS[etype]
+    if (sources is not None and source_label not in sources) or (
+            targets is not None and target_label not in targets):
+        def side(labels: frozenset[str] | None) -> str:
+            return "nhãn nào cũng được" if labels is None else " hoặc ".join(sorted(labels))
+        return (f"{etype} nối {source_label} → {target_label}, bảng chỉ cho {side(sources)} → "
+                f"{side(targets)}")
+    return None
+
+
 # Nhãn chung của mọi nút: khoá (story_id, id) là duy nhất trên toàn truyện, không theo nhãn.
 ENTITY = "Entity"
 
