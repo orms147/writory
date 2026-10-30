@@ -1,0 +1,60 @@
+{
+  "bench_a": {
+    "narrator": {
+      "expected": 78,
+      "rows": 78,
+      "correct": 30,
+      "abstained": 47,
+      "wrong": 1,
+      "final_leaks": 1,
+      "off_page_leaks": 0,
+      "blocked": {
+        "model_not_known": 47
+      },
+      "bool_unparsed": 0,
+      "cost_usd": 0.70394
+    },
+    "narrator_pages": {
+      "expected": 78,
+      "rows": 78,
+      "correct": 52,
+      "abstained": 19,
+      "wrong": 7,
+      "final_leaks": 5,
+      "off_page_leaks": 0,
+      "blocked": {
+        "model_not_known": 19
+      },
+      "bool_unparsed": 0,
+      "cost_usd": 1.037967
+    }
+  },
+  "bench_e": {
+    "2026-10-30-narrator-passages-muse-tu-tien-1": {
+      "rows": 39,
+      "final_leaks": 0,
+      "raw_leaks": 0,
+      "blocked": {
+        "model_not_known": 22
+      },
+      "cost_usd": 0.423097
+    },
+    "2026-10-30-narrator-passages-muse-v2": {
+      "rows": 108,
+      "final_leaks": 0,
+      "raw_leaks": 0,
+      "blocked": {
+        "model_not_known": 74
+      },
+      "cost_usd": 0.987442
+    }
+  },
+  "rules": {
+    "1_correct_margin": true,
+    "2_wrong_not_much_more": true,
+    "3_no_off_page_leak": true,
+    "4_bench_e_no_final_leak": true,
+    "complete": true
+  },
+  "keep_narrator_4": true
+}

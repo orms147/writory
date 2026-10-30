@@ -21,7 +21,11 @@ from writory.quality.bench_d import mock_judge_client
 from writory.safety.leak import check_leaks
 
 DATA = be.load_data()
-CONFIG = load_config()
+# Các test ở file này chạy đề `narrator-3` (chỉ sổ tay, có giám khảo): tắt đoạn trên trang. Đề
+# `narrator-4` (D-143): tests/unit/test_pipeline_bench_e_pages.py.
+_REPO = load_config()
+CONFIG = _REPO.model_copy(update={"limits": _REPO.limits.model_copy(update={
+    "narrator_pages": _REPO.limits.narrator_pages.model_copy(update={"top_k": 0})})})
 
 
 def opts(tmp_path: Path, **kw) -> be.RunOptions:

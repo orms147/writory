@@ -10,6 +10,9 @@
   với chuỗi cấm do model đặt, không phải chuỗi viết tay.
 - `run_packages`: gói từng chương trong `truth_dump.json`; bài A dùng chung để đọc truyện do
   pipeline viết (D-83).
+- `Story.pages`: văn đã hiện của từng chương (truyện mẫu: `chNN.md`; truyện do pipeline viết:
+  `chapters/chNN.md` qua `run_chapter_text`, chung với bài A), để người kể đọc đoạn trên trang như
+  khi chơi (D-143).
 - `pad_view`: thêm mục giả vào `PlayerView` để dựng sổ tay hàng trăm mục từ truyện vài chương.
   Mục đệm sinh bằng code từ một hạt giống khai trong đề (tất định), có tên và từ ngữ giống truyện
   ("lò rèn của ...", "thanh kiếm ...") để truy hồi phải phân biệt, và không chứa tên hay chuỗi cấm
@@ -19,8 +22,9 @@
 import hashlib
 import json
 import random
+import re
 from collections.abc import Mapping
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from pathlib import Path
 from typing import Any
 
@@ -61,13 +65,15 @@ def _json(path: Path, raw: bytes) -> Any:
 
 @dataclass(frozen=True)
 class Story:
-    """Những gì bài đo cần biết về một truyện: gói thay đổi theo chương (gồm chương 0)."""
+    """Những gì bài đo cần biết về một truyện: gói thay đổi theo chương (gồm chương 0), và văn đã
+    hiện của từng chương (chương >= 1)."""
 
     kind: str  # "sample" | "run"
     packages: tuple[tuple[int, ChangePackage], ...]
     plan: StoryPlan | None  # kế hoạch lúc chạy thật; None: `plan.yaml` của đề khai
     brief: str | None  # thiết lập truyện người chơi đã đọc; None: `plan.yaml` khai
     hashes: Mapping[str, str]  # sha256 các file nguồn, ghi vào meta.json của kết quả
+    pages: Mapping[int, str] = field(default_factory=dict)  # chương -> văn đã hiện (D-143)
 
     @property
     def chapters(self) -> tuple[int, ...]:
@@ -84,8 +90,27 @@ def load_sample_story(sample_dir: Path | None = None) -> Story:
     root = sample_dir or SAMPLE_DIR
     sample = read_sample(root)
     graph_raw = _read(root / "graph.yaml")
+    pages = {c.number: c.text for c in sample.chapters if c.number >= 1 and c.text}
+    hashes = {"sample-story/graph.yaml": _sha256(graph_raw),
+              **{f"sample-story/ch{n:02d}.md": _sha256(_read(root / f"ch{n:02d}.md"))
+                 for n in pages}}
     return Story("sample", tuple((c.number, c.package) for c in sample.chapters), None, None,
-                 {"sample-story/graph.yaml": _sha256(graph_raw)})
+                 hashes, pages)
+
+
+CHOICES_HEADING = "## Lựa chọn cuối chương"
+# Dòng của lệnh chạy, không phải văn: tiêu đề chương và ghi chú in nghiêng của `bench_run`.
+_HARNESS_LINE = re.compile(
+    r"^(# Chương \d+|_(Trạng thái: .*|Lựa chọn dẫn tới chương này: .*|Hết truyện\.)_)$")
+
+
+def run_chapter_text(raw: str) -> str:
+    """Văn một chương trong chapters/chNN.md của `bench_run`: bỏ tiêu đề, ghi chú in nghiêng của
+    lệnh chạy (trạng thái, lựa chọn dẫn tới chương, hết truyện) và mục lựa chọn cuối chương. Giữ
+    nguyên chữ của các cảnh và dòng ngắt cảnh. Bài A và bài E dùng chung (D-83, D-143)."""
+    body = raw.replace("\r\n", "\n").split(f"\n{CHOICES_HEADING}\n", 1)[0]
+    kept = [line for line in body.split("\n") if not _HARNESS_LINE.match(line.strip())]
+    return re.sub(r"\n{3,}", "\n\n", "\n".join(kept)).strip() + "\n"
 
 
 def _option(setup: Mapping[str, Any], step: str, cls: type[BaseModel]) -> Any:
@@ -119,6 +144,11 @@ def load_run_story(run_dir: Path | str) -> Story:
     setup = _json(Path("setup.json"), files["setup.json"])
     meta = _json(Path("meta.json"), files["meta.json"])
     packages = run_packages(dump)
+    chapter_raw = {n: _read(run_dir / "chapters" / f"ch{n:02d}.md") for n, _ in packages if n >= 1}
+    try:
+        pages = {n: run_chapter_text(raw.decode("utf-8")) for n, raw in chapter_raw.items()}
+    except UnicodeDecodeError as e:
+        raise ConfigError(f"{run_dir / 'chapters'}: chương không phải UTF-8: {e}") from None
     try:
         plan = StoryPlan.model_validate(dump["plan"])
     except (KeyError, TypeError, ValidationError) as e:
@@ -139,8 +169,9 @@ def load_run_story(run_dir: Path | str) -> Story:
                         _option(setup, "plots", PlotOption),
                         _option(setup, "characters", CharacterOption),
                         moderation=load_config().moderation if with_level else None)
-    return Story("run", packages, plan, brief,
-                 {f"run/{name}": _sha256(raw) for name, raw in files.items()})
+    hashes = {f"run/{name}": _sha256(raw) for name, raw in files.items()}
+    hashes |= {f"run/chapters/ch{n:02d}.md": _sha256(raw) for n, raw in chapter_raw.items()}
+    return Story("run", packages, plan, brief, hashes, pages)
 
 
 # --- sổ tay đệm -------------------------------------------------------------------------------

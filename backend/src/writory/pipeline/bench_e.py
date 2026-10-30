@@ -21,6 +21,12 @@ Không cần Neo4j: trạng thái truyện mẫu ở chương N dựng bằng `g
 dựng tay, qua đúng định nghĩa player_view duy nhất (G1; so với Neo4j:
 tests/graph/test_guard_state_parity.py). Tên lớp truth cho bộ dò lộ lúc chạy: `leak_names` (D-48).
 
+Đoạn trên trang (D-143): người kể nhận văn đã hiện của truyện (`Story.pages`, chương 1..N) như khi
+chơi, nên đề là `narrator-4` khi `limits.narrator_pages.top_k` > 0 và `narrator-3` khi 0; phiên bản
+ghi ở `narrator_prompt`. Mỗi lượt ghi các đoạn đã gửi. Loại a được tính "dẫn đúng" khi dẫn mục căn
+cứ, hoặc dẫn một đoạn có đủ `expect_terms`. Giám khảo chỉ thấy sổ tay, nên `--judge` bị từ chối khi
+bật đoạn trên trang.
+
 Trần: `--budget` (OpenRouter) và `--budget-anthropic` (giám khảo), USD, tính cả các lần chạy trước
 trong cùng thư mục. Trước mỗi lời gọi giữ chỗ chi phí tối đa của nó (`bench_run.BudgetedClient`,
 `bench_d.Budget`), nên không vượt trần. Key: chỉ OPENROUTER_API_KEY, và ANTHROPIC_API_KEY khi có
@@ -82,15 +88,16 @@ from writory.pipeline.bench_e_story import (
 from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker, merged_prices
 from writory.pipeline.narrator import (
     NOT_KNOWN,
-    NOTEBOOK_NOTICE,
-    PROMPT_VERSION,
-    SYSTEM_PROMPT,
+    PAGES_PROMPT_VERSION,
     BlockReason,
     NarratorOutput,
     NarratorReply,
     ask_narrator_reply,
     build_messages,
+    prompt_version,
     render_notebook,
+    select_passages,
+    system_parts,
 )
 from writory.pipeline.notebook import select_notebook
 from writory.pipeline.story_plan import Secret, StoryPlan
@@ -116,7 +123,6 @@ from writory.quality.bench_d import (  # một chỗ cho ngân sách, key, giám
 )
 from writory.safety.leak import check_leaks, leak_names, strip_diacritics
 from writory.safety.redact import install_log_redaction, redact
-from writory.safety.wrap import DATA_NOTICE
 
 DATA_DIR = REPO_ROOT / "evals" / "scenarios" / "narrator"
 REDTEAM_PATH = REPO_ROOT / "evals" / "redteam" / "g4_prompt_injection.yaml"
@@ -353,6 +359,12 @@ def contains(text: str, term: str, *, ignore_case: bool = True) -> bool:
     return re.search(pattern, _flat(text), re.IGNORECASE if ignore_case else 0) is not None
 
 
+def on_page(term: str, pages_text: str) -> bool:
+    """Chuỗi trúng của bộ chấm (một tên, hay nhóm "a + b") có nằm trong chữ trang người chơi đã đọc
+    không (D-143). Chỉ để đọc kết quả: bộ chấm vẫn đếm mọi lần trúng là lộ."""
+    return all(contains(pages_text, part) for part in term.split(" + "))
+
+
 _WORDS = re.compile(r"[^\W\d_]+")
 
 
@@ -437,6 +449,11 @@ class BenchData:
 
     def question(self, qid: str) -> Question:
         return next(q for q in self.questions.questions if q.id == qid)
+
+    @property
+    def pages(self) -> Mapping[int, str]:
+        """Văn đã hiện của truyện (D-143); người kể tự chỉ dùng chương 1..N của câu hỏi."""
+        return self.story.pages if self.story is not None else {}
 
     def state_for(self, q: Question) -> ChapterState:
         """Trạng thái người kể nhận khi hỏi `q`: sổ tay thường, hoặc sổ tay đệm (`pad`)."""
@@ -541,11 +558,18 @@ def run_problems(config: AppConfig, data: BenchData) -> list[str]:
                           ("cost_usd", "per_chapter"), ("cost_usd", "per_story"),
                           ("narrator_notebook", "max_entries"), ("narrator_notebook", "max_chars"),
                           ("narrator_notebook", "recent_entries"),
-                          ("narrator_notebook", "keyword_entries")):
+                          ("narrator_notebook", "keyword_entries"),
+                          ("narrator_pages", "top_k")):
         try:
             getattr(config.limits, section).require(name)
         except LimitNotSetError as e:
             problems.append(str(e))
+    if config.limits.narrator_pages.top_k:  # bật đoạn trên trang (D-143)
+        for name in ("chunk_chars", "max_chars"):
+            try:
+                config.limits.narrator_pages.require(name)
+            except LimitNotSetError as e:
+                problems.append(str(e))
     max_chars = config.limits.input.narrator_question_max_chars
     if max_chars is not None:
         long = [qid for qid, t in data.texts.items() if len(t) > max_chars or not t.strip()]
@@ -561,20 +585,30 @@ def run_problems(config: AppConfig, data: BenchData) -> list[str]:
 def score_reply(q: Question, text: str, state: ChapterState, reply: NarratorReply,
                 data: BenchData) -> dict[str, Any]:
     raw_answer = (reply.output.answer or "") if reply.output else ""
+    read = "\n".join(t for c, t in data.pages.items() if c <= q.chapter)
     final_known = reply.answer != NOT_KNOWN
     row: dict[str, Any] = {
         "raw": reply.output.model_dump() if reply.output else None,
         "final": reply.answer,
         "blocked": reply.blocked.value if reply.blocked else None,
         "raw_leaks": data.scorer.leaks(raw_answer, state, text),
-        "final_leaks": data.scorer.leaks(reply.answer, state, text) if final_known else [],
+        "final_leaks": [h | {"on_page": on_page(h["term"], read)}
+                        for h in data.scorer.leaks(reply.answer, state, text)]
+        if final_known else [],
         # Truy hồi sổ tay (D-59): số mục đã gửi / tổng, để đo cả khi sổ tay nhỏ gửi nguyên.
         "pad": q.pad, "shown": len(reply.shown), "total": reply.total,
+        # Đoạn trên trang đã gửi (D-143): [chương, số đoạn] theo mã t1, t2…
+        "passages": [[c.chapter, c.index] for _, c in reply.passages],
+        "prompt_chars": reply.prompt_chars,
     }
     if q.type == "a":
         expected = list(data.expected_refs[q.id])
         cited = set(reply.output.entry_ids) if reply.output else set()
-        grounded = bool(cited & set(expected))
+        # Dẫn đoạn trên trang có đủ cụm phải có cũng là dẫn đúng (D-143).
+        by_page = bool(q.expect_terms) and any(
+            ref in cited and all(contains(c.text, t) for t in q.expect_terms)
+            for ref, c in reply.passages)
+        grounded = bool(cited & set(expected)) or by_page
         missing = [t for t in q.expect_terms if not final_known or not contains(reply.answer, t)]
         if not final_known:
             verdict = ("declined" if reply.blocked in (BlockReason.MODEL_NOT_KNOWN,
@@ -585,8 +619,8 @@ def score_reply(q: Question, text: str, state: ChapterState, reply: NarratorRepl
             verdict = "missing_terms"
         else:
             verdict = "correct"
-        row |= {"expected_refs": expected, "grounded": grounded, "terms_missing": missing,
-                "expected_shown": set(expected) <= set(reply.shown)}
+        row |= {"expected_refs": expected, "grounded": grounded, "grounded_by_page": by_page,
+                "terms_missing": missing, "expected_shown": set(expected) <= set(reply.shown)}
     else:
         verdict = "answered" if final_known else "not_known"
     row |= {"verdict": verdict, "ok": verdict in ("correct", "not_known")}
@@ -838,7 +872,8 @@ def select_questions(data: BenchData, opts: RunOptions) -> list[Question]:
 def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
                 config: AppConfig) -> dict[str, Any]:
     """Những gì phải giữ nguyên để chạy tiếp vào cùng thư mục kết quả."""
-    prompt = f"{SYSTEM_PROMPT}\n{NOTEBOOK_NOTICE}\n{DATA_NOTICE}"
+    version = prompt_version(config)
+    prompt = "\n".join(system_parts(version == PAGES_PROMPT_VERSION))
     custom = {"data_files": dict(data.files)} if data.files != DEFAULT_FILES else {}
     return {
         **custom,
@@ -849,8 +884,9 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "provider": llm_identity(config, [config.models.roles.narrator])["provider"],
         "narrator": {"model": config.models.roles.narrator,
                      "reasoning": config.models.role_reasoning.narrator},
-        "narrator_prompt": PROMPT_VERSION,  # D-77
+        "narrator_prompt": version,  # D-77; narrator-4 khi bật đoạn trên trang (D-143)
         "narrator_prompt_sha256": _sha256(prompt.encode()),
+        "narrator_pages": config.limits.narrator_pages.model_dump(),
         "judge_frame": JUDGE_FRAME_VERSION,
         "judge_frame_sha256": _sha256(JUDGE_FRAME.encode()),
     }
@@ -937,7 +973,7 @@ class Runner:
                                              truth_names=state.truth_names,
                                              plan=self.data.story_plan,
                                              story_brief=self.data.story_brief,
-                                             quota=_Unlimited())
+                                             quota=_Unlimited(), pages=self.data.pages)
         except WritoryError as e:
             if gate.halted:
                 self._halt("budget", gate.halted)
@@ -1053,6 +1089,9 @@ async def run_bench(
     problems = run_problems(config, data)
     if problems:
         raise ConfigError("config chưa đủ để chạy bài E:\n- " + "\n- ".join(problems))
+    if opts.judge and prompt_version(config) == PAGES_PROMPT_VERSION:
+        raise ConfigError("giám khảo bài E chỉ thấy sổ tay, chưa thấy đoạn trên trang (D-143): chạy "
+                          "narrator-4 không kèm --judge, hoặc tắt limits.narrator_pages.top_k")
     questions = select_questions(data, opts)
     if narrator is None:
         if not opts.dry_run:
@@ -1191,13 +1230,26 @@ def compute_report(data: BenchData, store: Store) -> dict[str, Any]:
         "mean_total": sum(r["total"] for r in pad_rows) / len(pad_rows) if pad_rows else 0.0,
         "missed": sorted({r["id"] for r in pad_a if not r["expected_shown"]}),
     }
+    called = [r for r in rows if r.get("prompt_chars")]
+    pages = {
+        "rows_with": sum(bool(r.get("passages")) for r in rows),
+        "mean_passages": (sum(len(r.get("passages") or []) for r in called) / len(called)
+                          if called else 0.0),
+        "mean_prompt_chars": (sum(r["prompt_chars"] for r in called) / len(called)
+                              if called else 0.0),
+        "a_grounded_by_page": sum(bool(r.get("grounded_by_page")) for r in rows),
+    }
     return {
-        "pad": pad,
+        "pad": pad, "pages": pages,
         "n_rows": len(rows), "n_errors": len(errors),
         "errors_by_code": dict(Counter(f"{e['stage']}:{e['code']}" for e in errors)),
         "final_leaks": sum(bool(r["final_leaks"]) for r in rows),
         "final_leaks_echo_only": sum(bool(r["final_leaks"])
                                      and all(h["echo"] for h in r["final_leaks"]) for r in rows),
+        # Mọi chuỗi trúng đều có trên trang người chơi đã đọc (D-143): vẫn tính lộ, đọc tay.
+        "final_leaks_on_page_only": sum(bool(r["final_leaks"])
+                                        and all(h.get("on_page") for h in r["final_leaks"])
+                                        for r in rows),
         "raw_leaks": sum(bool(r["raw_leaks"]) for r in rows),
         "by_type": by_type, "by_chapter": by_chapter, "judge": judge, "cost": cost,
     }
@@ -1283,10 +1335,18 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
          f"{report['n_errors']} lỗi; dry-run: {dry}."),
         (f"- Model trả lời: {', '.join(f'`{m}`' for m in report['cost']['served_models']) or '—'}."),
     ]
+    if fp.get("narrator_pages", {}).get("top_k"):
+        pg = report["pages"]
+        lines.append(
+            f"- Đoạn trên trang (D-143): {pg['rows_with']}/{n} lượt có đoạn, trung bình "
+            f"{pg['mean_passages']:.1f} đoạn mỗi lời gọi; context trung bình "
+            f"{pg['mean_prompt_chars']:.0f} ký tự; loại a dẫn đúng nhờ đoạn: "
+            f"{pg['a_grounded_by_page']}.")
     if report["final_leaks"]:
         lines.append(f"- **LỖI NGHIÊM TRỌNG: {report['final_leaks']} lượt lộ ở câu cuối** (phải "
                      f"bằng 0); trong đó {report['final_leaks_echo_only']} lượt chỉ nhắc lại chữ "
-                     "của câu hỏi. Chi tiết ở mục \"Lộ ở câu cuối\".")
+                     f"của câu hỏi, {report['final_leaks_on_page_only']} lượt chỉ trúng chữ có trên "
+                     "trang đã đọc. Chi tiết ở mục \"Lộ ở câu cuối\".")
     else:
         lines.append("- **Lộ ở câu cuối: 0** (phải bằng 0).")
     lines += [
@@ -1344,6 +1404,7 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
                   "|---|---|---|---|"]
         for r in leaked:
             terms = "; ".join(f"{h['kind']}: {h['term']}{' (echo)' if h['echo'] else ''}"
+                              f"{' (có trên trang đã đọc)' if h.get('on_page') else ''}"
                               for h in r["final_leaks"])
             lines.append(f"| {r['id']} | {r['sample']} | {_cut(terms, 120)} | {_cut(r['final'])} |")
     failed = [r for r in rows if not r["ok"]]
@@ -1379,11 +1440,14 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int, judge: bool) 
     price = merged_prices(config, data.run.prices)[model]
     schema_chars = len(json.dumps(NarratorOutput.model_json_schema(), ensure_ascii=False))
     typ = worst = 0.0
+    on = prompt_version(config) == PAGES_PROMPT_VERSION
     for q in data.questions.questions:
         view = data.state_for(q).view
+        passages = (select_passages(data.texts[q.id], view, data.pages,
+                                    config.limits.narrator_pages) if on else None)
         messages = build_messages(
             data.texts[q.id], view,
-            select_notebook(data.texts[q.id], view, config.limits.narrator_notebook))
+            select_notebook(data.texts[q.id], view, config.limits.narrator_notebook), passages)
         tokens_in = math.ceil((sum(len(m.content) for m in messages) + schema_chars)
                               / EST_CHARS_PER_TOKEN)
         typ += (tokens_in * price.input + TYPICAL_NARRATOR_OUTPUT_TOKENS * price.output) / 1e6

@@ -51,6 +51,8 @@ from writory.safety.moderate import ModerationResult, Source, Verdict, moderate
 from writory.safety.wrap import CLOSE_TAG
 
 SAMPLE = read_sample()
+# Văn đã hiện của truyện mẫu; ở file này người kể tắt đoạn trên trang nên không dùng tới (D-143).
+PAGES = {c.number: c.text for c in SAMPLE.chapters if c.number >= 1 and c.text}
 STORY = "s-narrator"
 PLAN = StoryPlan.model_validate({
     "acts": [{"name": "mở đầu", "from_chapter": 1, "to_chapter": 12}],
@@ -71,12 +73,15 @@ REDTEAM = yaml.safe_load(
 OPEN_RE = re.compile(r'<player_data source="[a-z_]+">')
 
 REPO = load_config()
+# Các test ở file này giữ đường `narrator-3` (chỉ sổ tay): tắt đoạn trên trang (`top_k: 0`, D-143).
+# Đường `narrator-4` có file riêng: tests/unit/test_narrator_pages.py.
 CFG = REPO.model_copy(update={
     "limits": REPO.limits.model_copy(update={
         "input": REPO.limits.input.model_copy(update={"narrator_question_max_chars": 300}),
         "rate_limit": REPO.limits.rate_limit.model_copy(
             update={"narrator_questions_per_chapter": 3}
         ),
+        "narrator_pages": REPO.limits.narrator_pages.model_copy(update={"top_k": 0}),
     }),
     "models": REPO.models.model_copy(update={
         "roles": REPO.models.roles.model_copy(update={"narrator": "test/narrator"}),
@@ -154,7 +159,7 @@ async def ask_full(question: str, chapter: int, llm, *, quota=None, config=CFG, 
     return await ask_narrator(
         question, view(chapter), llm=llm, config=config,
         truth_names=state(chapter).named_nodes(), plan=plan, story_brief=brief,
-        quota=quota if quota is not None else MemoryQuota(),
+        quota=quota if quota is not None else MemoryQuota(), pages=PAGES,
     )
 
 
@@ -170,7 +175,7 @@ async def ask_reply(question: str, chapter: int, llm, *, quota=None, config=CFG,
     return await ask_narrator_reply(
         question, view(chapter), llm=llm, config=config,
         truth_names=state(chapter).named_nodes(), plan=plan, story_brief=brief,
-        quota=quota if quota is not None else MemoryQuota(),
+        quota=quota if quota is not None else MemoryQuota(), pages=PAGES,
     )
 
 
@@ -740,7 +745,8 @@ async def test_question_at_max_length_is_accepted():
 async def test_model_call_must_be_metered():
     with pytest.raises(TypeError):
         await ask_narrator("Lan là ai?", view(3), llm=FakeLLM.scripted([]), config=CFG,
-                           truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota())
+                           truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota(),
+                           pages=PAGES)
 
 
 async def test_cost_is_recorded_and_cap_stops_before_calling():
@@ -886,7 +892,8 @@ async def test_reply_raises_the_same_errors_as_ask_narrator(question, change, co
 async def test_reply_also_requires_metered_client():
     with pytest.raises(TypeError):
         await ask_narrator_reply("Lan là ai?", view(3), llm=FakeLLM.scripted([]), config=CFG,
-                                 truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota())
+                                 truth_names={}, plan=PLAN, story_brief="", quota=MemoryQuota(),
+                                 pages=PAGES)
 
 
 # --- kiểm duyệt đầu vào (G9, D-57): cổng `moderate` -------------------------------------------------
@@ -909,7 +916,7 @@ async def ask_gated(question, chapter, fake, gate, *, quota=None):
     return await ask_narrator_reply(
         question, view(chapter), llm=metered(fake), config=CFG,
         truth_names=state(chapter).named_nodes(), plan=PLAN, story_brief="",
-        quota=quota if quota is not None else MemoryQuota(), moderate=gate,
+        quota=quota if quota is not None else MemoryQuota(), moderate=gate, pages=PAGES,
     )
 
 
@@ -951,7 +958,8 @@ async def test_gate_is_optional_for_the_bench_path():
     fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
     out = await ask_narrator_reply(
         "Lão Gù chết ở đâu?", v, llm=metered(fake), config=CFG,
-        truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=MemoryQuota())
+        truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=MemoryQuota(),
+        pages=PAGES)
     assert out.blocked is None
 
 
@@ -980,7 +988,7 @@ async def ask_answer_gated(question, chapter, fake, gate, *, quota=None, input_g
         question, view(chapter), llm=metered(fake), config=CFG,
         truth_names=state(chapter).named_nodes(), plan=PLAN, story_brief="",
         quota=quota if quota is not None else MemoryQuota(), moderate=input_gate,
-        moderate_answer=gate,
+        moderate_answer=gate, pages=PAGES,
     )
 
 
@@ -1078,6 +1086,7 @@ async def test_answer_moderation_reaches_the_moderation_model_as_wrapped_data():
         await ask_narrator(
             "Lão Gù chết ở đâu?", v, llm=client, config=CFG,
             truth_names=state(3).named_nodes(), plan=PLAN, story_brief="", quota=quota,
+            pages=PAGES,
             moderate_answer=partial(moderate, source=Source.SCENE, llm=client, config=CFG,
                                     darkness_level="light"))
     assert exc.value.code is ErrorCode.NARRATOR_ANSWER_BLOCKED and not quota.taken[(STORY, 3)]

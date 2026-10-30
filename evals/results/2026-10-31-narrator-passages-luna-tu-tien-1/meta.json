@@ -1,0 +1,104 @@
+{
+  "bench": "E",
+  "created": "2026-10-31T00:00:15+07:00",
+  "narrator": {
+    "model": "openai/gpt-6-luna",
+    "reasoning": "low"
+  },
+  "judge": {
+    "model": "claude-sonnet-5-5",
+    "effort": "high",
+    "thinking": "adaptive",
+    "max_tokens": 8000
+  },
+  "versions": {
+    "questions": 1,
+    "plan": 1,
+    "run": 1
+  },
+  "story": {
+    "kind": "run",
+    "run_dir": "evals/results/2026-10-20-run-tu-tien-1"
+  },
+  "notebook_pad": null,
+  "fingerprint": {
+    "data_files": {
+      "questions": "questions-tu-tien-1.yaml",
+      "plan": "plan-tu-tien-1.yaml",
+      "run": "run.yaml"
+    },
+    "dry_run": false,
+    "fake": null,
+    "data_sha256": {
+      "questions-tu-tien-1.yaml": "a3ccbb011e93e4cbe19bd0403dce39aff1125604da73dc199ec7391d57bbbeb2",
+      "plan-tu-tien-1.yaml": "24d740a95aba8759b9036397c70af1e0ba92fda11fb85e932e63dcc0907297ef",
+      "run.yaml": "475080ebc14fd1abfcdb82fc3cb1783577e95782a29777778f01bc2e5f2bd348",
+      "redteam/g4_prompt_injection.yaml": "00e14c08189d38519f523d0fc2c234e0cbd98084c112fb4ec9a2191463ff6f58",
+      "run/truth_dump.json": "e99a43f259540cc451e28b387ef0c20d548b4b0fc228a87e8fdd331bfb7a5761",
+      "run/setup.json": "2ef64323ae817be93df2203c7739f3850ca9818f58d525907b49e2efbcd31228",
+      "run/meta.json": "ec492323508f895080acbf09fb338b845db02c70eb656bf170634b3ab49e2a29",
+      "run/chapters/ch01.md": "fdc3ecedfd2f603f52e275ad3cbe84b935e15538c56377731520c6b4693a5906",
+      "run/chapters/ch02.md": "d8ac20fc479b5a56d20b9aa995c1720cb18124a492196929af55c571ad59a324",
+      "run/chapters/ch03.md": "aa7991f4fe09ae8c2cd2e608eab10f3967a571518ae8e0bcfb26c2d6bc190c59",
+      "run/chapters/ch04.md": "42a9e256096a3c13d7496714129f0d03f9720e15a64d9cc9f66c1b5d751cdae5",
+      "run/chapters/ch05.md": "63bd9b9c23f31a163bd640bad9315d714bf782616324e9c5f6af588d93b5ce8b",
+      "run/chapters/ch06.md": "c2c79225f3663a256002098f6ee2c07e619a9e66f36f3e064f39a6bfe55bb2b8"
+    },
+    "config_sha256": {
+      "models.yaml": "1b7c267c3caed62b138c98bba384c256aad5d992d27126f5f7faff33da54726b",
+      "limits.yaml": "90c0b92c39bcea3414369ebafd6b07c86614ff936836b01f835ace6152e5dd38"
+    },
+    "provider": "openrouter",
+    "narrator": {
+      "model": "openai/gpt-6-luna",
+      "reasoning": "low"
+    },
+    "narrator_prompt": "narrator-4",
+    "narrator_prompt_sha256": "4466f41d8154b74a4771ea611a64ca6784d5f3f8f547fb0f669054cf3ff67b5c",
+    "narrator_pages": {
+      "top_k": 4,
+      "chunk_chars": 500,
+      "max_chars": 3600,
+      "neighbors": 1
+    },
+    "judge_frame": "e-judge-1",
+    "judge_frame_sha256": "bd8eaa9aa5a16cd2ffb1d681c0f99fc1586c6cc5b517dad3e047d21ce9ed257b"
+  },
+  "runs": [
+    {
+      "started": "2026-10-31T00:00:15+07:00",
+      "commit": "f431a6f4652015070284ca0041e40e1bca40412c",
+      "dirty": false,
+      "argv": [
+        "run",
+        "--label",
+        "passages-luna-tu-tien-1",
+        "--env-file",
+        "C:/Work/AI/WriTory/.env",
+        "--questions-file",
+        "questions-tu-tien-1.yaml",
+        "--plan-file",
+        "plan-tu-tien-1.yaml",
+        "--samples",
+        "1",
+        "--budget",
+        "0.05"
+      ],
+      "samples": 1,
+      "concurrency": 4,
+      "judge": false,
+      "questions": "all",
+      "budgets": {
+        "openrouter": 0.05,
+        "anthropic": null
+      },
+      "finished": "2026-10-31T00:00:34+07:00",
+      "wall_s": 19.3,
+      "stopped": null,
+      "spent_usd": {
+        "openrouter": 0.011269,
+        "anthropic": 0
+      }
+    }
+  ]
+}

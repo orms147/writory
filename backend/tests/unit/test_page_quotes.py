@@ -155,17 +155,21 @@ async def test_no_other_role_receives_passages(tmp_path):
     assert len(llm.calls) == len(prompts(llm, "outline", "writer", "choices", "extract", "summary"))
 
 
-def test_only_the_chapter_pipeline_uses_the_passage_store():
-    """Sổ tay, người kể, lựa chọn không nhập `pipeline.passages` (G1): thêm nơi dùng mới là phải
-    nghĩ lại về lớp truth và sửa danh sách này."""
+def test_only_the_chapter_pipeline_and_the_narrator_use_the_passage_store():
+    """Sổ tay, lựa chọn không nhập `pipeline.passages` (G1): thêm nơi dùng mới là phải nghĩ lại về
+    lớp truth và sửa danh sách này."""
     root = Path(__file__).parents[2] / "src" / "writory"
     users = {p.relative_to(root).as_posix() for p in root.rglob("*.py")
              if "pipeline.passages" in p.read_text(encoding="utf-8")}
     # extract.py chỉ dùng `flat` và `STOPWORDS` để so chữ Fact mới với trang (D-93): không đưa đoạn
     # nào vào đề của vai nào.
     # bench_a_retrieval.py là phép kiểm truy hồi không gọi model (D-96).
-    assert users == {"pipeline/bench_a_retrieval.py", "pipeline/bench_a_systems.py",
-                     "pipeline/chapter.py", "pipeline/extract.py", "pipeline/scene.py"}
+    # narrator.py (D-143): người kể nhận đoạn văn của chương 1..chương của player_view, chữ người chơi
+    # đã đọc; G1 kiểm trên context model nhận ở tests/unit/test_narrator_pages.py.
+    # bench_a_narrator.py chỉ dùng `flat` cho model giả của bài đo.
+    assert users == {"pipeline/bench_a_narrator.py", "pipeline/bench_a_retrieval.py",
+                     "pipeline/bench_a_systems.py", "pipeline/chapter.py", "pipeline/extract.py",
+                     "pipeline/narrator.py", "pipeline/scene.py"}
 
 
 # --- G4: đoạn là dữ liệu --------------------------------------------------------------------------------

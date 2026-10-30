@@ -33,6 +33,7 @@ from writory.db import (
     OwnerCosts,
     StoryRecord,
     chapter_costs,
+    committed_page_texts,
     committed_player_view,
     connect,
     delete_player_key,
@@ -274,6 +275,18 @@ def lock_narrator(story: OwnedStory, conn: PgConn) -> Iterator[None]:
 def get_player_view(story: OwnedStory, conn: PgConn, driver: Neo4jDriver) -> PlayerView:
     """player_view ở chương đã commit (D-6)."""
     return committed_player_view(conn, driver, story.id)
+
+
+def get_page_texts(story: OwnedStory, conn: PgConn, config: Config) -> dict[int, str]:
+    """Văn đã hiện của các chương đã commit, cho người kể (D-143): đúng chữ người chơi đã đọc. Chương
+    lấy từ bản ghi truyện của yêu cầu; người kể còn tự bỏ chương sau `player_view` (G1). Tắt
+    (`limits.narrator_pages.top_k` 0) hay chưa đặt thì không đọc gì: người kể tự báo lỗi cấu hình."""
+    if not config.limits.narrator_pages.top_k:
+        return {}
+    return committed_page_texts(conn, story.id, story.committed_chapter or 0)
+
+
+PageTexts = Annotated[dict[int, str], Depends(get_page_texts)]
 
 
 def get_truth_names(story: OwnedStory, driver: Neo4jDriver) -> Mapping[str, tuple[str, ...]]:
