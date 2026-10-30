@@ -15,6 +15,13 @@ mỗi ca 4 lời gọi xen kẽ 8, 11, 8, 11.
 
 Trần chi phí: dừng trước lời gọi tiếp theo nếu chi tiêu thật + 1,5 × lời gọi đắt nhất đã thấy (hoặc
 ước tính tối đa của lời gọi đầu) vượt `--budget`; hết ngân sách thì các lời gọi còn lại ghi là không chạy.
+Lời gọi hỏng đường truyền (không có `usage`, có thể vẫn bị tính tiền) được tính vào trần như một lời gọi
+đắt nhất đã thấy.
+
+Lần chạy đầu (`attempt1_calls.jsonl`) chết ở lời gọi thứ 8 vì `LLM_UNAVAILABLE: ReadTimeout` và mất đầu
+ra của 7 lời gọi đã xong (kết quả chỉ ghi lúc cuối). Từ đó: mỗi dòng `results.jsonl` ghi ngay khi có; lỗi
+tạm (`LLM_UNAVAILABLE`, `LLM_TIMEOUT`) thử lại một lần sau `RETRY_WAIT_S` giây; lỗi khác hay hỏng lần hai
+thì ghi vào `failed` của meta và chạy tiếp. Không đổi ca, đề, schema hay cách chấm.
 """
 
 import argparse
@@ -31,6 +38,7 @@ from pathlib import Path
 from pydantic import BaseModel, ConfigDict
 
 from writory.config import REPO_ROOT, load_config
+from writory.errors import ErrorCode, WritoryError
 from writory.graph import ChangePackage
 from writory.graph.schema import EDGE_TYPES
 from writory.guard.state import EmptyState, OverlayState
@@ -69,6 +77,8 @@ CASES: list[tuple[str, str, int]] = [
     ("3-ngu-canh", TU, 18), ("3-ngu-canh", KY, 22), ("3-ngu-canh", KY, 23), ("3-ngu-canh", TU, 17),
 ]
 REPEATS = 2
+RETRY_WAIT_S = 10
+TRANSIENT = {ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT}
 V8, V11 = "extract-8", "extract-11"
 ORDER = [(V8, 1), (V11, 1), (V8, 2), (V11, 2)]
 
@@ -211,15 +221,23 @@ class CappedLLM(LLMClient):
         self.max_call = 0.0
         self.halted: str | None = None
         self.calls = 0
+        self.unknown_cost_calls = 0  # lời gọi hỏng đường truyền: không biết chi phí
 
     async def chat(self, model, messages, *, response_schema=None, extra=None) -> ChatResult:
         bound = self._est.bound(extra)
         reserve = 1.5 * self.max_call if self.max_call else self._est.max_cost(
             model, messages, response_schema)
-        if self.spent + reserve > self._budget:
-            self.halted = f"chi {self.spent:.4f} + giữ chỗ {reserve:.4f} > trần {self._budget:.2f}"
+        unknown = self.unknown_cost_calls * self.max_call
+        if self.spent + unknown + reserve > self._budget:
+            self.halted = (f"chi {self.spent:.4f} + không rõ {unknown:.4f} + giữ chỗ {reserve:.4f} "
+                           f"> trần {self._budget:.2f}")
             raise RuntimeError(self.halted)
-        result = await self._inner.chat(model, messages, response_schema=response_schema, extra=bound)
+        try:
+            result = await self._inner.chat(model, messages, response_schema=response_schema,
+                                            extra=bound)
+        except WritoryError:
+            self.unknown_cost_calls += 1
+            raise
         cost = result.usage.cost_usd or 0.0
         self.spent += cost
         self.max_call = max(self.max_call, cost)
@@ -269,6 +287,7 @@ async def main() -> int:
     if not args.dry_run:
         out.mkdir(parents=True, exist_ok=True)
     calls_log = (out / "calls.jsonl").open("w", encoding="utf-8") if not args.dry_run else None
+    results_log = (out / "results.jsonl").open("w", encoding="utf-8") if not args.dry_run else None
     current: dict = {}
 
     def record(row: dict) -> None:
@@ -286,7 +305,18 @@ async def main() -> int:
         inner = OpenRouterClient(keys.openrouter_api_key, deadline_s=300)
     llm = CappedLLM(inner, estimator, args.budget, record)
 
-    results, skipped = [], []
+    async def call(messages, schema):
+        for attempt in (1, 2):
+            try:
+                return await llm.chat_json(model, messages, schema, extra=extra)
+            except WritoryError as e:
+                failed.append(dict(current) | {"attempt": attempt, "code": e.code.value})
+                if e.code not in TRANSIENT or attempt == 2:
+                    raise
+                await asyncio.sleep(RETRY_WAIT_S)
+        raise AssertionError("unreachable")
+
+    results, skipped, failed = [], [], []
     for case in cases:
         if dry is not None:
             dry.case = case
@@ -295,10 +325,11 @@ async def main() -> int:
             current.update({"run": case.run, "chapter": case.chapter, "version": version, "rep": rep,
                             "group": case.group})
             try:
-                raw, chat = await llm.chat_json(model, case.messages[version], SCHEMAS[version],
-                                                extra=extra)
+                raw, chat = await call(case.messages[version], SCHEMAS[version])
             except RuntimeError:
                 skipped.append(dict(current))
+                continue
+            except WritoryError:
                 continue
             output = ExtractOutput.model_validate(raw.model_dump())  # `quote` cũ thành một đoạn
             marks, rejected = accept_milestones(output, case.pending, case.done, case.text)
@@ -312,20 +343,22 @@ async def main() -> int:
                 "cost_usd": round(chat.usage.cost_usd or 0.0, 6),
                 "prompt_tokens": chat.usage.prompt_tokens,
                 "cached_tokens": chat.usage.cached_tokens})
+            if results_log:
+                results_log.write(json.dumps(results[-1], ensure_ascii=False) + "\n")
+                results_log.flush()
     if not args.dry_run:
-        with (out / "results.jsonl").open("w", encoding="utf-8") as fh:
-            for row in results:
-                fh.write(json.dumps(row, ensure_ascii=False) + "\n")
         cfg_hash = config_sha256(REPO_ROOT / "config")
         (out / "meta.json").write_text(json.dumps({
             "bench": "climax-milestone-replay", "git": git_info(), "model": model, "extra": extra,
             "config_sha256": cfg_hash["combined"], "budget_usd": args.budget,
             "spent_usd": round(llm.spent, 6), "calls": llm.calls, "halted": llm.halted,
+            "unknown_cost_calls": llm.unknown_cost_calls, "failed": failed,
             "skipped": skipped, "versions": [V8, V11], "repeats": REPEATS,
             "prompt_sha256": {V8: _sha(PROMPT_8), V11: _sha(PROMPT_11)},
             "cases": [list(c) for c in CASES],
         }, ensure_ascii=False, indent=1), encoding="utf-8")
-    print(f"{len(results)} lời gọi xong, bỏ qua {len(skipped)}, chi {llm.spent:.4f} USD"
+    print(f"{len(results)} lời gọi xong, bỏ qua {len(skipped)}, hỏng {len(failed)} lần, "
+          f"chi {llm.spent:.4f} USD"
           + (f" (dừng: {llm.halted})" if llm.halted else "") + (" [dry-run]" if args.dry_run else ""))
     for r in results:
         g3 = sum("(G3)" in w for _, w in r["rejected"])
