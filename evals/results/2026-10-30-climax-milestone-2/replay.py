@@ -1,5 +1,8 @@
 """Phát lại bộ trích `extract-8` và `extract-11` trên chương đã lưu, n=2 (khai trước ở `expectations.md`, D-139).
 
+`extract-11` không gộp (D-139): script này cần code của nhánh ở commit `b1f5b2d` (schema `quotes`,
+`graph.quote_parts_in_text`); chạy lại đúng như lần đo thì checkout commit đó.
+
 Chạy từ `backend/` (một mình, không song song với lượt khác dùng cùng key):
     uv run python ../evals/results/2026-10-30-climax-milestone-2/replay.py --dry-run
     uv run python ../evals/results/2026-10-30-climax-milestone-2/replay.py --budget 0.10

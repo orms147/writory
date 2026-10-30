@@ -200,39 +200,6 @@ def quote_in_text(quote: str, text: str) -> bool:
     return bool(q) and q in _normalize(text)
 
 
-# Câu trích nhiều đoạn của mốc cốt truyện (D-139): lưu thành MỘT chuỗi mỗi mốc ở `milestone_quotes`
-# (Neo4j không có danh sách lồng), các đoạn nối bằng dấu này. Câu một đoạn lưu y như trước D-139.
-QUOTE_PART_MARK = "[…]"
-QUOTE_PART_SEP = f" {QUOTE_PART_MARK} "
-
-
-def join_quote_parts(parts: Sequence[str]) -> str:
-    """Chuỗi lưu của một câu trích nhiều đoạn (D-139); một đoạn thì đúng đoạn đó."""
-    return QUOTE_PART_SEP.join(p.strip() for p in parts)
-
-
-def quote_parts(stored: str) -> list[str]:
-    """Các đoạn của một câu trích đã lưu (D-139). Câu lưu trước D-139 là một đoạn. Văn có sẵn dấu
-    `QUOTE_PART_MARK` thì câu một đoạn bị tách ra, nhưng các mảnh vẫn liền nhau theo thứ tự trong
-    văn, nên `quote_parts_in_text` vẫn nhận: phép tách không làm câu thật thành sai hay ngược lại."""
-    return [p.strip() for p in stored.split(QUOTE_PART_MARK)]
-
-
-def quote_parts_in_text(parts: Sequence[str], text: str) -> bool:
-    """G3 cho câu trích nhiều đoạn (D-139): mỗi đoạn có nguyên văn trong văn bản (chuẩn hoá như
-    `quote_in_text`), các đoạn theo đúng thứ tự trong văn và không chồng lên nhau. Một đoạn thì đúng
-    như `quote_in_text`. Không có đoạn nào, hay có đoạn rỗng, thì sai."""
-    page = _normalize(text)
-    start = 0
-    for part in parts:
-        q = _normalize(part)
-        at = page.find(q, start) if q else -1
-        if at < 0:
-            return False
-        start = at + len(q)
-    return bool(parts)
-
-
 _QUOTE_SHOWN_CHARS = 80
 
 
@@ -243,8 +210,7 @@ def quote_problems(package: ChangePackage, scenes: Sequence[str], *, protagonist
     - `REVEALED_TO_PLAYER` và `KNOWS` từ nhân vật chính: bắt buộc có `quote`, và `quote` ở trên trang.
     - `RESOLVED_IN` có `quote`: `quote` ở trên trang (gói dựng tay có thể không có quote).
     - Nút `Chapter` mang `milestones` (mốc đã diễn ra, D-116): có đủ một `milestone_quotes` cho mỗi
-      mốc, và mỗi câu ở trên trang; câu nhiều đoạn (D-139) thì mọi đoạn trong cùng một cảnh, đúng thứ
-      tự (`quote_parts_in_text`).
+      mốc, và mỗi câu ở trên trang.
 
     Mọi câu trích của đường pipeline đều lấy từ chữ một cảnh: bộ trích (`to_package`), tự hé lộ
     (D-62, câu chứa tên), Fact mới (D-93). Chương 0 không qua đây: câu trích của nó là dòng của
@@ -271,8 +237,7 @@ def quote_problems(package: ChangePackage, scenes: Sequence[str], *, protagonist
             problems.append(f"nút {n.id}: mốc đã diễn ra thiếu câu trích tương ứng (G3)")
             continue
         for number, quote in zip(marks, quotes, strict=True):
-            if not isinstance(quote, str) or not any(
-                    quote_parts_in_text(quote_parts(quote), s) for s in scenes):
+            if not isinstance(quote, str) or not any(quote_in_text(quote, s) for s in scenes):
                 shown = _normalize(str(quote))[:_QUOTE_SHOWN_CHARS]
                 problems.append(f"nút {n.id}: câu trích của mốc {number} không có trong văn chương: "
                                 f"{shown!r}")

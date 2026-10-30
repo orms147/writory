@@ -50,7 +50,7 @@ from tests.pipeline_fixtures import (
 )
 from writory.config import load_config
 from writory.errors import MESSAGES, ErrorCode
-from writory.graph import ChangePackage, EdgeSpec, join_quote_parts, quote_parts
+from writory.graph import ChangePackage, EdgeSpec
 from writory.graph.package import CloseSpec
 from writory.llm.base import role_extra
 from writory.llm.cost import CostTracker
@@ -1873,46 +1873,13 @@ async def test_a_milestone_marked_on_the_page_lands_on_the_chapter_node_and_stop
     assert node.props["milestones"] == [1] and node.props["milestone_quotes"] == [MS_QUOTE]
     # Cảnh 1: bộ trích nhận mốc 1 và 2 (mốc kết không theo dõi). Cảnh 2: mốc 1 đã xong ở cảnh trước.
     first, second = extractor_calls(llm)
-    assert "- m1 | bước ngoặt | chương 3–5 | Lan lộ ra" in first[-1].content
-    assert "- m2 | cao trào | chương 6–8" in first[-1].content
-    assert "- m1 |" not in second[-1].content and "- m2 | cao trào | chương 6–8" in second[-1].content
+    assert "- m1 | chương 3–5 | Lan lộ ra" in first[-1].content and "- m2 | chương 6–8" in first[-1].content
+    assert "- m1 |" not in second[-1].content and "- m2 | chương 6–8" in second[-1].content
     # Dàn ý và đề viết của cảnh 2 ghi mốc 1 đã xảy ra ở chương 4 thay vì giục lại.
     outline_two = calls_of(llm, "outline")[1][-1].content
     assert "Mốc ĐÃ xảy ra rồi" in outline_two and "xảy ra ở chương 4" in outline_two
     assert "Đang diễn ra (bước ngoặt" not in outline_two
     assert outcome.committed
-
-
-async def test_a_mark_quoted_in_parts_is_stored_on_the_chapter_node_and_passes_the_commit_check(
-        tmp_path):
-    """D-139: câu trích nhiều đoạn (mỗi đoạn nguyên văn, đúng thứ tự, trong cảnh) được nhận, lưu một
-    chuỗi mỗi mốc ở `milestone_quotes`, qua kiểm G3 ở bước ghi (kho trong bộ nhớ chạy `quote_problems`),
-    và chương sau không đánh dấu lại."""
-    parts = ["Ăn xong, Lan dọn bát.", "Em cũng tin anh."]
-    assert all(p in SCENE_1 for p in parts)
-    store = MemoryStore()
-    script = ms_script(extract_reply(milestones=[{"id": "m1", "quotes": parts}]))
-    events, outcome, _, _ = await run(script, tmp_path / "a", store=store, plan=MS_PLAN)
-    assert kinds(events)[-1] == "choices_ready" and outcome.committed
-    node = ms_chapter_node(store.commits[-1][2])
-    assert node.props["milestones"] == [1]
-    assert node.props["milestone_quotes"] == [join_quote_parts(parts)]
-    assert quote_parts(node.props["milestone_quotes"][0]) == parts
-    _, _, llm, _ = await run(ms_script(extract_reply(), extract_reply()), tmp_path / "b",
-                             store=store, plan=MS_PLAN, req=request(commit_id="c-ch5"))
-    assert "- m1 |" not in extractor_calls(llm)[0][-1].content
-
-
-async def test_a_mark_whose_parts_are_out_of_order_is_dropped_and_the_chapter_still_commits(tmp_path):
-    store = MemoryStore()
-    parts = ["Em cũng tin anh.", "Ăn xong, Lan dọn bát."]
-    events, outcome, _, _ = await run(
-        ms_script(extract_reply(milestones=[{"id": "m1", "quotes": parts}])), tmp_path,
-        store=store, plan=MS_PLAN)
-    assert kinds(events)[-1] == "choices_ready" and outcome.committed
-    assert "milestones" not in ms_chapter_node(store.commits[-1][2]).props
-    reasons = [why for review in outcome.reviews for _, why in review.rejected]
-    assert "các đoạn trích mốc sai thứ tự hay chồng nhau (G3)" in reasons
 
 
 async def test_the_next_chapter_does_not_nudge_the_milestone_again(tmp_path):
@@ -1966,18 +1933,15 @@ async def test_a_chapter_that_is_blocked_writes_no_mark_anywhere(tmp_path):
     assert not any("milestones" in n.props for p in store.packages for n in p.nodes)
 
 
-@pytest.mark.parametrize("mark", [
-    MS_MARK, {"id": "m1", "quotes": ["Ăn xong, Lan dọn bát.", "Em cũng tin anh."]}])
-async def test_milestone_text_and_quotes_never_reach_choices_or_the_notebook(tmp_path, mark):
+async def test_milestone_text_and_quotes_never_reach_choices_or_the_notebook(tmp_path):
     """G1: mô tả mốc và câu trích mốc chỉ ở đề của dàn ý, viết, bộ trích; không ở đề tạo lựa chọn,
-    người kể hay sổ tay (player_view). Câu trích nhiều đoạn (D-139) cũng vậy."""
+    người kể hay sổ tay (player_view)."""
     store = MemoryStore()
-    events, _, llm, _ = await run(ms_script(extract_reply(milestones=[mark])), tmp_path,
+    events, _, llm, _ = await run(ms_script(extract_reply(milestones=[MS_MARK])), tmp_path,
                                   store=store, plan=MS_PLAN)
     assert kinds(events)[-1] == "choices_ready"
-    assert ms_chapter_node(store.commits[-1][2]).props["milestones"] == [1]
     secret_bits = ("Lan lộ ra là người biết chuyện thanh kiếm", "Minh bỏ phố Bến Sương",
-                   "Mốc ĐÃ xảy ra", "chưa xảy ra (id |", "[…]")
+                   "Mốc ĐÃ xảy ra", "chưa xảy ra (id |")
     [choices_call] = calls_of(llm, "choices")
     sent = "\n".join(m.content for m in choices_call)
     assert not any(bit in sent for bit in secret_bits)

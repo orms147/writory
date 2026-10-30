@@ -1,9 +1,7 @@
 """Mốc cốt truyện đã diễn ra (D-116): dấu nằm ở thuộc tính nút `Chapter`, ghi cùng gói chương (D-6),
 câu trích kiểm lại ở bước ghi (G3), và báo cáo so kế hoạch với kết quả."""
 
-import pytest
-
-from writory.graph import ChangePackage, NodeSpec, join_quote_parts
+from writory.graph import ChangePackage, NodeSpec
 from writory.graph.package import quote_problems
 from writory.guard.plan import MilestoneProgress, PlanProgress
 from writory.pipeline.bench_run import plan_vs_result
@@ -59,38 +57,6 @@ def test_commit_time_check_rejects_marks_without_a_matching_quote():
 
 def test_a_chapter_without_marks_has_no_milestone_problem():
     assert quote_problems(_package(), ["x"], protagonist="") == []
-
-
-# --- câu trích nhiều đoạn (D-139): một chuỗi mỗi mốc, các đoạn nối bằng " […] " -----------------------
-
-PAGE = "Cánh cửa mở. Gió lùa vào gác. Minh bước xuống bậc thang đá. Sau lưng anh, then cài lại."
-PARTS = ["Cánh cửa mở.", "Minh bước xuống bậc thang đá."]
-
-
-def test_merge_keeps_one_stored_quote_per_mark_when_a_quote_has_parts():
-    package = merge_scene_packages(
-        "c", CHAPTER, [SCENE],
-        milestones=[MilestoneMark(2, join_quote_parts(PARTS)), MilestoneMark(1, "câu một")])
-    props = package.nodes[0].props
-    assert props["milestones"] == [2, 1]
-    assert props["milestone_quotes"] == ["Cánh cửa mở. […] Minh bước xuống bậc thang đá.", "câu một"]
-
-
-def test_commit_time_check_accepts_parts_in_order_inside_one_scene():
-    pkg = _package(milestones=[1, 2], milestone_quotes=[join_quote_parts(PARTS), "then cài lại"])
-    assert quote_problems(pkg, ["Cảnh trước.", PAGE], protagonist="") == []
-
-
-@pytest.mark.parametrize(("quote", "scenes"), [
-    (join_quote_parts(PARTS[::-1]), [PAGE]),  # sai thứ tự
-    (join_quote_parts(["Cánh cửa đã mở.", PARTS[1]]), [PAGE]),  # một đoạn bị sửa chữ
-    (join_quote_parts(PARTS), ["Cánh cửa mở.", "Minh bước xuống bậc thang đá."]),  # hai cảnh
-    ("Cánh cửa mở. [...] Minh bước xuống bậc thang đá.", [PAGE]),  # ghép bằng dấu khác, một đoạn
-])
-def test_commit_time_check_rejects_parts_out_of_order_edited_or_across_scenes(quote, scenes):
-    [problem] = quote_problems(_package(milestones=[1], milestone_quotes=[quote]), scenes,
-                               protagonist="")
-    assert "mốc 1" in problem
 
 
 def test_report_lists_each_milestone_with_its_window_and_the_chapter_it_happened_in():
