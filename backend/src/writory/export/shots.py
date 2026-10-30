@@ -15,12 +15,13 @@ Chữ truyện và chữ người chơi (tên, tiểu sử, nhân vật `user_au
 (G4). Chữ của bản xuất là lớp truth, không dành cho người chơi.
 """
 
+import math
 import re
 from collections.abc import Mapping, Sequence
 from dataclasses import dataclass
 from typing import Any, Literal
 
-from pydantic import BaseModel, ConfigDict
+from pydantic import BaseModel, ConfigDict, Field
 
 from writory.config import RetryLimits, VideoExportLimits
 from writory.errors import ErrorCode, WritoryError
@@ -29,7 +30,7 @@ from writory.llm.base import LLMClient, Message
 from writory.llm.retry import with_json_retries
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, escape_text, system_message, user_message
 
-PROMPT_VERSION = "video-1"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "video-2"  # đổi chữ prompt thì tăng số
 ROLE = "video"
 UNKNOWN_LOCATION = "unknown"  # `location_id` khi không nhận ra nơi chốn của shot
 
@@ -107,6 +108,13 @@ class SceneOutput(_Strict):
     shots: list[ShotDraft]
 
 
+class SceneResult(SceneOutput):
+    """Cảnh đã qua kiểm bằng code. `split_by_code[i]`: shot i do code sửa vì lời thoại dày hơn thời lượng
+    (tách thành nhiều shot, hay kéo dài thời lượng khi lời thoại vừa trong một shot; D-127)."""
+
+    split_by_code: list[bool] = Field(default_factory=list)
+
+
 @dataclass(frozen=True)
 class SheetItem:
     id: str
@@ -144,6 +152,76 @@ def _nonascii_ratio(text: str, names: Sequence[str] = ()) -> float:
     if not letters:
         return 0.0
     return sum(1 for c in letters if ord(c) > 127) / len(letters)
+
+
+_CHAR_LANGS = frozenset({"zh", "ja"})  # không có khoảng trắng giữa từ: đo bằng chữ; ngôn ngữ khác đo bằng từ
+PACE_MARK = "lời thoại dày:"  # đầu câu của lỗi nhịp thoại, để phân biệt với lỗi khác (`pace_only`)
+
+
+def _primary(tag: str) -> str:
+    return tag.split("-")[0].lower()
+
+
+def speech_units(tag: str, text: str) -> int:
+    """Lời nói đọc ra được: số chữ (zh, ja) hay số từ (ngôn ngữ khác). Dấu câu và ký hiệu không đọc thành tiếng
+    nên không tính."""
+    if _primary(tag) in _CHAR_LANGS:
+        return sum(1 for c in text if c.isalnum())
+    return sum(1 for word in text.split() if any(c.isalnum() for c in word))
+
+
+def pace_limit(limits: VideoExportLimits, tag: str) -> float | None:
+    """Tốc độ thoại tối đa (đơn vị mỗi giây) của ngôn ngữ, None nếu config không khai (khi đó không kiểm)."""
+    rates = limits.dialogue_max_per_second
+    return rates.get(_primary(tag)) if rates else None
+
+
+def _dialogue_units(shot: ShotDraft, tag: str) -> int:
+    return sum(speech_units(tag, d.text) for d in shot.dialogue)
+
+
+def pace_exceeded(shot: ShotDraft, limits: VideoExportLimits, tag: str) -> bool:
+    rate = pace_limit(limits, tag)
+    return rate is not None and _dialogue_units(shot, tag) > rate * shot.duration_s
+
+
+def pace_only(problems: Sequence[str]) -> bool:
+    """Mọi lỗi đều là lỗi nhịp thoại: câu trả lời hợp lệ ở mọi mặt khác, code tách được."""
+    return bool(problems) and all(PACE_MARK in p for p in problems)
+
+
+def split_dense_shots(drafts: Sequence[ShotDraft], limits: VideoExportLimits,
+                      tag: str) -> tuple[list[ShotDraft], list[bool]]:
+    """Shot nào có thoại dày hơn thời lượng thì code chia các lượt thoại (theo thứ tự) thành ít nhóm nhất mà
+    mỗi nhóm vừa một shot dài nhất; mỗi nhóm thành một shot giữ nguyên hành động, góc máy và `covers`, thời
+    lượng theo độ dài thoại của nhóm (trong khoảng của config). Một lượt thoại dài hơn mọi shot vẫn nằm
+    nguyên một shot (không mất chữ). Trả danh sách shot mới và cờ song song: shot đã bị code đổi."""
+    rate = pace_limit(limits, tag)
+    low, high = limits.require("shot_seconds_min"), limits.require("shot_seconds_max")
+    out: list[ShotDraft] = []
+    flags: list[bool] = []
+    for shot in drafts:
+        if rate is None or not pace_exceeded(shot, limits, tag):
+            out.append(shot)
+            flags.append(False)
+            continue
+        capacity = math.floor(rate * high)
+        groups: list[list[DialogueLine]] = []
+        sizes: list[int] = []
+        for spoken in shot.dialogue:
+            units = speech_units(tag, spoken.text)
+            if groups and sizes[-1] + units <= capacity:
+                groups[-1].append(spoken)
+                sizes[-1] += units
+            else:
+                groups.append([spoken])
+                sizes.append(units)
+        for group, units in zip(groups, sizes, strict=True):
+            part = shot.model_copy(update={"dialogue": group,
+                                           "duration_s": max(low, min(high, math.ceil(units / rate)))})
+            out.append(part)
+            flags.append(part != shot)
+    return out, flags
 
 
 def _bad(problems: Sequence[str], schema: str) -> WritoryError:
@@ -193,7 +271,9 @@ def sheet_problems(output: SheetOutput, characters: Sequence[str], locations: Se
 
 
 def scene_problems(output: SceneOutput, characters: Sequence[str], locations: Sequence[str],
-                   limits: VideoExportLimits, *, names: Sequence[str] = ()) -> list[str]:
+                   limits: VideoExportLimits, *, names: Sequence[str] = (),
+                   lang_tag: str | None = None) -> list[str]:
+    """`lang_tag`: thẻ ngôn ngữ của lời thoại; có thì kiểm thêm nhịp thoại (D-127), không thì bỏ qua."""
     most = limits.require("max_shots_per_scene")
     low, high = limits.require("shot_seconds_min"), limits.require("shot_seconds_max")
     problems = []
@@ -221,6 +301,11 @@ def scene_problems(output: SceneOutput, characters: Sequence[str], locations: Se
                 problems.append(f"{tag}: người nói {line.speaker_id!r} không nằm trong appears")
             if not _single_line(line.text) or not _single_line(line.source_text):
                 problems.append(f"{tag}: lời thoại rỗng")
+        if lang_tag is not None and pace_exceeded(shot, limits, lang_tag):
+            rate, unit = pace_limit(limits, lang_tag), "chữ" if _primary(lang_tag) in _CHAR_LANGS else "từ"
+            problems.append(f"{tag}: {PACE_MARK} {_dialogue_units(shot, lang_tag)} {unit} trong "
+                            f"{shot.duration_s} giây, vượt {rate:g} {unit}/giây (chia thành nhiều shot hay "
+                            f"kéo dài duration_s)")
     return problems
 
 
@@ -246,7 +331,7 @@ Split the scene into between 1 and {max_shots} shots, in story order, covering t
 - duration_s: whole seconds, between {low} and {high}; longer for spoken lines.
 - appears: ids of the characters visible in the shot, chosen only from the characters listed. The narrator "I" (tôi) is the protagonist.
 - action_en: what happens, in English, one or two plain sentences describing only what the camera sees. Refer to every character by exactly the name given in the character list, copied verbatim with its diacritics: never translate, romanize or abbreviate a name. Do not describe what the characters look like (their look is added separately) and do not name emotions that cannot be seen.
-- dialogue: the spoken lines of the shot, in order, each with speaker_id (must be in appears), `text` = the line translated into {lang} ({lang_tag}), writing each character's name exactly as listed under "in dialogue", and `source_text` = the original Vietnamese line exactly as written. Only lines that are spoken aloud in the scene text; never invent lines, never add narration or inner thoughts as dialogue. Keep each line short enough for its duration.
+- dialogue: the spoken lines of the shot, in order, each with speaker_id (must be in appears), `text` = the line translated into {lang} ({lang_tag}), writing each character's name exactly as listed under "in dialogue", and `source_text` = the original Vietnamese line exactly as written. Only lines that are spoken aloud in the scene text; never invent lines, never add narration or inner thoughts as dialogue. {pace}
 - covers: a short phrase copied exactly from the scene text that this shot stages.
 Do not add events that are not in the scene. Return JSON that exactly matches the schema."""
 
@@ -319,9 +404,14 @@ def scene_messages(
     said: Mapping[str, str] | None = None,
 ) -> list[Message]:
     """`relations` và `where`: (chữ, có chữ người chơi viết không); chữ người chơi bọc `UserAuthored` (G4)."""
+    rate = pace_limit(limits, lang_tag)
+    pace = ("Keep each line short enough for its duration." if rate is None else
+            f"Keep the spoken text of each shot to at most {rate:g} "
+            f"{'characters' if _primary(lang_tag) in _CHAR_LANGS else 'words'} per second of its duration_s "
+            f"(punctuation does not count); if the scene has more speech than that, use more shots.")
     system = SCENE_SYSTEM_PROMPT.format(
         max_shots=limits.require("max_shots_per_scene"), low=limits.require("shot_seconds_min"),
-        high=limits.require("shot_seconds_max"), lang=lang_name(lang_tag), lang_tag=lang_tag)
+        high=limits.require("shot_seconds_max"), lang=lang_name(lang_tag), lang_tag=lang_tag, pace=pace)
     cast_lines: list[str | UserAuthored] = ["Characters you may use (id: name):"]
     said = said or {}
     for c in characters:
@@ -380,18 +470,33 @@ async def make_sheet(
 async def make_scene_shots(
     llm: LLMClient, model: str, messages: list[Message], *, characters: Sequence[str],
     locations: Sequence[str], limits: VideoExportLimits, retries: RetryLimits,
-    names: Sequence[str] = (), extra: Mapping[str, Any] | None = None,
-) -> SceneOutput:
+    names: Sequence[str] = (), extra: Mapping[str, Any] | None = None, lang_tag: str | None = None,
+) -> SceneResult:
+    """`lang_tag`: kiểm nhịp thoại (D-127). Câu trả lời dày thoại thì làm lại trong lượt thử lại sẵn có; hết lượt
+    mà câu trả lời gần nhất hợp lệ ở mọi mặt khác thì code tách shot (`split_dense_shots`) thay vì bỏ cảnh."""
+    dense: list[SceneOutput] = []   # các câu trả lời chỉ sai nhịp thoại, cái cuối là cái gần nhất
+
     async def call() -> SceneOutput:
         output, _ = await llm.chat_json(model, messages, SceneOutput, extra=extra)
-        problems = scene_problems(output, characters, locations, limits, names=names)
+        hard = scene_problems(output, characters, locations, limits, names=names)
+        problems = hard if lang_tag is None else scene_problems(
+            output, characters, locations, limits, names=names, lang_tag=lang_tag)
         if problems:
+            if not hard:
+                dense.append(output)
             raise _bad(problems, "SceneOutput")
         return output
 
-    return await with_json_retries(call, schema_retries=retries.extract_schema_retry,
-                                   transient_retries=retries.llm_transient,
-                                   backoff=retries.transient_backoff_seconds)
+    try:
+        output = await with_json_retries(call, schema_retries=retries.extract_schema_retry,
+                                         transient_retries=retries.llm_transient,
+                                         backoff=retries.transient_backoff_seconds)
+    except WritoryError as e:
+        if not dense or lang_tag is None or e.code is not ErrorCode.RETRY_LIMIT_REACHED:
+            raise
+        parts, flags = split_dense_shots(dense[-1].shots, limits, lang_tag)
+        return SceneResult(shots=parts, split_by_code=flags)
+    return SceneResult(shots=output.shots, split_by_code=[False] * len(output.shots))
 
 
 # --- prompt cuối do code lắp ---------------------------------------------------------------------
