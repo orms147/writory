@@ -137,7 +137,7 @@ from writory.pipeline.setup import (
     story_brief,
 )
 from writory.pipeline.store import ChapterStore, GraphStore
-from writory.pipeline.story_plan import StoryPlan
+from writory.pipeline.story_plan import StoryPlan, WindowShift
 from writory.pipeline.summary import SummaryOutput
 from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách, key, trạng thái git
     EST_CHARS_PER_TOKEN,
@@ -731,6 +731,9 @@ class StoryRun:
         # Lượt sửa của build_story (D-54): lượt "bấm thử lại", loại lỗi, danh sách lỗi (có id, chỉ
         # vào truth_dump).
         self.setup_repairs: list[dict[str, Any]] = []
+        # Khoảng gỡ code dời lúc khởi tạo (D-135), có id: chỉ vào truth_dump; report chỉ có số. None:
+        # không biết (khởi tạo dùng lại hay chạy tiếp từ thư mục trước D-135).
+        self.thread_shifts: list[dict[str, Any]] | None = []
         self.stop: dict[str, Any] | None = None
         self.target: int | None = None
         self.clamped = False
@@ -869,6 +872,7 @@ class StoryRun:
             raise ConfigError(f"--setup-from: không đọc được khởi tạo từ {source}: {e}") from None
         choices = self.scenario.story_choices()
         self.plan = plan
+        self.thread_shifts = truth.get("thread_shifts")  # của lần khởi tạo nguồn (D-135)
         self.setup_record["build"] = {"done": True, "chapters_planned": plan.total_chapters,
                                       "reused_from": repo_path(source)}
         try:
@@ -913,6 +917,7 @@ class StoryRun:
         if built is None:
             return False
         self.plan = built.plan
+        self.thread_shifts = [shift_row(s) for s in built.shifts]
         self.setup_record["build"] = {"done": True, "chapters_planned": built.plan.total_chapters}
         try:
             # Lưu khoá mức u tối như đường chơi (D-67): mức này là trần kiểm duyệt mọi chương.
@@ -1319,6 +1324,7 @@ class StoryRun:
         self.errors = list(truth.get("errors") or [])
         self.quotes = list(truth.get("quotes") or [])
         self.setup_repairs = list(truth.get("setup_repairs") or [])
+        self.thread_shifts = truth.get("thread_shifts")  # D-135; None ở thư mục trước đó
         self.retries_used = {**self.retries_used, **report.get("player_retries_used", {})}
         self.rejected_bodies = report.get("rejected_bodies", 0)
         self.calls = calls
@@ -1446,6 +1452,7 @@ class StoryRun:
                          for n, p in sorted(self.packages.items())},
             "final": final, "chapters": self.truth_chapters, "errors": self.errors,
             "setup_repairs": self.setup_repairs,
+            "thread_shifts": self.thread_shifts,
             "quotes": self.quotes,
         }
         self._write_json("truth_dump.json", truth)
@@ -1670,10 +1677,46 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         # Ngoại hình của khởi tạo có phân biệt được nhau không: số đếm, không chữ (D-122).
         "appearance_variety": (setup_mod.appearance_variety(run.packages[0])
                                if 0 in run.packages else None),
+        # Mạch phải gỡ khai bí mật trả lời và khoảng gỡ code đã dời (D-135): số đếm, không id.
+        "thread_answers": thread_answers(run.plan, run.thread_shifts),
         **({"resumed_from": run.resumed_from, "resume_points": run.resume_points}
            if run.resumed_from is not None else {}),
         "chapters": run.attempts,
     }
+
+
+def shift_row(shift: WindowShift) -> dict[str, Any]:
+    """Một lần dời khoảng gỡ lúc khởi tạo (D-135) cho truth_dump: có id lớp truth."""
+    return {"thread_id": shift.thread_id, "before": list(shift.before),
+            "after": list(shift.after), "secrets": list(shift.secrets),
+            "end_moved": shift.end_moved}
+
+
+def thread_answers(plan: StoryPlan | None,
+                   shifts: Sequence[Mapping[str, Any]] | None) -> dict[str, Any] | None:
+    """Số mạch phải gỡ, số mạch khai `answered_by`, số khoảng gỡ code đã dời lúc khởi tạo (và số
+    phải dời cả hạn), số mạch còn bắt đầu trước khoảng lộ của bí mật trả lời nó trên kế hoạch cuối
+    (D-135). `shifts` None (thư mục trước D-135): hai số dời là None."""
+    if plan is None:
+        return None
+    return {
+        "threads": len(plan.must_resolve_threads),
+        "linked": sum(1 for t in plan.must_resolve_threads if t.answered_by),
+        "shifted": None if shifts is None else len(shifts),
+        "shifted_end": None if shifts is None else sum(1 for s in shifts if s["end_moved"]),
+        "mismatches": len(plan.answer_mismatches()),
+    }
+
+
+def _answers_line(answers: Mapping[str, Any] | None) -> list[str]:
+    """Một dòng về mạch do bí mật trả lời (D-135); kế hoạch không có mạch phải gỡ thì không dòng."""
+    if not answers or not answers["threads"]:
+        return []
+    shifted = ("dời khoảng gỡ không rõ (khởi tạo dùng lại từ thư mục trước D-135)"
+               if answers["shifted"] is None else
+               f"dời khoảng gỡ {answers['shifted']} (dời cả hạn {answers['shifted_end']})")
+    return [(f"- Mạch phải gỡ có bí mật trả lời (D-135): {answers['linked']}/{answers['threads']}; "
+             f"{shifted}; còn lệch {answers['mismatches']}.")]
 
 
 def _fmt_counts(counts: Mapping[str, int]) -> str:
@@ -1741,6 +1784,7 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
          f"({_fmt_counts(report['setup_repairs']['kinds'])}); tự bấm thử lại "
          f"{report['player_retries_used']['setup']}."),
         *_variety_line(report.get("appearance_variety")),
+        *_answers_line(report.get("thread_answers")),
         (f"- Chi phí: {cost['total_usd']:.4f} USD (trần --budget: {meta['budget_usd']}); ước tính "
          f"cho lời gọi không rõ chi phí: {cost['estimated_unbilled_usd']:.4f} USD."),
         (f"- Trần config (USD): cảnh {limits['per_scene']}, chương {limits['per_chapter']}, "
