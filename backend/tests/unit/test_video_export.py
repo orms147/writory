@@ -663,7 +663,7 @@ async def test_the_real_run_refuses_an_unset_call_deadline_before_reading_any_ke
     def no_keys(*_a, **_k):
         raise AssertionError("đọc key trước khi kiểm hạn lời gọi")
 
-    monkeypatch.setattr(video, "load_keys", no_keys)
+    monkeypatch.setattr("writory.quality.bench_d.load_keys", no_keys)
     code = await video.run(args(tmp_path, "--budget", "0.10", "--env-file",
                                 str(tmp_path / "khong-co.env")), source=source())
     assert code == video.EXIT_CONFIG
@@ -676,19 +676,19 @@ async def test_the_real_client_gets_the_configured_call_deadline(tmp_path, monke
 
     from pydantic import SecretStr
 
-    from writory.llm import openrouter
+    from writory.llm import provider
 
     make_config(tmp_path)
     built: list[float | None] = []
 
     class Client(FakeLLM):
-        def __init__(self, key, *, deadline_s=None):
+        def __init__(self, key, *, http=None, deadline_s=None):
             built.append(deadline_s)
             scripted = FakeLLM.scripted(full_script(), cost_usd=0.002)
             self.__dict__.update(scripted.__dict__)
 
-    monkeypatch.setattr(openrouter, "OpenRouterClient", Client)
-    monkeypatch.setattr(video, "load_keys",
+    monkeypatch.setattr(provider, "OpenRouterClient", Client)
+    monkeypatch.setattr("writory.quality.bench_d.load_keys",
                         lambda *_a, **_k: SimpleNamespace(openrouter_api_key=SecretStr("sk-thu")))
     code = await video.run(args(tmp_path, "--budget", "0.10", "--dialogue-lang", "zh"),
                            source=source())

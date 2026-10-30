@@ -44,7 +44,14 @@ from typing import Any
 import yaml
 from pydantic import BaseModel
 
-from writory.config import REPO_ROOT, AppConfig, CostLimits, Settings, load_config
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    CostLimits,
+    config_sources,
+    load_config,
+)
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import ChatResult, LLMClient, Message
 from writory.llm.fake import FakeLLM
@@ -223,10 +230,16 @@ def git(*args: str) -> str:
     ).stdout.strip()
 
 
-def run_meta(inputs: list[Path], cases_path: Path) -> dict[str, Any]:
-    """Phần meta chung của các bộ đo guardrail: ngày, commit, hash đầu vào, bộ câu."""
+def run_meta(inputs: list[Path], cases_path: Path, *, config: AppConfig | None = None,
+             models: list[str | None] | None = None) -> dict[str, Any]:
+    """Phần meta chung của các bộ đo guardrail: ngày, commit, hash đầu vào, bộ câu, nhà cung cấp (D-140)."""
+    from writory.llm.provider import llm_identity
+
     raw = cases_path.read_bytes()
+    identity = {} if config is None else {"provider": llm_identity(
+        config, [m for m in (models or []) if m])["provider"]}
     return {
+        **identity,
         "date": date.today().isoformat(),
         "commit": git("rev-parse", "HEAD"),
         "worktree_dirty": bool(git("status", "--porcelain")),
@@ -266,23 +279,21 @@ async def _dry_run(config: AppConfig, cases_path: Path) -> int:
 
 async def _main(args: argparse.Namespace) -> int:
     from writory.llm.cost import CostTracker, MeteredClient
-    from writory.llm.openrouter import OpenRouterClient
+    from writory.llm.provider import bench_llm
 
-    config = load_config()
+    config = load_config(args.config_dir)
     if args.dry_run:
         return await _dry_run(config, args.cases)
     cap = args.budget if args.budget is not None else config.limits.cost_usd.require("per_story")
-    key = Settings().openrouter_api_key
-    if key is None:
-        raise SystemExit("thiếu OPENROUTER_API_KEY (key của chủ dự án cho bộ đo)")
     tracker = CostTracker(CostLimits(per_scene=cap, per_chapter=cap, per_story=cap))
-    llm = MeteredClient(OpenRouterClient(key), tracker)
+    llm = MeteredClient(bench_llm(config, args.env_file, models=[config.models.roles.classify]), tracker)
     result = await score(load_set(args.cases), llm=llm, config=config)
     _print(result, f"chi phí {tracker.story_usd:.4f} USD")
     if args.out:
         meta = {
-            **run_meta([REPO_ROOT / "config" / "models.yaml",
-                        REPO_ROOT / "config" / "limits.yaml"], args.cases),
+            **run_meta([*config_sources(args.config_dir, "models.yaml"),
+                        *config_sources(args.config_dir, "limits.yaml")], args.cases,
+                       config=config, models=[config.models.roles.classify]),
             "model": config.models.roles.classify,
             "reasoning": config.models.role_reasoning.classify,
             "prompt": PROMPT_VERSION,
@@ -314,6 +325,10 @@ def build_parser() -> argparse.ArgumentParser:
                         help="trần chi phí của lần chạy, USD (mặc định limits.cost_usd.per_story)")
     parser.add_argument("--dry-run", action="store_true",
                         help="không gọi model: đếm lời gọi và ước tính chi phí")
+    parser.add_argument("--config-dir", type=Path, default=REPO_CONFIG_DIR,
+                        help="thư mục config (D-140: evals/config/meta dùng model Meta); mặc định config/")
+    parser.add_argument("--env-file", type=Path, default=REPO_ROOT / ".env",
+                        help="file .env chứa key của chủ dự án (OPENROUTER_API_KEY hay META_API_KEY)")
     return parser
 
 

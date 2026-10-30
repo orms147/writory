@@ -43,6 +43,7 @@ from writory.config import (
     load_config,
     parse_trusted_proxies,
     prod_problems,
+    product_model_problems,
 )
 from writory.llm.openrouter import DEFAULT_TIMEOUT
 from writory.safety.crypto import KeyCipher
@@ -176,6 +177,9 @@ def create_app(
     # Đọc biến môi trường và config/ lúc gọi factory (uvicorn --factory), không lúc import.
     settings = settings if settings is not None else Settings()
     config = config if config is not None else load_config()
+    meta = product_model_problems(config)
+    if meta:  # người chơi dùng key OpenRouter của họ; model Meta chỉ cho bộ đo (D-140)
+        raise ConfigError("config của app có model Meta (chỉ bộ đo được dùng): " + "; ".join(meta))
     prod = settings.app_env == "prod"
     if prod:
         problems = prod_problems(settings)

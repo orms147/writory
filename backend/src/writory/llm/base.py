@@ -60,6 +60,8 @@ class Usage(BaseModel):
     # Số token vào được đọc từ cache prompt của nhà cung cấp (usage.prompt_tokens_details.
     # cached_tokens, D-96). None = phản hồi không báo (khác 0 = đã báo, không có cache).
     cached_tokens: int | None = None
+    # Token suy luận, đã nằm trong `completion_tokens` (tính giá token ra). None = nhà cung cấp không báo (D-140).
+    reasoning_tokens: int | None = None
 
 
 class ChatResult(BaseModel):

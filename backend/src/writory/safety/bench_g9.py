@@ -39,9 +39,17 @@ from pathlib import Path
 
 import yaml
 
-from writory.config import REPO_ROOT, AppConfig, CostLimits, Settings, load_config
+from writory.config import (
+    REPO_CONFIG_DIR,
+    REPO_ROOT,
+    AppConfig,
+    CostLimits,
+    config_sources,
+    load_config,
+)
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient
+from writory.llm.provider import llm_identity
 from writory.safety.moderate import PROMPT_VERSION, Source, Verdict, moderate
 
 CASES_PATH = REPO_ROOT / "evals" / "redteam" / "g9_moderation.yaml"
@@ -145,14 +153,14 @@ def _git(*args: str) -> str:
 
 async def run_bench(
     cases_path: Path, *, repeat: int, budget: float, llm: LLMClient, tracker, config: AppConfig,
-    out: Path | None,
+    out: Path | None, config_dir: Path = REPO_CONFIG_DIR,
 ) -> G9Result:
     """Chạy bộ câu và ghi `result.json` (nếu có `out`). `llm` phải là client đã bọc `tracker`;
     `budget` chỉ để ghi lại (trần do `tracker` thi hành)."""
     result = await score(load_cases(cases_path), llm=llm, config=config, repeat=repeat)
     if out:
-        inputs = [cases_path, REPO_ROOT / "config" / "models.yaml",
-                  REPO_ROOT / "config" / "moderation.yaml", REPO_ROOT / "config" / "limits.yaml"]
+        inputs = [cases_path, *(p for n in ("models.yaml", "moderation.yaml", "limits.yaml")
+                                for p in config_sources(config_dir, n))]
         meta = {
             "date": date.today().isoformat(),
             "commit": _git("rev-parse", "HEAD"),
@@ -162,6 +170,7 @@ async def run_bench(
             "cases": cases_info(cases_path),
             "repeat": repeat,
             "budget_usd": budget,
+            "provider": llm_identity(config, [config.models.roles.moderate])["provider"],  # D-140
             "model": config.models.roles.moderate,
             "reasoning": config.models.role_reasoning.moderate,
             # Cách gọi (D-79): đầu vào kiểm `input_votes` lần, bộ lựa chọn chấm từng dòng.
@@ -180,17 +189,14 @@ async def run_bench(
 
 async def _main(args: argparse.Namespace) -> int:
     from writory.llm.cost import CostTracker, MeteredClient
-    from writory.llm.openrouter import OpenRouterClient
+    from writory.llm.provider import bench_llm
 
-    config = load_config()
+    config = load_config(args.config_dir)
     cap = args.budget if args.budget is not None else config.limits.cost_usd.require("per_story")
-    key = Settings().openrouter_api_key
-    if key is None:
-        raise SystemExit("thiếu OPENROUTER_API_KEY (key của chủ dự án cho bộ đo)")
     tracker = CostTracker(CostLimits(per_scene=cap, per_chapter=cap, per_story=cap))
-    llm = MeteredClient(OpenRouterClient(key), tracker)
+    llm = MeteredClient(bench_llm(config, args.env_file, models=[config.models.roles.moderate]), tracker)
     result = await run_bench(args.cases, repeat=args.repeat, budget=cap, llm=llm,
-                             tracker=tracker, config=config, out=args.out)
+                             tracker=tracker, config=config, out=args.out, config_dir=args.config_dir)
     sys.stdout.reconfigure(encoding="utf-8")
     print(f"đúng {result.correct}/{result.total}; bỏ sót {len(result.missed)}, chặn nhầm "
           f"{len(result.false_blocks)}, sai mức {len(result.wrong_kind)}, lỗi gọi {result.errors}; "
@@ -222,6 +228,10 @@ def build_parser() -> argparse.ArgumentParser:
     parser.add_argument("--out", type=Path, help="thư mục kết quả (evals/results/<ngày>-g9)")
     parser.add_argument("--cases", type=Path, default=CASES_PATH,
                         help="bộ câu (mặc định evals/redteam/g9_moderation.yaml)")
+    parser.add_argument("--config-dir", type=Path, default=REPO_CONFIG_DIR,
+                        help="thư mục config (D-140: evals/config/meta dùng model Meta); mặc định config/")
+    parser.add_argument("--env-file", type=Path, default=REPO_ROOT / ".env",
+                        help="file .env chứa key của chủ dự án (OPENROUTER_API_KEY hay META_API_KEY)")
     parser.add_argument("--repeat", type=_positive_int, default=1,
                         help="số lượt: mỗi câu chạy lại từng ấy lần, báo độ ổn định")
     parser.add_argument("--budget", type=_positive_float,
