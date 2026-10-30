@@ -90,3 +90,19 @@ def test_the_real_client_follows_the_config_the_run_was_started_with(tmp_path):
     meta = bench_run.real_llm(load_config(META_DIR), env, http=http, deadline_s=30)
     openrouter = bench_run.real_llm(load_config(), env, http=http, deadline_s=30)
     assert isinstance(meta, MetaClient) and isinstance(openrouter, OpenRouterClient)
+
+
+# --- bài A và E: giá lấy từ config khi run.yaml không khai -----------------------------------------
+
+
+def test_bench_a_and_e_need_no_meta_price_in_their_run_yaml_when_the_config_has_it(tmp_path):
+    from writory.pipeline import bench_a, bench_e
+    from writory.pipeline.bench_a_data import load_data as load_a
+
+    config = meta_config(tmp_path)
+    assert not [p for p in bench_a.run_problems(config, load_a()) if "prices" in p]
+    assert not [p for p in bench_e.run_problems(config, bench_e.load_data()) if "prices" in p]
+    (tmp_path / "bare").mkdir()
+    bare = make_config(tmp_path / "bare", models={**META_MODELS, "prices": {}})
+    assert any("prices" in p for p in bench_a.run_problems(bare, load_a()))
+    assert any("prices" in p for p in bench_e.run_problems(bare, bench_e.load_data()))

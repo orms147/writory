@@ -257,10 +257,14 @@ def models_in_use(config: AppConfig, scenario: RunScenario) -> dict[str, dict[st
     return out
 
 
+def merged_prices(config: AppConfig, prices: Mapping[str, Price]) -> dict[str, Price]:
+    """Giá (USD / 1 triệu token) để giữ chỗ ngân sách: `models.prices` của config, đề của bộ đo ghi đè (D-140). Nhờ
+    vậy giá của model Meta chỉ khai ở config bộ đo, không lặp trong từng đề."""
+    return {m: Price(input=p.input, output=p.output) for m, p in config.models.prices.items()} | dict(prices)
+
+
 def price_table(config: AppConfig, scenario: RunScenario) -> dict[str, Price]:
-    """Giá (USD / 1 triệu token) để giữ chỗ ngân sách: `models.prices` của config, đề ghi đè (D-140). Nhờ vậy giá của
-    model Meta chỉ khai ở config bộ đo, không lặp trong đề."""
-    return {m: Price(input=p.input, output=p.output) for m, p in config.models.prices.items()} | scenario.prices
+    return merged_prices(config, scenario.prices)
 
 
 def run_problems(config: AppConfig, scenario: RunScenario) -> list[str]:
