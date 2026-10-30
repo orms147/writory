@@ -64,6 +64,7 @@ from writory.pipeline.chapter import (
     merge_scene_packages,
 )
 from writory.pipeline.choices import Choice, LieEffect, choice_effects
+from writory.pipeline.extract import UNQUOTED_LEAK
 from writory.pipeline.story_plan import StoryPlan
 from writory.quality import narration_instruction, normalize_dashes
 from writory.safety.moderate import LINES_HEADER_RE, ChoicesModerationOutput, ModerationOutput
@@ -472,6 +473,37 @@ async def test_unprotected_name_on_the_page_is_shown_and_auto_revealed(tmp_path)
         "ha_ba_tung", "to_nguyet_hoa"}
     assert "Tô Nguyệt Hoa" in {e.text for e in store.player_view(1).entries}
     assert "Tô Nguyệt Hoa" in of_type(events, "choices_ready")[0].choices[0].text
+
+
+_MAP = "Hà lão kể rằng chuôi kiếm giấu một tấm bản đồ"
+
+
+async def test_a_fact_whose_text_names_a_protected_node_stays_out_of_the_notebook(tmp_path):
+    """D-134, hồi quy lỗ sổ tay (D-132): bộ trích hé lộ Fact không bí mật `f_chuoi_kiem_ban_do`
+    ("Chuôi kiếm Thiết Vân giấu bản đồ…") bằng câu trích có thật nhưng không nêu tên "kiếm Thiết
+    Vân" mà kế hoạch đang bảo vệ. Cảnh vẫn hiện, không viết lại; hai cạnh đưa Fact vào player_view
+    bị bỏ với lý do riêng, và sổ tay không có Fact đó."""
+    text = f"{_MAP}. {SCENE_PC}"
+    told = {"how": "được kể", "told_by": "ha_ba_tung", "quote": _MAP}
+    first = extract_reply([
+        {"type": "REVEALED_TO_PLAYER", "source": "ha_ba_tung", "target": "ch1", "quote": _HA_LAO,
+         "known_as": "Hà lão"},
+        {"type": "REVEALED_TO_PLAYER", "source": "f_chuoi_kiem_ban_do", "target": "ch1",
+         "quote": _MAP},
+        {"type": "KNOWS", "source": "protagonist", "target": "f_chuoi_kiem_ban_do", **told}])
+    outline = outline_reply(present=("protagonist", "ha_ba_tung"))
+    script = [outline, text, first, outline, SCENE_PC, extract_reply(), SUMMARY,
+              _choices_naming_protagonist]
+    events, outcome, store = await run_new_story(script, tmp_path, protects=("kiem_thiet_van",))
+
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert all(r.verdict == "accept" and r.issues == () for r in outcome.reviews)
+    package = store.packages[-1]
+    assert not [e for e in package.edges if "f_chuoi_kiem_ban_do" in (e.source, e.target)]
+    assert "f_chuoi_kiem_ban_do" not in {e.id for e in store.player_view(1).entries}
+    assert sorted(outcome.scenes[0].rejected) == [
+        ("KNOWS protagonist→f_chuoi_kiem_ban_do", UNQUOTED_LEAK),
+        ("REVEALED_TO_PLAYER f_chuoi_kiem_ban_do→ch1", UNQUOTED_LEAK)]
 
 
 def _choices_naming_visitor(messages) -> str:
