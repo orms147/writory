@@ -87,7 +87,8 @@ def reasoning_effort(extra: Mapping[str, Any]) -> str | None:
     return "minimal" if effort == "none" else str(effort)
 
 
-def _error(status: int, body: Any, text: str, secret: str) -> WritoryError:
+def meta_error(status: int, body: Any, text: str, secret: str) -> WritoryError:
+    """Lỗi HTTP của Meta thành mã của dự án; chữ lỗi không bao giờ mang key (G7). Dùng chung với giám khảo bài F."""
     err = body.get("error") if isinstance(body, dict) else None
     message = str(err.get("message", "")) if isinstance(err, dict) else text
     code = {400: ErrorCode.LLM_REQUEST_INVALID, 401: ErrorCode.LLM_AUTH_FAILED,
@@ -160,7 +161,7 @@ class MetaClient(LLMClient):
         except ValueError:
             data = None
         if resp.status_code != 200:
-            raise _error(resp.status_code, data, resp.text, secret)
+            raise meta_error(resp.status_code, data, resp.text, secret)
         try:
             choice = data["choices"][0]
             message = choice["message"]
