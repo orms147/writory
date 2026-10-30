@@ -363,3 +363,113 @@ def test_runner_builds_contexts_through_the_injected_graph_state():
 def test_data_module_exposes_group_names_used_by_the_report():
     assert set(bench_a_data.GROUP_LABEL) == set(bench_a_data.GROUPS)
     assert set(bench_a_systems.SYSTEM_LABELS) == set(bench_a.SYSTEMS)
+
+
+# --- truyện dài: trần dòng mỗi nhân vật và câu trả lời ở chữ Fact (D-144) ------------------------------
+
+import types
+
+from writory.graph import ChangePackage
+from writory.guard.state import EmptyState, OverlayState
+from writory.pipeline.bench_a_data import support_keys
+from writory.pipeline.bench_a_systems import LINES_PER_ENTITY_CAP, edge_key
+
+ODD_WORDS = [f"vật{chr(97 + i // 26)}{chr(97 + i % 26)}" for i in range(80)]
+
+
+def long_story_state(facts: int = 66, last_chapter: int = 22) -> OverlayState:
+    """Lan biết `facts` điều, mỗi điều một chữ lạ riêng, rải đều qua các chương 1..`last_chapter`."""
+    nodes = [{"id": "lan", "label": "Character", "props": {"name": "Lan"}}]
+    edges = []
+    for i in range(facts):
+        nodes.append({"id": f"f{i}", "label": "Fact",
+                      "props": {"text": f"Lan nhìn thấy {ODD_WORDS[i]} trong hộc tủ."}})
+        edges.append({"type": "KNOWS", "from": "lan", "to": f"f{i}",
+                      "valid_from_chapter": 1 + i * last_chapter // facts, "props": {"how": "chứng kiến"}})
+    package = ChangePackage.model_validate({"commit_id": "c0", "nodes": nodes, "edges": edges})
+    return OverlayState(EmptyState(), [package])
+
+
+def known_keys_in(ctx) -> set[str]:
+    return {k for k in ctx.facts if k.startswith("edge:KNOWS:lan>")}
+
+
+def shown(ctx, i: int) -> bool:
+    return ODD_WORDS[i] in ctx.text
+
+
+def test_a_cut_line_is_never_claimed_as_seen():
+    """D-144: khoá `facts` chỉ gồm dòng thật sự nằm trong chữ. Nhân vật biết 66 điều, trần 40 dòng:
+    số khoá KNOWS bằng số điều có chữ trong ngữ cảnh, không hơn."""
+    state = long_story_state()
+    ctx = build_graph_context(state, "Lan biết gì?", 22, story=None)
+    visible = [i for i in range(66) if shown(ctx, i)]
+    assert 0 < len(visible) <= LINES_PER_ENTITY_CAP - 1  # một dòng dành cho tình trạng
+    assert len(known_keys_in(ctx)) == len(visible)
+    for i in range(66):
+        key = next(edge_key(e) for e in state.edges_at("KNOWS", 22, source_id="lan", target_id=f"f{i}"))
+        assert (key in ctx.facts) == shown(ctx, i), i
+
+
+def test_when_over_the_cap_the_newest_lines_are_kept_and_a_relevant_old_one_is_pulled_back():
+    state = long_story_state()
+    plain = build_graph_context(state, "Lan biết gì?", 22, story=None)
+    assert shown(plain, 65) and shown(plain, 64) and not shown(plain, 0)  # gần đây ở lại
+    asked = build_graph_context(state, f"Lan có thấy {ODD_WORDS[3]} không?", 22, story=None)
+    assert shown(asked, 3) and shown(asked, 65)  # câu hỏi kéo một dòng cũ về, vẫn giữ dòng mới
+    assert (edge_key(next(iter(state.edges_at("KNOWS", 22, source_id="lan", target_id="f3"))))
+            in asked.facts)
+
+
+def test_selected_lines_keep_story_order_and_the_status_line_stays_first():
+    ctx = build_graph_context(long_story_state(), f"Lan có thấy {ODD_WORDS[3]} không?", 22, story=None)
+    block = ctx.text.split("## Lan (nhân vật)")[1].split("\n\n")[0].splitlines()
+    assert block[1].startswith("- Tình trạng cuối chương 22")
+    order = [i for line in block for i in range(66) if ODD_WORDS[i] in line]
+    assert order == sorted(order) and len(block) - 1 <= LINES_PER_ENTITY_CAP
+
+
+def test_under_the_cap_nothing_is_dropped_and_every_line_is_claimed():
+    state = long_story_state(facts=30, last_chapter=10)
+    ctx = build_graph_context(state, "Lan biết gì?", 10, story=None)
+    assert all(shown(ctx, i) for i in range(30)) and len(known_keys_in(ctx)) == 30
+    assert "complete:lan" in ctx.facts
+
+
+def test_a_cut_block_cannot_prove_that_an_edge_does_not_exist():
+    """Danh sách bị cắt thì không chứng minh được "không có cạnh": khoá `complete:` chỉ có khi đủ."""
+    cut = build_graph_context(long_story_state(), "Lan biết gì?", 22, story=None)
+    assert "complete:lan" not in cut.facts and "entity:lan" in cut.facts
+    spec = {"op": "edge_exists", "type": "KNOWS", "from": "lan", "to": "nobody"}
+    assert support_keys(spec, long_story_state(), 22) == {"complete:lan"}
+    assert not support_keys(spec, long_story_state(), 22) <= cut.facts
+
+
+def fake_question(spec: dict, state) -> tuple[types.SimpleNamespace, types.SimpleNamespace]:
+    # Bằng chứng trên trang cố ý không có trong ngữ cảnh: chỉ đồ thị mới có thể làm câu này đủ chứng cứ.
+    nowhere = types.SimpleNamespace(quote="một câu không bao giờ nằm trong ngữ cảnh đồ thị")
+    q = types.SimpleNamespace(graph_agrees=True, derive=spec, state_chapter=22, evidence=(nowhere,))
+    data = types.SimpleNamespace(state_at=lambda chapter: state)
+    return q, data
+
+
+def test_an_answer_that_lives_in_a_fact_text_counts_as_in_the_graph_when_that_text_is_shown():
+    """D-144: `node_text` của một Fact cần khoá `node:<id>`, mà trước đây chỉ khối Event sinh ra nó."""
+    state = long_story_state()
+    spec = {"op": "node_text", "node": "f65"}
+    assert support_keys(spec, state, 22) == {"node:f65"}
+    q, data = fake_question(spec, state)
+    shown_ctx = build_graph_context(state, "Lan biết gì?", 22, story=None)
+    assert "node:f65" in shown_ctx.facts and context_supports(q, shown_ctx, data)
+    # Dòng của Fact bị cắt thì chữ không có trong ngữ cảnh, nên không thể tính là có.
+    q0, data0 = fake_question({"op": "node_text", "node": "f0"}, state)
+    assert not shown(shown_ctx, 0) and "node:f0" not in shown_ctx.facts
+    assert not context_supports(q0, shown_ctx, data0)
+    # Hỏi đúng điều đó thì dòng được kéo về và đủ chứng cứ.
+    asked = build_graph_context(state, f"Lan có thấy {ODD_WORDS[0]} không?", 22, story=None)
+    assert context_supports(q0, asked, data0)
+
+
+def test_the_event_and_lie_keys_are_unchanged():
+    spec = {"op": "node_text", "node": "f1"}
+    assert support_keys(spec, long_story_state(), 22) == {"node:f1"}

@@ -155,6 +155,10 @@ HOW_VERBS = {"tự biết": "vốn đã biết", "chứng kiến": "chứng ki�
 
 LINKED_ENTITY_CAP = 6
 LINES_PER_ENTITY_CAP = 40
+# Khối một thực thể vượt trần dòng (truyện dài, D-144): giữ dòng tình trạng, `RECENT_LINES_KEPT` dòng
+# mới nhất, rồi dòng khớp câu hỏi nhất (BM25) cho đủ trần, rồi dòng mới tiếp theo nếu còn chỗ; in theo thứ
+# tự cũ. Cùng tinh thần chọn mục của sổ tay lớn (D-59): luôn kèm cái gần đây, cộng cái khớp câu hỏi.
+RECENT_LINES_KEPT = 10
 GRAPH_CHARS_CAP = 6000
 
 
@@ -165,6 +169,49 @@ def edge_key(e: EdgeRow) -> str:
 @dataclass
 class _Facts:
     keys: set[str] = field(default_factory=set)
+
+
+@dataclass(frozen=True)
+class _Line:
+    """Một dòng của khối thực thể, kèm khoá `facts` mà dòng đó chứng minh khi nó thật sự nằm trong chữ
+    (D-144), và chương của sự thật (để chọn dòng mới nhất). `pinned`: luôn giữ (tình trạng sống/chết)."""
+
+    text: str
+    keys: tuple[str, ...]
+    chapter: int
+    # Chữ để chấm điểm khớp câu hỏi và khoá hoà điểm, không phụ thuộc cách trình bày (`style`), nên
+    # cùng một sự thật thì mọi biến thể chọn giữ hay bỏ như nhau.
+    match: str = ""
+    tie: str = ""
+    pinned: bool = False
+
+
+def _select_lines(lines: list[_Line], question: str, cap: int) -> list[_Line]:
+    """Tối đa `cap` dòng. Vừa trần thì giữ hết. Vượt: dòng ghim, rồi `RECENT_LINES_KEPT` dòng có chương
+    lớn nhất, rồi dòng điểm BM25 cao nhất theo câu hỏi, rồi dòng mới nhất còn lại cho đủ trần; trả theo thứ
+    tự ban đầu. Tất định và không phụ thuộc cách trình bày: hoà thì dòng có `tie` lớn (id cạnh sau) trước."""
+    if len(lines) <= cap:
+        return lines
+    chosen = [i for i, line in enumerate(lines) if line.pinned][:cap]
+    rest = [i for i in range(len(lines)) if i not in chosen]
+    by_recency = sorted(rest, key=lambda i: lines[i].tie, reverse=True)
+    by_recency.sort(key=lambda i: -lines[i].chapter)  # ổn định: cùng chương thì `tie` lớn trước
+
+    def take(candidates: list[int], limit: int) -> None:
+        for i in candidates:
+            if len(chosen) >= min(cap, limit):
+                return
+            if i not in chosen:
+                chosen.append(i)
+
+    take(by_recency, len(chosen) + RECENT_LINES_KEPT)
+    left = [i for i in by_recency if i not in chosen]  # mới trước: BM25 hoà điểm thì dòng mới thắng
+    if left and question.strip():
+        index = Bm25Index([Chunk(-lines[i].chapter, n, lines[i].match or lines[i].text)
+                           for n, i in enumerate(left)])
+        take([left[c.index] for c in index.top(question, cap)], cap)
+    take(by_recency, cap)
+    return [lines[i] for i in sorted(chosen)]
 
 
 class GraphReader:
@@ -355,20 +402,20 @@ def _entity_block(r: GraphReader, entity: str, facts: _Facts, lies: dict[str, No
             "Faction": "phe nhóm"}.get(r.label_of(entity), "thực thể")
     head = f"## {names[0]} ({kind})" + (f", còn gọi: {', '.join(names[1:])}" if len(names) > 1 else "")
     facts.keys.add(f"entity:{entity}")
-    lines: list[str] = []
+    lines: list[_Line] = []
 
     if r.label_of(entity) == "Character":
         death = r.died_at(entity)
-        facts.keys.add(f"status:{entity}")
         if death is None:
-            lines.append(f"- Tình trạng cuối chương {r.chapter}: còn sống.")
+            status = f"- Tình trạng cuối chương {r.chapter}: còn sống."
         else:
-            lines.append(f"- Tình trạng cuối chương {r.chapter}: ĐÃ CHẾT (từ cuối chương "
-                         f"{death.valid_from_chapter}).")
+            status = (f"- Tình trạng cuối chương {r.chapter}: ĐÃ CHẾT (từ cuối chương "
+                      f"{death.valid_from_chapter}).")
+        lines.append(_Line(status, (f"status:{entity}",), r.chapter, pinned=True))
 
-    def add(e: EdgeRow, text: str) -> None:
-        facts.keys.add(edge_key(e))
-        lines.append(f"- {text} ({r.span(e)}).")
+    def add(e: EdgeRow, text: str, *extra_keys: str, match: str = "") -> None:
+        lines.append(_Line(f"- {text} ({r.span(e)}).", (edge_key(e), *extra_keys),
+                           e.valid_from_chapter, match=match or text, tie=e.id))
 
     for e in _sorted(r.edges("HOLDS", source=entity)):
         add(e, f"Giữ {r.title(e.target)}")
@@ -408,14 +455,14 @@ def _entity_block(r: GraphReader, entity: str, facts: _Facts, lies: dict[str, No
         elif style == "relevance":
             known.append((e, _known_line(r, e, names[0], style)))
         else:
-            add(e, _known_line(r, e, names[0], style))
+            add(e, _known_line(r, e, names[0], style), f"node:{e.target}", match=r.title(e.target))
     if known:  # relevance (D-99): vài dòng khớp câu hỏi nhất lên đầu nhóm, còn lại theo thời gian.
         # Chỉ đổi thứ tự, không thêm chữ: số dòng và độ dài khối giữ nguyên nên không đổi tập
         # sự thật nằm dưới các trần dòng và ký tự.
         index = Bm25Index([Chunk(0, i, r.title(e.target)) for i, (e, _) in enumerate(known)])
         top = [c.index for c in index.top(question, RELEVANT_KNOWN_LINES)]
         for i in [*top, *(i for i in range(len(known)) if i not in top)]:
-            add(*known[i])
+            add(*known[i], f"node:{known[i][0].target}", match=r.title(known[i][0].target))
     for e in _sorted(r.edges("TOLD", source=entity)):
         add(e, f"Đã nói một lời dối ở chương {r.chapter_of(e.target) or e.valid_from_chapter}: "
                f"«{r.title(e.target)}»")
@@ -426,7 +473,12 @@ def _entity_block(r: GraphReader, entity: str, facts: _Facts, lies: dict[str, No
     for e in _sorted(r.edges("REVEALED_TO_PLAYER", source=entity)):
         if e.props.get("quote"):
             add(e, f"Trên trang chương {e.valid_from_chapter}: «{e.props['quote']}»")
-    return "\n".join([head, *lines[:LINES_PER_ENTITY_CAP]])
+    kept = _select_lines(lines, question, LINES_PER_ENTITY_CAP)
+    for line in kept:  # chỉ dòng thật sự nằm trong chữ mới được tính là đã thấy (D-144)
+        facts.keys.update(line.keys)
+    if len(kept) == len(lines):  # đủ danh sách: mới chứng minh được "không có cạnh nào khác"
+        facts.keys.add(f"complete:{entity}")
+    return "\n".join([head, *(line.text for line in kept)])
 
 
 def _lie_block(r: GraphReader, lie: str, facts: _Facts) -> str:
