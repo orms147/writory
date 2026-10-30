@@ -84,4 +84,22 @@ uv run python -m writory.pipeline.bench_run --scenario ../evals/scenarios/story_
 Mỗi lượt một script nền nối tiếp, kiểm không còn chuỗi cũ đang chạy trước khi bắt đầu, giữ máy không ngủ (như `paid-run-hygiene`).
 
 ## Kết quả
-(chưa chạy)
+**Kết luận theo luật khai trước: "không thử được".** Kiểm tra thao tác không đạt: ở nhánh B (`phase_shift_every: 5`) câu nhắc đổi pha **không bật ở chương nào** trong 16 chương (`report.json` `phase_shift_chapters` rỗng, `phase_shift` không có ở attempt nào). Không kết luận gì về tác dụng của D-119; cờ giữ tắt. Không chạy B2, không chấm R1 và văn bằng giám khảo (không đổi được kết luận; tiết kiệm phần Meta đã duyệt).
+
+**Vì sao không bật (đã kiểm trên dữ liệu):** mốc kế hoạch xong là một lần "đổi pha" (`pacing._phase_changes`, D-119) và đặt lại đồng hồ. Ở B1 bộ trích đánh dấu mốc xong ở ch1, 2, 3, 7, 11, 16 (`plan_vs_result.milestones`: 4 trong 6 mốc "early"), không lần nào cách nhau quá 5 chương, nên đồng hồ không bao giờ chạm 5. **Suy luận, chưa kiểm:** cờ này mù chừng nào dấu mốc còn dễ dãi (cùng loại lỗi với tu-tiên m6, D-129); muốn thử lại D-119 thì hoặc không tính mốc xong làm đổi pha, hoặc thử trên thế giới ít mốc, hoặc N nhỏ hơn: mỗi lựa chọn là thiết kế mới, cần khai trước mới.
+
+| Lượt | Commit | Config (gộp) | Cờ | Chương | Chi phí USD | Nơi liền dài nhất (P1) | Nơi mới (P2) | Quay lại nơi cũ (P3) | Chương đứng yên (code) | Mốc xong / đúng hạn |
+|---|---|---|---|---|---|---|---|---|---|---|
+| A1 | d9a196a | e2c8343b233c | tắt | 16 | 0,1556 (+0,0088 ước tính chưa tính tiền) | 7 | 1 | 1 (ch7) | 4 | 6 / 1 |
+| A2 | d9a196a | e2c8343b233c | tắt | 16 | 0,1680 | 5 | 1 | 0 | 4 | 6 / 1 |
+| B1 | ch1–11 d9a196a, ch12–16 d916311 | e41337d6de42 → 2c4fa9ce7f63 | 5 | 16 | 0,1740 | 4 | 1 | 0 | 5 | 6 / 1 |
+
+Số tính bằng `psab_metrics.py 6 16` (dải ch6–16). Model mọi vai: `config/models.yaml` (meta.json của từng lượt). Chênh A1–A2 ở P1 (7 so với 5) cho thấy nhiễu giữa hai lượt cùng cấu hình cỡ hai chương; số của B1 nằm trong khoảng đó, và vì câu nhắc chưa từng bật nên B1 thực chất là một lượt A thứ ba.
+
+**B1 chạy làm ba chặng:**
+- `2026-10-29-run-psab-b1` dừng ở chương 12, `INTERNAL_ERROR` trước mọi lời gọi model. Nguyên nhân: cạnh `HOLDS` tới một Fact làm sập ngữ cảnh viết. Đây là lỗi sản phẩm, đã sửa ở D-128.
+- Hai lần `--resume` ngay sau đó (`b1-r1`, `b1-r2`) trên cùng commit ra đúng lỗi đó và không tốn tiền. Hai thư mục này không commit vì chỉ là bản sao.
+- `2026-10-30-run-psab-b1-r3` chạy tiếp từ chương 12 bằng `--resume --resume-allow-drift` trên d916311, là main có D-128 cùng D-125 tới D-127. `resume_drift` chỉ có `git.commit` và `config.sha256`; phần config khác là các số của bộ xuất video, còn cờ ngữ cảnh, đề và model không đổi.
+- Chương 12–16 của B1 chạy trên code có thêm D-126 (lựa chọn sai bỏ riêng) và D-128. Nó lệch so với A1 và A2, nhưng chỉ ảnh hưởng lựa chọn và cạnh, không ảnh hưởng câu nhắc đổi pha.
+
+**Chi phí cả đợt:** OpenRouter 0,4975 USD thật cộng 0,0088 USD ước tính chưa tính tiền, trên trần 1,00. Meta 0 USD.
