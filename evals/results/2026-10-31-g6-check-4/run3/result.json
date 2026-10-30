@@ -1,0 +1,401 @@
+{
+  "meta": {
+    "provider": "openrouter",
+    "date": "2026-10-31",
+    "commit": "5a41ddb090c0cedb7797e8f8909187f117f9ac42",
+    "worktree_dirty": true,
+    "inputs_sha256_16": "367728951cdf619a",
+    "cases": {
+      "file": "g6_overreach.yaml",
+      "sha256_16": "270b067e27727736",
+      "version": 3
+    },
+    "model": "openai/gpt-6-luna",
+    "reasoning": "low",
+    "prompt": "overreach-4",
+    "budget_usd": 0.01,
+    "cost_usd": 0.0016340999999999999
+  },
+  "total": 41,
+  "correct": 38,
+  "errors": 0,
+  "rewrite_missed": [],
+  "false_rewrite": [],
+  "confusion": {
+    "granted": {
+      "granted": 18,
+      "cost": 1
+    },
+    "failed": {
+      "failed": 12
+    },
+    "cost": {
+      "failed": 2,
+      "cost": 8
+    }
+  },
+  "wrong": [
+    {
+      "id": "doi-linh-cost",
+      "expected": "cost",
+      "got": "failed"
+    },
+    {
+      "id": "chem-nui-cost",
+      "expected": "cost",
+      "got": "failed"
+    },
+    {
+      "id": "truoc-nga-nay-bay-duoc",
+      "expected": "granted",
+      "got": "cost"
+    }
+  ],
+  "by_set": {
+    "original": {
+      "total": 14,
+      "correct": 11,
+      "errors": 0,
+      "rewrite_missed": [],
+      "false_rewrite": [],
+      "confusion": {
+        "granted": {
+          "granted": 6,
+          "cost": 1
+        },
+        "failed": {
+          "failed": 5
+        },
+        "cost": {
+          "failed": 2
+        }
+      },
+      "wrong": [
+        {
+          "id": "doi-linh-cost",
+          "expected": "cost",
+          "got": "failed"
+        },
+        {
+          "id": "chem-nui-cost",
+          "expected": "cost",
+          "got": "failed"
+        },
+        {
+          "id": "truoc-nga-nay-bay-duoc",
+          "expected": "granted",
+          "got": "cost"
+        }
+      ]
+    },
+    "hard": {
+      "total": 27,
+      "correct": 27,
+      "errors": 0,
+      "rewrite_missed": [],
+      "false_rewrite": [],
+      "confusion": {
+        "cost": {
+          "cost": 8
+        },
+        "granted": {
+          "granted": 12
+        },
+        "failed": {
+          "failed": 7
+        }
+      },
+      "wrong": []
+    }
+  },
+  "rows": [
+    {
+      "id": "bay-granted",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "bay-failed-nga",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "bay-chi-la-mo",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hoi-sinh-granted",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hoi-sinh-failed",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "doi-linh-granted",
+      "set": "original",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "doi-linh-cost",
+      "set": "original",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "failed"
+    },
+    {
+      "id": "doi-linh-failed",
+      "set": "original",
+      "feasibility": "beyond_character",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "chem-nui-cost",
+      "set": "original",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "failed"
+    },
+    {
+      "id": "chem-nui-granted",
+      "set": "original",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "truoc-nga-nay-im",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "truoc-nga-nay-bay-duoc",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "granted",
+      "got": "cost"
+    },
+    {
+      "id": "tan-cong-trong-hanh-dong",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "gia-chi-duoc-nhac",
+      "set": "original",
+      "feasibility": "beyond_world_rules",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc-thang-ca-doi-ma-gay-tay",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc-chem-nui-choang-vang",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc-thang-ca-doi-tin-xau-khong-lien-quan",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc-thang-ca-doi-nguoi-khac-ganh",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc-treo-cot-buom",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc-tim-mau-giay-thay-hoi-sinh",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc-khoac-lac-da-bay",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc-chu-cham-trong-van-canh",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc-canh-truoc-da-tra-gia",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc-bay-mot-quang-roi-gay-chan",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc2-thang-lai-chi-nhin-thay",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc2-thang-lai-ban-gay-tay",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc2-thang-lai-bi-truy-na",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc2-thang-lai-bi-lo-chi-duoc-nhac",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc2-tu-tien-kiet-suc-that",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc2-tu-tien-nguoi-khac-chiu-phat",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc2-tu-tien-ca-sanh-nhin-thay",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc2-tu-tien-bi-lo-bi-giam",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc3-xuyen-tuong-dap-tran",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc3-hoi-sinh-kiet-suc",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc3-trieu-hoi-phan-chan",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc3-bay-sau-cu-nhay-cau",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "failed",
+      "got": "failed"
+    },
+    {
+      "id": "hc3-thang-sau-nhac-kiet-suc",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc3-thang-sau-nhac-mat-chung-nhan",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc3-thang-sau-nhac-mat-long-tin",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "granted",
+      "got": "granted"
+    },
+    {
+      "id": "hc3-doi-linh-gay-xuong-suon",
+      "set": "hard",
+      "feasibility": "beyond_character",
+      "expected": "cost",
+      "got": "cost"
+    },
+    {
+      "id": "hc3-xuyen-tuong-ket-cung",
+      "set": "hard",
+      "feasibility": "beyond_world_rules",
+      "expected": "cost",
+      "got": "cost"
+    }
+  ],
+  "stopped_by_budget": false
+}

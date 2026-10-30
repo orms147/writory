@@ -201,7 +201,9 @@ def test_round_three_cases_are_new_and_the_prompt_does_not_echo_any_case():
         inputs = case_inputs(c, DOC)
         return " ".join([inputs["action"], *inputs["earlier"], inputs["scene_text"]])
 
-    prompt = _shingles(OVERREACH3_PROMPT.read_text(encoding="utf-8"))
+    from writory.safety.overreach import SYSTEM_PROMPT
+
+    prompt = _shingles(SYSTEM_PROMPT) | _shingles(OVERREACH3_PROMPT.read_text(encoding="utf-8"))
     others = [c for c in CASES if "round3" not in c["tags"]]
     dev_ids = {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}
     for case in CASES:
