@@ -389,12 +389,13 @@ Mọi router người chơi có dependency `deps.api_guard`. Cột "Đăng nhậ
 | `play` | `POST /stories/{id}/chapters/next` (SSE) | có | có | `story` |
 | `play` | `POST /stories/{id}/choices` (tạo lại khi chưa có) | có | khi chưa có | `story` |
 | `play` | `POST /stories/{id}/action` (ô tự viết) | có | có | `story` |
-| `play` | `GET /stories/{id}`; `GET /stories/{id}/chapters/{n}`; `POST /stories/{id}/choice` | có | | |
+| `play` | `GET /stories/{id}`; `GET /stories/{id}/chapters/{n}` | có | | |
+| `play` | `POST /stories/{id}/choice` | có | | `story` (D-133) |
 | `setup` | `POST /setup`; `GET /setup/{sid}`; `PUT /setup/{sid}/settings`, `plots` | có | | |
-| `setup` | `PUT /setup/{sid}/characters` | có | khi có phần sửa | |
+| `setup` | `PUT /setup/{sid}/characters` | có | khi có phần sửa | `setup` (D-133) |
 | `setup` | `POST /setup/{sid}/settings`, `plots`, `characters`, `finalize` | có | có, trừ khi bước đã có lựa chọn | `setup` |
 
-Lỗi `WritoryError` trả JSON có mã và câu tiếng Việt, status lấy từ một bảng duy nhất (`api/errors.py` `HTTP_STATUS`). Lỗi lạ trả `INTERNAL_ERROR`; chi tiết chỉ vào log đã redact (G12, D-29).
+Lỗi `WritoryError` trả JSON có mã và câu tiếng Việt, status lấy từ một bảng duy nhất (`api/errors.py` `HTTP_STATUS`). Lỗi lạ trả `INTERNAL_ERROR`; chi tiết chỉ vào log đã redact (G12, D-29). Lỗi của bộ định tuyến (đường không có, router tắt, method sai) cũng có mã riêng (`ROUTE_NOT_FOUND`, `METHOD_NOT_ALLOWED`), không trả `detail` của FastAPI (D-133). Khoá của các route ghi nhả ngay khi hàm xử lý xong, trước khi gửi phản hồi (`Depends(..., scope="function")`), để request kế tiếp của giao diện không gặp `STORY_BUSY` (D-133). Redact log chạy ở LogRecord factory nên phủ mọi bản ghi, kể cả khi uvicorn không gắn handler cho root (D-133).
 
 **Thứ tự sự kiện SSE của `POST /stories/{id}/chapters/next`:**
 
