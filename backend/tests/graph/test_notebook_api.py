@@ -7,7 +7,7 @@ import pytest
 from fastapi.testclient import TestClient
 
 from tests.api_fixtures import MASTER_KEY
-from tests.moderation_fixtures import ModeratedLLM
+from tests.moderation_fixtures import ModeratedLLM, moderation_reply
 from tests.unit.test_narrator import CFG, PLAN, metered, reply
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
@@ -16,6 +16,8 @@ from writory.db import (
     commit_chapter,
     committed_player_view,
     create_story,
+    narrator_questions_asked,
+    release_narrator_question,
     take_narrator_question,
 )
 from writory.graph import public_entries, read_sample
@@ -38,7 +40,7 @@ async def _ok() -> bool:
     return True
 
 
-def _app(pg, driver, *, fake: FakeLLM | None = None):
+def _app(pg, driver, *, fake: FakeLLM | None = None, moderation=()):
     settings = Settings(
         _env_file=None, neo4j_uri="bolt://unused", neo4j_user="u", neo4j_password="p",
         postgres_dsn="postgresql://unused", player_key_encryption_key=MASTER_KEY,
@@ -49,7 +51,7 @@ def _app(pg, driver, *, fake: FakeLLM | None = None):
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     app.dependency_overrides[deps.get_story_plan] = lambda: PLAN
     if fake is not None:
-        llm = metered(ModeratedLLM(fake))  # kiểm duyệt đầu vào (G9) mặc định cho qua
+        llm = metered(ModeratedLLM(fake, moderation))  # kiểm duyệt (G9) mặc định cho qua
         app.dependency_overrides[deps.get_narrator_llm] = lambda: llm
     return app
 
@@ -110,3 +112,41 @@ def test_take_narrator_question_for_unknown_story_is_not_found(pg, new_db_story_
 
     with pytest.raises(StoryNotFoundError):
         take_narrator_question(pg, new_db_story_id(), 1, 2)
+
+
+# --- câu trả lời bị kiểm duyệt chặn thì trả lại lượt (G9, D-137) ------------------------------------
+
+
+def test_release_narrator_question_gives_back_one_turn_and_never_goes_below_zero(
+        pg, new_db_story_id):
+    sid = new_db_story_id()
+    create_story(pg, sid, length_level="short")
+    assert [take_narrator_question(pg, sid, 1, 2) for _ in range(2)] == [True, True]
+    release_narrator_question(pg, sid, 1)
+    assert narrator_questions_asked(pg, sid, 1) == 1
+    assert [take_narrator_question(pg, sid, 1, 2) for _ in range(2)] == [True, False]
+    for _ in range(3):
+        release_narrator_question(pg, sid, 1)
+    assert narrator_questions_asked(pg, sid, 1) == 0
+    release_narrator_question(pg, sid, 5)  # chương chưa hỏi câu nào: không có gì để trả
+    assert narrator_questions_asked(pg, sid, 5) == 0
+    assert take_narrator_question(pg, sid, 5, 1) is True
+
+
+def test_blocked_answer_does_not_use_a_question_in_postgres(pg, driver, new_db_story_id):
+    sid = new_db_story_id()
+    _story(pg, driver, sid, 3)
+    view = committed_player_view(pg, driver, sid)
+    gu = next(r for r, e in public_entries(view) if e.id == "e_gu_death")
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [gu])])
+    votes = [moderation_reply()] * CFG.moderation.input_votes
+    # Truyện không chọn mức u tối: mức mặc định; máu me tả kéo dài vượt trần của nó.
+    blocked = moderation_reply(("gore", "extreme"))
+    app = _app(pg, driver, fake=fake, moderation=[*votes, blocked])
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post(f"/stories/{sid}/narrator", json={"question": "Lão Gù chết ở đâu?"})
+        remaining = client.get(f"/stories/{sid}/narrator").json()
+    assert (resp.status_code, resp.json()["code"]) == (502, "NARRATOR_ANSWER_BLOCKED")
+    assert "miếu Bà" not in resp.text
+    assert narrator_questions_asked(pg, sid, 3) == 0
+    assert remaining == {"remaining": CFG.limits.rate_limit.narrator_questions_per_chapter}

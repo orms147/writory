@@ -101,7 +101,12 @@ const ACTION_FAULTS = new Set([
   'ACTION_EMPTY', 'ACTION_TOO_LONG', 'ACTION_OUT_OF_STORY', 'ACTION_UNCLEAR', 'ACTION_FORBIDDEN',
   'LLM_CONTENT_BLOCKED', 'INPUT_BLOCKED',
 ]);
-const NARRATOR_FAULTS = new Set(['NARRATOR_QUESTION_EMPTY', 'NARRATOR_QUESTION_TOO_LONG', 'NARRATOR_LIMIT_REACHED']);
+// NARRATOR_ANSWER_BLOCKED (D-137): như máy chủ, trả lỗi trước khi tính lượt.
+const NARRATOR_FAULTS = new Set([
+  'NARRATOR_QUESTION_EMPTY', 'NARRATOR_QUESTION_TOO_LONG', 'NARRATOR_LIMIT_REACHED', 'NARRATOR_ANSWER_BLOCKED',
+]);
+// Lỗi của bước tạo lựa chọn khởi tạo; SETUP_OPTIONS_BLOCKED: kiểm duyệt bỏ quá nhiều lựa chọn (D-137).
+const SETUP_FAULTS = new Set(['LLM_INSUFFICIENT_CREDITS', 'LLM_AUTH_FAILED', 'SETUP_OPTIONS_BLOCKED']);
 
 export function createMockServer(options: MockOptions = {}) {
   const scale = options.delayScale ?? 1;
@@ -467,7 +472,7 @@ export function createMockServer(options: MockOptions = {}) {
           return errorResponse('SETUP_STEP_NOT_READY');
         }
         await wait(1600, signal);
-        if (f === 'LLM_INSUFFICIENT_CREDITS' || f === 'LLM_AUTH_FAILED') return errorResponse(f);
+        if (f && SETUP_FAULTS.has(f)) return errorResponse(f);
         if (step === 'settings') return save({ settings: SETTINGS });
         if (step === 'plots') return save({ plots: PLOTS });
         return save({ characters: CHARACTERS });

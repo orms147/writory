@@ -30,6 +30,9 @@ TUNING = load_cases(CASES_PATH)  # bộ chỉnh g9_moderation.yaml
 V1 = load_cases(HOLDOUT_V1_PATH)  # bộ giữ riêng v1, nay là bộ chỉnh (D-79)
 IDS = [c["id"] for c in CASES]
 OUTPUT = {Source.SCENE.value, Source.CHOICES.value}
+# Nguồn chữ bộ câu này được soạn cho (khai trước khi chạy, D-71, D-80). Nguồn `setup` (lựa chọn
+# khởi tạo, D-137) có sau và chưa có câu nào trong các bộ G9: chưa đo (docs/eval.md, G9).
+SOURCES = {s.value for s in Source} - {Source.SETUP.value}
 GENRES = {"tu-tien", "kiem-hiep", "trinh-tham", "hau-tan-the", "co-trang", "kinh-di"}
 
 
@@ -88,7 +91,7 @@ def test_covers_every_category_on_both_input_and_output():
 
 
 def test_covers_every_source_verdict_language_and_darkness_level():
-    assert {c["source"] for c in CASES} == {s.value for s in Source}
+    assert {c["source"] for c in CASES} == SOURCES
     assert {c["expected"]["verdict"] for c in CASES} == {v.value for v in Verdict}
     assert {"vi", "vi-khong-dau", "vi-teencode", "en"} <= {c["lang"] for c in CASES}
     levels = Counter(c["darkness_level"] for c in CASES if "darkness_level" in c)
@@ -123,7 +126,7 @@ def test_legit_dark_fiction_is_the_majority_and_all_expect_allow():
     legit = [c for c in CASES if "legit" in c["tags"]]
     assert len(legit) >= 30
     assert len(legit) > len(CASES) / 2  # phần lớn bộ câu
-    assert {c["source"] for c in legit} == {s.value for s in Source}
+    assert {c["source"] for c in legit} == SOURCES
     for case in legit:
         assert case["expected"]["verdict"] == "allow", case["id"]
     for case in CASES:

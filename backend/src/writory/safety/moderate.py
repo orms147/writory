@@ -2,9 +2,10 @@
 
 - Model chỉ báo `findings` (loại + mức độ miêu tả); mức xử lý (chặn cứng, chặn, vượt trần u tối) do
   `decide` quyết bằng code từ `config/moderation.yaml`. Không dùng regex để đọc ý định (G5).
-- Ba nguồn chữ (`Source`): đầu vào của người chơi, cảnh, bộ lựa chọn. Đầu vào chỉ kiểm loại chặn
-  cứng và loại chặn; mức miêu tả (u tối) chỉ kiểm ở đầu ra, vì hành động người chơi viết là điều
-  nhân vật làm, còn mức miêu tả do model viết ra.
+- Bốn nguồn chữ (`Source`): đầu vào của người chơi, cảnh (cả câu trả lời của người kể, D-137), bộ
+  lựa chọn cuối chương, lựa chọn khởi tạo (D-137). Đầu vào chỉ kiểm loại chặn cứng và loại chặn;
+  mức miêu tả (u tối) chỉ kiểm ở đầu ra, vì hành động người chơi viết là điều nhân vật làm, còn mức
+  miêu tả do model viết ra.
 - Cách gọi theo nguồn (D-79), cùng một hàm `moderate` cho sản phẩm và bộ đo:
   - đầu vào: `moderation.input_votes` lời gọi độc lập, lần lượt; lần nào báo chặn thì dừng và chặn
     (theo hướng an toàn). Lần lượt, không song song: trần chi phí kiểm đúng trước mỗi lời gọi, và
@@ -12,7 +13,10 @@
   - cảnh: một lời gọi;
   - bộ lựa chọn: một lời gọi, mỗi dòng (chữ lựa chọn, lời nói dối, cảm xúc thầm) đánh số, model trả
     đúng một mục cho mỗi dòng và chấm dòng đó như một hành động sẽ xảy ra trong cảnh; code quyết
-    từng dòng theo trần u tối, dòng nặng nhất quyết định.
+    từng dòng theo trần u tối, dòng nặng nhất quyết định;
+  - lựa chọn khởi tạo (D-137): như bộ lựa chọn, mỗi lựa chọn (bối cảnh, hướng truyện, nhân vật
+    chính) một dòng, với khung đề riêng: chấm theo đúng chữ dòng đó viết. Kết luận từng dòng ở
+    `ModerationResult.line_verdicts`, để nơi gọi bỏ riêng lựa chọn bị chặn.
 - Mọi chữ, kể cả cảnh do model viết, bọc thành khối dữ liệu (G4): chữ đó không được ra lệnh cho bộ
   kiểm duyệt. Số dòng và số thứ tự là chữ của code.
 - Fail closed: JSON sai schema (kể cả bộ lựa chọn thiếu, thừa hay trùng dòng) thử lại theo
@@ -44,13 +48,17 @@ _REASON_MAX_CHARS = 200
 
 # Đổi cách gọi hay chữ prompt thì tăng số; bộ đo G9 ghi số này (D-79). moderate-1: một lời gọi cho
 # mọi nguồn (D-57, D-70). moderate-2: đầu vào kiểm `input_votes` lần, bộ lựa chọn chấm từng dòng.
-PROMPT_VERSION = "moderate-2"
+# moderate-3: thêm nguồn `setup` với khung đề riêng (D-137); đề của input, scene, choices không đổi
+# một chữ (test so đề setup với đề choices).
+PROMPT_VERSION = "moderate-3"
 
 
 class Source(StrEnum):
     INPUT = "input"  # chữ người chơi gõ: ô tự viết, câu hỏi người kể, sửa nhân vật, tag
-    SCENE = "scene"  # văn một cảnh model viết
+    # Văn model viết để hiện thành một đoạn: một cảnh; câu trả lời của người kể (D-137).
+    SCENE = "scene"
     CHOICES = "choices"  # chữ bộ lựa chọn model tạo, mỗi dòng một chuỗi người chơi thấy
+    SETUP = "setup"  # lựa chọn khởi tạo model tạo, mỗi lựa chọn một dòng (D-137)
 
 
 class Verdict(StrEnum):
@@ -94,7 +102,8 @@ class LineFindings(BaseModel):
 
 
 class ChoicesModerationOutput(BaseModel):
-    """Đầu ra của model cho bộ lựa chọn (D-79): đúng một mục cho mỗi dòng; code kiểm đủ dòng."""
+    """Đầu ra của model cho nguồn chấm theo dòng (bộ lựa chọn, D-79; lựa chọn khởi tạo, D-137):
+    đúng một mục cho mỗi dòng; code kiểm đủ dòng."""
 
     model_config = ConfigDict(extra="forbid", frozen=True)
 
@@ -111,8 +120,10 @@ class ModerationResult:
     # Kết luận của từng lần kiểm, theo thứ tự: đầu vào tới `input_votes` phần tử (D-79), cảnh và bộ
     # lựa chọn một phần tử; chữ rỗng (không gọi model) thì rỗng.
     votes: tuple[Verdict, ...] = ()
-    # Bộ lựa chọn: số thứ tự các dòng làm nên kết luận (rỗng khi cho qua).
+    # Nguồn chấm theo dòng: số thứ tự các dòng làm nên kết luận (rỗng khi cho qua).
     lines: tuple[int, ...] = ()
+    # Nguồn chấm theo dòng: kết luận của từng dòng, theo thứ tự dòng (D-137); nguồn khác rỗng.
+    line_verdicts: tuple[Verdict, ...] = ()
 
 
 def decide(
@@ -163,6 +174,17 @@ kể đúng điều đó xảy ra. Chấm TỪNG DÒNG riêng, như một hành 
 độ miêu tả (intensity) là của chính việc dòng đó nói khi nó xảy ra trong cảnh, không theo độ dài \
 của dòng chữ. Dòng ngắn không làm nhẹ việc nó nói. Các dòng khác chỉ là ngữ cảnh."""
 
+# Lựa chọn khởi tạo (D-137): đoạn giới thiệu người chơi đọc để chọn, rồi thành thiết lập của cả
+# truyện. Chấm theo đúng chữ dòng viết, cùng thang mức độ với văn cảnh.
+_SETUP_FRAME = """Khối player_data là các lựa chọn khởi tạo truyện, đánh số [1], [2], …: mỗi dòng \
+là một lựa chọn người chơi đọc để chọn (một bối cảnh mở đầu, một hướng cốt truyện, hoặc một nhân \
+vật chính để nhập vai, kèm tính cách và quá khứ). Lựa chọn được chọn thành thiết lập của cả truyện. \
+Chấm TỪNG DÒNG riêng theo đúng chữ của dòng đó: loại và mức độ miêu tả (intensity) là của chính \
+điều dòng đó viết ra. Các dòng khác chỉ là ngữ cảnh."""
+
+# Nguồn chấm theo dòng và khung đề của từng nguồn; mọi nguồn khác chấm cả đoạn một lần.
+_LINE_FRAMES = {Source.CHOICES: _CHOICES_FRAME, Source.SETUP: _SETUP_FRAME}
+
 _RETURN_FLAT = (
     "Trả về JSON đúng schema: `findings` là danh sách {category, intensity} của MỌI loại nội "
     "dung đoạn chữ có (rỗng nếu không có gì), `reason` là lý do rất ngắn bằng tiếng Việt."
@@ -177,8 +199,8 @@ _RETURN_LINES = (
 def _system_prompt(config: ModerationConfig, source: Source) -> str:
     """Prompt dựng từ danh mục trong config: sửa config thì prompt đổi (một nguồn)."""
     lines = [_INTRO]
-    if source is Source.CHOICES:
-        lines += ["", _CHOICES_FRAME]
+    if source in _LINE_FRAMES:
+        lines += ["", _LINE_FRAMES[source]]
     lines += ["", "Các loại nội dung cần báo:"]
     limited = []
     for category, rule in config.categories.items():
@@ -193,7 +215,7 @@ def _system_prompt(config: ModerationConfig, source: Source) -> str:
         lines += [f"- {i.name.lower()}: {text}" for i, text in config.intensity_scale.items()]
         lines.append("Với loại không bị giới hạn ở trên, đặt intensity là strong.")
     lines.append("")
-    lines.append(_RETURN_LINES if source is Source.CHOICES else _RETURN_FLAT)
+    lines.append(_RETURN_LINES if source in _LINE_FRAMES else _RETURN_FLAT)
     return "\n".join(lines)
 
 
@@ -202,7 +224,8 @@ _FRAMING = {
     Source.SCENE: "Phân loại đoạn văn của một cảnh truyện:",
 }
 
-# Dòng đầu của lời gọi cho bộ lựa chọn: chữ của code, ngoài khối dữ liệu. Model giả đọc số dòng ở đây.
+# Dòng đầu của lời gọi cho nguồn chấm theo dòng (bộ lựa chọn, lựa chọn khởi tạo): chữ của code, ngoài
+# khối dữ liệu. Model giả đọc số dòng ở đây.
 LINES_HEADER = "Bộ lựa chọn có {n} dòng, đánh số [1] tới [{n}]. Phân loại từng dòng:"
 LINES_HEADER_RE = re.compile(r"Bộ lựa chọn có (\d+) dòng")
 
@@ -213,7 +236,8 @@ async def moderate(
 ) -> ModerationResult:
     """Kiểm một chữ theo cách gọi của nguồn (D-79) rồi `decide`. `llm` nên là `MeteredClient` (G8):
     mọi lời gọi, kể cả các lần kiểm đầu vào, đều qua trần và bộ đếm lời gọi. Chữ rỗng thì không có
-    gì để kiểm, không gọi model. Bộ lựa chọn: mỗi dòng của `text` là một chuỗi người chơi thấy."""
+    gì để kiểm, không gọi model. Nguồn chấm theo dòng (bộ lựa chọn, lựa chọn khởi tạo): mỗi dòng
+    không rỗng của `text` là một chuỗi người chơi thấy."""
     model = require_model(config.models.roles, "moderate")
     config.moderation.ceiling(darkness_level)  # sai mức u tối thì báo trước lời gọi
     if not text.strip():
@@ -221,8 +245,8 @@ async def moderate(
     if source is Source.INPUT:
         result = await _input_votes(text, model=model, llm=llm, config=config)
         detail = f"sau {len(result.votes)}/{config.moderation.input_votes} lần"
-    elif source is Source.CHOICES:
-        result = await _choices(text, model=model, llm=llm, config=config,
+    elif source in _LINE_FRAMES:
+        result = await _by_line(text, source=source, model=model, llm=llm, config=config,
                                 darkness_level=darkness_level)
         detail = f"dòng {', '.join(str(n) for n in result.lines) or '-'}"
     else:
@@ -284,7 +308,7 @@ async def _input_votes(text: str, *, model: str, llm: LLMClient,
                             votes=tuple(v.verdict for v in votes))
 
 
-async def _choices(text: str, *, model: str, llm: LLMClient, config: AppConfig,
+async def _by_line(text: str, *, source: Source, model: str, llm: LLMClient, config: AppConfig,
                    darkness_level: str | None) -> ModerationResult:
     """Một lời gọi cho cả bộ, mỗi dòng đánh số; model trả đúng một mục cho mỗi dòng (thiếu, thừa
     hay trùng là sai schema, thử lại). Mỗi dòng `decide` riêng; dòng nặng nhất quyết định. Cả bộ
@@ -293,7 +317,7 @@ async def _choices(text: str, *, model: str, llm: LLMClient, config: AppConfig,
     n = len(rows)
     numbered = "\n".join(f"[{i}] {row}" for i, row in enumerate(rows, 1))
     messages = [
-        system_message(_system_prompt(config.moderation, Source.CHOICES), DATA_NOTICE),
+        system_message(_system_prompt(config.moderation, source), DATA_NOTICE),
         user_message(LINES_HEADER.format(n=n), UserAuthored(numbered, "moderated_text")),
     ]
 
@@ -307,17 +331,19 @@ async def _choices(text: str, *, model: str, llm: LLMClient, config: AppConfig,
 
     output = await _call(messages, ChoicesModerationOutput, model=model, llm=llm, config=config,
                          check=check)
-    decided = [(item.line, *decide(item.findings, source=Source.CHOICES,
+    decided = [(item.line, *decide(item.findings, source=source,
                                    config=config.moderation, darkness_level=darkness_level))
                for item in sorted(output.lines, key=lambda item: item.line)]
-    verdict = max((v for _, v, _ in decided), key=_SEVERITY.__getitem__)
+    per_line = tuple(v for _, v, _ in decided)
+    verdict = max(per_line, key=_SEVERITY.__getitem__)
     findings = tuple(f for item in output.lines for f in item.findings)
     if verdict is Verdict.ALLOW:
-        return ModerationResult(verdict, (), findings, output.reason, votes=(verdict,))
+        return ModerationResult(verdict, (), findings, output.reason, votes=(verdict,),
+                                line_verdicts=per_line)
     worst = [(line, cats) for line, v, cats in decided if v is verdict]
     return ModerationResult(verdict, _unique(c for _, cats in worst for c in cats), findings,
                             output.reason, votes=(verdict,),
-                            lines=tuple(line for line, _ in worst))
+                            lines=tuple(line for line, _ in worst), line_verdicts=per_line)
 
 
 async def ensure_input_allowed(text: str, *, llm: LLMClient, config: AppConfig) -> None:
