@@ -23,7 +23,8 @@ from writory.graph import PlayerView, public_entries, public_lies
 from writory.llm.fake import FakeLLM
 from writory.pipeline.narrator import NOT_KNOWN
 
-from .test_narrator import CFG, PLAN, MemoryQuota, metered, ref, reply, state, view
+from .test_narrator import CFG, PAGES, PLAN, MemoryQuota, metered, ref, reply, state, view
+from .test_narrator_pages import CFG4, PASSAGES_OPEN, passages_in
 
 NOTEBOOK_KEYS = {"chapter", "entries", "lies"}
 ENTRY_KEYS = {"ref", "kind", "text", "aliases", "since_chapter", "quote", "about",
@@ -41,8 +42,8 @@ async def ok() -> bool:
 
 def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota | None = None,
           override_llm: bool = True, override_plan: bool = True,
-          moderated: ModeratedLLM | None = None) -> FastAPI:
-    app = create_app(settings(dev=True), health_checks={"neo4j": ok}, config=CFG)
+          moderated: ModeratedLLM | None = None, config=CFG) -> FastAPI:
+    app = create_app(settings(dev=True), health_checks={"neo4j": ok}, config=config)
 
     def player_view(story_id: str) -> PlayerView:
         if story_id == "khong-co":
@@ -63,6 +64,9 @@ def build(chapter: int = 4, *, fake: FakeLLM | None = None, quota: MemoryQuota |
     app.dependency_overrides[deps.get_player_view] = player_view
     app.dependency_overrides[deps.get_truth_names] = lambda: state(chapter).named_nodes()
     app.dependency_overrides[deps.get_story_brief] = lambda: ""
+    # Văn đã hiện của chương 1..N, như `db.committed_page_texts` (D-143).
+    app.dependency_overrides[deps.get_page_texts] = lambda: {
+        n: t for n, t in PAGES.items() if n <= chapter}
     q = quota or MemoryQuota()
     app.dependency_overrides[deps.get_narrator_quota] = lambda: q
     if override_plan:
@@ -447,3 +451,31 @@ def test_answer_is_moderated_at_the_story_darkness_level(darkness, status):
     with TestClient(app, raise_server_exceptions=False) as client:
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù sao rồi?"})
     assert resp.status_code == status
+
+
+# --- đoạn đã hiện trên trang (D-143) ----------------------------------------------------------------
+
+
+def test_narrator_reads_the_seen_pages_and_cites_their_chapter():
+    """Bật đoạn trên trang: người kể nhận văn các chương đã đọc từ `deps.get_page_texts`; câu trả lời
+    dẫn một đoạn thì nguồn có chương của đoạn đó."""
+    probe = FakeLLM.scripted([reply(False, None, [])])
+    with TestClient(build(3, fake=probe, config=CFG4)) as client:
+        client.post("/stories/s1/narrator", json={"question": "Lão Gù rèn gì?"})
+    [messages] = probe.calls
+    [user] = [m.content for m in messages if m.role == "user"]
+    assert PASSAGES_OPEN in user
+    [(t1, chapter, _), *_] = passages_in(user)
+    assert 1 <= chapter <= 3
+    fake = FakeLLM.scripted([reply(True, "Lão giữ thanh kiếm Thanh Sương.", [t1])])
+    with TestClient(build(3, fake=fake, config=CFG4)) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù rèn gì?"})
+    assert (resp.status_code, resp.json()) == (
+        200, answered("Lão giữ thanh kiếm Thanh Sương.", sources=[chapter]))
+    assert set(resp.json()) == NARRATOR_KEYS
+
+
+def test_page_texts_are_not_read_when_passages_are_off():
+    """Tắt (`top_k: 0`): không đọc văn chương nào (kết nối giả None không bị chạm)."""
+    story = StoryRecord("s1", "dev", "short", 4)
+    assert deps.get_page_texts(story, None, CFG) == {}

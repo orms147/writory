@@ -5,15 +5,18 @@ import json
 
 import pytest
 from fastapi.testclient import TestClient
+from psycopg.types.json import Jsonb
 
 from tests.api_fixtures import MASTER_KEY
 from tests.moderation_fixtures import ModeratedLLM, moderation_reply
 from tests.unit.test_narrator import CFG, PLAN, metered, reply
+from tests.unit.test_narrator_pages import CFG4, PASSAGES_OPEN, passage_block
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.config import Settings
 from writory.db import (
     commit_chapter,
+    committed_page_texts,
     committed_player_view,
     create_story,
     narrator_questions_asked,
@@ -40,13 +43,13 @@ async def _ok() -> bool:
     return True
 
 
-def _app(pg, driver, *, fake: FakeLLM | None = None, moderation=()):
+def _app(pg, driver, *, fake: FakeLLM | None = None, moderation=(), config=CFG):
     settings = Settings(
         _env_file=None, neo4j_uri="bolt://unused", neo4j_user="u", neo4j_password="p",
         postgres_dsn="postgresql://unused", player_key_encryption_key=MASTER_KEY,
         enable_dev_routes=True,
     )
-    app = create_app(settings, health_checks={"neo4j": _ok}, config=CFG)
+    app = create_app(settings, health_checks={"neo4j": _ok}, config=config)
     app.dependency_overrides[deps.get_pg_conn] = lambda: pg
     app.dependency_overrides[deps.get_neo4j_driver] = lambda: driver
     app.dependency_overrides[deps.get_story_plan] = lambda: PLAN
@@ -150,3 +153,41 @@ def test_blocked_answer_does_not_use_a_question_in_postgres(pg, driver, new_db_s
     assert "miếu Bà" not in resp.text
     assert narrator_questions_asked(pg, sid, 3) == 0
     assert remaining == {"remaining": CFG.limits.rate_limit.narrator_questions_per_chapter}
+
+
+# --- đoạn đã hiện trên trang (D-143): chỉ chương đã commit ------------------------------------------
+
+
+def _pending(pg, sid: str, number: int, scenes: list[str]) -> None:
+    """Một chương còn `pending` (đã ghi Postgres, chưa áp sang Neo4j): chữ của nó chưa hiện."""
+    pg.execute("INSERT INTO chapters (story_id, commit_id, number, status, scenes) "
+               "VALUES (%s, %s, %s, 'pending', %s)",
+               (sid, f"pending-{number}", number, Jsonb(scenes)))
+
+
+def test_committed_page_texts_skip_pending_chapters_and_chapter_zero(pg, driver, new_db_story_id):
+    sid = new_db_story_id()
+    _story(pg, driver, sid, 4)
+    _pending(pg, sid, 5, [SAMPLE.chapters[5].text])
+    texts = committed_page_texts(pg, sid, 10)
+    assert sorted(texts) == [1, 2, 3, 4]
+    assert texts[2] == SAMPLE.chapters[2].text
+    assert sorted(committed_page_texts(pg, sid, 2)) == [1, 2]
+    assert committed_page_texts(pg, sid, 0) == {}
+
+
+def test_narrator_reads_only_pages_of_committed_chapters(pg, driver, new_db_story_id):
+    """Chương 5 (tên thật "Lý Thất") còn pending: người kể ở chương 4 không thấy chữ nào của nó."""
+    sid = new_db_story_id()
+    _story(pg, driver, sid, 4)
+    _pending(pg, sid, 5, [SAMPLE.chapters[5].text])
+    fake = FakeLLM.scripted([reply(False, None, [])])
+    with TestClient(_app(pg, driver, fake=fake, config=CFG4)) as client:
+        resp = client.post(f"/stories/{sid}/narrator",
+                           json={"question": "Gã lái đò mặt sẹo tên thật là gì? Lý Thất là ai?"})
+    assert resp.status_code == 200
+    [messages] = fake.calls
+    [user] = [m.content for m in messages if m.role == "user"]
+    assert PASSAGES_OPEN in user
+    block = passage_block(user)
+    assert "Lý Thất" not in block and "Chương 5:" not in block

@@ -119,6 +119,18 @@ class NarratorNotebookLimits(_Section):
         return self
 
 
+class NarratorPagesLimits(_Section):
+    """Đoạn đã hiện trên trang cho người kể (D-143): BM25 theo câu hỏi trên văn các chương đã ghi.
+    `top_k` 0 = tắt (đề `narrator-3`); bật thì `chunk_chars` và `max_chars` bắt buộc."""
+
+    _path = "narrator_pages"
+    _file = "limits.yaml"
+    top_k: NonNegativeInt | None = None  # số đoạn trúng tối đa mỗi câu hỏi; 0 = tắt
+    chunk_chars: PositiveInt | None = None  # cỡ một đoạn khi chia chương
+    max_chars: PositiveInt | None = None  # tổng độ dài chữ tối đa của các đoạn
+    neighbors: NonNegativeInt = 0  # đoạn liền sau mỗi đoạn trúng cũng lấy (như D-96)
+
+
 class ContextLimits(_Section):
     _path = "context"
     _file = "limits.yaml"
@@ -224,6 +236,7 @@ class LimitsConfig(_Strict):
     rate_limit: RateLimits
     input: InputLimits
     narrator_notebook: NarratorNotebookLimits
+    narrator_pages: NarratorPagesLimits = NarratorPagesLimits()
     context: ContextLimits
     facts: FactLimits = FactLimits()
     llm_call: LLMCallLimits = LLMCallLimits()

@@ -223,7 +223,8 @@ CFG = CONFIG.model_copy(update={
 async def ask(question: str, view: PlayerView, reply: dict) -> tuple[FakeLLM, object]:
     fake = FakeLLM.scripted([json.dumps(reply, ensure_ascii=False)])
     out = await ask_narrator_reply(question, view, llm=metered(fake), config=CFG,
-                                   truth_names={}, plan=PLAN, story_brief="", quota=Quota())
+                                   truth_names={}, plan=PLAN, story_brief="", quota=Quota(),
+                                   pages={})
     return fake, out
 
 

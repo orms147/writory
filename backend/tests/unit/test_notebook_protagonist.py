@@ -62,7 +62,7 @@ async def ask(question: str, view: PlayerView, state, plan, reply: dict):
     fake = FakeLLM.scripted([json.dumps(reply, ensure_ascii=False)])
     out = await ask_narrator_reply(question, view, llm=metered(fake), config=CFG,
                                    truth_names=leak_names(state), plan=plan, story_brief="",
-                                   quota=Quota())
+                                   quota=Quota(), pages={})
     return fake, out
 
 

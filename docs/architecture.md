@@ -307,6 +307,7 @@ flowchart LR
   pv -->|select_notebook| v_narrator
   page["Chữ cảnh đã hiện"] --> v_summary
   page --> v_choices
+  page -->|đoạn BM25 chương 1..N, D-143| v_narrator
   leak{{"Bộ dò lộ check_leaks, bằng code"}}
   v_writer -->|chữ cảnh| leak
   v_extract -->|chữ lớp truth sổ tay sẽ hiện| leak
@@ -333,7 +334,7 @@ flowchart LR
 | `extract` | danh mục mọi nút, cạnh đang mở, mạch phải gỡ kèm hạn, văn cảnh (bọc) | có | `ExtractOutput`, rồi `to_package` | `pipeline/extract.py` `extract_changes` |
 | `summary` | chỉ chữ chương đã hiện (bọc) | không | `SummaryOutput` | `pipeline/summary.py` `summarize_chapter` |
 | `choices` | sổ tay dựng từ `player_view` (mã công khai), cảnh cuối đã hiện, cờ đứng yên chỉ đúng hay sai (D-98: ở yên một nơi; D-112: nhiều chương liền không đổi trạng thái nào) | không | `ChoicesOutput`; tham chiếu ngoài sổ tay bị bỏ riêng, không bỏ cả bộ (D-114) | `pipeline/choices.py` `make_choices`, từ `_choices` và `POST /stories/{id}/choices` |
-| `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput`; câu sắp hiện qua dò lộ, lưới úp mở rồi kiểm duyệt, bị chặn thì `NARRATOR_ANSWER_BLOCKED` và trả lại lượt (D-137) | `pipeline/narrator.py` `ask_narrator_reply` |
+| `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`); đoạn văn đã hiện của chương 1..N tìm theo câu hỏi khi bật (`select_passages`, D-143); câu hỏi; cả ba bọc | không | `NarratorOutput`, mã dẫn có thể là mục hay đoạn; câu sắp hiện qua dò lộ, lưới úp mở rồi kiểm duyệt, bị chặn thì `NARRATOR_ANSWER_BLOCKED` và trả lại lượt (D-137) | `pipeline/narrator.py` `ask_narrator_reply` |
 | `classify` | chữ ô tự viết và thiết lập truyện người chơi đã đọc (`stories.brief`), đều bọc | không | `Classification`: nhãn enum (G5) và `feasibility` enum (G6, D-138) | `safety/classify.py` `classify_action` |
 | `overreach` | hành động tự viết dẫn tới chương, văn các cảnh trước của chương và bản đang soát (bọc); loại vượt luật là chữ của code | không | `OverreachCheck`, kết luận enum (G6, D-138) | `safety/overreach.py` `check_overreach`, từ `_review` |
 | `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn, lựa chọn khởi tạo, câu trả lời người kể (bọc; D-137) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
@@ -352,13 +353,16 @@ flowchart LR
   pq --> prompt
   pv["player_view"] -->|select_notebook| nb["Phần sổ tay gửi người kể"]
   nb --> narr["Đề người kể"]
-  pq -.->|cùng code passages.py| benchA["Bài A: hệ rag, graph_quotes"]
+  pages -->|committed_page_texts chương 1..N, select_passages khi bật narrator_pages| np["Đoạn trên trang cho người kể"]
+  np --> narr
+  pq -.->|cùng code passages.py| benchA["Bài A: hệ rag, graph_quotes, narrator_pages"]
 ```
 
 - **`writer_context`** (`graph/context.py`) đọc lớp `truth` ở cuối chương trước: người có mặt, quan hệ, Fact họ biết, lời nói dối chưa bị phát hiện, bí mật kèm trạng thái, đồ vật (D-90), lân cận theo cạnh, mạch đang mở. `render_writer_context` ghi cạnh tên thật tên mà người đọc biết (`reader_names`, D-91). Danh sách đầy đủ: `docs/graph-schema.md`, mục "Ngữ cảnh cho model viết". `cap_page_facts` giới hạn số Fact sinh từ trang (D-93).
 - **Đoạn trên trang** (`pipeline/passages.py`, D-85). Đây là BM25 thuần Python, tất định, không đọc đồ thị. Kho đoạn chỉ được dựng ở `_start` khi `limits.context.page_quotes_top_k` khác 0; mặc định là tắt (`config/limits.yaml`). Mỗi đoạn trúng kéo theo đoạn liền sau cùng chương (`page_quotes_neighbors`, D-96). Đoạn chỉ vào đề dàn ý và đề viết, trong khối dữ liệu (G4).
 - **Truy hồi sổ tay của người kể** (`pipeline/notebook.py` `select_notebook`, D-59). Hàm chỉ nhận `PlayerView`, nên lọc theo `player_view` trước, truy hồi sau. Sổ tay dưới trần `limits.narrator_notebook` thì gửi nguyên. Vượt trần thì luôn kèm các mục gần đây nhất (`recent_entries`), rồi chọn theo tên, từ khoá hiếm và hàng xóm theo `about`. Mã công khai luôn lấy từ sổ tay đầy đủ, nên ổn định dù chỉ gửi một phần.
-- **Quan hệ với bài A** (`pipeline/bench_a_systems.py`, `SYSTEMS`). Hệ `rag` và phần chữ trang của `graph_quotes` dùng chung `PagePool` với sản phẩm. Hệ `graph` của bài A có cách dựng ngữ cảnh riêng (`build_graph_context`, đọc qua `GraphState`), không phải `writer_context`. Vì vậy kết quả bài A đo khả năng của đồ thị làm bộ nhớ, không đo trực tiếp đề của model viết (suy luận). Đề, hệ và cách chấm: `docs/eval.md`, Bài A.
+- **Đoạn trên trang cho người kể** (`pipeline/narrator.py` `select_passages`, D-143). Bộ trích bỏ sót nhiều sự thật ở truyện dài, nên sổ tay thiếu điều người chơi đã đọc. Route người kể đọc văn các chương đã commit (`db.committed_page_texts` qua `api/deps.get_page_texts`; không đọc gì khi tắt). Người kể chỉ giữ chương 1..`view.chapter` rồi chạy `PagePool` theo chữ câu hỏi, trong `limits.narrator_pages`; đoạn mang mã `t1`… trong khối `page_passages`, đề `narrator-4`. `top_k: 0` là tắt: đề `narrator-3`, tin nhắn y như trước. Câu trả lời vẫn qua bộ dò lộ: tên hay bí mật mà trang đã nói nhưng bộ trích chưa ghi vào `player_view` vẫn bị chặn (hạn chế, an toàn). Nguồn trả về gồm chương của đoạn được dẫn.
+- **Quan hệ với bài A** (`pipeline/bench_a_systems.py`, `SYSTEMS`). Hệ `rag` và phần chữ trang của `graph_quotes` dùng chung `PagePool` với sản phẩm. Hai hệ `narrator`, `narrator_pages` (`pipeline/bench_a_narrator.py`, D-143) gọi đúng `ask_narrator_reply` của sản phẩm, nên đo chính đường người kể. Hệ `graph` của bài A có cách dựng ngữ cảnh riêng (`build_graph_context`, đọc qua `GraphState`), không phải `writer_context`. Vì vậy kết quả bài A đo khả năng của đồ thị làm bộ nhớ, không đo trực tiếp đề của model viết (suy luận). Đề, hệ và cách chấm: `docs/eval.md`, Bài A.
 
 ## 9. LLM client và chi phí
 
@@ -502,11 +506,11 @@ Migration: SQL thuần trong `db/migrations/`, chạy theo thứ tự tên file 
 
 | Bài | Đo phần nào của kiến trúc | Module |
 |---|---|---|
-| A, bộ nhớ | đồ thị làm bộ nhớ so với không nhớ, tóm tắt cuốn chiếu, RAG, toàn văn, đồ thị kèm đoạn trang (mục 8) | `pipeline/bench_a.py`, `bench_a_systems.py`, `bench_a_retrieval.py` |
+| A, bộ nhớ | đồ thị làm bộ nhớ so với không nhớ, tóm tắt cuốn chiếu, RAG, toàn văn, đồ thị kèm đoạn trang (mục 8); độ đúng của đường người kể có và không có đoạn trang (D-143) | `pipeline/bench_a.py`, `bench_a_systems.py`, `bench_a_retrieval.py`, `bench_a_narrator.py` |
 | B, người canh | các phép kiểm bằng code của `guard/` trên gói cài lỗi và gói sạch | `guard/bench_b.py` |
 | C, trích thay đổi | vai `extract` và `to_package`, đo trên lớp người chơi biết | `pipeline/bench_c.py` |
 | D, chất lượng văn | model viết trên dàn ý cảnh | `quality/bench_d.py` |
-| E, người kể không lộ | ranh giới G1 và G2 của đường người kể, cả truy hồi sổ tay lớn | `pipeline/bench_e.py`, `bench_e_story.py` |
+| E, người kể không lộ | ranh giới G1 và G2 của đường người kể, cả truy hồi sổ tay lớn và đoạn trên trang (D-143) | `pipeline/bench_e.py`, `bench_e_story.py` |
 | F, so model viết | toàn bộ đường viết trên cùng một thế giới, kèm chi phí thật | `quality/bench_bakeoff.py`, `pipeline/bench_run.py` |
 | Chạy cả truyện | đi hết đường người chơi: chi phí theo vai, lỗi, kế hoạch so với kết quả | `pipeline/bench_run.py` |
 | Red-team G5, G6, G9 | phân loại ô tự viết (cả `feasibility`), vai `overreach` chấm trang, kiểm duyệt nội dung | `safety/bench_g5.py`, `safety/bench_g6.py`, `safety/bench_g9.py` |
@@ -519,6 +523,7 @@ Các mục dưới đây đọc được trong code. Tài liệu chỉ liệt k�
 
 - **Ở dev, chương kẹt `pending` vẫn phải áp lại bằng tay.** Áp lại lúc khởi động chỉ chạy ở `APP_ENV=prod`, cùng migration (D-105). Lệnh tay: `docs/runbook.md`, mục "Ghi chương bị kẹt `pending`". Lệnh chạy cả truyện (`pipeline/bench_run.py`) ghi chương không qua khoá `story`; nó chạy trên kho dev, không chung kho với chồng prod (suy luận).
 - **G6 dựa vào hai lời gọi model, mới đo một lần.** Lời gọi phân loại chấm `feasibility`, vai `overreach` chấm trang (D-138); một lần chạy, đạt theo luật khai trước (`evals/results/2026-10-30-g6-check/notes.md`). Bộ phân loại chấm "trong luật" thì chương đó chỉ còn dòng dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` vẫn không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
+- **Người kể đọc đoạn trang: đo một lần, một truyện dài.** `narrator-4` bật mặc định với số tạm chờ duyệt (`config/limits.yaml`, `narrator_pages`; D-143); lượt đo khai trước đạt trên Muse và Luna (`evals/results/2026-10-30-narrator-passages/notes.md`), luật số câu sai đạt sát ngưỡng. Mỗi câu hỏi đọc lại văn mọi chương đã commit và chia đoạn lại (không có kho dựng sẵn); truyện 60 chương chưa đo thời gian. Giám khảo bài E chưa thấy đoạn trang, nên bài E từ chối `--judge` khi bật.
 - **Model viết không đi qua `role_extra`.** `_write` (`pipeline/chapter.py`) dựng `extra` bằng `reasoning_extra(tier.reasoning)`, nên `provider_ignore` (D-100) không áp cho model viết; mọi vai trong `roles` thì có (D-106). Hiện `provider_ignore` rỗng (D-102) nên không có tác động. Chưa rõ có cố ý không.
 - **Không có migration `0006`.** Thư mục `db/migrations/` nhảy từ `0005` sang `0007`, và lịch sử git không có file `0006` nào. `migrate` chạy theo thứ tự tên nên không hỏng (suy luận).
 - Các điểm chưa làm của lớp đồ thị (lời người chơi đã nghe, quan hệ trong sổ tay, `writer_context` trên `GraphState`): `docs/graph-schema.md`, mục "Chưa làm". Các điểm bảo mật còn mở: `docs/security.md`, mục "Chưa giải quyết".

@@ -14,7 +14,11 @@ from writory.pipeline import bench_e as be
 from writory.pipeline.narrator import NOT_KNOWN, render_notebook
 from writory.pipeline.notebook import select_notebook
 
-CONFIG = load_config()
+# Các test ở file này chạy đề `narrator-3` (chỉ sổ tay, có giám khảo): tắt đoạn trên trang. Đề
+# `narrator-4` (D-143): tests/unit/test_pipeline_bench_e_pages.py.
+_REPO = load_config()
+CONFIG = _REPO.model_copy(update={"limits": _REPO.limits.model_copy(update={
+    "narrator_pages": _REPO.limits.narrator_pages.model_copy(update={"top_k": 0})})})
 LIMITS = CONFIG.limits.narrator_notebook
 V1 = be.load_data()
 V2 = be.load_data(questions_file="questions-v2.yaml")

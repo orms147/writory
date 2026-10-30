@@ -149,6 +149,17 @@ def chapter_scenes(conn: psycopg.Connection, story_id: str, number: int) -> list
     return None if row is None else list(row[0])
 
 
+def committed_page_texts(conn: psycopg.Connection, story_id: str, upto: int) -> dict[int, str]:
+    """Văn đã hiện của các chương đã commit 1..`upto` (các cảnh nối bằng dòng trống), cho người kể
+    (D-143). Chương pending hay failed chưa hiện nên không có; chương 0 không có trang."""
+    rows = conn.execute(
+        "SELECT number, scenes FROM chapters WHERE story_id = %s AND status = 'committed' "
+        "AND number BETWEEN 1 AND %s ORDER BY number",
+        (story_id, upto),
+    ).fetchall()
+    return {number: "\n\n".join(scenes) for number, scenes in rows if scenes}
+
+
 def delete_story_record(conn: psycopg.Connection, story_id: str) -> None:
     """Xoá truyện khỏi Postgres (chương và gói xoá theo). Đồ thị xoá riêng: graph.delete_story."""
     require_story_id(story_id)
