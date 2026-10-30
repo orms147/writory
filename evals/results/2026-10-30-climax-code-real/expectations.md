@@ -72,3 +72,31 @@ uv run python -m writory.pipeline.bench_run --scenario ../evals/scenarios/story_
 # Pha 2: --scenario .../long-tu-tien.yaml --setup-from ../evals/results/2026-10-29-run-long-tu-tien-3 --chapters 24 --budget 23 --config-dir ../evals/config/meta --label ckr-tu-treat
 # số đo: python ../evals/results/2026-10-30-climax-code-real/judge_aftermath.py pack|judge|count (spec.json khai sau khi biết d)
 ```
+
+## Bổ sung trước khi chạy (30/10/2026, sau khi D-140 gộp; main `b65510e`). Các mục trên không đổi.
+- **Config gộp từng khoá (D-140):** thư mục config bộ đo chỉ chứa phần khác `config/`, nên `ctrl` là một thư mục nhỏ thay cho bản sao toàn bộ `limits.yaml` ở mục "Lệnh dự kiến" phía trên: `models.yaml` (sao nguyên `evals/config/meta/models.yaml`, vì thiếu file này loader lấy `config/models.yaml` của Luna) và `limits.yaml` chỉ có `cost_usd` của Meta (0,80 / 3,20 / 40,0) và `context.climax_aftermath_chapters: null`. Đã kiểm bằng `load_config`: config gộp của `ctrl` và `treat` khác đúng một khoá (`context.climax_aftermath_chapters`, 2 so với null), cùng `models.roles`, cùng trần Meta. `treat` dùng thẳng `--config-dir ../evals/config/meta`.
+- **Thay đổi mã nhỏ ở nhánh này để kiểm được cờ từ `meta.json`:** `CONTEXT_FLAGS` của `bench_run` thêm `climax_aftermath_chapters`, nên `meta.json.context_flags` ghi giá trị đã dùng (2 hay null); test `test_meta_records_the_three_context_flags` cập nhật. Mọi lượt chạy trên đúng một commit của nhánh sau khi thay đổi này nằm trong; không merge giữa chừng.
+- **Dry-run lại (0 USD)** với hai thư mục config trên, `--chapters 20`: chạy hết; `meta.json` ghi `provider: meta`, model viết `meta/muse-wonder-1.0`, hash `limits.yaml` khác nhau ở hai nhánh và hash `models.yaml` giống nhau, `prompt_variant: climax-old` chỉ ở `ctrl`.
+- **Trần per_story của Meta (40) so với ước tính:** lượt tu-tien dài nhất ước tính trên 22,5 USD < 40; trần chương 3,20 và cảnh 0,80 cao hơn chi phí cảnh/chương Luna nhân 40 (0,0033 và 0,015 nhân 40 = 0,13 và 0,6) nên không chặn trước `--budget`.
+- **Ước tính lại từ lượt thử Muse (`../2026-10-30-run-meta-thu/`):** ba bước khởi tạo ra 3518 token so với 1402–1606 của Luna ở các bước tương ứng (`ab-*-setup`), tức khoảng **2,2 đến 2,5 lần**; session 1 báo khoảng 38% token ra là suy luận. `cached` của Meta là 0 ở cả ba lời gọi, nhưng các lời gọi đó ngắn (dưới ~1.200 token vào) nên chưa biết cache có hoạt động ở lời gọi dài không. Vì vậy bảng giữa dùng token ra ×2,4 và KHÔNG cache; bảng dưới giữ ×2 có cache 21%; bảng trên giữ ×3 không cache (như trước).
+
+  | lượt | dưới | giữa | trên | `--budget` |
+  |---|---|---|---|---|
+  | ky-ao `ctrl`, tới ch20 | 10,1 | 12,3 | 13,9 | 14 |
+  | ky-ao `treat`, tới ch20 | 10,1 | 12,3 | 13,9 | 14 |
+  | tu-tien `treat`, tới ch24 | 16,4 | 19,9 | 22,5 | 23 |
+  | chấm (b) | 0,5 | 0,8 | 1,2 | 3 |
+  | **Tổng** | **37** | **45** | **52** | **54** |
+
+  Ước tính giữa tăng từ 37 lên 45 USD. Rủi ro đã thấy: `--budget` 14 và 23 sát ước tính trên (13,9 và 22,5); nếu chi phí thật vượt, `bench_run` dừng đúng ở trần và chạy tiếp bằng `--resume` cần nâng trần. Tôi sẽ không tự nâng trần: dừng và báo.
+- **Thứ tự key Meta (điều phối xếp):** (1) PR #127 của session 2 (~1,5 USD), (2) người kể (~12 USD), (3) phép đo này. Không chạy trước khi điều phối báo tới lượt.
+- **Lệnh (thay mục "Lệnh dự kiến"; trong `backend/`, `PYTHONIOENCODING=utf-8`):**
+  ```
+  CTRL=<thư mục tạm>   # mkdir; cp ../evals/config/meta/models.yaml $CTRL/; limits.yaml như trên
+  uv run python -m writory.pipeline.bench_run --scenario ../evals/scenarios/story_run/long-ky-ao-hanh-trinh.yaml \
+    --setup-from ../evals/results/2026-10-29-run-long-ky-ao-hanh-trinh-1 --chapters 20 --budget 14 \
+    --config-dir $CTRL --prompt-variant climax-old --env-file <.env> --label ckr-ky-ctrl
+  # treat: --config-dir ../evals/config/meta, bỏ --prompt-variant, --label ckr-ky-treat, cùng --budget 14
+  # Pha 2: --scenario .../long-tu-tien.yaml --setup-from ../evals/results/2026-10-29-run-long-tu-tien-3 --chapters 24 \
+  #        --budget 23 --config-dir ../evals/config/meta --label ckr-tu-treat
+  ```

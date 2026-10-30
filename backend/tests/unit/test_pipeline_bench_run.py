@@ -1156,7 +1156,7 @@ async def test_meta_records_the_three_context_flags(tmp_path):
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     assert meta["context_flags"] == {"character_personality_max_chars": 0,
                                      "previous_openings": 0, "unplanned_chapter_goal": False,
-                                     "phase_shift_every": None}
+                                     "phase_shift_every": None, "climax_aftermath_chapters": 2}
     on = make_config(tmp_path / "on", **FIRST_PERSON, limits={"context": {
         "character_personality_max_chars": 240, "previous_openings": 2,
         "previous_opening_max_chars": 160, "unplanned_chapter_goal": True,
@@ -1165,7 +1165,8 @@ async def test_meta_records_the_three_context_flags(tmp_path):
     assert await run2.run() == bench_run.EXIT_OK
     flags = json.loads((out2 / "meta.json").read_text(encoding="utf-8"))["context_flags"]
     assert flags == {"character_personality_max_chars": 240, "previous_openings": 2,
-                     "unplanned_chapter_goal": True, "phase_shift_every": 4}
+                     "unplanned_chapter_goal": True, "phase_shift_every": 4,
+                     "climax_aftermath_chapters": 2}
 
 
 async def test_report_says_which_chapters_had_the_phase_shift_line_on(tmp_path):
