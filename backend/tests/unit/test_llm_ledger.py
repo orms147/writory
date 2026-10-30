@@ -92,7 +92,7 @@ async def test_stream_records_once_at_the_end():
     (BuildOutput, "setup"),
     (ModerationOutput, "moderate"),  # G9, D-57
     (ChoicesModerationOutput, "moderate"),  # bộ lựa chọn theo dòng, D-79
-    (OverreachCheck, "overreach"),  # G6, D-137
+    (OverreachCheck, "overreach"),  # G6, D-138
 ])
 def test_role_of_schema(schema, role):
     assert role_of_schema(schema) == role

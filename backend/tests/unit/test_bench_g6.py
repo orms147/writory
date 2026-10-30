@@ -1,4 +1,4 @@
-"""Bộ câu và bộ chấm của vai `overreach` (G6, D-137). Model giả: kiểm cấu trúc và đường chấm, không đo
+"""Bộ câu và bộ chấm của vai `overreach` (G6, D-138). Model giả: kiểm cấu trúc và đường chấm, không đo
 model. Đo với model thật: `writory.safety.bench_g6` (docs/eval.md, mục Red-team)."""
 
 import json

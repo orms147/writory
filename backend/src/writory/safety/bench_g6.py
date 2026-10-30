@@ -1,4 +1,4 @@
-"""Đo vai `overreach` của G6 (D-137) trên bộ câu có nhãn evals/redteam/g6_overreach.yaml, với model thật.
+"""Đo vai `overreach` của G6 (D-138) trên bộ câu có nhãn evals/redteam/g6_overreach.yaml, với model thật.
 
 Chạy:
     cd backend && uv run python -m writory.safety.bench_g6 --budget 0.05 --out ../evals/results/<ngày>-g6

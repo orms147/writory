@@ -29,6 +29,6 @@ def test_router_errors_have_the_same_text_and_status_in_the_mock_table():
 
 
 def test_scene_block_errors_have_the_same_text_and_status_in_the_mock_table():
-    """Hai mã của `scene_blocked`: lộ bí mật (G2) và chiều theo hành động vượt luật (G6, D-137)."""
+    """Hai mã của `scene_blocked`: lộ bí mật (G2) và chiều theo hành động vượt luật (G6, D-138)."""
     for code in (ErrorCode.SCENE_LEAK_BLOCKED, ErrorCode.SCENE_OVERREACH_BLOCKED):
         assert _mock(code) == (MESSAGES[code].text(), HTTP_STATUS[code]), code.value

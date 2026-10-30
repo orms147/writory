@@ -1,4 +1,4 @@
-"""G6 (D-137) trong đường đi một chương: hành động tự viết vượt luật thì mục tiêu chương đòi thất
+"""G6 (D-138) trong đường đi một chương: hành động tự viết vượt luật thì mục tiêu chương đòi thất
 bại hay cái giá, và mỗi bản viết qua vai `overreach`; `granted` là lỗi chặn, viết lại trong giới hạn
 cứng (G8). Chương thường không có lời gọi nào thêm.
 
@@ -89,7 +89,7 @@ async def test_a_chapter_within_the_rules_makes_no_extra_call_and_has_no_overrea
 
 
 async def test_a_picked_choice_is_never_checked(tmp_path):
-    """Lựa chọn có sẵn do model tạo trong thế giới truyện: không bao giờ vượt luật (D-137)."""
+    """Lựa chọn có sẵn do model tạo trong thế giới truyện: không bao giờ vượt luật (D-138)."""
     _, outcome, llm = await run(full_script(), tmp_path,
                                 req=request(feasibility=None, player_action="[Hành động] Ở nhà."))
     assert outcome.committed and calls_of(llm, "overreach") == []

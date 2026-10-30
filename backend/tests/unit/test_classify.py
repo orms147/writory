@@ -1,5 +1,5 @@
 """G5: phân loại ô tự viết bằng một lời gọi LLM có đầu ra enum. Test bằng FakeLLM, không mạng.
-Cùng lời gọi chấm `feasibility` cho G6 (D-137)."""
+Cùng lời gọi chấm `feasibility` cho G6 (D-138)."""
 
 import json
 
@@ -76,7 +76,7 @@ def test_every_case_fits_the_real_input_limit():
 
 
 def test_labelled_set_has_g6_feasibility_cases():
-    """G6 (D-137): mọi câu in_story_action có `feasibility` mong đợi, câu nhãn khác không có; đủ
+    """G6 (D-138): mọi câu in_story_action có `feasibility` mong đợi, câu nhãn khác không có; đủ
     hai loại vượt luật, câu trong luật dễ nhầm (khó, phủ định, lời nói, nội tâm), câu dài, các thứ
     tiếng, và câu mà cùng hành động trong luật hay vượt luật tuỳ thiết lập truyện."""
     assert REDTEAM["default_brief"] in BRIEFS
@@ -118,7 +118,7 @@ async def test_returns_label_feasibility_and_reason_from_structured_call():
 
 @pytest.mark.parametrize("feasibility", [f.value for f in Feasibility])
 async def test_feasibility_is_parsed_and_beyond_values_are_the_two_overreach_kinds(feasibility):
-    """G6, D-137: `feasibility` là một trong ba giá trị; hai giá trị vượt luật là BEYOND_RULES."""
+    """G6, D-138: `feasibility` là một trong ba giá trị; hai giá trị vượt luật là BEYOND_RULES."""
     llm = FakeLLM.scripted([answer("in_story_action", feasibility=feasibility)])
     result = await classify("Tôi bay lên trời.", llm)
     assert result.feasibility is Feasibility(feasibility)
@@ -190,7 +190,7 @@ async def test_bad_json_retries_then_fails_closed():
     '{"label": "valid", "feasibility": "within_rules", "reason": "x"}',
     '{"label": "in_story_action", "feasibility": "within_rules"}',
     '{"label": "in_story_action", "feasibility": "within_rules", "reason": "x", "allow": true}',
-    # G6, D-137: thiếu hay sai `feasibility` là sai schema, không mặc định là trong luật.
+    # G6, D-138: thiếu hay sai `feasibility` là sai schema, không mặc định là trong luật.
     '{"label": "in_story_action", "reason": "x"}',
     '{"label": "in_story_action", "feasibility": "possible", "reason": "x"}',
     '{"label": "in_story_action", "feasibility": null, "reason": "x"}',
@@ -309,7 +309,7 @@ async def test_bench_scores_labelled_set():
 
 
 async def test_bench_scores_feasibility_separately_from_the_label():
-    """G6, D-137: vượt luật mà ra trong luật là bỏ sót; trong luật mà ra vượt luật là báo nhầm;
+    """G6, D-138: vượt luật mà ra trong luật là bỏ sót; trong luật mà ra vượt luật là báo nhầm;
     sai loại vượt luật đếm riêng. Nhãn vẫn đúng thì `correct` không đổi."""
     from writory.safety.bench_g5 import score
 

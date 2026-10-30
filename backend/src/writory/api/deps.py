@@ -284,7 +284,7 @@ def get_truth_names(story: OwnedStory, driver: Neo4jDriver) -> Mapping[str, tupl
 def get_story_brief(story: OwnedStory, conn: PgConn) -> str:
     """Thiết lập truyện người chơi đã đọc lúc khởi tạo (`stories.brief`), cho bộ dò lộ (G2): tên có
     trong đó là chữ đã thấy (D-52); và cho bộ phân loại ô tự viết, để chấm hành động có vượt luật
-    của thế giới không (G6, D-137; bọc như dữ liệu). Truyện không có (nạp tay) thì rỗng: bộ dò chỉ
+    của thế giới không (G6, D-138; bọc như dữ liệu). Truyện không có (nạp tay) thì rỗng: bộ dò chỉ
     chặt hơn, không lỏng hơn."""
     return load_story_brief(conn, story.id) or ""
 
@@ -409,7 +409,7 @@ ROLE_OF_SCHEMA: dict[type[BaseModel], str] = {
     SummaryOutput: "summary",  # tóm tắt chương (D-49)
     ModerationOutput: "moderate",  # kiểm duyệt nội dung (G9, D-57)
     ChoicesModerationOutput: "moderate",  # kiểm duyệt bộ lựa chọn theo dòng (D-79)
-    OverreachCheck: "overreach",  # trang có chiều theo hành động vượt luật không (G6, D-137)
+    OverreachCheck: "overreach",  # trang có chiều theo hành động vượt luật không (G6, D-138)
 }
 
 

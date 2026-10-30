@@ -200,7 +200,7 @@ stateDiagram-v2
 | `context` | `_context` | `writer_context` ở chương trước (lớp `truth`); mục tiêu chương `chapter_goals` (D-49) trên nền đã commit cộng các cảnh trước; mốc đã diễn ra (dấu ở nút `Chapter`, cộng mốc các cảnh trước của chương) thì ghi "đã xảy ra" thay vì giục lại (D-116) | |
 | `outline` | `_outline` | dàn ý cảnh; cảnh cuối mà chưa dàn ý nào định gỡ mạch đến hạn thì thử lại (D-82); id lạ bị lọc (G11) | `outline` |
 | `write` | `_write` | văn cảnh, hoặc viết lại kèm lỗi của bản trước | model viết theo `writer_tier` |
-| `review` | `_review` | chuỗi kiểm ở bảng dưới, rồi ra `verdict` | `extract`, `moderate`; `overreach` chỉ khi hành động tự viết dẫn tới chương vượt luật (D-137) |
+| `review` | `_review` | chuỗi kiểm ở bảng dưới, rồi ra `verdict` | `extract`, `moderate`; `overreach` chỉ khi hành động tự viết dẫn tới chương vượt luật (D-138) |
 | `accept` | `_accept` | phát `scene_ready` (chữ cảnh tới người chơi), giữ gói của cảnh | |
 | `blocked` | `_blocked` | phát `scene_blocked`, dừng chương, không ghi gì | |
 | `commit` | `_commit` | `merge_scene_packages` rồi `store.commit` (mục 6) | |
@@ -219,7 +219,7 @@ stateDiagram-v2
 | 4b | Chữ sổ tay sẽ hiện: chữ lớp truth của nút chữ (Fact, Event, Lie, kể cả Fact mới) mà gói đưa vào `player_view` không được có tên bị cấm hay nhóm `leak_terms` (`scope="player_path"`) mà câu trích của nút không nói. Sau người canh, để người canh vẫn thấy mọi hé lộ | `pipeline/extract.py` `drop_unquoted_leaks`, `safety/leak.py` `unquoted_leaks` | cạnh đưa nút vào bị bỏ, Fact mới bị bỏ cả nút; không chặn cảnh (D-93, D-134) |
 | 5 | Dò lộ trên chữ cảnh, `scope="scene"` | `safety/leak.py` `check_leaks` | chặn |
 | 6 | Kiểm duyệt nội dung G9, ở mức u tối của truyện | `safety/moderate.py` `moderate`, `decide` | chặn |
-| 7 | Chỉ khi hành động tự viết dẫn tới chương bị bộ phân loại chấm vượt luật (`ChapterRequest.feasibility`): trang, tính tới hết cảnh này cùng các cảnh trước của chương, có để hành động thành công trọn vẹn không (G6, D-137) | `safety/overreach.py` `check_overreach` | `granted` là chặn; `failed`, `cost` qua |
+| 7 | Chỉ khi hành động tự viết dẫn tới chương bị bộ phân loại chấm vượt luật (`ChapterRequest.feasibility`): trang, tính tới hết cảnh này cùng các cảnh trước của chương, có để hành động thành công trọn vẹn không (G6, D-138) | `safety/overreach.py` `check_overreach` | `granted` là chặn; `failed`, `cost` qua |
 
 Phán quyết: không lỗi thì `accept`. Có lỗi và còn lượt (`limits.retries.rewrite_per_scene`) thì `rewrite`. Hết lượt mà còn lỗi chặn: có bản trước không lỗi chặn thì `fallback` và hiện bản đó (D-50), không có thì `block`. Hết lượt mà chỉ còn lỗi mức viết lại thì `accept`. `scene_blocked` mang `SCENE_OVERREACH_BLOCKED` khi lỗi chặn duy nhất là bước 7, còn lại `SCENE_LEAK_BLOCKED` (`blocked_code`). Chương có hành động vượt luật còn có câu mục tiêu "thất bại hoặc trả giá" trong đề dàn ý và đề viết (`pipeline/pacing.py`). Luật của từng phép kiểm: `docs/security.md` (G2, G3, G9) và `docs/graph-schema.md` (bộ trích, tự hé lộ).
 
@@ -329,8 +329,8 @@ flowchart LR
 | `summary` | chỉ chữ chương đã hiện (bọc) | không | `SummaryOutput` | `pipeline/summary.py` `summarize_chapter` |
 | `choices` | sổ tay dựng từ `player_view` (mã công khai), cảnh cuối đã hiện, cờ đứng yên chỉ đúng hay sai (D-98: ở yên một nơi; D-112: nhiều chương liền không đổi trạng thái nào) | không | `ChoicesOutput`; tham chiếu ngoài sổ tay bị bỏ riêng, không bỏ cả bộ (D-114) | `pipeline/choices.py` `make_choices`, từ `_choices` và `POST /stories/{id}/choices` |
 | `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput` | `pipeline/narrator.py` `ask_narrator_reply` |
-| `classify` | chữ ô tự viết và thiết lập truyện người chơi đã đọc (`stories.brief`), đều bọc | không | `Classification`: nhãn enum (G5) và `feasibility` enum (G6, D-137) | `safety/classify.py` `classify_action` |
-| `overreach` | hành động tự viết dẫn tới chương, văn các cảnh trước của chương và bản đang soát (bọc); loại vượt luật là chữ của code | không | `OverreachCheck`, kết luận enum (G6, D-137) | `safety/overreach.py` `check_overreach`, từ `_review` |
+| `classify` | chữ ô tự viết và thiết lập truyện người chơi đã đọc (`stories.brief`), đều bọc | không | `Classification`: nhãn enum (G5) và `feasibility` enum (G6, D-138) | `safety/classify.py` `classify_action` |
+| `overreach` | hành động tự viết dẫn tới chương, văn các cảnh trước của chương và bản đang soát (bọc); loại vượt luật là chữ của code | không | `OverreachCheck`, kết luận enum (G6, D-138) | `safety/overreach.py` `check_overreach`, từ `_review` |
 | `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn (bọc) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
 | `video` | nhân vật (ngoại hình, tính cách, quá khứ), nơi chốn, quan hệ, nơi của nhân vật chính, chữ cảnh đã ghi (chữ truyện và chữ người chơi bọc G4) | có, toàn bộ, kể cả bí mật; chỉ lệnh admin, không có đường tới người chơi (D-118, D-125) | `SheetOutput`, `SceneOutput` | `export/shots.py` `make_sheet`, `make_scene_shots`, gọi từ `export/video.py` |
 
@@ -481,7 +481,7 @@ erDiagram
 | `stories`, `chapters`, `change_packages` | truyện, chương theo `commit_id` với trạng thái `pending`, `committed`, `failed`, và outbox gói đồ thị (D-6) |
 | `story_plans` | bản kế hoạch ẩn; không ra API (G1) |
 | `chapter_summaries` | tóm tắt chương, chỉ dùng nội bộ (D-49) |
-| `chapter_choices`, `player_actions` | bộ lựa chọn phía máy chủ (có id nút thật, không ra API) và hành động dẫn tới chương sau (D-46, D-55); hành động tự viết mang `feasibility` của bộ phân loại, không ra API (G6, migration 0011, D-137) |
+| `chapter_choices`, `player_actions` | bộ lựa chọn phía máy chủ (có id nút thật, không ra API) và hành động dẫn tới chương sau (D-46, D-55); hành động tự viết mang `feasibility` của bộ phân loại, không ra API (G6, migration 0011, D-138) |
 | `narrator_questions` | số câu đã hỏi người kể theo chương |
 | `setup_sessions` | phiên khởi tạo; giữ các lựa chọn của từng bước |
 | `player_keys` | key OpenRouter, chỉ bản mã hoá (G7) |
@@ -512,7 +512,7 @@ Migration: SQL thuần trong `db/migrations/`, chạy theo thứ tự tên file 
 Các mục dưới đây đọc được trong code. Tài liệu chỉ liệt kê; sửa thì cần quyết định riêng.
 
 - **Ở dev, chương kẹt `pending` vẫn phải áp lại bằng tay.** Áp lại lúc khởi động chỉ chạy ở `APP_ENV=prod`, cùng migration (D-105). Lệnh tay: `docs/runbook.md`, mục "Ghi chương bị kẹt `pending`". Lệnh chạy cả truyện (`pipeline/bench_run.py`) ghi chương không qua khoá `story`; nó chạy trên kho dev, không chung kho với chồng prod (suy luận).
-- **G6 dựa vào hai lời gọi model chưa đo.** Lời gọi phân loại chấm `feasibility`, vai `overreach` chấm trang (D-137); chưa chạy với model thật. Bộ phân loại chấm "trong luật" thì chương đó chỉ còn dòng dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` vẫn không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
+- **G6 dựa vào hai lời gọi model chưa đo.** Lời gọi phân loại chấm `feasibility`, vai `overreach` chấm trang (D-138); chưa chạy với model thật. Bộ phân loại chấm "trong luật" thì chương đó chỉ còn dòng dặn trong `OUTLINE_SYSTEM_PROMPT` (`pipeline/scene.py`). `guard/rules.py` vẫn không có phép kiểm nào cho G6 (D-88; `docs/security.md`, mục "Chưa giải quyết").
 - **Model viết không đi qua `role_extra`.** `_write` (`pipeline/chapter.py`) dựng `extra` bằng `reasoning_extra(tier.reasoning)`, nên `provider_ignore` (D-100) không áp cho model viết; mọi vai trong `roles` thì có (D-106). Hiện `provider_ignore` rỗng (D-102) nên không có tác động. Chưa rõ có cố ý không.
 - **Không có migration `0006`.** Thư mục `db/migrations/` nhảy từ `0005` sang `0007`, và lịch sử git không có file `0006` nào. `migrate` chạy theo thứ tự tên nên không hỏng (suy luận).
 - Các điểm chưa làm của lớp đồ thị (lời người chơi đã nghe, quan hệ trong sổ tay, `writer_context` trên `GraphState`): `docs/graph-schema.md`, mục "Chưa làm". Các điểm bảo mật còn mở: `docs/security.md`, mục "Chưa giải quyết".

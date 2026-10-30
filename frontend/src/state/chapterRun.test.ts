@@ -44,7 +44,7 @@ describe('lần viết chương qua SSE (máy chủ giả)', () => {
     expect(run.committed).toBe(false);
   });
 
-  it('cảnh chiều theo hành động vượt luật: scene_blocked với mã riêng (G6, D-137)', async () => {
+  it('cảnh chiều theo hành động vượt luật: scene_blocked với mã riêng (G6, D-138)', async () => {
     withMock({ fault: 'SCENE_OVERREACH_BLOCKED' });
     startRun('s-haidang', 1);
     await until('s-haidang', () => getRun('s-haidang')?.status !== 'running');

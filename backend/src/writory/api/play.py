@@ -21,7 +21,7 @@
   thứ hai báo STORY_BUSY, không gọi model. Chọn lựa chọn và ô tự viết giữ cùng khoá đó, ở phạm vi
   `function`: khoá nhả trước khi phản hồi đi, vì giao diện gửi lệnh viết chương ngay sau phản hồi.
 - G5: chữ tự viết qua `classify_action` + `ensure_in_story` trước khi lưu làm hành động. Cùng lời
-  gọi chấm `feasibility` (G6, D-137), lưu cùng hành động; viết chương sau thì nó vào
+  gọi chấm `feasibility` (G6, D-138), lưu cùng hành động; viết chương sau thì nó vào
   `ChapterRequest.feasibility`. Lựa chọn có sẵn luôn trong luật (lưu NULL).
 - Chọn lựa chọn lưu hành động cho chương sau; khi viết chương đó, lời nói dối (`Lie`, `TOLD`, `TOLD_TO`,
   `ABOUT`) và nội tâm (`FEELS`) của lựa chọn được ghi vào gói của chính chương đó (D-55).
@@ -157,7 +157,7 @@ def _picked_choice(conn, story_id: str, chapter: int, action: ActionRecord | Non
 
 
 def _feasibility(action: ActionRecord | None) -> Feasibility | None:
-    """G6 (D-137): chỉ hành động tự viết có giá trị; NULL (lựa chọn, hay hàng cũ) là trong luật."""
+    """G6 (D-138): chỉ hành động tự viết có giá trị; NULL (lựa chọn, hay hàng cũ) là trong luật."""
     if action is None or action.source != "custom" or action.feasibility is None:
         return None
     return Feasibility(action.feasibility)
@@ -357,7 +357,7 @@ async def custom_action(body: CustomActionIn, story: deps.OwnedStory, conn: deps
     """Ô tự viết: kiểm độ dài, kiểm duyệt nội dung (G9, D-57), rồi phân loại ý định bằng model có
     đầu ra enum (G5), trước khi lưu. Bị chặn ở bước nào thì không lưu và không tới bước sau.
     Truyện đã kết thì báo trước khi gọi model (G8). Bộ phân loại nhận thiết lập truyện người chơi
-    đã đọc để chấm `feasibility` (G6, D-137), lưu cùng hành động; không ra phản hồi."""
+    đã đọc để chấm `feasibility` (G6, D-138), lưu cùng hành động; không ra phản hồi."""
     chapter = _not_finished(story, plan) + 1
     check_action_text(body.text, config)
     client = llm.metered(story_id=story.id, chapter=chapter)

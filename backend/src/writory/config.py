@@ -244,7 +244,7 @@ class RoleModels(_Section):
     summary: str | None = None  # tóm tắt chương vừa ghi (D-49)
     moderate: str | None = None  # kiểm duyệt nội dung, G9 (D-57)
     video: str | None = None  # bộ xuất kịch bản video, chỉ admin chạy bằng lệnh (D-125)
-    overreach: str | None = None  # trang có chiều theo hành động vượt luật không, G6 (D-137)
+    overreach: str | None = None  # trang có chiều theo hành động vượt luật không, G6 (D-138)
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]

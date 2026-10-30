@@ -343,7 +343,7 @@ ROLE_BY_SCHEMA_NAME: dict[str, str] = {
     SceneOutline.__name__: "outline", ExtractOutput.__name__: "extract",
     ChoicesOutput.__name__: "choices", SummaryOutput.__name__: "summary",
     ModerationOutput.__name__: "moderate", ChoicesModerationOutput.__name__: "moderate",
-    OverreachCheck.__name__: "overreach",  # G6, D-137: chỉ chương có hành động tự viết vượt luật
+    OverreachCheck.__name__: "overreach",  # G6, D-138: chỉ chương có hành động tự viết vượt luật
 }
 _SETUP_STEP_BY_SCHEMA = dict(zip(
     (SettingsOutput.__name__, PlotsOutput.__name__, CharactersOutput.__name__,

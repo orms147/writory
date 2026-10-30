@@ -1,4 +1,4 @@
-# Khai trước: G6, bộ phân loại `feasibility` và vai `overreach` chấm trang (D-137)
+# Khai trước: G6, bộ phân loại `feasibility` và vai `overreach` chấm trang (D-138)
 
 Khai TRƯỚC khi gọi model thật: commit chứa file này đi trước mọi lời gọi. Chưa chạy gì có trả tiền.
 Bộ câu và nhãn mong đợi do Claude soạn, chưa được chủ dự án duyệt; đọc lại nhãn trước khi duyệt lệnh chạy.

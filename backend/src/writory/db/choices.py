@@ -3,7 +3,7 @@
 Lựa chọn lưu kèm dữ liệu có cấu trúc (id nút thật, lời nói dối) để ghi về sau; không bao giờ ra API.
 Người chơi chỉ nhận `PlayerChoice` và gửi lại id mờ `choice-…`.
 
-Hành động tự viết lưu kèm `feasibility` của bộ phân loại (G6, D-137, migration 0011): giá trị của
+Hành động tự viết lưu kèm `feasibility` của bộ phân loại (G6, D-138, migration 0011): giá trị của
 `safety.classify.Feasibility`; lựa chọn có sẵn luôn NULL. Không ra API.
 """
 
@@ -25,7 +25,7 @@ class ActionRecord:
     source: ActionSource
     text: str
     choice_id: str | None
-    feasibility: FeasibilityValue | None = None  # G6, D-137: chỉ hành động tự viết
+    feasibility: FeasibilityValue | None = None  # G6, D-138: chỉ hành động tự viết
 
 
 def save_choices(

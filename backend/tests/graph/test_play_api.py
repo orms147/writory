@@ -261,7 +261,7 @@ def test_blocked_custom_action_is_not_saved(pg, driver, story, tmp_path, label, 
     assert len(llm.calls) == 1
 
 
-# --- G6: hành động tự viết vượt luật (D-137) --------------------------------------------------------
+# --- G6: hành động tự viết vượt luật (D-138) --------------------------------------------------------
 
 FLY = "Tôi bay lên trời, nhìn xuống cả phố Bến Sương."
 

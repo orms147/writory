@@ -46,7 +46,7 @@ class SceneReady(_Event):
 
 
 class SceneBlocked(_Event):
-    """Cảnh không hiện (G2; G6, D-137). Kết thúc chương; không có gì được ghi."""
+    """Cảnh không hiện (G2; G6, D-138). Kết thúc chương; không có gì được ghi."""
 
     type: Literal["scene_blocked"] = "scene_blocked"
     scene: int

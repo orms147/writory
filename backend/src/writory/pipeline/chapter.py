@@ -2,7 +2,7 @@
 
 Mỗi cảnh: dựng ngữ cảnh và mục tiêu của chương (`pipeline.pacing`, D-49) → dàn ý → viết → soát
 (chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, tự hé lộ tên trang vừa nêu, người canh, dò lộ,
-kiểm duyệt nội dung G9, và kiểm vượt luật G6 khi hành động tự viết vượt luật, D-137) → viết lại tối
+kiểm duyệt nội dung G9, và kiểm vượt luật G6 khi hành động tự viết vượt luật, D-138) → viết lại tối
 đa `limits.retries.rewrite_per_scene` lần → hiện. Dàn ý
 cảnh cuối mà không dàn ý nào của chương định gỡ mạch đến hạn thì thử lại trong ngân sách của dàn
 ý; hết lượt thì viết tiếp với dàn ý cuối (D-82). Bộ trích nhận mạch phải gỡ đang mở ở mọi lượt.
@@ -125,7 +125,7 @@ class ChapterRequest:
     `choice`: khi `player_action` đến từ một lựa chọn có sẵn (không phải ô tự viết), truyền cả lựa
     chọn đó để lời nói dối và nội tâm của nó được ghi vào gói của chính chương này (D-55).
 
-    `feasibility`: bộ phân loại chấm hành động tự viết (G6, D-137). Vượt luật (`BEYOND_RULES`) thì
+    `feasibility`: bộ phân loại chấm hành động tự viết (G6, D-138). Vượt luật (`BEYOND_RULES`) thì
     mục tiêu chương đòi thất bại hay cái giá, và mỗi bản viết qua `safety.overreach`. None (lựa chọn
     có sẵn, chương 1) hay trong luật: không có gì thêm.
     """
@@ -139,7 +139,7 @@ class ChapterRequest:
     darkness_level: str | None = None
     commit_id: str | None = None  # None = tự sinh
     choice: Choice | None = None  # lựa chọn dẫn tới chương này; tác động của nó vào gói (D-55)
-    feasibility: Feasibility | None = None  # G6, D-137: chỉ có với hành động tự viết
+    feasibility: Feasibility | None = None  # G6, D-138: chỉ có với hành động tự viết
 
 
 @dataclass(frozen=True)
@@ -202,7 +202,7 @@ class ChapterOutcome:
     package: ChangePackage | None = None
     committed: bool = False
     blocked_scene: int | None = None
-    blocked_code: ErrorCode | None = None  # mã của `scene_blocked` (D-137: G2 hay G6)
+    blocked_code: ErrorCode | None = None  # mã của `scene_blocked` (D-138: G2 hay G6)
     choices: list[Choice] = field(default_factory=list)
     finished: bool = False  # chương cuối của kế hoạch đã ghi: truyện kết, không có lựa chọn
     summary: str | None = None  # tóm tắt chương vừa ghi (D-49); chữ nội bộ, không tới người chơi
@@ -422,7 +422,7 @@ _NARRATION_LIMIT = {"first": "first_person_min_per_100_words",
 
 
 def overreach_of(request: ChapterRequest) -> Feasibility | None:
-    """Loại vượt luật của hành động dẫn tới chương (G6, D-137), hay None nếu không phải."""
+    """Loại vượt luật của hành động dẫn tới chương (G6, D-138), hay None nếu không phải."""
     if request.player_action and request.feasibility in BEYOND_RULES:
         return request.feasibility
     return None
@@ -876,7 +876,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             for category in mod.categories
         ]
 
-    # 7. G6 (D-137): hành động tự viết vượt luật thì trang, tính tới hết cảnh này, không được để nó
+    # 7. G6 (D-138): hành động tự viết vượt luật thì trang, tính tới hết cảnh này, không được để nó
     # thành công trọn vẹn. `granted` là lỗi chặn: viết lại trong cùng giới hạn, còn thì không hiện.
     overreach = overreach_of(d.request)
     if overreach is not None:
@@ -942,7 +942,7 @@ async def _accept(state: _State, runtime: Runtime[_Deps]) -> dict:
 
 def blocked_code(issues: Sequence[ReviewIssue]) -> ErrorCode:
     """Mã của `scene_blocked`: SCENE_OVERREACH_BLOCKED khi lỗi chặn duy nhất là trang chiều theo
-    hành động vượt luật (G6, D-137); còn lỗi chặn nào khác thì câu trung tính như cũ (D-26)."""
+    hành động vượt luật (G6, D-138); còn lỗi chặn nào khác thì câu trung tính như cũ (D-26)."""
     blocking = {i.source for i in issues if i.block}
     if blocking == {"overreach"}:
         return ErrorCode.SCENE_OVERREACH_BLOCKED

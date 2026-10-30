@@ -5,7 +5,7 @@
 - Chữ người chơi chỉ đi vào vai user, bọc trong khối player_data (G4).
 - Fail closed: JSON sai schema thì thử lại theo `retries.extract_schema_retry`; vẫn sai, hoặc model
   lỗi, thì ném lỗi. Không bao giờ mặc định là hợp lệ.
-- Cùng lời gọi chấm thêm `feasibility` (G6, D-137): hành động có nằm trong luật của thế giới và
+- Cùng lời gọi chấm thêm `feasibility` (G6, D-138): hành động có nằm trong luật của thế giới và
   sức của nhân vật chính không, theo thiết lập truyện người chơi đã đọc (`stories.brief`, bọc như
   dữ liệu). Không chặn gì: hành động vượt luật vẫn là `in_story_action`; pipeline thêm mục tiêu
   chương và kiểm trang sau khi viết (`safety.overreach`). Ở đây chỉ có `ensure_in_story`, map nhãn
@@ -37,7 +37,7 @@ class ActionLabel(StrEnum):
 
 
 class Feasibility(StrEnum):
-    """Hành động trong truyện có làm được trong thế giới của truyện không (G6, D-137)."""
+    """Hành động trong truyện có làm được trong thế giới của truyện không (G6, D-138)."""
 
     WITHIN_RULES = "within_rules"
     BEYOND_WORLD_RULES = "beyond_world_rules"  # luật của thế giới không cho ai làm được
@@ -59,7 +59,7 @@ class Classification(BaseModel):
 
 
 # Đổi chữ prompt hay cách gọi thì tăng số; bộ đo G5 ghi số này. classify-1: chỉ nhãn (D-27).
-# classify-2: thêm `feasibility` và thiết lập truyện trong lời gọi (D-137).
+# classify-2: thêm `feasibility` và thiết lập truyện trong lời gọi (D-138).
 PROMPT_VERSION = "classify-2"
 
 
@@ -100,7 +100,7 @@ def check_action_text(text: str, config: AppConfig) -> None:
 async def classify_action(text: str, *, story_brief: str, llm: LLMClient,
                           config: AppConfig) -> Classification:
     """`story_brief`: thiết lập truyện người chơi đã đọc lúc khởi tạo (`stories.brief`), để chấm
-    `feasibility` (D-137). Chữ có nguồn người chơi: bọc như dữ liệu (G4). Rỗng (truyện nạp tay)
+    `feasibility` (D-138). Chữ có nguồn người chơi: bọc như dữ liệu (G4). Rỗng (truyện nạp tay)
     thì model chỉ có chữ hành động."""
     check_action_text(text, config)
     model = require_model(config.models.roles, "classify")

@@ -31,7 +31,7 @@ const GROUP_OF: Record<string, ErrorGroup> = {
   COST_LIMIT_CHAPTER: 'cost',
   COST_LIMIT_STORY: 'cost',
   SCENE_LEAK_BLOCKED: 'leak',
-  // G6 (D-137): hành động tự viết vượt luật mà mọi bản viết đều chiều theo; có thể đổi hành động.
+  // G6 (D-138): hành động tự viết vượt luật mà mọi bản viết đều chiều theo; có thể đổi hành động.
   SCENE_OVERREACH_BLOCKED: 'overreach',
   CHOICES_LEAK_BLOCKED: 'leak',
   RETRY_LIMIT_REACHED: 'retry_limit',

@@ -175,7 +175,7 @@ def role_of(messages: list[Message]) -> str:
         ("extract", extract_mod.SYSTEM_PROMPT),
         ("choices", choices_mod.SYSTEM_PROMPT),
         ("summary", summary_mod.SYSTEM_PROMPT),
-        ("overreach", overreach_mod.SYSTEM_PROMPT),  # G6, D-137
+        ("overreach", overreach_mod.SYSTEM_PROMPT),  # G6, D-138
     ):
         if system.startswith(prompt[:60]):
             return role
@@ -194,7 +194,7 @@ def unavailable() -> WritoryError:
 
 
 def overreach_reply(verdict: str = "failed") -> str:
-    """Câu trả lời của vai kiểm hành động vượt luật (G6, D-137)."""
+    """Câu trả lời của vai kiểm hành động vượt luật (G6, D-138)."""
     return json.dumps({"verdict": verdict, "reason": "thử"}, ensure_ascii=False)
 
 

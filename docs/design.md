@@ -249,7 +249,7 @@ Chạy sau mỗi chương, trên kết quả trích thay đổi và văn bản c
 
 Kiểm tra gồm phần quy tắc bằng code (truy vấn đồ thị) và phần LLM (đọc văn bản tìm điểm nghi). Phần nào kiểm được bằng code thì phải kiểm bằng code. Phần code kiểm gói thay đổi của từng cảnh trước khi ghi (D-23).
 
-**Bản 1 chỉ có phần code** (D-88). Người canh chỉ thấy điều bộ trích đã ghi vào gói thay đổi: điều văn viết ra mà bộ trích không ghi thì không bị kiểm. Riêng hành động vượt luật được chiều theo (G6, §6.4) có một lời gọi chấm riêng ở bước soát cảnh, ngoài người canh (D-137). Phần LLM của người canh để bản sau, khi đã có bài B cho nó; config chưa có vai model cho người canh.
+**Bản 1 chỉ có phần code** (D-88). Người canh chỉ thấy điều bộ trích đã ghi vào gói thay đổi: điều văn viết ra mà bộ trích không ghi thì không bị kiểm. Riêng hành động vượt luật được chiều theo (G6, §6.4) có một lời gọi chấm riêng ở bước soát cảnh, ngoài người canh (D-138). Phần LLM của người canh để bản sau, khi đã có bài B cho nó; config chưa có vai model cho người canh.
 
 Khi có phần LLM, mọi điểm nghi do LLM báo phải kèm **câu trích nguyên văn** từ cảnh; code kiểm câu trích có thật trong văn bản, không có thì bỏ điểm nghi đó. Việc đánh dấu một bí mật là "đã hé lộ cho người chơi" cũng phải kèm câu trích, vì đánh dấu sai sẽ làm sổ tay lộ bí mật. Chi tiết guardrail: `docs/security.md`.
 

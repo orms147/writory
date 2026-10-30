@@ -1,4 +1,4 @@
-"""G6 (D-137): trang có chiều theo hành động vượt luật của người chơi không.
+"""G6 (D-138): trang có chiều theo hành động vượt luật của người chơi không.
 
 Hành động tự viết mà bộ phân loại chấm `feasibility` vượt luật (`safety.classify.BEYOND_RULES`)
 thì chương đó có mục tiêu "thất bại hoặc trả giá" (`pipeline.pacing`), và mỗi bản viết của mỗi cảnh

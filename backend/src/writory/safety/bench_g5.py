@@ -1,5 +1,5 @@
 """Đo bộ phân loại G5 trên bộ câu có nhãn evals/redteam/g5_classify.yaml, với model thật. Từ bộ câu
-v2 chấm thêm `feasibility` của G6 (D-137).
+v2 chấm thêm `feasibility` của G6 (D-138).
 
 Chạy:
     cd backend && uv run python -m writory.safety.bench_g5 --budget 0.05 --out ../evals/results/<ngày>-g5
@@ -64,7 +64,7 @@ class G5Result:
     errors: int = 0  # lời gọi lỗi (fail closed): tính là sai
     confusion: dict[str, dict[str, int]] = field(default_factory=dict)
     wrong: list[dict] = field(default_factory=list)
-    # G6 (D-137), trên câu in_story_action mà nhãn ra đúng.
+    # G6 (D-138), trên câu in_story_action mà nhãn ra đúng.
     feasibility_total: int = 0
     feasibility_correct: int = 0
     beyond_missed: list[str] = field(default_factory=list)

@@ -219,7 +219,7 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Cảnh vừa viết không qua được bước kiểm tra cuối nên hệ thống không hiện nó.",
         "Bấm thử lại để viết lại cảnh này.",
     ),
-    # G6 (D-137): mọi bản viết của cảnh đều để hành động vượt luật thành công trọn vẹn. Chỉ khi đó
+    # G6 (D-138): mọi bản viết của cảnh đều để hành động vượt luật thành công trọn vẹn. Chỉ khi đó
     # là lỗi chặn duy nhất; có lỗi chặn khác thì vẫn là SCENE_LEAK_BLOCKED (câu trung tính).
     ErrorCode.SCENE_OVERREACH_BLOCKED: PlayerMessage(
         "Hành động bạn tự viết vượt luật của thế giới truyện hoặc sức của nhân vật, mà hệ thống "

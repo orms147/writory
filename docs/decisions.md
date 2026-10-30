@@ -1281,7 +1281,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** hé lộ bí mật danh tính mà câu trích không nêu tên bị bỏ; bí mật coi như chưa lộ, cảnh sau ghi lại được. Fact mới có tên cấm mà câu trích nêu tên nay được giữ; Fact mới chỉ được mở khoá nhờ hé lộ khác cùng gói nay bị bỏ. Gói nạp thẳng bằng `apply_package` (truyện mẫu) không qua phép lọc. Chưa đo trên lần chạy thật bao nhiêu cạnh bị bỏ.
 - **Người quyết:** Claude (giao việc 30/10/2026), nhánh fix/notebook-protected-name · 30/10/2026
 
-## D-137 · G6 cài bằng code: bộ phân loại chấm `feasibility`, mục tiêu chương "thất bại hoặc trả giá", vai `overreach` chấm trang (thay một phần D-88, chỉ cho G6)
+## D-138 · G6 cài bằng code: bộ phân loại chấm `feasibility`, mục tiêu chương "thất bại hoặc trả giá", vai `overreach` chấm trang (thay một phần D-88, chỉ cho G6)
 - **Bối cảnh:** G6 chỉ là một dòng trong đề dàn ý (`pipeline/scene.py`); D-88 để người canh bản 1 không có phần model, nên không ai kiểm trang có chiều theo hành động vượt luật. Chủ dự án quyết cài G6 trong code ngay, chấp nhận đọc bằng model (30/10/2026).
 - **Quyết định:**
   - Đầu vào: lời gọi G5 trả thêm enum `feasibility` (`within_rules`, `beyond_world_rules`, `beyond_character`); `label` không đổi nghĩa, vượt luật vẫn là `in_story_action`, không chặn. Lời gọi nhận thêm `stories.brief` (bọc G4), vì vượt luật hay không tuỳ thế giới; đề `classify-2`. Cờ lưu cùng hành động (migration 0011, `player_actions.feasibility`, chỉ hàng `custom`); lựa chọn có sẵn do model tạo trong thế giới truyện nên luôn NULL, tức trong luật.

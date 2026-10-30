@@ -40,7 +40,7 @@ def client():
         lambda story_id: StoryRecord(story_id, "dev", "short", 3))
     app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(
         {"acts": [{"name": "một", "from_chapter": 1, "to_chapter": 6}]})
-    app.dependency_overrides[deps.get_story_brief] = lambda: ""  # ô tự viết đọc thiết lập (D-137)
+    app.dependency_overrides[deps.get_story_brief] = lambda: ""  # ô tự viết đọc thiết lập (D-138)
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c
 
@@ -160,7 +160,7 @@ def _classify(label: str = "in_story_action", feasibility: str = "within_rules")
 @pytest.mark.parametrize("feasibility", ["within_rules", "beyond_world_rules", "beyond_character"])
 def test_custom_action_is_saved_with_its_feasibility_but_the_response_has_none(monkeypatch,
                                                                               feasibility):
-    """G6 (D-137): bộ phân loại nhận thiết lập truyện (bọc như dữ liệu) và kết quả `feasibility` lưu
+    """G6 (D-138): bộ phân loại nhận thiết lập truyện (bọc như dữ liệu) và kết quả `feasibility` lưu
     cùng hành động; phản hồi cho người chơi không có trường đó."""
     from tests.moderation_fixtures import ModeratedLLM
     from writory.llm.fake import FakeLLM

@@ -1,4 +1,4 @@
-"""G6 (D-137): kiểm trang có chiều theo hành động vượt luật không, bằng một lời gọi có đầu ra enum.
+"""G6 (D-138): kiểm trang có chiều theo hành động vượt luật không, bằng một lời gọi có đầu ra enum.
 Model giả, không mạng. Đường đi trong chương: tests/unit/test_pipeline_overreach.py."""
 
 import json

@@ -13,7 +13,7 @@ Không bao giờ vào đề tạo lựa chọn, người kể hay sự kiện ch
 G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đi qua `escape_text`; chữ của nút
 `user_authored` bọc `UserAuthored`.
 
-Hành động tự viết mà bộ phân loại chấm vượt luật (G6, D-137; `safety.classify.BEYOND_RULES`) thêm một
+Hành động tự viết mà bộ phân loại chấm vượt luật (G6, D-138; `safety.classify.BEYOND_RULES`) thêm một
 câu cố định: trên trang nó phải thất bại hoặc phải trả giá. Câu không chép chữ người chơi; chữ đó đã
 nằm trong khối dữ liệu "Lựa chọn của người chơi dẫn tới chương này" của đề.
 """
@@ -146,7 +146,7 @@ class ChapterGoals:
     # Chỉ khi `chapter_goals(phase_shift_every=N)` và đã tới nhịp đổi pha (D-119); không đặt cùng
     # `standstill` hay `idle`, vì chúng đã đòi đổi tình thế cụ thể hơn.
     phase_shift: PhaseShift | None = None
-    # Hành động tự viết dẫn tới chương này vượt luật (G6, D-137): chỉ hai giá trị của `BEYOND_RULES`.
+    # Hành động tự viết dẫn tới chương này vượt luật (G6, D-138): chỉ hai giá trị của `BEYOND_RULES`.
     overreach: Feasibility | None = None
 
     @property
@@ -325,7 +325,7 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
     phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt.
     `milestone_lookahead`: theo dõi mốc đã diễn ra (D-116), None = tắt; `done_extra`: mốc các cảnh
     trước của chính chương này đã đánh dấu (chưa vào nút Chapter, số thứ tự -> chương N).
-    `overreach`: `feasibility` của hành động tự viết dẫn tới chương (G6, D-137); trong luật hay None
+    `overreach`: `feasibility` của hành động tự viết dẫn tới chương (G6, D-138); trong luật hay None
     thì không có câu nào thêm."""
     progress = plan_progress(plan, state, chapter)
     final = progress.final
@@ -443,7 +443,7 @@ GOAL_DEFAULTS: dict[str, str] = {
                     "điều nhân vật chính tận mắt thấy), không chỉ gợi ý."),
     "revealed_note": ("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân "
                       "vật phản ứng với điều đã biết và đi một bước mới."),
-    # Hành động tự viết vượt luật (G6, D-137), theo loại `feasibility`. Không chép chữ người chơi.
+    # Hành động tự viết vượt luật (G6, D-138), theo loại `feasibility`. Không chép chữ người chơi.
     "overreach_world": ("Hành động người chơi tự viết dẫn tới chương này (mục \"Lựa chọn của người "
                         "chơi dẫn tới chương này\") vượt luật của thế giới truyện. Trên trang nó PHẢI "
                         "thất bại, hoặc chỉ được một phần và nhân vật chính trả một cái giá rõ ràng "

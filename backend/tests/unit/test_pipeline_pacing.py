@@ -727,7 +727,7 @@ def test_the_milestone_lookahead_is_in_config():
     assert load_config().limits.context.milestone_lookahead == 4  # D-116; số tạm, D-47
 
 
-# --- hành động vượt luật của người chơi (G6, D-137) ----------------------------------------------
+# --- hành động vượt luật của người chơi (G6, D-138) ----------------------------------------------
 
 
 @pytest.mark.parametrize(("feasibility", "key"), [
