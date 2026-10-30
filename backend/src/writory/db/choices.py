@@ -2,6 +2,9 @@
 
 Lựa chọn lưu kèm dữ liệu có cấu trúc (id nút thật, lời nói dối) để ghi về sau; không bao giờ ra API.
 Người chơi chỉ nhận `PlayerChoice` và gửi lại id mờ `choice-…`.
+
+Hành động tự viết lưu kèm `feasibility` của bộ phân loại (G6, D-138, migration 0011): giá trị của
+`safety.classify.Feasibility`; lựa chọn có sẵn luôn NULL. Không ra API.
 """
 
 from dataclasses import dataclass
@@ -13,6 +16,7 @@ from psycopg.types.json import Jsonb
 from writory.graph.story import require_chapter, require_story_id
 
 ActionSource = Literal["choice", "custom"]
+FeasibilityValue = Literal["within_rules", "beyond_world_rules", "beyond_character"]
 
 
 @dataclass(frozen=True)
@@ -21,6 +25,7 @@ class ActionRecord:
     source: ActionSource
     text: str
     choice_id: str | None
+    feasibility: FeasibilityValue | None = None  # G6, D-138: chỉ hành động tự viết
 
 
 def save_choices(
@@ -62,23 +67,24 @@ def load_choice(
 
 def save_action(
     conn: psycopg.Connection, story_id: str, for_chapter: int, *, source: ActionSource, text: str,
-    choice_id: str | None = None,
+    choice_id: str | None = None, feasibility: FeasibilityValue | None = None,
 ) -> ActionRecord:
-    """Thêm hoặc thay hành động dẫn tới chương `for_chapter` (chọn lại được tới khi chương đó viết)."""
+    """Thêm hoặc thay hành động dẫn tới chương `for_chapter` (chọn lại được tới khi chương đó viết).
+    Thay thì thay cả `feasibility`: chọn lựa chọn sau một hành động tự viết vượt luật thì hết cờ."""
     require_story_id(story_id)
     conn.execute(
-        "INSERT INTO player_actions (story_id, for_chapter, source, choice_id, text) "
-        "VALUES (%s, %s, %s, %s, %s) ON CONFLICT (story_id, for_chapter) DO UPDATE SET "
+        "INSERT INTO player_actions (story_id, for_chapter, source, choice_id, text, feasibility) "
+        "VALUES (%s, %s, %s, %s, %s, %s) ON CONFLICT (story_id, for_chapter) DO UPDATE SET "
         "source = EXCLUDED.source, choice_id = EXCLUDED.choice_id, text = EXCLUDED.text, "
-        "updated_at = now()",
-        (story_id, for_chapter, source, choice_id, text),
+        "feasibility = EXCLUDED.feasibility, updated_at = now()",
+        (story_id, for_chapter, source, choice_id, text, feasibility),
     )
-    return ActionRecord(for_chapter, source, text, choice_id)
+    return ActionRecord(for_chapter, source, text, choice_id, feasibility)
 
 
 def load_action(conn: psycopg.Connection, story_id: str, for_chapter: int) -> ActionRecord | None:
     row = conn.execute(
-        "SELECT for_chapter, source, text, choice_id FROM player_actions "
+        "SELECT for_chapter, source, text, choice_id, feasibility FROM player_actions "
         "WHERE story_id = %s AND for_chapter = %s",
         (story_id, for_chapter),
     ).fetchone()

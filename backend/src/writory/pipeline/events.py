@@ -46,7 +46,7 @@ class SceneReady(_Event):
 
 
 class SceneBlocked(_Event):
-    """Cảnh không hiện (G2). Kết thúc chương; không có gì được ghi."""
+    """Cảnh không hiện (G2; G6, D-138). Kết thúc chương; không có gì được ghi."""
 
     type: Literal["scene_blocked"] = "scene_blocked"
     scene: int
@@ -108,6 +108,10 @@ def error_event(err: WritoryError) -> ErrorEvent:
     return ErrorEvent(code=err.code, message=payload["message"])
 
 
-def blocked_event(scene: int) -> SceneBlocked:
-    code = ErrorCode.SCENE_LEAK_BLOCKED
+BLOCK_CODES = frozenset({ErrorCode.SCENE_LEAK_BLOCKED, ErrorCode.SCENE_OVERREACH_BLOCKED})
+
+
+def blocked_event(scene: int, code: ErrorCode = ErrorCode.SCENE_LEAK_BLOCKED) -> SceneBlocked:
+    if code not in BLOCK_CODES:
+        raise ValueError(f"mã không phải mã chặn cảnh: {code}")
     return SceneBlocked(scene=scene, code=code, message=MESSAGES[code].text())

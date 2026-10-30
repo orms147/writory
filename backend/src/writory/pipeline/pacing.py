@@ -12,6 +12,11 @@ Không bao giờ vào đề tạo lựa chọn, người kể hay sự kiện ch
 `standstill`, chỉ là một cờ đúng/sai khi vào đề tạo lựa chọn, không mang tên nơi chốn, D-98).
 G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đi qua `escape_text`; chữ của nút
 `user_authored` bọc `UserAuthored`.
+
+Hành động tự viết mà bộ phân loại chấm vượt luật (G6, D-138; `safety.classify.BEYOND_RULES`) thêm một
+câu cố định theo loại: vượt luật thế giới thì trên trang nó phải thất bại; vượt sức nhân vật thì thất
+bại hoặc phải trả giá. Câu không chép chữ người chơi; chữ đó đã nằm trong khối dữ liệu "Lựa chọn của
+người chơi dẫn tới chương này" của đề.
 """
 
 from collections.abc import Iterable, Mapping
@@ -21,6 +26,7 @@ from typing import Literal
 from writory.guard.plan import Deadline, deadline, plan_progress
 from writory.guard.state import GraphState
 from writory.pipeline.story_plan import MilestoneKind, StoryPlan
+from writory.safety.classify import BEYOND_RULES, Feasibility
 from writory.safety.wrap import UserAuthored, escape_text
 
 
@@ -141,6 +147,8 @@ class ChapterGoals:
     # Chỉ khi `chapter_goals(phase_shift_every=N)` và đã tới nhịp đổi pha (D-119); không đặt cùng
     # `standstill` hay `idle`, vì chúng đã đòi đổi tình thế cụ thể hơn.
     phase_shift: PhaseShift | None = None
+    # Hành động tự viết dẫn tới chương này vượt luật (G6, D-138): chỉ hai giá trị của `BEYOND_RULES`.
+    overreach: Feasibility | None = None
 
     @property
     def final(self) -> bool:
@@ -312,11 +320,14 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
                   idle_chapters: int | None = None,
                   milestone_lookahead: int | None = None,
                   done_extra: Mapping[int, int] | None = None,
-                  phase_shift_every: int | None = None) -> ChapterGoals:
+                  phase_shift_every: int | None = None,
+                  overreach: Feasibility | None = None) -> ChapterGoals:
     """Mục tiêu của chương N. `state`: trạng thái trước cảnh đang viết (nền đã commit tới N-1,
     phủ các gói cảnh trước của chương N). `standstill_chapters`: ngưỡng "ở yên" (D-98), None = tắt.
     `milestone_lookahead`: theo dõi mốc đã diễn ra (D-116), None = tắt; `done_extra`: mốc các cảnh
-    trước của chính chương này đã đánh dấu (chưa vào nút Chapter, số thứ tự -> chương N)."""
+    trước của chính chương này đã đánh dấu (chưa vào nút Chapter, số thứ tự -> chương N).
+    `overreach`: `feasibility` của hành động tự viết dẫn tới chương (G6, D-138); trong luật hay None
+    thì không có câu nào thêm."""
     progress = plan_progress(plan, state, chapter)
     final = progress.final
     act = None
@@ -354,7 +365,8 @@ def chapter_goals(plan: StoryPlan, chapter: int, state: GraphState, *,
     return ChapterGoals(chapter, plan.total_chapters, act, milestones,
                         tuple(secrets), threads, revealed, still, gap, idle,
                         _pending_milestones(plan, chapter, milestone_lookahead, done),
-                        tuple(sorted(done.items())), shift)
+                        tuple(sorted(done.items())), shift,
+                        overreach if overreach in BEYOND_RULES else None)
 
 
 # --- chữ trong đề ------------------------------------------------------------------------------
@@ -432,12 +444,27 @@ GOAL_DEFAULTS: dict[str, str] = {
                     "điều nhân vật chính tận mắt thấy), không chỉ gợi ý."),
     "revealed_note": ("Những bí mật này đã lộ rồi: không diễn lại cảnh lộ hay lời thú nhận. Nhân "
                       "vật phản ứng với điều đã biết và đi một bước mới."),
+    # Hành động tự viết vượt luật (G6, D-138), theo loại `feasibility`. Không chép chữ người chơi.
+    "overreach_world": ("Hành động người chơi tự viết dẫn tới chương này (mục \"Lựa chọn của người "
+                        "chơi dẫn tới chương này\") vượt luật của thế giới truyện. Luật của thế giới giữ "
+                        "nguyên: trên trang hành động đó PHẢI thất bại, điều bất khả không xảy ra ở cảnh "
+                        "nào, dù chỉ một phần, trong chốc lát hay kèm cái giá. Nhân vật chính có thể chịu "
+                        "hậu quả của việc đã thử."),
+    "overreach_character": ("Hành động người chơi tự viết dẫn tới chương này (mục \"Lựa chọn của "
+                            "người chơi dẫn tới chương này\") vượt sức của nhân vật chính. Trên trang "
+                            "nó PHẢI thất bại, hoặc chỉ được một phần và nhân vật chính trả một cái "
+                            "giá rõ ràng ngay trong chương (bị thương, mất vật, bị lộ, mất lòng tin, "
+                            "bị bắt). Không để nó thành công trọn vẹn ở cảnh nào."),
     "thread_note": ("Gỡ mạch nghĩa là trên trang có câu trả lời rõ cho câu hỏi chính của mạch, "
                     "hoặc nhân vật đưa ra quyết định dứt khoát mà mạch đòi, nói thẳng ra. Mạch hỏi "
                     "nhiều vế thì chỉ gỡ khi mọi vế đã có câu trả lời. Gỡ phải là một bước mới: "
                     "không diễn lại nhịp đã xảy ra ở chương trước (lời thú nhận, phát hiện cũ), "
                     "không chỉ nhắc lại điều người đọc đã biết."),
 }
+
+
+_OVERREACH_KEY = {Feasibility.BEYOND_WORLD_RULES: "overreach_world",
+                  Feasibility.BEYOND_CHARACTER: "overreach_character"}
 
 
 def _fill_standstill(template: str, st: "Standstill") -> list[str | UserAuthored]:
@@ -486,6 +513,8 @@ def render_chapter_goals(goals: ChapterGoals, *, scene: int, scene_count: int,
         where += (f"; hồi «{escape_text(a.name)}» (hồi {a.number}/{a.count}), chương "
                   f"{a.chapter_in_act}/{a.chapters_in_act} của hồi")
     line(f"- Vị trí: {where}.")
+    if goals.overreach is not None:
+        line("- " + say[_OVERREACH_KEY[goals.overreach]])
     if not goals.final:
         line("- " + say["push_forward"])
     if goals.gap:

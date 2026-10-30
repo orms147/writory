@@ -41,6 +41,7 @@ from writory.pipeline import summary as summary_mod
 from writory.pipeline.extract import Entity
 from writory.pipeline.store import entities_from_rows
 from writory.pipeline.story_plan import StoryPlan
+from writory.safety import overreach as overreach_mod
 
 SAMPLE = read_sample()
 COMMITTED_THROUGH = 3
@@ -174,6 +175,7 @@ def role_of(messages: list[Message]) -> str:
         ("extract", extract_mod.SYSTEM_PROMPT),
         ("choices", choices_mod.SYSTEM_PROMPT),
         ("summary", summary_mod.SYSTEM_PROMPT),
+        ("overreach", overreach_mod.SYSTEM_PROMPT),  # G6, D-138
     ):
         if system.startswith(prompt[:60]):
             return role
@@ -189,6 +191,11 @@ def unavailable() -> WritoryError:
 
 
 # --- câu trả lời ghi sẵn ------------------------------------------------------------------------
+
+
+def overreach_reply(verdict: str = "failed") -> str:
+    """Câu trả lời của vai kiểm hành động vượt luật (G6, D-138)."""
+    return json.dumps({"verdict": verdict, "reason": "thử"}, ensure_ascii=False)
 
 
 def outline_reply(present=("minh", "lan"), beats=None, resolves=()) -> str:

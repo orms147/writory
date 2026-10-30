@@ -31,6 +31,7 @@ export const MOCK_ERRORS: Record<string, { message: string; status: number }> = 
   ACTION_UNCLEAR: { message: "Hệ thống không hiểu hành động bạn viết. Viết lại rõ hơn, ví dụ: \"Tôi mở cửa bước ra ngoài.\"", status: 422 },
   INTERNAL_ERROR: { message: "Hệ thống gặp lỗi không lường trước nên chưa làm xong việc bạn yêu cầu. Bấm thử lại. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 500 },
   SCENE_LEAK_BLOCKED: { message: "Cảnh vừa viết không qua được bước kiểm tra cuối nên hệ thống không hiện nó. Bấm thử lại để viết lại cảnh này.", status: 502 },
+  SCENE_OVERREACH_BLOCKED: { message: "Hành động bạn tự viết vượt luật của thế giới truyện hoặc sức của nhân vật, mà hệ thống chưa viết được cảnh để nó thất bại hay phải trả giá, nên không hiện cảnh này. Chưa có gì được lưu. Bấm thử lại để viết lại, hoặc quay về lựa chọn để chọn hay viết hành động khác.", status: 502 },
   NARRATOR_QUESTION_EMPTY: { message: "Bạn chưa viết câu hỏi nào. Viết điều bạn muốn hỏi người kể chuyện rồi gửi.", status: 422 },
   NARRATOR_QUESTION_TOO_LONG: { message: "Câu hỏi bạn viết dài hơn mức cho phép. Rút gọn câu hỏi rồi gửi lại.", status: 422 },
   NARRATOR_LIMIT_REACHED: { message: "Bạn đã dùng hết số câu hỏi người kể chuyện cho chương này. Đọc tiếp sang chương sau để hỏi thêm.", status: 429 },
