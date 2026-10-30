@@ -10,7 +10,14 @@ from pydantic import SecretStr
 
 from writory.errors import ErrorCode, WritoryError
 from writory.safety.crypto import KeyCipher, mask_key
-from writory.safety.redact import REDACTED, RedactSecretsFilter, install_log_redaction, redact
+from writory.safety.redact import (
+    REDACTED,
+    RedactSecretsFilter,
+    install_log_redaction,
+    log_records_redacted,
+    redact,
+    redacting_log_records,
+)
 
 FAKE_KEY = "sk-or-v1-" + "fedcba9876543210" * 4
 
@@ -167,3 +174,71 @@ def test_key_only_in_repr_is_redacted():
     logger, stream = _capture_logger("writory.test.repr")
     logger.info("obj=%r", Holder())
     assert FAKE_KEY not in stream.getvalue()
+
+
+# --- lớp redaction của app: LogRecord factory (rà soát 30/10/2026) -------------------------------
+
+
+def _raw_logger(name: str) -> tuple[logging.Logger, io.StringIO]:
+    """Logger có handler KHÔNG gắn bộ lọc, không truyền lên root."""
+    stream = io.StringIO()
+    logger = logging.getLogger(name)
+    logger.handlers = [logging.StreamHandler(stream)]
+    logger.propagate = False
+    logger.setLevel(logging.DEBUG)
+    return logger, stream
+
+
+def test_record_factory_redacts_records_for_handlers_without_the_filter():
+    logger, stream = _raw_logger("writory.test.factory")
+    before = logging.getLogRecordFactory()
+    with redacting_log_records():
+        assert log_records_redacted()
+        logger.info("dùng key %s cho truyện %s", FAKE_KEY, "abc")
+        logger.warning(f"thử lại với Bearer {FAKE_KEY}")
+        try:
+            raise RuntimeError(f"upstream said: invalid key {FAKE_KEY}")
+        except RuntimeError:
+            logger.exception("gọi model lỗi")
+    assert logging.getLogRecordFactory() is before and not log_records_redacted()
+    out = stream.getvalue()
+    assert FAKE_KEY not in out
+    assert out.count(REDACTED) == 3 and "truyện abc" in out and "RuntimeError" in out
+
+
+def test_record_factory_covers_records_that_reach_no_handler(capsys):
+    """Không handler nào nhận record thì logging ghi ra stderr qua `logging.lastResort`, vốn không
+    có bộ lọc: factory redact trước cả bước đó."""
+    logger = logging.getLogger("writory.test.lastresort")
+    logger.handlers = []
+    logger.propagate = False
+    with redacting_log_records():
+        logger.warning("key=%s", FAKE_KEY)
+    err = capsys.readouterr().err
+    assert REDACTED in err and FAKE_KEY not in err
+
+
+def test_nested_record_redaction_wraps_once_and_restores_at_the_outer_exit():
+    before = logging.getLogRecordFactory()
+    with redacting_log_records():
+        outer = logging.getLogRecordFactory()
+        with redacting_log_records():
+            assert logging.getLogRecordFactory() is outer
+        assert logging.getLogRecordFactory() is outer
+    assert logging.getLogRecordFactory() is before
+
+
+def test_record_that_cannot_be_redacted_is_dropped_and_never_breaks_the_caller():
+    """Factory chạy ở chính nơi gọi `log.x(...)`: arg có `__str__` ném lỗi không được làm hỏng yêu
+    cầu đang chạy, và chữ không redact được thì không ra log (fail closed)."""
+    class Broken:
+        def __str__(self) -> str:
+            raise RuntimeError(FAKE_KEY)
+
+        __repr__ = __str__
+
+    logger, stream = _raw_logger("writory.test.broken")
+    with redacting_log_records():
+        logger.warning("key %s và %s", FAKE_KEY, Broken())
+    out = stream.getvalue()
+    assert FAKE_KEY not in out and "không redact được" in out

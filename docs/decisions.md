@@ -1260,3 +1260,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bộ xuất lấy hạn qua `llm.openrouter.call_deadline` trước khi đọc key; `main` đổi stdout/stderr sang UTF-8 như `bench_run`.
 - **Hệ quả:** bộ trích mất thêm cạnh model ghi sai (bộ đo đếm hai lý do mới). Cạnh sai đã nằm trong đồ thị không bị xoá; quan hệ thiếu `score` cũ vẫn in "None". Mạch hiện QUÁ HẠN sớm hơn một chương so với trước.
 - **Người quyết:** Claude (sửa theo review, giao việc 30/10/2026), nhánh fix/graph-review · 30/10/2026
+
+## D-133 · Redact log ở LogRecord factory; lỗi của bộ định tuyến có mã; chọn lựa chọn và chọn nhân vật giữ khoá
+- **Bối cảnh:** review bảo mật/API (30/10/2026). (1) Bộ lọc redact chỉ gắn vào handler có sẵn lúc khởi động; cấu hình log mặc định của uvicorn (lệnh của `deploy/backend.Dockerfile`) không cho root handler nào, nên log `writory.*` ra `logging.lastResort` không qua redact (key giả hiện nguyên) và dòng INFO mất. Test cũ tự thêm handler ở root nên không thấy. (2) Route không có, router chưa bật (`deps.api_guard`), sai phương thức trả `{"detail": ...}` của FastAPI: không mã, không câu tiếng Việt, chép `detail`. (3) `POST /stories/{id}/choice` không giữ khoá của truyện, nên ghi đè hành động đang dẫn chương đang viết; `PUT /setup/{sid}/characters` gọi model kiểm duyệt mà không giữ khoá của phiên.
+- **Quyết định:**
+  - Redact ở LogRecord factory (`safety.redact.redacting_log_records`), bật trong lifespan của app: mọi record tạo qua logger đều qua, dù có handler nào. Không chọn "handler ở root có bộ lọc", vì cách đó vẫn hở với handler thêm sau, logger không truyền lên root và `--log-config` khác. Lệnh chạy tay giữ `install_log_redaction`.
+  - Root chưa có handler thì app gắn handler ra stderr và cho logger `writory` ghi từ INFO (`api/app.app_log_output`); root đã có handler thì giữ cấu hình đó.
+  - `HTTPException` → `ROUTE_NOT_FOUND` (404), `METHOD_NOT_ALLOWED` (405); status khác → `REQUEST_INVALID` hay `INTERNAL_ERROR`. Không chép `detail`. Lớp mock giao diện có hai mã mới và trả `ROUTE_NOT_FOUND` cho đường dẫn lạ.
+  - Chọn lựa chọn giữ khoá `story`, chọn nhân vật giữ khoá `setup` (D-46); bận thì `STORY_BUSY`. Hai route đó và ô tự viết giữ khoá bằng `Depends(..., scope="function")`, nên khoá nhả trước khi phản hồi đi: giao diện gửi lệnh viết chương hay lệnh chốt ngay sau phản hồi.
+- **Hệ quả:** test bắt log thô (`tests/api_fixtures.captured_logs`) bắt ở factory, dưới lớp redaction, nên phải vào trước `TestClient`. Thân yêu cầu sai của chọn nhân vật chỉ được kiểm sau khi giữ khoá. Chưa đổi: tạo lại lựa chọn và các bước tạo lựa chọn khởi tạo vẫn nhả khoá sau khi phản hồi đi.
+- **Người quyết:** Claude (sửa theo review bảo mật/API, giao việc 30/10/2026), nhánh fix/security-review · 30/10/2026

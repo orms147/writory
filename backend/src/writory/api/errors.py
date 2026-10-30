@@ -5,6 +5,10 @@
   phản hồi; chi tiết chỉ vào log, đã qua redact (G7).
 - Lỗi kiểm thân yêu cầu → `REQUEST_INVALID` kèm `fields` (đường dẫn trường sai), không bao giờ kèm
   giá trị đầu vào (D-45).
+- `HTTPException` của Starlette/FastAPI (route không có, router người chơi chưa bật qua
+  `deps.api_guard`, sai phương thức, thân không đọc được) → mã theo status (`_HTTP_CODES`), không
+  chép `detail`. Bản mặc định trả `{"detail": ...}`: không mã, không câu tiếng Việt, và chép lại
+  `detail` (G12).
 """
 
 import logging
@@ -16,6 +20,7 @@ from typing import Any
 from fastapi import FastAPI, Request
 from fastapi.exceptions import RequestValidationError
 from fastapi.responses import JSONResponse
+from starlette.exceptions import HTTPException as StarletteHTTPException
 
 from writory.errors import ErrorCode, WritoryError
 from writory.safety.redact import redact
@@ -85,7 +90,14 @@ HTTP_STATUS: dict[ErrorCode, int] = {
     ErrorCode.LOGIN_RATE_LIMITED: 429,
     ErrorCode.REQUEST_ORIGIN_INVALID: 403,  # CSRF: route ghi không phải JSON cùng origin
     ErrorCode.STORY_BUSY: 409,  # D-46: đang có một lần viết/chốt khác của cùng truyện, phiên
+    # Lỗi của bộ định tuyến (`_http_error`)
+    ErrorCode.ROUTE_NOT_FOUND: 404,
+    ErrorCode.METHOD_NOT_ALLOWED: 405,
 }
+
+# Status của HTTPException → mã. Status khác: từ 500 là INTERNAL_ERROR, dưới 500 là REQUEST_INVALID.
+_HTTP_CODES: dict[int, ErrorCode] = {404: ErrorCode.ROUTE_NOT_FOUND,
+                                     405: ErrorCode.METHOD_NOT_ALLOWED}
 
 
 async def _writory_error(request: Request, exc: Exception) -> JSONResponse:
@@ -137,7 +149,20 @@ async def _request_invalid(request: Request, exc: Exception) -> JSONResponse:
     return JSONResponse(err.player_payload(), status_code=HTTP_STATUS[err.code])
 
 
+async def _http_error(request: Request, exc: Exception) -> JSONResponse:
+    """HTTPException của bộ định tuyến hay của FastAPI: mã theo status, câu tiếng Việt cố định.
+    Giữ header (405 có `Allow`); `detail` không vào phản hồi hay log."""
+    assert isinstance(exc, StarletteHTTPException)
+    code = _HTTP_CODES.get(exc.status_code) or (
+        ErrorCode.INTERNAL_ERROR if exc.status_code >= 500 else ErrorCode.REQUEST_INVALID)
+    log.info("%s %s -> %s (HTTP %d)", request.method, request.url.path, code.value,
+             exc.status_code)
+    err = WritoryError(code)
+    return JSONResponse(err.player_payload(), status_code=HTTP_STATUS[code], headers=exc.headers)
+
+
 def install_error_handlers(app: FastAPI) -> None:
     app.add_exception_handler(WritoryError, _writory_error)
+    app.add_exception_handler(StarletteHTTPException, _http_error)
     app.add_exception_handler(RequestValidationError, _request_invalid)
     app.add_exception_handler(Exception, _unexpected_error)

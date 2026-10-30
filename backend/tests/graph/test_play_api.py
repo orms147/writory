@@ -27,6 +27,7 @@ from tests.api_fixtures import (
     asgi_request,
     dev_settings,
     live_server,
+    lock_is_free,
     own_connections,
 )
 from tests.moderation_fixtures import moderation_reply
@@ -665,6 +666,51 @@ async def test_choices_and_action_wait_out_a_chapter_being_written(pg, driver, s
     llm.gate.set()
     status, _ = await asyncio.wait_for(writing, timeout=60)
     assert status == 200
+
+
+STORED = {"id": "choice-0123456789ab", "kind": "action", "tone": None, "text": "Xuống bến.",
+          "listeners": [], "about": [], "lie": None, "feeling": None}
+
+
+def test_picking_a_choice_is_refused_while_the_story_is_busy(pg, driver, story, tmp_path):
+    """Hồi quy (rà soát 30/10/2026, G11, D-46): chọn lựa chọn không giữ khoá của truyện, nên khi
+    chương đang viết thì hành động đã lưu (dẫn tới chính chương đó) bị ghi đè. Giữ khoá viết
+    chương trên một kết nối khác, rồi chọn: STORY_BUSY, hành động không đổi."""
+    sid = story()
+    save_choices(pg, sid, 3, [STORED])
+    holder = own_connections()
+    conn = next(holder)
+    try:
+        with job_lock(conn, "story", sid), TestClient(
+                make_app(pg, driver, ScriptedLLM([]), tmp_path, own_conns=True),
+                raise_server_exceptions=False) as client:
+            resp = client.post(f"/stories/{sid}/choice", json={"choice_id": STORED["id"]})
+    finally:
+        holder.close()
+    assert (resp.status_code, resp.json()) == (409, BUSY)
+    assert load_action(pg, sid, 4).text == "Ở nhà chờ tin."
+
+
+async def test_choice_and_action_free_the_story_lock_before_answering(pg, driver, story,
+                                                                      tmp_path):
+    """Giao diện gửi `POST .../chapters/next` ngay khi nhận phản hồi của chọn lựa chọn hay hành
+    động tự viết (`StoryScreen` `onChosen`). Khoá còn giữ tới sau khi gửi phản hồi thì lần viết đó
+    có thể nhận STORY_BUSY oan: khoá phải nhả trước khi phản hồi đi."""
+    sid = story(action=None)
+    save_choices(pg, sid, 3, [STORED])
+    app = make_app(pg, driver, ScriptedLLM([classify_reply()]), tmp_path, own_conns=True)
+    free: list[bool] = []
+
+    def on_send(message) -> None:
+        if message["type"] == "http.response.start":
+            free.append(lock_is_free("story", sid))
+
+    for path, body in ((f"/stories/{sid}/choice", {"choice_id": STORED["id"]}),
+                       (f"/stories/{sid}/action", {"text": "Tôi ở nhà chờ tin."})):
+        status, resp = await asyncio.wait_for(
+            asgi_request(app, "POST", path, body, on_send=on_send), timeout=30)
+        assert status == 200, resp
+    assert free == [True, True]
 
 
 # --- giới hạn lời gọi model mỗi phút (G8, D-56) --------------------------------------------------

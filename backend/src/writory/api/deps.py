@@ -253,9 +253,11 @@ OwnedStory = Annotated[StoryRecord, Depends(get_owned_story)]
 
 
 def lock_story(story: OwnedStory, conn: PgConn) -> Iterator[None]:
-    """Giữ khoá của truyện tới khi yêu cầu kết thúc: dùng cho đường gọi model đổi trạng thái truyện
-    (tạo lại lựa chọn, ô tự viết). Đang có việc khác trên truyện, kể cả viết chương: STORY_BUSY
-    ngay, không gọi model (G8, D-56). Cùng khoá với viết chương (`api/play.get_chapter_job`)."""
+    """Giữ khoá của truyện tới khi yêu cầu kết thúc (hay tới khi hàm của route xong, với
+    `Depends(..., scope="function")`): dùng cho đường đổi trạng thái truyện (tạo lại lựa chọn, ô
+    tự viết, chọn lựa chọn). Đang có việc khác trên truyện, kể cả viết chương: STORY_BUSY ngay,
+    không gọi model, không ghi gì (G8, G11, D-56). Cùng khoá với viết chương
+    (`api/play.get_chapter_job`)."""
     with job_lock(conn, "story", story.id):
         yield
 

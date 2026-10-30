@@ -53,4 +53,6 @@ export const MOCK_ERRORS: Record<string, { message: string; status: number }> = 
   LOGIN_RATE_LIMITED: { message: "Máy này đã nhập mã mời quá nhiều lần trong thời gian ngắn nên tạm bị chặn. Đợi một lúc rồi thử lại; nếu vẫn bị chặn, hỏi người đã mời bạn.", status: 429 },
   REQUEST_ORIGIN_INVALID: { message: "Yêu cầu bị từ chối vì không được gửi từ trang WriTory. Mở WriTory trực tiếp, tải lại trang rồi thử lại.", status: 403 },
   STORY_BUSY: { message: "Truyện này đang được viết hoặc tạo ở một yêu cầu khác (có thể bạn mở nó ở hai nơi), nên hệ thống không chạy thêm lần nữa để khỏi trừ tiền key của bạn hai lần. Đợi việc đang chạy xong rồi tải lại trang.", status: 409 },
+  ROUTE_NOT_FOUND: { message: "Máy chủ không có chức năng ở địa chỉ vừa gọi. Mở WriTory từ trang chủ rồi thử lại. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 404 },
+  METHOD_NOT_ALLOWED: { message: "Máy chủ không nhận kiểu yêu cầu này ở địa chỉ vừa gọi. Tải lại trang rồi thử lại. Nếu lỗi lặp lại, hãy báo cho người quản trị.", status: 405 },
 };
