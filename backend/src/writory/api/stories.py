@@ -34,7 +34,7 @@ from writory.pipeline.narrator import (
     source_chapters,
 )
 from writory.pipeline.story_plan import StoryPlan
-from writory.safety.moderate import ensure_input_allowed
+from writory.safety.moderate import Source, ensure_input_allowed, moderate
 
 router = APIRouter(prefix="/stories", dependencies=[Depends(deps.api_guard)])
 Counter = Annotated[NarratorCounter, Depends(deps.get_narrator_quota)]
@@ -62,6 +62,7 @@ def notebook(view: Annotated[PlayerView, Depends(deps.get_player_view)]) -> Note
              dependencies=[Depends(deps.lock_narrator)])
 async def narrator(
     body: NarratorQuestionIn,
+    story: deps.OwnedStory,
     view: Annotated[PlayerView, Depends(deps.get_player_view)],
     config: Annotated[AppConfig, Depends(deps.get_app_config)],
     llm: Annotated[MeteredClient, Depends(deps.get_narrator_llm)],
@@ -71,7 +72,9 @@ async def narrator(
     quota: Counter,
 ) -> NarratorAnswerOut:
     """Hỏi người kể: không mất lượt truyện; số câu mỗi chương có trần (G8). Câu hỏi qua kiểm duyệt
-    (G9, D-57) sau khi kiểm độ dài, trước khi giữ lượt và trước model người kể.
+    (G9, D-57) sau khi kiểm độ dài, trước khi giữ lượt và trước model người kể. Câu trả lời sắp hiện
+    qua kiểm duyệt đầu ra ở mức u tối của truyện, cùng client (G8); bị chặn thì
+    NARRATOR_ANSWER_BLOCKED và không mất lượt (D-137).
 
     Trả thêm số câu còn lại của chương (bộ đếm `narrator_questions`, sau khi giữ lượt) và chương
     của các mục câu trả lời dẫn, tính từ `player_view` (D-65). Hết lượt: NARRATOR_LIMIT_REACHED
@@ -80,6 +83,9 @@ async def narrator(
         body.question, view, llm=llm, config=config, truth_names=truth_names, plan=plan,
         story_brief=brief, quota=quota,
         moderate=partial(_moderate_input, llm=llm, config=config),
+        # Câu trả lời là văn model viết để hiện thành một đoạn: kiểm như văn cảnh (D-137).
+        moderate_answer=partial(moderate, source=Source.SCENE, llm=llm, config=config,
+                                darkness_level=story.darkness_level),
     )
     return NarratorAnswerOut(
         answer=result.answer,

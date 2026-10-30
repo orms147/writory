@@ -743,7 +743,7 @@ def test_a_beyond_rules_action_adds_exactly_its_overreach_sentence(feasibility, 
     assert goals.overreach is Feasibility(feasibility)
     text = _text(render_chapter_goals(goals, scene=2, scene_count=2))
     assert GOAL_DEFAULTS[key] in text
-    assert "thất bại" in GOAL_DEFAULTS[key] and "cái giá" in GOAL_DEFAULTS[key]
+    assert "PHẢI thất bại" in GOAL_DEFAULTS[key]
     other = _text(render_chapter_goals(chapter_goals(PLAN, 2, through(1)), scene=2, scene_count=2))
     assert text.replace(f"- {GOAL_DEFAULTS[key]}\n", "") == other
     assert plain != text
@@ -782,3 +782,12 @@ def test_the_overreach_sentences_can_be_replaced_for_the_bench_and_load_as_a_var
     folder.mkdir()
     (folder / "goals.yaml").write_text('overreach_world: "Thất bại."\n', encoding="utf-8")
     assert load_prompt_variant("g6", root=tmp_path).goal_texts == {"overreach_world": "Thất bại."}
+
+
+def test_the_world_sentence_forbids_even_a_partial_success_and_the_character_one_allows_a_cost():
+    """D-138: luật của thế giới giữ nguyên (chỉ thất bại); vượt sức nhân vật thì thất bại hay trả giá."""
+    from writory.pipeline.pacing import GOAL_DEFAULTS
+
+    world, character = GOAL_DEFAULTS["overreach_world"], GOAL_DEFAULTS["overreach_character"]
+    assert "không xảy ra ở cảnh nào, dù chỉ một phần" in world and "kèm cái giá" in world
+    assert "hoặc chỉ được một phần và nhân vật chính trả một cái giá" in character

@@ -679,6 +679,9 @@ class _Unlimited:
     async def take(self, story_id: str, chapter: int, limit: int) -> bool:
         return True
 
+    async def release(self, story_id: str, chapter: int) -> None:
+        """Bài đo không truyền cổng kiểm duyệt câu trả lời (D-137), nên không bao giờ trả lượt."""
+
 
 # --- giám khảo ----------------------------------------------------------------------------------
 

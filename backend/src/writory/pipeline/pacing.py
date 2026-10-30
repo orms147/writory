@@ -14,8 +14,9 @@ G4: chữ do model khởi tạo viết (mốc, tên hồi, bí mật, mạch) đ
 `user_authored` bọc `UserAuthored`.
 
 Hành động tự viết mà bộ phân loại chấm vượt luật (G6, D-138; `safety.classify.BEYOND_RULES`) thêm một
-câu cố định: trên trang nó phải thất bại hoặc phải trả giá. Câu không chép chữ người chơi; chữ đó đã
-nằm trong khối dữ liệu "Lựa chọn của người chơi dẫn tới chương này" của đề.
+câu cố định theo loại: vượt luật thế giới thì trên trang nó phải thất bại; vượt sức nhân vật thì thất
+bại hoặc phải trả giá. Câu không chép chữ người chơi; chữ đó đã nằm trong khối dữ liệu "Lựa chọn của
+người chơi dẫn tới chương này" của đề.
 """
 
 from collections.abc import Iterable, Mapping
@@ -445,10 +446,10 @@ GOAL_DEFAULTS: dict[str, str] = {
                       "vật phản ứng với điều đã biết và đi một bước mới."),
     # Hành động tự viết vượt luật (G6, D-138), theo loại `feasibility`. Không chép chữ người chơi.
     "overreach_world": ("Hành động người chơi tự viết dẫn tới chương này (mục \"Lựa chọn của người "
-                        "chơi dẫn tới chương này\") vượt luật của thế giới truyện. Trên trang nó PHẢI "
-                        "thất bại, hoặc chỉ được một phần và nhân vật chính trả một cái giá rõ ràng "
-                        "ngay trong chương (bị thương, mất vật, bị lộ, mất lòng tin, bị bắt). Không "
-                        "để nó thành công trọn vẹn ở cảnh nào."),
+                        "chơi dẫn tới chương này\") vượt luật của thế giới truyện. Luật của thế giới giữ "
+                        "nguyên: trên trang hành động đó PHẢI thất bại, điều bất khả không xảy ra ở cảnh "
+                        "nào, dù chỉ một phần, trong chốc lát hay kèm cái giá. Nhân vật chính có thể chịu "
+                        "hậu quả của việc đã thử."),
     "overreach_character": ("Hành động người chơi tự viết dẫn tới chương này (mục \"Lựa chọn của "
                             "người chơi dẫn tới chương này\") vượt sức của nhân vật chính. Trên trang "
                             "nó PHẢI thất bại, hoặc chỉ được một phần và nhân vật chính trả một cái "

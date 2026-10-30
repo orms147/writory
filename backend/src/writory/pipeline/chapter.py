@@ -102,7 +102,7 @@ from writory.safety.leak import (
     protected_ids,
 )
 from writory.safety.moderate import Source, Verdict, moderate, rewrite_feedback
-from writory.safety.overreach import OverreachVerdict, check_overreach
+from writory.safety.overreach import check_overreach, needs_rewrite
 from writory.safety.overreach import rewrite_feedback as overreach_feedback
 from writory.safety.redact import redact
 from writory.safety.reveal import auto_reveals
@@ -463,7 +463,7 @@ def _open_edges(state: _State) -> dict[str, OpenEdge]:
         for c in pkg.close:
             open_edges.pop(c.id, None)
         for e in pkg.edges:
-            open_edges[e.id] = OpenEdge(e.id, e.type, e.source, e.target)
+            open_edges[e.id] = OpenEdge(e.id, e.type, e.source, e.target, e.props.get("known_as"))
     return open_edges
 
 
@@ -611,7 +611,7 @@ async def _start(state: _State, runtime: Runtime[_Deps]) -> dict:
     catalogue.append(Entity(node.id, "Chapter", f"Chương {chapter}"))
     base = d.store.state()
     base_edges = {
-        r.id: OpenEdge(r.id, r.type, r.source, r.target)
+        r.id: OpenEdge(r.id, r.type, r.source, r.target, r.props.get("known_as"))
         for t in EDGE_TYPES for r in base.edges_at(t, chapter)
     }
     protagonist = base.protagonist_id()
@@ -799,6 +799,10 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     retries = cfg.limits.retries
     extract_model = require_model(cfg.models.roles, "extract")
     entities, open_edges = state["catalogue"], list(_open_edges(state).values())
+    # Nút có tên không được thêm tên mới (D-136): bí mật bảo vệ nó chưa có trong player_view trước cảnh
+    # này (đường người chơi, bất kể khoảng lộ: tên mới nối hai tên trong sổ tay, D-61).
+    locked = protected_ids(d.plan, player_view_of(
+        OverlayState(d.store.state(), _earlier_packages(state)), chapter), "player_path")
     result = await with_json_retries(
         lambda: extract_changes(
             d.llm, extract_model, chapter=chapter, chapter_id=state["header"].nodes[0].id,
@@ -808,7 +812,7 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             threads=state["goals"].threads, extra=role_extra(cfg.models, "extract"),
             fact_rules=_fact_rules(d, state, scene),
             milestones=state["goals"].pending_milestones,
-            milestones_done=dict(state["goals"].milestones_done),
+            milestones_done=dict(state["goals"].milestones_done), locked=locked,
         ),
         schema_retries=retries.extract_schema_retry, transient_retries=retries.llm_transient,
         backoff=retries.transient_backoff_seconds,
@@ -820,10 +824,14 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     # vừa ghi), không phải nhân vật chính hay tên đang được kế hoạch bảo vệ (D-61).
     extracted = OverlayState(base, [*earlier, result.package])
     seen = player_view_of(extracted, chapter)
+    here = state["header"].nodes[0].id
     auto = auto_reveals(
-        text, chapter=chapter, chapter_id=state["header"].nodes[0].id,
-        names=extracted.named_nodes(), view=seen,
+        text, chapter=chapter, chapter_id=here, names=extracted.named_nodes(), view=seen,
         skip={state["protagonist"], *protected_ids(d.plan, seen, "scene")},
+        # Tên mới cho nút đã hé lộ (D-136): không với nút bị khoá, không với nút đã hé lộ ở chương này
+        # (cùng id cạnh: gộp cảnh sẽ đè lần trước).
+        no_new_name={*locked, *(e.source for p in [*earlier, result.package] for e in p.edges
+                                if e.type == "REVEALED_TO_PLAYER" and e.target == here)},
     )
     scene_package = (result.package.model_copy(update={"edges": [*result.package.edges, *auto]})
                      if auto else result.package)
@@ -876,15 +884,16 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             for category in mod.categories
         ]
 
-    # 7. G6 (D-138): hành động tự viết vượt luật thì trang, tính tới hết cảnh này, không được để nó
-    # thành công trọn vẹn. `granted` là lỗi chặn: viết lại trong cùng giới hạn, còn thì không hiện.
+    # 7. G6 (D-138): hành động tự viết vượt luật thì trang, tính tới hết cảnh này, không được chiều
+    # theo: vượt luật thế giới chỉ được thất bại, vượt sức nhân vật thì thất bại hay trả giá
+    # (`overreach.PASSES`). Không qua là lỗi chặn: viết lại trong cùng giới hạn, còn thì không hiện.
     overreach = overreach_of(d.request)
     if overreach is not None:
         assert d.request.player_action is not None
         judged = await check_overreach(
             action=d.request.player_action, feasibility=overreach,
             earlier=[s.text for s in state["accepted"]], scene_text=text, llm=d.llm, config=cfg)
-        if judged.verdict is OverreachVerdict.GRANTED:
+        if needs_rewrite(overreach, judged.verdict):
             issues.append(ReviewIssue("overreach", judged.verdict.value, True,
                                       overreach_feedback(overreach)))
 

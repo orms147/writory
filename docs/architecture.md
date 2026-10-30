@@ -139,7 +139,11 @@ sequenceDiagram
   A->>M: kiểm duyệt tag tự gõ, vai moderate
   A->>S: propose_settings
   S->>M: vai setup, JSON theo schema
-  A->>D: save_setup_options, máy chủ giữ các lựa chọn
+  A->>M: kiểm duyệt bộ vừa tạo, vai moderate, nguồn setup, mỗi lựa chọn một dòng
+  alt còn dưới MIN_SETUP_OPTIONS lựa chọn được cho qua
+    A->>S: tạo lại bước, tối đa SETUP_REGENERATIONS lần, rồi SETUP_OPTIONS_BLOCKED
+  end
+  A->>D: save_setup_options, chỉ các lựa chọn được cho qua
   B->>A: PUT /setup/sid/settings, chỉ gửi số thứ tự
   Note over B,A: plots và characters đi cùng một cách. PUT characters có thể kèm phần sửa, phần sửa được kiểm duyệt
   B->>A: POST /setup/sid/finalize
@@ -161,7 +165,8 @@ sequenceDiagram
 ```
 
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
-- `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
+- Lựa chọn do model tạo qua kiểm duyệt đầu ra trước khi lưu hay trả về (`api/setup.moderated_options`, G9, D-137): một lời gọi cho cả bộ ở mức u tối của phiên; lựa chọn bị chặn bị bỏ, nên một bước có thể chỉ còn hai lựa chọn. Kiểm duyệt lỗi thì không lưu gì. Chốt không trả chữ model nào mới.
+- `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Mạch phải gỡ khai bí mật trả lời nó (`answered_by`); khoảng gỡ bắt đầu trước khoảng lộ của bí mật đó thì code dời trên cả `story_plan` lẫn nút `Thread`, không tốn lượt sửa (`story_plan.align_thread_windows`, D-135); id fact thường (không phải bí mật) trong `answered_by` thì code bỏ, cũng không tốn lượt sửa. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
 - Bước dựng cũng sinh ngoại hình cố định cho nhân vật (`appearance`, kể cả nhân vật chính qua `protagonist_appearance`) và cảnh sắc cho nơi chốn (`visual`), nền cho xuất kịch bản video (D-118, D-120). Chúng là thuộc tính tuỳ chọn trên nút, lớp `truth`; `story_plan` không đổi. Ngữ cảnh viết đọc `appearance` của người có mặt và nhân vật lân cận khi `limits.context.character_appearance_max_chars` > 0; `visual` chưa vào đề nào của đường viết; đề bảng mô tả của bộ xuất video đọc nó (`export/shots.py` `sheet_messages`).
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
 - Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`), kể cả từng lượt sửa (D-54). `api/setup.py` không bọc thêm lớp nào, nên lỗi mạng chỉ gọi lại đúng lời gọi hỏng (D-105).
@@ -219,9 +224,9 @@ stateDiagram-v2
 | 4b | Chữ sổ tay sẽ hiện: chữ lớp truth của nút chữ (Fact, Event, Lie, kể cả Fact mới) mà gói đưa vào `player_view` không được có tên bị cấm hay nhóm `leak_terms` (`scope="player_path"`) mà câu trích của nút không nói. Sau người canh, để người canh vẫn thấy mọi hé lộ | `pipeline/extract.py` `drop_unquoted_leaks`, `safety/leak.py` `unquoted_leaks` | cạnh đưa nút vào bị bỏ, Fact mới bị bỏ cả nút; không chặn cảnh (D-93, D-134) |
 | 5 | Dò lộ trên chữ cảnh, `scope="scene"` | `safety/leak.py` `check_leaks` | chặn |
 | 6 | Kiểm duyệt nội dung G9, ở mức u tối của truyện | `safety/moderate.py` `moderate`, `decide` | chặn |
-| 7 | Chỉ khi hành động tự viết dẫn tới chương bị bộ phân loại chấm vượt luật (`ChapterRequest.feasibility`): trang, tính tới hết cảnh này cùng các cảnh trước của chương, có để hành động thành công trọn vẹn không (G6, D-138) | `safety/overreach.py` `check_overreach` | `granted` là chặn; `failed`, `cost` qua |
+| 7 | Chỉ khi hành động tự viết dẫn tới chương bị bộ phân loại chấm vượt luật (`ChapterRequest.feasibility`): trang, tính tới hết cảnh này cùng các cảnh trước của chương, có để điều vượt luật xảy ra không (G6, D-138) | `safety/overreach.py` `check_overreach`, `needs_rewrite` | vượt luật thế giới: chỉ `failed` qua, `cost` và `granted` là chặn; vượt sức nhân vật: `failed`, `cost` qua, `granted` là chặn |
 
-Phán quyết: không lỗi thì `accept`. Có lỗi và còn lượt (`limits.retries.rewrite_per_scene`) thì `rewrite`. Hết lượt mà còn lỗi chặn: có bản trước không lỗi chặn thì `fallback` và hiện bản đó (D-50), không có thì `block`. Hết lượt mà chỉ còn lỗi mức viết lại thì `accept`. `scene_blocked` mang `SCENE_OVERREACH_BLOCKED` khi lỗi chặn duy nhất là bước 7, còn lại `SCENE_LEAK_BLOCKED` (`blocked_code`). Chương có hành động vượt luật còn có câu mục tiêu "thất bại hoặc trả giá" trong đề dàn ý và đề viết (`pipeline/pacing.py`). Luật của từng phép kiểm: `docs/security.md` (G2, G3, G9) và `docs/graph-schema.md` (bộ trích, tự hé lộ).
+Phán quyết: không lỗi thì `accept`. Có lỗi và còn lượt (`limits.retries.rewrite_per_scene`) thì `rewrite`. Hết lượt mà còn lỗi chặn: có bản trước không lỗi chặn thì `fallback` và hiện bản đó (D-50), không có thì `block`. Hết lượt mà chỉ còn lỗi mức viết lại thì `accept`. `scene_blocked` mang `SCENE_OVERREACH_BLOCKED` khi lỗi chặn duy nhất là bước 7, còn lại `SCENE_LEAK_BLOCKED` (`blocked_code`). Chương có hành động vượt luật còn có câu mục tiêu theo loại vượt luật (thế giới: thất bại; nhân vật: thất bại hoặc trả giá) trong đề dàn ý và đề viết (`pipeline/pacing.py`). Luật của từng phép kiểm: `docs/security.md` (G2, G3, G9) và `docs/graph-schema.md` (bộ trích, tự hé lộ).
 
 **Chạy và huỷ.** `ChapterRun` chạy đồ thị trong một task riêng. Hàng đợi sự kiện có kích thước nhỏ, để đồ thị không chạy xa hơn người đọc. `aclose()` chờ đồ thị dừng hẳn rồi mới trả về, để API nhả khoá (D-63).
 
@@ -328,10 +333,10 @@ flowchart LR
 | `extract` | danh mục mọi nút, cạnh đang mở, mạch phải gỡ kèm hạn, văn cảnh (bọc) | có | `ExtractOutput`, rồi `to_package` | `pipeline/extract.py` `extract_changes` |
 | `summary` | chỉ chữ chương đã hiện (bọc) | không | `SummaryOutput` | `pipeline/summary.py` `summarize_chapter` |
 | `choices` | sổ tay dựng từ `player_view` (mã công khai), cảnh cuối đã hiện, cờ đứng yên chỉ đúng hay sai (D-98: ở yên một nơi; D-112: nhiều chương liền không đổi trạng thái nào) | không | `ChoicesOutput`; tham chiếu ngoài sổ tay bị bỏ riêng, không bỏ cả bộ (D-114) | `pipeline/choices.py` `make_choices`, từ `_choices` và `POST /stories/{id}/choices` |
-| `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput` | `pipeline/narrator.py` `ask_narrator_reply` |
+| `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput`; câu sắp hiện qua dò lộ, lưới úp mở rồi kiểm duyệt, bị chặn thì `NARRATOR_ANSWER_BLOCKED` và trả lại lượt (D-137) | `pipeline/narrator.py` `ask_narrator_reply` |
 | `classify` | chữ ô tự viết và thiết lập truyện người chơi đã đọc (`stories.brief`), đều bọc | không | `Classification`: nhãn enum (G5) và `feasibility` enum (G6, D-138) | `safety/classify.py` `classify_action` |
 | `overreach` | hành động tự viết dẫn tới chương, văn các cảnh trước của chương và bản đang soát (bọc); loại vượt luật là chữ của code | không | `OverreachCheck`, kết luận enum (G6, D-138) | `safety/overreach.py` `check_overreach`, từ `_review` |
-| `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn (bọc) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
+| `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn, lựa chọn khởi tạo, câu trả lời người kể (bọc; D-137) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
 | `video` | nhân vật (ngoại hình, tính cách, quá khứ), nơi chốn, quan hệ, nơi của nhân vật chính, chữ cảnh đã ghi (chữ truyện và chữ người chơi bọc G4) | có, toàn bộ, kể cả bí mật; chỉ lệnh admin, không có đường tới người chơi (D-118, D-125) | `SheetOutput`, `SceneOutput` | `export/shots.py` `make_sheet`, `make_scene_shots`, gọi từ `export/video.py` |
 
 Model của từng vai và danh sách mức model viết: `config/models.yaml` (`roles`, `writer_tiers`).

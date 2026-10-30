@@ -1,0 +1,2537 @@
+{
+ "story_id": "run-20261030-setup11-long-ky-ao-hanh-trinh-993744e0",
+ "plan": {
+  "acts": [
+   {
+    "name": "Đêm trên Bạc Nứt",
+    "from_chapter": 1,
+    "to_chapter": 6
+   },
+   {
+    "name": "Những luật lệ xa lạ",
+    "from_chapter": 7,
+    "to_chapter": 12
+   },
+   {
+    "name": "Món nợ lan rộng",
+    "from_chapter": 13,
+    "to_chapter": 18
+   },
+   {
+    "name": "Con đường trả giá",
+    "from_chapter": 19,
+    "to_chapter": 24
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "fact_07",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 6,
+    "leak_terms": [
+     [
+      "Lan",
+      "lối kín"
+     ],
+     [
+      "Lan",
+      "dưới Giếng Vọng"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_11",
+    "reveal_from_chapter": 9,
+    "reveal_to_chapter": 11,
+    "leak_terms": [
+     [
+      "túi khóa kín",
+      "bản sao của sổ giếng cũ"
+     ],
+     [
+      "chiếc túi",
+      "chứa",
+      "sổ giếng cũ"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "fact_12",
+    "reveal_from_chapter": 15,
+    "reveal_to_chapter": 17,
+    "leak_terms": [
+     [
+      "người thu phí",
+      "bản ghi nợ giả"
+     ],
+     [
+      "Hội Cọc Đường",
+      "kích động",
+      "các đoàn xe"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "thread_lan",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 6,
+    "answered_by": [
+     "fact_07"
+    ]
+   },
+   {
+    "thread_id": "thread_vet_truot",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 5,
+    "answered_by": []
+   },
+   {
+    "thread_id": "thread_no_cua_tuan",
+    "resolve_from_chapter": 7,
+    "resolve_to_chapter": 12,
+    "answered_by": []
+   },
+   {
+    "thread_id": "thread_so_gieng",
+    "resolve_from_chapter": 11,
+    "resolve_to_chapter": 17,
+    "answered_by": []
+   },
+   {
+    "thread_id": "thread_ke_kich_dong",
+    "resolve_from_chapter": 15,
+    "resolve_to_chapter": 18,
+    "answered_by": [
+     "fact_12"
+    ]
+   },
+   {
+    "thread_id": "thread_tui",
+    "resolve_from_chapter": 9,
+    "resolve_to_chapter": 12,
+    "answered_by": [
+     "fact_11"
+    ]
+   },
+   {
+    "thread_id": "thread_quyet_dinh",
+    "resolve_from_chapter": 19,
+    "resolve_to_chapter": 24,
+    "answered_by": []
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Huy quyết định lần theo dấu trượt tới Giếng Vọng thay vì tiếp tục giữ đoàn xe tại chỗ.",
+    "from_chapter": 2,
+    "to_chapter": 3
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Dấu vết dưới giếng xác nhận Lan còn sống và đã tìm được một lối thoát.",
+    "from_chapter": 5,
+    "to_chapter": 6
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Huy và Tuấn rời Bạc Nứt theo lịch trình để tìm dấu vết của Lan.",
+    "from_chapter": 8,
+    "to_chapter": 9
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Tại Rừng Mây, Huy phải chọn giữa tuân theo luật của trạm canh và cứu một người mắc kẹt ngoài lối an toàn.",
+    "from_chapter": 11,
+    "to_chapter": 12
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Huy nhận ra chiếc túi có thể làm sáng tỏ khoản nợ đang chia rẽ các đoàn xe.",
+    "from_chapter": 14,
+    "to_chapter": 15
+   },
+   {
+    "kind": "climax",
+    "goal": "Tại Cảng nổi Rêu Ráng, Huy đối mặt với người thu phí đã khuấy động cuộc tranh chấp.",
+    "from_chapter": 17,
+    "to_chapter": 18
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Huy đưa được bằng chứng về khoản nợ sai lệch tới Chân núi Tàn, nơi các đoàn xe có thể thương lượng.",
+    "from_chapter": 20,
+    "to_chapter": 21
+   },
+   {
+    "kind": "ending",
+    "goal": "Huy quyết định trao bằng chứng, giữ lại nó hoặc dùng nó để đặt ra một thỏa thuận mới giữa các bên.",
+    "from_chapter": 24,
+    "to_chapter": 24
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 24,
+  "secrets": [
+   {
+    "fact_id": "fact_07",
+    "text": "Lan rời đoàn xe bằng lối kín dưới Giếng Vọng.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "fact_11",
+    "text": "Túi khóa kín chứa một bản sao của sổ giếng cũ.",
+    "user_authored": false,
+    "from_chapter": 9,
+    "to_chapter": 11,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "fact_12",
+    "text": "Người thu phí đã dùng một bản ghi nợ giả để kích động các đoàn xe tranh nhau chiếc túi.",
+    "user_authored": false,
+    "from_chapter": 15,
+    "to_chapter": 17,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "thread_lan",
+    "description": "Lan đã đi đâu sau khi rời đoàn xe?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_vet_truot",
+    "description": "Ai tạo ra những vệt trượt hướng về Giếng Vọng?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_no_cua_tuan",
+    "description": "Tuấn cần làm gì để trả món nợ của mình với Khương?",
+    "user_authored": false,
+    "from_chapter": 7,
+    "to_chapter": 12,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_so_gieng",
+    "description": "Bản ghi nào chứng minh khoản nợ của đoàn xe bị ghi sai?",
+    "user_authored": false,
+    "from_chapter": 11,
+    "to_chapter": 17,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_ke_kich_dong",
+    "description": "Ai đã dùng bản ghi nợ giả để kích động tranh chấp?",
+    "user_authored": false,
+    "from_chapter": 15,
+    "to_chapter": 18,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_tui",
+    "description": "Túi khóa kín chứa thứ gì?",
+    "user_authored": false,
+    "from_chapter": 9,
+    "to_chapter": 12,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thread_quyet_dinh",
+    "description": "Huy sẽ chọn cách nào để kết thúc cuộc tranh chấp giữa các đoàn xe và những người giữ giếng?",
+    "user_authored": false,
+    "from_chapter": 19,
+    "to_chapter": 24,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Huy quyết định lần theo dấu trượt tới Giếng Vọng thay vì tiếp tục giữ đoàn xe tại chỗ.",
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Dấu vết dưới giếng xác nhận Lan còn sống và đã tìm được một lối thoát.",
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "turning_point",
+    "goal": "Huy và Tuấn rời Bạc Nứt theo lịch trình để tìm dấu vết của Lan.",
+    "from_chapter": 8,
+    "to_chapter": 9,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "turning_point",
+    "goal": "Tại Rừng Mây, Huy phải chọn giữa tuân theo luật của trạm canh và cứu một người mắc kẹt ngoài lối an toàn.",
+    "from_chapter": 11,
+    "to_chapter": 12,
+    "done_chapter": null
+   },
+   {
+    "number": 5,
+    "kind": "turning_point",
+    "goal": "Huy nhận ra chiếc túi có thể làm sáng tỏ khoản nợ đang chia rẽ các đoàn xe.",
+    "from_chapter": 14,
+    "to_chapter": 15,
+    "done_chapter": null
+   },
+   {
+    "number": 6,
+    "kind": "climax",
+    "goal": "Tại Cảng nổi Rêu Ráng, Huy đối mặt với người thu phí đã khuấy động cuộc tranh chấp.",
+    "from_chapter": 17,
+    "to_chapter": 18,
+    "done_chapter": null
+   },
+   {
+    "number": 7,
+    "kind": "turning_point",
+    "goal": "Huy đưa được bằng chứng về khoản nợ sai lệch tới Chân núi Tàn, nơi các đoàn xe có thể thương lượng.",
+    "from_chapter": 20,
+    "to_chapter": 21,
+    "done_chapter": null
+   },
+   {
+    "number": 8,
+    "kind": "ending",
+    "goal": "Huy quyết định trao bằng chứng, giữ lại nó hoặc dùng nó để đặt ra một thỏa thuận mới giữa các bên.",
+    "from_chapter": 24,
+    "to_chapter": 24,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261030-setup11-long-ky-ao-hanh-trinh-993744e0-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Quốc Huy",
+      "personality": "Điềm tĩnh, kiên nhẫn và có tài đọc dấu vết trên những vùng đất khó đi. Huy khá cứng đầu, nhưng thường dùng sự tử tế vụng về để làm dịu những cuộc cãi vã.",
+      "backstory": "Huy từng làm người giữ sổ cho một giếng nước ở rìa Bạc Nứt, ghi lại những khoản nợ mà khách qua đường để lại. Anh rời bỏ công việc sau khi một món nợ bị ghi sai khiến cả đoàn xe chịu vạ lây. Nay làm người hộ tống, Huy nhận ra vụ đòi nợ nhắm vào đoàn xe có những dấu hiệu bất thường, và quyết định lần theo người đưa thư trước khi tranh chấp bùng thành một cuộc thanh toán lớn hơn.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Vóc người cao vừa và bờ vai chắc của một người đàn ông khoảng ba mươi hai tuổi; gương mặt chữ điền, mắt nâu sẫm và mái tóc nâu hạt dẻ uốn nhẹ, dài chạm gáy. Anh mặc áo khoác xanh rêu bằng vải dày, có vết bớt nhỏ hình giọt nước bên thái dương phải."
+     }
+    },
+    {
+     "id": "le_tuan",
+     "label": "Character",
+     "props": {
+      "name": "Lê Tuấn",
+      "aliases": [
+       "Tuấn thu phí"
+      ],
+      "personality": "Lắm lời, lanh trí và giỏi biến một lời từ chối thành cuộc mặc cả khác. Hay pha trò để che sự lo lắng, nhưng biết giữ lời khi đã nhận phần việc.",
+      "backstory": "Tuấn từng dẫn khách qua các giếng ở Bạc Nứt và mắc một khoản nợ với người giữ giếng Vọng. Anh nhận thu phí trên những tuyến đường ít người qua để trả nợ, nhưng càng làm càng bị cuốn vào những cuộc tranh chấp không do mình gây ra.",
+      "appearance": "Gương mặt dài, cằm nhọn và đôi mắt nâu sáng nổi bật trên vóc người gầy khoảng ba mươi tuổi; mái tóc nâu đỏ cắt ngắn lệch một bên. Anh mặc áo khoác vàng đất bằng vải thô, có chiếc khuyên đồng lớn ở tai trái."
+     }
+    },
+    {
+     "id": "nguyen_moc_lan",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn Mộc Lan",
+      "aliases": [
+       "Lan đưa thư"
+      ],
+      "personality": "Kín đáo, quyết đoán và không dễ để người khác đổi hướng câu chuyện. Cô quan tâm đến người yếu thế, nhưng thường tự gánh việc nguy hiểm thay vì nhờ giúp đỡ.",
+      "backstory": "Lan nhận chuyển thư và hàng hóa giữa những vùng đất bị chia cắt. Cô biết các tuyến đường ít được ghi trên bản đồ, nhưng chưa từng kể hết lý do mình chọn những chuyến đi khó nhất.",
+      "appearance": "Khuôn mặt trái xoan với đôi mắt xám và một nốt ruồi dưới cằm; thân hình nhỏ nhắn khoảng hai mươi sáu tuổi, tóc bạc cắt ngang tai. Cô mặc áo choàng xanh sẫm bằng vải dệt chặt, trên cổ có chiếc khóa bạc hình lá."
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "Khương giữ giếng"
+      ],
+      "personality": "Cứng rắn, công bằng theo luật lệ của mình và không tin những lời giải thích dài dòng. Khương có lòng trắc ẩn nhưng cho rằng lòng tốt không thể thay thế nước uống.",
+      "backstory": "Khương tiếp quản giếng Vọng sau khi người giữ giếng trước đó mất tích. Từ ngày ấy, ông siết chặt quyền lấy nước và giữ kín những ghi chép cũ của giếng.",
+      "appearance": "Hàm vuông và chiếc mũi lệch tạo nét rõ trên gương mặt rám nắng của người đàn ông ngoài năm mươi, vai rộng, tóc hoa râm tết thành một bím ngắn. Ông mặc áo chẽn màu chàm phủ áo da sẫm, bàn tay phải thiếu ngón út."
+     }
+    },
+    {
+     "id": "bui_thu_ha",
+     "label": "Character",
+     "props": {
+      "name": "Bùi Thu Hà",
+      "aliases": [
+       "Hà chủ bè"
+      ],
+      "personality": "Nhanh nhẹn, sắc sảo và thích thử người khác bằng những câu hỏi tưởng như bâng quơ. Hà quý sự thẳng thắn, nhưng sẵn sàng lợi dụng kẽ hở trong luật nếu điều đó giúp bè của mình sống sót.",
+      "backstory": "Hà điều hành một bè nổi chuyên chở khách qua vùng nước sâu bên ngoài rừng sương. Cô từng mất một chuyến hàng vì tin nhầm giấy thông hành, nên đặt niềm tin vào người đi cùng hơn là con dấu trên giấy.",
+      "appearance": "Đôi gò má cao và cặp mắt đen láy nổi bật trên vóc người thấp chắc khoảng bốn mươi tuổi; tóc xoăn màu hạt dẻ buộc thành búi thấp. Cô mặc áo khoác đỏ sẫm bằng vải chống nước, đeo một chiếc vòng vỏ ốc trắng ở cổ tay."
+     }
+    },
+    {
+     "id": "pham_nhat_quang",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Nhật Quang",
+      "aliases": [
+       "Quang đo đạc"
+      ],
+      "personality": "Điềm đạm, tỉ mỉ và có khiếu nhận ra điều người khác bỏ sót. Anh ngại đối đầu trực diện, nhưng một khi đã có bằng chứng thì không dễ lùi bước.",
+      "backstory": "Quang từng lập bản đồ các lối đi quanh núi lửa ngủ rồi mất quyền sử dụng bản đồ sau một cuộc tranh chấp. Anh nay làm người chỉ đường độc lập và giữ lại những trang ghi chép mà các chủ tuyến đường không muốn công khai.",
+      "appearance": "Gương mặt hẹp, môi mỏng và đôi mắt xanh nhạt khiến người đàn ông khoảng ba mươi lăm tuổi có vẻ nghiêm nghị; tóc vàng sẫm dài chấm vai, buộc bằng dây xám. Anh mặc áo choàng màu tro bằng vải dày, đeo kính tròn gọng đồng."
+     }
+    },
+    {
+     "id": "bac_nut",
+     "label": "Location",
+     "props": {
+      "name": "Bạc Nứt",
+      "description": "Sa mạc muối trắng lóa nơi các đoàn xe trượt phải xin quyền đi qua từng giếng.",
+      "visual": "Mặt đất nứt thành những phiến trắng phản chiếu ánh nắng đến nhức mắt, xa xa là các dải bụi lơ lửng như sương. Đêm xuống, gió lạnh quét qua những vệt bánh xe trống trải."
+     }
+    },
+    {
+     "id": "gieng_vong",
+     "label": "Location",
+     "props": {
+      "name": "Giếng Vọng",
+      "aliases": [
+       "giếng bỏ hoang"
+      ],
+      "description": "Giếng cạn nằm ngoài tuyến đường chính, nơi những dấu trượt lạ dẫn tới sau khi Lan biến mất.",
+      "visual": "Miệng giếng xây bằng đá xám sứt cạnh, phủ lớp muối mỏng ánh lên dưới trăng. Những tấm ván mục chắn một nửa lối xuống, còn gió từ lòng giếng mang lên tiếng rì rầm khô khốc."
+     }
+    },
+    {
+     "id": "rung_may",
+     "label": "Location",
+     "props": {
+      "name": "Rừng Mây",
+      "aliases": [
+       "rừng sương"
+      ],
+      "description": "Rừng ẩm nơi lối đi và mốc đường thay đổi theo những quy tắc do các trạm canh đặt ra.",
+      "visual": "Thân cây xanh xám vươn cao giữa những dải sương bạc, ánh sáng bị tán lá xé thành từng mảnh nhỏ. Rêu phủ lên cầu gỗ và cọc chỉ đường, khiến cả khu rừng như đang lặng lẽ trôi."
+     }
+    },
+    {
+     "id": "cang_noi_riel",
+     "label": "Location",
+     "props": {
+      "name": "Cảng nổi Rêu Ráng",
+      "aliases": [
+       "Cảng Rêu Ráng"
+      ],
+      "description": "Một cụm bè và nhà nổi nối với nhau bằng cầu dây, nơi quyền neo đậu được mua bằng nước sạch.",
+      "visual": "Những sàn gỗ sẫm chập chờn trên mặt nước lặng, đèn lồng xanh hắt ánh sáng lên dây neo phủ rêu. Tiếng mái chèo, tiếng rao và tiếng ván va nhau trộn thành âm thanh không ngơi."
+     }
+    },
+    {
+     "id": "chan_nui_tan",
+     "label": "Location",
+     "props": {
+      "name": "Chân núi Tàn",
+      "aliases": [
+       "núi lửa ngủ"
+      ],
+      "description": "Vùng đá đen quanh một ngọn núi lửa đã ngủ, nơi các lối qua chỉ mở theo lịch thông gió của cư dân.",
+      "visual": "Đá núi sẫm màu nứt thành những đường ngoằn ngoèo, ánh đỏ âm ỉ hắt lên từ vài khe sâu. Tro mịn phủ trên đường đi và làm bầu trời phía chân núi lúc nào cũng đục màu."
+     }
+    },
+    {
+     "id": "nguoi_giu_gieng",
+     "label": "Faction",
+     "props": {
+      "name": "Người Giữ Giếng",
+      "description": "Những chủ giếng tự đặt luật lấy nước và bảo vệ quyền kiểm soát các nguồn nước trên Bạc Nứt."
+     }
+    },
+    {
+     "id": "doan_truot_bac",
+     "label": "Faction",
+     "props": {
+      "name": "Đoàn Trượt Bạc",
+      "description": "Liên minh các đoàn xe trượt sống bằng việc chuyên chở hàng và khách qua sa mạc muối."
+     }
+    },
+    {
+     "id": "hoi_coc_duong",
+     "label": "Faction",
+     "props": {
+      "name": "Hội Cọc Đường",
+      "description": "Những người dựng mốc và thu phí qua đường tại các vùng có luật lệ riêng."
+     }
+    },
+    {
+     "id": "tui_khoa",
+     "label": "Item",
+     "props": {
+      "name": "Túi khóa kín",
+      "aliases": [
+       "chiếc túi"
+      ],
+      "description": "Chiếc túi vải dầu khóa bằng chốt đồng, Lan để lại khi biến mất."
+     }
+    },
+    {
+     "id": "lich_trinh",
+     "label": "Item",
+     "props": {
+      "name": "Lịch trình đường xa",
+      "aliases": [
+       "lịch trình"
+      ],
+      "description": "Tờ lịch ghi các chặng đường qua nhiều vùng đất bằng những ký hiệu không đồng nhất."
+     }
+    },
+    {
+     "id": "so_gieng_cu",
+     "label": "Item",
+     "props": {
+      "name": "Sổ giếng cũ",
+      "description": "Cuốn sổ ghi những khoản nợ và quyền lấy nước của các giếng trên Bạc Nứt."
+     }
+    },
+    {
+     "id": "fact_01",
+     "label": "Fact",
+     "props": {
+      "text": "Mỗi giếng trên Bạc Nứt có chủ và luật lấy nước riêng."
+     }
+    },
+    {
+     "id": "fact_02",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn xe của Huy bị chặn bởi những người thu phí đòi một món nợ lạ."
+     }
+    },
+    {
+     "id": "fact_03",
+     "label": "Fact",
+     "props": {
+      "text": "Lan biến mất giữa cuộc tranh cãi bên đoàn xe."
+     }
+    },
+    {
+     "id": "fact_04",
+     "label": "Fact",
+     "props": {
+      "text": "Túi khóa kín và lịch trình đường xa còn lại bên đoàn xe sau khi Lan biến mất."
+     }
+    },
+    {
+     "id": "fact_05",
+     "label": "Fact",
+     "props": {
+      "text": "Tuấn nợ Khương một khoản tiền vì từng dùng lối qua Giếng Vọng mà chưa trả phí."
+     }
+    },
+    {
+     "id": "fact_06",
+     "label": "Fact",
+     "props": {
+      "text": "Những vệt trượt hướng về Giếng Vọng được tạo bởi một tấm ván kéo chứ không phải xe trượt."
+     }
+    },
+    {
+     "id": "fact_07",
+     "label": "Fact",
+     "props": {
+      "text": "Lan rời đoàn xe bằng lối kín dưới Giếng Vọng."
+     }
+    },
+    {
+     "id": "fact_08",
+     "label": "Fact",
+     "props": {
+      "text": "Lan chủ động để lại dấu trượt nhằm kéo những kẻ đòi nợ rời khỏi đoàn xe."
+     }
+    },
+    {
+     "id": "fact_09",
+     "label": "Fact",
+     "props": {
+      "text": "Một bản sao của sổ giếng cũ có thể chứng minh rằng món nợ đòi từ đoàn xe đã bị ghi sai."
+     }
+    },
+    {
+     "id": "fact_10",
+     "label": "Fact",
+     "props": {
+      "text": "Khương giấu bản sao sổ giếng cũ dưới nền đá của Giếng Vọng."
+     }
+    },
+    {
+     "id": "fact_11",
+     "label": "Fact",
+     "props": {
+      "text": "Túi khóa kín chứa một bản sao của sổ giếng cũ."
+     }
+    },
+    {
+     "id": "fact_12",
+     "label": "Fact",
+     "props": {
+      "text": "Người thu phí đã dùng một bản ghi nợ giả để kích động các đoàn xe tranh nhau chiếc túi."
+     }
+    },
+    {
+     "id": "fact_13",
+     "label": "Fact",
+     "props": {
+      "text": "Tuấn nhận lời dẫn Huy tìm Lan để đổi lấy sự giúp đỡ trả món nợ với Khương."
+     }
+    },
+    {
+     "id": "fact_14",
+     "label": "Fact",
+     "props": {
+      "text": "Qua khỏi Bạc Nứt phải tuân theo luật riêng của từng chặng đường."
+     }
+    },
+    {
+     "id": "thread_lan",
+     "label": "Thread",
+     "props": {
+      "description": "Lan đã đi đâu sau khi rời đoàn xe?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "thread_vet_truot",
+     "label": "Thread",
+     "props": {
+      "description": "Ai tạo ra những vệt trượt hướng về Giếng Vọng?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "thread_no_cua_tuan",
+     "label": "Thread",
+     "props": {
+      "description": "Tuấn cần làm gì để trả món nợ của mình với Khương?",
+      "planted_chapter": 0,
+      "due_from_chapter": 7,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "thread_so_gieng",
+     "label": "Thread",
+     "props": {
+      "description": "Bản ghi nào chứng minh khoản nợ của đoàn xe bị ghi sai?",
+      "planted_chapter": 0,
+      "due_from_chapter": 11,
+      "due_to_chapter": 17
+     }
+    },
+    {
+     "id": "thread_ke_kich_dong",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã dùng bản ghi nợ giả để kích động tranh chấp?",
+      "planted_chapter": 0,
+      "due_from_chapter": 15,
+      "due_to_chapter": 18
+     }
+    },
+    {
+     "id": "thread_tui",
+     "label": "Thread",
+     "props": {
+      "description": "Túi khóa kín chứa thứ gì?",
+      "planted_chapter": 0,
+      "due_from_chapter": 9,
+      "due_to_chapter": 12
+     }
+    },
+    {
+     "id": "thread_quyet_dinh",
+     "label": "Thread",
+     "props": {
+      "description": "Huy sẽ chọn cách nào để kết thúc cuộc tranh chấp giữa các đoàn xe và những người giữ giếng?",
+      "planted_chapter": 0,
+      "due_from_chapter": 19,
+      "due_to_chapter": 24
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "le_tuan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>le_tuan@0",
+     "props": {
+      "kind": "người dẫn đường bất đắc dĩ",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_tuan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_tuan>protagonist@0",
+     "props": {
+      "kind": "người thuê giúp trả nợ",
+      "score": 5
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "nguyen_moc_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>nguyen_moc_lan@0",
+     "props": {
+      "kind": "người được hộ tống",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nguyen_moc_lan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nguyen_moc_lan>protagonist@0",
+     "props": {
+      "kind": "người hộ tống",
+      "score": 25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "le_tuan",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:le_tuan>doan_khuong@0",
+     "props": {
+      "kind": "con nợ",
+      "score": -25
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "le_tuan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>le_tuan@0",
+     "props": {
+      "kind": "chủ nợ",
+      "score": -15
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "bac_nut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>bac_nut@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "le_tuan",
+     "to": "bac_nut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:le_tuan>bac_nut@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguyen_moc_lan",
+     "to": "bac_nut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguyen_moc_lan>bac_nut@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "gieng_vong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>gieng_vong@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bui_thu_ha",
+     "to": "cang_noi_riel",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bui_thu_ha>cang_noi_riel@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_nhat_quang",
+     "to": "chan_nui_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_nhat_quang>chan_nui_tan@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "tui_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>tui_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "lich_trinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>lich_trinh@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "doan_khuong",
+     "to": "so_gieng_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:doan_khuong>so_gieng_cu@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "nguoi_giu_gieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>nguoi_giu_gieng@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "le_tuan",
+     "to": "hoi_coc_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:le_tuan>hoi_coc_duong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_01",
+     "to": "bac_nut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_01>bac_nut@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_01",
+     "to": "nguoi_giu_gieng",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_01>nguoi_giu_gieng@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_01",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_01@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_01",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_01@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_moc_lan",
+     "to": "fact_01",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_moc_lan>fact_01@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bui_thu_ha",
+     "to": "fact_01",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bui_thu_ha>fact_01@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_nhat_quang",
+     "to": "fact_01",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_nhat_quang>fact_01@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_02",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_02>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_02",
+     "to": "doan_truot_bac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_02>doan_truot_bac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_02",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_02@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_moc_lan",
+     "to": "fact_02",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_moc_lan>fact_02@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_03",
+     "to": "nguyen_moc_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_03>nguyen_moc_lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_03",
+     "to": "doan_truot_bac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_03>doan_truot_bac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_03",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_03@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_04",
+     "to": "tui_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_04>tui_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_04",
+     "to": "lich_trinh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_04>lich_trinh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_04",
+     "to": "nguyen_moc_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_04>nguyen_moc_lan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_04",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_04@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_05",
+     "to": "le_tuan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_05>le_tuan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_05",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_05>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_05",
+     "to": "gieng_vong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_05>gieng_vong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_05",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_05@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_05",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_05@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_06",
+     "to": "gieng_vong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_06>gieng_vong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_06",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_06@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_07",
+     "to": "nguyen_moc_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_07>nguyen_moc_lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_07",
+     "to": "gieng_vong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_07>gieng_vong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_moc_lan",
+     "to": "fact_07",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_moc_lan>fact_07@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_08",
+     "to": "nguyen_moc_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_08>nguyen_moc_lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_08",
+     "to": "doan_truot_bac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_08>doan_truot_bac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_moc_lan",
+     "to": "fact_08",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_moc_lan>fact_08@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_09",
+     "to": "so_gieng_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_09>so_gieng_cu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_09",
+     "to": "doan_truot_bac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_09>doan_truot_bac@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_09",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_09@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_10",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_10>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_10",
+     "to": "so_gieng_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_10>so_gieng_cu@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_10",
+     "to": "gieng_vong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_10>gieng_vong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "fact_10",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>fact_10@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_11",
+     "to": "tui_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_11>tui_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_11",
+     "to": "so_gieng_cu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_11>so_gieng_cu@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_moc_lan",
+     "to": "fact_11",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_moc_lan>fact_11@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_12",
+     "to": "hoi_coc_duong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_12>hoi_coc_duong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_12",
+     "to": "doan_truot_bac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_12>doan_truot_bac@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_12",
+     "to": "tui_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_12>tui_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_12",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_12@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_13",
+     "to": "le_tuan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_13>le_tuan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_13",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_13>protagonist@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_13",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_13>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_13",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_13@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_14",
+     "to": "bac_nut",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_14>bac_nut@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_14",
+     "to": "rung_may",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_14>rung_may@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_14",
+     "to": "cang_noi_riel",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_14>cang_noi_riel@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "fact_14",
+     "to": "chan_nui_tan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:fact_14>chan_nui_tan@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "le_tuan",
+     "to": "fact_14",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:le_tuan>fact_14@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_moc_lan",
+     "to": "fact_14",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_moc_lan>fact_14@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "bui_thu_ha",
+     "to": "fact_14",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:bui_thu_ha>fact_14@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_nhat_quang",
+     "to": "fact_14",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_nhat_quang>fact_14@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Phạm Quốc Huy",
+      "known_as": "Phạm Quốc Huy"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "bac_nut": {
+    "label": "Location",
+    "props": {
+     "name": "Bạc Nứt",
+     "visual": "Mặt đất nứt thành những phiến trắng phản chiếu ánh nắng đến nhức mắt, xa xa là các dải bụi lơ lửng như sương. Đêm xuống, gió lạnh quét qua những vệt bánh xe trống trải.",
+     "description": "Sa mạc muối trắng lóa nơi các đoàn xe trượt phải xin quyền đi qua từng giếng."
+    }
+   },
+   "bui_thu_ha": {
+    "label": "Character",
+    "props": {
+     "backstory": "Hà điều hành một bè nổi chuyên chở khách qua vùng nước sâu bên ngoài rừng sương. Cô từng mất một chuyến hàng vì tin nhầm giấy thông hành, nên đặt niềm tin vào người đi cùng hơn là con dấu trên giấy.",
+     "appearance": "Đôi gò má cao và cặp mắt đen láy nổi bật trên vóc người thấp chắc khoảng bốn mươi tuổi; tóc xoăn màu hạt dẻ buộc thành búi thấp. Cô mặc áo khoác đỏ sẫm bằng vải chống nước, đeo một chiếc vòng vỏ ốc trắng ở cổ tay.",
+     "aliases": [
+      "Hà chủ bè"
+     ],
+     "personality": "Nhanh nhẹn, sắc sảo và thích thử người khác bằng những câu hỏi tưởng như bâng quơ. Hà quý sự thẳng thắn, nhưng sẵn sàng lợi dụng kẽ hở trong luật nếu điều đó giúp bè của mình sống sót.",
+     "name": "Bùi Thu Hà"
+    }
+   },
+   "cang_noi_riel": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "Cảng Rêu Ráng"
+     ],
+     "name": "Cảng nổi Rêu Ráng",
+     "visual": "Những sàn gỗ sẫm chập chờn trên mặt nước lặng, đèn lồng xanh hắt ánh sáng lên dây neo phủ rêu. Tiếng mái chèo, tiếng rao và tiếng ván va nhau trộn thành âm thanh không ngơi.",
+     "description": "Một cụm bè và nhà nổi nối với nhau bằng cầu dây, nơi quyền neo đậu được mua bằng nước sạch."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "chan_nui_tan": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "núi lửa ngủ"
+     ],
+     "name": "Chân núi Tàn",
+     "visual": "Đá núi sẫm màu nứt thành những đường ngoằn ngoèo, ánh đỏ âm ỉ hắt lên từ vài khe sâu. Tro mịn phủ trên đường đi và làm bầu trời phía chân núi lúc nào cũng đục màu.",
+     "description": "Vùng đá đen quanh một ngọn núi lửa đã ngủ, nơi các lối qua chỉ mở theo lịch thông gió của cư dân."
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Khương tiếp quản giếng Vọng sau khi người giữ giếng trước đó mất tích. Từ ngày ấy, ông siết chặt quyền lấy nước và giữ kín những ghi chép cũ của giếng.",
+     "appearance": "Hàm vuông và chiếc mũi lệch tạo nét rõ trên gương mặt rám nắng của người đàn ông ngoài năm mươi, vai rộng, tóc hoa râm tết thành một bím ngắn. Ông mặc áo chẽn màu chàm phủ áo da sẫm, bàn tay phải thiếu ngón út.",
+     "aliases": [
+      "Khương giữ giếng"
+     ],
+     "personality": "Cứng rắn, công bằng theo luật lệ của mình và không tin những lời giải thích dài dòng. Khương có lòng trắc ẩn nhưng cho rằng lòng tốt không thể thay thế nước uống.",
+     "name": "Đoàn Khương"
+    }
+   },
+   "doan_truot_bac": {
+    "label": "Faction",
+    "props": {
+     "name": "Đoàn Trượt Bạc",
+     "description": "Liên minh các đoàn xe trượt sống bằng việc chuyên chở hàng và khách qua sa mạc muối."
+    }
+   },
+   "fact_01": {
+    "label": "Fact",
+    "props": {
+     "text": "Mỗi giếng trên Bạc Nứt có chủ và luật lấy nước riêng."
+    }
+   },
+   "fact_02": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn xe của Huy bị chặn bởi những người thu phí đòi một món nợ lạ."
+    }
+   },
+   "fact_03": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan biến mất giữa cuộc tranh cãi bên đoàn xe."
+    }
+   },
+   "fact_04": {
+    "label": "Fact",
+    "props": {
+     "text": "Túi khóa kín và lịch trình đường xa còn lại bên đoàn xe sau khi Lan biến mất."
+    }
+   },
+   "fact_05": {
+    "label": "Fact",
+    "props": {
+     "text": "Tuấn nợ Khương một khoản tiền vì từng dùng lối qua Giếng Vọng mà chưa trả phí."
+    }
+   },
+   "fact_06": {
+    "label": "Fact",
+    "props": {
+     "text": "Những vệt trượt hướng về Giếng Vọng được tạo bởi một tấm ván kéo chứ không phải xe trượt."
+    }
+   },
+   "fact_07": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan rời đoàn xe bằng lối kín dưới Giếng Vọng."
+    }
+   },
+   "fact_08": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan chủ động để lại dấu trượt nhằm kéo những kẻ đòi nợ rời khỏi đoàn xe."
+    }
+   },
+   "fact_09": {
+    "label": "Fact",
+    "props": {
+     "text": "Một bản sao của sổ giếng cũ có thể chứng minh rằng món nợ đòi từ đoàn xe đã bị ghi sai."
+    }
+   },
+   "fact_10": {
+    "label": "Fact",
+    "props": {
+     "text": "Khương giấu bản sao sổ giếng cũ dưới nền đá của Giếng Vọng."
+    }
+   },
+   "fact_11": {
+    "label": "Fact",
+    "props": {
+     "text": "Túi khóa kín chứa một bản sao của sổ giếng cũ."
+    }
+   },
+   "fact_12": {
+    "label": "Fact",
+    "props": {
+     "text": "Người thu phí đã dùng một bản ghi nợ giả để kích động các đoàn xe tranh nhau chiếc túi."
+    }
+   },
+   "fact_13": {
+    "label": "Fact",
+    "props": {
+     "text": "Tuấn nhận lời dẫn Huy tìm Lan để đổi lấy sự giúp đỡ trả món nợ với Khương."
+    }
+   },
+   "fact_14": {
+    "label": "Fact",
+    "props": {
+     "text": "Qua khỏi Bạc Nứt phải tuân theo luật riêng của từng chặng đường."
+    }
+   },
+   "gieng_vong": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "giếng bỏ hoang"
+     ],
+     "name": "Giếng Vọng",
+     "description": "Giếng cạn nằm ngoài tuyến đường chính, nơi những dấu trượt lạ dẫn tới sau khi Lan biến mất.",
+     "visual": "Miệng giếng xây bằng đá xám sứt cạnh, phủ lớp muối mỏng ánh lên dưới trăng. Những tấm ván mục chắn một nửa lối xuống, còn gió từ lòng giếng mang lên tiếng rì rầm khô khốc."
+    }
+   },
+   "hoi_coc_duong": {
+    "label": "Faction",
+    "props": {
+     "name": "Hội Cọc Đường",
+     "description": "Những người dựng mốc và thu phí qua đường tại các vùng có luật lệ riêng."
+    }
+   },
+   "le_tuan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Tuấn từng dẫn khách qua các giếng ở Bạc Nứt và mắc một khoản nợ với người giữ giếng Vọng. Anh nhận thu phí trên những tuyến đường ít người qua để trả nợ, nhưng càng làm càng bị cuốn vào những cuộc tranh chấp không do mình gây ra.",
+     "appearance": "Gương mặt dài, cằm nhọn và đôi mắt nâu sáng nổi bật trên vóc người gầy khoảng ba mươi tuổi; mái tóc nâu đỏ cắt ngắn lệch một bên. Anh mặc áo khoác vàng đất bằng vải thô, có chiếc khuyên đồng lớn ở tai trái.",
+     "aliases": [
+      "Tuấn thu phí"
+     ],
+     "personality": "Lắm lời, lanh trí và giỏi biến một lời từ chối thành cuộc mặc cả khác. Hay pha trò để che sự lo lắng, nhưng biết giữ lời khi đã nhận phần việc.",
+     "name": "Lê Tuấn"
+    }
+   },
+   "lich_trinh": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "lịch trình"
+     ],
+     "name": "Lịch trình đường xa",
+     "description": "Tờ lịch ghi các chặng đường qua nhiều vùng đất bằng những ký hiệu không đồng nhất."
+    }
+   },
+   "nguoi_giu_gieng": {
+    "label": "Faction",
+    "props": {
+     "name": "Người Giữ Giếng",
+     "description": "Những chủ giếng tự đặt luật lấy nước và bảo vệ quyền kiểm soát các nguồn nước trên Bạc Nứt."
+    }
+   },
+   "nguyen_moc_lan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lan nhận chuyển thư và hàng hóa giữa những vùng đất bị chia cắt. Cô biết các tuyến đường ít được ghi trên bản đồ, nhưng chưa từng kể hết lý do mình chọn những chuyến đi khó nhất.",
+     "appearance": "Khuôn mặt trái xoan với đôi mắt xám và một nốt ruồi dưới cằm; thân hình nhỏ nhắn khoảng hai mươi sáu tuổi, tóc bạc cắt ngang tai. Cô mặc áo choàng xanh sẫm bằng vải dệt chặt, trên cổ có chiếc khóa bạc hình lá.",
+     "aliases": [
+      "Lan đưa thư"
+     ],
+     "personality": "Kín đáo, quyết đoán và không dễ để người khác đổi hướng câu chuyện. Cô quan tâm đến người yếu thế, nhưng thường tự gánh việc nguy hiểm thay vì nhờ giúp đỡ.",
+     "name": "Nguyễn Mộc Lan"
+    }
+   },
+   "pham_nhat_quang": {
+    "label": "Character",
+    "props": {
+     "backstory": "Quang từng lập bản đồ các lối đi quanh núi lửa ngủ rồi mất quyền sử dụng bản đồ sau một cuộc tranh chấp. Anh nay làm người chỉ đường độc lập và giữ lại những trang ghi chép mà các chủ tuyến đường không muốn công khai.",
+     "appearance": "Gương mặt hẹp, môi mỏng và đôi mắt xanh nhạt khiến người đàn ông khoảng ba mươi lăm tuổi có vẻ nghiêm nghị; tóc vàng sẫm dài chấm vai, buộc bằng dây xám. Anh mặc áo choàng màu tro bằng vải dày, đeo kính tròn gọng đồng.",
+     "aliases": [
+      "Quang đo đạc"
+     ],
+     "personality": "Điềm đạm, tỉ mỉ và có khiếu nhận ra điều người khác bỏ sót. Anh ngại đối đầu trực diện, nhưng một khi đã có bằng chứng thì không dễ lùi bước.",
+     "name": "Phạm Nhật Quang"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Huy từng làm người giữ sổ cho một giếng nước ở rìa Bạc Nứt, ghi lại những khoản nợ mà khách qua đường để lại. Anh rời bỏ công việc sau khi một món nợ bị ghi sai khiến cả đoàn xe chịu vạ lây. Nay làm người hộ tống, Huy nhận ra vụ đòi nợ nhắm vào đoàn xe có những dấu hiệu bất thường, và quyết định lần theo người đưa thư trước khi tranh chấp bùng thành một cuộc thanh toán lớn hơn.",
+     "appearance": "Vóc người cao vừa và bờ vai chắc của một người đàn ông khoảng ba mươi hai tuổi; gương mặt chữ điền, mắt nâu sẫm và mái tóc nâu hạt dẻ uốn nhẹ, dài chạm gáy. Anh mặc áo khoác xanh rêu bằng vải dày, có vết bớt nhỏ hình giọt nước bên thái dương phải.",
+     "personality": "Điềm tĩnh, kiên nhẫn và có tài đọc dấu vết trên những vùng đất khó đi. Huy khá cứng đầu, nhưng thường dùng sự tử tế vụng về để làm dịu những cuộc cãi vã.",
+     "name": "Phạm Quốc Huy",
+     "is_protagonist": true
+    }
+   },
+   "rung_may": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "rừng sương"
+     ],
+     "name": "Rừng Mây",
+     "visual": "Thân cây xanh xám vươn cao giữa những dải sương bạc, ánh sáng bị tán lá xé thành từng mảnh nhỏ. Rêu phủ lên cầu gỗ và cọc chỉ đường, khiến cả khu rừng như đang lặng lẽ trôi.",
+     "description": "Rừng ẩm nơi lối đi và mốc đường thay đổi theo những quy tắc do các trạm canh đặt ra."
+    }
+   },
+   "so_gieng_cu": {
+    "label": "Item",
+    "props": {
+     "name": "Sổ giếng cũ",
+     "description": "Cuốn sổ ghi những khoản nợ và quyền lấy nước của các giếng trên Bạc Nứt."
+    }
+   },
+   "thread_ke_kich_dong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã dùng bản ghi nợ giả để kích động tranh chấp?",
+     "due_from_chapter": 15,
+     "due_to_chapter": 18
+    }
+   },
+   "thread_lan": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Lan đã đi đâu sau khi rời đoàn xe?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 6
+    }
+   },
+   "thread_no_cua_tuan": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Tuấn cần làm gì để trả món nợ của mình với Khương?",
+     "due_from_chapter": 7,
+     "due_to_chapter": 12
+    }
+   },
+   "thread_quyet_dinh": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Huy sẽ chọn cách nào để kết thúc cuộc tranh chấp giữa các đoàn xe và những người giữ giếng?",
+     "due_from_chapter": 19,
+     "due_to_chapter": 24
+    }
+   },
+   "thread_so_gieng": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Bản ghi nào chứng minh khoản nợ của đoàn xe bị ghi sai?",
+     "due_from_chapter": 11,
+     "due_to_chapter": 17
+    }
+   },
+   "thread_tui": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Túi khóa kín chứa thứ gì?",
+     "due_from_chapter": 9,
+     "due_to_chapter": 12
+    }
+   },
+   "thread_vet_truot": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai tạo ra những vệt trượt hướng về Giếng Vọng?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 5
+    }
+   },
+   "tui_khoa": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "chiếc túi"
+     ],
+     "name": "Túi khóa kín",
+     "description": "Chiếc túi vải dầu khóa bằng chốt đồng, Lan để lại khi biến mất."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khuong>le_tuan@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "le_tuan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -15,
+     "kind": "chủ nợ"
+    }
+   },
+   {
+    "id": "RELATES_TO:le_tuan>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "le_tuan",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -25,
+     "kind": "con nợ"
+    }
+   },
+   {
+    "id": "RELATES_TO:le_tuan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "le_tuan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 5,
+     "kind": "người thuê giúp trả nợ"
+    }
+   },
+   {
+    "id": "RELATES_TO:nguyen_moc_lan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "nguyen_moc_lan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 25,
+     "kind": "người hộ tống"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>le_tuan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "le_tuan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "người dẫn đường bất đắc dĩ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>nguyen_moc_lan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "nguyen_moc_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "người được hộ tống"
+    }
+   },
+   {
+    "id": "LOCATED_AT:bui_thu_ha>cang_noi_riel@0",
+    "type": "LOCATED_AT",
+    "source": "bui_thu_ha",
+    "target": "cang_noi_riel",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>gieng_vong@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "gieng_vong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:le_tuan>bac_nut@0",
+    "type": "LOCATED_AT",
+    "source": "le_tuan",
+    "target": "bac_nut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nguyen_moc_lan>bac_nut@0",
+    "type": "LOCATED_AT",
+    "source": "nguyen_moc_lan",
+    "target": "bac_nut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_nhat_quang>chan_nui_tan@0",
+    "type": "LOCATED_AT",
+    "source": "pham_nhat_quang",
+    "target": "chan_nui_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>bac_nut@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "bac_nut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:doan_khuong>so_gieng_cu@0",
+    "type": "HOLDS",
+    "source": "doan_khuong",
+    "target": "so_gieng_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>lich_trinh@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "lich_trinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>tui_khoa@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "tui_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>nguoi_giu_gieng@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "nguoi_giu_gieng",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:le_tuan>hoi_coc_duong@0",
+    "type": "MEMBER_OF",
+    "source": "le_tuan",
+    "target": "hoi_coc_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:bui_thu_ha>fact_01@0",
+    "type": "KNOWS",
+    "source": "bui_thu_ha",
+    "target": "fact_01",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:bui_thu_ha>fact_14@0",
+    "type": "KNOWS",
+    "source": "bui_thu_ha",
+    "target": "fact_14",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_01@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_01",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_05@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_05",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_09@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_09",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>fact_10@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "fact_10",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_01@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_01",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_02@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_02",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_03@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_03",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_04@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_04",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_05@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_05",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_06@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_06",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_12@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_12",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_13@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_13",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:le_tuan>fact_14@0",
+    "type": "KNOWS",
+    "source": "le_tuan",
+    "target": "fact_14",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_moc_lan>fact_01@0",
+    "type": "KNOWS",
+    "source": "nguyen_moc_lan",
+    "target": "fact_01",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_moc_lan>fact_02@0",
+    "type": "KNOWS",
+    "source": "nguyen_moc_lan",
+    "target": "fact_02",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_moc_lan>fact_07@0",
+    "type": "KNOWS",
+    "source": "nguyen_moc_lan",
+    "target": "fact_07",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_moc_lan>fact_08@0",
+    "type": "KNOWS",
+    "source": "nguyen_moc_lan",
+    "target": "fact_08",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_moc_lan>fact_11@0",
+    "type": "KNOWS",
+    "source": "nguyen_moc_lan",
+    "target": "fact_11",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_moc_lan>fact_14@0",
+    "type": "KNOWS",
+    "source": "nguyen_moc_lan",
+    "target": "fact_14",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_nhat_quang>fact_01@0",
+    "type": "KNOWS",
+    "source": "pham_nhat_quang",
+    "target": "fact_01",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_nhat_quang>fact_14@0",
+    "type": "KNOWS",
+    "source": "pham_nhat_quang",
+    "target": "fact_14",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:fact_01>bac_nut@0",
+    "type": "ABOUT",
+    "source": "fact_01",
+    "target": "bac_nut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_01>nguoi_giu_gieng@0",
+    "type": "ABOUT",
+    "source": "fact_01",
+    "target": "nguoi_giu_gieng",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_02>doan_truot_bac@0",
+    "type": "ABOUT",
+    "source": "fact_02",
+    "target": "doan_truot_bac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_02>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_02",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_03>doan_truot_bac@0",
+    "type": "ABOUT",
+    "source": "fact_03",
+    "target": "doan_truot_bac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_03>nguyen_moc_lan@0",
+    "type": "ABOUT",
+    "source": "fact_03",
+    "target": "nguyen_moc_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_04>lich_trinh@0",
+    "type": "ABOUT",
+    "source": "fact_04",
+    "target": "lich_trinh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_04>nguyen_moc_lan@0",
+    "type": "ABOUT",
+    "source": "fact_04",
+    "target": "nguyen_moc_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_04>tui_khoa@0",
+    "type": "ABOUT",
+    "source": "fact_04",
+    "target": "tui_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_05>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_05",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_05>gieng_vong@0",
+    "type": "ABOUT",
+    "source": "fact_05",
+    "target": "gieng_vong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_05>le_tuan@0",
+    "type": "ABOUT",
+    "source": "fact_05",
+    "target": "le_tuan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_06>gieng_vong@0",
+    "type": "ABOUT",
+    "source": "fact_06",
+    "target": "gieng_vong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_07>gieng_vong@0",
+    "type": "ABOUT",
+    "source": "fact_07",
+    "target": "gieng_vong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_07>nguyen_moc_lan@0",
+    "type": "ABOUT",
+    "source": "fact_07",
+    "target": "nguyen_moc_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_08>doan_truot_bac@0",
+    "type": "ABOUT",
+    "source": "fact_08",
+    "target": "doan_truot_bac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_08>nguyen_moc_lan@0",
+    "type": "ABOUT",
+    "source": "fact_08",
+    "target": "nguyen_moc_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_09>doan_truot_bac@0",
+    "type": "ABOUT",
+    "source": "fact_09",
+    "target": "doan_truot_bac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_09>so_gieng_cu@0",
+    "type": "ABOUT",
+    "source": "fact_09",
+    "target": "so_gieng_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_10>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_10",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_10>gieng_vong@0",
+    "type": "ABOUT",
+    "source": "fact_10",
+    "target": "gieng_vong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_10>so_gieng_cu@0",
+    "type": "ABOUT",
+    "source": "fact_10",
+    "target": "so_gieng_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_11>so_gieng_cu@0",
+    "type": "ABOUT",
+    "source": "fact_11",
+    "target": "so_gieng_cu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_11>tui_khoa@0",
+    "type": "ABOUT",
+    "source": "fact_11",
+    "target": "tui_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_12>doan_truot_bac@0",
+    "type": "ABOUT",
+    "source": "fact_12",
+    "target": "doan_truot_bac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_12>hoi_coc_duong@0",
+    "type": "ABOUT",
+    "source": "fact_12",
+    "target": "hoi_coc_duong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_12>tui_khoa@0",
+    "type": "ABOUT",
+    "source": "fact_12",
+    "target": "tui_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_13>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "fact_13",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_13>le_tuan@0",
+    "type": "ABOUT",
+    "source": "fact_13",
+    "target": "le_tuan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_13>protagonist@0",
+    "type": "ABOUT",
+    "source": "fact_13",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_14>bac_nut@0",
+    "type": "ABOUT",
+    "source": "fact_14",
+    "target": "bac_nut",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_14>cang_noi_riel@0",
+    "type": "ABOUT",
+    "source": "fact_14",
+    "target": "cang_noi_riel",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_14>chan_nui_tan@0",
+    "type": "ABOUT",
+    "source": "fact_14",
+    "target": "chan_nui_tan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:fact_14>rung_may@0",
+    "type": "ABOUT",
+    "source": "fact_14",
+    "target": "rung_may",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Phạm Quốc Huy",
+     "known_as": "Phạm Quốc Huy"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "answered_by": 2
+   },
+   "problems": [
+    "mạch thread_vet_truot: answered_by có fact_06, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng",
+    "mạch thread_so_gieng: answered_by có fact_09, là fact nhưng không phải bí mật trong `secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng"
+   ]
+  }
+ ],
+ "thread_shifts": [],
+ "quotes": []
+}

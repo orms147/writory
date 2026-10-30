@@ -14,7 +14,7 @@ như hé lộ (D-82). Bộ trích không được biết dàn ý định gỡ m�
 """
 
 import re
-from collections.abc import Mapping, Sequence
+from collections.abc import Collection, Mapping, Sequence
 from dataclasses import dataclass, field
 from typing import Any, Literal
 
@@ -37,7 +37,7 @@ from writory.pipeline.pacing import PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.leak import leak_names, unquoted_leaks
-from writory.safety.reveal import known_as_conflicts
+from writory.safety.reveal import known_as_conflicts, new_name_problem
 from writory.safety.wrap import (
     DATA_NOTICE,
     UserAuthored,
@@ -51,7 +51,8 @@ from writory.safety.wrap import (
 # gỡ khi mọi vế có trả lời (D-84). extract-5: KNOWS của nhân vật chính ghi ngay chương trang cho thấy
 # nhân vật chính biết, không để sang chương sau (D-92). extract-6: `new_facts` (D-93). extract-7:
 # Fact mới chỉ là điều xảy ra hay đúng trong thế giới, có ví dụ đúng và sai (D-95). extract-8: mục
-# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116).
+# "Mốc cốt truyện chưa xảy ra" và trường `milestones` (D-116). extract-9 (D-129) và extract-10 (hé lộ lần
+# hai dưới tên chính, D-136) đã thử, không gộp: chữ đề lưu ở evals/results của từng lần đo.
 PROMPT_VERSION = "extract-8"
 
 # Kiểu cạnh model được trích. FEELS (lựa chọn nội tâm) do bước ghi lựa chọn ghi, không trích.
@@ -158,6 +159,9 @@ class OpenEdge:
     type: str
     source: str
     target: str
+    # `known_as` của cạnh hé lộ (REVEALED_TO_PLAYER, KNOWS của nhân vật chính tới nút có tên): tên
+    # người chơi đang biết, cho luật hé lộ lần hai (D-136). Không vào đề. None với mọi cạnh khác.
+    known_as: str | None = None
 
 
 @dataclass
@@ -417,10 +421,15 @@ def to_package(
     output: ExtractOutput, *, chapter: int, commit_id: str, protagonist_id: str,
     chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
     threads: Sequence[ThreadGoal] = (), fact_rules: FactRules | None = None,
+    locked: Collection[str] = (),
 ) -> tuple[ChangePackage, list[tuple[str, str]]]:
     """Đổi đầu ra của model thành `ChangePackage`; cạnh sai quy tắc bị bỏ, kèm lý do.
     `threads`: mạch phải gỡ chưa gỡ kèm trạng thái hạn (`ChapterGoals.threads`). `RESOLVED_IN` của
-    mạch trong đó còn `later` (chưa tới khoảng gỡ) bị bỏ (D-84); mạch ngoài danh sách không đổi."""
+    mạch trong đó còn `later` (chưa tới khoảng gỡ) bị bỏ (D-84); mạch ngoài danh sách không đổi.
+    Hé lộ lần hai của nút có tên đã hé lộ (theo `open_edges`, kèm `known_as`): chỉ tên chính mới, không
+    ở chương nút đã hé lộ, không với nút trong `locked` (`safety.reveal.new_name_problem`, D-136).
+    `locked`: nút có tên đang được bảo vệ ở đường người chơi; đường pipeline luôn truyền
+    (`extract_changes` bắt buộc), () cho bài C và test."""
     known = {e.id: e for e in entities}
     existing = set(known)  # id có sẵn trước khi thêm Fact mới
     # Thực thể mỗi Fact nói về: Fact có sẵn theo cạnh ABOUT đang hiệu lực, Fact mới theo cạnh trong đầu ra.
@@ -440,6 +449,18 @@ def to_package(
     # Tên lớp truth của mọi nút có tên, kể cả tên người chơi viết: để bắt `known_as` của nút khác.
     names = {e.id: (e.text, *e.aliases) for e in entities if e.label in NAMED_LABELS}
     open_by_id = {o.id: o for o in open_edges}
+    # Nút người chơi đã biết: tên đang biết, và nút chương của từng lần hé lộ (D-136).
+    shown: dict[str, list[str]] = {}
+    revealed_at: dict[str, set[str]] = {}
+    for o in open_edges:
+        if o.type == "REVEALED_TO_PLAYER":
+            node = o.source
+            revealed_at.setdefault(node, set()).add(o.target)
+        elif o.type == "KNOWS" and o.source == protagonist_id:
+            node = o.target
+        else:
+            continue
+        shown.setdefault(node, []).extend([o.known_as] if o.known_as else [])
     rejected: list[tuple[str, str]] = list(plan.rejected)
     open_knows = {(o.source, o.target) for o in open_edges if o.type == "KNOWS"}
     edges: list[EdgeSpec] = []
@@ -516,6 +537,14 @@ def to_package(
             if others:
                 rejected.append((desc, f"known_as là tên của nút khác: {others} (D-62)"))
                 continue
+            if x.type == "REVEALED_TO_PLAYER" and node in shown:
+                again = ("đã hé lộ ở chương này: tên mới ghi ở chương sau (D-136)"
+                         if x.target in revealed_at.get(node, ()) else
+                         new_name_problem(x.known_as, node, names=names, shown=shown[node],
+                                          locked=locked))
+                if again:
+                    rejected.append((desc, again))
+                    continue
             props["known_as"] = x.known_as
         try:
             spec = EdgeSpec.model_validate(
@@ -748,12 +777,13 @@ async def extract_changes(
     protagonist_id: str, chapter_text: str, entities: list[Entity], open_edges: list[OpenEdge],
     threads: Sequence[ThreadGoal] = (), extra: Mapping[str, Any] | None = None,
     fact_rules: FactRules | None = None, milestones: Sequence[PendingMilestone] = (),
-    milestones_done: Mapping[int, int] | None = None,
+    milestones_done: Mapping[int, int] | None = None, locked: Collection[str],
 ) -> ExtractResult:
     """Một lời gọi model. Lỗi schema để nơi gọi thử lại theo RETRY_SCHEMA (G11, D-14).
     `threads`: mạch phải gỡ chưa gỡ, kèm trạng thái hạn (`ChapterGoals.threads`, D-82).
     `fact_rules`: luật Fact mới (D-93); None = tắt. `milestones`: mốc chưa xảy ra bộ trích được đánh
-    dấu, `milestones_done`: số thứ tự -> chương đã xong (D-116)."""
+    dấu, `milestones_done`: số thứ tự -> chương đã xong (D-116). `locked`: nút có tên không được thêm
+    tên mới (bắt buộc, `to_package`, D-136)."""
     messages = build_messages(
         chapter=chapter, chapter_id=chapter_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text, entities=entities, open_edges=open_edges, threads=threads,
@@ -764,6 +794,7 @@ async def extract_changes(
         output, chapter=chapter, commit_id=commit_id, protagonist_id=protagonist_id,
         chapter_text=chapter_text,
         entities=entities, open_edges=open_edges, threads=threads, fact_rules=fact_rules,
+        locked=locked,
     )
     marks, bad_marks = accept_milestones(output, milestones, milestones_done or {}, chapter_text)
     return ExtractResult(package=package, rejected=[*rejected, *bad_marks], chat=chat,

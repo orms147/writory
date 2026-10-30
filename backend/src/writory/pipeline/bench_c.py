@@ -78,7 +78,7 @@ def gold_state(sample: SampleStory, chapter: int) -> tuple[list[Entity], list[Op
         if ch.number == chapter:
             break
         for e in ch.package.edges:
-            open_edges[e.id] = OpenEdge(e.id, e.type, e.source, e.target)
+            open_edges[e.id] = OpenEdge(e.id, e.type, e.source, e.target, e.props.get("known_as"))
         for c in ch.package.close:
             open_edges.pop(c.id, None)
     return list(entities.values()), list(open_edges.values())
@@ -207,6 +207,7 @@ async def run_one(
             llm, model.model or model.id, chapter=chapter, chapter_id=chapter_node,
             commit_id=f"bench-c-{chapter}", protagonist_id=sample.protagonist, chapter_text=text,
             entities=entities, open_edges=open_edges, extra=_extra_for(model, cfg),
+            locked=(),  # truyện mẫu không có kế hoạch, không bí mật nào bảo vệ tên
         )
 
     async def with_schema_retry():

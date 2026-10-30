@@ -272,7 +272,7 @@ def test_beyond_rules_action_is_saved_with_its_flag_and_its_chapter_is_checked(p
 
     sid = story(action=None)
     llm = ScriptedLLM([classify_reply(feasibility="beyond_world_rules"),
-                       outline_reply(), SCENE_1, EXTRACT_1, overreach_reply("cost"),
+                       outline_reply(), SCENE_1, EXTRACT_1, overreach_reply("failed"),
                        outline_reply(), SCENE_2, EXTRACT_2, overreach_reply("failed"),
                        SUMMARY, choices_reply()])
     with TestClient(make_app(pg, driver, llm, tmp_path)) as client:

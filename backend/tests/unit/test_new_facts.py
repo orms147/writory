@@ -199,7 +199,7 @@ async def test_extract_changes_passes_the_rules_and_the_prompt_mentions_new_fact
     result = await extract_changes(
         FakeLLM.scripted([reply]), "m", chapter=4, chapter_id="ch4", commit_id="c",
         protagonist_id="protagonist", chapter_text=TEXT, entities=ENTITIES, open_edges=[],
-        fact_rules=RULES)
+        fact_rules=RULES, locked=())
     assert [n.id for n in result.package.nodes] == ["fact_c4s1_1"]
 
 

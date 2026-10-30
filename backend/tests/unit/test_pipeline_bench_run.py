@@ -109,6 +109,9 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
                      "summary": total - 1, "choices": total - 1,
                      "moderate": scenes + 1 + (total - 1)}
     assert report["setup_repairs"] == {"used": 0, "kinds": {}}
+    # Mạch của thế giới dry-run không khai bí mật trả lời: không dời gì (D-135).
+    assert report["thread_answers"] == {"threads": 1, "linked": 0, "shifted": 0,
+                                        "shifted_end": 0, "dropped": 0, "mismatches": 0}
     # Fixture khởi tạo không có ngoại hình: chỉ số đếm 0, không chữ (D-122).
     assert report["appearance_variety"] == {
         "characters": report["appearance_variety"]["characters"], "with_appearance": 0,
@@ -926,6 +929,96 @@ async def test_setup_only_stops_after_chapter_0_and_leaves_a_usable_source(tmp_p
                                    out=tmp_path / "b" / "out")
     assert await again.run() == bench_run.EXIT_OK
     assert again.plan == first.plan and store2.committed == first.plan.total_chapters
+
+
+# --- mạch do bí mật trả lời (D-135) ---------------------------------------------------------------
+
+
+def _linked_thread(answer: str) -> str:
+    """Mạch của thế giới dry-run khai bí mật nội gián là câu trả lời: mạch gỡ ở chương cuối-1..cuối,
+    bí mật lộ ở chương cuối, nên code dời chương đầu của khoảng gỡ."""
+    data = json.loads(answer)
+    data["threads"][0]["answered_by"] = [data["secrets"][0]["fact_id"]]
+    return json.dumps(data, ensure_ascii=False)
+
+
+async def test_thread_window_shift_is_counted_in_the_report_with_ids_only_in_truth_dump(tmp_path):
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, _, out = make_run(tmp_path, llm=_Scripted(total, {("setup", 4): _linked_thread}),
+                              config=config, setup_only=True)
+    assert await run.run() == bench_run.EXIT_OK
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["thread_answers"] == {"threads": 1, "linked": 1, "shifted": 1,
+                                        "shifted_end": 0, "dropped": 0, "mismatches": 0}
+    assert report["setup_repairs"]["used"] == 0  # code dời, không tốn lượt sửa
+    assert ("Mạch phải gỡ có bí mật trả lời (D-135): 1/1; dời khoảng gỡ 1 (dời cả hạn 0); bỏ id "
+            "fact thường 0; còn lệch 0.") in (out / "summary.md").read_text(encoding="utf-8")
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    assert dump["thread_shifts"] == [{"thread_id": "t_ngoc_boi", "before": [total - 1, total],
+                                      "after": [total, total], "secrets": ["f_ha_tran_noi_gian"],
+                                      "end_moved": False}]
+    assert dump["plan"]["must_resolve_threads"][0]["answered_by"] == ["f_ha_tran_noi_gian"]
+    general = all_text(out, skip=("truth_dump.json",))
+    assert "t_ngoc_boi" not in general and "f_ha_tran_noi_gian" not in general
+
+    # --setup-from dùng lại thế giới: số dời là của lần khởi tạo nguồn.
+    again, _, _, out2 = make_run(tmp_path / "b", llm=DryRunLLM(total), config=config,
+                                 setup_from=out, store=OverlayStore("mem-run-2"),
+                                 out=tmp_path / "b" / "out", chapters=1)
+    assert await again.run() == bench_run.EXIT_OK
+    report2 = json.loads((out2 / "report.json").read_text(encoding="utf-8"))
+    assert report2["thread_answers"] == report["thread_answers"]
+
+
+async def test_setup_from_an_old_world_does_not_know_its_shifts(tmp_path):
+    """Thư mục nguồn trước D-135 (truth_dump không có `thread_shifts`): số dời là không rõ."""
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    first, _, _, source = make_run(tmp_path / "a", out=tmp_path / "a" / "out", config=config,
+                                   setup_only=True)
+    assert await first.run() == bench_run.EXIT_OK
+    dump = json.loads((source / "truth_dump.json").read_text(encoding="utf-8"))
+    del dump["thread_shifts"], dump["answers_dropped"]
+    (source / "truth_dump.json").write_text(json.dumps(dump, ensure_ascii=False), encoding="utf-8")
+    again, _, _, out = make_run(tmp_path / "b", llm=DryRunLLM(total), config=config,
+                                setup_from=source, store=OverlayStore("mem-run-2"),
+                                out=tmp_path / "b" / "out", chapters=1)
+    assert await again.run() == bench_run.EXIT_OK
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["thread_answers"]["shifted"] is None
+    assert report["thread_answers"]["dropped"] is None
+    assert report["thread_answers"]["mismatches"] == 0
+    summary = (out / "summary.md").read_text(encoding="utf-8")
+    assert "dời khoảng gỡ không rõ" in summary and "bỏ id fact thường không rõ" in summary
+
+
+def _plain_fact_link(answer: str) -> str:
+    """Mạch của thế giới dry-run khai fact thường (không phải bí mật) là câu trả lời (D-135)."""
+    data = json.loads(answer)
+    plain = next(f["id"] for f in data["facts"]
+                 if f["id"] not in {s["fact_id"] for s in data["secrets"]})
+    data["threads"][0]["answered_by"] = [plain]
+    return json.dumps(data, ensure_ascii=False)
+
+
+async def test_dropped_plain_fact_link_is_counted_without_a_repair(tmp_path):
+    """Chủ dự án chọn (D-135): id fact thường trong `answered_by` bị code bỏ, không tốn lượt sửa.
+    Report đếm số đã bỏ; cặp (mạch, fact) có id chỉ ở truth_dump."""
+    config = trial_config(tmp_path)
+    total = config.story_lengths.levels["short"].chapters.min
+    run, _, _, out = make_run(tmp_path, llm=_Scripted(total, {("setup", 4): _plain_fact_link}),
+                              config=config, setup_only=True)
+    assert await run.run() == bench_run.EXIT_OK
+    report = json.loads((out / "report.json").read_text(encoding="utf-8"))
+    assert report["thread_answers"] == {"threads": 1, "linked": 0, "shifted": 0,
+                                        "shifted_end": 0, "dropped": 1, "mismatches": 0}
+    assert report["setup_repairs"]["used"] == 0
+    assert "bỏ id fact thường 1" in (out / "summary.md").read_text(encoding="utf-8")
+    dump = json.loads((out / "truth_dump.json").read_text(encoding="utf-8"))
+    assert dump["answers_dropped"] == [["t_ngoc_boi", "f_ngoc_boi_linh_mach"]]
+    general = all_text(out, skip=("truth_dump.json",))
+    assert "t_ngoc_boi" not in general and "f_ngoc_boi_linh_mach" not in general
 
 
 def test_cli_parses_the_override_flags():

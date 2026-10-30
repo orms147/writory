@@ -44,6 +44,7 @@ from writory.db import (
     owner_costs,
     pending_cost_estimates,
     record_cost,
+    release_narrator_question,
     save_player_key,
     settle_cost_estimate,
     setup_spent_usd,
@@ -560,7 +561,8 @@ def get_narrator_llm(story: OwnedStory, llm: PlayerLLMs) -> MeteredClient:
 
 class PostgresNarratorQuota:
     """Bộ đếm câu hỏi người kể trong Postgres (`db.take_narrator_question`); đọc lại số lượt đã
-    giữ để báo số câu còn lại (`db.narrator_questions_asked`, D-66)."""
+    giữ để báo số câu còn lại (`db.narrator_questions_asked`, D-66); trả lại lượt khi câu trả lời
+    bị kiểm duyệt chặn (`db.release_narrator_question`, D-137)."""
 
     def __init__(self, conn: psycopg.Connection) -> None:
         self._conn = conn
@@ -568,6 +570,9 @@ class PostgresNarratorQuota:
     async def take(self, story_id: str, chapter: int, limit: int) -> bool:
         return await asyncio.to_thread(take_narrator_question, self._conn, story_id, chapter,
                                        limit)
+
+    async def release(self, story_id: str, chapter: int) -> None:
+        await asyncio.to_thread(release_narrator_question, self._conn, story_id, chapter)
 
     async def asked(self, story_id: str, chapter: int) -> int:
         return await asyncio.to_thread(narrator_questions_asked, self._conn, story_id, chapter)

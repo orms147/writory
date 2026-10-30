@@ -10,11 +10,14 @@ loại vượt luật, văn các cảnh trước của chương (`earlier_refs`)
 
 Cần: `models.roles.overreach`, trần chi phí và OPENROUTER_API_KEY (key của chủ dự án dành cho bộ đo).
 
-Chỉ số, theo thứ tự quan trọng:
-- `granted_missed`: mong đợi `granted` mà ra `failed`/`cost`: trang chiều theo mà không bị bắt (G6 hở).
-- `false_granted`: mong đợi `failed`/`cost` mà ra `granted`: cảnh hợp lệ bị viết lại, hết lượt thì
-  bị chặn.
-- `correct`/`total`: đúng cả ba giá trị. Nhầm giữa `failed` và `cost` không đổi gì ở sản phẩm.
+Chỉ số, cho cả bộ câu và riêng từng bộ (`by_set`: `original` là các câu không ghi `set`, `hard` là
+bộ khó, bộ quyết định ở luật đạt). Tính theo quyết định của sản phẩm (`overreach.needs_rewrite`,
+D-138: vượt luật thế giới chỉ `failed` qua; vượt sức nhân vật thì `failed` hay `cost` qua):
+- `rewrite_missed`: trang phải viết lại mà kết luận của người chấm cho qua (G6 hở).
+- `false_rewrite`: trang được qua mà kết luận của người chấm bắt viết lại (cảnh hợp lệ bị viết lại,
+  hết lượt thì bị chặn).
+- `correct`/`total`: đúng cả ba giá trị. Nhầm mà không đổi quyết định (`failed` với `cost` ở vượt sức
+  nhân vật, `cost` với `granted` ở vượt luật thế giới) chỉ ghi ở `wrong`.
 Lời gọi lỗi (fail closed) tính là sai, không tính vào hai danh sách trên.
 """
 
@@ -41,22 +44,35 @@ from writory.safety.bench_g5 import (
     unlimited_tracker,
 )
 from writory.safety.classify import Feasibility
-from writory.safety.overreach import PROMPT_VERSION, OverreachVerdict, check_overreach
+from writory.safety.overreach import (
+    PROMPT_VERSION,
+    OverreachVerdict,
+    check_overreach,
+    needs_rewrite,
+)
 from writory.safety.wrap import UserAuthored
 
 CASES_PATH = REPO_ROOT / "evals" / "redteam" / "g6_overreach.yaml"
-GRANTED = OverreachVerdict.GRANTED.value
+SETS = ("original", "hard")
 
 
 @dataclass
-class G6Result:
+class G6Summary:
     total: int = 0
     correct: int = 0
     errors: int = 0
-    granted_missed: list[str] = field(default_factory=list)
-    false_granted: list[str] = field(default_factory=list)
+    rewrite_missed: list[str] = field(default_factory=list)
+    false_rewrite: list[str] = field(default_factory=list)
     confusion: dict[str, dict[str, int]] = field(default_factory=dict)
     wrong: list[dict] = field(default_factory=list)
+
+
+@dataclass
+class G6Result(G6Summary):
+    """Chỉ số của cả bộ câu, cộng `by_set` (cùng các chỉ số, riêng từng bộ) và từng câu (`rows`)."""
+
+    by_set: dict[str, dict[str, Any]] = field(default_factory=dict)
+    rows: list[dict[str, Any]] = field(default_factory=list)
     stopped_by_budget: bool = False
 
 
@@ -75,55 +91,81 @@ def case_inputs(case: Mapping[str, Any], doc: Mapping[str, Any]) -> dict[str, An
     }
 
 
-async def score(doc: Mapping[str, Any], *, llm: LLMClient, config: AppConfig) -> G6Result:
-    result = G6Result()
+def summarize(rows: list[dict[str, Any]]) -> G6Summary:
+    out = G6Summary()
     confusion: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for row in rows:
+        out.total += 1
+        expected, got = row["expected"], row["got"]
+        confusion[expected][got] += 1
+        if got == expected:
+            out.correct += 1
+            continue
+        out.wrong.append({"id": row["id"], "expected": expected, "got": got})
+        if got.startswith("error:"):
+            out.errors += 1
+            continue
+        kind = Feasibility(row["feasibility"])
+        should = needs_rewrite(kind, OverreachVerdict(expected))
+        does = needs_rewrite(kind, OverreachVerdict(got))
+        if should and not does:
+            out.rewrite_missed.append(row["id"])
+        elif does and not should:
+            out.false_rewrite.append(row["id"])
+    out.confusion = {k: dict(v) for k, v in confusion.items()}
+    return out
+
+
+async def score(doc: Mapping[str, Any], *, llm: LLMClient, config: AppConfig) -> G6Result:
+    rows: list[dict[str, Any]] = []
+    stopped = False
     for case in doc["cases"]:
-        expected = case["expected"]
         try:
             got = (await check_overreach(**case_inputs(case, doc), llm=llm, config=config)
                    ).verdict.value
         except WritoryError as e:
             if e.code in BUDGET_CODES:
-                result.stopped_by_budget = True
+                stopped = True
                 break
-            result.errors += 1
             got = f"error:{e.code.value}"
-        result.total += 1
-        confusion[expected][got] += 1
-        if got == expected:
-            result.correct += 1
-            continue
-        result.wrong.append({"id": case["id"], "expected": expected, "got": got})
-        if got.startswith("error:"):
-            continue
-        if expected == GRANTED:
-            result.granted_missed.append(case["id"])
-        elif got == GRANTED:
-            result.false_granted.append(case["id"])
-    result.confusion = {k: dict(v) for k, v in confusion.items()}
-    return result
+        rows.append({"id": case["id"], "set": case.get("set", "original"),
+                     "feasibility": case["feasibility"], "expected": case["expected"],
+                     "got": got})
+    by_set = {name: asdict(summarize([r for r in rows if r["set"] == name])) for name in SETS}
+    return G6Result(**asdict(summarize(rows)), by_set=by_set, rows=rows, stopped_by_budget=stopped)
 
 
 def _oracle(doc: Mapping[str, Any]) -> Callable[[list[Message]], str]:
-    """Trả đúng kết luận của câu có cảnh vừa viết trong lời gọi (phần sau "Cảnh vừa viết:")."""
+    """Trả đúng kết luận của câu có cùng cảnh vừa viết (phần sau "Cảnh vừa viết:") và cùng các cảnh
+    trước với lời gọi."""
+    def key(inputs: Mapping[str, Any]) -> tuple[str, ...]:
+        return (str(UserAuthored(inputs["scene_text"], "scene_text")),
+                *(str(UserAuthored(t, "scene_text")) for t in inputs["earlier"]))
+
     def answer(messages: list[Message]) -> str:
-        current = messages[-1].content.split("Cảnh vừa viết:", 1)[1]
-        for case in doc["cases"]:
-            inputs = case_inputs(case, doc)
-            if (str(UserAuthored(inputs["scene_text"], "scene_text")) in current
-                    and len(inputs["earlier"]) == messages[-1].content.count("scene_text") - 1):
-                return json.dumps({"verdict": case["expected"], "reason": "chạy khô"})
-        raise AssertionError("chạy khô: không tìm thấy câu của lời gọi")
+        before, current = messages[-1].content.split("Cảnh vừa viết:", 1)
+        found = [c for c in doc["cases"]
+                 if (k := key(case_inputs(c, doc)))[0] in current
+                 and all(e in before for e in k[1:])
+                 and before.count('source="scene_text"') == len(k) - 1]
+        [case] = found
+        return json.dumps({"verdict": case["expected"], "reason": "chạy khô"})
     return answer
+
+
+def _line(name: str, m: Mapping[str, Any]) -> str:
+    return (f"{name}: đúng {m['correct']}/{m['total']}; bỏ sót (phải viết lại mà cho qua) "
+            f"{len(m['rewrite_missed'])}, báo nhầm (được qua mà bắt viết lại) "
+            f"{len(m['false_rewrite'])}, lỗi gọi {m['errors']}")
 
 
 def _print(result: G6Result, cost_text: str) -> None:
     import sys
 
     sys.stdout.reconfigure(encoding="utf-8")
-    print(f"đúng {result.correct}/{result.total}; granted bị bỏ sót {len(result.granted_missed)}, "
-          f"granted báo nhầm {len(result.false_granted)}, lỗi gọi {result.errors}; {cost_text}")
+    for name in SETS:
+        print(_line(name, result.by_set[name]))
+    print(f"{_line('cả bộ', asdict(result))}; {cost_text}")
     if result.stopped_by_budget:
         print("DỪNG vì chạm trần chi phí: chưa đo hết bộ câu")
 

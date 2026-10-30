@@ -129,7 +129,8 @@ async def test_player_action_stays_wrapped_in_every_prompt_of_the_chapter(tmp_pa
 
 async def test_each_scene_is_checked_once_with_the_earlier_scenes_of_the_chapter(tmp_path):
     config = make_config(tmp_path)
-    events, outcome, llm = await run(checked_script("cost", "failed"), tmp_path, config=config)
+    events, outcome, llm = await run(checked_script("cost", "failed"), tmp_path, config=config,
+                                     req=request(feasibility=CHARACTER))
     assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
     first, second = calls_of(llm, "overreach")
     s1 = normalize_dashes(SCENE_1)
@@ -145,11 +146,42 @@ async def test_each_scene_is_checked_once_with_the_earlier_scenes_of_the_chapter
                                    for r in outcome.reviews for i in r.issues)
 
 
-@pytest.mark.parametrize("verdict", ["failed", "cost"])
-async def test_failed_or_cost_passes_without_a_rewrite(tmp_path, verdict):
-    _, outcome, llm = await run(checked_script(verdict, verdict), tmp_path)
+@pytest.mark.parametrize(("feasibility", "verdict"), [
+    (WORLD, "failed"), (CHARACTER, "failed"), (CHARACTER, "cost")])
+async def test_verdicts_that_pass_for_the_kind_need_no_rewrite(tmp_path, feasibility, verdict):
+    """D-138: vượt luật thế giới chỉ `failed` qua; vượt sức nhân vật thì `failed` hay `cost`."""
+    _, outcome, llm = await run(checked_script(verdict, verdict), tmp_path,
+                                req=request(feasibility=feasibility))
     assert outcome.committed and len(calls_of(llm, "writer")) == 2
     assert [r.verdict for r in outcome.reviews] == ["accept", "accept"]
+
+
+async def test_a_world_overreach_that_happens_with_a_cost_is_rewritten_like_granted(tmp_path):
+    """D-138: luật của thế giới giữ nguyên. "Bay được mà gãy chân" (`cost`) ở thế giới không phép là
+    thế giới đã có phép: viết lại như `granted`, với lời nhắn của loại vượt luật thế giới."""
+    script = [outline_reply(), SCENE_1, EXTRACT_1, overreach_reply("cost"),
+              SCENE_1, EXTRACT_1, overreach_reply("failed"),
+              outline_reply(), SCENE_2, EXTRACT_2, overreach_reply("failed"),
+              SUMMARY, choices_reply()]
+    _, outcome, llm = await run(script, tmp_path, req=request(feasibility=WORLD))
+    assert outcome.committed
+    first = outcome.reviews[0]
+    assert first.verdict == "rewrite"
+    assert [(i.source, i.kind, i.block) for i in first.issues] == [("overreach", "cost", True)]
+    writer = prompts(llm, "writer")
+    assert rewrite_feedback(WORLD) in writer[1]
+    assert rewrite_feedback(CHARACTER) not in writer[1]
+
+
+async def test_a_world_cost_after_the_rewrite_limit_blocks_with_the_overreach_code(tmp_path):
+    config = make_config(tmp_path)
+    limit = config.limits.retries.rewrite_per_scene
+    script = [outline_reply()]
+    for _ in range(1 + limit):
+        script += [SCENE_1, EXTRACT_1, overreach_reply("cost")]
+    events, outcome, _ = await run(script, tmp_path, config=config, req=request(feasibility=WORLD))
+    assert [e.type for e in events if e.type != "stage"] == ["scene_blocked"]
+    assert outcome.blocked_code is ErrorCode.SCENE_OVERREACH_BLOCKED
 
 
 async def test_granted_rewrites_the_scene_once_with_fixed_feedback(tmp_path):
@@ -199,7 +231,7 @@ async def test_a_leak_with_granted_blocks_with_the_neutral_code(tmp_path):
 
 async def test_a_granted_rewrite_falls_back_to_the_earlier_draft_that_was_not(tmp_path):
     """Như D-50: bản viết lại có lỗi chặn mà bản trước không có thì hiện bản trước."""
-    script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, overreach_reply("cost"),
+    script = [outline_reply(), SCENE_1_CLICHE, EXTRACT_1, overreach_reply("failed"),
               SCENE_1, EXTRACT_1, overreach_reply("granted"),
               outline_reply(), SCENE_2, EXTRACT_2, overreach_reply("failed"),
               SUMMARY, choices_reply()]

@@ -7,7 +7,14 @@ import shutil
 import pytest
 
 from tests.pipeline_fixtures import OverlayStore
-from tests.unit.test_pipeline_bench_run import make_run, rows, scenario_for, trial_config
+from tests.unit.test_pipeline_bench_run import (
+    _linked_thread,
+    _Scripted,
+    make_run,
+    rows,
+    scenario_for,
+    trial_config,
+)
 from writory.config import ConfigError
 from writory.errors import ErrorCode, WritoryError
 from writory.pipeline import bench_run
@@ -113,6 +120,23 @@ async def test_resume_after_a_stop_at_chapter_k_matches_a_straight_run(tmp_path)
     assert report_2["cost"]["total_usd"] == report_a["cost"]["total_usd"]  # cộng dồn, không mất
     assert report_2["chapters"] == report_a["chapters"]
     assert report_2["chapters_committed"] == total and report_2["story_finished"] is True
+
+
+async def test_resume_keeps_the_thread_shifts_made_at_setup(tmp_path):
+    """Khoảng gỡ đã dời lúc khởi tạo (D-135) không mất khi chạy tiếp: số trong report, id trong
+    truth_dump."""
+    config, scenario, total = setup(tmp_path)
+    llm = _Scripted(total, {("setup", 4): _linked_thread})
+    _, store, out_1, code = await first_leg(tmp_path, config, scenario, total, chapters=1, llm=llm)
+    assert code == bench_run.EXIT_OK
+    _, out_2, code2 = await resume(tmp_path, config, scenario, total, store, out_1, chapters=2)
+    assert code2 == bench_run.EXIT_OK
+    reports = [json.loads((o / "report.json").read_text(encoding="utf-8")) for o in (out_1, out_2)]
+    assert reports[0]["thread_answers"]["shifted"] == 1
+    assert reports[1]["thread_answers"] == reports[0]["thread_answers"]
+    dumps = [json.loads((o / "truth_dump.json").read_text(encoding="utf-8")) for o in (out_1, out_2)]
+    assert dumps[1]["thread_shifts"] == dumps[0]["thread_shifts"] != []
+    assert dumps[1]["answers_dropped"] == dumps[0]["answers_dropped"] == []
 
 
 async def test_old_result_directory_is_left_untouched(tmp_path):

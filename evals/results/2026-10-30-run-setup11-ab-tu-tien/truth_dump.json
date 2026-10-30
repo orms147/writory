@@ -1,0 +1,1986 @@
+{
+ "story_id": "run-20261030-setup11-ab-tu-tien-91fc9ec7",
+ "plan": {
+  "acts": [
+   {
+    "name": "Vách đá hé mở",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Giá của một chỗ đứng",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Đường lui dưới lòng núi",
+    "from_chapter": 5,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "yen_tang_con_song",
+    "reveal_from_chapter": 3,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Yến Tàng",
+      "còn sống"
+     ],
+     [
+      "Yến sư huynh",
+      "vẫn sống"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "doan_khuong_giau_yen_tang",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Đoàn Khương",
+      "giúp Yến Tàng ẩn náu"
+     ],
+     [
+      "trưởng đội Đoàn",
+      "giấu Yến sư huynh"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "manh_moi_yen_tang",
+    "resolve_from_chapter": 3,
+    "resolve_to_chapter": 4,
+    "answered_by": [
+     "yen_tang_con_song"
+    ]
+   },
+   {
+    "thread_id": "cho_dung_cua_ngoai_mon",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6,
+    "answered_by": []
+   },
+   {
+    "thread_id": "loi_di_duoi_mo",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 3,
+    "answered_by": []
+   },
+   {
+    "thread_id": "thoa_thuan_hai_tong",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 5,
+    "answered_by": []
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Cố Hoài Tín phải quyết định giữ kín hay đem mảnh bản đồ ra làm điều kiện mặc cả.",
+    "from_chapter": 2,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Cố Hoài Tín tìm được lối vào khoang sâu và phát hiện dấu vết cho thấy lời đồn về Yến Tàng không đáng tin.",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Trong cuộc đối đầu dưới mỏ, Cố Hoài Tín phải chọn cách phơi bày bí mật hay dùng nó để đổi lấy đường sống.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Cố Hoài Tín xác lập được con đường sống của mình sau khi quyền khai thác mỏ được phân định.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "yen_tang_con_song",
+    "text": "Yến Tàng còn sống và đang ẩn trong khoang sâu dưới mỏ Linh Nham.",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "doan_khuong_giau_yen_tang",
+    "text": "Đoàn Khương đã giúp Yến Tàng ẩn náu vì Yến Tàng phát hiện các đại tông định bỏ mặc đệ tử ngoại môn sau khi lấy mỏ.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "manh_moi_yen_tang",
+    "description": "Yến Tàng còn sống hay đã chết?",
+    "user_authored": false,
+    "from_chapter": 3,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "cho_dung_cua_ngoai_mon",
+    "description": "Cố Hoài Tín có giành được một chỗ sống cho mình sau cuộc tiếp quản không?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "loi_di_duoi_mo",
+    "description": "Mảnh bản đồ dẫn đến khoang nào dưới mỏ?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "thoa_thuan_hai_tong",
+    "description": "Bên nào sẽ nắm quyền khai thác mỏ Linh Nham?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Cố Hoài Tín phải quyết định giữ kín hay đem mảnh bản đồ ra làm điều kiện mặc cả.",
+    "from_chapter": 2,
+    "to_chapter": 2,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Cố Hoài Tín tìm được lối vào khoang sâu và phát hiện dấu vết cho thấy lời đồn về Yến Tàng không đáng tin.",
+    "from_chapter": 3,
+    "to_chapter": 3,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Trong cuộc đối đầu dưới mỏ, Cố Hoài Tín phải chọn cách phơi bày bí mật hay dùng nó để đổi lấy đường sống.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "ending",
+    "goal": "Cố Hoài Tín xác lập được con đường sống của mình sau khi quyền khai thác mỏ được phân định.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261030-setup11-ab-tu-tien-91fc9ec7-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Cố Hoài Tín",
+      "personality": "Thẳng thắn, trọng tình nghĩa nhưng không ngây thơ; chàng thường im lặng lâu hơn mức cần thiết trước khi quyết định. Nỗi sợ bị bỏ lại khiến chàng đôi khi chọn cách tự gánh lấy rủi ro.",
+      "backstory": "Cố Hoài Tín từng được một vị sư huynh trong Thanh Vi Tông cứu giúp, nên chàng ở lại tông môn dù ngày tháng tu hành ngày càng chật vật. Sau khi sư huynh mất tích, chàng bị chuyển xuống mỏ đá và không biết nên tin những lời giải thích nào về vụ việc ấy. Mảnh bản đồ trong tay đồng đội có thể dẫn đến một manh mối, nhưng cũng buộc chàng lựa chọn giữa món nợ cũ và con đường sống của chính mình.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Vóc người cao gầy và gương mặt dài với đường nét thẳng là nét nổi bật của chàng trai ngoài hai mươi; tóc nâu tro buộc gọn sau gáy, áo ngoại môn xanh sẫm bằng vải dày và một vết xước nhạt ở thái dương."
+     }
+    },
+    {
+     "id": "doan_khuong",
+     "label": "Character",
+     "props": {
+      "name": "Đoàn Khương",
+      "aliases": [
+       "trưởng đội Đoàn"
+      ],
+      "personality": "Điềm đạm, thực dụng, giỏi dùng lời lẽ nửa kín nửa hở để giữ người khác ở thế phải đoán.",
+      "backstory": "Từng là đệ tử nội môn Thanh Vi Tông, sau một lần tranh chấp tài nguyên bị đẩy xuống quản lý đội đào mỏ. Ông biết rõ các lối cũ dưới núi nhưng hiếm khi nói trọn điều mình biết.",
+      "appearance": "Gương mặt vuông với quai hàm rộng nổi bật trên vóc người đậm chắc ngoài bốn mươi; tóc hoa râm cắt ngắn, áo bào xám viền xanh sẫm bằng vải thô và một vết sẹo mảnh ngang cằm."
+     }
+    },
+    {
+     "id": "trieu_ninh",
+     "label": "Character",
+     "props": {
+      "name": "Triệu Ninh",
+      "personality": "Nhạy bén, kín đáo, có lòng trắc ẩn nhưng không dễ trao niềm tin.",
+      "backstory": "Lớn lên ở chân núi Thanh Vi, vào tông môn làm đệ tử ngoại môn để có đường tu hành. Sau khi một người thân mất tích trong mỏ, nàng bắt đầu lần theo những dấu vết mà người khác cố tình bỏ qua.",
+      "appearance": "Khuôn mặt trái xoan nhỏ và đôi mắt dài là nét dễ nhận ra nhất ở người phụ nữ ngoài hai mươi có vóc dáng mảnh; mái tóc nâu đỏ tết thành một bím dài, dưới cổ áo vải lam có chiếc khuyên bạc hình lá."
+     }
+    },
+    {
+     "id": "yen_tang",
+     "label": "Character",
+     "props": {
+      "name": "Yến Tàng",
+      "aliases": [
+       "Yến sư huynh"
+      ],
+      "personality": "Trầm tĩnh, cứng cỏi, thương người nhưng sẵn lòng tự gánh lấy hậu quả.",
+      "backstory": "Từng cứu Cố Hoài Tín khỏi một trận tai nạn khi mới vào Thanh Vi Tông. Yến Tàng mất tích trước khi các cuộc thương lượng tiếp quản bắt đầu, để lại những lời giải thích trái ngược nhau.",
+      "appearance": "Vầng trán cao và chiếc mũi thẳng nổi trên gương mặt gầy của người đàn ông ngoài hai mươi; tóc bạc nhạt buộc thấp ngang vai, áo tu sĩ xanh tro viền bạc và một nốt ruồi sẫm dưới mắt trái."
+     }
+    },
+    {
+     "id": "luong_thac",
+     "label": "Character",
+     "props": {
+      "name": "Lương Thác",
+      "personality": "Lịch sự, kiên nhẫn và luôn cân nhắc lời nói như thể đang định giá từng câu.",
+      "backstory": "Được Huyền Kiếm Tông cử đến dự bàn việc tiếp quản Thanh Vi Tông. Hắn xem mỏ Linh Nham là điều kiện then chốt để thỏa thuận có lợi cho phe mình.",
+      "appearance": "Đôi mắt sâu và gò má cao tạo vẻ sắc lạnh trên gương mặt dài của người đàn ông ngoài ba mươi vóc người thanh; tóc nâu sẫm cạo sát hai bên, áo choàng trắng ngà thêu đường kiếm bạc và một chiếc nhẫn ngọc xanh trên ngón trỏ."
+     }
+    },
+    {
+     "id": "pham_tu_ha",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Từ Hà",
+      "personality": "Cởi mở vừa đủ, tỉnh táo trước lợi ích và không muốn để người khác biết mình đã chọn bên nào.",
+      "backstory": "Là người thay mặt Bích Tiêu Tông tham gia thương lượng. Nàng tin rằng Thanh Vi Tông đã suy kiệt đến mức chỉ còn có thể cứu một phần đệ tử.",
+      "appearance": "Gương mặt tròn cùng vóc người cao lớn là điểm nổi bật của người phụ nữ khoảng bốn mươi; tóc đen xoăn ngắn chấm vai, áo lụa tím sẫm có cổ thêu chỉ trắng và một chiếc trâm đồng hình chim."
+     }
+    },
+    {
+     "id": "mo_linh_nham",
+     "label": "Location",
+     "props": {
+      "name": "Mỏ Linh Nham",
+      "aliases": [
+       "mỏ đá"
+      ],
+      "description": "Mỏ đá nằm dưới sườn núi Thanh Vi, nơi đệ tử ngoại môn khai thác phần linh mạch cuối cùng.",
+      "visual": "Ánh đèn dầu vàng đục rọi lên vách đá xám lấp lánh vụn tinh thạch. Không khí nặng mùi bụi ẩm, tiếng cuốc vọng đều qua những đường hầm thấp."
+     }
+    },
+    {
+     "id": "thach_that_vo_thanh",
+     "label": "Location",
+     "props": {
+      "name": "Thạch thất Vô Thanh",
+      "aliases": [
+       "gian thạch thất"
+      ],
+      "description": "Gian phòng kín sau vách sụp, bên trong có bài vị của một đệ tử mất tích.",
+      "visual": "Ánh sáng xanh nhạt rỉ qua các đường nứt trên đá, phủ lên nền phẳng lạnh và những vệt khắc đã mòn. Sự im ắng ở đây dường như nuốt mất tiếng động từ đường hầm bên ngoài."
+     }
+    },
+    {
+     "id": "san_truong_thanh_vi",
+     "label": "Location",
+     "props": {
+      "name": "Sân Trường Vi",
+      "aliases": [
+       "sân nghị sự"
+      ],
+      "description": "Khoảng sân lát đá trước điện nhỏ nơi đại diện các tông môn gặp nhau.",
+      "visual": "Nắng nhạt đổ lên những phiến đá xanh đã sứt cạnh, còn mái gỗ sẫm giữ sân trong bóng râm. Hương nhang cũ trộn với mùi áo mưa ẩm khiến không gian có vẻ trang nghiêm mà lạnh lẽo."
+     }
+    },
+    {
+     "id": "tang_cac_thanh_vi",
+     "label": "Location",
+     "props": {
+      "name": "Tàng Các Thanh Vi",
+      "aliases": [
+       "tàng các"
+      ],
+      "description": "Nhà kho sách và bản đồ cũ của Thanh Vi Tông, phần lớn đã bị niêm phong.",
+      "visual": "Ánh sáng lọt qua cửa chớp thành những vệt mỏng trên kệ gỗ nứt và các cuộn giấy phủ bụi. Mùi giấy mục và gỗ khô giữ nơi này trong vẻ tĩnh lặng lâu năm."
+     }
+    },
+    {
+     "id": "thanh_vi_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Thanh Vi Tông",
+      "aliases": [
+       "Thanh Vi"
+      ],
+      "description": "Tông môn nhỏ đang suy yếu, nắm giữ mỏ Linh Nham nhưng không còn đủ người và tài lực để bảo vệ mình."
+     }
+    },
+    {
+     "id": "huyen_kiem_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Huyền Kiếm Tông",
+      "aliases": [
+       "Huyền Kiếm"
+      ],
+      "description": "Đại tông mạnh về kiếm tu, đang thương lượng để giành quyền tiếp quản Thanh Vi Tông."
+     }
+    },
+    {
+     "id": "bich_tieu_tong",
+     "label": "Faction",
+     "props": {
+      "name": "Bích Tiêu Tông",
+      "aliases": [
+       "Bích Tiêu"
+      ],
+      "description": "Đại tông có thế lực và tài nguyên dồi dào, muốn đưa ra điều kiện tiếp quản riêng với Thanh Vi Tông."
+     }
+    },
+    {
+     "id": "manh_ban_do",
+     "label": "Item",
+     "props": {
+      "name": "Mảnh bản đồ",
+      "aliases": [
+       "mảnh giấy"
+      ],
+      "description": "Mảnh giấy cũ chỉ một đường đi từ mỏ Linh Nham đến những khoang sâu bị lấp."
+     }
+    },
+    {
+     "id": "bai_vi_yen_tang",
+     "label": "Item",
+     "props": {
+      "name": "Bài vị Yến Tàng",
+      "aliases": [
+       "bài vị"
+      ],
+      "description": "Tấm bài vị khắc tên Yến Tàng được tìm thấy trong Thạch thất Vô Thanh."
+     }
+    },
+    {
+     "id": "thanh_vi_sap_bi_tiep_quan",
+     "label": "Fact",
+     "props": {
+      "text": "Thanh Vi Tông đang suy yếu và đối diện nguy cơ bị Huyền Kiếm Tông cùng Bích Tiêu Tông tiếp quản."
+     }
+    },
+    {
+     "id": "ngoai_mon_bi_day_xuong_mo",
+     "label": "Fact",
+     "props": {
+      "text": "Đệ tử ngoại môn Thanh Vi Tông đang bị điều đến mỏ Linh Nham để khai thác phần linh mạch cuối cùng."
+     }
+    },
+    {
+     "id": "bai_vi_trong_thach_that",
+     "label": "Fact",
+     "props": {
+      "text": "Bài vị khắc tên Yến Tàng nằm trong Thạch thất Vô Thanh."
+     }
+    },
+    {
+     "id": "ban_do_dan_den_khoang_sau",
+     "label": "Fact",
+     "props": {
+      "text": "Mảnh bản đồ chỉ một lối đi đến khoang sâu dưới mỏ Linh Nham."
+     }
+    },
+    {
+     "id": "doan_khuong_ra_lenh_lap_cua",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khương đã ra lệnh lấp cửa Thạch thất Vô Thanh sau khi tìm thấy bài vị."
+     }
+    },
+    {
+     "id": "yen_tang_con_song",
+     "label": "Fact",
+     "props": {
+      "text": "Yến Tàng còn sống và đang ẩn trong khoang sâu dưới mỏ Linh Nham."
+     }
+    },
+    {
+     "id": "doan_khuong_giau_yen_tang",
+     "label": "Fact",
+     "props": {
+      "text": "Đoàn Khương đã giúp Yến Tàng ẩn náu vì Yến Tàng phát hiện các đại tông định bỏ mặc đệ tử ngoại môn sau khi lấy mỏ."
+     }
+    },
+    {
+     "id": "hai_tong_doi_chia_nguon_mo",
+     "label": "Fact",
+     "props": {
+      "text": "Huyền Kiếm Tông và Bích Tiêu Tông đang tranh phần quyền khai thác mỏ Linh Nham trong cuộc thương lượng."
+     }
+    },
+    {
+     "id": "manh_moi_yen_tang",
+     "label": "Thread",
+     "props": {
+      "description": "Yến Tàng còn sống hay đã chết?",
+      "planted_chapter": 0,
+      "due_from_chapter": 3,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "cho_dung_cua_ngoai_mon",
+     "label": "Thread",
+     "props": {
+      "description": "Cố Hoài Tín có giành được một chỗ sống cho mình sau cuộc tiếp quản không?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "loi_di_duoi_mo",
+     "label": "Thread",
+     "props": {
+      "description": "Mảnh bản đồ dẫn đến khoang nào dưới mỏ?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 3
+     }
+    },
+    {
+     "id": "thoa_thuan_hai_tong",
+     "label": "Thread",
+     "props": {
+      "description": "Bên nào sẽ nắm quyền khai thác mỏ Linh Nham?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>yen_tang@0",
+     "props": {
+      "kind": "ân nhân",
+      "score": 75
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "yen_tang",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:yen_tang>protagonist@0",
+     "props": {
+      "kind": "sư huynh",
+      "score": 80
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "trieu_ninh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>trieu_ninh@0",
+     "props": {
+      "kind": "đồng đội",
+      "score": 35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "trieu_ninh",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:trieu_ninh>protagonist@0",
+     "props": {
+      "kind": "đồng đội",
+      "score": 30
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>doan_khuong@0",
+     "props": {
+      "kind": "ngờ vực",
+      "score": -15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "doan_khuong",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:doan_khuong>protagonist@0",
+     "props": {
+      "kind": "cấp trên",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "luong_thac",
+     "to": "pham_tu_ha",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:luong_thac>pham_tu_ha@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -35
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_tu_ha",
+     "to": "luong_thac",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_tu_ha>luong_thac@0",
+     "props": {
+      "kind": "đối thủ",
+      "score": -30
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "doan_khuong",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:doan_khuong>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "trieu_ninh",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:trieu_ninh>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "yen_tang",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:yen_tang>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "luong_thac",
+     "to": "san_truong_thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:luong_thac>san_truong_thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_tu_ha",
+     "to": "san_truong_thanh_vi",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_tu_ha>san_truong_thanh_vi@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "manh_ban_do",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>manh_ban_do@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "bai_vi_yen_tang",
+     "to": "thach_that_vo_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:bai_vi_yen_tang>thach_that_vo_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "protagonist",
+     "to": "thanh_vi_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:protagonist>thanh_vi_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "doan_khuong",
+     "to": "thanh_vi_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:doan_khuong>thanh_vi_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "trieu_ninh",
+     "to": "thanh_vi_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:trieu_ninh>thanh_vi_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "yen_tang",
+     "to": "thanh_vi_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:yen_tang>thanh_vi_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "luong_thac",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:luong_thac>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "pham_tu_ha",
+     "to": "bich_tieu_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:pham_tu_ha>bich_tieu_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_vi_sap_bi_tiep_quan",
+     "to": "thanh_vi_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_vi_sap_bi_tiep_quan>thanh_vi_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_vi_sap_bi_tiep_quan",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_vi_sap_bi_tiep_quan>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "thanh_vi_sap_bi_tiep_quan",
+     "to": "bich_tieu_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:thanh_vi_sap_bi_tiep_quan>bich_tieu_tong@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "thanh_vi_sap_bi_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>thanh_vi_sap_bi_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_ninh",
+     "to": "thanh_vi_sap_bi_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_ninh>thanh_vi_sap_bi_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_thac",
+     "to": "thanh_vi_sap_bi_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_thac>thanh_vi_sap_bi_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_ha",
+     "to": "thanh_vi_sap_bi_tiep_quan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_ha>thanh_vi_sap_bi_tiep_quan@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ngoai_mon_bi_day_xuong_mo",
+     "to": "thanh_vi_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ngoai_mon_bi_day_xuong_mo>thanh_vi_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ngoai_mon_bi_day_xuong_mo",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ngoai_mon_bi_day_xuong_mo>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "ngoai_mon_bi_day_xuong_mo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>ngoai_mon_bi_day_xuong_mo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_ninh",
+     "to": "ngoai_mon_bi_day_xuong_mo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_ninh>ngoai_mon_bi_day_xuong_mo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "bai_vi_trong_thach_that",
+     "to": "bai_vi_yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bai_vi_trong_thach_that>bai_vi_yen_tang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "bai_vi_trong_thach_that",
+     "to": "yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bai_vi_trong_thach_that>yen_tang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "bai_vi_trong_thach_that",
+     "to": "thach_that_vo_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:bai_vi_trong_thach_that>thach_that_vo_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "bai_vi_trong_thach_that",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>bai_vi_trong_thach_that@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_ninh",
+     "to": "bai_vi_trong_thach_that",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_ninh>bai_vi_trong_thach_that@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "ban_do_dan_den_khoang_sau",
+     "to": "manh_ban_do",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ban_do_dan_den_khoang_sau>manh_ban_do@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "ban_do_dan_den_khoang_sau",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:ban_do_dan_den_khoang_sau>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_ninh",
+     "to": "ban_do_dan_den_khoang_sau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_ninh>ban_do_dan_den_khoang_sau@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_ra_lenh_lap_cua",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_ra_lenh_lap_cua>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_ra_lenh_lap_cua",
+     "to": "thach_that_vo_thanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_ra_lenh_lap_cua>thach_that_vo_thanh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_ra_lenh_lap_cua",
+     "to": "bai_vi_yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_ra_lenh_lap_cua>bai_vi_yen_tang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "trieu_ninh",
+     "to": "doan_khuong_ra_lenh_lap_cua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:trieu_ninh>doan_khuong_ra_lenh_lap_cua@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "yen_tang_con_song",
+     "to": "yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:yen_tang_con_song>yen_tang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "yen_tang_con_song",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:yen_tang_con_song>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "yen_tang",
+     "to": "yen_tang_con_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:yen_tang>yen_tang_con_song@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "yen_tang_con_song",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>yen_tang_con_song@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_giau_yen_tang",
+     "to": "doan_khuong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_giau_yen_tang>doan_khuong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_giau_yen_tang",
+     "to": "yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_giau_yen_tang>yen_tang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_giau_yen_tang",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_giau_yen_tang>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_giau_yen_tang",
+     "to": "bich_tieu_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_giau_yen_tang>bich_tieu_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "doan_khuong_giau_yen_tang",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:doan_khuong_giau_yen_tang>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "doan_khuong",
+     "to": "doan_khuong_giau_yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:doan_khuong>doan_khuong_giau_yen_tang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "yen_tang",
+     "to": "doan_khuong_giau_yen_tang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:yen_tang>doan_khuong_giau_yen_tang@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "hai_tong_doi_chia_nguon_mo",
+     "to": "huyen_kiem_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hai_tong_doi_chia_nguon_mo>huyen_kiem_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hai_tong_doi_chia_nguon_mo",
+     "to": "bich_tieu_tong",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hai_tong_doi_chia_nguon_mo>bich_tieu_tong@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hai_tong_doi_chia_nguon_mo",
+     "to": "mo_linh_nham",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hai_tong_doi_chia_nguon_mo>mo_linh_nham@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "luong_thac",
+     "to": "hai_tong_doi_chia_nguon_mo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:luong_thac>hai_tong_doi_chia_nguon_mo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_tu_ha",
+     "to": "hai_tong_doi_chia_nguon_mo",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_tu_ha>hai_tong_doi_chia_nguon_mo@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Cố Hoài Tín",
+      "known_as": "Cố Hoài Tín"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "bai_vi_trong_thach_that": {
+    "label": "Fact",
+    "props": {
+     "text": "Bài vị khắc tên Yến Tàng nằm trong Thạch thất Vô Thanh."
+    }
+   },
+   "bai_vi_yen_tang": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "bài vị"
+     ],
+     "name": "Bài vị Yến Tàng",
+     "description": "Tấm bài vị khắc tên Yến Tàng được tìm thấy trong Thạch thất Vô Thanh."
+    }
+   },
+   "ban_do_dan_den_khoang_sau": {
+    "label": "Fact",
+    "props": {
+     "text": "Mảnh bản đồ chỉ một lối đi đến khoang sâu dưới mỏ Linh Nham."
+    }
+   },
+   "bich_tieu_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Bích Tiêu"
+     ],
+     "name": "Bích Tiêu Tông",
+     "description": "Đại tông có thế lực và tài nguyên dồi dào, muốn đưa ra điều kiện tiếp quản riêng với Thanh Vi Tông."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "cho_dung_cua_ngoai_mon": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Cố Hoài Tín có giành được một chỗ sống cho mình sau cuộc tiếp quản không?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "doan_khuong": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng là đệ tử nội môn Thanh Vi Tông, sau một lần tranh chấp tài nguyên bị đẩy xuống quản lý đội đào mỏ. Ông biết rõ các lối cũ dưới núi nhưng hiếm khi nói trọn điều mình biết.",
+     "appearance": "Gương mặt vuông với quai hàm rộng nổi bật trên vóc người đậm chắc ngoài bốn mươi; tóc hoa râm cắt ngắn, áo bào xám viền xanh sẫm bằng vải thô và một vết sẹo mảnh ngang cằm.",
+     "aliases": [
+      "trưởng đội Đoàn"
+     ],
+     "personality": "Điềm đạm, thực dụng, giỏi dùng lời lẽ nửa kín nửa hở để giữ người khác ở thế phải đoán.",
+     "name": "Đoàn Khương"
+    }
+   },
+   "doan_khuong_giau_yen_tang": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khương đã giúp Yến Tàng ẩn náu vì Yến Tàng phát hiện các đại tông định bỏ mặc đệ tử ngoại môn sau khi lấy mỏ."
+    }
+   },
+   "doan_khuong_ra_lenh_lap_cua": {
+    "label": "Fact",
+    "props": {
+     "text": "Đoàn Khương đã ra lệnh lấp cửa Thạch thất Vô Thanh sau khi tìm thấy bài vị."
+    }
+   },
+   "hai_tong_doi_chia_nguon_mo": {
+    "label": "Fact",
+    "props": {
+     "text": "Huyền Kiếm Tông và Bích Tiêu Tông đang tranh phần quyền khai thác mỏ Linh Nham trong cuộc thương lượng."
+    }
+   },
+   "huyen_kiem_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Huyền Kiếm"
+     ],
+     "name": "Huyền Kiếm Tông",
+     "description": "Đại tông mạnh về kiếm tu, đang thương lượng để giành quyền tiếp quản Thanh Vi Tông."
+    }
+   },
+   "loi_di_duoi_mo": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mảnh bản đồ dẫn đến khoang nào dưới mỏ?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 3
+    }
+   },
+   "luong_thac": {
+    "label": "Character",
+    "props": {
+     "backstory": "Được Huyền Kiếm Tông cử đến dự bàn việc tiếp quản Thanh Vi Tông. Hắn xem mỏ Linh Nham là điều kiện then chốt để thỏa thuận có lợi cho phe mình.",
+     "appearance": "Đôi mắt sâu và gò má cao tạo vẻ sắc lạnh trên gương mặt dài của người đàn ông ngoài ba mươi vóc người thanh; tóc nâu sẫm cạo sát hai bên, áo choàng trắng ngà thêu đường kiếm bạc và một chiếc nhẫn ngọc xanh trên ngón trỏ.",
+     "personality": "Lịch sự, kiên nhẫn và luôn cân nhắc lời nói như thể đang định giá từng câu.",
+     "name": "Lương Thác"
+    }
+   },
+   "manh_ban_do": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "mảnh giấy"
+     ],
+     "name": "Mảnh bản đồ",
+     "description": "Mảnh giấy cũ chỉ một đường đi từ mỏ Linh Nham đến những khoang sâu bị lấp."
+    }
+   },
+   "manh_moi_yen_tang": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Yến Tàng còn sống hay đã chết?",
+     "due_from_chapter": 3,
+     "due_to_chapter": 4
+    }
+   },
+   "mo_linh_nham": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "mỏ đá"
+     ],
+     "name": "Mỏ Linh Nham",
+     "description": "Mỏ đá nằm dưới sườn núi Thanh Vi, nơi đệ tử ngoại môn khai thác phần linh mạch cuối cùng.",
+     "visual": "Ánh đèn dầu vàng đục rọi lên vách đá xám lấp lánh vụn tinh thạch. Không khí nặng mùi bụi ẩm, tiếng cuốc vọng đều qua những đường hầm thấp."
+    }
+   },
+   "ngoai_mon_bi_day_xuong_mo": {
+    "label": "Fact",
+    "props": {
+     "text": "Đệ tử ngoại môn Thanh Vi Tông đang bị điều đến mỏ Linh Nham để khai thác phần linh mạch cuối cùng."
+    }
+   },
+   "pham_tu_ha": {
+    "label": "Character",
+    "props": {
+     "backstory": "Là người thay mặt Bích Tiêu Tông tham gia thương lượng. Nàng tin rằng Thanh Vi Tông đã suy kiệt đến mức chỉ còn có thể cứu một phần đệ tử.",
+     "appearance": "Gương mặt tròn cùng vóc người cao lớn là điểm nổi bật của người phụ nữ khoảng bốn mươi; tóc đen xoăn ngắn chấm vai, áo lụa tím sẫm có cổ thêu chỉ trắng và một chiếc trâm đồng hình chim.",
+     "personality": "Cởi mở vừa đủ, tỉnh táo trước lợi ích và không muốn để người khác biết mình đã chọn bên nào.",
+     "name": "Phạm Từ Hà"
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Cố Hoài Tín từng được một vị sư huynh trong Thanh Vi Tông cứu giúp, nên chàng ở lại tông môn dù ngày tháng tu hành ngày càng chật vật. Sau khi sư huynh mất tích, chàng bị chuyển xuống mỏ đá và không biết nên tin những lời giải thích nào về vụ việc ấy. Mảnh bản đồ trong tay đồng đội có thể dẫn đến một manh mối, nhưng cũng buộc chàng lựa chọn giữa món nợ cũ và con đường sống của chính mình.",
+     "appearance": "Vóc người cao gầy và gương mặt dài với đường nét thẳng là nét nổi bật của chàng trai ngoài hai mươi; tóc nâu tro buộc gọn sau gáy, áo ngoại môn xanh sẫm bằng vải dày và một vết xước nhạt ở thái dương.",
+     "personality": "Thẳng thắn, trọng tình nghĩa nhưng không ngây thơ; chàng thường im lặng lâu hơn mức cần thiết trước khi quyết định. Nỗi sợ bị bỏ lại khiến chàng đôi khi chọn cách tự gánh lấy rủi ro.",
+     "name": "Cố Hoài Tín",
+     "is_protagonist": true
+    }
+   },
+   "san_truong_thanh_vi": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "sân nghị sự"
+     ],
+     "name": "Sân Trường Vi",
+     "description": "Khoảng sân lát đá trước điện nhỏ nơi đại diện các tông môn gặp nhau.",
+     "visual": "Nắng nhạt đổ lên những phiến đá xanh đã sứt cạnh, còn mái gỗ sẫm giữ sân trong bóng râm. Hương nhang cũ trộn với mùi áo mưa ẩm khiến không gian có vẻ trang nghiêm mà lạnh lẽo."
+    }
+   },
+   "tang_cac_thanh_vi": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "tàng các"
+     ],
+     "name": "Tàng Các Thanh Vi",
+     "description": "Nhà kho sách và bản đồ cũ của Thanh Vi Tông, phần lớn đã bị niêm phong.",
+     "visual": "Ánh sáng lọt qua cửa chớp thành những vệt mỏng trên kệ gỗ nứt và các cuộn giấy phủ bụi. Mùi giấy mục và gỗ khô giữ nơi này trong vẻ tĩnh lặng lâu năm."
+    }
+   },
+   "thach_that_vo_thanh": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "gian thạch thất"
+     ],
+     "name": "Thạch thất Vô Thanh",
+     "visual": "Ánh sáng xanh nhạt rỉ qua các đường nứt trên đá, phủ lên nền phẳng lạnh và những vệt khắc đã mòn. Sự im ắng ở đây dường như nuốt mất tiếng động từ đường hầm bên ngoài.",
+     "description": "Gian phòng kín sau vách sụp, bên trong có bài vị của một đệ tử mất tích."
+    }
+   },
+   "thanh_vi_sap_bi_tiep_quan": {
+    "label": "Fact",
+    "props": {
+     "text": "Thanh Vi Tông đang suy yếu và đối diện nguy cơ bị Huyền Kiếm Tông cùng Bích Tiêu Tông tiếp quản."
+    }
+   },
+   "thanh_vi_tong": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "Thanh Vi"
+     ],
+     "name": "Thanh Vi Tông",
+     "description": "Tông môn nhỏ đang suy yếu, nắm giữ mỏ Linh Nham nhưng không còn đủ người và tài lực để bảo vệ mình."
+    }
+   },
+   "thoa_thuan_hai_tong": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Bên nào sẽ nắm quyền khai thác mỏ Linh Nham?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 5
+    }
+   },
+   "trieu_ninh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lớn lên ở chân núi Thanh Vi, vào tông môn làm đệ tử ngoại môn để có đường tu hành. Sau khi một người thân mất tích trong mỏ, nàng bắt đầu lần theo những dấu vết mà người khác cố tình bỏ qua.",
+     "appearance": "Khuôn mặt trái xoan nhỏ và đôi mắt dài là nét dễ nhận ra nhất ở người phụ nữ ngoài hai mươi có vóc dáng mảnh; mái tóc nâu đỏ tết thành một bím dài, dưới cổ áo vải lam có chiếc khuyên bạc hình lá.",
+     "personality": "Nhạy bén, kín đáo, có lòng trắc ẩn nhưng không dễ trao niềm tin.",
+     "name": "Triệu Ninh"
+    }
+   },
+   "yen_tang": {
+    "label": "Character",
+    "props": {
+     "backstory": "Từng cứu Cố Hoài Tín khỏi một trận tai nạn khi mới vào Thanh Vi Tông. Yến Tàng mất tích trước khi các cuộc thương lượng tiếp quản bắt đầu, để lại những lời giải thích trái ngược nhau.",
+     "appearance": "Vầng trán cao và chiếc mũi thẳng nổi trên gương mặt gầy của người đàn ông ngoài hai mươi; tóc bạc nhạt buộc thấp ngang vai, áo tu sĩ xanh tro viền bạc và một nốt ruồi sẫm dưới mắt trái.",
+     "aliases": [
+      "Yến sư huynh"
+     ],
+     "personality": "Trầm tĩnh, cứng cỏi, thương người nhưng sẵn lòng tự gánh lấy hậu quả.",
+     "name": "Yến Tàng"
+    }
+   },
+   "yen_tang_con_song": {
+    "label": "Fact",
+    "props": {
+     "text": "Yến Tàng còn sống và đang ẩn trong khoang sâu dưới mỏ Linh Nham."
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:doan_khuong>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "doan_khuong",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "cấp trên"
+    }
+   },
+   {
+    "id": "RELATES_TO:luong_thac>pham_tu_ha@0",
+    "type": "RELATES_TO",
+    "source": "luong_thac",
+    "target": "pham_tu_ha",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -35,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_tu_ha>luong_thac@0",
+    "type": "RELATES_TO",
+    "source": "pham_tu_ha",
+    "target": "luong_thac",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -30,
+     "kind": "đối thủ"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>doan_khuong@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": -15,
+     "kind": "ngờ vực"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>trieu_ninh@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "trieu_ninh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 35,
+     "kind": "đồng đội"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>yen_tang@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 75,
+     "kind": "ân nhân"
+    }
+   },
+   {
+    "id": "RELATES_TO:trieu_ninh>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "trieu_ninh",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 30,
+     "kind": "đồng đội"
+    }
+   },
+   {
+    "id": "RELATES_TO:yen_tang>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "yen_tang",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 80,
+     "kind": "sư huynh"
+    }
+   },
+   {
+    "id": "LOCATED_AT:bai_vi_yen_tang>thach_that_vo_thanh@0",
+    "type": "LOCATED_AT",
+    "source": "bai_vi_yen_tang",
+    "target": "thach_that_vo_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:doan_khuong>mo_linh_nham@0",
+    "type": "LOCATED_AT",
+    "source": "doan_khuong",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:luong_thac>san_truong_thanh_vi@0",
+    "type": "LOCATED_AT",
+    "source": "luong_thac",
+    "target": "san_truong_thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_tu_ha>san_truong_thanh_vi@0",
+    "type": "LOCATED_AT",
+    "source": "pham_tu_ha",
+    "target": "san_truong_thanh_vi",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>mo_linh_nham@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:trieu_ninh>mo_linh_nham@0",
+    "type": "LOCATED_AT",
+    "source": "trieu_ninh",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:yen_tang>mo_linh_nham@0",
+    "type": "LOCATED_AT",
+    "source": "yen_tang",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>manh_ban_do@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "manh_ban_do",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:doan_khuong>thanh_vi_tong@0",
+    "type": "MEMBER_OF",
+    "source": "doan_khuong",
+    "target": "thanh_vi_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:luong_thac>huyen_kiem_tong@0",
+    "type": "MEMBER_OF",
+    "source": "luong_thac",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:pham_tu_ha>bich_tieu_tong@0",
+    "type": "MEMBER_OF",
+    "source": "pham_tu_ha",
+    "target": "bich_tieu_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:protagonist>thanh_vi_tong@0",
+    "type": "MEMBER_OF",
+    "source": "protagonist",
+    "target": "thanh_vi_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:trieu_ninh>thanh_vi_tong@0",
+    "type": "MEMBER_OF",
+    "source": "trieu_ninh",
+    "target": "thanh_vi_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:yen_tang>thanh_vi_tong@0",
+    "type": "MEMBER_OF",
+    "source": "yen_tang",
+    "target": "thanh_vi_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:doan_khuong>bai_vi_trong_thach_that@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "bai_vi_trong_thach_that",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>doan_khuong_giau_yen_tang@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "doan_khuong_giau_yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>ngoai_mon_bi_day_xuong_mo@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "ngoai_mon_bi_day_xuong_mo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>thanh_vi_sap_bi_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "thanh_vi_sap_bi_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:doan_khuong>yen_tang_con_song@0",
+    "type": "KNOWS",
+    "source": "doan_khuong",
+    "target": "yen_tang_con_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luong_thac>hai_tong_doi_chia_nguon_mo@0",
+    "type": "KNOWS",
+    "source": "luong_thac",
+    "target": "hai_tong_doi_chia_nguon_mo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:luong_thac>thanh_vi_sap_bi_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "luong_thac",
+    "target": "thanh_vi_sap_bi_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_ha>hai_tong_doi_chia_nguon_mo@0",
+    "type": "KNOWS",
+    "source": "pham_tu_ha",
+    "target": "hai_tong_doi_chia_nguon_mo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_tu_ha>thanh_vi_sap_bi_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "pham_tu_ha",
+    "target": "thanh_vi_sap_bi_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_ninh>bai_vi_trong_thach_that@0",
+    "type": "KNOWS",
+    "source": "trieu_ninh",
+    "target": "bai_vi_trong_thach_that",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_ninh>ban_do_dan_den_khoang_sau@0",
+    "type": "KNOWS",
+    "source": "trieu_ninh",
+    "target": "ban_do_dan_den_khoang_sau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_ninh>doan_khuong_ra_lenh_lap_cua@0",
+    "type": "KNOWS",
+    "source": "trieu_ninh",
+    "target": "doan_khuong_ra_lenh_lap_cua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_ninh>ngoai_mon_bi_day_xuong_mo@0",
+    "type": "KNOWS",
+    "source": "trieu_ninh",
+    "target": "ngoai_mon_bi_day_xuong_mo",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:trieu_ninh>thanh_vi_sap_bi_tiep_quan@0",
+    "type": "KNOWS",
+    "source": "trieu_ninh",
+    "target": "thanh_vi_sap_bi_tiep_quan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:yen_tang>doan_khuong_giau_yen_tang@0",
+    "type": "KNOWS",
+    "source": "yen_tang",
+    "target": "doan_khuong_giau_yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:yen_tang>yen_tang_con_song@0",
+    "type": "KNOWS",
+    "source": "yen_tang",
+    "target": "yen_tang_con_song",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:bai_vi_trong_thach_that>bai_vi_yen_tang@0",
+    "type": "ABOUT",
+    "source": "bai_vi_trong_thach_that",
+    "target": "bai_vi_yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bai_vi_trong_thach_that>thach_that_vo_thanh@0",
+    "type": "ABOUT",
+    "source": "bai_vi_trong_thach_that",
+    "target": "thach_that_vo_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:bai_vi_trong_thach_that>yen_tang@0",
+    "type": "ABOUT",
+    "source": "bai_vi_trong_thach_that",
+    "target": "yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ban_do_dan_den_khoang_sau>manh_ban_do@0",
+    "type": "ABOUT",
+    "source": "ban_do_dan_den_khoang_sau",
+    "target": "manh_ban_do",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ban_do_dan_den_khoang_sau>mo_linh_nham@0",
+    "type": "ABOUT",
+    "source": "ban_do_dan_den_khoang_sau",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_giau_yen_tang>bich_tieu_tong@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_giau_yen_tang",
+    "target": "bich_tieu_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_giau_yen_tang>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_giau_yen_tang",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_giau_yen_tang>huyen_kiem_tong@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_giau_yen_tang",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_giau_yen_tang>mo_linh_nham@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_giau_yen_tang",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_giau_yen_tang>yen_tang@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_giau_yen_tang",
+    "target": "yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_ra_lenh_lap_cua>bai_vi_yen_tang@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_ra_lenh_lap_cua",
+    "target": "bai_vi_yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_ra_lenh_lap_cua>doan_khuong@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_ra_lenh_lap_cua",
+    "target": "doan_khuong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:doan_khuong_ra_lenh_lap_cua>thach_that_vo_thanh@0",
+    "type": "ABOUT",
+    "source": "doan_khuong_ra_lenh_lap_cua",
+    "target": "thach_that_vo_thanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hai_tong_doi_chia_nguon_mo>bich_tieu_tong@0",
+    "type": "ABOUT",
+    "source": "hai_tong_doi_chia_nguon_mo",
+    "target": "bich_tieu_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hai_tong_doi_chia_nguon_mo>huyen_kiem_tong@0",
+    "type": "ABOUT",
+    "source": "hai_tong_doi_chia_nguon_mo",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hai_tong_doi_chia_nguon_mo>mo_linh_nham@0",
+    "type": "ABOUT",
+    "source": "hai_tong_doi_chia_nguon_mo",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ngoai_mon_bi_day_xuong_mo>mo_linh_nham@0",
+    "type": "ABOUT",
+    "source": "ngoai_mon_bi_day_xuong_mo",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:ngoai_mon_bi_day_xuong_mo>thanh_vi_tong@0",
+    "type": "ABOUT",
+    "source": "ngoai_mon_bi_day_xuong_mo",
+    "target": "thanh_vi_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_vi_sap_bi_tiep_quan>bich_tieu_tong@0",
+    "type": "ABOUT",
+    "source": "thanh_vi_sap_bi_tiep_quan",
+    "target": "bich_tieu_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_vi_sap_bi_tiep_quan>huyen_kiem_tong@0",
+    "type": "ABOUT",
+    "source": "thanh_vi_sap_bi_tiep_quan",
+    "target": "huyen_kiem_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:thanh_vi_sap_bi_tiep_quan>thanh_vi_tong@0",
+    "type": "ABOUT",
+    "source": "thanh_vi_sap_bi_tiep_quan",
+    "target": "thanh_vi_tong",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:yen_tang_con_song>mo_linh_nham@0",
+    "type": "ABOUT",
+    "source": "yen_tang_con_song",
+    "target": "mo_linh_nham",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:yen_tang_con_song>yen_tang@0",
+    "type": "ABOUT",
+    "source": "yen_tang_con_song",
+    "target": "yen_tang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Cố Hoài Tín",
+     "known_as": "Cố Hoài Tín"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [
+  {
+   "attempt": 1,
+   "kinds": {
+    "edges": 1
+   },
+   "problems": [
+    "cạnh KNOWS:trieu_khuong>doan_khuong_ra_lenh_lap_cua@0 trỏ tới nút không có trong gói: ['trieu_khuong']"
+   ]
+  }
+ ],
+ "thread_shifts": [],
+ "quotes": []
+}

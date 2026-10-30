@@ -401,7 +401,49 @@ def test_allowed_question_is_moderated_input_votes_times_then_answered():
         resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
     assert resp.status_code == 200
     assert resp.json()["answer"] == "Lão Gù chết sau miếu Bà."
-    assert len(moderated.moderation_calls) == CFG.moderation.input_votes  # D-79
-    for messages in moderated.moderation_calls:
+    # Câu hỏi `input_votes` lần (D-79), rồi một lần cho câu trả lời sắp hiện (D-137).
+    *asked, answered = moderated.moderation_calls
+    assert len(asked) == CFG.moderation.input_votes
+    for messages in asked:
         assert "Lão Gù chết ở đâu?" in messages[-1].content
+    assert "Lão Gù chết sau miếu Bà." in answered[-1].content
+    assert "Lão Gù chết ở đâu?" not in answered[-1].content
     assert len(fake.calls) == 1
+
+
+# --- kiểm duyệt câu trả lời (G9, D-137) -------------------------------------------------------------
+
+VOTES = [moderation_reply()] * CFG.moderation.input_votes  # câu hỏi sạch
+
+
+def test_blocked_answer_is_a_specific_error_and_does_not_use_a_question():
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết sau miếu Bà.", [ref(v, "e_gu_death")])])
+    moderated = ModeratedLLM(fake, [*VOTES, moderation_reply(("gore", "extreme"))])
+    quota = MemoryQuota()
+    with TestClient(build(3, quota=quota, moderated=moderated),
+                    raise_server_exceptions=False) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù chết ở đâu?"})
+        remaining = client.get("/stories/s1/narrator").json()
+    assert resp.status_code == HTTP_STATUS[ErrorCode.NARRATOR_ANSWER_BLOCKED] == 502
+    assert resp.json() == WritoryError(ErrorCode.NARRATOR_ANSWER_BLOCKED).player_payload()
+    assert "miếu Bà" not in resp.text and "gore" not in resp.text
+    assert remaining == {"remaining": LIMIT}
+    assert len(fake.calls) == 1
+
+
+@pytest.mark.parametrize(("darkness", "status"), [("light", 502), ("moderate", 200),
+                                                  (None, 200)])
+def test_answer_is_moderated_at_the_story_darkness_level(darkness, status):
+    """Trần của truyện (D-67, `stories.darkness_level`; None = mức mặc định): máu me tả lướt vượt
+    mức "Nhẹ", trong trần mức "Vừa"."""
+    v = view(3)
+    fake = FakeLLM.scripted([reply(True, "Lão Gù chết, máu loang trên áo.",
+                                   [ref(v, "e_gu_death")])])
+    moderated = ModeratedLLM(fake, [*VOTES, moderation_reply(("gore", "mild"))])
+    app = build(3, moderated=moderated)
+    app.dependency_overrides[deps.get_owned_story] = lambda: StoryRecord(
+        "s1", "dev", "short", 3, darkness_level=darkness)
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.post("/stories/s1/narrator", json={"question": "Lão Gù sao rồi?"})
+    assert resp.status_code == status

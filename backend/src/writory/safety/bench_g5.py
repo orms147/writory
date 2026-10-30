@@ -17,8 +17,11 @@ OPENROUTER_API_KEY (key của chủ dự án dành cho bộ đo). Trần chưa �
 model. Mỗi câu đi qua đúng `safety.classify.classify_action` như sản phẩm, kèm thiết lập truyện của
 câu (`brief`, mặc định `default_brief` của bộ câu).
 
-Chỉ số:
+Chỉ số, cho cả bộ câu và riêng từng bộ (`by_set`: `original` là các câu không ghi `set`, `holdout` là
+bộ giữ riêng, bộ quyết định ở luật đạt):
 - `correct`/`total`: nhãn đúng. Lời gọi lỗi (fail closed) tính là sai.
+- `blocked_beyond`: câu mong đợi `in_story_action` vượt luật mà ra nhãn bị chặn (G6: vượt luật không
+  chặn). Lọc theo nhãn và `feasibility` mong đợi, không theo thẻ.
 - G6, chỉ trên câu mong đợi `in_story_action` mà nhãn ra đúng (`feasibility_total`):
   `beyond_missed` (mong đợi vượt luật, ra within_rules), `beyond_false` (mong đợi within_rules,
   ra vượt luật), `beyond_kind_wrong` (vượt luật nhưng sai loại), `feasibility_correct` (đúng cả
@@ -57,20 +60,34 @@ BUDGET_CODES = frozenset(
 DRY_RUN_COMPLETION_TOKENS = 300
 
 
+SETS = ("original", "holdout")
+_BLOCKING = frozenset({"out_of_story_request", "forbidden_content", "gibberish"})
+
+
 @dataclass
-class G5Result:
+class G5Summary:
     total: int = 0
     correct: int = 0
     errors: int = 0  # lời gọi lỗi (fail closed): tính là sai
     confusion: dict[str, dict[str, int]] = field(default_factory=dict)
     wrong: list[dict] = field(default_factory=list)
-    # G6 (D-138), trên câu in_story_action mà nhãn ra đúng.
+    # G6 (D-138): câu vượt luật mong đợi in_story_action mà ra nhãn bị chặn.
+    blocked_beyond: list[str] = field(default_factory=list)
+    # G6, trên câu in_story_action mà nhãn ra đúng.
     feasibility_total: int = 0
     feasibility_correct: int = 0
     beyond_missed: list[str] = field(default_factory=list)
     beyond_false: list[str] = field(default_factory=list)
     beyond_kind_wrong: list[str] = field(default_factory=list)
     feasibility_confusion: dict[str, dict[str, int]] = field(default_factory=dict)
+
+
+@dataclass
+class G5Result(G5Summary):
+    """Chỉ số của cả bộ câu, cộng `by_set` (cùng các chỉ số, riêng từng bộ) và từng câu (`rows`)."""
+
+    by_set: dict[str, dict[str, Any]] = field(default_factory=dict)
+    rows: list[dict[str, Any]] = field(default_factory=list)
     stopped_by_budget: bool = False
 
 
@@ -82,49 +99,66 @@ def brief_of(case: Mapping[str, Any], doc: Mapping[str, Any]) -> str:
     return doc["briefs"][case.get("brief", doc["default_brief"])]
 
 
-def _score_feasibility(result: G5Result, case: Mapping[str, Any], got: Feasibility,
-                       confusion: dict[str, dict[str, int]]) -> None:
-    expected = Feasibility(case["feasibility"])
-    result.feasibility_total += 1
-    confusion[expected.value][got.value] += 1
-    if got is expected:
-        result.feasibility_correct += 1
-    elif expected in BEYOND_RULES and got not in BEYOND_RULES:
-        result.beyond_missed.append(case["id"])
-    elif expected not in BEYOND_RULES:
-        result.beyond_false.append(case["id"])
-    else:
-        result.beyond_kind_wrong.append(case["id"])
+def set_of(case: Mapping[str, Any]) -> str:
+    return case.get("set", "original")
+
+
+def summarize(rows: list[dict[str, Any]]) -> G5Summary:
+    """Chỉ số từ các dòng (một dòng một câu đã chạy: nhãn và feasibility mong đợi, kết quả)."""
+    out = G5Summary()
+    confusion: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    feasibility: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    for row in rows:
+        out.total += 1
+        expected, got = row["expected"], row["got"]
+        out.errors += got.startswith("error:")
+        confusion[expected][got] += 1
+        beyond = row["feasibility"] is not None and Feasibility(row["feasibility"]) in BEYOND_RULES
+        if expected == "in_story_action" and beyond and got in _BLOCKING:
+            out.blocked_beyond.append(row["id"])
+        if got != expected:
+            out.wrong.append({"id": row["id"], "expected": expected, "got": got})
+            continue
+        out.correct += 1
+        if row["feasibility"] is None or row["feasibility_got"] is None:
+            continue
+        want, have = Feasibility(row["feasibility"]), Feasibility(row["feasibility_got"])
+        out.feasibility_total += 1
+        feasibility[want.value][have.value] += 1
+        if have is want:
+            out.feasibility_correct += 1
+        elif want in BEYOND_RULES and have not in BEYOND_RULES:
+            out.beyond_missed.append(row["id"])
+        elif want not in BEYOND_RULES:
+            out.beyond_false.append(row["id"])
+        else:
+            out.beyond_kind_wrong.append(row["id"])
+    out.confusion = {k: dict(v) for k, v in confusion.items()}
+    out.feasibility_confusion = {k: dict(v) for k, v in feasibility.items()}
+    return out
 
 
 async def score(doc: Mapping[str, Any], *, llm: LLMClient, config: AppConfig) -> G5Result:
     """Chạy cả bộ câu `doc` (nội dung g5_classify.yaml). Chạm trần chi phí của `llm` thì dừng ngay,
     không tính lời gọi bị từ chối là sai."""
-    result = G5Result()
-    confusion: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
-    feasibility: dict[str, dict[str, int]] = defaultdict(lambda: defaultdict(int))
+    rows: list[dict[str, Any]] = []
+    stopped = False
     for case in doc["cases"]:
+        feasibility_got = None
         try:
             out = await classify_action(case["text"], story_brief=brief_of(case, doc), llm=llm,
                                         config=config)
-            got = out.label.value
+            got, feasibility_got = out.label.value, out.feasibility.value
         except WritoryError as e:
             if e.code in BUDGET_CODES:
-                result.stopped_by_budget = True
+                stopped = True
                 break
-            result.errors += 1
-            out, got = None, f"error:{e.code.value}"
-        result.total += 1
-        confusion[case["expected"]][got] += 1
-        if got != case["expected"]:
-            result.wrong.append({"id": case["id"], "expected": case["expected"], "got": got})
-            continue
-        result.correct += 1
-        if out is not None and "feasibility" in case:
-            _score_feasibility(result, case, out.feasibility, feasibility)
-    result.confusion = {k: dict(v) for k, v in confusion.items()}
-    result.feasibility_confusion = {k: dict(v) for k, v in feasibility.items()}
-    return result
+            got = f"error:{e.code.value}"
+        rows.append({"id": case["id"], "set": set_of(case), "expected": case["expected"],
+                     "got": got, "feasibility": case.get("feasibility"),
+                     "feasibility_got": feasibility_got})
+    by_set = {name: asdict(summarize([r for r in rows if r["set"] == name])) for name in SETS}
+    return G5Result(**asdict(summarize(rows)), by_set=by_set, rows=rows, stopped_by_budget=stopped)
 
 
 # --- chạy khô ------------------------------------------------------------------------------------
@@ -162,12 +196,18 @@ def unlimited_tracker():
 
 
 def _oracle(doc: Mapping[str, Any]) -> Callable[[list[Message]], str]:
-    """Trả đúng đáp án của câu có chữ trong khối `custom_action` của lời gọi: chạy khô đi hết
-    đường chấm như lần đo thật."""
-    by_block = {str(UserAuthored(c["text"], "custom_action")): c for c in doc["cases"]}
+    """Trả đúng đáp án của câu có cùng chữ (khối `custom_action`) và cùng thiết lập truyện (khối
+    `story_setup`) với lời gọi: chạy khô đi hết đường chấm như lần đo thật, kể cả các cặp cùng chữ
+    khác thiết lập."""
+    def key(case: Mapping[str, Any]) -> tuple[str, str]:
+        return (str(UserAuthored(brief_of(case, doc), "story_setup")),
+                str(UserAuthored(case["text"], "custom_action")))
+
+    by_key = {key(c): c for c in doc["cases"]}
 
     def answer(messages: list[Message]) -> str:
-        case = next(c for block, c in by_block.items() if block in messages[-1].content)
+        user = messages[-1].content
+        [case] = [c for (brief, text), c in by_key.items() if brief in user and text in user]
         return json.dumps({"label": case["expected"],
                            "feasibility": case.get("feasibility", "within_rules"),
                            "reason": "chạy khô"})
@@ -197,12 +237,18 @@ def run_meta(inputs: list[Path], cases_path: Path) -> dict[str, Any]:
     }
 
 
+def _line(name: str, m: Mapping[str, Any]) -> str:
+    return (f"{name}: nhãn đúng {m['correct']}/{m['total']}, lỗi gọi {m['errors']}, vượt luật bị "
+            f"chặn {len(m['blocked_beyond'])}; G6 feasibility đúng {m['feasibility_correct']}/"
+            f"{m['feasibility_total']}, bỏ sót vượt luật {len(m['beyond_missed'])}, báo nhầm vượt "
+            f"luật {len(m['beyond_false'])}, sai loại {len(m['beyond_kind_wrong'])}")
+
+
 def _print(result: G5Result, cost_text: str) -> None:
     sys.stdout.reconfigure(encoding="utf-8")
-    print(f"nhãn đúng {result.correct}/{result.total}, lỗi gọi {result.errors}; G6 feasibility "
-          f"đúng {result.feasibility_correct}/{result.feasibility_total}, bỏ sót vượt luật "
-          f"{len(result.beyond_missed)}, báo nhầm vượt luật {len(result.beyond_false)}, sai loại "
-          f"{len(result.beyond_kind_wrong)}; {cost_text}")
+    for name in SETS:
+        print(_line(name, result.by_set[name]))
+    print(f"{_line('cả bộ', asdict(result))}; {cost_text}")
     if result.stopped_by_budget:
         print("DỪNG vì chạm trần chi phí: chưa đo hết bộ câu")
 

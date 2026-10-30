@@ -47,9 +47,11 @@ class ErrorCode(StrEnum):
     NARRATOR_QUESTION_EMPTY = "NARRATOR_QUESTION_EMPTY"
     NARRATOR_QUESTION_TOO_LONG = "NARRATOR_QUESTION_TOO_LONG"
     NARRATOR_LIMIT_REACHED = "NARRATOR_LIMIT_REACHED"
+    NARRATOR_ANSWER_BLOCKED = "NARRATOR_ANSWER_BLOCKED"
     WRITORY_RATE_LIMITED = "WRITORY_RATE_LIMITED"
     STORY_SETUP_INVALID = "STORY_SETUP_INVALID"
     STORY_LENGTH_NOT_OPEN = "STORY_LENGTH_NOT_OPEN"
+    SETUP_OPTIONS_BLOCKED = "SETUP_OPTIONS_BLOCKED"
     CHOICES_LEAK_BLOCKED = "CHOICES_LEAK_BLOCKED"
     INPUT_BLOCKED = "INPUT_BLOCKED"
     SETUP_NOT_FOUND = "SETUP_NOT_FOUND"
@@ -240,6 +242,13 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
         "Bạn đã dùng hết số câu hỏi người kể chuyện cho chương này.",
         "Đọc tiếp sang chương sau để hỏi thêm.",
     ),
+    # Câu trả lời bị kiểm duyệt đầu ra chặn (G9, D-137). Trung tính như SCENE_LEAK_BLOCKED: không
+    # nói lý do, không nhắc lại chữ. Lượt đã giữ được trả lại, nên câu nói rõ là không mất lượt.
+    ErrorCode.NARRATOR_ANSWER_BLOCKED: PlayerMessage(
+        "Câu trả lời của người kể chuyện không qua được bước kiểm tra cuối nên hệ thống không "
+        "hiện nó. Câu hỏi này không bị tính vào số câu của chương.",
+        "Hỏi lại, hoặc hỏi theo cách khác.",
+    ),
     # Giới hạn tần suất của chính WriTory (G8, limits.rate_limit.llm_calls_per_minute_per_user),
     # khác LLM_RATE_LIMITED là giới hạn của OpenRouter với key người chơi.
     ErrorCode.WRITORY_RATE_LIMITED: PlayerMessage(
@@ -258,6 +267,13 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.STORY_LENGTH_NOT_OPEN: PlayerMessage(
         "Độ dài truyện bạn chọn chưa mở cho người chơi ở bản này.",
         "Tải lại trang rồi chọn một độ dài trong danh sách đang có.",
+    ),
+    # Lựa chọn khởi tạo bị kiểm duyệt đầu ra chặn tới dưới số tối thiểu, kể cả sau lần tạo lại
+    # (G9, D-137). Trung tính: không nêu loại nội dung, không nhắc lại chữ.
+    ErrorCode.SETUP_OPTIONS_BLOCKED: PlayerMessage(
+        "Các lựa chọn vừa tạo cho bước này không qua được bước kiểm tra cuối nên hệ thống không "
+        "hiện và chưa lưu chúng.",
+        "Bấm thử lại để tạo bộ lựa chọn mới.",
     ),
     # Cùng lý do trung tính như SCENE_LEAK_BLOCKED (D-37). Chương đã ghi xong trước bước này.
     # Kiểm duyệt đầu vào (G9, D-57). Một câu cho mọi loại: không nêu loại nội dung, không nhắc

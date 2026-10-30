@@ -1,0 +1,1923 @@
+{
+ "story_id": "run-20261030-setup11-ab-trinh-tham-d098fa5c",
+ "plan": {
+  "acts": [
+   {
+    "name": "Căn phòng chung",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "name": "Những con số lệch",
+    "from_chapter": 3,
+    "to_chapter": 4
+   },
+   {
+    "name": "Trang giấy cuối",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "name": "Trước ngày sửa mái",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ],
+  "secrets": [
+   {
+    "fact_id": "hoa_sua_phieu",
+    "reveal_from_chapter": 4,
+    "reveal_to_chapter": 4,
+    "leak_terms": [
+     [
+      "Hòa",
+      "sửa phiếu"
+     ],
+     [
+      "Trần Quang Hòa",
+      "làm sai lệch phiếu lĩnh"
+     ]
+    ],
+    "protects": []
+   },
+   {
+    "fact_id": "mai_roi_di_tam_lanh",
+    "reveal_from_chapter": 5,
+    "reveal_to_chapter": 5,
+    "leak_terms": [
+     [
+      "Mai",
+      "tự rời khu tập thể"
+     ],
+     [
+      "Mai",
+      "ở nhờ nhà người thân"
+     ]
+    ],
+    "protects": []
+   }
+  ],
+  "must_resolve_threads": [
+   {
+    "thread_id": "so_sanh_cac_khoan_lech",
+    "resolve_from_chapter": 2,
+    "resolve_to_chapter": 3,
+    "answered_by": []
+   },
+   {
+    "thread_id": "nguoi_sua_phieu",
+    "resolve_from_chapter": 4,
+    "resolve_to_chapter": 4,
+    "answered_by": [
+     "hoa_sua_phieu"
+    ]
+   },
+   {
+    "thread_id": "vi_sao_mai_roi_di",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 5,
+    "answered_by": [
+     "mai_roi_di_tam_lanh"
+    ]
+   },
+   {
+    "thread_id": "mai_dang_o_dau",
+    "resolve_from_chapter": 5,
+    "resolve_to_chapter": 6,
+    "answered_by": [
+     "mai_roi_di_tam_lanh"
+    ]
+   }
+  ],
+  "milestones": [
+   {
+    "kind": "turning_point",
+    "goal": "Dũng tìm được cuốn sổ và nhận ra những khoản ghi trong đó không khớp với phiếu lĩnh còn lại.",
+    "from_chapter": 1,
+    "to_chapter": 2
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Lời kể của Lan và Bình giúp Dũng khoanh vùng những lần hàng rời kho vào buổi tối.",
+    "from_chapter": 3,
+    "to_chapter": 3
+   },
+   {
+    "kind": "climax",
+    "goal": "Dũng đối chiếu nét mực và các khoản ghi để xác định Hòa đã sửa phiếu lĩnh.",
+    "from_chapter": 4,
+    "to_chapter": 4
+   },
+   {
+    "kind": "turning_point",
+    "goal": "Dũng tìm được dấu vết cho thấy Mai rời đi vì bị gây sức ép chứ không phải về quê như lời đồn.",
+    "from_chapter": 5,
+    "to_chapter": 5
+   },
+   {
+    "kind": "ending",
+    "goal": "Dũng quyết định cách trình bày chứng cứ trước khi mái nhà được sửa và giấy tờ cũ bị dọn đi.",
+    "from_chapter": 6,
+    "to_chapter": 6
+   }
+  ]
+ },
+ "plan_progress": {
+  "chapter": 0,
+  "total_chapters": 6,
+  "secrets": [
+   {
+    "fact_id": "hoa_sua_phieu",
+    "text": "Trần Quang Hòa đã sửa một số phiếu lĩnh để che việc chuyển hàng khỏi kho mà không ghi vào sổ chính.",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "revealed_chapter": null
+   },
+   {
+    "fact_id": "mai_roi_di_tam_lanh",
+    "text": "Sau khi bị Hòa gây sức ép vì phát hiện việc sửa phiếu, Mai chủ động rời khu tập thể và ở nhờ nhà người thân tại quê để tránh bị quy trách nhiệm.",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "revealed_chapter": null
+   }
+  ],
+  "threads": [
+   {
+    "thread_id": "so_sanh_cac_khoan_lech",
+    "description": "Những khoản hàng hóa nào trong sổ không khớp với phiếu lĩnh?",
+    "user_authored": false,
+    "from_chapter": 2,
+    "to_chapter": 3,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "nguoi_sua_phieu",
+    "description": "Ai đã sửa các phiếu lĩnh để che việc chuyển hàng khỏi kho?",
+    "user_authored": false,
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "vi_sao_mai_roi_di",
+    "description": "Vì sao Mai rời khu tập thể?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "resolved_chapter": null
+   },
+   {
+    "thread_id": "mai_dang_o_dau",
+    "description": "Mai đang ở đâu khi câu chuyện khép lại?",
+    "user_authored": false,
+    "from_chapter": 5,
+    "to_chapter": 6,
+    "resolved_chapter": null
+   }
+  ],
+  "milestones": [
+   {
+    "number": 1,
+    "kind": "turning_point",
+    "goal": "Dũng tìm được cuốn sổ và nhận ra những khoản ghi trong đó không khớp với phiếu lĩnh còn lại.",
+    "from_chapter": 1,
+    "to_chapter": 2,
+    "done_chapter": null
+   },
+   {
+    "number": 2,
+    "kind": "turning_point",
+    "goal": "Lời kể của Lan và Bình giúp Dũng khoanh vùng những lần hàng rời kho vào buổi tối.",
+    "from_chapter": 3,
+    "to_chapter": 3,
+    "done_chapter": null
+   },
+   {
+    "number": 3,
+    "kind": "climax",
+    "goal": "Dũng đối chiếu nét mực và các khoản ghi để xác định Hòa đã sửa phiếu lĩnh.",
+    "from_chapter": 4,
+    "to_chapter": 4,
+    "done_chapter": null
+   },
+   {
+    "number": 4,
+    "kind": "turning_point",
+    "goal": "Dũng tìm được dấu vết cho thấy Mai rời đi vì bị gây sức ép chứ không phải về quê như lời đồn.",
+    "from_chapter": 5,
+    "to_chapter": 5,
+    "done_chapter": null
+   },
+   {
+    "number": 5,
+    "kind": "ending",
+    "goal": "Dũng quyết định cách trình bày chứng cứ trước khi mái nhà được sửa và giấy tờ cũ bị dọn đi.",
+    "from_chapter": 6,
+    "to_chapter": 6,
+    "done_chapter": null
+   }
+  ]
+ },
+ "packages": {
+  "0": {
+   "commit_id": "run-20261030-setup11-ab-trinh-tham-d098fa5c-ch0",
+   "nodes": [
+    {
+     "id": "protagonist",
+     "label": "Character",
+     "props": {
+      "name": "Lê Văn Dũng",
+      "personality": "Kín đáo, cẩn trọng và giỏi nhận ra những chỗ giấy tờ không khớp nhau. Dũng ít nói về điều mình nghĩ, thường chờ nghe đủ nhiều lời kể trước khi đưa ra nhận xét.",
+      "backstory": "Dũng làm thợ sửa điện nước, được gọi đến khu tập thể để xem đường dây và mái dột trước đợt sửa chữa. Anh từng giúp cô Mai chuyển vài thùng hàng vào kho, nhưng chưa bao giờ hỏi chúng từ đâu tới. Cuốn sổ và những phiếu lĩnh cũ khiến Dũng nhận lời phụ dọn căn phòng chung, vừa để hoàn thành việc được giao vừa để hiểu vì sao các con số lại dẫn về nhiều người khác nhau.",
+      "is_protagonist": true,
+      "user_authored": true,
+      "appearance": "Dáng người cao gầy, gương mặt dài với cặp lông mày rậm và tuổi ngoài ba mươi; tóc nâu hạt dẻ cắt ngắn, hơi gợn ở đỉnh đầu. Anh mặc áo sơ mi xám dưới chiếc áo khoác vải xanh đã bạc màu, cổ tay có vết chai nhạt."
+     }
+    },
+    {
+     "id": "nguyen_thi_mai",
+     "label": "Character",
+     "props": {
+      "name": "Nguyễn Thị Mai",
+      "aliases": [
+       "cô Mai"
+      ],
+      "personality": "Cẩn thận, kín tiếng, không dễ tin lời giải thích thiếu chứng cứ.",
+      "backstory": "Mai trông coi kho hàng dùng chung của khu tập thể. Trước khi mất tích, cô ghi lại những khoản hàng hóa không khớp với phiếu lĩnh.",
+      "appearance": "Gương mặt trái xoan gầy với đôi mắt sâu, khoảng bốn mươi tuổi; tóc nâu sẫm cắt ngang cằm, vài sợi bạc ở thái dương. Cô mặc áo len màu mận cũ bên ngoài áo sơ mi sáng màu, cổ tay có chiếc đồng hồ mặt vuông."
+     }
+    },
+    {
+     "id": "tran_quang_hoa",
+     "label": "Character",
+     "props": {
+      "name": "Trần Quang Hòa",
+      "aliases": [
+       "anh Hòa"
+      ],
+      "personality": "Thực dụng, sốt ruột trước những chuyện có thể làm đình trệ công việc chung, biết chọn lời vừa đủ để tránh cam kết.",
+      "backstory": "Hòa phụ trách việc quản lý nhà ở và đang thúc mọi người thu dọn trước đợt sửa mái. Anh biết các thủ tục cấp phát trong khu nhà và thường giữ bản phiếu tổng hợp.",
+      "appearance": "Thân hình đậm, khuôn mặt vuông và chiếc cằm rộng, ngoài bốn mươi tuổi; tóc hoa râm chải lệch, ngắn. Anh mặc áo bông xanh rêu đã sờn cổ, trên ngón áp út có chiếc nhẫn bạc bản mảnh."
+     }
+    },
+    {
+     "id": "pham_thi_lan",
+     "label": "Character",
+     "props": {
+      "name": "Phạm Thị Lan",
+      "aliases": [
+       "chị Lan"
+      ],
+      "personality": "Nhanh trí, cảnh giác với lời đồn, chỉ kể điều mình tin là đã tận mắt thấy.",
+      "backstory": "Lan sống cùng dãy nhà với Mai và từng phụ ghi phiếu lĩnh hàng cho các hộ. Cô nhớ rõ những buổi phát hàng vì phải đối chiếu phần của gia đình mình.",
+      "appearance": "Khuôn mặt tròn, sống mũi thấp và vóc người nhỏ nhắn, khoảng ba mươi lăm tuổi; tóc đỏ nâu uốn nhẹ, buộc gọn sau gáy. Cô mặc áo sơ mi hoa nhí dưới chiếc áo gile len vàng đất, tai trái đeo khuyên tròn nhỏ."
+     }
+    },
+    {
+     "id": "do_van_binh",
+     "label": "Character",
+     "props": {
+      "name": "Đỗ Văn Bình",
+      "aliases": [
+       "ông Bình"
+      ],
+      "personality": "Ít lời, hay cân nhắc trước khi trả lời, không thích bị lôi kéo vào tranh cãi giữa hàng xóm.",
+      "backstory": "Bình là người trông nom kho chung vào một số buổi tối. Ông biết các lối đi giữa kho và sân sau, nhưng không được giao giữ sổ sách chính.",
+      "appearance": "Vầng trán cao, gò má nhô và dáng người gầy, ngoài sáu mươi tuổi; tóc bạc cắt sát, để lộ một vết sẹo mảnh ngang chân tóc. Ông mặc áo chàm bạc màu, cổ quấn khăn len xám."
+     }
+    },
+    {
+     "id": "day_nha_bach_khoa",
+     "label": "Location",
+     "props": {
+      "name": "Dãy tập thể Bách Khoa",
+      "aliases": [
+       "khu tập thể"
+      ],
+      "description": "Dãy nhà cũ nơi Mai sống và làm việc, đang chờ sửa mái.",
+      "visual": "Ánh sáng xám lọt qua những ô cửa sổ đọng nước, phản lên tường vôi bong và lan can sắt han. Mùi ẩm, khói bếp và tiếng xô chậu hứng nước làm hành lang có vẻ chật hơn."
+     }
+    },
+    {
+     "id": "phong_chung",
+     "label": "Location",
+     "props": {
+      "name": "Phòng chung cuối hành lang",
+      "aliases": [
+       "căn phòng chung"
+      ],
+      "description": "Căn phòng bỏ không được dùng làm chỗ chứa giấy tờ và đồ dùng cũ của khu nhà.",
+      "visual": "Bóng đèn vàng hắt lên nền xi măng loang nước, những tờ báo cũ mềm nhũn dính vào chân bàn. Mái tôn phía trên lộ vết gỉ, tiếng mưa rơi nghe sát và đều."
+     }
+    },
+    {
+     "id": "kho_hang",
+     "label": "Location",
+     "props": {
+      "name": "Kho hàng tầng trệt",
+      "aliases": [
+       "kho chung"
+      ],
+      "description": "Kho nhỏ khóa bằng cửa gỗ, từng chứa hàng cấp phát cho các hộ.",
+      "visual": "Một khe sáng mỏng lọt qua cánh cửa gỗ xước, soi bụi trên những giá kê thấp. Trong kho có mùi bao tải ẩm và giấy cũ."
+     }
+    },
+    {
+     "id": "san_sau",
+     "label": "Location",
+     "props": {
+      "name": "Sân sau dãy nhà",
+      "aliases": [
+       "sân sau"
+      ],
+      "description": "Khoảng sân hẹp nối lối giao hàng với cửa kho.",
+      "visual": "Mái hiên thấp che một nửa sân, ánh trời nhợt nhạt đọng thành vệt trên nền gạch sẫm. Những thùng gỗ cũ nép sát tường rêu."
+     }
+    },
+    {
+     "id": "nha_van_hoa",
+     "label": "Location",
+     "props": {
+      "name": "Phòng quản lý nhà",
+      "aliases": [
+       "phòng quản lý"
+      ],
+      "description": "Gian phòng làm việc nhỏ của cán bộ phụ trách khu nhà.",
+      "visual": "Ánh sáng đục xuyên qua rèm vải bạc màu, chạm vào bàn gỗ đầy giấy và chiếc ấm men sứt miệng. Không khí ngai ngái mùi mực, chè nguội và tường ẩm."
+     }
+    },
+    {
+     "id": "ban_quan_ly_khu_nha",
+     "label": "Faction",
+     "props": {
+      "name": "Ban quản lý khu nhà",
+      "aliases": [
+       "ban quản lý"
+      ],
+      "description": "Nhóm cư dân được giao trông coi kho, giấy tờ và việc sửa chữa chung."
+     }
+    },
+    {
+     "id": "cuon_so_kho",
+     "label": "Item",
+     "props": {
+      "name": "Cuốn sổ kho",
+      "aliases": [
+       "cuốn sổ"
+      ],
+      "description": "Sổ ghi các khoản hàng hóa xuất nhập, còn thiếu trang cuối."
+     }
+    },
+    {
+     "id": "tap_phieu_linh",
+     "label": "Item",
+     "props": {
+      "name": "Tập phiếu lĩnh",
+      "aliases": [
+       "phiếu lĩnh"
+      ],
+      "description": "Những tờ phiếu cũ ghi hàng đã cấp cho từng hộ, có chỗ sửa bằng mực khác màu."
+     }
+    },
+    {
+     "id": "mai_trong_coi_kho",
+     "label": "Fact",
+     "props": {
+      "text": "Nguyễn Thị Mai từng trông coi kho hàng chung của dãy tập thể."
+     }
+    },
+    {
+     "id": "mai_mat_tich",
+     "label": "Fact",
+     "props": {
+      "text": "Mai đã không trở lại khu tập thể từ vài ngày trước khi câu chuyện bắt đầu."
+     }
+    },
+    {
+     "id": "loi_don_ve_que",
+     "label": "Fact",
+     "props": {
+      "text": "Một số cư dân nói Mai đã về quê nhưng không ai trong số họ xác nhận đã nhìn thấy cô rời khu nhà."
+     }
+    },
+    {
+     "id": "so_co_khoan_lech",
+     "label": "Fact",
+     "props": {
+      "text": "Cuốn sổ kho có ghi những khoản hàng hóa không khớp với tập phiếu lĩnh còn lưu."
+     }
+    },
+    {
+     "id": "trang_cuoi_bi_xe",
+     "label": "Fact",
+     "props": {
+      "text": "Trang cuối của cuốn sổ kho đã bị xé mất trước khi cuốn sổ được tìm thấy."
+     }
+    },
+    {
+     "id": "hoa_sua_phieu",
+     "label": "Fact",
+     "props": {
+      "text": "Trần Quang Hòa đã sửa một số phiếu lĩnh để che việc chuyển hàng khỏi kho mà không ghi vào sổ chính."
+     }
+    },
+    {
+     "id": "hoa_chuyen_hang_cho_nguoi_than",
+     "label": "Fact",
+     "props": {
+      "text": "Hòa chuyển một phần hàng thiếu cho người quen ngoài khu nhà để đổi lấy vật liệu dùng cho việc sửa chữa phòng quản lý."
+     }
+    },
+    {
+     "id": "mai_roi_di_tam_lanh",
+     "label": "Fact",
+     "props": {
+      "text": "Sau khi bị Hòa gây sức ép vì phát hiện việc sửa phiếu, Mai chủ động rời khu tập thể và ở nhờ nhà người thân tại quê để tránh bị quy trách nhiệm."
+     }
+    },
+    {
+     "id": "binh_thay_thung_sau",
+     "label": "Fact",
+     "props": {
+      "text": "Bình từng thấy một thùng hàng được đưa từ kho ra sân sau vào buổi tối nhưng không nhìn rõ người mang."
+     }
+    },
+    {
+     "id": "lan_nho_phieu_sua",
+     "label": "Fact",
+     "props": {
+      "text": "Lan nhận ra nét mực trên một vài phiếu lĩnh không giống nét ghi ban đầu."
+     }
+    },
+    {
+     "id": "so_sanh_cac_khoan_lech",
+     "label": "Thread",
+     "props": {
+      "description": "Những khoản hàng hóa nào trong sổ không khớp với phiếu lĩnh?",
+      "planted_chapter": 0,
+      "due_from_chapter": 2,
+      "due_to_chapter": 3
+     }
+    },
+    {
+     "id": "nguoi_sua_phieu",
+     "label": "Thread",
+     "props": {
+      "description": "Ai đã sửa các phiếu lĩnh để che việc chuyển hàng khỏi kho?",
+      "planted_chapter": 0,
+      "due_from_chapter": 4,
+      "due_to_chapter": 4
+     }
+    },
+    {
+     "id": "vi_sao_mai_roi_di",
+     "label": "Thread",
+     "props": {
+      "description": "Vì sao Mai rời khu tập thể?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 5
+     }
+    },
+    {
+     "id": "mai_dang_o_dau",
+     "label": "Thread",
+     "props": {
+      "description": "Mai đang ở đâu khi câu chuyện khép lại?",
+      "planted_chapter": 0,
+      "due_from_chapter": 5,
+      "due_to_chapter": 6
+     }
+    },
+    {
+     "id": "ch0",
+     "label": "Chapter",
+     "props": {
+      "number": 0
+     }
+    }
+   ],
+   "edges": [
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "nguyen_thi_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>nguyen_thi_mai@0",
+     "props": {
+      "kind": "người quen",
+      "score": 20
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "nguyen_thi_mai",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:nguyen_thi_mai>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 15
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "tran_quang_hoa",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:tran_quang_hoa>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "tran_quang_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>tran_quang_hoa@0",
+     "props": {
+      "kind": "người quen",
+      "score": 0
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "pham_thi_lan",
+     "to": "protagonist",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:pham_thi_lan>protagonist@0",
+     "props": {
+      "kind": "người quen",
+      "score": 10
+     }
+    },
+    {
+     "type": "RELATES_TO",
+     "from": "protagonist",
+     "to": "pham_thi_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "RELATES_TO:protagonist>pham_thi_lan@0",
+     "props": {
+      "kind": "người quen",
+      "score": 10
+     }
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "protagonist",
+     "to": "day_nha_bach_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:protagonist>day_nha_bach_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "nguyen_thi_mai",
+     "to": "day_nha_bach_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:nguyen_thi_mai>day_nha_bach_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tran_quang_hoa",
+     "to": "nha_van_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tran_quang_hoa>nha_van_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "pham_thi_lan",
+     "to": "day_nha_bach_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:pham_thi_lan>day_nha_bach_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "do_van_binh",
+     "to": "kho_hang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:do_van_binh>kho_hang@0",
+     "props": {}
+    },
+    {
+     "type": "HOLDS",
+     "from": "protagonist",
+     "to": "cuon_so_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "HOLDS:protagonist>cuon_so_kho@0",
+     "props": {}
+    },
+    {
+     "type": "LOCATED_AT",
+     "from": "tap_phieu_linh",
+     "to": "nha_van_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "LOCATED_AT:tap_phieu_linh>nha_van_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "tran_quang_hoa",
+     "to": "ban_quan_ly_khu_nha",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:tran_quang_hoa>ban_quan_ly_khu_nha@0",
+     "props": {}
+    },
+    {
+     "type": "MEMBER_OF",
+     "from": "pham_thi_lan",
+     "to": "ban_quan_ly_khu_nha",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "MEMBER_OF:pham_thi_lan>ban_quan_ly_khu_nha@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_trong_coi_kho",
+     "to": "nguyen_thi_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_trong_coi_kho>nguyen_thi_mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_trong_coi_kho",
+     "to": "kho_hang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_trong_coi_kho>kho_hang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_trong_coi_kho",
+     "to": "day_nha_bach_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_trong_coi_kho>day_nha_bach_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_quang_hoa",
+     "to": "mai_trong_coi_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_quang_hoa>mai_trong_coi_kho@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_thi_lan",
+     "to": "mai_trong_coi_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_thi_lan>mai_trong_coi_kho@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "do_van_binh",
+     "to": "mai_trong_coi_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:do_van_binh>mai_trong_coi_kho@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_mat_tich",
+     "to": "nguyen_thi_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_mat_tich>nguyen_thi_mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_mat_tich",
+     "to": "day_nha_bach_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_mat_tich>day_nha_bach_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_quang_hoa",
+     "to": "mai_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_quang_hoa>mai_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_thi_lan",
+     "to": "mai_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_thi_lan>mai_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "do_van_binh",
+     "to": "mai_mat_tich",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:do_van_binh>mai_mat_tich@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_don_ve_que",
+     "to": "nguyen_thi_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_don_ve_que>nguyen_thi_mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "loi_don_ve_que",
+     "to": "day_nha_bach_khoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:loi_don_ve_que>day_nha_bach_khoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_quang_hoa",
+     "to": "loi_don_ve_que",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_quang_hoa>loi_don_ve_que@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_thi_lan",
+     "to": "loi_don_ve_que",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_thi_lan>loi_don_ve_que@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "do_van_binh",
+     "to": "loi_don_ve_que",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:do_van_binh>loi_don_ve_que@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "so_co_khoan_lech",
+     "to": "cuon_so_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:so_co_khoan_lech>cuon_so_kho@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "so_co_khoan_lech",
+     "to": "tap_phieu_linh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:so_co_khoan_lech>tap_phieu_linh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "so_co_khoan_lech",
+     "to": "kho_hang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:so_co_khoan_lech>kho_hang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_thi_mai",
+     "to": "so_co_khoan_lech",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_thi_mai>so_co_khoan_lech@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_quang_hoa",
+     "to": "so_co_khoan_lech",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_quang_hoa>so_co_khoan_lech@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "trang_cuoi_bi_xe",
+     "to": "cuon_so_kho",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:trang_cuoi_bi_xe>cuon_so_kho@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_thi_mai",
+     "to": "trang_cuoi_bi_xe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_thi_mai>trang_cuoi_bi_xe@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "KNOWS",
+     "from": "tran_quang_hoa",
+     "to": "trang_cuoi_bi_xe",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:tran_quang_hoa>trang_cuoi_bi_xe@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "hoa_sua_phieu",
+     "to": "tran_quang_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hoa_sua_phieu>tran_quang_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hoa_sua_phieu",
+     "to": "tap_phieu_linh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hoa_sua_phieu>tap_phieu_linh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hoa_sua_phieu",
+     "to": "kho_hang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hoa_sua_phieu>kho_hang@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_thi_mai",
+     "to": "hoa_sua_phieu",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_thi_mai>hoa_sua_phieu@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "hoa_chuyen_hang_cho_nguoi_than",
+     "to": "tran_quang_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hoa_chuyen_hang_cho_nguoi_than>tran_quang_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hoa_chuyen_hang_cho_nguoi_than",
+     "to": "kho_hang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hoa_chuyen_hang_cho_nguoi_than>kho_hang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "hoa_chuyen_hang_cho_nguoi_than",
+     "to": "nha_van_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:hoa_chuyen_hang_cho_nguoi_than>nha_van_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_thi_mai",
+     "to": "hoa_chuyen_hang_cho_nguoi_than",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_thi_mai>hoa_chuyen_hang_cho_nguoi_than@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_roi_di_tam_lanh",
+     "to": "nguyen_thi_mai",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_roi_di_tam_lanh>nguyen_thi_mai@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "mai_roi_di_tam_lanh",
+     "to": "tran_quang_hoa",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:mai_roi_di_tam_lanh>tran_quang_hoa@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "nguyen_thi_mai",
+     "to": "mai_roi_di_tam_lanh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:nguyen_thi_mai>mai_roi_di_tam_lanh@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "binh_thay_thung_sau",
+     "to": "do_van_binh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:binh_thay_thung_sau>do_van_binh@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "binh_thay_thung_sau",
+     "to": "kho_hang",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:binh_thay_thung_sau>kho_hang@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "binh_thay_thung_sau",
+     "to": "san_sau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:binh_thay_thung_sau>san_sau@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "do_van_binh",
+     "to": "binh_thay_thung_sau",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:do_van_binh>binh_thay_thung_sau@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "ABOUT",
+     "from": "lan_nho_phieu_sua",
+     "to": "pham_thi_lan",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:lan_nho_phieu_sua>pham_thi_lan@0",
+     "props": {}
+    },
+    {
+     "type": "ABOUT",
+     "from": "lan_nho_phieu_sua",
+     "to": "tap_phieu_linh",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "ABOUT:lan_nho_phieu_sua>tap_phieu_linh@0",
+     "props": {}
+    },
+    {
+     "type": "KNOWS",
+     "from": "pham_thi_lan",
+     "to": "lan_nho_phieu_sua",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "KNOWS:pham_thi_lan>lan_nho_phieu_sua@0",
+     "props": {
+      "how": "tự biết"
+     }
+    },
+    {
+     "type": "REVEALED_TO_PLAYER",
+     "from": "protagonist",
+     "to": "ch0",
+     "valid_from_chapter": 0,
+     "valid_to_chapter": null,
+     "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+     "props": {
+      "quote": "Nhân vật chính: Lê Văn Dũng",
+      "known_as": "Lê Văn Dũng"
+     }
+    }
+   ],
+   "close": []
+  }
+ },
+ "final": {
+  "chapter": 0,
+  "nodes": {
+   "ban_quan_ly_khu_nha": {
+    "label": "Faction",
+    "props": {
+     "aliases": [
+      "ban quản lý"
+     ],
+     "name": "Ban quản lý khu nhà",
+     "description": "Nhóm cư dân được giao trông coi kho, giấy tờ và việc sửa chữa chung."
+    }
+   },
+   "binh_thay_thung_sau": {
+    "label": "Fact",
+    "props": {
+     "text": "Bình từng thấy một thùng hàng được đưa từ kho ra sân sau vào buổi tối nhưng không nhìn rõ người mang."
+    }
+   },
+   "ch0": {
+    "label": "Chapter",
+    "props": {
+     "number": 0
+    }
+   },
+   "cuon_so_kho": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "cuốn sổ"
+     ],
+     "name": "Cuốn sổ kho",
+     "description": "Sổ ghi các khoản hàng hóa xuất nhập, còn thiếu trang cuối."
+    }
+   },
+   "day_nha_bach_khoa": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "khu tập thể"
+     ],
+     "name": "Dãy tập thể Bách Khoa",
+     "visual": "Ánh sáng xám lọt qua những ô cửa sổ đọng nước, phản lên tường vôi bong và lan can sắt han. Mùi ẩm, khói bếp và tiếng xô chậu hứng nước làm hành lang có vẻ chật hơn.",
+     "description": "Dãy nhà cũ nơi Mai sống và làm việc, đang chờ sửa mái."
+    }
+   },
+   "do_van_binh": {
+    "label": "Character",
+    "props": {
+     "backstory": "Bình là người trông nom kho chung vào một số buổi tối. Ông biết các lối đi giữa kho và sân sau, nhưng không được giao giữ sổ sách chính.",
+     "appearance": "Vầng trán cao, gò má nhô và dáng người gầy, ngoài sáu mươi tuổi; tóc bạc cắt sát, để lộ một vết sẹo mảnh ngang chân tóc. Ông mặc áo chàm bạc màu, cổ quấn khăn len xám.",
+     "aliases": [
+      "ông Bình"
+     ],
+     "personality": "Ít lời, hay cân nhắc trước khi trả lời, không thích bị lôi kéo vào tranh cãi giữa hàng xóm.",
+     "name": "Đỗ Văn Bình"
+    }
+   },
+   "hoa_chuyen_hang_cho_nguoi_than": {
+    "label": "Fact",
+    "props": {
+     "text": "Hòa chuyển một phần hàng thiếu cho người quen ngoài khu nhà để đổi lấy vật liệu dùng cho việc sửa chữa phòng quản lý."
+    }
+   },
+   "hoa_sua_phieu": {
+    "label": "Fact",
+    "props": {
+     "text": "Trần Quang Hòa đã sửa một số phiếu lĩnh để che việc chuyển hàng khỏi kho mà không ghi vào sổ chính."
+    }
+   },
+   "kho_hang": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "kho chung"
+     ],
+     "name": "Kho hàng tầng trệt",
+     "visual": "Một khe sáng mỏng lọt qua cánh cửa gỗ xước, soi bụi trên những giá kê thấp. Trong kho có mùi bao tải ẩm và giấy cũ.",
+     "description": "Kho nhỏ khóa bằng cửa gỗ, từng chứa hàng cấp phát cho các hộ."
+    }
+   },
+   "lan_nho_phieu_sua": {
+    "label": "Fact",
+    "props": {
+     "text": "Lan nhận ra nét mực trên một vài phiếu lĩnh không giống nét ghi ban đầu."
+    }
+   },
+   "loi_don_ve_que": {
+    "label": "Fact",
+    "props": {
+     "text": "Một số cư dân nói Mai đã về quê nhưng không ai trong số họ xác nhận đã nhìn thấy cô rời khu nhà."
+    }
+   },
+   "mai_dang_o_dau": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Mai đang ở đâu khi câu chuyện khép lại?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 6
+    }
+   },
+   "mai_mat_tich": {
+    "label": "Fact",
+    "props": {
+     "text": "Mai đã không trở lại khu tập thể từ vài ngày trước khi câu chuyện bắt đầu."
+    }
+   },
+   "mai_roi_di_tam_lanh": {
+    "label": "Fact",
+    "props": {
+     "text": "Sau khi bị Hòa gây sức ép vì phát hiện việc sửa phiếu, Mai chủ động rời khu tập thể và ở nhờ nhà người thân tại quê để tránh bị quy trách nhiệm."
+    }
+   },
+   "mai_trong_coi_kho": {
+    "label": "Fact",
+    "props": {
+     "text": "Nguyễn Thị Mai từng trông coi kho hàng chung của dãy tập thể."
+    }
+   },
+   "nguoi_sua_phieu": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Ai đã sửa các phiếu lĩnh để che việc chuyển hàng khỏi kho?",
+     "due_from_chapter": 4,
+     "due_to_chapter": 4
+    }
+   },
+   "nguyen_thi_mai": {
+    "label": "Character",
+    "props": {
+     "backstory": "Mai trông coi kho hàng dùng chung của khu tập thể. Trước khi mất tích, cô ghi lại những khoản hàng hóa không khớp với phiếu lĩnh.",
+     "appearance": "Gương mặt trái xoan gầy với đôi mắt sâu, khoảng bốn mươi tuổi; tóc nâu sẫm cắt ngang cằm, vài sợi bạc ở thái dương. Cô mặc áo len màu mận cũ bên ngoài áo sơ mi sáng màu, cổ tay có chiếc đồng hồ mặt vuông.",
+     "aliases": [
+      "cô Mai"
+     ],
+     "personality": "Cẩn thận, kín tiếng, không dễ tin lời giải thích thiếu chứng cứ.",
+     "name": "Nguyễn Thị Mai"
+    }
+   },
+   "nha_van_hoa": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "phòng quản lý"
+     ],
+     "name": "Phòng quản lý nhà",
+     "visual": "Ánh sáng đục xuyên qua rèm vải bạc màu, chạm vào bàn gỗ đầy giấy và chiếc ấm men sứt miệng. Không khí ngai ngái mùi mực, chè nguội và tường ẩm.",
+     "description": "Gian phòng làm việc nhỏ của cán bộ phụ trách khu nhà."
+    }
+   },
+   "pham_thi_lan": {
+    "label": "Character",
+    "props": {
+     "backstory": "Lan sống cùng dãy nhà với Mai và từng phụ ghi phiếu lĩnh hàng cho các hộ. Cô nhớ rõ những buổi phát hàng vì phải đối chiếu phần của gia đình mình.",
+     "appearance": "Khuôn mặt tròn, sống mũi thấp và vóc người nhỏ nhắn, khoảng ba mươi lăm tuổi; tóc đỏ nâu uốn nhẹ, buộc gọn sau gáy. Cô mặc áo sơ mi hoa nhí dưới chiếc áo gile len vàng đất, tai trái đeo khuyên tròn nhỏ.",
+     "aliases": [
+      "chị Lan"
+     ],
+     "personality": "Nhanh trí, cảnh giác với lời đồn, chỉ kể điều mình tin là đã tận mắt thấy.",
+     "name": "Phạm Thị Lan"
+    }
+   },
+   "phong_chung": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "căn phòng chung"
+     ],
+     "name": "Phòng chung cuối hành lang",
+     "visual": "Bóng đèn vàng hắt lên nền xi măng loang nước, những tờ báo cũ mềm nhũn dính vào chân bàn. Mái tôn phía trên lộ vết gỉ, tiếng mưa rơi nghe sát và đều.",
+     "description": "Căn phòng bỏ không được dùng làm chỗ chứa giấy tờ và đồ dùng cũ của khu nhà."
+    }
+   },
+   "protagonist": {
+    "label": "Character",
+    "props": {
+     "user_authored": true,
+     "backstory": "Dũng làm thợ sửa điện nước, được gọi đến khu tập thể để xem đường dây và mái dột trước đợt sửa chữa. Anh từng giúp cô Mai chuyển vài thùng hàng vào kho, nhưng chưa bao giờ hỏi chúng từ đâu tới. Cuốn sổ và những phiếu lĩnh cũ khiến Dũng nhận lời phụ dọn căn phòng chung, vừa để hoàn thành việc được giao vừa để hiểu vì sao các con số lại dẫn về nhiều người khác nhau.",
+     "appearance": "Dáng người cao gầy, gương mặt dài với cặp lông mày rậm và tuổi ngoài ba mươi; tóc nâu hạt dẻ cắt ngắn, hơi gợn ở đỉnh đầu. Anh mặc áo sơ mi xám dưới chiếc áo khoác vải xanh đã bạc màu, cổ tay có vết chai nhạt.",
+     "personality": "Kín đáo, cẩn trọng và giỏi nhận ra những chỗ giấy tờ không khớp nhau. Dũng ít nói về điều mình nghĩ, thường chờ nghe đủ nhiều lời kể trước khi đưa ra nhận xét.",
+     "name": "Lê Văn Dũng",
+     "is_protagonist": true
+    }
+   },
+   "san_sau": {
+    "label": "Location",
+    "props": {
+     "aliases": [
+      "sân sau"
+     ],
+     "name": "Sân sau dãy nhà",
+     "description": "Khoảng sân hẹp nối lối giao hàng với cửa kho.",
+     "visual": "Mái hiên thấp che một nửa sân, ánh trời nhợt nhạt đọng thành vệt trên nền gạch sẫm. Những thùng gỗ cũ nép sát tường rêu."
+    }
+   },
+   "so_co_khoan_lech": {
+    "label": "Fact",
+    "props": {
+     "text": "Cuốn sổ kho có ghi những khoản hàng hóa không khớp với tập phiếu lĩnh còn lưu."
+    }
+   },
+   "so_sanh_cac_khoan_lech": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Những khoản hàng hóa nào trong sổ không khớp với phiếu lĩnh?",
+     "due_from_chapter": 2,
+     "due_to_chapter": 3
+    }
+   },
+   "tap_phieu_linh": {
+    "label": "Item",
+    "props": {
+     "aliases": [
+      "phiếu lĩnh"
+     ],
+     "name": "Tập phiếu lĩnh",
+     "description": "Những tờ phiếu cũ ghi hàng đã cấp cho từng hộ, có chỗ sửa bằng mực khác màu."
+    }
+   },
+   "tran_quang_hoa": {
+    "label": "Character",
+    "props": {
+     "backstory": "Hòa phụ trách việc quản lý nhà ở và đang thúc mọi người thu dọn trước đợt sửa mái. Anh biết các thủ tục cấp phát trong khu nhà và thường giữ bản phiếu tổng hợp.",
+     "appearance": "Thân hình đậm, khuôn mặt vuông và chiếc cằm rộng, ngoài bốn mươi tuổi; tóc hoa râm chải lệch, ngắn. Anh mặc áo bông xanh rêu đã sờn cổ, trên ngón áp út có chiếc nhẫn bạc bản mảnh.",
+     "aliases": [
+      "anh Hòa"
+     ],
+     "personality": "Thực dụng, sốt ruột trước những chuyện có thể làm đình trệ công việc chung, biết chọn lời vừa đủ để tránh cam kết.",
+     "name": "Trần Quang Hòa"
+    }
+   },
+   "trang_cuoi_bi_xe": {
+    "label": "Fact",
+    "props": {
+     "text": "Trang cuối của cuốn sổ kho đã bị xé mất trước khi cuốn sổ được tìm thấy."
+    }
+   },
+   "vi_sao_mai_roi_di": {
+    "label": "Thread",
+    "props": {
+     "planted_chapter": 0,
+     "description": "Vì sao Mai rời khu tập thể?",
+     "due_from_chapter": 5,
+     "due_to_chapter": 5
+    }
+   }
+  },
+  "edges": [
+   {
+    "id": "RELATES_TO:nguyen_thi_mai>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "nguyen_thi_mai",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 15,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:pham_thi_lan>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "pham_thi_lan",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>nguyen_thi_mai@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "nguyen_thi_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 20,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>pham_thi_lan@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "pham_thi_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 10,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:protagonist>tran_quang_hoa@0",
+    "type": "RELATES_TO",
+    "source": "protagonist",
+    "target": "tran_quang_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "RELATES_TO:tran_quang_hoa>protagonist@0",
+    "type": "RELATES_TO",
+    "source": "tran_quang_hoa",
+    "target": "protagonist",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "score": 0,
+     "kind": "người quen"
+    }
+   },
+   {
+    "id": "LOCATED_AT:do_van_binh>kho_hang@0",
+    "type": "LOCATED_AT",
+    "source": "do_van_binh",
+    "target": "kho_hang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:nguyen_thi_mai>day_nha_bach_khoa@0",
+    "type": "LOCATED_AT",
+    "source": "nguyen_thi_mai",
+    "target": "day_nha_bach_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:pham_thi_lan>day_nha_bach_khoa@0",
+    "type": "LOCATED_AT",
+    "source": "pham_thi_lan",
+    "target": "day_nha_bach_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:protagonist>day_nha_bach_khoa@0",
+    "type": "LOCATED_AT",
+    "source": "protagonist",
+    "target": "day_nha_bach_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tap_phieu_linh>nha_van_hoa@0",
+    "type": "LOCATED_AT",
+    "source": "tap_phieu_linh",
+    "target": "nha_van_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "LOCATED_AT:tran_quang_hoa>nha_van_hoa@0",
+    "type": "LOCATED_AT",
+    "source": "tran_quang_hoa",
+    "target": "nha_van_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "HOLDS:protagonist>cuon_so_kho@0",
+    "type": "HOLDS",
+    "source": "protagonist",
+    "target": "cuon_so_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:pham_thi_lan>ban_quan_ly_khu_nha@0",
+    "type": "MEMBER_OF",
+    "source": "pham_thi_lan",
+    "target": "ban_quan_ly_khu_nha",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "MEMBER_OF:tran_quang_hoa>ban_quan_ly_khu_nha@0",
+    "type": "MEMBER_OF",
+    "source": "tran_quang_hoa",
+    "target": "ban_quan_ly_khu_nha",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "KNOWS:do_van_binh>binh_thay_thung_sau@0",
+    "type": "KNOWS",
+    "source": "do_van_binh",
+    "target": "binh_thay_thung_sau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:do_van_binh>loi_don_ve_que@0",
+    "type": "KNOWS",
+    "source": "do_van_binh",
+    "target": "loi_don_ve_que",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:do_van_binh>mai_mat_tich@0",
+    "type": "KNOWS",
+    "source": "do_van_binh",
+    "target": "mai_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:do_van_binh>mai_trong_coi_kho@0",
+    "type": "KNOWS",
+    "source": "do_van_binh",
+    "target": "mai_trong_coi_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_thi_mai>hoa_chuyen_hang_cho_nguoi_than@0",
+    "type": "KNOWS",
+    "source": "nguyen_thi_mai",
+    "target": "hoa_chuyen_hang_cho_nguoi_than",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_thi_mai>hoa_sua_phieu@0",
+    "type": "KNOWS",
+    "source": "nguyen_thi_mai",
+    "target": "hoa_sua_phieu",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_thi_mai>mai_roi_di_tam_lanh@0",
+    "type": "KNOWS",
+    "source": "nguyen_thi_mai",
+    "target": "mai_roi_di_tam_lanh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_thi_mai>so_co_khoan_lech@0",
+    "type": "KNOWS",
+    "source": "nguyen_thi_mai",
+    "target": "so_co_khoan_lech",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:nguyen_thi_mai>trang_cuoi_bi_xe@0",
+    "type": "KNOWS",
+    "source": "nguyen_thi_mai",
+    "target": "trang_cuoi_bi_xe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_thi_lan>lan_nho_phieu_sua@0",
+    "type": "KNOWS",
+    "source": "pham_thi_lan",
+    "target": "lan_nho_phieu_sua",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_thi_lan>loi_don_ve_que@0",
+    "type": "KNOWS",
+    "source": "pham_thi_lan",
+    "target": "loi_don_ve_que",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_thi_lan>mai_mat_tich@0",
+    "type": "KNOWS",
+    "source": "pham_thi_lan",
+    "target": "mai_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:pham_thi_lan>mai_trong_coi_kho@0",
+    "type": "KNOWS",
+    "source": "pham_thi_lan",
+    "target": "mai_trong_coi_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_quang_hoa>loi_don_ve_que@0",
+    "type": "KNOWS",
+    "source": "tran_quang_hoa",
+    "target": "loi_don_ve_que",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_quang_hoa>mai_mat_tich@0",
+    "type": "KNOWS",
+    "source": "tran_quang_hoa",
+    "target": "mai_mat_tich",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_quang_hoa>mai_trong_coi_kho@0",
+    "type": "KNOWS",
+    "source": "tran_quang_hoa",
+    "target": "mai_trong_coi_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_quang_hoa>so_co_khoan_lech@0",
+    "type": "KNOWS",
+    "source": "tran_quang_hoa",
+    "target": "so_co_khoan_lech",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "KNOWS:tran_quang_hoa>trang_cuoi_bi_xe@0",
+    "type": "KNOWS",
+    "source": "tran_quang_hoa",
+    "target": "trang_cuoi_bi_xe",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "how": "tự biết"
+    }
+   },
+   {
+    "id": "ABOUT:binh_thay_thung_sau>do_van_binh@0",
+    "type": "ABOUT",
+    "source": "binh_thay_thung_sau",
+    "target": "do_van_binh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:binh_thay_thung_sau>kho_hang@0",
+    "type": "ABOUT",
+    "source": "binh_thay_thung_sau",
+    "target": "kho_hang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:binh_thay_thung_sau>san_sau@0",
+    "type": "ABOUT",
+    "source": "binh_thay_thung_sau",
+    "target": "san_sau",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hoa_chuyen_hang_cho_nguoi_than>kho_hang@0",
+    "type": "ABOUT",
+    "source": "hoa_chuyen_hang_cho_nguoi_than",
+    "target": "kho_hang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hoa_chuyen_hang_cho_nguoi_than>nha_van_hoa@0",
+    "type": "ABOUT",
+    "source": "hoa_chuyen_hang_cho_nguoi_than",
+    "target": "nha_van_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hoa_chuyen_hang_cho_nguoi_than>tran_quang_hoa@0",
+    "type": "ABOUT",
+    "source": "hoa_chuyen_hang_cho_nguoi_than",
+    "target": "tran_quang_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hoa_sua_phieu>kho_hang@0",
+    "type": "ABOUT",
+    "source": "hoa_sua_phieu",
+    "target": "kho_hang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hoa_sua_phieu>tap_phieu_linh@0",
+    "type": "ABOUT",
+    "source": "hoa_sua_phieu",
+    "target": "tap_phieu_linh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:hoa_sua_phieu>tran_quang_hoa@0",
+    "type": "ABOUT",
+    "source": "hoa_sua_phieu",
+    "target": "tran_quang_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:lan_nho_phieu_sua>pham_thi_lan@0",
+    "type": "ABOUT",
+    "source": "lan_nho_phieu_sua",
+    "target": "pham_thi_lan",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:lan_nho_phieu_sua>tap_phieu_linh@0",
+    "type": "ABOUT",
+    "source": "lan_nho_phieu_sua",
+    "target": "tap_phieu_linh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_don_ve_que>day_nha_bach_khoa@0",
+    "type": "ABOUT",
+    "source": "loi_don_ve_que",
+    "target": "day_nha_bach_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:loi_don_ve_que>nguyen_thi_mai@0",
+    "type": "ABOUT",
+    "source": "loi_don_ve_que",
+    "target": "nguyen_thi_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_mat_tich>day_nha_bach_khoa@0",
+    "type": "ABOUT",
+    "source": "mai_mat_tich",
+    "target": "day_nha_bach_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_mat_tich>nguyen_thi_mai@0",
+    "type": "ABOUT",
+    "source": "mai_mat_tich",
+    "target": "nguyen_thi_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_roi_di_tam_lanh>nguyen_thi_mai@0",
+    "type": "ABOUT",
+    "source": "mai_roi_di_tam_lanh",
+    "target": "nguyen_thi_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_roi_di_tam_lanh>tran_quang_hoa@0",
+    "type": "ABOUT",
+    "source": "mai_roi_di_tam_lanh",
+    "target": "tran_quang_hoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_trong_coi_kho>day_nha_bach_khoa@0",
+    "type": "ABOUT",
+    "source": "mai_trong_coi_kho",
+    "target": "day_nha_bach_khoa",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_trong_coi_kho>kho_hang@0",
+    "type": "ABOUT",
+    "source": "mai_trong_coi_kho",
+    "target": "kho_hang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:mai_trong_coi_kho>nguyen_thi_mai@0",
+    "type": "ABOUT",
+    "source": "mai_trong_coi_kho",
+    "target": "nguyen_thi_mai",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:so_co_khoan_lech>cuon_so_kho@0",
+    "type": "ABOUT",
+    "source": "so_co_khoan_lech",
+    "target": "cuon_so_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:so_co_khoan_lech>kho_hang@0",
+    "type": "ABOUT",
+    "source": "so_co_khoan_lech",
+    "target": "kho_hang",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:so_co_khoan_lech>tap_phieu_linh@0",
+    "type": "ABOUT",
+    "source": "so_co_khoan_lech",
+    "target": "tap_phieu_linh",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "ABOUT:trang_cuoi_bi_xe>cuon_so_kho@0",
+    "type": "ABOUT",
+    "source": "trang_cuoi_bi_xe",
+    "target": "cuon_so_kho",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {}
+   },
+   {
+    "id": "REVEALED_TO_PLAYER:protagonist>ch0@0",
+    "type": "REVEALED_TO_PLAYER",
+    "source": "protagonist",
+    "target": "ch0",
+    "valid_from_chapter": 0,
+    "valid_to_chapter": null,
+    "props": {
+     "quote": "Nhân vật chính: Lê Văn Dũng",
+     "known_as": "Lê Văn Dũng"
+    }
+   }
+  ]
+ },
+ "chapters": {},
+ "errors": [],
+ "setup_repairs": [],
+ "thread_shifts": [],
+ "quotes": []
+}
