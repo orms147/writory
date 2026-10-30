@@ -50,3 +50,6 @@ Khai trước: `expectations.md` (commit `f6f208c`, trước mọi lời gọi).
 - Một lời gọi mỗi bản đề mỗi ca (hai lời gọi ở hai ca mục tiêu) là nhiễu, như luật khai trước nói. Chính `extract-8` cũng đổi kết quả giữa lần 1 và lần lặp ở ky-ao ch24 (không trả mốc, rồi nhận m7).
 - Phát lại một lời gọi cho cả chương, khác sản phẩm (mỗi cảnh một lời gọi); danh mục không có `Lie` của lựa chọn (`expectations.md`).
 - Lời gọi 21–24 có chi phí thấp hơn ba đến năm lần so với lần 1 cùng ca, với cùng số token đề (có thể do cache phía nhà cung cấp; chưa kiểm).
+
+## Quyết định sau phép đo
+Theo luật khai trước (tín hiệu xấu), `extract-9` không gộp vào main (D-129); PR #109 chỉ còn kết quả đo. Chữ đề `extract-9` lưu ở `extract9_system_prompt.txt`; dòng mốc có cột loại do code của commit 7ea8812 sinh, nên chạy lại đúng như lần đo cần checkout commit đó.

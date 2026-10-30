@@ -32,9 +32,6 @@ from writory.llm.cost import CostEstimator
 from writory.llm.fake import FakeLLM
 from writory.pipeline.chapter import chapter_node
 from writory.pipeline.extract import (
-    SYSTEM_PROMPT as PROMPT_9,
-)
-from writory.pipeline.extract import (
     Entity,
     ExtractOutput,
     FactRules,
@@ -62,6 +59,9 @@ CASES: list[tuple[str, str, int]] = [
     ("4-lap-lai", TU, 19), ("4-lap-lai", KY, 24),
 ]
 PROMPT_8 = (HERE / "extract8_system_prompt.txt").read_text(encoding="utf-8")
+# extract-9 không gộp vào main (D-129): chữ đề lưu ở đây. Dòng mốc có cột loại do `build_messages` của
+# code extract-9 sinh, nên chạy lại đúng như lần đo cần checkout commit 7ea8812 (nhánh feature/extract-milestone-kind).
+PROMPT_9 = (HERE / "extract9_system_prompt.txt").read_text(encoding="utf-8")
 
 
 def to_extract8_user(content: str) -> str:
