@@ -80,6 +80,7 @@ from writory.config import (
     AppConfig,
     ConfigError,
     ReasoningEffort,
+    config_files,
     load_config,
 )
 from writory.errors import ErrorCode, WritoryError
@@ -99,6 +100,7 @@ from writory.llm.base import (
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import call_deadline
+from writory.llm.provider import bench_llm, llm_identity
 from writory.llm.retry import watch_rejections
 from writory.pipeline import choices as choices_mod
 from writory.pipeline import extract as extract_mod
@@ -146,7 +148,6 @@ from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách
     Store,
     _maybe_billed,
     git_state,
-    load_keys,
 )
 from writory.safety.leak import leak_names
 from writory.safety.moderate import LINES_HEADER_RE, ChoicesModerationOutput, ModerationOutput
@@ -235,7 +236,8 @@ def repo_path(path: Path) -> str:
 
 
 def config_sha256(config_dir: Path) -> dict[str, str]:
-    files = {p.name: _sha256(p.read_bytes()) for p in sorted(config_dir.glob("*.yaml"))}
+    """Hash các file config CÓ HIỆU LỰC của thư mục (D-140): file thiếu ở thư mục bộ đo thì lấy của config/."""
+    files = {name: _sha256(path.read_bytes()) for name, path in sorted(config_files(config_dir).items())}
     combined = hashlib.sha256("".join(f"{k}:{v}\n" for k, v in files.items()).encode())
     return {"combined": combined.hexdigest(), **files}
 
@@ -253,6 +255,12 @@ def models_in_use(config: AppConfig, scenario: RunScenario) -> dict[str, dict[st
     except (WritoryError, ValueError):
         out["writer"] = {"tier": scenario.writer_tier, "model": None, "reasoning": None}
     return out
+
+
+def price_table(config: AppConfig, scenario: RunScenario) -> dict[str, Price]:
+    """Giá (USD / 1 triệu token) để giữ chỗ ngân sách: `models.prices` của config, đề ghi đè (D-140). Nhờ vậy giá của
+    model Meta chỉ khai ở config bộ đo, không lặp trong đề."""
+    return {m: Price(input=p.input, output=p.output) for m, p in config.models.prices.items()} | scenario.prices
 
 
 def run_problems(config: AppConfig, scenario: RunScenario) -> list[str]:
@@ -280,10 +288,11 @@ def run_problems(config: AppConfig, scenario: RunScenario) -> list[str]:
     if level is not None and level not in config.moderation.darkness_levels:
         problems.append(f"đề chọn darkness_level {level!r}, config/moderation.yaml chỉ có "
                         f"{sorted(config.moderation.darkness_levels)}")
+    prices = price_table(config, scenario)
     for role, info in models_in_use(config, scenario).items():
-        if info["model"] is not None and info["model"] not in scenario.prices:
-            problems.append(f"đề không có giá (prices) cho model {info['model']} của vai {role}: "
-                            "cần để giữ chỗ ngân sách")
+        if info["model"] is not None and info["model"] not in prices:
+            problems.append(f"đề và config/models.yaml không có giá (prices) cho model {info['model']} của vai "
+                            f"{role}: cần để giữ chỗ ngân sách")
     return problems
 
 
@@ -777,7 +786,7 @@ class StoryRun:
             self.llm,
             budget=Budget("run", math.inf if budget is None else budget,
                           spent_usd=self._prior_spent),
-            prices=self.scenario.prices, max_tokens=self.scenario.max_tokens_per_call,
+            prices=price_table(self.config, self.scenario), max_tokens=self.scenario.max_tokens_per_call,
             tracker=self.tracker, record=self._record_call, first_seq=self._prior_seq,
         )
         self.metered = MeteredClient(self.budgeted, self.tracker)
@@ -1500,6 +1509,9 @@ class StoryRun:
             "finished": datetime.now().astimezone().isoformat(timespec="seconds"),
             "status": status, "exit_code": self.exit_code if status != "running" else None,
             "stop": self.stop, "dry_run": self.options.dry_run, "git": git_state(),
+            # Nhà cung cấp của lần chạy (D-140): theo tiền tố id model trong config; model từng vai ở `models`.
+            "provider": llm_identity(self.config, [m["model"] for m in models_in_use(
+                self.config, self.scenario).values() if m["model"]])["provider"],
             "story_id": self.store.story_id, "seed": self.seed,
             "budget_usd": self.options.budget_usd, "chapters_arg": self.options.chapters,
             "scenario": {"path": repo_path(path) if path else None, "sha256": self.scenario_sha,
@@ -2146,15 +2158,11 @@ class RunServices(BaseSettings):
     postgres_dsn: SecretStr
 
 
-def openrouter_client(env_file: Path, *, http: httpx.AsyncClient | None = None,
-                      deadline_s: float | None = None) -> LLMClient:
-    """Client thật, key của chủ dự án: chỉ OPENROUTER_API_KEY (biến môi trường hoặc `env_file`).
-    `deadline_s`: hạn tổng mỗi lời gọi (`limits.llm_call.deadline_seconds`, D-113)."""
-    from writory.llm.openrouter import OpenRouterClient
-
-    keys = load_keys(env_file, ["openrouter"])
-    assert keys.openrouter_api_key is not None
-    return OpenRouterClient(keys.openrouter_api_key, http=http, deadline_s=deadline_s)
+def real_llm(config: AppConfig, env_file: Path, *, http: httpx.AsyncClient | None = None,
+             deadline_s: float | None = None) -> LLMClient:
+    """Client thật của lần chạy, theo config (D-140): OpenRouter hay Meta, key của chủ dự án. Chỉ đọc đúng key của
+    nhà cung cấp lần chạy dùng; không in, không ghi (G7). `deadline_s`: hạn tổng mỗi lời gọi (D-113)."""
+    return bench_llm(config, env_file, http=http, deadline_s=deadline_s)
 
 
 def resolve_out(args: argparse.Namespace) -> tuple[Path, str]:
@@ -2227,7 +2235,7 @@ async def _cli(args: argparse.Namespace) -> int:
         llm: LLMClient = DryRunLLM(level.chapters.min, milestones=level.milestones.min)
     else:
         http = httpx.AsyncClient(timeout=httpx.Timeout(120.0, connect=10.0))
-        llm = openrouter_client(env_file, http=http, deadline_s=call_deadline(config))
+        llm = real_llm(config, env_file, http=http, deadline_s=call_deadline(config))
     try:
         conn = psycopg.connect(services.postgres_dsn.get_secret_value(), autocommit=True)
     except psycopg.Error as e:
