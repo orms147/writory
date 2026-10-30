@@ -1234,3 +1234,18 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Lời gọi lỗi tính tiền theo `llm/cost.maybe_billed`: `BudgetedClient` mở `CallTrace` như `export/video.py`; `bench_d._maybe_billed` gọi cùng hàm (không có trace thì coi như có thể đã gửi), nên bài D, E, F cũng tính `LLM_TIMEOUT`.
 - **Hệ quả:** lượt dừng vì `--chapters k` đã chạy đủ thì phải nâng `--chapters` mới viết tiếp. Lỗi kết nối chắc chưa gửi (`CallTrace.sent=False`) không còn tính vào trần `bench_run`. Chương `pending` reconcile thành `committed` thì kho đi trước thư mục kết quả và vẫn bị từ chối; thành `failed` thì chạy tiếp được (chưa thử với kho thật). Thư mục chạy tiếp trước D-130 thiếu `leg`, `source` ở các điểm cũ; summary in `?`.
 - **Người quyết:** Claude (sửa theo review D-124, giao việc 30/10/2026), nhánh fix/bench-resume-review · 30/10/2026
+
+## D-131 · Chủ dự án duyệt các số tạm Claude thêm vào `config/limits.yaml` sau D-47
+- **Bối cảnh:** D-47 là số tạm Claude đề xuất, chủ dự án duyệt 20/10/2026. Các số thêm sau đó trong các quyết định do Claude quyết cũng gắn nhãn "(tạm, D-47)", nên đọc như chủ dự án đã duyệt dù chưa (review đối chiếu tài liệu với code, 30/10/2026).
+- **Quyết định:** chủ dự án duyệt, ngày 30/10/2026, mọi số đang gắn nhãn tạm D-47 trong `config/limits.yaml`, vẫn là số tạm. Gồm các khoá của:
+  - D-85, D-94, D-96, D-98: `context`.
+  - D-87: `chapter_estimate`.
+  - D-89: `auth`.
+  - D-93: `facts`.
+  - D-112, D-116, D-119: `context`.
+  - D-113: `llm_call.deadline_seconds`.
+  - D-123: `retries.transient_backoff_seconds`.
+  - D-125, D-127: `video_export`, kể cả trần chi phí mỗi lần xuất.
+- **Hệ quả:** nhãn "(tạm, D-47)" trong `limits.yaml` giờ nghĩa là số tạm chủ dự án đã duyệt. Số mới thêm sau ngày này phải ghi người quyết riêng, chưa duyệt thì ghi "(tạm, Claude, chờ chủ dự án duyệt)".
+- **Người quyết:** Chủ dự án (30/10/2026)
+
