@@ -199,7 +199,7 @@ async def test_extract_changes_passes_the_rules_and_the_prompt_mentions_new_fact
     result = await extract_changes(
         FakeLLM.scripted([reply]), "m", chapter=4, chapter_id="ch4", commit_id="c",
         protagonist_id="protagonist", chapter_text=TEXT, entities=ENTITIES, open_edges=[],
-        fact_rules=RULES)
+        fact_rules=RULES, locked=())
     assert [n.id for n in result.package.nodes] == ["fact_c4s1_1"]
 
 
@@ -301,7 +301,7 @@ def test_two_new_facts_restating_each_other_about_the_same_entity_become_one():
 
 def test_the_prompt_keeps_new_facts_to_what_happened_with_examples_both_ways():
     from writory.pipeline.extract import PROMPT_VERSION
-    assert PROMPT_VERSION == "extract-8"
+    assert PROMPT_VERSION == "extract-10"
     for phrase in ("KHÔNG ghi", "ý định", "quyết định", "cảm nghĩ", "Ví dụ ĐÚNG", "Ví dụ SAI",
                    "dù diễn đạt khác"):
         assert phrase in SYSTEM_PROMPT, phrase

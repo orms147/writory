@@ -595,6 +595,11 @@ _REJECT_REASONS = (
     "nhân vật chính biết mà không có câu trích (G3)", "hé lộ nút có tên mà thiếu known_as (D-17)",
     "trùng cạnh trong cùng gói", "không phải cạnh đang hiệu lực",
     "known_as là tên của nút khác",  # D-62
+    # Hé lộ lần hai dưới tên chính (D-136)
+    "người chơi đã biết nút này dưới tên đó",
+    "hé lộ lần hai chỉ nhận tên chính lớp truth của nút (D-17)",
+    "tên mới của nút có tên đang được bảo vệ (D-61)",
+    "đã hé lộ ở chương này: tên mới ghi ở chương sau (D-136)",
     "gỡ mạch mà không có câu trích (D-82)",
     # Fact mới (D-93)
     "hết trần Fact mới", "ref phải dạng", "chữ phải một dòng", "chữ Fact không bám trang",
