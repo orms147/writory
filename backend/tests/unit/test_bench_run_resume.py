@@ -136,6 +136,7 @@ async def test_resume_keeps_the_thread_shifts_made_at_setup(tmp_path):
     assert reports[1]["thread_answers"] == reports[0]["thread_answers"]
     dumps = [json.loads((o / "truth_dump.json").read_text(encoding="utf-8")) for o in (out_1, out_2)]
     assert dumps[1]["thread_shifts"] == dumps[0]["thread_shifts"] != []
+    assert dumps[1]["answers_dropped"] == dumps[0]["answers_dropped"] == []
 
 
 async def test_old_result_directory_is_left_untouched(tmp_path):

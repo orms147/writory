@@ -1,6 +1,6 @@
 """Mạch phải gỡ khai bí mật trả lời nó (`answered_by`, D-135): code dời khoảng gỡ về sau khoảng lộ của
-bí mật ở bước dựng (`pipeline.setup`), không tốn lượt sửa; id lạ là lỗi, đi lượt sửa (D-54). FakeLLM,
-không mạng."""
+bí mật ở bước dựng (`pipeline.setup`), không tốn lượt sửa; id fact thường bị code bỏ, cũng không tốn
+lượt sửa; id khác là lỗi, đi lượt sửa (D-54). FakeLLM, không mạng."""
 
 import copy
 import html
@@ -115,9 +115,49 @@ def test_thread_due_before_the_secret_opens_moves_its_deadline_too():
     assert setup.plan.deadlines()[6] > SHORT_LEVEL.max_due_per_chapter
 
 
-async def test_unknown_or_non_secret_answer_id_is_a_problem_for_the_repair_round():
-    for bad, words in (("f_khong_co", "không phải bí mật"),
-                       ("f_chuoi_kiem_ban_do", "là fact nhưng không phải bí mật")):
+# --- id fact thường trong answered_by: code bỏ, không tốn lượt sửa (chủ dự án chọn, D-135) --------
+# Hồi quy evals/results/2026-10-30-setup11-check/notes.md (C2): ở 2/5 lượt `setup-11`, model ghi fact
+# thường (đúng là câu trả lời, nhưng không phải bí mật) vào `answered_by`, mỗi lượt tốn lượt sửa duy
+# nhất. Fact thường không có khoảng lộ nên bỏ đi không mất gì cho việc dời.
+
+
+async def test_plain_fact_answer_is_dropped_by_code_without_a_repair_call(caplog):
+    caplog.set_level(logging.INFO, logger="writory.pipeline.setup")
+    data = _data(t_ai_giet_cha=["f_chuoi_kiem_ban_do", "f_ha_lao_giet_cha"],
+                 t_chuoi_kiem=["f_chuoi_kiem_ban_do"])
+    llm = FakeLLM.scripted([_dumps(data)])
+    seen = []
+    setup = await build_story(CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0",
+                              on_repair=seen.append)
+    assert len(llm.calls) == 1 and seen == []
+    assert setup.plan.thread("t_ai_giet_cha").answered_by == ["f_ha_lao_giet_cha"]  # bí mật: giữ
+    assert setup.plan.thread("t_chuoi_kiem").answered_by == []
+    assert setup.dropped_answers == (("t_ai_giet_cha", "f_chuoi_kiem_ban_do"),
+                                     ("t_chuoi_kiem", "f_chuoi_kiem_ban_do"))
+    assert setup == _setup(data)  # to_story_setup đi cùng đường
+    # Fact vẫn là fact của thế giới: chỉ liên kết bị bỏ.
+    assert "f_chuoi_kiem_ban_do" in {n.id for n in setup.package.nodes if n.label == "Fact"}
+    # Log chỉ có số, không id (G12).
+    assert "bỏ 2 id fact thường" in caplog.text and "f_chuoi_kiem_ban_do" not in caplog.text
+
+
+def test_plain_fact_is_dropped_before_the_window_is_aligned_to_the_secret():
+    setup = _setup(_data({"t_ai_giet_cha": (2, 6)},
+                         t_ai_giet_cha=["f_chuoi_kiem_ban_do", "f_ha_lao_giet_cha"]))
+    assert setup.dropped_answers == (("t_ai_giet_cha", "f_chuoi_kiem_ban_do"),)
+    assert setup.shifts == (WindowShift("t_ai_giet_cha", (2, 6), (5, 6), ("f_ha_lao_giet_cha",)),)
+
+
+def test_links_of_threads_that_need_not_resolve_are_not_counted():
+    setup = _setup(_data(t_doan_khuong=["f_chuoi_kiem_ban_do"]))
+    assert setup.dropped_answers == () and setup.plan.thread("t_doan_khuong") is None
+
+
+async def test_an_id_that_is_no_fact_at_all_is_still_a_problem_for_the_repair_round():
+    """Id không có trong câu trả lời có thể là id bí mật viết sai: bỏ đi thì mất liên kết thật mà
+    không ai biết, nên vẫn đi lượt sửa như mọi id lạ khác (`about`, `edges`). Id một nút khác Fact
+    (nhân vật) cũng vậy."""
+    for bad in ("f_ha_lao_giet", "to_nguyet_hoa"):
         data = _data(t_chuoi_kiem=[bad])
         llm = FakeLLM.scripted([_dumps(data), _dumps(_data())])
         seen: list[list[str]] = []
@@ -125,10 +165,11 @@ async def test_unknown_or_non_secret_answer_id_is_a_problem_for_the_repair_round
             CHOICES, SETTING, PLOT, PC, llm=llm, config=CFG, commit_id="c0",
             on_repair=lambda problems, seen=seen: seen.append([p.kind for p in problems]))
         assert len(llm.calls) == 2 and seen == [["answered_by"]]
-        assert setup.plan.thread("t_chuoi_kiem").answered_by == []
+        assert setup.plan.thread("t_chuoi_kiem").answered_by == [] and setup.dropped_answers == ()
         [user] = [m.content for m in llm.calls[1] if m.role == "user"]
         problems = user.split(CLOSE_TAG)[-1]
-        assert f"mạch t_chuoi_kiem: answered_by có {bad}" in problems and words in problems
+        assert f"mạch t_chuoi_kiem: answered_by có {bad}" in problems
+        assert "không phải id của bí mật hay fact nào đã khai" in problems
 
 
 async def test_accented_answer_ids_are_normalized_with_the_rest():

@@ -734,6 +734,8 @@ class StoryRun:
         # Khoảng gỡ code dời lúc khởi tạo (D-135), có id: chỉ vào truth_dump; report chỉ có số. None:
         # không biết (khởi tạo dùng lại hay chạy tiếp từ thư mục trước D-135).
         self.thread_shifts: list[dict[str, Any]] | None = []
+        # Cặp (mạch, fact thường) code bỏ khỏi `answered_by` lúc khởi tạo (D-135): như trên.
+        self.answers_dropped: list[list[str]] | None = []
         self.stop: dict[str, Any] | None = None
         self.target: int | None = None
         self.clamped = False
@@ -873,6 +875,7 @@ class StoryRun:
         choices = self.scenario.story_choices()
         self.plan = plan
         self.thread_shifts = truth.get("thread_shifts")  # của lần khởi tạo nguồn (D-135)
+        self.answers_dropped = truth.get("answers_dropped")
         self.setup_record["build"] = {"done": True, "chapters_planned": plan.total_chapters,
                                       "reused_from": repo_path(source)}
         try:
@@ -918,6 +921,7 @@ class StoryRun:
             return False
         self.plan = built.plan
         self.thread_shifts = [shift_row(s) for s in built.shifts]
+        self.answers_dropped = [list(pair) for pair in built.dropped_answers]
         self.setup_record["build"] = {"done": True, "chapters_planned": built.plan.total_chapters}
         try:
             # Lưu khoá mức u tối như đường chơi (D-67): mức này là trần kiểm duyệt mọi chương.
@@ -1325,6 +1329,7 @@ class StoryRun:
         self.quotes = list(truth.get("quotes") or [])
         self.setup_repairs = list(truth.get("setup_repairs") or [])
         self.thread_shifts = truth.get("thread_shifts")  # D-135; None ở thư mục trước đó
+        self.answers_dropped = truth.get("answers_dropped")
         self.retries_used = {**self.retries_used, **report.get("player_retries_used", {})}
         self.rejected_bodies = report.get("rejected_bodies", 0)
         self.calls = calls
@@ -1453,6 +1458,7 @@ class StoryRun:
             "final": final, "chapters": self.truth_chapters, "errors": self.errors,
             "setup_repairs": self.setup_repairs,
             "thread_shifts": self.thread_shifts,
+            "answers_dropped": self.answers_dropped,
             "quotes": self.quotes,
         }
         self._write_json("truth_dump.json", truth)
@@ -1678,7 +1684,7 @@ def build_report(run: StoryRun) -> dict[str, Any]:
         "appearance_variety": (setup_mod.appearance_variety(run.packages[0])
                                if 0 in run.packages else None),
         # Mạch phải gỡ khai bí mật trả lời và khoảng gỡ code đã dời (D-135): số đếm, không id.
-        "thread_answers": thread_answers(run.plan, run.thread_shifts),
+        "thread_answers": thread_answers(run.plan, run.thread_shifts, run.answers_dropped),
         **({"resumed_from": run.resumed_from, "resume_points": run.resume_points}
            if run.resumed_from is not None else {}),
         "chapters": run.attempts,
@@ -1692,11 +1698,12 @@ def shift_row(shift: WindowShift) -> dict[str, Any]:
             "end_moved": shift.end_moved}
 
 
-def thread_answers(plan: StoryPlan | None,
-                   shifts: Sequence[Mapping[str, Any]] | None) -> dict[str, Any] | None:
+def thread_answers(plan: StoryPlan | None, shifts: Sequence[Mapping[str, Any]] | None,
+                   dropped: Sequence[Sequence[str]] | None = None) -> dict[str, Any] | None:
     """Số mạch phải gỡ, số mạch khai `answered_by`, số khoảng gỡ code đã dời lúc khởi tạo (và số
-    phải dời cả hạn), số mạch còn bắt đầu trước khoảng lộ của bí mật trả lời nó trên kế hoạch cuối
-    (D-135). `shifts` None (thư mục trước D-135): hai số dời là None."""
+    phải dời cả hạn), số id fact thường code đã bỏ khỏi `answered_by`, số mạch còn bắt đầu trước
+    khoảng lộ của bí mật trả lời nó trên kế hoạch cuối (D-135). `shifts`, `dropped` None (thư mục
+    trước khi có chúng): số tương ứng là None."""
     if plan is None:
         return None
     return {
@@ -1704,6 +1711,7 @@ def thread_answers(plan: StoryPlan | None,
         "linked": sum(1 for t in plan.must_resolve_threads if t.answered_by),
         "shifted": None if shifts is None else len(shifts),
         "shifted_end": None if shifts is None else sum(1 for s in shifts if s["end_moved"]),
+        "dropped": None if dropped is None else len(dropped),
         "mismatches": len(plan.answer_mismatches()),
     }
 
@@ -1715,8 +1723,9 @@ def _answers_line(answers: Mapping[str, Any] | None) -> list[str]:
     shifted = ("dời khoảng gỡ không rõ (khởi tạo dùng lại từ thư mục trước D-135)"
                if answers["shifted"] is None else
                f"dời khoảng gỡ {answers['shifted']} (dời cả hạn {answers['shifted_end']})")
+    dropped = "không rõ" if answers.get("dropped") is None else answers["dropped"]
     return [(f"- Mạch phải gỡ có bí mật trả lời (D-135): {answers['linked']}/{answers['threads']}; "
-             f"{shifted}; còn lệch {answers['mismatches']}.")]
+             f"{shifted}; bỏ id fact thường {dropped}; còn lệch {answers['mismatches']}.")]
 
 
 def _fmt_counts(counts: Mapping[str, int]) -> str:

@@ -31,8 +31,9 @@ Module này không ghi gì. Nơi gọi lưu bản kế hoạch và ghi gói qua 
   lượt sửa. Log chỉ có số cạnh bị bỏ.
 - D-135: mạch phải gỡ khai bí mật trả lời nó (`answered_by`). Khoảng gỡ bắt đầu trước khoảng lộ
   của bí mật thì code dời (`story_plan.align_thread_windows`) cả trên kế hoạch lẫn nút `Thread`,
-  không tốn lượt sửa; các lần dời ở `StorySetup.shifts`, log chỉ có số mạch. Id không phải bí mật
-  của kế hoạch là lỗi `answered_by`, đi lượt sửa.
+  không tốn lượt sửa; các lần dời ở `StorySetup.shifts`, log chỉ có số mạch. Id một fact thường
+  (đã khai, không phải bí mật) thì code bỏ khỏi `answered_by` như D-76 (`drop_plain_fact_answers`,
+  `StorySetup.dropped_answers`); id không phải fact nào là lỗi `answered_by`, đi lượt sửa.
 """
 
 import logging
@@ -364,12 +365,14 @@ class BuildOutput(_Out):
 
 @dataclass(frozen=True)
 class StorySetup:
-    """`shifts`: khoảng gỡ code đã dời để mạch không gỡ trước khoảng lộ của bí mật trả lời nó
-    (D-135), có id lớp truth: chỉ cho bộ đo (truth_dump), không vào log hay API."""
+    """`shifts`: khoảng gỡ code đã dời để mạch không gỡ trước khoảng lộ của bí mật trả lời nó;
+    `dropped_answers`: các cặp (mạch, fact thường) code đã bỏ khỏi `answered_by` (D-135). Cả hai có
+    id lớp truth: chỉ cho bộ đo (truth_dump), không vào log hay API."""
 
     plan: StoryPlan
     package: ChangePackage
     shifts: tuple[WindowShift, ...] = ()
+    dropped_answers: tuple[tuple[str, str], ...] = ()
 
 
 # --- lỗi của build_story (D-54) ------------------------------------------------------------------
@@ -506,6 +509,30 @@ def drop_protagonist_knows(output: BuildOutput) -> tuple[BuildOutput, int]:
     data = output.model_dump()
     for f in data["facts"]:
         f["known_by"] = [i for i in f["known_by"] if i != PROTAGONIST_ID]
+    return BuildOutput.model_validate(data), dropped
+
+
+# --- id fact thường trong `answered_by` (D-135, chủ dự án chọn sau phép đo) -----------------------
+# Đo `setup-11` (evals/results/2026-10-30-setup11-check/notes.md): ở 2/5 lượt model ghi id một fact
+# thường (đúng là câu trả lời, nhưng không phải bí mật) vào `answered_by`, mỗi lượt tốn lượt sửa duy
+# nhất. Fact thường không có khoảng lộ nên bỏ liên kết không mất gì cho việc dời; fact vẫn còn.
+
+
+def drop_plain_fact_answers(
+    output: BuildOutput,
+) -> tuple[BuildOutput, tuple[tuple[str, str], ...]]:
+    """Bỏ khỏi `answered_by` của mạch phải gỡ các id là Fact đã khai trong câu trả lời mà không phải
+    bí mật. Trả đầu ra mới và các cặp (mạch, fact) đã bỏ. Id không phải Fact nào thì giữ, để phép
+    kiểm báo lỗi: nó có thể là id bí mật viết sai, bỏ đi thì mất một liên kết thật mà không ai biết."""
+    plain = {f.id for f in output.facts} - {s.fact_id for s in output.secrets}
+    dropped = tuple(dict.fromkeys((t.id, i) for t in output.threads if t.must_resolve
+                                  for i in t.answered_by if i in plain))
+    if not dropped:
+        return output, ()
+    data = output.model_dump()
+    for t in data["threads"]:
+        if t["must_resolve"]:
+            t["answered_by"] = [i for i in t["answered_by"] if i not in plain]
     return BuildOutput.model_validate(data), dropped
 
 
@@ -793,6 +820,9 @@ async def build_story(
         output, setup, problems = _check_build(output, protagonist=pc, commit_id=commit_id,
                                                level=level)
         if setup is not None:
+            if setup.dropped_answers:  # chỉ số, không id (G12)
+                log.info("khởi tạo: bỏ %d id fact thường khỏi answered_by (D-135)",
+                         len(setup.dropped_answers))
             if setup.shifts:  # chỉ số mạch, không id (G12)
                 log.info("khởi tạo: dời khoảng gỡ của %d mạch cho khỏi bắt đầu trước khoảng "
                          "lộ của bí mật trả lời nó (D-135)", len(setup.shifts))
@@ -933,6 +963,7 @@ def _check_build(
     if dropped:
         # Chỉ số cạnh và loại, không id hay chữ của fact (G12).
         log.info("khởi tạo: bỏ %d cạnh KNOWS của nhân vật chính ở chương 0 (D-76)", dropped)
+    output, dropped_answers = drop_plain_fact_answers(output)  # D-135, trước mọi phép kiểm
     plan_problems: list[SetupProblem] = []
     plan = _validated(StoryPlan, {
         "acts": [a.model_dump() for a in output.acts],
@@ -994,7 +1025,8 @@ def _check_build(
         problems += _initial_problems(plan, package, level=level)
     if problems or package is None or plan is None:
         return output, None, problems
-    return output, StorySetup(plan=plan, package=package, shifts=shifts), []
+    return output, StorySetup(plan=plan, package=package, shifts=shifts,
+                              dropped_answers=dropped_answers), []
 
 
 def _shift_threads(output: BuildOutput, shifts: Sequence[WindowShift]) -> BuildOutput:
@@ -1240,10 +1272,12 @@ def _plan_problems(
         for fact_id in t.answered_by:
             if fact_id in secret_ids:
                 continue
+            # Fact thường đã bị `drop_plain_fact_answers` bỏ trước khi tới đây (D-135); nhánh đó chỉ
+            # còn cho kế hoạch dựng ngoài `build_story`.
             what = ("là fact nhưng không phải bí mật" if labels.get(fact_id) == "Fact"
-                    else "không phải bí mật")
-            add("answered_by", f"mạch {t.thread_id}: answered_by có {fact_id}, {what} trong "
-                               "`secrets`; chỉ ghi fact_id của bí mật, hoặc để danh sách rỗng")
+                    else "không phải id của bí mật hay fact nào đã khai")
+            add("answered_by", f"mạch {t.thread_id}: answered_by có {fact_id}, {what}; chỉ ghi "
+                               "fact_id của bí mật trong `secrets`, hoặc để danh sách rỗng")
     for tid, props in threads.items():
         planted = props.get("planted_chapter")
         low, high = props.get("due_from_chapter"), props.get("due_to_chapter")
