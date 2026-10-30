@@ -130,3 +130,15 @@ async def test_the_openrouter_client_the_players_use_refuses_a_meta_model_before
     with pytest.raises(WritoryError):
         [e async for e in client.stream(MODEL, [Message(role="user", content="x")])]
     assert seen == [] and Path(META_CONFIG_DIR).is_dir()
+
+
+def test_the_meta_models_file_differs_from_the_repo_one_only_in_the_model_names_and_prices():
+    """Loader thay cả file models.yaml (không gộp từng khoá), nên file của bộ đo chép lại phần còn lại của
+    `config/models.yaml` (D-140). Lệch thì bài đo Meta chạy với vai hay mức suy luận khác sản phẩm."""
+    meta, base = load_config(META_CONFIG_DIR).models, load_config().models
+    assert set(meta.roles.model_dump()) == set(base.roles.model_dump())
+    assert {r: m is None for r, m in meta.roles.model_dump().items()} == {
+        r: m is None for r, m in base.roles.model_dump().items()}
+    assert meta.role_reasoning == base.role_reasoning and meta.provider_ignore == []
+    assert [t.model_copy(update={"model": ""}) for t in meta.writer_tiers] == [
+        t.model_copy(update={"model": ""}) for t in base.writer_tiers]
