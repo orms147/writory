@@ -847,17 +847,13 @@ async def _anthropic_create(
     với workspace. Không nằm trong `request`, nên không vào traces."""
     import anthropic
 
+    from writory.llm.anthropic_client import anthropic_error
+
     options = {"workspace_id": workspace_id} if workspace_id else {}
     try:
         return await client.messages.create(**request, **options)
-    except anthropic.APIStatusError as e:
-        status = e.status_code
-        code = {401: ErrorCode.LLM_AUTH_FAILED, 403: ErrorCode.LLM_AUTH_FAILED,
-                429: ErrorCode.LLM_RATE_LIMITED}.get(status)
-        code = code or (ErrorCode.LLM_UNAVAILABLE if status >= 500 else ErrorCode.LLM_REQUEST_INVALID)
-        raise WritoryError(code, detail=f"HTTP {status}: {e.message}"[:400]) from None
-    except anthropic.APIConnectionError as e:
-        raise WritoryError(ErrorCode.LLM_UNAVAILABLE, detail=type(e).__name__) from None
+    except (anthropic.APIStatusError, anthropic.APIConnectionError) as e:
+        raise anthropic_error(e, workspace_id or "") from None
 
 
 class Runner:
