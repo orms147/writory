@@ -2,7 +2,7 @@
 
 > **In short:** WriTory is an interactive fiction engine for Vietnamese. You live a story as its protagonist and shape it with choices (action, dialogue, inner thought). The world is remembered in a two-layer knowledge graph: a `truth` layer that only the AI sees, and a `player_view` layer with only what the page has revealed to you. Secrets and plot twists are enforced by code, not by prompts. It is a learning project about graph-based memory (GraphRAG); players bring their own OpenRouter key. Status: work in progress; playable through the web UI on a developer machine or with invite codes; a production stack (Docker Compose behind Cloudflare Tunnel) exists but is not live yet.
 
-Truyện tương tác tiếng Việt. Bạn sống đời nhân vật chính qua từng lựa chọn: hành động, lời thoại, nội tâm. Truyện dài tới khoảng 100 trang; bản 1 mở cho người chơi truyện ngắn và truyện vừa, các mức dài hơn mở sau khi đã đo.
+Truyện tương tác tiếng Việt. Bạn sống đời nhân vật chính qua từng lựa chọn: hành động, lời thoại, nội tâm. Truyện dài tới khoảng 100 trang ([docs/design.md](docs/design.md) mục 3); bản 1 mở cho người chơi truyện ngắn và truyện vừa, các mức dài hơn mở sau khi đã đo (mức nào mở: `player_selectable` trong `config/story_lengths.yaml`).
 
 ## Vì sao làm
 
@@ -14,7 +14,7 @@ Truyện do AI viết thường **mất context** khi dài ra: quên nhân vật
 - **Đường đi một chương** (LangGraph): lấy phần đồ thị liên quan → dàn ý → viết cảnh → trích thay đổi thành JSON → kiểm → ghi vào đồ thị → tạo lựa chọn. Một cảnh chỉ hiện ra sau khi đã kiểm.
 - **Người canh** chỉ kiểm bằng code ở bản 1 (phần đọc văn bằng LLM để bản sau): người chết xuất hiện, đồ vật ở hai nơi, nhân vật biết điều chưa biết, quan hệ đổi đột ngột, lộ bí mật sớm, mạch quá hạn.
 - **Bộ dò lộ và guardrail.** Sổ tay, người kể và lựa chọn chỉ nhận dữ liệu từ `player_view`, lọc bằng code. Chữ người chơi luôn bị bọc như dữ liệu, không phải lệnh. Có trần chi phí, kiểm duyệt nội dung, và ghi chương theo kiểu tất cả hoặc không gì. An toàn nằm trong code, không nằm trong prompt. Danh sách đầy đủ: [docs/security.md](docs/security.md).
-- **Người chơi dùng key OpenRouter của chính mình.** Key được mã hoá khi lưu, không vào log hay API. Model viết hiện chỉ có một mức; các vai giữ trí nhớ dùng model cố định. Cấu hình ở `config/`.
+- **Người chơi dùng key OpenRouter của chính mình.** Key được mã hoá khi lưu, không vào log hay API. Model viết hiện chỉ có một mức; các vai giữ trí nhớ dùng model cố định. Cấu hình ở `config/models.yaml` (`writer_tiers`, `roles`).
 
 Stack: FastAPI · LangGraph · Neo4j · PostgreSQL · React/TypeScript · OpenRouter.
 

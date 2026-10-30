@@ -16,7 +16,7 @@ flowchart LR
   owner -.->|gửi mã mời| player
 ```
 
-- **BYOK (D-2).** Người chơi dán key OpenRouter của mình (`PUT /player/key`, `api/keys.py`). Key được mã hoá Fernet trước khi lưu (`safety/crypto.py` `KeyCipher`, `db/keys.py`), và chỉ được giải mã ở hai chỗ: khi gọi model (`api/deps.py` `PlayerLLM.open`), và khi `GET /player/key` tính bốn ký tự cuối để hiện (`api/keys.py` `key_status`). Key `OPENROUTER_API_KEY` của chủ dự án chỉ dùng cho bộ đo (`config.py` `Settings`).
+- **BYOK (D-2).** Người chơi dán key OpenRouter của mình (`PUT /player/key`, `api/keys.py`). Key được mã hoá Fernet trước khi lưu (`safety/crypto.py` `KeyCipher`, `db/keys.py`), và chỉ được giải mã ở hai chỗ: khi gọi model (`api/deps.py` `PlayerLLM.open`), và khi `GET /player/key` tính bốn ký tự cuối để hiện (`api/keys.py` `key_status`). Key `OPENROUTER_API_KEY` của chủ dự án chỉ dùng cho bộ đo và lệnh xuất kịch bản video của admin (mục 3), không bao giờ cho app; phần lớn đọc nó qua `quality/bench_d.py` `load_keys` (bộ xuất, `bench_run`, bài A, C, D, E), riêng `safety/bench_g5.py`, `bench_g9.py` qua `config.py` `Settings`.
 - **Mã mời (D-89).** Chủ dự án tạo và thu hồi mã bằng lệnh `python -m writory.db.invites` (`db/invites.py`). Người chơi nhập mã ở màn đăng nhập để có phiên (mục 10).
 - **Bật, tắt (D-103).** Chủ dự án tự bật chồng prod khi có người chơi và tắt khi xong, bằng script `deploy/prod-up.ps1` và `deploy/prod-down.ps1`. Cách chạy: `docs/runbook.md`, mục Deploy.
 
@@ -88,9 +88,13 @@ flowchart TD
   m_export --> m_db
   m_export --> m_llm
   m_export --> m_safety
+  m_export -->|graph/package.py quote_in_text| m_graph
+  m_export -->|pipeline/bench_a_systems.py AliasIndex| m_pipeline
+  m_export -->|quality/bench_d.py Budget, load_keys| m_quality
   m_safety --> m_graph
   m_safety --> m_llm
   m_db -->|commit_chapter gọi apply_package| m_graph
+  m_db -->|safety/redact.py redact| m_safety
   m_graph --> neo
   m_db --> pg
 ```
@@ -98,6 +102,7 @@ flowchart TD
 - **Luật G10: mọi Cypher chỉ nằm trong `graph/`.** Mọi hàm công khai của `graph/` đọc hay ghi dữ liệu truyện đều kiểm `story_id` bằng `require_story_id` (`graph/story.py`), trực tiếp hoặc qua hàm chung (ví dụ `_read` trong `graph/queries.py`, hay `apply_package`), và mọi câu Cypher lọc theo `story_id`. Các module khác đọc đồ thị qua hàm của `graph/`. Ví dụ, `guard/state.py` `Neo4jState` gọi các hàm cùng tên trong `graph/queries.py`. Test nhanh `tests/unit/test_cypher_boundary.py` quét mọi file `.py` của `src/writory` ngoài `graph/`, tìm mệnh đề Cypher và lời gọi chạy truy vấn của driver (D-106). Hiện không có ngoại lệ.
 - **Phụ thuộc vào kiểu dữ liệu.** `pipeline/story_plan.py` (`StoryPlan`) chỉ là kiểu dữ liệu, nên `guard/`, `safety/leak.py` và `db/` đều nhập nó. `graph/context.py` nhập `safety/wrap.py` (`UserAuthored`) để bọc chữ người chơi viết khi đọc lại từ đồ thị (G4). Hai mũi tên này không vẽ trên sơ đồ.
 - **Gốc gói.** `config.py` (nạp và kiểm `config/*.yaml` bằng pydantic) và `errors.py` (mã lỗi, câu cho người chơi) được mọi module dùng (D-13). Hai file này không vẽ trên sơ đồ.
+- **Bộ đo nhập thêm.** Mũi tên chỉ do bộ đo tạo ra thì không vẽ, ví dụ `quality/bench_d.py` và `quality/bench_bakeoff.py` nhập `llm/` và `pipeline/`. Riêng `export/` dùng lại hạ tầng của bộ đo (trần, đọc key, chỉ mục tên), nên các mũi tên đó có vẽ.
 - **`export/` (D-125) không có đường nào từ `api/` hay giao diện.** Bộ xuất kịch bản video đọc toàn bộ `truth` (kể cả bí mật) nên chỉ chạy bằng lệnh của admin cầm DB; nó chỉ đọc, và không module nào ngoài chính nó nhập nó (test: `tests/unit/test_video_export_security.py`). Luồng:
 
 ```mermaid
@@ -105,8 +110,10 @@ flowchart LR
   cmd["lệnh python -m writory.export.video (admin)"] --> src["đọc: db.chapters.chapter_scenes + Neo4jState (all_nodes, edges_at)"]
   src --> code["sheets.py, bằng code: bảng nhân vật, bảng nơi chốn, sơ đồ Mermaid theo chương, nhân vật có mặt trong cảnh"]
   src --> sheet["shots.py, vai video: mô tả tiếng Anh cố định, 1 lời gọi"]
-  sheet --> scene["shots.py, vai video: chia shot và dịch thoại, 1 lời gọi mỗi cảnh"]
+  sheet --> scene["shots.make_scene_shots, vai video: chia shot và dịch thoại, 1 lời gọi mỗi cảnh, sai kiểm bằng code kể cả nhịp thoại thì hỏi lại trong lượt thử lại schema"]
+  scene -->|hết lượt mà chỉ sai nhịp thoại, D-127| split["shots.split_dense_shots, bằng code: tách shot theo lượt thoại, đánh dấu split_by_code"]
   scene --> asm["shots.assemble_prompt, bằng code: chép nguyên văn mô tả nhân vật"]
+  split --> asm
   asm --> mod["safety.moderate (G9) trên prompt của cảnh"]
   mod --> files["script.md, script.json, prompts.txt, calls.jsonl"]
   code --> files
@@ -155,7 +162,7 @@ sequenceDiagram
 
 - Máy chủ giữ các lựa chọn của mỗi bước trong `setup_sessions`; trình duyệt chỉ gửi số thứ tự (`api/setup.py`). POST một bước đã có lựa chọn thì trả lại, không gọi model. Chi phí của khởi tạo tính theo phiên (`llm.metered(setup_id=...)`).
 - `pipeline/setup.py` không ghi gì. Nhân vật chính do code dựng từ chữ người chơi, mang `user_authored: true`. Gói chương 0 chỉ có một hé lộ, là nhân vật chính (D-38, D-74). Code chuẩn hoá id (D-54) rồi mới kiểm quy tắc. Chi tiết luật của gói chương 0: `docs/graph-schema.md`, mục "Chương 0".
-- Bước dựng cũng sinh ngoại hình cố định cho nhân vật (`appearance`, kể cả nhân vật chính qua `protagonist_appearance`) và cảnh sắc cho nơi chốn (`visual`), nền cho xuất kịch bản video (D-118, D-120). Chúng là thuộc tính tuỳ chọn trên nút, lớp `truth`; `story_plan` không đổi. Ngữ cảnh viết đọc `appearance` của người có mặt và nhân vật lân cận khi `limits.context.character_appearance_max_chars` > 0; `visual` chưa vào đề nào.
+- Bước dựng cũng sinh ngoại hình cố định cho nhân vật (`appearance`, kể cả nhân vật chính qua `protagonist_appearance`) và cảnh sắc cho nơi chốn (`visual`), nền cho xuất kịch bản video (D-118, D-120). Chúng là thuộc tính tuỳ chọn trên nút, lớp `truth`; `story_plan` không đổi. Ngữ cảnh viết đọc `appearance` của người có mặt và nhân vật lân cận khi `limits.context.character_appearance_max_chars` > 0; `visual` chưa vào đề nào của đường viết; đề bảng mô tả của bộ xuất video đọc nó (`export/shots.py` `sheet_messages`).
 - `story_brief` là thiết lập truyện người chơi đã đọc. Nó được lưu theo truyện; mọi đề chương sau bọc nó như dữ liệu, và bộ dò lộ coi nó là chữ người chơi đã thấy (D-52).
 - Thử lại: mỗi lời gọi `_ask` có lớp thử lại schema và lớp thử lại mạng (`with_json_retries`), kể cả từng lượt sửa (D-54). `api/setup.py` không bọc thêm lớp nào, nên lỗi mạng chỉ gọi lại đúng lời gọi hỏng (D-105).
 
@@ -279,6 +286,9 @@ flowchart LR
     v_moderate["moderate"]
     v_classify["classify"]
   end
+  subgraph admin_only["Vai của lệnh admin, ngoài đường người chơi"]
+    v_video["video: thấy toàn bộ truth"]
+  end
   neo -->|writer_context, story_nodes| v_outline
   neo --> v_writer
   neo --> v_extract
@@ -298,6 +308,9 @@ flowchart LR
   plan -.->|tên lớp truth, bí mật: chỉ cho bộ dò, không vào prompt| leak
   leak -->|qua thì hiện| player["Người chơi"]
   pv -->|NotebookOut, danh sách trắng| player
+  neo -->|Neo4jState, D-125| v_video
+  page --> v_video
+  v_video -->|kịch bản, kiểm duyệt G9| exports["exports/, chỉ admin đọc"]
 ```
 
 - **Một định nghĩa `player_view`:** hàm thuần `build_player_view` (`graph/player_view.py`). Có hai nơi gom bản ghi cho hàm này: `player_view` đọc từ Neo4j, và `guard/state.py` `player_view_of` đọc trên nền đã commit cộng gói chưa ghi. Hai đường được test so với nhau. Định nghĩa: `docs/graph-schema.md`, mục `player_view`.
@@ -316,6 +329,7 @@ flowchart LR
 | `narrator` | sổ tay từ `player_view`, đủ hay một phần (`select_notebook`), câu hỏi (bọc) | không | `NarratorOutput` | `pipeline/narrator.py` `ask_narrator_reply` |
 | `classify` | chỉ chữ ô tự viết (bọc) | không | `Classification`, nhãn enum (G5) | `safety/classify.py` `classify_action` |
 | `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn (bọc) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
+| `video` | nhân vật (ngoại hình, tính cách, quá khứ), nơi chốn, quan hệ, nơi của nhân vật chính, chữ cảnh đã ghi (chữ truyện và chữ người chơi bọc G4) | có, toàn bộ, kể cả bí mật; chỉ lệnh admin, không có đường tới người chơi (D-118, D-125) | `SheetOutput`, `SceneOutput` | `export/shots.py` `make_sheet`, `make_scene_shots`, gọi từ `export/video.py` |
 
 Model của từng vai và danh sách mức model viết: `config/models.yaml` (`roles`, `writer_tiers`).
 

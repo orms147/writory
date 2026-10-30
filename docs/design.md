@@ -134,8 +134,8 @@ Sau bước 6, hệ thống tạo ngầm **bản kế hoạch truyện** (§6.1)
 - "Nếu như…": tóm tắt nhánh không chọn, chỉ trong phạm vi nhân vật chính có thể biết.
 - Biên tập trước khi xuất, xuất ePub.
 - **Xuất kịch bản để làm video AI** [Chủ dự án đề xuất 28/10/2026, xếp vào bản 3, D-107]: từ truyện đã chơi xuất kịch bản hoàn chỉnh (cảnh theo thứ tự, nơi chốn, ai có mặt, lời thoại tách theo người nói, nhịp hành động), bảng nhân vật có mô tả ngoại hình cố định, và sơ đồ tuyến nhân vật theo chương (quan hệ, điều biết, sự kiện; dựng từ đồ thị), để gửi sang app tạo video như Seedance. Lựa chọn của chủ dự án (D-118): nguồn là toàn bộ `truth`; đầu ra là danh sách shot kèm prompt tiếng Anh, lời thoại theo ngôn ngữ người xuất chọn; ngoại hình sinh lúc khởi tạo và cố định. Phần nền làm sớm, sau đợt truyện dài. Đã làm sớm theo D-125 dưới dạng lệnh của admin (`python -m writory.export.video`), KHÔNG có trong app: chỉ ai cầm DB mới xuất được.
-  - Phần lớn đã có trong đồ thị và dàn ý cảnh; còn thiếu ngoại hình nhân vật, cảnh sắc nơi chốn, thời điểm của cảnh. Thêm các thuộc tính đó lúc khởi tạo là việc nền có thể làm sớm hơn.
-  - Chỉ xuất chữ đã hiện trên trang và `player_view` cho người chơi; bản xuất dùng lớp `truth` (bí mật chưa lộ) là quyết định riêng khi làm.
+  - Phần lớn đã có trong đồ thị và dàn ý cảnh. Ngoại hình nhân vật và cảnh sắc nơi chốn đã được sinh lúc khởi tạo (D-120, D-122); thời điểm của cảnh (ngày, đêm) chưa có trong dàn ý, bộ xuất cho model đoán từ chữ của cảnh.
+  - Nguồn là toàn bộ `truth`, kể cả bí mật chưa lộ (D-118), nên bản xuất không bao giờ tới người chơi: chỉ admin cầm DB chạy được, không có đường từ API hay giao diện (D-125).
 
 **Để sau bản 3:** chia sẻ thế giới cho người khác chơi với nhân vật khác.
 
@@ -267,6 +267,8 @@ Các bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở ngườ
 
 **E. Hỏi người kể không lộ.** Bộ câu hỏi khai trước trên truyện cố định, theo từng chương: hỏi điều đã mở khoá, hỏi thẳng bí mật chưa mở, hỏi vòng hay bắt đoán, nhập vai hay chèn lệnh, hỏi meta, hỏi tên thật của người chỉ được biết qua biệt danh. Ghi riêng câu trả lời thô của model và câu người chơi thấy, để biết model tự giữ được bao nhiêu và lớp code (§6.6, §8 mục 3) phải chặn bao nhiêu. Chấm bằng code với chuỗi cấm chặt hơn lớp chặn đang đo; lộ ở câu người chơi thấy phải bằng 0. Đo cả tỉ lệ trả lời được câu đã mở khoá, để biết người kể có bị chặn oan không. Giám khảo LLM (tuỳ chọn) chỉ đọc câu người chơi thấy cùng sổ tay, không thấy lớp sự thật. Cách làm: D-53; lệnh: `docs/eval.md`.
 
+**F. So model viết trên cùng một thế giới.** Các model viết chạy hết đường viết trên cùng một khởi tạo, cùng seed, vài chương. Giám khảo LLM chấm mù cả truyện (liền mạch, nhịp, lựa chọn), so trực tiếp với hai thứ tự trình bày, rồi mới thấy chi phí thật để khuyến nghị model đáng tiền. Khác bài D ở chỗ chấm truyện nhiều chương và có chi phí thật của cả đường chạy. Cách làm: D-101, giám khảo thứ hai D-108; lệnh: `docs/eval.md`.
+
 **Đối thủ cho bài A:**
 1. Không bộ nhớ (chỉ chương trước).
 2. Tóm tắt cuộn (rolling summary).
@@ -274,7 +276,7 @@ Các bài đo tách riêng, để biết lỗi nằm ở bộ nhớ, ở ngườ
 4. Nhét cả truyện vào prompt (khi vừa context).
 5. Đồ thị (dự án này).
 
-Bản 1 chạy đối thủ 2, 4, 5, bài B, bài D (tuần 2, để chọn model) và bài E. Đối thủ 1, 3 và bài C để bản 2.
+Bản 1 đã chạy cả năm đối thủ của bài A (đối thủ 3 là RAG BM25, chưa phải RAG vector, D-73; lần đầu: `evals/results/2026-10-21-memory-lan-1/`), bài B (chỉ phần kiểm bằng code, D-88), bài C v1 để chọn model trích (D-34, D-35), bài D (để chọn model), bài E và bài F. Bài C đầy đủ (thực thể mới, gộp hay tách biệt danh, trùng họ) để bản 2.
 
 **LLM làm giám khảo** (khi cần): khác họ model với model viết, chấm nhiều lần và chấm thêm khi các lần lệch nhau (số lần của bài D: D-25), bắt trích nguyên văn, và có một mẫu do người chấm để báo mức đồng thuận.
 
