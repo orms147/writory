@@ -28,6 +28,21 @@ class DownLLM(DryRunLLM):
         return await super().chat(model, messages, response_schema=response_schema, extra=extra)
 
 
+class WriterDiesAfter(DryRunLLM):
+    """Viết được `chapters` chương rồi đứt mạng (mọi lời gọi viết sau đó lỗi)."""
+
+    def __init__(self, total, *, chapters, scene_count, **kw):
+        super().__init__(total, **kw)
+        self.allowed, self.writer_calls = chapters * scene_count, 0
+
+    async def chat(self, model, messages, *, response_schema=None, extra=None):
+        if response_schema is None:
+            self.writer_calls += 1
+            if self.writer_calls > self.allowed:
+                raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail="giả: đứt mạng")
+        return await super().chat(model, messages, response_schema=response_schema, extra=extra)
+
+
 def setup(tmp_path):
     config = trial_config(tmp_path)
     scenario = scenario_for(config, player_retries=0)
@@ -83,7 +98,9 @@ async def test_resume_after_a_stop_at_chapter_k_matches_a_straight_run(tmp_path)
     _, store_b, out_1, code = await first_leg(tmp_path, config, scenario, total, chapters=k)
     assert code == bench_run.EXIT_OK and store_b.committed == k
 
-    run2, out_2, code2 = await resume(tmp_path, config, scenario, total, store_b, out_1)
+    # Lượt đầu dừng vì --chapters k: viết tiếp phải nâng --chapters (không thì kế thừa k, D-130).
+    run2, out_2, code2 = await resume(tmp_path, config, scenario, total, store_b, out_1,
+                                      chapters=total)
     assert code2 == bench_run.EXIT_OK and run2.finished and store_b.committed == total
 
     assert packages(store_b) == packages(store_a)  # không đổi chương đã có, chương mới như chạy liền
@@ -102,7 +119,7 @@ async def test_old_result_directory_is_left_untouched(tmp_path):
     config, scenario, total = setup(tmp_path)
     _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
     before = {p.name: p.read_bytes() for p in sorted(out_1.rglob("*")) if p.is_file()}
-    await resume(tmp_path, config, scenario, total, store, out_1)
+    await resume(tmp_path, config, scenario, total, store, out_1, chapters=total)
     after = {p.name: p.read_bytes() for p in sorted(out_1.rglob("*")) if p.is_file()}
     assert before == after
 
@@ -111,7 +128,7 @@ async def test_meta_and_report_say_where_the_run_was_resumed_from(tmp_path):
     config, scenario, total = setup(tmp_path)
     _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
     spent = json.loads((out_1 / "report.json").read_text(encoding="utf-8"))["cost"]["total_usd"]
-    _, out_2, _ = await resume(tmp_path, config, scenario, total, store, out_1)
+    _, out_2, _ = await resume(tmp_path, config, scenario, total, store, out_1, chapters=total)
     meta = json.loads((out_2 / "meta.json").read_text(encoding="utf-8"))
     report = json.loads((out_2 / "report.json").read_text(encoding="utf-8"))
     assert meta["resumed_from"] == str(out_1).replace("\\", "/") or meta["resumed_from"].endswith(
@@ -128,7 +145,8 @@ async def test_resuming_a_resumed_run_keeps_every_resume_point(tmp_path):
     _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
     _, out_2, _ = await resume(tmp_path, config, scenario, total, store, out_1, name="leg2",
                                chapters=3)
-    _, out_3, _ = await resume(tmp_path, config, scenario, total, store, out_2, name="leg3")
+    _, out_3, _ = await resume(tmp_path, config, scenario, total, store, out_2, name="leg3",
+                               chapters=total)
     points = json.loads((out_3 / "meta.json").read_text(encoding="utf-8"))["resume_points"]
     assert [p["chapter"] for p in points] == [3, 4]
 
@@ -200,9 +218,10 @@ async def test_the_budget_counts_what_the_first_leg_already_spent(tmp_path):
     spent = run1.budgeted.spent_usd
     assert spent > 0
     with pytest.raises(ConfigError, match="trần"):
-        await resume(tmp_path, config, scenario, total, store, out_1, name="leg2", budget_usd=spent)
+        await resume(tmp_path, config, scenario, total, store, out_1, name="leg2", budget_usd=spent,
+                     chapters=total)
     run2, _, code = await resume(tmp_path, config, scenario, total, store, out_1, name="leg3",
-                                 budget_usd=spent * 1.02)
+                                 budget_usd=spent * 1.02, chapters=total)
     assert code == bench_run.EXIT_BUDGET and run2.stop["kind"] == "budget"  # trần tổng, không phải thêm
     assert run2.budgeted.spent_usd >= spent
     meta = json.loads((tmp_path / "leg3" / "meta.json").read_text(encoding="utf-8"))
@@ -212,7 +231,7 @@ async def test_the_budget_counts_what_the_first_leg_already_spent(tmp_path):
 async def test_the_per_story_cap_keeps_counting_across_the_resume(tmp_path):
     config, scenario, total = setup(tmp_path)
     run1, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
-    run2, _, _ = await resume(tmp_path, config, scenario, total, store, out_1)
+    run2, _, _ = await resume(tmp_path, config, scenario, total, store, out_1, chapters=total)
     assert run2.tracker.story_usd == pytest.approx(
         sum(c.get("cost_usd") or 0 for c in rows(tmp_path / "leg2" / "calls.jsonl")))
     assert run2.tracker.story_usd > run1.tracker.story_usd
@@ -250,7 +269,7 @@ async def test_allow_drift_resumes_and_records_what_drifted(tmp_path):
     _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
     edit_meta(out_1, lambda m: m["git"].update(commit="0" * 40))
     _, out_2, code = await resume(tmp_path, config, scenario, total, store, out_1,
-                                  resume_allow_drift=True)
+                                  resume_allow_drift=True, chapters=total)
     assert code == bench_run.EXIT_OK
     meta = json.loads((out_2 / "meta.json").read_text(encoding="utf-8"))
     assert [d["key"] for d in meta["resume_drift"]] == ["git.commit"]
@@ -311,3 +330,161 @@ async def test_the_seed_must_still_replay_to_the_choices_that_were_picked(tmp_pa
     edit_meta(out_1, corrupt)
     with pytest.raises(ConfigError, match="seed"):
         await resume(tmp_path, config, scenario, total, store, out_1)
+
+
+# --- sửa sau review (D-130) ------------------------------------------------------------------------
+
+
+async def test_a_dry_run_never_resumes_a_real_run_even_with_allow_drift(tmp_path):
+    """Lượt thật chạy tiếp bằng --dry-run thì model giả viết vào story_id thật, và dry-run không
+    --keep-story thì `_finish` xoá truyện đó: luôn từ chối, `--resume-allow-drift` không cho qua."""
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    edit_meta(out_1, lambda m: m.update(dry_run=False))  # thư mục của một lượt thật
+    with pytest.raises(ConfigError, match="dry-run"):
+        await resume(tmp_path, config, scenario, total, store, out_1, chapters=total,
+                     keep_story=False, resume_allow_drift=True)
+    assert store.committed == 2 and not store.deleted and not (tmp_path / "leg2").exists()
+
+
+async def test_a_real_run_never_resumes_a_dry_run(tmp_path):
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    with pytest.raises(ConfigError, match="dry-run"):
+        await resume(tmp_path, config, scenario, total, store, out_1, chapters=total,
+                     dry_run=False, budget_usd=5.0, resume_allow_drift=True)
+    assert store.committed == 2 and not (tmp_path / "leg2").exists()
+
+
+async def test_summary_says_where_the_run_was_resumed_and_on_which_commit(tmp_path):
+    """summary.md ghi từng điểm chạy tiếp (chương, commit cũ, lý do dừng trước) và khoá đã khác, để
+    lượt ghép không trông như chạy hết trên commit mới."""
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    edit_meta(out_1, lambda m: m["git"].update(commit="a" * 40))
+    _, out_2, code = await resume(tmp_path, config, scenario, total, store, out_1, chapters=total,
+                                  resume_allow_drift=True)
+    assert code == bench_run.EXIT_OK
+    lines = (out_2 / "summary.md").read_text(encoding="utf-8").splitlines()
+    [head] = [x for x in lines if x.startswith("- Chạy tiếp")]
+    assert out_1.name in head
+    [point] = [x for x in lines if x.lstrip().startswith("- Từ chương 3")]
+    assert "a" * 12 in point and "hết --chapters" in point
+    [drift] = [x for x in lines if x.lstrip().startswith("- Khác lượt trước")]
+    assert "git.commit" in drift and "chương 3" in drift
+    assert "Chạy tiếp" not in (out_1 / "summary.md").read_text(encoding="utf-8")
+
+
+async def test_drift_is_kept_across_every_resume_and_tagged_with_its_leg(tmp_path):
+    """Lượt 3 so với lượt 2 không khác gì, nhưng phần đã khác ở lượt 2 vẫn phải còn trong meta."""
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    edit_meta(out_1, lambda m: m["git"].update(commit="a" * 40))
+    _, out_2, _ = await resume(tmp_path, config, scenario, total, store, out_1, name="leg2",
+                               chapters=3, resume_allow_drift=True)
+    _, out_3, code = await resume(tmp_path, config, scenario, total, store, out_2, name="leg3",
+                                  chapters=total)
+    assert code == bench_run.EXIT_OK
+    meta = json.loads((out_3 / "meta.json").read_text(encoding="utf-8"))
+    [entry] = meta["resume_drift"]
+    assert (entry["key"], entry["was"], entry["chapter"], entry["leg"]) == (
+        "git.commit", "a" * 40, 3, 2)
+    p2, p3 = meta["resume_points"]
+    assert (p2["leg"], p3["leg"]) == (2, 3)
+    assert p2["source"].endswith(out_1.name) and p3["source"].endswith(out_2.name)
+    config_sha = json.loads((out_1 / "meta.json").read_text(encoding="utf-8"))["config"]["sha256"]
+    assert p2["from_config_sha256"] == config_sha["combined"]
+    assert p2["from_commit"] == "a" * 40
+
+
+async def test_resume_inherits_chapters_from_the_stopped_run(tmp_path):
+    """Lượt đầu `--chapters total-1` chết ở chương 3: chạy tiếp không có `--chapters` dừng ở total-1
+    như lần đầu, không chạy tới hết kế hoạch."""
+    config, scenario, total = setup(tmp_path)
+    llm = WriterDiesAfter(total, chapters=2, scene_count=scenario.scene_count)
+    _, store, out_1, code1 = await first_leg(tmp_path, config, scenario, total,
+                                             chapters=total - 1, llm=llm)
+    assert code1 == bench_run.EXIT_ABORT and store.committed == 2
+    run2, out_2, code2 = await resume(tmp_path, config, scenario, total, store, out_1)
+    assert code2 == bench_run.EXIT_OK and store.committed == total - 1 and not run2.finished
+    meta = json.loads((out_2 / "meta.json").read_text(encoding="utf-8"))
+    assert meta["chapters_arg"] == total - 1
+    assert meta["resume_points"][0]["chapters_inherited"] is True
+
+
+async def test_an_explicit_chapters_flag_still_overrides_the_inherited_one(tmp_path):
+    config, scenario, total = setup(tmp_path)
+    llm = WriterDiesAfter(total, chapters=2, scene_count=scenario.scene_count)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=total - 1,
+                                         llm=llm)
+    run2, out_2, code2 = await resume(tmp_path, config, scenario, total, store, out_1,
+                                      chapters=total)
+    assert code2 == bench_run.EXIT_OK and store.committed == total and run2.finished
+    meta = json.loads((out_2 / "meta.json").read_text(encoding="utf-8"))
+    assert meta["chapters_arg"] == total
+    assert meta["resume_points"][0]["chapters_inherited"] is False
+
+
+async def test_resume_with_nothing_left_under_chapters_is_refused(tmp_path):
+    """Lượt đầu chạy đủ `--chapters 2`: chạy tiếp mà không nâng `--chapters` thì không còn gì để viết."""
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    with pytest.raises(ConfigError, match="--chapters"):
+        await resume(tmp_path, config, scenario, total, store, out_1)
+    with pytest.raises(ConfigError, match="--chapters"):
+        await resume(tmp_path, config, scenario, total, store, out_1, name="leg3", chapters=2)
+    assert not (tmp_path / "leg2").exists() and not (tmp_path / "leg3").exists()
+
+
+async def test_a_chapter_stuck_pending_is_refused_before_anything_runs(tmp_path):
+    """Tiến trình chết giữa lúc ghi chương: Postgres còn chương `pending`. Từ chối ngay, nói phải làm
+    gì; không tự sửa kho, không chạy rồi mới chết vì CHAPTER_PENDING."""
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    store.has_pending = lambda: True
+    with pytest.raises(ConfigError, match="pending") as info:
+        await resume(tmp_path, config, scenario, total, store, out_1, chapters=total)
+    assert "reconcile" in str(info.value) and "runbook" in str(info.value)
+    assert store.committed == 2 and not (tmp_path / "leg2").exists()
+
+
+async def test_a_half_copied_output_directory_is_not_appended_to_twice(tmp_path):
+    """Sao chép phần cũ hỏng giữa chừng (calls.jsonl đã nối, chưa có meta.json): chạy lại cùng thư
+    mục phải bị từ chối, không nối thêm một bản nữa (đếm đôi chi phí)."""
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    run, _, _, out_2 = make_run(tmp_path, config=config, scenario=scenario, store=store,
+                                out=tmp_path / "leg2", resume=out_1, chapters=total)
+    real_append, appended = run.files.append, []
+
+    def flaky(name, row):
+        if len(appended) == 3:
+            raise OSError("giả: đĩa đầy")
+        appended.append(name)
+        real_append(name, row)
+
+    run.files.append = flaky
+    with pytest.raises(OSError):
+        await run.run()
+    assert not (out_2 / "meta.json").exists() and len(rows(out_2 / "calls.jsonl")) == 3
+    with pytest.raises(ConfigError, match="đã có"):
+        await resume(tmp_path, config, scenario, total, store, out_1, chapters=total)
+    assert len(rows(out_2 / "calls.jsonl")) == 3 and store.committed == 2
+
+
+@pytest.mark.parametrize(("name", "mutate"), [
+    ("truth_dump.json", lambda d: d.pop("packages")),
+    ("truth_dump.json", lambda d: d["chapters"]["1"][-1].update(choices=[{"id": "x"}])),
+    ("report.json", lambda d: d.pop("chapters")),
+    ("meta.json", lambda d: d.pop("seed")),
+])
+async def test_a_malformed_old_result_is_a_config_error_not_a_crash(tmp_path, name, mutate):
+    config, scenario, total = setup(tmp_path)
+    _, store, out_1, _ = await first_leg(tmp_path, config, scenario, total, chapters=2)
+    path = out_1 / name
+    data = json.loads(path.read_text(encoding="utf-8"))
+    mutate(data)
+    path.write_text(json.dumps(data, ensure_ascii=False), encoding="utf-8")
+    with pytest.raises(ConfigError, match="--resume"):
+        await resume(tmp_path, config, scenario, total, store, out_1, chapters=total)
+    assert not (tmp_path / "leg2").exists()

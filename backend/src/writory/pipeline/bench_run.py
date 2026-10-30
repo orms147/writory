@@ -27,8 +27,9 @@ chạy lại cả truyện (D-124). Đọc meta, setup, report, truth_dump, call
 trong Neo4j + Postgres (`story_id` cũ) và phải đang ở đúng chương cuối đã ghi; tiếp từ chương kế
 tiếp, với lựa chọn đã bấm ở cuối chương cuối (dựng lại bằng seed). Kết quả ghi vào thư mục MỚI
 (`--label`/`--out`), sao chép phần cũ rồi nối tiếp; thư mục cũ giữ nguyên. `--budget` là trần TỔNG, số
-đã tiêu tính vào. Từ chối nếu commit, config, đề, model hay đề lời gọi khác lần đầu, trừ
-`--resume-allow-drift` (ghi vào meta `resume_drift`).
+đã tiêu tính vào; không có `--chapters` thì giữ `--chapters` của lượt cũ. Từ chối nếu commit, config,
+đề, model hay đề lời gọi khác lần đầu, trừ `--resume-allow-drift` (ghi vào meta `resume_drift`, cộng
+dồn qua mọi lượt); seed hay `--dry-run` khác, hoặc kho còn chương `pending`, thì luôn từ chối (D-130).
 
 Trần: `--budget` (USD) cho cả lần chạy. Trước mỗi lời gọi giữ chỗ chi phí tối đa của lời gọi đó
 (giá trong đề × token vào ước tính + `max_tokens_per_call` × giá ra), như bài D, nên không vượt
@@ -53,7 +54,7 @@ import traceback
 import uuid
 from collections import Counter, defaultdict
 from collections.abc import AsyncIterator, Callable, Mapping, Sequence
-from dataclasses import asdict, dataclass, field
+from dataclasses import asdict, dataclass, field, replace
 from datetime import date, datetime
 from functools import partial
 from pathlib import Path
@@ -93,6 +94,7 @@ from writory.llm.base import (
     Usage,
     require_model,
     role_extra,
+    trace_call,
 )
 from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.fake import FakeLLM
@@ -429,21 +431,22 @@ class BudgetedClient(LLMClient):
         }
         started = self._clock()
         self.last_body = None
-        try:
-            result = await self._inner.chat(model, messages, response_schema=response_schema,
-                                            extra=body_extra)
-        except WritoryError as e:
-            billed = estimate if _maybe_billed(e) else 0.0
-            self._budget.settle(held, billed)
-            self._record(row | {"status": e.code.value, "cost_usd": None,
-                                "cost_estimated_usd": billed or None,
-                                "latency_s": round(self._clock() - started, 3)})
-            raise
-        except BaseException:
-            self._budget.settle(held, estimate)  # có thể đã bị tính tiền: tính theo mức tối đa
-            self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
-                                "cost_estimated_usd": estimate})
-            raise
+        with trace_call() as trace:  # client thật báo đã gửi chưa, id generation (D-64)
+            try:
+                result = await self._inner.chat(model, messages, response_schema=response_schema,
+                                                extra=body_extra)
+            except WritoryError as e:
+                billed = estimate if _maybe_billed(e, trace) else 0.0  # như llm.cost (D-130)
+                self._budget.settle(held, billed)
+                self._record(row | {"status": e.code.value, "cost_usd": None,
+                                    "cost_estimated_usd": billed or None,
+                                    "latency_s": round(self._clock() - started, 3)})
+                raise
+            except BaseException:
+                self._budget.settle(held, estimate)  # có thể đã bị tính tiền: tính theo mức tối đa
+                self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
+                                    "cost_estimated_usd": estimate})
+                raise
         self.last_body = {k: row[k] for k in ("seq", "chapter", "attempt", "role", "scene")} | {
             "text": result.text}
         cost = result.usage.cost_usd
@@ -628,12 +631,19 @@ def _choice_truth(c: Choice) -> dict[str, Any]:
             "lie": asdict(c.lie) if c.lie else None, "feeling": c.feeling}
 
 
-# Những gì phải giống lần đầu thì mới chạy tiếp được (D-124): khoá trong meta.json, dạng "a.b".
+# Những gì phải giống lần đầu thì mới chạy tiếp được (D-124): khoá trong meta.json, dạng "a.b";
+# `--resume-allow-drift` cho qua. Seed và `dry_run` không nằm ở đây: khác là luôn từ chối (D-130).
 RESUME_KEYS = (
     "git.commit", "scenario.sha256", "config.sha256", "models", "max_tokens_per_call",
     "prompt_versions", "style_guide_sha256", "prompt_variant", "prompt_versions_overridden",
-    "overrides", "context_flags", "page_quotes_top_k", "cost_limits", "dry_run",
+    "overrides", "context_flags", "page_quotes_top_k", "cost_limits",
 )
+
+
+def output_in_use(out: Path) -> bool:
+    """Thư mục kết quả đã có file (kết quả cũ, hay lượt chạy tiếp sao chép dở chưa kịp ghi meta.json):
+    ghi tiếp vào đó thì nối thêm một bản calls.jsonl, events.jsonl và đếm đôi chi phí (D-130)."""
+    return out.exists() and (not out.is_dir() or any(out.iterdir()))
 
 
 def _dig(data: Mapping[str, Any], dotted: str) -> Any:
@@ -743,8 +753,9 @@ class StoryRun:
         budget = self.options.budget_usd
         if budget is None and not self.options.dry_run:
             raise ConfigError("lượt chạy thật cần --budget (USD)")
-        if (self.options.out / "meta.json").exists():
-            raise ConfigError(f"{self.options.out} đã có kết quả; dùng nhãn khác")
+        if output_in_use(self.options.out):
+            raise ConfigError(f"{self.options.out} đã có file (kết quả cũ, hay lượt trước ghi dở); "
+                              "dùng nhãn khác")
         if self.options.resume is not None:
             self._load_resume(self.options.resume)  # từ chối ở đây thì chưa ghi gì
         self.budgeted = BudgetedClient(
@@ -1182,19 +1193,37 @@ class StoryRun:
                               "chưa kịp ghi kết quả (bị ngắt cứng?), không chạy tiếp được") from None
         except (OSError, ValueError) as e:
             raise ConfigError(f"--resume: không đọc được {source}: {e}") from None
+        try:
+            self._restore(source, old, record, report, truth, calls, events)
+        except (KeyError, IndexError, TypeError, AttributeError, ValueError) as e:
+            # File JSON đọc được nhưng thiếu hay sai trường (sửa tay, bản cũ hơn, ghi dở).
+            raise ConfigError(f"--resume: kết quả ở {source} thiếu hoặc sai trường "
+                              f"({type(e).__name__}: {str(e)[:200]}), không chạy tiếp được") from None
+        self._copy_resume_files(source, calls, events)
+
+    def _restore(self, source: Path, old: dict[str, Any], record: dict[str, Any],
+                 report: dict[str, Any], truth: dict[str, Any], calls: list[dict[str, Any]],
+                 events: list[dict[str, Any]]) -> None:
+        """Phần kiểm và nạp của `_load_resume`, trên các file đã đọc của lượt cũ."""
+        o = self.options
         if old.get("bench") != "run" or truth.get("plan") is None:
             raise ConfigError(f"--resume: {source} không phải kết quả chạy cả truyện đã khởi tạo xong")
         if report.get("story_finished"):
             raise ConfigError(f"--resume: truyện của {source} đã kết, không còn chương để viết tiếp")
         if old["seed"] != self.seed:
             raise ConfigError(f"--resume: seed {self.seed} khác seed {old['seed']} của {source}")
+        if old.get("dry_run") != o.dry_run:  # D-130: không phải drift, không cho qua
+            was, now = ("có" if old.get("dry_run") else "không"), ("có" if o.dry_run else "không")
+            raise ConfigError(f"--resume: lượt cũ --dry-run: {was}, lượt này: {now}. Phải giống "
+                              "nhau, kể cả với --resume-allow-drift: model giả sẽ viết vào truyện "
+                              "của lượt thật, và dry-run xoá truyện khi xong")
+        leg = len(old.get("resume_points") or []) + 2  # lượt 1 là lượt chạy đầu
         drift = resume_drift(old, self._meta("running"))
         if drift and not o.resume_allow_drift:
             listed = "; ".join(f"{d['key']} (trước {str(d['was'])[:60]}, nay {str(d['now'])[:60]})"
                                for d in drift)
             raise ConfigError(f"--resume: khác lần chạy đầu ở: {listed}. Muốn chạy tiếp dù vậy: "
                               "--resume-allow-drift")
-        self.resume_drift = drift
 
         packages = {int(n): ChangePackage.model_validate(p) for n, p in truth["packages"].items()}
         last = max(packages)
@@ -1209,9 +1238,22 @@ class StoryRun:
         if in_store is None:
             raise ConfigError(f"--resume: kho không còn truyện {self.store.story_id} "
                               "(Neo4j + Postgres), không chạy tiếp được")
+        if self.store.has_pending():
+            raise ConfigError(
+                f"--resume: truyện {self.store.story_id} còn chương `pending` trong Postgres "
+                "(tiến trình chết lúc đang ghi chương?). Lệnh này không tự sửa kho: áp lại chương "
+                "pending bằng lệnh reconcile ở docs/runbook.md rồi chạy lại --resume. Chương đó "
+                "thành `failed` thì chạy tiếp được; thành `committed` thì kho đi trước thư mục kết "
+                "quả và lệnh sẽ từ chối")
         if in_store != last:
             raise ConfigError(f"--resume: kho đang ở chương {in_store} còn thư mục kết quả ở chương "
                               f"{last}; hai bên phải khớp")
+        inherited = o.chapters is None  # D-130: không có --chapters thì giữ giới hạn của lượt cũ
+        chapters = old.get("chapters_arg") if inherited else o.chapters
+        if chapters is not None and chapters <= last:
+            raise ConfigError(f"--resume: đã ghi tới chương {last}, --chapters "
+                              f"{'của lượt cũ ' if inherited else ''}là {chapters}: không còn chương "
+                              f"nào để viết. Muốn viết tiếp thì đặt --chapters lớn hơn {last}")
         budget = o.budget_usd
         prior = round(spent_usd_of(calls), 6)
         if budget is not None and budget <= prior:
@@ -1255,11 +1297,18 @@ class StoryRun:
 
         self.resumed_from = repo_path(source)
         self.resume_points = [
-            *old.get("resume_points", []),
-            {"chapter": last + 1, "at": datetime.now().astimezone().isoformat(timespec="seconds"),
-             "spent_usd_before": prior, "from_commit": (old.get("git") or {}).get("commit"),
-             "previous_stop": report.get("stop")},
+            *(old.get("resume_points") or []),
+            {"leg": leg, "chapter": last + 1,
+             "at": datetime.now().astimezone().isoformat(timespec="seconds"),
+             "source": self.resumed_from, "spent_usd_before": prior,
+             "from_commit": (old.get("git") or {}).get("commit"),
+             "from_config_sha256": ((old.get("config") or {}).get("sha256") or {}).get("combined"),
+             "previous_stop": report.get("stop"), "chapters_inherited": inherited},
         ]
+        # Cộng dồn qua mọi lượt (D-130): phần đã khác ở lượt trước không mất khi lượt sau không khác.
+        self.resume_drift = [*(old.get("resume_drift") or []),
+                             *({**d, "leg": leg, "chapter": last + 1} for d in drift)]
+        self.options = replace(o, chapters=chapters)
         self.plan = StoryPlan.model_validate(truth["plan"])
         self.packages = packages
         self.setup_record = record
@@ -1283,7 +1332,6 @@ class StoryRun:
             "attempts_before": sum(1 for a in self.attempts if a["chapter"] == last + 1),
             "setup_from": old.get("setup_from"),
         }
-        self._copy_resume_files(source, calls, events)
 
     def _copy_resume_files(self, source: Path, calls: Sequence[Mapping[str, Any]],
                            events: Sequence[Mapping[str, Any]]) -> None:
@@ -1640,6 +1688,28 @@ def _variety_line(variety: Mapping[str, Any] | None) -> list[str]:
              f"màu tóc ({_fmt_counts(variety['hair'])}), trùng {variety['hair_repeats']}.")]
 
 
+def _resume_lines(meta: Mapping[str, Any]) -> list[str]:
+    """Lượt ghép từ nhiều lượt (D-124): từng điểm chạy tiếp và phần đã khác, để dòng commit, config
+    của lượt cuối không bị đọc thành của cả truyện (D-130). Không chạy tiếp thì không dòng nào."""
+    points = meta.get("resume_points") or []
+    if not points:
+        return []
+    head = (f"- Chạy tiếp từ `{meta.get('resumed_from')}` ({len(points)} lần): commit và config ở "
+            "dòng trên là của lượt cuối; các chương trước mỗi điểm chạy tiếp chạy ở:")
+    lines = [head]
+    for p in points:
+        stop = p.get("previous_stop")
+        why = f"{stop['kind']} ở {stop['where']} ({stop['code']})" if stop else "hết --chapters"
+        lines.append(f"  - Từ chương {p['chapter']}: lượt trước ở commit "
+                     f"`{(p.get('from_commit') or '?')[:12]}`, config "
+                     f"`{(p.get('from_config_sha256') or '?')[:12]}`; lượt trước dừng: {why}.")
+    drift = meta.get("resume_drift") or []
+    if drift:
+        keys = "; ".join(f"{d['key']} (chương {d.get('chapter', '?')})" for d in drift)
+        lines.append(f"  - Khác lượt trước, cho qua bằng `--resume-allow-drift`: {keys}.")
+    return lines
+
+
 def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
     models = meta["models"]
 
@@ -1661,6 +1731,7 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         (f"- Commit `{git['commit']}`{dirty}; đề v{scenario['content']['version']} "
          f"(`{scenario['sha256'][:12]}`); config `{meta['config']['sha256']['combined'][:12]}`; "
          f"seed {meta['seed']}; dry-run: {'có' if meta['dry_run'] else 'không'}."),
+        *_resume_lines(meta),
         "- Model: " + "; ".join(model(r) for r in RUN_ROLES) + ".",
         (f"- Chương đã ghi: {report['chapters_committed']}/{report['chapters_target']} "
          f"(kế hoạch {report['chapters_planned']}){clamped}."),
@@ -2061,8 +2132,8 @@ async def _cli(args: argparse.Namespace) -> int:
     if args.budget is None and not args.dry_run:
         raise ConfigError("lượt chạy thật cần --budget (USD)")
     out, label = resolve_out(args)
-    if (out / "meta.json").exists():
-        raise ConfigError(f"{out} đã có kết quả; dùng nhãn khác")
+    if output_in_use(out):
+        raise ConfigError(f"{out} đã có file (kết quả cũ, hay lượt trước ghi dở); dùng nhãn khác")
     resume_story_id: str | None = None
     if args.resume:
         if args.setup_from or args.setup_only:
@@ -2143,7 +2214,8 @@ def _parser() -> argparse.ArgumentParser:
     p.add_argument("--label", help="tạo evals/results/<ngày>-run-<nhãn>/")
     p.add_argument("--out", help="thư mục kết quả (mới)")
     p.add_argument("--budget", type=float, help="trần USD cho cả lần chạy; bắt buộc khi chạy thật")
-    p.add_argument("--chapters", type=int, help="số chương tối đa (mặc định: số chương kế hoạch)")
+    p.add_argument("--chapters", type=int, help="số chương tối đa (mặc định: số chương kế hoạch; "
+                   "với --resume: như lượt cũ)")
     p.add_argument("--seed", type=int, help="ghi đè seed của đề")
     p.add_argument("--setup-from", help="thư mục kết quả của lần chạy trước: dùng lại khởi tạo "
                    "của nó (kế hoạch, chương 0, lựa chọn khởi tạo), không gọi model khởi tạo")
@@ -2151,7 +2223,8 @@ def _parser() -> argparse.ArgumentParser:
                    "chương kế tiếp chưa ghi (truyện còn trong Neo4j + Postgres), ghi vào thư mục "
                    "mới; --budget là trần tổng (D-124)")
     p.add_argument("--resume-allow-drift", action="store_true",
-                   help="cho --resume chạy dù commit, config, đề hay model khác lần đầu; ghi vào meta")
+                   help="cho --resume chạy dù commit, config, đề hay model khác lần đầu; ghi vào meta "
+                   "(seed hay --dry-run khác thì vẫn từ chối, D-130)")
     p.add_argument("--setup-only", action="store_true",
                    help="chỉ khởi tạo (chương 0) rồi dừng; thư mục kết quả dùng làm --setup-from")
     p.add_argument("--writer-model", help="ghi đè model viết của mức mà đề dùng (D-101)")

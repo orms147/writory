@@ -55,8 +55,8 @@ from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from writory.config import REPO_ROOT, ConfigError, QualityConfig, load_config
 from writory.errors import ErrorCode, WritoryError
-from writory.llm.base import LLMClient, Message
-from writory.llm.cost import EST_CHARS_PER_TOKEN  # một chỗ cho ước tính token (D-64)
+from writory.llm.base import CallTrace, LLMClient, Message
+from writory.llm.cost import EST_CHARS_PER_TOKEN, maybe_billed  # một chỗ (D-64)
 from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import OpenRouterClient
 from writory.pipeline.setup import NAMES_TEXT, PLACES_TEXT, Naming  # quy ước tên D-32, một chỗ
@@ -631,9 +631,10 @@ def judge_cost(model: str, usage: dict[str, int]) -> float:
     ) / 1e6
 
 
-def _maybe_billed(e: WritoryError) -> bool:
-    """Lỗi không kèm phản hồi HTTP (mạng đứt): yêu cầu có thể đã chạy và bị tính tiền."""
-    return e.code is ErrorCode.LLM_UNAVAILABLE and not e.detail.startswith("HTTP ")
+def _maybe_billed(e: WritoryError, trace: CallTrace | None = None) -> bool:
+    """Lời gọi lỗi có thể đã bị tính tiền không: đúng luật của `llm.cost.maybe_billed` (D-64, D-113;
+    mạng đứt sau khi gửi, quá hạn tổng). Không có `trace` thì coi như có thể đã gửi (D-130)."""
+    return maybe_billed(e, trace if trace is not None else CallTrace())
 
 
 # --- lưu kết quả --------------------------------------------------------------------------------

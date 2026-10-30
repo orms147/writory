@@ -11,12 +11,18 @@ import pytest
 
 from tests.pipeline_fixtures import FIRST_PERSON, OverlayStore, make_config
 from writory.config import ConfigError, load_config
+from writory.errors import ErrorCode, WritoryError
+from writory.llm.base import Message, current_trace
+from writory.llm.fake import FakeLLM
 from writory.llm.openrouter import OpenRouterClient
 from writory.pipeline import bench_run
 from writory.pipeline.bench_run import (
     DRY_RUN_SECRET_TEXT,
+    BudgetedClient,
     DryRunLLM,
+    Price,
     RunOptions,
+    StepTracker,
     StoryRun,
     load_scenario,
     models_in_use,
@@ -24,6 +30,7 @@ from writory.pipeline.bench_run import (
 )
 from writory.pipeline.scene import SceneOutline
 from writory.quality import check_scene
+from writory.quality.bench_d import Budget, _maybe_billed
 
 SCENARIO_PATH = bench_run.DEFAULT_SCENARIO
 GENERAL_FILES = ("meta.json", "setup.json", "events.jsonl", "calls.jsonl", "report.json",
@@ -58,8 +65,8 @@ def make_run(tmp_path, *, llm=None, config=None, scenario=None, store=None, out=
     store = store or OverlayStore()
     out = out or tmp_path / "out"
     run = StoryRun(scenario, "sha-test", config, llm=llm, store=store,
-                   options=RunOptions(out=out, dry_run=True, **options), style_guide=STYLE,
-                   log=lambda _: None)
+                   options=RunOptions(**{"out": out, "dry_run": True, **options}),
+                   style_guide=STYLE, log=lambda _: None)
     return run, llm, store, out
 
 
@@ -222,9 +229,22 @@ async def test_existing_results_are_never_overwritten(tmp_path):
     run, _, _, out = make_run(tmp_path, chapters=1)
     assert await run.run() == bench_run.EXIT_OK
     again, llm, _, _ = make_run(tmp_path, out=out, chapters=1)
-    with pytest.raises(ConfigError, match="đã có kết quả"):
+    with pytest.raises(ConfigError, match="đã có file"):
         await again.run()
     assert llm.calls == []
+
+
+async def test_a_directory_with_files_but_no_meta_is_not_written_into(tmp_path):
+    """D-130: thư mục ghi dở (không có meta.json) cũng bị từ chối; thư mục rỗng thì dùng được."""
+    (tmp_path / "half").mkdir()
+    (tmp_path / "half" / "calls.jsonl").write_text('{"seq": 1}\n', encoding="utf-8")
+    run, llm, _, _ = make_run(tmp_path, out=tmp_path / "half", chapters=1)
+    with pytest.raises(ConfigError, match="đã có file"):
+        await run.run()
+    assert llm.calls == []
+    (tmp_path / "empty").mkdir()
+    run, _, _, _ = make_run(tmp_path, out=tmp_path / "empty", chapters=1)
+    assert await run.run() == bench_run.EXIT_OK
 
 
 # --- tách chữ bí mật ------------------------------------------------------------------------
@@ -449,6 +469,56 @@ async def test_budget_stops_before_a_call_that_could_exceed_and_keeps_what_was_d
     assert dump["plan"] and set(dump["packages"]) == {"0"}
     meta = json.loads((out / "meta.json").read_text(encoding="utf-8"))
     assert meta["status"] == "budget" and meta["budget_usd"] == 0.0105
+
+
+def _gate(inner, budget, record):
+    return BudgetedClient(inner, budget=budget,
+                          prices={"m": Price.model_validate({"in": 0.0, "out": 2.0})},
+                          max_tokens=1000, tracker=StepTracker(load_config().limits.cost_usd),
+                          record=record)
+
+
+@pytest.mark.parametrize(("code", "detail"), [
+    (ErrorCode.LLM_TIMEOUT, "quá hạn tổng"),  # D-113: như lời gọi bị huỷ
+    (ErrorCode.LLM_UNAVAILABLE, "ReadError"),  # đứt sau khi gửi
+])
+async def test_a_call_that_may_have_been_billed_counts_its_maximum_against_the_budget(code, detail):
+    """Như `llm.cost.maybe_billed` (D-64, D-113): lỗi sau khi gửi thì có thể đã bị tính tiền, nên trần
+    --budget và số đã tiêu cộng chi phí tối đa của lời gọi (0,002 USD ở đây), không phải 0."""
+
+    class Fails(FakeLLM):
+        async def chat(self, model, messages, *, response_schema=None, extra=None):
+            raise WritoryError(code, detail=detail)
+
+    calls: list[dict] = []
+    budget = Budget("run", 1.0)
+    with pytest.raises(WritoryError):
+        await _gate(Fails([]), budget, calls.append).chat("m", [Message(role="user", content="x")])
+    assert budget.spent_usd == pytest.approx(0.002)
+    assert calls[0]["status"] == code.value and calls[0]["cost_estimated_usd"] == 0.002
+
+
+async def test_a_call_that_never_left_the_machine_is_not_counted():
+    """Client thật báo chưa gửi (lỗi kết nối, `CallTrace.sent=False`): không tốn tiền (D-64)."""
+
+    class NotSent(FakeLLM):
+        async def chat(self, model, messages, *, response_schema=None, extra=None):
+            current_trace().sent = False
+            raise WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="ConnectError")
+
+    calls: list[dict] = []
+    budget = Budget("run", 1.0)
+    with pytest.raises(WritoryError):
+        await _gate(NotSent([]), budget, calls.append).chat("m", [Message(role="user", content="x")])
+    assert budget.spent_usd == 0.0 and calls[0]["cost_estimated_usd"] is None
+
+
+def test_the_other_benches_count_a_timed_out_call_as_possibly_billed():
+    """bench_d, bench_e, bài F dùng `bench_d._maybe_billed`: phải theo `llm.cost.maybe_billed`."""
+    assert _maybe_billed(WritoryError(ErrorCode.LLM_TIMEOUT, detail="quá hạn tổng"))
+    assert _maybe_billed(WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="ReadError"))
+    assert not _maybe_billed(WritoryError(ErrorCode.LLM_UNAVAILABLE, detail="HTTP 503: x"))
+    assert not _maybe_billed(WritoryError(ErrorCode.WRITORY_RATE_LIMITED))
 
 
 async def test_budget_is_required_for_a_real_run(tmp_path):
