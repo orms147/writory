@@ -14,8 +14,9 @@ uv sync
 uv run pytest -m "not graph"  # test nhanh: không mạng, không gọi model thật
 uv run pytest -m graph        # test cần Neo4j + Postgres ở trên; Postgres dùng database riêng <tên>_test (tự tạo, hoặc POSTGRES_TEST_DSN), không đụng dữ liệu app (D-75); Neo4j: mỗi test một story_id riêng
 ```
+Test `-m graph` đọc `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD`, `POSTGRES_DSN`, `POSTGRES_TEST_DSN` từ biến môi trường, **không đọc `.env`** (`backend/tests/graph/conftest.py`); biến nào không đặt thì lấy giá trị mặc định giống `.env.example`. Đã đổi mật khẩu trong `.env` thì đặt các biến đó trong shell trước khi chạy test.
 
-Chạy cả một truyện từ dòng lệnh (`writory.pipeline.bench_run`; lệnh, đề và kết quả: `docs/eval.md`, mục "Chạy cả truyện"). Lệnh đọc `NEO4J_*`, `POSTGRES_DSN` và, khi chạy thật, `OPENROUTER_API_KEY` từ biến môi trường hoặc `.env`; tự chạy migration và tạo ràng buộc Neo4j. Mỗi lần chạy dùng một story_id mới `run-<ngày>-<nhãn>-<mã>`, ghi trong `meta.json`. Truyện của lần chạy thật được giữ lại trong Neo4j + Postgres; xem bằng sổ tay (`ENABLE_DEV_ROUTES`, bên dưới) hoặc xoá bằng `delete_story_record` và `graph.delete_story`.
+Chạy cả một truyện từ dòng lệnh (`writory.pipeline.bench_run`; lệnh, đề và kết quả: `docs/eval.md`, mục "Chạy cả truyện"). Lệnh đọc `NEO4J_*`, `POSTGRES_DSN` và, khi chạy thật, `OPENROUTER_API_KEY` từ biến môi trường hoặc `.env`; tự chạy migration và tạo ràng buộc Neo4j. Mỗi lần chạy dùng một story_id mới `run-<ngày>-<nhãn>-<mã>`, ghi trong `meta.json`. Truyện của lần chạy thật được giữ lại trong Neo4j + Postgres, nhưng API và giao diện không mở được nó: truyện không có chủ (`owner_id` rỗng, còn ở `AUTH_MODE=dev` API chỉ cho người chơi `dev` thấy truyện của mình) và kế hoạch ẩn không được lưu vào Postgres. Đọc lại bằng các file trong thư mục kết quả; lệnh xuất kịch bản video đọc được truyện này (mục Xuất kịch bản video); xoá bằng `delete_story_record` và `graph.delete_story`.
 
 Chạy API ở máy (đọc biến môi trường từ `.env` ở gốc repo):
 ```bash
@@ -74,8 +75,8 @@ Frontend (Vite, `http://localhost:5173`) gọi API qua proxy của Vite, nên tr
    cd backend
    ENABLE_DEV_ROUTES=true uv run uvicorn writory.api:create_app --factory --reload --host 127.0.0.1 --port 8000
    ```
-4. Proxy của Vite chuyển các đường của API tới `http://127.0.0.1:8000`: `/stories`, `/setup`, `/player`, `/config`, `/health` (hoặc một tiền tố chung, ví dụ `/api`, kèm rewrite bỏ tiền tố). Đường của trang (`/truyen/...`, `/moi`, `/khoa`) không trùng đường của API.
-5. Viết chương là SSE trên `POST` (D-46): đọc stream bằng `fetch`, không dùng `EventSource`. Chưa kiểm SSE đi qua proxy của Vite có bị đệm hay không.
+4. Proxy của Vite chỉ chuyển `/api/*` tới backend (mặc định `http://localhost:8000`) và bỏ tiền tố `/api` (`frontend/vite.config.ts`; đổi đích, đổi tiền tố: mục Frontend). Đường của trang (`/truyen/...`, `/moi`, `/khoa`) không bắt đầu bằng `/api`.
+5. Viết chương là SSE trên `POST` (D-46): đọc stream bằng `fetch`, không dùng `EventSource`. SSE qua proxy của Vite đã chạy được trong lần chạy thử đầu cuối với model thật (21/10/2026, CLAUDE.md §9); chưa đo riêng proxy có giữ sự kiện lại lâu hơn không.
 
 ## Frontend
 React + TypeScript + Tailwind, dựng bằng Vite, trong `frontend/` (D-68). Cần Node 20.19+ và npm (lockfile `package-lock.json`).
@@ -120,7 +121,7 @@ GitHub Actions, file `.github/workflows/ci.yml`. Chạy trên mỗi PR và mỗi
 | `frontend` | Node 20, `npm ci`, `npm run lint`, `npm run typecheck`, `npm test`, `npm run build` trong `frontend/` |
 
 - Marker `graph` đánh dấu mọi test cần dịch vụ Docker: Neo4j, và Postgres cho luồng ghi chương. Test nhanh (`-m "not graph"`) không cần Docker.
-- Job `graph` đặt `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` và `POSTGRES_DSN` qua biến môi trường của job; mật khẩu chỉ dùng cho container CI. Test đọc kết nối từ các biến này, mặc định theo `.env.example` khi chạy local.
+- Job `graph` đặt `NEO4J_URI`, `NEO4J_USER`, `NEO4J_PASSWORD` và `POSTGRES_DSN` qua biến môi trường của job; mật khẩu chỉ dùng cho container CI. Test đọc kết nối từ các biến này (không đọc `.env`); không đặt thì lấy giá trị mặc định giống `.env.example`.
 - Không có test nào mang marker `graph` chạy (pytest trả mã 5) thì job `graph` đỏ.
 - `uv sync --locked` báo lỗi nếu `uv.lock` lệch `pyproject.toml`: chạy `uv lock` ở máy rồi commit lại.
 - Chạy giống CI ở máy: các lệnh `ruff`/`pytest` ở mục trên, và các lệnh `npm` ở mục Frontend.
@@ -132,7 +133,7 @@ SQL thuần trong `backend/src/writory/db/migrations/`, chạy theo thứ tự t
 cd backend
 uv run python -c "from writory.config import Settings; from writory.db import connect, migrate; print(migrate(connect(Settings())))"
 ```
-Test `-m graph` tự chạy migration trên database trong `POSTGRES_DSN`.
+Test `-m graph` tự chạy migration trên database test riêng (tên database của `POSTGRES_DSN` thêm `_test`, hoặc `POSTGRES_TEST_DSN`), không bao giờ trên database của app (`backend/tests/graph/conftest.py`, D-75).
 
 Sau khi kéo code có migration mới thì chạy lệnh trên trước khi mở app. Ví dụ `0004_chapter_summaries` thêm bảng `chapter_summaries` (tóm tắt chương, D-49); chưa chạy thì viết chương báo `INTERNAL_ERROR` vì không đọc được bảng này. `0005_llm_call_windows` thêm bảng đếm lời gọi model mỗi phút (D-56); chưa chạy thì mọi lời gọi model của API báo `INTERNAL_ERROR`. `0008_story_darkness_level` thêm cột `stories.darkness_level` (mức u tối theo truyện, D-67); chưa chạy thì mọi route đọc truyện báo `INTERNAL_ERROR`. `0009_invite_login` thêm bảng mã mời, phiên đăng nhập và bộ đếm lần nhập mã (D-89); chưa chạy thì ở `AUTH_MODE=invite` đăng nhập và mọi route cần đăng nhập báo `INTERNAL_ERROR`, ở `AUTH_MODE=dev` không ảnh hưởng. `bench_run` tự chạy migration.
 
@@ -157,16 +158,17 @@ uv run python -m writory.export.video --story <id> --dialogue-lang zh --chapters
 `--chapters` nhận `N` hoặc `A-B` (mặc định cả truyện). `--dialogue-lang` là thẻ ngôn ngữ của lời thoại (zh, vi, en…). `--budget` không được vượt `limits.video_export.max_budget_usd`. Lời thoại của mỗi shot bị kiểm nhịp theo ngôn ngữ (`limits.video_export.dialogue_max_per_second`): quá dày thì model làm lại, vẫn dày thì code tách shot theo lượt thoại và đánh dấu `split_by_code` (D-127); lượt thoại quá dài cho mọi shot được đánh dấu `pace_over`. Kiểm duyệt G9 trên prompt cuối bật mặc định; `--no-moderate` tắt và in cảnh báo. Mặc định ghi `exports/<story>-<ngày>/` (git bỏ qua): `script.md` (đọc), `script.json` (máy đọc), `prompts.txt` (mỗi shot một prompt, dán thẳng vào app video), `calls.jsonl` (số liệu từng lời gọi, không có chữ truyện). Thư mục `--out` đã có kết quả thì lệnh từ chối ngay (đổi `--out` hay xoá thư mục), không đè bản trả tiền cũ. Cảnh có mức kiểm duyệt BLOCKED hay HARD_BLOCKED (`withheld_moderation`), hoặc không kiểm duyệt được (`withheld_unmoderated`), bị giữ lại hoàn toàn trong `script.json`; chỉ mức OVER_DARKNESS thì cảnh vẫn có và được đánh dấu để admin quyết. Mã thoát: 0 xong; 1 sai tham số, cấu hình hay dữ liệu (`EXPORT_STORY_NOT_FOUND`, `EXPORT_DB_UNAVAILABLE`, `EXPORT_ENV_MISSING`); 2 dừng vì chạm `--budget` (phần đã xong vẫn được ghi); 3 có cảnh lỗi hay có cảnh bị giữ vì không kiểm duyệt được. Truyện cũ không có ngoại hình: mô tả được sinh bù lúc xuất và đánh dấu `inferred`.
 
 ## Biến môi trường
-Danh sách đầy đủ: `.env.example`. Không commit `.env`.
+`.env.example` có các biến thường dùng của chồng dev, chưa phải mọi biến: mục này ghi thêm `APP_ENV`, `TRUSTED_PROXIES`, `POSTGRES_TEST_DSN`; biến của chồng prod ở `.env.prod.example` (mục Deploy); biến của frontend (`WRITORY_API_URL`, `VITE_API_BASE`, `VITE_MOCK`) ở mục Frontend. Không commit `.env`.
 
-- `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`: key của chủ dự án, chỉ cho bộ đo và lệnh chạy cả truyện (`bench_run`, chỉ cần `OPENROUTER_API_KEY`). Runner chỉ đọc đúng các tên này; thiếu thì báo lỗi và không gọi model.
+- `OPENROUTER_API_KEY`, `ANTHROPIC_API_KEY`, `META_API_KEY`: key của chủ dự án, chỉ cho bộ đo, lệnh chạy cả truyện (`bench_run`, chỉ cần `OPENROUTER_API_KEY`) và lệnh xuất kịch bản video của admin (chỉ cần `OPENROUTER_API_KEY`, mục Xuất kịch bản video). `META_API_KEY` chỉ cho giám khảo thứ hai của bài F (D-108). App không dùng các key này: lời gọi của người chơi trả bằng key của họ (D-2). Lệnh chỉ đọc đúng các tên này; thiếu thì báo lỗi và không gọi model.
 - `ANTHROPIC_WORKSPACE_ID` (tuỳ chọn): cần khi key Anthropic không gắn với workspace. Lệnh: `docs/eval.md`.
+- `POSTGRES_TEST_DSN` (tuỳ chọn, không có trong `.env.example`): database Postgres cho test `-m graph`; không đặt thì là tên database của `POSTGRES_DSN` thêm `_test`, tự tạo (D-75).
 
 - `PLAYER_KEY_ENCRYPTION_KEY`: khoá Fernet mã hoá key OpenRouter của người chơi (G7, D-11). Tạo bằng lệnh sau, chạy trong `backend/`:
   ```bash
   uv run python -c "from cryptography.fernet import Fernet; print(Fernet.generate_key().decode())"
   ```
-  Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại. Khi `ENABLE_DEV_ROUTES=true`, khoá sai định dạng thì app không khởi động (D-11, D-45).
+  Mất hoặc đổi khoá thì key đã lưu không giải mã được nữa, và người chơi phải nhập lại. Khi router người chơi được gắn (`AUTH_MODE=invite`, hoặc `ENABLE_DEV_ROUTES=true` ở `AUTH_MODE=dev`), khoá sai định dạng thì app không khởi động (`api/app.py` `create_app`; D-11, D-45).
 - `ENABLE_DEV_ROUTES` (mặc định `false`): ở `AUTH_MODE=dev`, gắn router của người chơi (truyện, khởi tạo, key và chi phí người chơi, cấu hình công khai, đăng nhập; D-41, D-66), mọi người là người chơi dev. Chỉ bật trên máy dev.
 - `AUTH_MODE` (mặc định `dev`): `dev` hoặc `invite` (D-89). `invite`: đăng nhập bằng mã mời, router luôn được gắn. Thời hạn phiên và số lần nhập mã mỗi máy: `config/limits.yaml`, mục `auth`.
 - `APP_ENV` (mặc định `dev`): `prod` cho chồng prod (D-103): bắt buộc `AUTH_MODE=invite` và mật khẩu Neo4j, Postgres mạnh, tự chạy migration lúc khởi động, không có trang OpenAPI. Biến của chồng prod: `.env.prod.example`, mục Deploy.
