@@ -55,8 +55,11 @@ def test_unknown_style_is_refused():
 
 
 @pytest.mark.parametrize("style", GRAPH_STYLES[1:])
-def test_variants_say_the_same_facts_as_base(style):
-    """Cùng khoá `facts` ở các câu mà biến thể không bỏ dòng nào (khác `no_item_place`)."""
+def test_variants_say_the_same_facts_as_base(style, monkeypatch):
+    """Cùng khoá `facts` ở các câu mà biến thể không bỏ dòng nào (khác `no_item_place`). Trần ký tự của
+    cả ngữ cảnh gỡ ra: chữ mỗi biến thể dài ngắn khác nhau nên sát trần thì một khối vừa ở biến thể này
+    mà không vừa ở biến thể kia (đã thấy sau D-144, khi dòng cuối của khối không còn bị cắt)."""
+    monkeypatch.setattr("writory.pipeline.bench_a_systems.GRAPH_CHARS_CAP", 10**6)
     for qid in Q:
         base, other = graph(qid), graph(qid, style)
         if style == "no_item_place":
