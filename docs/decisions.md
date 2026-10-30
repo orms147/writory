@@ -1249,3 +1249,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** nhãn "(tạm, D-47)" trong `limits.yaml` giờ nghĩa là số tạm chủ dự án đã duyệt. Số mới thêm sau ngày này phải ghi người quyết riêng, chưa duyệt thì ghi "(tạm, Claude, chờ chủ dự án duyệt)".
 - **Người quyết:** Chủ dự án (30/10/2026)
 
+## D-132 · Sửa theo review đối chiếu graph/pipeline/export: hạn của mạch, tên hiện, cạnh chỉ của nhân vật chính, RELATES_TO, DIED_IN, hạn lời gọi bộ xuất (bổ sung D-17, D-49, D-113, D-128)
+- **Bối cảnh:** review đối chiếu tài liệu với code (30/10/2026). Ngữ cảnh viết cờ mạch quá hạn so với chương đã commit, trong khi bí mật cùng ngữ cảnh và mục tiêu của chương (`guard.plan.deadline`) so với chương đang viết: viết chương ngay sau khoảng gỡ thì mục tiêu nói QUÁ HẠN mà ngữ cảnh không. `player_view` hiện tên của lần hé lộ ĐẦU khi một tên được hé lộ lại (A, B, A ra B). `EDGE_ENDPOINTS` cho mọi nhân vật `KNOWS` nút có tên và `FEELS`. `kind`, `score` của `RELATES_TO` chỉ kiểm ở chương 0, ngữ cảnh viết in "None (None)". `is_alive` đòi đích `DIED_IN` là Event, ngữ cảnh viết và người canh thì không. `export/video.py` truyền thẳng `deadline_seconds` (null = vô hạn), `--help` sập trên console cp1252.
+- **Quyết định:**
+  - Cờ quá hạn của mạch trong ngữ cảnh viết so với chương đang viết (`due_to < as_of + 1`), cùng phép so với `guard.plan.deadline`. `overdue_threads` (câu hỏi §7.3, hỏi ở chính chương N) giữ nguyên.
+  - Tên hiện của nút có tên là `known_as` của lần hé lộ mới nhất, đúng graph-schema.md; một định nghĩa nên Neo4j và Overlay cùng đổi.
+  - `graph/schema.py` `PROTAGONIST_ONLY` (`KNOWS` tới nút có tên, `FEELS`): bộ trích bỏ cạnh của người khác, lý do "chỉ nhân vật chính"; `edge_endpoint_violations` đếm riêng (`protagonist_only`).
+  - `graph/package.py` `RELATES_TO_SCORE`, `relation_problem`: một luật cho khởi tạo và bộ trích; bộ trích bỏ cạnh sai. Không kiểm trong `EdgeSpec`, để gói đã lưu (outbox, bài A) vẫn đọc lại được.
+  - "Còn sống" không xét nhãn đích của `DIED_IN` ở mọi đường đọc (Claude chọn hướng này thay vì đòi Event, vì người canh và bài A đọc qua `edges_at` không lọc nhãn, và chết vẫn là chết).
+  - Bộ xuất lấy hạn qua `llm.openrouter.call_deadline` trước khi đọc key; `main` đổi stdout/stderr sang UTF-8 như `bench_run`.
+- **Hệ quả:** bộ trích mất thêm cạnh model ghi sai (bộ đo đếm hai lý do mới). Cạnh sai đã nằm trong đồ thị không bị xoá; quan hệ thiếu `score` cũ vẫn in "None". Mạch hiện QUÁ HẠN sớm hơn một chương so với trước.
+- **Người quyết:** Claude (sửa theo review, giao việc 30/10/2026), nhánh fix/graph-review · 30/10/2026

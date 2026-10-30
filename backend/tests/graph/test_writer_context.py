@@ -446,3 +446,88 @@ def test_a_plan_secret_is_never_repeated_as_a_neighbor_hint(driver, sample_story
     ctx = writer_context(driver, sample_story_id, 4, ["minh"], PLAN)
     assert {s.fact_id for s in ctx.secrets} == {"f_lan_spy", "f_lan_killed_gu"}
     assert not {n.id for n in ctx.neighbors} & {"f_lan_spy", "f_lan_killed_gu"}
+
+
+# --- cờ "QUÁ HẠN" của mạch: so với chương đang viết, như mục tiêu của chương ---------------------
+
+
+@pytest.mark.parametrize("as_of", [1, 2, 3, 4, 5])
+def test_thread_overdue_flag_matches_chapter_goals(driver, sample_story_id, as_of):
+    """Ngữ cảnh viết chương as_of+1: mạch quá hạn khi chương đang viết đã qua khoảng gỡ, đúng định
+    nghĩa `guard.plan.deadline` mà mục tiêu của chương và người canh dùng (D-49), và như bí mật cùng
+    ngữ cảnh (so với chương đang viết). Trước đây cờ so với as_of, nên viết chương due_to+1 thì mục
+    tiêu nói QUÁ HẠN mà ngữ cảnh không."""
+    from writory.guard.plan import deadline
+
+    ctx = writer_context(driver, sample_story_id, as_of, ["minh"], None)
+    for t in ctx.open_threads:
+        late = deadline(ctx.writing_chapter, t.due_from_chapter, t.due_to_chapter,
+                        final=False) == "overdue"
+        assert t.overdue is late, (as_of, t.id)
+
+
+def test_thread_is_overdue_when_writing_the_chapter_after_its_window(driver, sample_story_id):
+    # t_gu_warning: khoảng gỡ 2–3. Viết chương 4 (as_of 3) là đã quá hạn.
+    ctx = writer_context(driver, sample_story_id, 3, ["minh"], None)
+    flags = {t.id: t.overdue for t in ctx.open_threads}
+    assert flags["t_gu_warning"] is True
+    assert flags["t_sealed_letter"] is False  # khoảng 3–4: chương 4 là chương cuối của khoảng
+    text = "".join(str(p) for p in render_writer_context(ctx))
+    line = next(x for x in text.splitlines() if "Lão Gù dặn Minh" in x)
+    assert "QUÁ HẠN" in line
+
+
+# --- "còn sống": một luật cho is_alive, ngữ cảnh viết và người canh ------------------------------
+
+
+def test_a_death_edge_to_a_wrong_label_still_means_dead_everywhere(driver, new_story_id):
+    """DIED_IN tới một nút không phải Event (chỉ có ở đồ thị trước D-128, bộ trích nay bỏ) vẫn là
+    chết. Trước đây `is_alive` đòi đích Event còn ngữ cảnh viết và người canh thì không, nên cùng một
+    nhân vật vừa sống vừa chết tuỳ đường đọc."""
+    from writory.graph import ChangePackage, apply_package, is_alive
+    from writory.guard.state import Neo4jState
+
+    sid = new_story_id()
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character", "props": {"name": "Thảo", "is_protagonist": True}},
+            {"id": "old", "label": "Character", "props": {"name": "Lão Gù"}},
+            {"id": "temple", "label": "Location", "props": {"name": "Miếu Bà"}}],
+        "edges": [
+            {"type": "DIED_IN", "from": "old", "to": "temple", "valid_from_chapter": 0},
+            {"type": "RELATES_TO", "from": "hero", "to": "old", "valid_from_chapter": 0,
+             "kind": "thầy trò", "score": 40}],
+    }))
+    assert is_alive(driver, sid, "old", 0) is False
+    ctx = writer_context(driver, sid, 0, ["hero", "old"], None)
+    assert next(c for c in ctx.present if c.id == "old").alive is False
+    assert Neo4jState(driver, sid).edges_at("DIED_IN", 0, source_id="old")  # đường người canh
+    assert is_alive(driver, sid, "hero", 0) is True
+
+
+def test_edge_endpoint_violations_also_counts_edges_only_the_protagonist_may_have(driver, new_story_id):
+    """KNOWS tới nút có tên và FEELS chỉ đi ra từ nhân vật chính (D-17, D-55; `PROTAGONIST_ONLY`): nhãn
+    đúng bảng nhưng nguồn là người khác thì cũng được đếm, tách riêng."""
+    from writory.graph import ChangePackage, apply_package, edge_endpoint_violations
+
+    sid = new_story_id()
+    apply_package(driver, sid, ChangePackage.model_validate({
+        "commit_id": "c0",
+        "nodes": [
+            {"id": "hero", "label": "Character", "props": {"name": "Thảo", "is_protagonist": True}},
+            {"id": "yen", "label": "Character", "props": {"name": "Phụng Yên"}},
+            {"id": "pier", "label": "Location", "props": {"name": "Bến cảng"}},
+            {"id": "f1", "label": "Fact", "props": {"text": "Bến cảng đóng cửa"}},
+            {"id": "ch0", "label": "Chapter", "props": {"number": 0}}],
+        "edges": [
+            {"type": "KNOWS", "from": "yen", "to": "pier", "valid_from_chapter": 0},
+            {"type": "FEELS", "from": "yen", "to": "f1", "valid_from_chapter": 0, "feeling": "sợ"},
+            {"type": "KNOWS", "from": "yen", "to": "f1", "valid_from_chapter": 0},
+            {"type": "KNOWS", "from": "hero", "to": "pier", "valid_from_chapter": 0,
+             "quote": "Thảo đứng ở Bến cảng", "known_as": "Bến cảng"},
+            {"type": "FEELS", "from": "hero", "to": "yen", "valid_from_chapter": 0, "feeling": "tin"}],
+    }))
+    got = sorted((v.type, v.source_label, v.target_label, v.count, v.protagonist_only)
+                 for v in edge_endpoint_violations(driver, sid))
+    assert got == [("FEELS", "Character", "Fact", 1, True), ("KNOWS", "Character", "Location", 1, True)]

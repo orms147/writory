@@ -65,3 +65,20 @@ def test_lie_hearer_name_parity_after_d17_fix(driver, new_story_id):
         assert player_view_of(memory, chapter, story_id=sid) == neo4j_view, chapter
         if chapter == 4:
             assert "Lý Thất" not in repr(neo4j_view)
+
+
+def test_newest_known_as_parity(driver, new_story_id):
+    """Nút hé lộ dưới tên A, rồi B, rồi lại A: Neo4j và Overlay cùng hiện A ở chương 3 (D-17)."""
+    from tests.unit.test_guard_state import RENAMED
+    from writory.graph import apply_package, player_view
+    from writory.guard.state import player_view_of
+
+    sid = new_story_id()
+    for package in RENAMED:
+        apply_package(driver, sid, package)
+    memory = OverlayState(EmptyState(), RENAMED)
+    for chapter in range(1, 4):
+        neo4j_view = player_view(driver, sid, chapter)
+        assert player_view_of(memory, chapter, story_id=sid) == neo4j_view, chapter
+    [entry] = [e for e in player_view(driver, sid, 3).entries if e.id == "ferry"]
+    assert (entry.text, entry.aliases) == ("gã lái đò", ("Lý Thất",))

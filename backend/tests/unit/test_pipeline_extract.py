@@ -556,7 +556,7 @@ def test_a_rejected_edge_closes_nothing():
     assert pkg.close == []
 
 
-# --- nhân vật chính luôn có đúng một nơi ở sau mỗi gói (D-112) ------------------------------------
+# --- nhân vật chính có tối đa một nơi ở sau mỗi gói, đã có thì không mất (D-112) ---------------------
 
 _PLACE_ENTITIES = [
     Entity(id="protagonist", label="Character", text="Bạn"),

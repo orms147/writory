@@ -1,4 +1,4 @@
-"""Nhân vật chính luôn có đúng một nơi ở sau mỗi chương, trên Neo4j thật (D-112)."""
+"""Nhân vật chính có tối đa một nơi ở sau mỗi chương, và đã có thì không mất, trên Neo4j thật (D-112)."""
 
 import pytest
 

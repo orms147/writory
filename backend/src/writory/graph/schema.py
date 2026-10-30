@@ -44,9 +44,9 @@ EDGE_ENDPOINTS: dict[str, tuple[frozenset[str] | None, frozenset[str] | None]] =
     "MEMBER_OF": (frozenset({"Character"}), frozenset({"Faction"})),
     "PARTICIPATED_IN": (frozenset({"Character"}), frozenset({"Event"})),
     "DIED_IN": (frozenset({"Character"}), frozenset({"Event"})),
-    # Nhân vật chính tới nút có tên, kèm `known_as` (D-17; `graph.commit.needs_known_as`).
+    # Tới nút có tên: chỉ từ nhân vật chính, kèm `known_as` (D-17; `PROTAGONIST_ONLY` dưới đây).
     "KNOWS": (frozenset({"Character"}), frozenset({"Fact", "Lie", "Event"}) | NAMED_LABELS),
-    "FEELS": (frozenset({"Character"}), None),
+    "FEELS": (frozenset({"Character"}), None),  # chỉ từ nhân vật chính (D-55; `PROTAGONIST_ONLY`)
     "TOLD": (frozenset({"Character"}), frozenset({"Lie"})),
     "TOLD_TO": (frozenset({"Lie"}), frozenset({"Character"})),
     "ABOUT": (frozenset({"Fact", "Event", "Lie"}), None),
@@ -67,6 +67,25 @@ def endpoint_problem(etype: str, source_label: str, target_label: str) -> str | 
         return (f"{etype} nối {source_label} → {target_label}, bảng chỉ cho {side(sources)} → "
                 f"{side(targets)}")
     return None
+
+
+# Cạnh chỉ nhân vật chính được làm nguồn, theo nhãn đích (None = mọi nhãn): `KNOWS` tới nút có tên là
+# điều người chơi biết, kèm `known_as` (D-17); `FEELS` là cảm xúc thầm từ lựa chọn nội tâm (D-55).
+# `EDGE_ENDPOINTS` chỉ biết nhãn, nên luật này kiểm ở nơi biết id nhân vật chính: bộ trích
+# (`extract.to_package`) và `edge_endpoint_violations`.
+PROTAGONIST_ONLY: dict[str, frozenset[str] | None] = {"KNOWS": NAMED_LABELS, "FEELS": None}
+assert set(PROTAGONIST_ONLY) <= set(EDGE_TYPES)
+
+
+def protagonist_problem(etype: str, target_label: str, *, from_protagonist: bool) -> str | None:
+    """Lý do cạnh `etype` tới nhãn `target_label` phải đi ra từ nhân vật chính mà không, hoặc None. Chỉ
+    nêu kiểu cạnh và nhãn, không chữ của truyện."""
+    if from_protagonist or etype not in PROTAGONIST_ONLY:
+        return None
+    targets = PROTAGONIST_ONLY[etype]
+    if targets is not None and target_label not in targets:
+        return None
+    return f"{etype} tới {target_label} chỉ đi ra từ nhân vật chính"
 
 
 # Nhãn chung của mọi nút: khoá (story_id, id) là duy nhất trên toàn truyện, không theo nhãn.

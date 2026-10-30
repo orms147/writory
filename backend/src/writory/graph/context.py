@@ -462,9 +462,12 @@ def writer_context(
               | {s.fact_id for s in secrets})
     neighbors = _neighbors(read, max_neighbors, shown, personality_max_chars, appearance_max_chars)
 
+    # Quá hạn so với chương ĐANG VIẾT, như bí mật ở trên và như `guard.plan.deadline` của mục tiêu chương
+    # và người canh (chương > cuối khoảng; D-49). graph/ không import guard/, nên viết lại phép so.
+    writing = as_of_chapter + 1
     threads = tuple(
         ThreadInfo(r["id"], r["description"], r["planted"], r["due_from"], r["due_to"],
-                   r["due_to"] < as_of_chapter, r["ua"])
+                   r["due_to"] < writing, r["ua"])
         for r in read(f"""
             MATCH (t:{ENTITY}:Thread {{story_id: $story_id}})
             WHERE t.planted_chapter <= $chapter

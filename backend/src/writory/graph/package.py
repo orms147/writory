@@ -2,7 +2,7 @@
 
 import re
 import unicodedata
-from collections.abc import Sequence
+from collections.abc import Mapping, Sequence
 from typing import Any, Self
 
 from pydantic import BaseModel, ConfigDict, Field, model_validator
@@ -18,6 +18,22 @@ PropValue = str | int | float | bool | list[str] | list[int] | list[float] | Non
 KNOWS_HOW = ("chứng kiến", "được kể", "suy ra", "tự biết", "tự làm")
 TOLD = "được kể"
 _ID_RE = re.compile(ID_PATTERN)
+
+# Khoảng của `score` trên RELATES_TO (gồm hai đầu). Kiểm ở khởi tạo và bộ trích (`relation_problem`),
+# không ở EdgeSpec: gói đã lưu từ trước (outbox, bài A) phải đọc lại được.
+RELATES_TO_SCORE = (-100, 100)
+
+
+def relation_problem(props: Mapping[str, object]) -> str | None:
+    """Lý do thuộc tính của một cạnh RELATES_TO sai (thiếu `kind`, `score` không phải số nguyên trong
+    `RELATES_TO_SCORE`), hoặc None. Một luật cho khởi tạo (`setup.initial_problems`) và bộ trích
+    (`extract.to_package`): ngữ cảnh viết in `kind (score)` của mọi quan hệ."""
+    kind, score = props.get("kind"), props.get("score")
+    low, high = RELATES_TO_SCORE
+    if not (isinstance(kind, str) and kind.strip()) or not (
+            isinstance(score, int) and not isinstance(score, bool) and low <= score <= high):
+        return f"RELATES_TO cần `kind` và `score` trong {low}…{high}"
+    return None
 
 
 def _split_props(data: Any, known: set[str]) -> Any:

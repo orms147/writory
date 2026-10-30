@@ -16,6 +16,7 @@ from writory.graph.schema import (
     NAMED_LABELS,
     RESERVED_PROPS,
     endpoint_problem,
+    protagonist_problem,
 )
 from writory.graph.story import require_chapter, require_story_id
 
@@ -187,12 +188,15 @@ def relationship(
 
 
 def is_alive(driver: Driver, story_id: str, character_id: str, chapter: int) -> bool:
+    """Chết = có DIED_IN mở tới chương N, không xét nhãn đích: cùng luật với ngữ cảnh viết
+    (`graph.context`) và người canh (`edges_at`). DIED_IN sai đích chỉ có ở đồ thị trước D-128, và
+    vẫn nghĩa là đã chết."""
     rows = _read(
         driver,
         f"""
         MATCH (c:{ENTITY}:Character {{story_id: $story_id, id: $character_id}})
         RETURN NOT EXISTS {{
-          MATCH (c)-[r:DIED_IN]->(:{ENTITY}:Event {{story_id: $story_id}})
+          MATCH (c)-[r:DIED_IN]->(:{ENTITY} {{story_id: $story_id}})
           WHERE r.valid_from_chapter <= $chapter
         }} AS alive
         """,
@@ -276,32 +280,43 @@ def edges_at(
 
 @dataclass(frozen=True)
 class EndpointViolation:
-    """Một tổ hợp (kiểu cạnh, nhãn nguồn, nhãn đích) trái bảng `EDGE_ENDPOINTS`, kèm số cạnh."""
+    """Một tổ hợp (kiểu cạnh, nhãn nguồn, nhãn đích) trái bảng `EDGE_ENDPOINTS`, kèm số cạnh.
+    `protagonist_only`: nhãn đúng bảng, nhưng kiểu cạnh tới nhãn đó chỉ được đi ra từ nhân vật chính
+    (`PROTAGONIST_ONLY`) mà nguồn là người khác."""
 
     type: str
     source_label: str
     target_label: str
     count: int
+    protagonist_only: bool = False
 
 
 def edge_endpoint_violations(driver: Driver, story_id: str) -> list[EndpointViolation]:
-    """Kiểm đếm cạnh sai đầu mút trong cả truyện (D-128), kể cả cạnh đã đóng. Dùng cho test và bộ đo;
-    chỉ có kiểu cạnh và nhãn, không chữ của truyện."""
+    """Kiểm đếm cạnh sai đầu mút trong cả truyện (D-128), kể cả cạnh đã đóng, cùng luật với bộ trích
+    (`endpoint_problem`, rồi `protagonist_problem`). Dùng cho test và bộ đo; chỉ có kiểu cạnh và nhãn,
+    không chữ của truyện."""
     rows = _read(
         driver,
         f"""
         MATCH (a:{ENTITY} {{story_id: $story_id}})-[r]->(b:{ENTITY} {{story_id: $story_id}})
         RETURN type(r) AS type, [l IN labels(a) WHERE l <> '{ENTITY}'][0] AS source_label,
-               [l IN labels(b) WHERE l <> '{ENTITY}'][0] AS target_label, count(r) AS count
+               [l IN labels(b) WHERE l <> '{ENTITY}'][0] AS target_label,
+               coalesce(a.is_protagonist, false) AS me, count(r) AS count
         """,
         story_id,
     )
-    return sorted(
-        (EndpointViolation(r["type"], r["source_label"], r["target_label"], r["count"])
-         for r in rows if r["type"] in EDGE_TYPES
-         and endpoint_problem(r["type"], r["source_label"], r["target_label"])),
-        key=lambda v: (v.type, v.source_label, v.target_label),
-    )
+    counts: dict[tuple[str, str, str, bool], int] = {}
+    for r in rows:
+        if r["type"] not in EDGE_TYPES:
+            continue
+        if endpoint_problem(r["type"], r["source_label"], r["target_label"]):
+            key = (r["type"], r["source_label"], r["target_label"], False)
+        elif protagonist_problem(r["type"], r["target_label"], from_protagonist=r["me"] is True):
+            key = (r["type"], r["source_label"], r["target_label"], True)
+        else:
+            continue
+        counts[key] = counts.get(key, 0) + r["count"]
+    return [EndpointViolation(t, s, g, n, only) for (t, s, g, only), n in sorted(counts.items())]
 
 
 def node_labels(driver: Driver, story_id: str, ids: list[str]) -> dict[str, str]:
