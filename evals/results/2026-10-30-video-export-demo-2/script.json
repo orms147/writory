@@ -1,0 +1,3090 @@
+{
+  "warning": "SPOILER / TRUTH WARNING: this file is built from the full truth layer of the story (secrets, backstage, what characters hide) and from text the reader has seen. It reveals everything. Do not show it to players. | CẢNH BÁO LỘ BÍ MẬT: bản xuất dựng từ toàn bộ lớp truth của truyện; chỉ admin được giữ, không đưa cho người chơi.",
+  "meta": {
+    "format": "writory-video-script/1",
+    "story_id": "run-20261021-ky-ao-vua-2-f8a61160",
+    "dialogue_lang": "zh",
+    "chapters": [
+      1,
+      2,
+      3
+    ],
+    "sheets_only": false,
+    "dry_run": false,
+    "moderation": true,
+    "model": "openai/gpt-6-luna",
+    "prompt_version": "video-2",
+    "generated": "2026-10-30",
+    "calls": 16,
+    "cost_usd": 0.016427,
+    "budget_usd": 0.1
+  },
+  "characters": [
+    {
+      "id": "bach_kinh_luan",
+      "name": "Bạch Kinh Luân",
+      "aliases": [
+        "Trưởng môn Bạch"
+      ],
+      "appearance": null,
+      "personality": "Ôn hòa trong lời nói, sắc bén trong thương lượng và luôn tìm cách biến nhượng bộ của người khác thành lợi thế cho mình.",
+      "protagonist": false,
+      "visual_en": "Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow.",
+      "dialogue_name": "白经纶",
+      "inferred": true
+    },
+    {
+      "id": "duong_anh_lac",
+      "name": "Dương Anh Lạc",
+      "aliases": [
+        "Chấp luật Dương"
+      ],
+      "appearance": null,
+      "personality": "Cứng rắn, trọng trật tự và tin rằng một luật lệ nghiêm khắc vẫn tốt hơn một cuộc chiến không hồi kết.",
+      "protagonist": false,
+      "visual_en": "Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye.",
+      "dialogue_name": "杨英乐",
+      "inferred": true
+    },
+    {
+      "id": "han_tinh_chau",
+      "name": "Hàn Tinh Châu",
+      "aliases": [
+        "Trưởng môn Hàn"
+      ],
+      "appearance": null,
+      "personality": "Lạnh lùng, giỏi cân nhắc lợi hại và không bao giờ đưa ra lời hứa mà chưa tính đường rút.",
+      "protagonist": false,
+      "visual_en": "Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye.",
+      "dialogue_name": "韩星洲",
+      "inferred": true
+    },
+    {
+      "id": "lao_thanh_nguyen",
+      "name": "Lão Thành Nguyên",
+      "aliases": [
+        "Nguyên lão"
+      ],
+      "appearance": null,
+      "personality": "Điềm đạm, kín đáo và tin rằng những người từng thắng trong chiến tranh không nên là người duy nhất viết luật cho hòa bình.",
+      "protagonist": false,
+      "visual_en": "Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek.",
+      "dialogue_name": "老成元",
+      "inferred": true
+    },
+    {
+      "id": "protagonist",
+      "name": "Lục Minh Vi",
+      "aliases": [],
+      "appearance": null,
+      "personality": "Gan dạ, thẳng thắn và không ngại đối đáp với người có địa vị cao hơn. Nàng nhạy bén trước nỗi sợ của người khác, nhưng đôi khi hành động quá nhanh khi thấy kẻ yếu bị dồn ép.",
+      "protagonist": true,
+      "visual_en": "Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin.",
+      "dialogue_name": "陆明薇",
+      "inferred": true
+    },
+    {
+      "id": "thieu_kiem_hoai",
+      "name": "Thiệu Kiếm Hoài",
+      "aliases": [
+        "Người giữ ấn"
+      ],
+      "appearance": null,
+      "personality": "Kiệm lời, cẩn trọng và có thói quen ghi lại cả những điều người khác cho là không đáng kể.",
+      "protagonist": false,
+      "visual_en": "Elderly man with a lean build, long lined face, salt-and-pepper hair in a neat topknot, deep navy official robe with a bronze seal clasp, small notch in his right earlobe.",
+      "dialogue_name": "邵剑怀",
+      "inferred": true
+    }
+  ],
+  "locations": [
+    {
+      "id": "ben_may_lac",
+      "name": "Bến Mây Lạc",
+      "aliases": [],
+      "visual": null,
+      "description": "Bến neo ở rìa đảo, nơi các thuyền bay chờ lệnh rời Cửu Tiêu Đài.",
+      "visual_en": "Open-air mooring platform at the edge of a floating island, pale stone paving and dark iron rings set into the floor, cloud-bright daylight, wind-worn wooden posts and suspended docks fading into mist.",
+      "dialogue_name": "宾梅乐",
+      "inferred": true
+    },
+    {
+      "id": "cuu_tieu_dai",
+      "name": "Cửu Tiêu Đài",
+      "aliases": [
+        "Đài Thiên Luật"
+      ],
+      "visual": null,
+      "description": "Đảo bay trung lập nơi các tiên môn tập trung dựng lại luật lệ sau đại chiến.",
+      "visual_en": "Neutral floating island beneath clear high-altitude light, broad terraces of pale stone, dark tiled roofs and suspended bridges, ringed by cloud and crossed by wind-carved cliffs and narrow waterfalls.",
+      "dialogue_name": "九霄台",
+      "inferred": true
+    },
+    {
+      "id": "dai_nghi_su",
+      "name": "Đại Nghị Sảnh",
+      "aliases": [
+        "chính điện"
+      ],
+      "visual": null,
+      "description": "Chính điện trên Cửu Tiêu Đài, có cửa đá khép kín và các lối thoát được kiểm soát từ bên trong.",
+      "visual_en": "Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling.",
+      "dialogue_name": "大议厅",
+      "inferred": true
+    },
+    {
+      "id": "hanh_lang_phong_luan",
+      "name": "Hành Lang Phong Luân",
+      "aliases": [],
+      "visual": null,
+      "description": "Lối đi hẹp chạy quanh chân đài, nối đại điện với các gian lưu trữ và bệ điều khiển cửa.",
+      "visual_en": "Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel.",
+      "dialogue_name": "风轮走廊",
+      "inferred": true
+    }
+  ],
+  "chapters": [
+    {
+      "chapter": 1,
+      "overview": {
+        "chapter": 1,
+        "relationships": [
+          {
+            "source": "Bạch Kinh Luân",
+            "target": "Hàn Tinh Châu",
+            "kind": "đối thủ",
+            "score": -30
+          },
+          {
+            "source": "Bạch Kinh Luân",
+            "target": "Lục Minh Vi",
+            "kind": "lợi dụng",
+            "score": -5
+          },
+          {
+            "source": "Dương Anh Lạc",
+            "target": "Hàn Tinh Châu",
+            "kind": "đối địch",
+            "score": -20
+          },
+          {
+            "source": "Dương Anh Lạc",
+            "target": "Lục Minh Vi",
+            "kind": "đề phòng",
+            "score": 0
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Bạch Kinh Luân",
+            "kind": "đối thủ",
+            "score": -25
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Dương Anh Lạc",
+            "kind": "đối địch",
+            "score": -25
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Lục Minh Vi",
+            "kind": "thận trọng",
+            "score": 5
+          },
+          {
+            "source": "Lão Thành Nguyên",
+            "target": "Lục Minh Vi",
+            "kind": "bảo hộ",
+            "score": 20
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Bạch Kinh Luân",
+            "kind": "nghi kỵ",
+            "score": -15
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Dương Anh Lạc",
+            "kind": "đồng cảm",
+            "score": 20
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Hàn Tinh Châu",
+            "kind": "nghi kỵ",
+            "score": -10
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Lão Thành Nguyên",
+            "kind": "tin cậy",
+            "score": 15
+          }
+        ],
+        "memberships": [
+          [
+            "Bạch Kinh Luân",
+            "Vân Tê Môn"
+          ],
+          [
+            "Dương Anh Lạc",
+            "Thanh Tiêu Môn"
+          ],
+          [
+            "Hàn Tinh Châu",
+            "Băng Tâm Môn"
+          ]
+        ],
+        "where": [
+          [
+            "Bạch Kinh Luân",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Dương Anh Lạc",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Hàn Tinh Châu",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Lão Thành Nguyên",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Lục Minh Vi",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Thiệu Kiếm Hoài",
+            "Hành Lang Phong Luân"
+          ]
+        ],
+        "knowledge": [
+          {
+            "who": "Lục Minh Vi",
+            "text": "Cửa Đại Nghị Sảnh đã bị khóa từ phía trong khi cuộc tranh luận bắt đầu.",
+            "how": "chứng kiến",
+            "kind": "Fact"
+          },
+          {
+            "who": "Lục Minh Vi",
+            "text": "Hộp Phong Ấn được phát hiện trống ngay trước khi lời buộc tội đầu tiên được đưa ra.",
+            "how": "chứng kiến",
+            "kind": "Fact"
+          },
+          {
+            "who": "Lục Minh Vi",
+            "text": "Thiệu Kiếm Hoài mất tích trước khi cửa Đại Nghị Sảnh bị khóa.",
+            "how": "chứng kiến",
+            "kind": "Fact"
+          }
+        ],
+        "events": [],
+        "lies": [],
+        "mermaid": "graph LR\n  c1[\"Bạch Kinh Luân\"]\n  c2[\"Hàn Tinh Châu\"]\n  c3[\"Lục Minh Vi\"]\n  c4[\"Dương Anh Lạc\"]\n  c5[\"Lão Thành Nguyên\"]\n  f6([\"Vân Tê Môn\"])\n  f7([\"Thanh Tiêu Môn\"])\n  f8([\"Băng Tâm Môn\"])\n  c1 -->|\"đối thủ -30\"| c2\n  c1 -->|\"lợi dụng -5\"| c3\n  c4 -->|\"đối địch -20\"| c2\n  c4 -->|\"đề phòng +0\"| c3\n  c2 -->|\"đối thủ -25\"| c1\n  c2 -->|\"đối địch -25\"| c4\n  c2 -->|\"thận trọng +5\"| c3\n  c5 -->|\"bảo hộ +20\"| c3\n  c3 -->|\"nghi kỵ -15\"| c1\n  c3 -->|\"đồng cảm +20\"| c4\n  c3 -->|\"nghi kỵ -10\"| c2\n  c3 -->|\"tin cậy +15\"| c5\n  c1 -.-> f6\n  c4 -.-> f7\n  c2 -.-> f8"
+      },
+      "scenes": [
+        {
+          "chapter": 1,
+          "scene": 1,
+          "status": "ok",
+          "shots": [
+            {
+              "n": 1,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 8,
+              "appears": [
+                "bach_kinh_luan",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân turns toward Lục Minh Vi and rests one hand on the stone table.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "陆明薇，明护镖局的护送队曾经过争议地区，对吗？",
+                  "source_text": "Lục Minh Vi, chuyến hộ tống của Minh Hộ Tống từng đi qua vùng tranh chấp, phải không?"
+                }
+              ],
+              "covers": "Bạch Kinh Luân đã quay sang tôi.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân turns toward Lục Minh Vi and rests one hand on the stone table. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"陆明薇，明护镖局的护送队曾经过争议地区，对吗？\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 2,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 7,
+              "appears": [
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Behind Bạch Kinh Luân, the Seal Box remains open and empty beneath the overhead light.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "门派之外之人的证词，可以判定谁先破了规矩。",
+                  "source_text": "Lời khai của người ngoài các đại môn phái có thể phân định ai đã phá luật trước."
+                }
+              ],
+              "covers": "Sau lưng ông, Hộp Phong Ấn vẫn mở nắp.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Behind Bạch Kinh Luân, the Seal Box remains open and empty beneath the overhead light. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"门派之外之人的证词，可以判定谁先破了规矩。\" Duration: 7 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 3,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "static",
+              "duration_s": 5,
+              "appears": [
+                "han_tinh_chau",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu cuts in, keeping his gaze fixed on Lục Minh Vi.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "一个低阶弟子也值得如此信任吗？",
+                  "source_text": "Một môn sinh cấp thấp cũng đáng tin đến thế sao?"
+                }
+              ],
+              "covers": "Hàn Tinh Châu cắt ngang, mắt không rời khỏi tôi.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, over-the-shoulder angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Hàn Tinh Châu cuts in, keeping his gaze fixed on Lục Minh Vi. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"一个低阶弟子也值得如此信任吗？\" Duration: 5 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 4,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "low",
+              "camera_move": "push_in",
+              "duration_s": 7,
+              "appears": [
+                "han_tinh_chau",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu taps the chair edge with one finger as several elders look toward Lục Minh Vi and exchange glances.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "证词若含糊，各方只会更有理由动手。你该知道自己在把谁推向哪一边。",
+                  "source_text": "Nếu lời khai mập mờ, các phe chỉ càng có cớ động thủ. Cô nên biết mình đang đẩy ai về phía nào."
+                }
+              ],
+              "covers": "Ngón tay ông gõ nhẹ lên thành ghế.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, low angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Hàn Tinh Châu taps the chair edge with one finger as several elders look toward Lục Minh Vi and exchange glances. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"证词若含糊，各方只会更有理由动手。你该知道自己在把谁推向哪一边。\" Duration: 7 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 5,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "track",
+              "duration_s": 10,
+              "appears": [
+                "duong_anh_lac",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc rises, scraping her chair across the stone floor, while two people stop moving away from their seats.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "大议厅的门已经锁了。邵剑怀仍然失踪。谁也不许擅自离开，也不许用指控代替证据。",
+                  "source_text": "Cửa Đại Nghị Sảnh đã khóa. Thiệu Kiếm Hoài vẫn mất tích. Không ai tự ý rời đi, cũng không ai được lấy lời buộc tội thay cho chứng cứ."
+                }
+              ],
+              "covers": "Dương Anh Lạc đứng lên.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, tracking shot. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Dương Anh Lạc rises, scraping her chair across the stone floor, while two people stop moving away from their seats. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"大议厅的门已经锁了。邵剑怀仍然失踪。谁也不许擅自离开，也不许用指控代替证据。\" Duration: 10 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 6,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 9,
+              "appears": [
+                "lao_thanh_nguyen",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên extends an open hand toward Lục Minh Vi.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "明薇，你只说自己亲眼所见。别猜是谁从封印盒里拿走了天阙碎片。",
+                  "source_text": "Minh Vi, con chỉ nói điều mình tận mắt chứng kiến. Đừng suy đoán ai đã lấy Mảnh Thiên Khuyết khỏi Hộp Phong Ấn."
+                }
+              ],
+              "covers": "Lão Thành Nguyên đưa tay về phía tôi, lòng bàn tay mở.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lão Thành Nguyên extends an open hand toward Lục Minh Vi. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"明薇，你只说自己亲眼所见。别猜是谁从封印盒里拿走了天阙碎片。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 7,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "low",
+              "camera_move": "static",
+              "duration_s": 4,
+              "appears": [
+                "bach_kinh_luan",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [
+                "protagonist"
+              ],
+              "action_en": "Bạch Kinh Luân tilts his head toward Lục Minh Vi.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "沉默也是一种选择。",
+                  "source_text": "Im lặng cũng là một lựa chọn."
+                }
+              ],
+              "covers": "Bạch Kinh Luân nghiêng đầu.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, low angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân tilts his head toward Lục Minh Vi. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"沉默也是一种选择。\" Duration: 4 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 8,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 8,
+              "appears": [
+                "han_tinh_chau",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu looks directly at Lục Minh Vi as she looks around the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "那趟行程有没有把人或物带过争议地区？说清楚。",
+                  "source_text": "Chuyến đi ấy có đưa người hay vật qua vùng tranh chấp hay không? Nói rõ."
+                }
+              ],
+              "covers": "Hàn Tinh Châu nhìn thẳng vào tôi, giọng lạnh tanh.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Hàn Tinh Châu looks directly at Lục Minh Vi as she looks around the table. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"那趟行程有没有把人或物带过争议地区？说清楚。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 9,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 9,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi holds her hands inside her sleeves, then faces the people around the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我会如实讲述自己知道的一切。但我不会替任何门派确认指控。",
+                  "source_text": "Tôi sẽ kể đúng những gì mình biết. Nhưng tôi không xác nhận lời buộc tội thay cho bất kỳ môn phái nào."
+                }
+              ],
+              "covers": "Tôi sẽ kể đúng những gì mình biết.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi holds her hands inside her sleeves, then faces the people around the table. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我会如实讲述自己知道的一切。但我不会替任何门派确认指控。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 10,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 6,
+              "appears": [
+                "bach_kinh_luan",
+                "han_tinh_chau",
+                "duong_anh_lac",
+                "lao_thanh_nguyen",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu",
+                "Dương Anh Lạc",
+                "Lão Thành Nguyên",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân pushes himself up, Hàn Tinh Châu rises from his chair, Dương Anh Lạc tightens her glove strap, and Lão Thành Nguyên lowers his hand. The people around the table begin speaking over one another.",
+              "dialogue": [],
+              "covers": "Tiếng xì xào nổi lên ở cuối bàn.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân pushes himself up, Hàn Tinh Châu rises from his chair, Dương Anh Lạc tightens her glove strap, and Lão Thành Nguyên lowers his hand. The people around the table begin speaking over one another. Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 11,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "high",
+              "camera_move": "pull_out",
+              "duration_s": 7,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau",
+                "duong_anh_lac",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu",
+                "Dương Anh Lạc",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi stands among the stone columns facing the council table as everyone keeps their eyes on her.",
+              "dialogue": [],
+              "covers": "Tôi đứng giữa các cột đá, đối diện bàn nghị sự.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, high angle, slow pull-out. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lục Minh Vi stands among the stone columns facing the council table as everyone keeps their eyes on her. Duration: 7 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            }
+          ],
+          "moderation": {
+            "verdict": "allow",
+            "categories": [],
+            "reason": "Cảnh đối chất trong hội trường, không có nội dung thuộc các loại cần báo."
+          },
+          "error": null,
+          "withheld_shots": 0
+        },
+        {
+          "chapter": 1,
+          "scene": 2,
+          "status": "ok",
+          "shots": [
+            {
+              "n": 1,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 12,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi turns away from the open box and addresses the people around the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我们的护送队曾带人穿过争议地区。我在途中，见过被护送的人、界碑和巡逻队。但我没亲眼见谁拿了天阙碎片，也不能说哪个门派该负责。",
+                  "source_text": "Đoàn hộ tống của chúng tôi từng đưa người qua vùng tranh chấp. Tôi có mặt trên đường đi, thấy người được đưa qua, thấy những cột mốc ranh giới và những toán tuần tra. Nhưng tôi không chứng kiến ai lấy Mảnh Thiên Khuyết, cũng không thể nói môn phái nào phải chịu trách nhiệm."
+                }
+              ],
+              "covers": "Đoàn hộ tống của chúng tôi từng đưa người qua vùng tranh chấp.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi turns away from the open box and addresses the people around the table. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我们的护送队曾带人穿过争议地区。我在途中，见过被护送的人、界碑和巡逻队。但我没亲眼见谁拿了天阙碎片，也不能说哪个门派该负责。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 2,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "static",
+              "duration_s": 6,
+              "appears": [
+                "bach_kinh_luan",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [
+                "protagonist"
+              ],
+              "action_en": "Bạch Kinh Luân keeps one hand still on the stone tabletop as he questions Lục Minh Vi.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "那么，那趟行程是否越过了仙门划定的边界？",
+                  "source_text": "Vậy hành trình ấy có vượt qua ranh giới do các tiên môn đặt ra hay không?"
+                }
+              ],
+              "covers": "Vậy hành trình ấy có vượt qua ranh giới do các tiên môn đặt ra hay không?",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, over-the-shoulder angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân keeps one hand still on the stone tabletop as he questions Lục Minh Vi. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"那么，那趟行程是否越过了仙门划定的边界？\" Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 3,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi answers from beside the table without looking away from the gathered assembly.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我可以陈述队伍经过哪里、遇见谁、看见什么。至于行程是否违反边界，我无权代仙门下结论。",
+                  "source_text": "Tôi có thể thuật lại đoàn đi qua đâu, gặp ai, nhìn thấy gì. Còn việc chuyến đi có vi phạm ranh giới hay không, tôi không có thẩm quyền kết luận thay các tiên môn."
+                }
+              ],
+              "covers": "Tôi có thể thuật lại đoàn đi qua đâu, gặp ai, nhìn thấy gì.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi answers from beside the table without looking away from the gathered assembly. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我可以陈述队伍经过哪里、遇见谁、看见什么。至于行程是否违反边界，我无权代仙门下结论。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 4,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "low",
+              "camera_move": "push_in",
+              "duration_s": 6,
+              "appears": [
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu taps one finger against the side of his chair and speaks across the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "这样的证词，能分辨什么对错？",
+                  "source_text": "Lời khai như thế thì phân định được đúng sai gì?"
+                }
+              ],
+              "covers": "Lời khai như thế thì phân định được đúng sai gì?",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, low angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Hàn Tinh Châu taps one finger against the side of his chair and speaks across the table. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"这样的证词，能分辨什么对错？\" Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 5,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 9,
+              "appears": [
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc speaks briefly as hands near sword hilts withdraw from the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "至少不能让任何人仅凭证据缺口就抓人。",
+                  "source_text": "Ít ra nó không cho ai quyền bắt người chỉ vì muốn lấp chỗ trống trong chứng cứ."
+                }
+              ],
+              "covers": "Ánh mắt nàng lướt qua những bàn tay đang đặt gần chuôi kiếm.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Dương Anh Lạc speaks briefly as hands near sword hilts withdraw from the table. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"至少不能让任何人仅凭证据缺口就抓人。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 6,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "pan",
+              "duration_s": 6,
+              "appears": [
+                "han_tinh_chau",
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu turns his face toward Dương Anh Lạc and addresses her.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "杨执律想让此事不了了之？",
+                  "source_text": "Chấp luật Dương muốn để chuyện này trôi qua?"
+                }
+              ],
+              "covers": "Hàn Tinh Châu nghiêng mặt về phía nàng.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, over-the-shoulder angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Hàn Tinh Châu turns his face toward Dương Anh Lạc and addresses her. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"杨执律想让此事不了了之？\" Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 7,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 12,
+              "appears": [
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc keeps her hands on the table, away from her sword hilt, as she replies.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "我不想让人拿不充分的证词定罪。门已锁，守印人失踪，盒子空了。再扣一个人，也不会凭空长出证据。",
+                  "source_text": "Tôi muốn không ai lấy lời chưa đủ làm cớ kết tội. Cửa đã khóa, người giữ ấn mất tích, hộp thì trống. Thêm một người bị giữ lại cũng chẳng khiến chứng cứ tự mọc ra."
+                }
+              ],
+              "covers": "Cửa đã khóa, người giữ ấn mất tích, hộp thì trống.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Dương Anh Lạc keeps her hands on the table, away from her sword hilt, as she replies. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"我不想让人拿不充分的证词定罪。门已锁，守印人失踪，盒子空了。再扣一个人，也不会凭空长出证据。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 8,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "low",
+              "camera_move": "tilt",
+              "duration_s": 12,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên rises, bracing himself on his cane; its tip strikes the stone floor as he addresses the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "就在这里把陆明薇的证词记成文书。在场的人都听清了，免得日后有人说她讲过别的话。",
+                  "source_text": "Ghi lời khai của Minh Vi thành chứng từ ngay tại đây. Ai có mặt đều nghe rõ, sau này khỏi ai bảo nàng nói khác."
+                }
+              ],
+              "covers": "Lão Thành Nguyên chống đầu gậy đứng lên.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, low angle, tilt. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên rises, bracing himself on his cane; its tip strikes the stone floor as he addresses the table. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"就在这里把陆明薇的证词记成文书。在场的人都听清了，免得日后有人说她讲过别的话。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 9,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 9,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên looks around the table and lays down the restriction; no one answers.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "有更多证据之前，谁也不得擅动封印盒，也不得指控任何门派。",
+                  "source_text": "Cho đến khi có thêm chứng cứ, không ai được tự ý động vào Hộp Phong Ấn hay buộc tội môn phái nào."
+                }
+              ],
+              "covers": "Cho đến khi có thêm chứng cứ, không ai được tự ý động vào Hộp Phong Ấn hay buộc tội môn phái nào.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên looks around the table and lays down the restriction; no one answers. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"有更多证据之前，谁也不得擅动封印盒，也不得指控任何门派。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 10,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 9,
+              "appears": [
+                "bach_kinh_luan",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [
+                "protagonist"
+              ],
+              "action_en": "Bạch Kinh Luân slowly smooths a crease in his sleeve while speaking to Lục Minh Vi.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "记就记。但证词里的每句话，你都得负责。",
+                  "source_text": "Ghi thì ghi. Nhưng từng câu trong lời khai, cô phải chịu trách nhiệm."
+                }
+              ],
+              "covers": "Bạch Kinh Luân chậm rãi vuốt phẳng nếp tay áo.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân slowly smooths a crease in his sleeve while speaking to Lục Minh Vi. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"记就记。但证词里的每句话，你都得负责。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 11,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 10,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi looks at Bạch Kinh Luân and answers across the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我为自己看到和说过的事负责。证词不是判决。",
+                  "source_text": "Tôi chịu trách nhiệm về điều mình đã thấy và đã nói. Lời chứng không phải bản án."
+                }
+              ],
+              "covers": "Tôi chịu trách nhiệm về điều mình đã thấy và đã nói.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Lục Minh Vi looks at Bạch Kinh Luân and answers across the table. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我为自己看到和说过的事负责。证词不是判决。\" Duration: 10 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 12,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "high",
+              "camera_move": "pull_out",
+              "duration_s": 8,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau",
+                "duong_anh_lac",
+                "lao_thanh_nguyen",
+                "thieu_kiem_hoai"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu",
+                "Dương Anh Lạc",
+                "Lão Thành Nguyên",
+                "Thiệu Kiếm Hoài"
+              ],
+              "appears_added": [
+                "thieu_kiem_hoai"
+              ],
+              "action_en": "A written statement lies in the middle of the table as a scribe writes. The leaders look down without signing, and no hands return to the sword hilts; the hall door remains locked and Thiệu Kiếm Hoài’s seat is empty.",
+              "dialogue": [],
+              "covers": "Một tờ chứng từ được đặt giữa bàn nghị sự.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, high angle, slow pull-out. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Thiệu Kiếm Hoài: Elderly man with a lean build, long lined face, salt-and-pepper hair in a neat topknot, deep navy official robe with a bronze seal clasp, small notch in his right earlobe. Action: A written statement lies in the middle of the table as a scribe writes. The leaders look down without signing, and no hands return to the sword hilts; the hall door remains locked and Thiệu Kiếm Hoài’s seat is empty. Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            }
+          ],
+          "moderation": {
+            "verdict": "allow",
+            "categories": [],
+            "reason": "Cảnh đối thoại và điều tra trong bối cảnh hư cấu; không có nội dung thuộc các loại cần báo."
+          },
+          "error": null,
+          "withheld_shots": 0
+        }
+      ]
+    },
+    {
+      "chapter": 2,
+      "overview": {
+        "chapter": 2,
+        "relationships": [
+          {
+            "source": "Bạch Kinh Luân",
+            "target": "Hàn Tinh Châu",
+            "kind": "đối thủ",
+            "score": -30
+          },
+          {
+            "source": "Bạch Kinh Luân",
+            "target": "Lục Minh Vi",
+            "kind": "lợi dụng",
+            "score": -5
+          },
+          {
+            "source": "Dương Anh Lạc",
+            "target": "Hàn Tinh Châu",
+            "kind": "đối địch",
+            "score": -20
+          },
+          {
+            "source": "Dương Anh Lạc",
+            "target": "Lục Minh Vi",
+            "kind": "đề phòng",
+            "score": 0
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Bạch Kinh Luân",
+            "kind": "đối thủ",
+            "score": -25
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Dương Anh Lạc",
+            "kind": "đối địch",
+            "score": -25
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Lục Minh Vi",
+            "kind": "thận trọng",
+            "score": 5
+          },
+          {
+            "source": "Lão Thành Nguyên",
+            "target": "Lục Minh Vi",
+            "kind": "bảo hộ",
+            "score": 20
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Bạch Kinh Luân",
+            "kind": "nghi kỵ",
+            "score": -15
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Dương Anh Lạc",
+            "kind": "đồng cảm",
+            "score": 20
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Hàn Tinh Châu",
+            "kind": "nghi kỵ",
+            "score": -10
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Lão Thành Nguyên",
+            "kind": "tin cậy",
+            "score": 15
+          }
+        ],
+        "memberships": [
+          [
+            "Bạch Kinh Luân",
+            "Vân Tê Môn"
+          ],
+          [
+            "Dương Anh Lạc",
+            "Thanh Tiêu Môn"
+          ],
+          [
+            "Hàn Tinh Châu",
+            "Băng Tâm Môn"
+          ]
+        ],
+        "where": [
+          [
+            "Bạch Kinh Luân",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Dương Anh Lạc",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Hàn Tinh Châu",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Lão Thành Nguyên",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Lục Minh Vi",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Thiệu Kiếm Hoài",
+            "Hành Lang Phong Luân"
+          ]
+        ],
+        "knowledge": [
+          {
+            "who": "Lục Minh Vi",
+            "text": "Bang Luận Kiếm muốn trao quyền quản giữ thần khí cho một hội đồng do các tiên môn lớn chi phối.",
+            "how": "chứng kiến",
+            "kind": "Fact"
+          }
+        ],
+        "events": [],
+        "lies": [],
+        "mermaid": "graph LR\n  c1[\"Bạch Kinh Luân\"]\n  c2[\"Hàn Tinh Châu\"]\n  c3[\"Lục Minh Vi\"]\n  c4[\"Dương Anh Lạc\"]\n  c5[\"Lão Thành Nguyên\"]\n  f6([\"Vân Tê Môn\"])\n  f7([\"Thanh Tiêu Môn\"])\n  f8([\"Băng Tâm Môn\"])\n  c1 -->|\"đối thủ -30\"| c2\n  c1 -->|\"lợi dụng -5\"| c3\n  c4 -->|\"đối địch -20\"| c2\n  c4 -->|\"đề phòng +0\"| c3\n  c2 -->|\"đối thủ -25\"| c1\n  c2 -->|\"đối địch -25\"| c4\n  c2 -->|\"thận trọng +5\"| c3\n  c5 -->|\"bảo hộ +20\"| c3\n  c3 -->|\"nghi kỵ -15\"| c1\n  c3 -->|\"đồng cảm +20\"| c4\n  c3 -->|\"nghi kỵ -10\"| c2\n  c3 -->|\"tin cậy +15\"| c5\n  c1 -.-> f6\n  c4 -.-> f7\n  c2 -.-> f8"
+      },
+      "scenes": [
+        {
+          "chapter": 2,
+          "scene": 1,
+          "status": "ok",
+          "shots": [
+            {
+              "n": 1,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "high",
+              "camera_move": "push_in",
+              "duration_s": 8,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi looks down at the document on the table, its ink shining beneath the spirit lamp.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "请从头读。我只为亲眼所见负责。",
+                  "source_text": "Xin đọc lại từ đầu. Ta chỉ chịu trách nhiệm cho điều mình tận mắt chứng kiến."
+                }
+              ],
+              "covers": "Tôi nhìn xuống bản chứng từ trên bàn, mực còn bóng dưới ánh đèn linh thạch.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, high angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi looks down at the document on the table, its ink shining beneath the spirit lamp. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"请从头读。我只为亲眼所见负责。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 2,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 8,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "The surrounding murmurs fade. Lão Thành Nguyên nods and draws the paper toward himself.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "好。我就在这里逐句念。",
+                  "source_text": "Được. Ta đọc ngay tại đây, từng câu một."
+                }
+              ],
+              "covers": "Mấy tiếng bàn tán lắng xuống. Lão Thành Nguyên gật đầu, kéo tờ giấy về phía mình.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: The surrounding murmurs fade. Lão Thành Nguyên nods and draws the paper toward himself. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"好。我就在这里逐句念。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 3,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 8,
+              "appears": [
+                "lao_thanh_nguyen",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên lifts the record and reads aloud in the hall as wind brushes against the closed windows. Lục Minh Vi cuts in.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "明护送的护卫队经过争议地带，那里有界碑和巡逻队——",
+                  "source_text": "Đoàn hộ tống của Minh Hộ Tống đã đi qua vùng tranh chấp, nơi có cột mốc và toán tuần tra-"
+                },
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "请停在这里。",
+                  "source_text": "Xin dừng ở đó."
+                }
+              ],
+              "covers": "Ông cầm bản ghi lên. Trong đại sảnh, tiếng gió cọ qua những ô cửa đóng kín nghe rõ mồn một.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lão Thành Nguyên lifts the record and reads aloud in the hall as wind brushes against the closed windows. Lục Minh Vi cuts in. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"明护送的护卫队经过争议地带，那里有界碑和巡逻队——\" Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"请停在这里。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 4,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "lao_thanh_nguyen",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên lowers the paper. Lục Minh Vi points to a line without touching the ink.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我看见了界碑和巡逻队，但无法判断界碑标示哪条边界，也认不出巡逻者属于哪个门派。",
+                  "source_text": "Tôi thấy cột mốc. Tôi thấy toán tuần tra. Nhưng tôi không xác định được cột mốc ấy đánh dấu ranh giới nào, cũng không nhận ra môn phái của những người tuần tra."
+                }
+              ],
+              "covers": "Lão Thành Nguyên hạ tờ giấy xuống. Tôi chỉ vào dòng chữ, không chạm tay lên mực.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, over-the-shoulder angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lão Thành Nguyên lowers the paper. Lục Minh Vi points to a line without touching the ink. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我看见了界碑和巡逻队，但无法判断界碑标示哪条边界，也认不出巡逻者属于哪个门派。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 5,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "low",
+              "camera_move": "tilt",
+              "duration_s": 12,
+              "appears": [
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân rises, his sleeve passing the edge of the table, and addresses the assembly.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "即使她认不出门派，队伍仍经过争议地带。这趟护送足以证明现行法度维持不了秩序。天阙碎片不能交由各派争夺，必须由大仙门议会掌控。",
+                  "source_text": "Dù nàng không nhận ra môn phái, đoàn người vẫn đi qua vùng tranh chấp. Một chuyến đi như vậy đủ cho thấy luật hiện hành không thể giữ nổi trật tự. Mảnh Thiên Khuyết không thể giao cho từng môn phái tự tranh đoạt. Hội đồng các tiên môn lớn phải nắm quyền kiểm soát."
+                }
+              ],
+              "covers": "Trưởng môn Bạch đã đứng dậy, tay áo trắng lướt qua mép bàn.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, low angle, tilt. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Bạch Kinh Luân rises, his sleeve passing the edge of the table, and addresses the assembly. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"即使她认不出门派，队伍仍经过争议地带。这趟护送足以证明现行法度维持不了秩序。天阙碎片不能交由各派争夺，必须由大仙门议会掌控。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 6,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 12,
+              "appears": [
+                "han_tinh_chau",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu gives a dry laugh. Bạch Kinh Luân turns toward him.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "她的证词没证明谁拿了神器碎片。您把一次护送扯进来，只为争取保管权，也太顺手了。",
+                  "source_text": "Bản khai của nàng không chứng minh ai lấy mảnh thần khí. Ông kéo chuyện một chuyến hộ tống vào đây để xin quyền giữ nó, nghe cũng thuận tay quá."
+                },
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "那你想让空盒和失踪的印主摆着，再称之为中立？",
+                  "source_text": "Còn ông muốn để chiếc hộp trống và người giữ ấn mất tích, rồi gọi đó là trung lập?"
+                }
+              ],
+              "covers": "Hàn Tinh Châu bật ra một tiếng cười khô.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Hàn Tinh Châu gives a dry laugh. Bạch Kinh Luân turns toward him. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"她的证词没证明谁拿了神器碎片。您把一次护送扯进来，只为争取保管权，也太顺手了。\" Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"那你想让空盒和失踪的印主摆着，再称之为中立？\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 7,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "high",
+              "camera_move": "tilt",
+              "duration_s": 6,
+              "appears": [
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu does not answer at once. His finger taps the tabletop twice, then stops.",
+              "dialogue": [],
+              "covers": "Ngón tay ông gõ một nhịp lên mặt bàn, dừng ở tiếng thứ hai.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, high angle, tilt. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Hàn Tinh Châu does not answer at once. His finger taps the tabletop twice, then stops. Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 8,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "track",
+              "duration_s": 12,
+              "appears": [
+                "duong_anh_lac",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc steps forward before Lão Thành Nguyên can speak. She looks from the record to the scribe.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "只有她亲眼所见的句子才能记作证词。推测的部分删掉。",
+                  "source_text": "Chỉ những câu nàng tận mắt thấy mới được ghi thành chứng từ. Phần nào là suy đoán thì bỏ đi."
+                }
+              ],
+              "covers": "Dương Anh Lạc bước lên trước khi Lão Thành Nguyên kịp cất lời.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, tracking shot. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Dương Anh Lạc steps forward before Lão Thành Nguyên can speak. She looks from the record to the scribe. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"只有她亲眼所见的句子才能记作证词。推测的部分删掉。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 9,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "pan",
+              "duration_s": 9,
+              "appears": [
+                "duong_anh_lac",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc turns her gaze toward Bạch Kinh Luân. He remains standing beside the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "逼证人确认她没说过的话，这场议事就谈不上中立。",
+                  "source_text": "Ép nhân chứng xác nhận điều nàng chưa nói, phiên nghị sự này sẽ chẳng còn gì để gọi là trung lập."
+                },
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "我没有逼她确认。",
+                  "source_text": "Ta đâu có ép nàng xác nhận."
+                },
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "那就别把这份证词当成它不是的东西。",
+                  "source_text": "Vậy thì đừng dùng lời khai ấy làm thứ nó không phải."
+                }
+              ],
+              "covers": "Ánh mắt nàng chuyển sang Bạch Kinh Luân.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, over-the-shoulder angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Dương Anh Lạc turns her gaze toward Bạch Kinh Luân. He remains standing beside the table. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"逼证人确认她没说过的话，这场议事就谈不上中立。\" Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"我没有逼她确认。\" Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"那就别把这份证词当成它不是的东西。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 10,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 12,
+              "appears": [
+                "protagonist",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "People shift in the rows around the table; hands on sword hilts show beneath sleeves. The scribe's pen pauses mid-line as Lục Minh Vi speaks.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "删去护送队越过某门派控制边界的说法。照我的原话重写：我看见界碑和巡逻队，但无法确认边界或他们所属的门派。",
+                  "source_text": "Gạch bỏ phần nói đoàn hộ tống đã vượt qua ranh giới do một môn phái nào đó kiểm soát. Ghi lại đúng lời tôi: tôi thấy cột mốc và toán tuần tra, nhưng không xác định được ranh giới hay môn phái của họ."
+                }
+              ],
+              "covers": "Gạch bỏ phần nói đoàn hộ tống đã vượt qua ranh giới do một môn phái nào đó kiểm soát.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: People shift in the rows around the table; hands on sword hilts show beneath sleeves. The scribe's pen pauses mid-line as Lục Minh Vi speaks. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"删去护送队越过某门派控制边界的说法。照我的原话重写：我看见界碑和巡逻队，但无法确认边界或他们所属的门派。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 11,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "protagonist",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên looks to Lục Minh Vi, who nods. The scribe draws a thin line through the old sentence and writes beneath it; she reads the fresh ink, then signs the page.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "记录已改。我只确认亲眼所见，不为任何一方的结论负责。",
+                  "source_text": "Bản ghi đã sửa. Ta xác nhận những điều ta tận mắt chứng kiến, không nhận trách nhiệm cho kết luận của bất kỳ phe nào."
+                }
+              ],
+              "covers": "Người chép gạch một đường mảnh qua câu cũ, rồi viết lại bên dưới.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên looks to Lục Minh Vi, who nods. The scribe draws a thin line through the old sentence and writes beneath it; she reads the fresh ink, then signs the page. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"记录已改。我只确认亲眼所见，不为任何一方的结论负责。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 12,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "low",
+              "camera_move": "pull_out",
+              "duration_s": 12,
+              "appears": [
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân remains standing as Hàn Tinh Châu leans forward. Between them, the amended document lies flat beside the open, empty sealed box beneath the lamp.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "你可以字字谨慎，但各派仍须决定谁有权保管神器碎片。",
+                  "source_text": "Nàng có thể dè dặt với từng chữ. Nhưng các môn phái vẫn phải quyết định ai có quyền giữ mảnh thần khí."
+                },
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "就凭这份证词来决定？那权力早就在想占有它的人手里了。",
+                  "source_text": "Quyết định bằng lời khai này ư? Vậy thì quyền ấy đã nằm sẵn trong tay người muốn chiếm nó."
+                }
+              ],
+              "covers": "Bạch Kinh Luân không ngồi xuống. Hàn Tinh Châu cũng vậy.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, low angle, slow pull-out. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Bạch Kinh Luân remains standing as Hàn Tinh Châu leans forward. Between them, the amended document lies flat beside the open, empty sealed box beneath the lamp. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"你可以字字谨慎，但各派仍须决定谁有权保管神器碎片。\" Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"就凭这份证词来决定？那权力早就在想占有它的人手里了。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            }
+          ],
+          "moderation": {
+            "verdict": "allow",
+            "categories": [],
+            "reason": "Cảnh tranh luận chính trị giữa các phe hư cấu; không có nội dung thuộc các loại cần báo."
+          },
+          "error": null,
+          "withheld_shots": 0
+        },
+        {
+          "chapter": 2,
+          "scene": 2,
+          "status": "ok",
+          "shots": [
+            {
+              "n": 1,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 8,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi follows the lines on the document as the fresh ink catches the light. Several people in the hall turn to look at Lục Minh Vi.",
+              "dialogue": [],
+              "covers": "Tôi nhìn theo từng dòng, đến những chỗ mực mới còn đen bóng.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi follows the lines on the document as the fresh ink catches the light. Several people in the hall turn to look at Lục Minh Vi. Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 2,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "high",
+              "camera_move": "static",
+              "duration_s": 5,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "The reading stops. Several people turn their attention toward Lục Minh Vi.",
+              "dialogue": [],
+              "covers": "Trong đại sảnh, vài người quay sang nhìn tôi.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, high angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: The reading stops. Several people turn their attention toward Lục Minh Vi. Duration: 5 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 3,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 10,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi studies the document, then looks up from it.",
+              "dialogue": [],
+              "covers": "Tôi đối chiếu từng câu với những gì đã thấy trên đường.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi studies the document, then looks up from it. Duration: 10 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 4,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "track",
+              "duration_s": 12,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi speaks while holding position beside the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "对。此份记录没有断定护送队越过了边界，也没有指出任何门派。",
+                  "source_text": "Đúng. Bản này không kết luận đoàn hộ tống đã vượt ranh giới, cũng không chỉ ra môn phái nào."
+                },
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我确认自己亲眼见到的事。",
+                  "source_text": "Tôi xác nhận những điều mình tận mắt chứng kiến."
+                }
+              ],
+              "covers": "Tôi xác nhận những điều mình tận mắt chứng kiến.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, tracking shot. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi speaks while holding position beside the table. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"对。此份记录没有断定护送队越过了边界，也没有指出任何门派。\" Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我确认自己亲眼见到的事。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 5,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "low",
+              "camera_move": "track",
+              "duration_s": 12,
+              "appears": [
+                "bach_kinh_luan",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [
+                "protagonist"
+              ],
+              "action_en": "Bạch Kinh Luân steps up beside the table and looks down at Lục Minh Vi's signature.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "即便你不知道边界在哪里，那支队伍仍经过了争议地区。",
+                  "source_text": "Dù nàng không biết ranh giới nằm ở đâu, đoàn ấy vẫn đi qua vùng tranh chấp."
+                },
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "仅凭这一点，就足以证明现行法律无法维持秩序。",
+                  "source_text": "Chừng đó đủ chứng minh luật hiện hành không giữ nổi trật tự."
+                }
+              ],
+              "covers": "Bạch Kinh Luân lập tức bước tới bên bàn.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, low angle, tracking shot. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân steps up beside the table and looks down at Lục Minh Vi's signature. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"即便你不知道边界在哪里，那支队伍仍经过了争议地区。\" Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"仅凭这一点，就足以证明现行法律无法维持秩序。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 6,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 8,
+              "appears": [
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân continues addressing the assembly from beside the table.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "会议必须把神器碎片的保管权交给大仙门联盟。",
+                  "source_text": "Hội nghị phải giao quyền giữ mảnh thần khí cho liên minh các tiên môn lớn."
+                }
+              ],
+              "covers": "Hội nghị phải giao quyền giữ mảnh thần khí cho liên minh các tiên môn lớn.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Bạch Kinh Luân continues addressing the assembly from beside the table. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"会议必须把神器碎片的保管权交给大仙门联盟。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 7,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi places both hands on the edge of the table, leaving space between them and the document.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "一次有路标、有巡逻者的行程，不能证明谁违反了法律。",
+                  "source_text": "Một chuyến đi có cột mốc, có người tuần tra, không chứng minh được ai vi phạm luật."
+                },
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "更不能以此作为交出神器碎片保管权的证据。",
+                  "source_text": "Càng không thể lấy nó làm bằng chứng để trao quyền giữ mảnh thần khí."
+                }
+              ],
+              "covers": "Tôi đặt hai tay lên mép bàn, để cách tờ chứng từ một khoảng.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi places both hands on the edge of the table, leaving space between them and the document. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"一次有路标、有巡逻者的行程，不能证明谁违反了法律。\" Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"更不能以此作为交出神器碎片保管权的证据。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 8,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 12,
+              "appears": [
+                "duong_anh_lac",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc looks around the table as several hands slowly release their sword hilts.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "请分清证人的证词与想掌权之人的推论。",
+                  "source_text": "Hãy phân biệt chứng từ của nhân chứng với suy luận của người muốn nắm quyền."
+                },
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "她只说了自己亲眼所见的事。其余都是你的话。",
+                  "source_text": "Nàng ấy chỉ nói điều mình tận mắt thấy. Phần còn lại là lời của ông."
+                }
+              ],
+              "covers": "Dương Anh Lạc nhìn quanh bàn.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Dương Anh Lạc looks around the table as several hands slowly release their sword hilts. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"请分清证人的证词与想掌权之人的推论。\" Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"她只说了自己亲眼所见的事。其余都是你的话。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 9,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "bach_kinh_luan",
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân tilts his head slightly as he speaks toward Dương Anh Lạc.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "如果事事都要等到证据充分，各大仙门要等到何时才能重整秩序？",
+                  "source_text": "Nếu chuyện gì cũng chờ đủ chứng cứ, các tiên môn định lập lại trật tự đến bao giờ?"
+                }
+              ],
+              "covers": "Bạch Kinh Luân hơi nghiêng đầu.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Bạch Kinh Luân tilts his head slightly as he speaks toward Dương Anh Lạc. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"如果事事都要等到证据充分，各大仙门要等到何时才能重整秩序？\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 10,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 12,
+              "appears": [
+                "duong_anh_lac",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc answers across the table. Hàn Tinh Châu taps one finger on the tabletop.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "让别人替自己担责来重整秩序，确实很快。",
+                  "source_text": "Lập trật tự bằng cách bắt người khác chịu trách nhiệm thay mình thì nhanh thật."
+                },
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "把我的反对意见明确记入会议记录。",
+                  "source_text": "Ghi rõ lời phản đối của ta vào biên bản."
+                },
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "我不接受用这份证词作为借口，把权力交给白经纶的联盟。",
+                  "source_text": "Ta không chấp nhận dùng bản khai này làm cớ trao quyền cho liên minh của Bạch Kinh Luân."
+                }
+              ],
+              "covers": "Hàn Tinh Châu gõ một ngón tay xuống bàn.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Dương Anh Lạc answers across the table. Hàn Tinh Châu taps one finger on the tabletop. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"让别人替自己担责来重整秩序，确实很快。\" Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"把我的反对意见明确记入会议记录。\" Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"我不接受用这份证词作为借口，把权力交给白经纶的联盟。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 11,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "high",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "lao_thanh_nguyen",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên pulls the paper toward himself and holds one hand over its corner. Bạch Kinh Luân turns toward him.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "证词既已确认，就照原样保留。不得用它作为定罪依据，也不得用它表决交出神器碎片的控制权。",
+                  "source_text": "Lời khai đã xác nhận thì giữ nguyên như vậy. Không được dùng nó làm căn cứ kết tội, cũng không được lấy nó để biểu quyết trao quyền kiểm soát mảnh thần khí."
+                },
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "元老要靠一张纸阻止整个会议作出决定吗？",
+                  "source_text": "Nguyên lão định giữ một tờ giấy để ngăn cả hội nghị quyết định sao?"
+                }
+              ],
+              "covers": "Lão Thành Nguyên kéo tờ giấy về phía mình, giữ một bàn tay trên góc bản ghi.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, high angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Lão Thành Nguyên pulls the paper toward himself and holds one hand over its corner. Bạch Kinh Luân turns toward him. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"证词既已确认，就照原样保留。不得用它作为定罪依据，也不得用它表决交出神器碎片的控制权。\" Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"元老要靠一张纸阻止整个会议作出决定吗？\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 12,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 12,
+              "appears": [
+                "lao_thanh_nguyen",
+                "protagonist",
+                "han_tinh_chau",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Lục Minh Vi",
+                "Hàn Tinh Châu",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên keeps his hand on the paper. The scribe writes beside the confirmed document as Lục Minh Vi leaves it untouched; the two sides withdraw in opposite directions. Beyond the shut main door, the bolt remains still.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "我是在保护证人的话不被篡改成控罪。",
+                  "source_text": "Ta giữ lời nhân chứng khỏi bị sửa thành lời buộc tội."
+                }
+              ],
+              "covers": "Ngoài cánh cửa lớn, then khóa không nhúc nhích.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Lão Thành Nguyên keeps his hand on the paper. The scribe writes beside the confirmed document as Lục Minh Vi leaves it untouched; the two sides withdraw in opposite directions. Beyond the shut main door, the bolt remains still. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"我是在保护证人的话不被篡改成控罪。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            }
+          ],
+          "moderation": {
+            "verdict": "allow",
+            "categories": [],
+            "reason": "Cảnh đối thoại chính trị hư cấu, không có nội dung thuộc các loại cần báo."
+          },
+          "error": null,
+          "withheld_shots": 0
+        }
+      ]
+    },
+    {
+      "chapter": 3,
+      "overview": {
+        "chapter": 3,
+        "relationships": [
+          {
+            "source": "Bạch Kinh Luân",
+            "target": "Hàn Tinh Châu",
+            "kind": "đối thủ",
+            "score": -30
+          },
+          {
+            "source": "Bạch Kinh Luân",
+            "target": "Lục Minh Vi",
+            "kind": "lợi dụng",
+            "score": -5
+          },
+          {
+            "source": "Dương Anh Lạc",
+            "target": "Hàn Tinh Châu",
+            "kind": "đối địch",
+            "score": -20
+          },
+          {
+            "source": "Dương Anh Lạc",
+            "target": "Lục Minh Vi",
+            "kind": "đề phòng",
+            "score": 0
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Bạch Kinh Luân",
+            "kind": "đối thủ",
+            "score": -25
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Dương Anh Lạc",
+            "kind": "đối địch",
+            "score": -25
+          },
+          {
+            "source": "Hàn Tinh Châu",
+            "target": "Lục Minh Vi",
+            "kind": "thận trọng",
+            "score": 5
+          },
+          {
+            "source": "Lão Thành Nguyên",
+            "target": "Lục Minh Vi",
+            "kind": "bảo hộ",
+            "score": 20
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Bạch Kinh Luân",
+            "kind": "nghi kỵ",
+            "score": -15
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Dương Anh Lạc",
+            "kind": "đồng cảm",
+            "score": 20
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Hàn Tinh Châu",
+            "kind": "nghi kỵ",
+            "score": -10
+          },
+          {
+            "source": "Lục Minh Vi",
+            "target": "Lão Thành Nguyên",
+            "kind": "tin cậy",
+            "score": 15
+          }
+        ],
+        "memberships": [
+          [
+            "Bạch Kinh Luân",
+            "Vân Tê Môn"
+          ],
+          [
+            "Dương Anh Lạc",
+            "Thanh Tiêu Môn"
+          ],
+          [
+            "Hàn Tinh Châu",
+            "Băng Tâm Môn"
+          ]
+        ],
+        "where": [
+          [
+            "Bạch Kinh Luân",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Dương Anh Lạc",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Hàn Tinh Châu",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Lão Thành Nguyên",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Lục Minh Vi",
+            "Đại Nghị Sảnh"
+          ],
+          [
+            "Thiệu Kiếm Hoài",
+            "Hành Lang Phong Luân"
+          ]
+        ],
+        "knowledge": [],
+        "events": [],
+        "lies": [],
+        "mermaid": "graph LR\n  c1[\"Bạch Kinh Luân\"]\n  c2[\"Hàn Tinh Châu\"]\n  c3[\"Lục Minh Vi\"]\n  c4[\"Dương Anh Lạc\"]\n  c5[\"Lão Thành Nguyên\"]\n  f6([\"Vân Tê Môn\"])\n  f7([\"Thanh Tiêu Môn\"])\n  f8([\"Băng Tâm Môn\"])\n  c1 -->|\"đối thủ -30\"| c2\n  c1 -->|\"lợi dụng -5\"| c3\n  c4 -->|\"đối địch -20\"| c2\n  c4 -->|\"đề phòng +0\"| c3\n  c2 -->|\"đối thủ -25\"| c1\n  c2 -->|\"đối địch -25\"| c4\n  c2 -->|\"thận trọng +5\"| c3\n  c5 -->|\"bảo hộ +20\"| c3\n  c3 -->|\"nghi kỵ -15\"| c1\n  c3 -->|\"đồng cảm +20\"| c4\n  c3 -->|\"nghi kỵ -10\"| c2\n  c3 -->|\"tin cậy +15\"| c5\n  c1 -.-> f6\n  c4 -.-> f7\n  c2 -.-> f8"
+      },
+      "scenes": [
+        {
+          "chapter": 3,
+          "scene": 1,
+          "status": "ok",
+          "shots": [
+            {
+              "n": 1,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 8,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi looks down at the dry signature on the testimony while Bạch Kinh Luân waits across the table, then turns toward the others.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "门还锁着。眼下必须有人有权下令。",
+                  "source_text": "Cửa vẫn khóa. Trong lúc này, phải có người được quyền ra lệnh."
+                }
+              ],
+              "covers": "Mực trên chứng từ đã khô.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Lục Minh Vi looks down at the dry signature on the testimony while Bạch Kinh Luân waits across the table, then turns toward the others. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"门还锁着。眼下必须有人有权下令。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 2,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "static",
+              "duration_s": 8,
+              "appears": [
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu rests a hand on the table's edge and addresses the others without looking away from them.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "今日有权下令的人，要握权到何时？别拿门锁当借口，把整个天律台交给一派。",
+                  "source_text": "Người được quyền ra lệnh hôm nay sẽ giữ quyền ấy đến khi nào? Đừng lấy cửa khóa làm cớ trao cả Đài Thiên Luật cho một phe."
+                }
+              ],
+              "covers": "Hàn Tinh Châu đặt tay lên mép bàn",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, over-the-shoulder angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Hàn Tinh Châu rests a hand on the table's edge and addresses the others without looking away from them. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"今日有权下令的人，要握权到何时？别拿门锁当借口，把整个天律台交给一派。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 3,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "track",
+              "duration_s": 9,
+              "appears": [
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc steps between the sect leaders and the empty sealed box, keeping her hands away from it.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "所有人离开箱子。没有证据，谁也不能抓人，更不能擅自搜查。",
+                  "source_text": "Tất cả lùi khỏi chiếc hộp. Chưa có chứng cứ thì không ai được bắt giữ người khác, càng không ai được tự ý lục soát."
+                }
+              ],
+              "covers": "Dương Anh Lạc bước lên, chắn giữa các trưởng môn và chiếc hộp niêm phong trống rỗng.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, tracking shot. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Dương Anh Lạc steps between the sect leaders and the empty sealed box, keeping her hands away from it. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"所有人离开箱子。没有证据，谁也不能抓人，更不能擅自搜查。\" Duration: 9 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 4,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 7,
+              "appears": [
+                "bach_kinh_luan",
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [
+                "duong_anh_lac"
+              ],
+              "action_en": "Bạch Kinh Luân looks toward Dương Anh Lạc with a slight lift at the corner of his mouth.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "等待也是一种选择。等到别人遭难，别说今天没人负责。",
+                  "source_text": "Chờ đợi cũng là một lựa chọn. Đến khi có người khác gặp nạn, đừng nói hôm nay không ai chịu trách nhiệm."
+                }
+              ],
+              "covers": "Bạch Kinh Luân nhìn nàng, khóe miệng hơi nhếch.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Bạch Kinh Luân looks toward Dương Anh Lạc with a slight lift at the corner of his mouth. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"等待也是一种选择。等到别人遭难，别说今天没人负责。\" Duration: 7 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 5,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 8,
+              "appears": [
+                "protagonist",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [
+                "lao_thanh_nguyen"
+              ],
+              "action_en": "Lục Minh Vi turns toward Lão Thành Nguyên as a nearby disciple grips a sword hilt and looks at the box.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "元长老，还有办法不破锁检查门吗？",
+                  "source_text": "Nguyên lão, còn cách nào kiểm tra cửa mà không phá khóa không?"
+                }
+              ],
+              "covers": "Tôi quay sang Lão Thành Nguyên.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lục Minh Vi turns toward Lão Thành Nguyên as a nearby disciple grips a sword hilt and looks at the box. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"元长老，还有办法不破锁检查门吗？\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 6,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 8,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên taps the top of his staff once with a finger, then stills his hand.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "锁的机关仍完好。但刚才，我感到台深处传来极微弱的一次回应。不像开门声。",
+                  "source_text": "Cơ chế khóa vẫn nguyên. Nhưng vừa rồi, ta cảm nhận được một nhịp đáp rất yếu từ sâu bên trong đài. Không giống tiếng cửa mở."
+                }
+              ],
+              "covers": "Ngón tay già nua khẽ gõ lên đầu gậy, rồi dừng lại.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên taps the top of his staff once with a finger, then stills his hand. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"锁的机关仍完好。但刚才，我感到台深处传来极微弱的一次回应。不像开门声。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 7,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "static",
+              "duration_s": 3,
+              "appears": [
+                "han_tinh_chau",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu turns his attention toward Lão Thành Nguyên.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "你确定吗？",
+                  "source_text": "Ông chắc chứ?"
+                }
+              ],
+              "covers": "- Ông chắc chứ? - Hàn Tinh Châu hỏi.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, over-the-shoulder angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Hàn Tinh Châu turns his attention toward Lão Thành Nguyên. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"你确定吗？\" Duration: 3 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 8,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 8,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên looks toward the rune-carved doors at the far end of the hall.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "我只说自己感受到的。那可能是机关余响，也可能是别的东西。",
+                  "source_text": "Ta chỉ nói điều mình cảm nhận được. Nó có thể là dư âm của cơ chế, cũng có thể là thứ khác."
+                }
+              ],
+              "covers": "Ông nhìn về phía những cánh cửa khắc phù văn ở cuối đại sảnh.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên looks toward the rune-carved doors at the far end of the hall. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"我只说自己感受到的。那可能是机关余响，也可能是别的东西。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 9,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "low",
+              "camera_move": "tilt",
+              "duration_s": 10,
+              "appears": [
+                "protagonist"
+              ],
+              "appears_names": [
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi steps away from the table; a shoe touches a thin crack in the stone floor as dust lies nearby.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "那就别在这里争谁下令了。我们检查里面的通道，只确认台的状况。谁也不能拿结果定罪别人或抢箱子。",
+                  "source_text": "Vậy đừng tranh quyền ra lệnh ở đây nữa. Chúng ta kiểm tra các lối bên trong, chỉ để biết tình trạng của đài. Không ai được dùng kết quả để kết tội người khác hay giành chiếc hộp."
+                }
+              ],
+              "covers": "Tôi bước khỏi bàn.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, low angle, tilt. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Lục Minh Vi steps away from the table; a shoe touches a thin crack in the stone floor as dust lies nearby. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"那就别在这里争谁下令了。我们检查里面的通道，只确认台的状况。谁也不能拿结果定罪别人或抢箱子。\" Duration: 10 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 10,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 5,
+              "appears": [
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc nods once as she stands near the others.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "我同行。若有人想抓人，我会阻止。",
+                  "source_text": "Ta đi cùng. Nếu có ai định bắt người, ta sẽ ngăn lại."
+                }
+              ],
+              "covers": "Dương Anh Lạc gật đầu.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, static camera. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Dương Anh Lạc nods once as she stands near the others. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"我同行。若有人想抓人，我会阻止。\" Duration: 5 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 11,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "push_in",
+              "duration_s": 8,
+              "appears": [
+                "bach_kinh_luan",
+                "protagonist"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Lục Minh Vi"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân looks for a long moment at Lục Minh Vi, then shifts his gaze from the signature toward the inner door.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "我同意，但每件事都必须有人作证。",
+                  "source_text": "Ta chấp thuận, với điều kiện có người làm chứng cho mọi việc."
+                }
+              ],
+              "covers": "Bạch Kinh Luân nhìn tôi một lúc lâu.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, over-the-shoulder angle, slow push-in. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Action: Bạch Kinh Luân looks for a long moment at Lục Minh Vi, then shifts his gaze from the signature toward the inner door. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"我同意，但每件事都必须有人作证。\" Duration: 8 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 12,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "track",
+              "duration_s": 12,
+              "appears": [
+                "han_tinh_chau",
+                "bach_kinh_luan",
+                "lao_thanh_nguyen",
+                "protagonist",
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Hàn Tinh Châu",
+                "Bạch Kinh Luân",
+                "Lão Thành Nguyên",
+                "Lục Minh Vi",
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Hàn Tinh Châu speaks as the group moves toward the inner door behind Lão Thành Nguyên. Lục Minh Vi stops at the dark threshold while Lão Thành Nguyên places a hand on the door; everyone else halts behind them.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "我也同意。而且谁也不许独自行动。",
+                  "source_text": "Ta cũng vậy. Và không ai được đi một mình."
+                }
+              ],
+              "covers": "Tôi nhìn khe cửa tối om, chờ ông đẩy ra.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, tracking shot. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Hàn Tinh Châu speaks as the group moves toward the inner door behind Lão Thành Nguyên. Lục Minh Vi stops at the dark threshold while Lão Thành Nguyên places a hand on the door; everyone else halts behind them. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"我也同意。而且谁也不许独自行动。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            }
+          ],
+          "moderation": {
+            "verdict": "allow",
+            "categories": [],
+            "reason": "Đoạn truyện không có nội dung thuộc các loại cần báo."
+          },
+          "error": null,
+          "withheld_shots": 0
+        },
+        {
+          "chapter": 3,
+          "scene": 2,
+          "status": "ok",
+          "shots": [
+            {
+              "n": 1,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 6,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên leans his shoulder into the inner door. The hinge groans, dust falls from the threshold, and the door opens onto a narrow dark corridor.",
+              "dialogue": [],
+              "covers": "Lão Thành Nguyên đặt vai vào cánh cửa trong.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, slow push-in. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên leans his shoulder into the inner door. The hinge groans, dust falls from the threshold, and the door opens onto a narrow dark corridor. Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 2,
+              "location_id": "dai_nghi_su",
+              "location": "Đại Nghị Sảnh",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "pan",
+              "duration_s": 11,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi looks back toward the sealed great door, then turns toward the opening. Bạch Kinh Luân speaks as Hàn Tinh Châu glances at him.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "至少里面还有路。",
+                  "source_text": "Ít nhất bên trong còn lối đi."
+                },
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "有路不等于有出口。",
+                  "source_text": "Lối đi không đồng nghĩa với lối thoát."
+                }
+              ],
+              "covers": "Ít nhất bên trong còn lối đi.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, over-the-shoulder angle, pan. Setting: Vast stone council hall lit by cool shafts from high windows, gray flagstone floor and dark timber beams, massive closed stone doors, tiered benches and controlled side passages beneath a solemn vaulted ceiling. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Lục Minh Vi looks back toward the sealed great door, then turns toward the opening. Bạch Kinh Luân speaks as Hàn Tinh Châu glances at him. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"至少里面还有路。\" Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"有路不等于有出口。\" Duration: 11 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 3,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "low",
+              "camera_move": "tilt",
+              "duration_s": 5,
+              "appears": [
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên raises his staff and taps the corridor floor. The dry knock echoes down the passage and fades.",
+              "dialogue": [],
+              "covers": "Lão Thành Nguyên giơ gậy, chạm nhẹ xuống nền hành lang.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, low angle, tilt. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Lão Thành Nguyên raises his staff and taps the corridor floor. The dry knock echoes down the passage and fades. Duration: 5 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 4,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "high",
+              "camera_move": "tilt",
+              "duration_s": 12,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi crouches to inspect the disturbed dust near the wall, then looks up. Bạch Kinh Luân looks down without touching it.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "这里有被扰动的灰尘。只是需要检查的痕迹，还不足以指控任何人。",
+                  "source_text": "Có bụi bị động ở đây. Chỉ là dấu vết cần kiểm tra, chưa đủ để buộc tội bất kỳ ai."
+                },
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "如果这是守印人的脚印呢？",
+                  "source_text": "Nếu là dấu chân của người giữ ấn thì sao?"
+                }
+              ],
+              "covers": "Có bụi bị động ở đây.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, high angle, tilt. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Action: Lục Minh Vi crouches to inspect the disturbed dust near the wall, then looks up. Bạch Kinh Luân looks down without touching it. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"这里有被扰动的灰尘。只是需要检查的痕迹，还不足以指控任何人。\" Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"如果这是守印人的脚印呢？\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 5,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 10,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi raises their head toward Bạch Kinh Luân. Hàn Tinh Châu faces Bạch Kinh Luân as they exchange remarks.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "如果您知道那是谁的脚印，就请明说。至于现在，我们还不知道。",
+                  "source_text": "Nếu ông biết đó là dấu chân của ai, cứ nói rõ. Còn hiện giờ, ta chưa biết."
+                },
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "白掌门想让整队人跟着一片模糊的灰尘走，然后称之为证据。",
+                  "source_text": "Trưởng môn Bạch muốn cả đoàn bước theo một vệt bụi mờ, rồi gọi đó là chứng cứ."
+                }
+              ],
+              "covers": "Còn hiện giờ, ta chưa biết.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Lục Minh Vi raises their head toward Bạch Kinh Luân. Hàn Tinh Châu faces Bạch Kinh Luân as they exchange remarks. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"如果您知道那是谁的脚印，就请明说。至于现在，我们还不知道。\" Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"白掌门想让整队人跟着一片模糊的灰尘走，然后称之为证据。\" Duration: 10 seconds.",
+              "split_by_code": true,
+              "pace_over": false
+            },
+            {
+              "n": 6,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 4,
+              "appears": [
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi raises their head toward Bạch Kinh Luân. Hàn Tinh Châu faces Bạch Kinh Luân as they exchange remarks.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "那你想站着不动，直到痕迹自己消失吗？",
+                  "source_text": "Còn ngươi muốn đứng yên đến khi dấu vết tự biến mất?"
+                }
+              ],
+              "covers": "Còn hiện giờ, ta chưa biết.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, eye-level angle, slow push-in. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Lục Minh Vi raises their head toward Bạch Kinh Luân. Hàn Tinh Châu faces Bạch Kinh Luân as they exchange remarks. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"那你想站着不动，直到痕迹自己消失吗？\" Duration: 4 seconds.",
+              "split_by_code": true,
+              "pace_over": false
+            },
+            {
+              "n": 7,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "static",
+              "duration_s": 12,
+              "appears": [
+                "duong_anh_lac",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Dương Anh Lạc",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Dương Anh Lạc moves between Bạch Kinh Luân and Hàn Tinh Châu, holding one hand away from her sword hilt. Both stop speaking.",
+              "dialogue": [
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "一起行动。谁也不许擅自分路，也不许在大家看见之前碰任何东西。记录痕迹，然后回来这里。",
+                  "source_text": "Đi cùng nhau. Không ai tự ý rẽ lối hay chạm vào thứ gì trước khi mọi người nhìn thấy. Ghi nhận dấu vết, rồi quay lại đây."
+                }
+              ],
+              "covers": "Dương Anh Lạc nghiêng người chắn giữa hai người.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, static camera. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Dương Anh Lạc moves between Bạch Kinh Luân and Hàn Tinh Châu, holding one hand away from her sword hilt. Both stop speaking. Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"一起行动。谁也不许擅自分路，也不许在大家看见之前碰任何东西。记录痕迹，然后回来这里。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 8,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 7,
+              "appears": [
+                "lao_thanh_nguyen",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên closes his eyes as a faint note sounds from deep in the corridor and dies away. Bạch Kinh Luân steps forward slightly; Hàn Tinh Châu places a hand on his sword hilt.",
+              "dialogue": [
+                {
+                  "speaker_id": "lao_thanh_nguyen",
+                  "speaker": "Lão Thành Nguyên",
+                  "text": "可能与高台的机关有关。我不敢说得更多。",
+                  "source_text": "Có thể liên quan đến cơ chế của đài. Ta không dám chắc hơn."
+                },
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "那么曾经守印的人应该带路。我走在最前面。",
+                  "source_text": "Vậy người từng giữ ấn nên dẫn đường. Ta sẽ đi đầu."
+                }
+              ],
+              "covers": "Từ sâu trong hành lang bỗng vọng tới một tiếng ngân rất nhẹ.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, eye-level angle, slow push-in. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Lão Thành Nguyên closes his eyes as a faint note sounds from deep in the corridor and dies away. Bạch Kinh Luân steps forward slightly; Hàn Tinh Châu places a hand on his sword hilt. Spoken line in Chinese (Mandarin) by Lão Thành Nguyên: \"可能与高台的机关有关。我不敢说得更多。\" Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"那么曾经守印的人应该带路。我走在最前面。\" Duration: 7 seconds.",
+              "split_by_code": true,
+              "pace_over": false
+            },
+            {
+              "n": 9,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "close_up",
+              "camera_angle": "eye_level",
+              "camera_move": "push_in",
+              "duration_s": 6,
+              "appears": [
+                "lao_thanh_nguyen",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "Lão Thành Nguyên closes his eyes as a faint note sounds from deep in the corridor and dies away. Bạch Kinh Luân steps forward slightly; Hàn Tinh Châu places a hand on his sword hilt.",
+              "dialogue": [
+                {
+                  "speaker_id": "han_tinh_chau",
+                  "speaker": "Hàn Tinh Châu",
+                  "text": "不需要你替大家选路。我走前面。如果有机关，至少我还能认出来。",
+                  "source_text": "Không cần ông chọn đường cho mọi người. Ta sẽ đi trước. Nếu có cơ quan, ít nhất ta còn nhận ra."
+                }
+              ],
+              "covers": "Từ sâu trong hành lang bỗng vọng tới một tiếng ngân rất nhẹ.",
+              "covers_verified": true,
+              "prompt_en": "Close-up, eye-level angle, slow push-in. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: Lão Thành Nguyên closes his eyes as a faint note sounds from deep in the corridor and dies away. Bạch Kinh Luân steps forward slightly; Hàn Tinh Châu places a hand on his sword hilt. Spoken line in Chinese (Mandarin) by Hàn Tinh Châu: \"不需要你替大家选路。我走前面。如果有机关，至少我还能认出来。\" Duration: 6 seconds.",
+              "split_by_code": true,
+              "pace_over": false
+            },
+            {
+              "n": 10,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "medium",
+              "camera_angle": "eye_level",
+              "camera_move": "pan",
+              "duration_s": 12,
+              "appears": [
+                "bach_kinh_luan",
+                "han_tinh_chau",
+                "duong_anh_lac",
+                "lao_thanh_nguyen"
+              ],
+              "appears_names": [
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu",
+                "Dương Anh Lạc",
+                "Lão Thành Nguyên"
+              ],
+              "appears_added": [],
+              "action_en": "Bạch Kinh Luân and Hàn Tinh Châu face each other. Dương Anh Lạc raises a hand between them, then gestures toward Lão Thành Nguyên.",
+              "dialogue": [
+                {
+                  "speaker_id": "bach_kinh_luan",
+                  "speaker": "Bạch Kinh Luân",
+                  "text": "你认出对自己有利的事倒是很快。",
+                  "source_text": "Ngươi nhận ra mọi thứ có lợi cho mình rất nhanh."
+                },
+                {
+                  "speaker_id": "duong_anh_lac",
+                  "speaker": "Dương Anh Lạc",
+                  "text": "谁也不许独自走在前面。我在队伍中间。老成元走前面，其余人紧跟。发现什么就停下，一起查看。",
+                  "source_text": "Không ai đi đầu một mình. Ta sẽ giữ giữa đội hình. Lão Thành Nguyên đi trước, những người còn lại theo sát. Có dấu gì thì dừng lại, cùng xem."
+                }
+              ],
+              "covers": "Dương Anh Lạc giơ tay, chặn giữa hai người lần nữa.",
+              "covers_verified": true,
+              "prompt_en": "Medium shot, eye-level angle, pan. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Action: Bạch Kinh Luân and Hàn Tinh Châu face each other. Dương Anh Lạc raises a hand between them, then gestures toward Lão Thành Nguyên. Spoken line in Chinese (Mandarin) by Bạch Kinh Luân: \"你认出对自己有利的事倒是很快。\" Spoken line in Chinese (Mandarin) by Dương Anh Lạc: \"谁也不许独自走在前面。我在队伍中间。老成元走前面，其余人紧跟。发现什么就停下，一起查看。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 11,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "medium_close_up",
+              "camera_angle": "over_the_shoulder",
+              "camera_move": "push_in",
+              "duration_s": 12,
+              "appears": [
+                "protagonist",
+                "lao_thanh_nguyen",
+                "duong_anh_lac"
+              ],
+              "appears_names": [
+                "Lục Minh Vi",
+                "Lão Thành Nguyên",
+                "Dương Anh Lạc"
+              ],
+              "appears_added": [],
+              "action_en": "Lục Minh Vi looks into the corridor darkness and speaks. Lão Thành Nguyên nods; Dương Anh Lạc looks briefly toward Lục Minh Vi, then turns into the passage.",
+              "dialogue": [
+                {
+                  "speaker_id": "protagonist",
+                  "speaker": "Lục Minh Vi",
+                  "text": "我同意继续前进。但我们只寻找邵剑怀的踪迹和通道的状况。不下结论说他还在高台里，也不猜是谁把他带走。",
+                  "source_text": "Tôi đồng ý đi tiếp. Nhưng chúng ta chỉ tìm dấu vết của Thiệu Kiếm Hoài và tình trạng lối đi. Không kết luận ông còn ở trong đài, cũng không đoán ai đã đưa ông đi."
+                }
+              ],
+              "covers": "Tôi đồng ý đi tiếp.",
+              "covers_verified": true,
+              "prompt_en": "Medium close-up, over-the-shoulder angle, slow push-in. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Action: Lục Minh Vi looks into the corridor darkness and speaks. Lão Thành Nguyên nods; Dương Anh Lạc looks briefly toward Lục Minh Vi, then turns into the passage. Spoken line in Chinese (Mandarin) by Lục Minh Vi: \"我同意继续前进。但我们只寻找邵剑怀的踪迹和通道的状况。不下结论说他还在高台里，也不猜是谁把他带走。\" Duration: 12 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 12,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "eye_level",
+              "camera_move": "track",
+              "duration_s": 6,
+              "appears": [
+                "lao_thanh_nguyen",
+                "duong_anh_lac",
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Dương Anh Lạc",
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "The group advances farther into the corridor behind Lão Thành Nguyên. Light from the hall disappears behind the doorway as his staff taps steadily on the stone.",
+              "dialogue": [],
+              "covers": "Chúng tôi tiến thêm một đoạn.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, eye-level angle, tracking shot. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: The group advances farther into the corridor behind Lão Thành Nguyên. Light from the hall disappears behind the doorway as his staff taps steadily on the stone. Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 13,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "high",
+              "camera_move": "static",
+              "duration_s": 6,
+              "appears": [
+                "lao_thanh_nguyen",
+                "duong_anh_lac",
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Dương Anh Lạc",
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "The group stops before a dark bend in the corridor. No one separates from the others, and the dusty floor shows only the faint disturbed marks.",
+              "dialogue": [],
+              "covers": "Cả nhóm dừng trước một khúc ngoặt tối",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, high angle, static camera. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: The group stops before a dark bend in the corridor. No one separates from the others, and the dusty floor shows only the faint disturbed marks. Duration: 6 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            },
+            {
+              "n": 14,
+              "location_id": "hanh_lang_phong_luan",
+              "location": "Hành Lang Phong Luân",
+              "time_of_day": "unknown",
+              "shot_size": "wide",
+              "camera_angle": "low",
+              "camera_move": "pull_out",
+              "duration_s": 5,
+              "appears": [
+                "lao_thanh_nguyen",
+                "duong_anh_lac",
+                "protagonist",
+                "bach_kinh_luan",
+                "han_tinh_chau"
+              ],
+              "appears_names": [
+                "Lão Thành Nguyên",
+                "Dương Anh Lạc",
+                "Lục Minh Vi",
+                "Bạch Kinh Luân",
+                "Hàn Tinh Châu"
+              ],
+              "appears_added": [],
+              "action_en": "The group waits in the corridor, with the inner door open behind them and the sealed hall farther back. Lão Thành Nguyên stands at the front as they wait for him to choose the way forward.",
+              "dialogue": [],
+              "covers": "chờ Lão Thành Nguyên quyết định bước tiếp về phía nào.",
+              "covers_verified": true,
+              "prompt_en": "Wide shot, low angle, slow pull-out. Setting: Narrow covered corridor circling the base of a floating platform, cool blue light on gray stone walls and iron fittings, exposed wind vanes, storage-room doors and a compact mechanical gate-control panel. Characters: Lão Thành Nguyên: Elderly man with a slight build, deeply lined face, sparse white hair tied at the nape, muted brown scholar's robe and a plain wooden cane, dark age spot on his left cheek. Dương Anh Lạc: Young adult woman with a sturdy build, oval face, dark eyes, black hair in a tight high bun, charcoal-gray uniform robe with a stiff collar and fitted leather gloves, small mole below her right eye. Lục Minh Vi: Young adult woman with a wiry build, alert oval face, dark brown eyes, black hair in a practical low braid, slate-blue travel robe with a weathered leather shoulder strap, small crescent-shaped scar on her chin. Bạch Kinh Luân: Middle-aged man with a lean build, long angular face, straight black hair tied in a high knot, ivory robe with dark teal edging and a jade belt, thin scar through his left eyebrow. Hàn Tinh Châu: Middle-aged man with a slender build, narrow pale face, long black hair secured with a silver clasp, layered ice-blue robes with a white fur collar, faint vertical scar beside his right eye. Action: The group waits in the corridor, with the inner door open behind them and the sealed hall farther back. Lão Thành Nguyên stands at the front as they wait for him to choose the way forward. Duration: 5 seconds.",
+              "split_by_code": false,
+              "pace_over": false
+            }
+          ],
+          "moderation": {
+            "verdict": "allow",
+            "categories": [],
+            "reason": "Đoạn văn mô tả nhóm nhân vật khám phá hành lang và trao đổi; không có nội dung thuộc các loại cần báo."
+          },
+          "error": null,
+          "withheld_shots": 0
+        }
+      ]
+    }
+  ],
+  "stop": null
+}
