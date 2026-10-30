@@ -141,3 +141,19 @@ def test_on_page_needs_every_part_of_a_group():
     page = "Lão Gù ngồi bên bếp lò nguội. Lan rót trà."
     assert be.on_page("Lão Gù", page) and be.on_page("Lão Gù + Lan", page)
     assert not be.on_page("Lão Gù + gián điệp", page)
+
+
+META_DIR = Path(__file__).parents[3] / "evals" / "config" / "meta"
+
+
+async def test_dry_run_with_the_meta_config_keeps_narrator_4_and_records_muse(tmp_path):
+    """D-140: `--config-dir evals/config/meta` đổi model người kể sang Muse, không đổi đoạn trên trang."""
+    meta_config = load_config(META_DIR)
+    assert prompt_version(meta_config) == PAGES_PROMPT_VERSION
+    o = opts(tmp_path, chapters=[3])
+    code = await be.run_bench(RUN, o, config=meta_config, config_dir=META_DIR, log=lambda _: None)
+    assert code == be.EXIT_OK
+    meta = be.Store(o.out).read_meta()
+    assert meta["narrator"]["model"] == "meta/muse-wonder-1.0"
+    assert meta["fingerprint"]["provider"] == "meta"
+    assert meta["fingerprint"]["narrator_pages"] == CONFIG.limits.narrator_pages.model_dump()

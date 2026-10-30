@@ -138,5 +138,82 @@ PYTHONIOENCODING=utf-8 uv run python ../evals/results/2026-10-30-narrator-passag
   bằng giám khảo.
 - Lệnh chạy cụ thể của lượt chính phụ thuộc client Meta của D-140; phần đó bổ sung ở đây trước lời gọi đầu.
 
-## Bổ sung trước khi chạy
-(Chưa có. Ghi cờ client Meta, giá giữ chỗ của Muse, commit chạy và mọi thay đổi khác so với bản khai này.)
+## Bổ sung trước khi chạy (30/10/2026, trước mọi lời gọi)
+Ghi TRƯỚC lời gọi đầu, trong commit đi trước lượt chạy. Phần này thay các mục ở trên khi hai bên khác nhau; luật
+quyết định giữ nguyên, chỉ viết lại theo số lần hỏi mới.
+
+**Vì sao đổi.** Client Meta của D-140 đã gộp (`main` b65510e): bộ đo chọn Meta bằng
+`--config-dir ../evals/config/meta`, thư mục config một phần gộp từng khoá với `config/`. Muse đắt đúng 40 lần Luna
+mỗi token, nên kế hoạch đầy đủ ở trên (≈ 0,82 USD theo giá Luna) thành khoảng 33 USD. Chủ dự án duyệt kế hoạch rút
+gọn dưới đây (qua điều phối, 30/10/2026).
+
+**Model và giá.**
+- Lượt chính: `meta/muse-wonder-1.0` cho vai `narrator` (`evals/config/meta/models.yaml`), mức suy luận `low` lấy từ
+  `config/models.yaml` (`role_reasoning.narrator`). Giá giữ chỗ (`evals/config/meta/models.yaml`, `prices`): vào 4,0,
+  vào có cache 0,2, ra 20,0 USD mỗi triệu token; chi phí Meta tính bằng token × giá này. Trần mỗi cảnh, chương,
+  truyện của bộ đo Meta: `evals/config/meta/limits.yaml` (nhân 40 so với `config/limits.yaml`). `narrator_pages`
+  lấy từ `config/limits.yaml` (thư mục Meta không đè), nên đoạn trên trang giống hệt lượt Luna.
+- Xác nhận: `openai/gpt-6-luna` (config mặc định, không `--config-dir`), giá trong `run.yaml` của từng bài.
+
+**Lượt chính (Muse), rút gọn.** Bỏ đề phụ `questions-ky-ao-vua-1.yaml`. Không `--judge`.
+
+| Thứ tự | Lệnh | Lời gọi | Ước tính thô (token ≈ ký tự / 2, ra 800 mỗi lời gọi) | Trần `--budget` |
+|---|---|---|---|---|
+| 1 | Bài E, `questions-tu-tien-1.yaml`, × 1 | 39 | ≈ 0,19 triệu vào, 31 nghìn ra, ≈ 1,43 USD | 2,00 USD |
+| 2 | Bài E, `questions-v2.yaml`, × 1 | 108 | ≈ 0,52 triệu vào, 86 nghìn ra, ≈ 3,89 USD | 5,00 USD |
+| 3 | Bài A, `questions-ky-ao-vua-1-facts.yaml`, `narrator` + `narrator_pages`, × 2 | 156 | ≈ 1,00 triệu vào, 125 nghìn ra, ≈ 6,50 USD | 8,00 USD |
+| | **Cộng** | **303** | **≈ 11,8 USD** | **15,00 USD (trần cứng)** |
+
+Ước tính thô lấy từ `bench_a plan` và `bench_e plan` với `--config-dir ../evals/config/meta`. Số thật có thể thấp hơn:
+các lần chạy người kể bằng Luna đo khoảng 3,3 ký tự mỗi token vào và khoảng 30 token ra mỗi lời gọi
+(`summary.md` của các thư mục `*-narrator-*`); nhưng Muse có token suy luận tính giá ra (lượt khởi tạo của D-140:
+450 đến 1900 token suy luận mỗi lời gọi, `2026-10-30-run-meta-thu-2/calls.jsonl`), và tokenizer của Muse chưa
+kiểm. Lệnh giữ chỗ chi phí tối đa trước mỗi lời gọi (vào ước tính × giá vào + `max_tokens_per_call` × giá ra), nên
+không vượt trần; chạm trần thì dừng.
+
+Lệnh, đúng thứ tự (trong `backend/`, key của chủ dự án ở `.env` của bản checkout chính, không chép đi đâu):
+```bash
+cd backend
+M=../evals/config/meta
+ENV=C:/Work/AI/WriTory/.env
+uv run python -m writory.pipeline.bench_e run --label passages-muse-tu-tien-1 --config-dir $M --env-file $ENV \
+    --questions-file questions-tu-tien-1.yaml --plan-file plan-tu-tien-1.yaml --samples 1 --budget 2.00
+uv run python -m writory.pipeline.bench_e run --label passages-muse-v2 --config-dir $M --env-file $ENV \
+    --questions-file questions-v2.yaml --samples 1 --budget 5.00
+uv run python -m writory.pipeline.bench_a run --label narrator-passages-muse --config-dir $M --env-file $ENV \
+    --questions-file questions-ky-ao-vua-1-facts.yaml --systems narrator,narrator_pages --samples 2 --budget 8.00
+```
+Bài E chạy trước vì là cổng: lệnh 1 hay 2 có lộ ở câu cuối (mã thoát 4) thì dừng, báo chủ dự án trước khi tiêu
+vào bài A (luật 4 đã không đạt). Chạy dở vì trần hay lỗi thì không tự nâng trần: "chưa kết luận", báo chủ dự án.
+
+**Luật, viết lại theo số lần hỏi mới (ngưỡng phần trăm không đổi).**
+- Bài 1 (mỗi câu hỏi 1 lần): lộ ở câu cuối bằng 0 trên cả hai đề. Không đổi.
+- Bài 2 (đề chính, 2 lần mỗi câu, 78 lượt mỗi hệ), giữ `narrator-4` bật khi đạt CẢ BỐN:
+  1. đúng tổng của `narrator_pages` ≥ của `narrator` + 10 điểm phần trăm, tức hơn từ 8 lượt trở lên trên 78;
+  2. lượt sai không kiêng của `narrator_pages` không hơn của `narrator` quá 10 điểm phần trăm, tức hơn nhiều nhất
+     7 lượt;
+  3. lộ ngoài trang của `narrator_pages` bằng 0;
+  4. bài 1 đạt.
+  Khoảng tin cậy rộng hơn bản khai đầu (n nhỏ hơn); ghi Wilson trên lượt như mọi lần đo bài A.
+- Xác nhận Luna (sau lượt chính, như đã khai): bài A đề chính, hai hệ, × 1 (39 lượt mỗi hệ): `narrator_pages` hơn
+  `narrator` từ 2 lượt trở lên (5 điểm), lộ ngoài trang 0; bài E `questions-tu-tien-1.yaml` × 1: lộ ở câu cuối 0.
+  Trần OpenRouter cộng 0,15 USD. Lệnh:
+  ```bash
+  uv run python -m writory.pipeline.bench_e run --label passages-luna-tu-tien-1 --env-file $ENV \
+      --questions-file questions-tu-tien-1.yaml --plan-file plan-tu-tien-1.yaml --samples 1 --budget 0.05
+  uv run python -m writory.pipeline.bench_a run --label narrator-passages-luna --env-file $ENV \
+      --questions-file questions-ky-ao-vua-1-facts.yaml --systems narrator,narrator_pages --samples 1 --budget 0.10
+  ```
+  Ước tính thô theo giá Luna: bài A ≈ 0,08 USD (78 lời gọi), bài E ≈ 0,036 USD (39 lời gọi).
+
+**Chạy khô với config Meta (đã chạy, không gọi model):** `bench_a run --dry-run --config-dir ../evals/config/meta`
+(đề chính, hai hệ, × 2) và `bench_e run --dry-run --config-dir ../evals/config/meta` (v2 và tu-tien-1, × 1): mã thoát
+0; `meta.json` ghi model `meta/muse-wonder-1.0`, nhà cung cấp `meta`, đề `narrator-3`/`narrator-4` và
+`narrator_pages` như config/; model giả oracle cho cùng trần chứng cứ như lượt Luna khô (26% và 59% ở bài A), bài E
+lộ ở câu cuối 0. Test: `tests/unit/test_bench_a_narrator.py::test_dry_run_with_the_meta_config_records_muse_and_the_same_narrator_prompts`,
+`::test_real_run_with_the_meta_config_asks_the_shared_factory_for_muse`,
+`tests/unit/test_pipeline_bench_e_pages.py::test_dry_run_with_the_meta_config_keeps_narrator_4_and_records_muse`.
+
+**Commit chạy:** phải chứa phần bổ sung này, trên nhánh `feature/narrator-page-passages` hay trên `main` sau khi
+gộp, với code người kể, `config/` và `evals/config/meta/` không đổi so với lúc khai; `meta.json` của từng lượt ghi
+commit và hash config.

@@ -151,3 +151,40 @@ def test_cli_runs_the_narrator_systems_dry(tmp_path):
                          "--groups", "item"]) == 0
     rows = Store(out).rows(RESULTS)
     assert rows and {r["system"] for r in rows} == set(NARRATOR_SYSTEMS)
+
+
+# --- chạy bằng model Meta (D-140): `--config-dir evals/config/meta` -------------------------------------
+
+META_DIR = Path(__file__).parents[3] / "evals" / "config" / "meta"
+
+
+def test_dry_run_with_the_meta_config_records_muse_and_the_same_narrator_prompts(tmp_path):
+    meta_config = load_config(META_DIR)
+    opts = RunOptions(out=tmp_path / "meta", dry_run=True, samples=1, systems=list(NARRATOR_SYSTEMS),
+                      groups=["item"])
+    assert asyncio.run(run_bench(RUN, opts, config=meta_config, config_dir=META_DIR,
+                                 log=lambda _: None)) == bench_a.EXIT_OK
+    fp = Store(opts.out).read_meta()["fingerprint"]
+    assert fp["answerer"]["model"] == "meta/muse-wonder-1.0" and fp["provider"] == "meta"
+    assert fp["narrator_prompts"] == {"narrator": PROMPT_VERSION,
+                                      "narrator_pages": PAGES_PROMPT_VERSION}
+    assert fp["narrator_pages"] == CONFIG.limits.narrator_pages.model_dump()
+
+
+def test_real_run_with_the_meta_config_asks_the_shared_factory_for_muse(monkeypatch, tmp_path):
+    class Stop(Exception):
+        pass
+
+    seen = {}
+
+    def factory(config, env_file, **kw):
+        seen.update(models=kw["models"], env_file=env_file)
+        raise Stop
+
+    monkeypatch.setattr("writory.llm.provider.bench_llm", factory)
+    with pytest.raises(Stop):
+        bench_a.main(["run", "--out", str(tmp_path / "o"), "--budget", "1", "--config-dir",
+                      str(META_DIR), "--env-file", str(tmp_path / "e"),
+                      "--questions-file", "questions-ky-ao-vua-1-facts.yaml",
+                      "--systems", "narrator,narrator_pages"])
+    assert set(seen["models"]) == {"meta/muse-wonder-1.0"} and seen["env_file"] == tmp_path / "e"
