@@ -112,7 +112,9 @@ def build_player_view(
         recs.sort(key=lambda r: (r.since, r.edge_id))
         kind = kinds[nid]
         if kind in NAMED_LABELS:
-            names = list(dict.fromkeys(r.known_as for r in recs if r.known_as))
+            # Mỗi tên một lần, ở vị trí lần hé lộ CUỐI của tên đó, để chữ hiện là tên của lần hé lộ
+            # mới nhất (A ở ch1, B ở ch2, lại A ở ch3: hiện A, biệt danh B).
+            names = list(dict.fromkeys(r.known_as for r in reversed(recs) if r.known_as))[::-1]
             if not names:
                 continue  # không biết người chơi gọi nó là gì: không hiện, thay vì lộ tên thật
             text, aliases = names[-1], tuple(names[:-1])

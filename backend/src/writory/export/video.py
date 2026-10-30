@@ -708,12 +708,12 @@ async def run(args: argparse.Namespace, *, source: StorySource | None = None,
                 if args.dry_run:
                     inner = DryRunLLM()
                 else:
-                    from writory.llm.openrouter import OpenRouterClient
+                    from writory.llm.openrouter import OpenRouterClient, call_deadline
 
+                    deadline = call_deadline(config)  # chưa đặt: CONFIG_LIMIT_NOT_SET (D-113)
                     keys = load_keys(Path(args.env_file), ["openrouter"])
                     assert keys.openrouter_api_key is not None
-                    inner = OpenRouterClient(keys.openrouter_api_key,
-                                             deadline_s=config.limits.llm_call.deadline_seconds)
+                    inner = OpenRouterClient(keys.openrouter_api_key, deadline_s=deadline)
             client = ExportClient(
                 inner, budget=Budget("export", math.inf if budget is None else budget),
                 prices=config.models.prices, max_tokens=limits.require("max_output_tokens"),
@@ -757,6 +757,10 @@ def _fail(code: str, sentence: str) -> int:
 
 
 def main(argv: Sequence[str] | None = None) -> int:
+    # Console Windows mặc định cp1252: chữ Việt của --help và của lỗi làm lệnh sập (như bench_run).
+    for stream in (sys.stdout, sys.stderr):
+        if hasattr(stream, "reconfigure"):
+            stream.reconfigure(encoding="utf-8", errors="replace")
     return asyncio.run(run(build_parser().parse_args(argv)))
 
 

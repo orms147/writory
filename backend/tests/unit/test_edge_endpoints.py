@@ -136,3 +136,90 @@ def test_a_package_the_model_could_not_make_is_not_the_only_defence():
     node = NodeSpec(id="fact_c10s1_1", label="Fact", props={"text": "x"})
     assert endpoint_problem(spec.type, "Character", node.label)
     assert NAMED_LABELS >= {"Character", "Location", "Item", "Faction"}
+
+
+# --- cạnh chỉ nhân vật chính được làm nguồn (D-17, D-55) ---------------------------------------------
+# Bảng nhãn không biết ai là nhân vật chính: `KNOWS` tới nút có tên (kèm `known_as`) và `FEELS` chỉ đi
+# ra từ nhân vật chính. Kiểm ở nơi biết id nhân vật chính (`to_package`), lý do riêng.
+
+
+def test_protagonist_rule_table():
+    from writory.graph.schema import PROTAGONIST_ONLY, protagonist_problem
+
+    assert set(PROTAGONIST_ONLY) == {"KNOWS", "FEELS"} and set(PROTAGONIST_ONLY) <= set(EDGE_TYPES)
+    for label in sorted(NAMED_LABELS):
+        assert protagonist_problem("KNOWS", label, from_protagonist=False), label
+        assert protagonist_problem("KNOWS", label, from_protagonist=True) is None, label
+    for label in ("Fact", "Lie", "Event"):
+        assert protagonist_problem("KNOWS", label, from_protagonist=False) is None, label
+    assert protagonist_problem("FEELS", "Fact", from_protagonist=False)
+    assert protagonist_problem("FEELS", "Character", from_protagonist=True) is None
+    assert protagonist_problem("HOLDS", "Item", from_protagonist=False) is None
+    text = protagonist_problem("KNOWS", "Location", from_protagonist=False)
+    assert text and "KNOWS" in text and "Location" in text
+
+
+def test_knows_a_named_node_from_someone_else_is_rejected_with_its_own_reason():
+    package, rejected = extract(edge("KNOWS", "phung_yen", "cang", how="chứng kiến"))
+    assert kinds(package) == []
+    [(desc, why)] = rejected
+    assert "KNOWS" in desc and why.startswith("chỉ nhân vật chính")
+    assert reject_reason(why) == "chỉ nhân vật chính"
+
+
+def test_the_protagonist_may_still_know_a_named_node_and_others_may_know_facts():
+    package, rejected = extract(
+        edge("KNOWS", "protagonist", "phung_yen", how="chứng kiến", quote="Phụng Yên cầm tờ giấy",
+             known_as="Phụng Yên"),
+        edge("KNOWS", "phung_yen", "fact_c10s1_1", how="tự biết"))
+    assert ("KNOWS", "protagonist", "phung_yen") in kinds(package)
+    assert ("KNOWS", "phung_yen", "fact_c10s1_1") in kinds(package)
+    assert rejected == []
+
+
+def test_every_edge_of_the_sample_story_obeys_the_protagonist_rule():
+    from writory.graph.schema import protagonist_problem
+
+    sample = read_sample()
+    labels = {n.id: n.label for ch in sample.chapters for n in ch.package.nodes}
+    wrong = [(e.type, e.source, e.target) for ch in sample.chapters for e in ch.package.edges
+             if protagonist_problem(e.type, labels[e.target],
+                                    from_protagonist=e.source == sample.protagonist)]
+    assert wrong == []
+
+
+# --- RELATES_TO: `kind` và `score` trong khoảng, một luật cho khởi tạo và bộ trích -------------------
+
+
+def test_relation_rule_is_one_constant():
+    from writory.graph.package import RELATES_TO_SCORE, relation_problem
+
+    low, high = RELATES_TO_SCORE
+    assert relation_problem({"kind": "bạn", "score": low}) is None
+    assert relation_problem({"kind": "bạn", "score": high}) is None
+    for bad in ({"kind": "bạn"}, {"kind": "bạn", "score": high + 1}, {"kind": "bạn", "score": low - 1},
+                {"score": 10}, {"kind": "  ", "score": 10}, {"kind": "bạn", "score": True},
+                {"kind": "bạn", "score": 1.5}):
+        assert relation_problem(bad), bad
+
+
+def test_extractor_rejects_a_relation_without_kind_or_score_in_range():
+    from writory.graph.package import RELATES_TO_SCORE
+
+    low, high = RELATES_TO_SCORE
+    package, rejected = extract(
+        edge("RELATES_TO", "phung_yen", "protagonist", kind="bạn", score=None),
+        edge("RELATES_TO", "protagonist", "phung_yen", kind="thù", score=high + 50),
+        edge("RELATES_TO", "phung_yen", "protagonist", kind=None, score=10))
+    assert kinds(package) == []
+    assert len(rejected) == 3
+    assert all(reject_reason(why) == "RELATES_TO cần `kind` và `score`" for _, why in rejected)
+    package, rejected = extract(edge("RELATES_TO", "phung_yen", "protagonist", kind="bạn", score=low))
+    assert kinds(package) == [("RELATES_TO", "phung_yen", "protagonist")] and rejected == []
+
+
+def test_setup_uses_the_same_relation_rule():
+    from writory.graph.package import relation_problem
+    from writory.pipeline import setup
+
+    assert setup.relation_problem is relation_problem

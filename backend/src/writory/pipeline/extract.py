@@ -28,8 +28,9 @@ from writory.graph.package import (
     EdgeSpec,
     NodeSpec,
     quote_in_text,
+    relation_problem,
 )
-from writory.graph.schema import NAMED_LABELS, endpoint_problem
+from writory.graph.schema import NAMED_LABELS, endpoint_problem, protagonist_problem
 from writory.llm.base import ChatResult, LLMClient
 from writory.pipeline.pacing import PendingMilestone, ThreadGoal
 from writory.pipeline.passages import STOPWORDS, flat
@@ -68,7 +69,7 @@ class ExtractedEdge(_Out):
     source: str
     target: str
     kind: str | None  # RELATES_TO: bạn, thù, yêu, thầy trò…
-    score: int | None  # RELATES_TO: −100…100
+    score: int | None  # RELATES_TO: trong `graph.package.RELATES_TO_SCORE`
     how: KnowsHow | None  # KNOWS
     told_by: str | None  # KNOWS với how = "được kể"
     quote: str | None  # REVEALED_TO_PLAYER, RESOLVED_IN, KNOWS của nhân vật chính: nguyên văn
@@ -461,6 +462,17 @@ def to_package(
             # ngữ cảnh viết ở chương sau (psab-b1).
             rejected.append((desc, f"đầu mút sai loại nút: {wrong_ends}"))
             continue
+        not_mine = protagonist_problem(x.type, known[x.target].label,
+                                       from_protagonist=x.source == protagonist_id)
+        if not_mine:
+            # Bảng nhãn không biết ai là nhân vật chính: KNOWS tới nút có tên là điều người chơi biết,
+            # kèm `known_as` (D-17); của nhân vật khác thì không có nghĩa trong schema.
+            rejected.append((desc, f"chỉ nhân vật chính: {not_mine}"))
+            continue
+        if x.type == "RELATES_TO" and (bad := relation_problem({"kind": x.kind, "score": x.score})):
+            # Cùng luật với khởi tạo; thiếu thì ngữ cảnh viết in "None (None)".
+            rejected.append((desc, bad))
+            continue
         if x.type == "KNOWS" and (x.source, x.target) in open_knows:
             # Hai KNOWS đang hiệu lực giữa cùng hai nút làm hỏng truy vấn một-cạnh (D-95).
             rejected.append((desc, "đã có KNOWS đang hiệu lực giữa hai nút này"))
@@ -592,7 +604,8 @@ def _one_place_for_protagonist(
     edges: list[EdgeSpec], close: list[CloseSpec], open_edges: Sequence[OpenEdge],
     protagonist_id: str, chapter: int, rejected: list[tuple[str, str]],
 ) -> tuple[list[EdgeSpec], list[CloseSpec]]:
-    """Nhân vật chính luôn có đúng một nơi ở hiện tại sau mỗi gói (D-112, như D-90 cho đồ vật).
+    """Nhân vật chính có tối đa một nơi ở hiện tại sau mỗi gói, và đã có thì không mất (D-112, như D-90
+    cho đồ vật). Chưa có nơi ở (chương 0 không bắt buộc) thì gói không tự tạo nơi nào.
     long-tu-tien-2: bộ trích đóng nơi ở ở ch7 mà không mở cạnh mới, 11 chương không có nơi ở và cờ
     `standstill` (D-98) mù. Làm bằng code vì model hay ghi cạnh mới mà quên đóng cạnh cũ, hoặc ngược lại.
     Nơi CUỐI của gói là cạnh `LOCATED_AT` ghi sau cùng của nhân vật chính (D-121, review):

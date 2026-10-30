@@ -49,6 +49,7 @@ from writory.graph.package import (
     ChangePackage,
     EdgeSpec,
     chapter_rule_problems,
+    relation_problem,
 )
 from writory.graph.schema import EDGE_ENDPOINTS, NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
@@ -229,8 +230,9 @@ class CharactersOutput(_Out):
     options: list[CharacterOption]
 
 
-# Kiểu cạnh model khai ở chương 0. KNOWS và ABOUT do code dựng từ `facts`; không có
-# REVEALED_TO_PLAYER (người chơi chưa đọc trang nào), không có cạnh cần Event hay Lie.
+# Kiểu cạnh model khai ở chương 0. KNOWS và ABOUT do code dựng từ `facts`; REVEALED_TO_PLAYER duy
+# nhất của chương 0 (nhân vật chính → ch0, D-74) cũng do code dựng, model không khai hé lộ nào;
+# không có cạnh cần Event hay Lie.
 InitialEdgeType = Literal["RELATES_TO", "LOCATED_AT", "HOLDS", "MEMBER_OF"]
 
 
@@ -294,7 +296,7 @@ class OutEdge(_Out):
     source: str
     target: str
     kind: str | None  # RELATES_TO
-    score: int | None  # RELATES_TO: -100…100
+    score: int | None  # RELATES_TO: trong `graph.package.RELATES_TO_SCORE`
 
 
 class OutThread(_Out):
@@ -1096,11 +1098,8 @@ def _edge_problems(
                 problems.append(f"cạnh {e.id}: KNOWS ở chương 0 phải có how = "
                                 f"{INITIAL_KNOWS_HOW!r}")
         elif e.type == "RELATES_TO":
-            kind, score = e.props.get("kind"), e.props.get("score")
-            if not (isinstance(kind, str) and kind.strip()) or not (
-                _is_int(score) and -100 <= score <= 100
-            ):
-                problems.append(f"cạnh {e.id}: RELATES_TO cần `kind` và `score` trong -100…100")
+            if (bad := relation_problem(e.props)) is not None:  # cùng luật với bộ trích
+                problems.append(f"cạnh {e.id}: {bad}")
         elif e.type == "HOLDS":
             holders[e.target] += 1
         elif e.type == "LOCATED_AT":

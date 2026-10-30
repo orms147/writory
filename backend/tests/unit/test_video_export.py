@@ -649,3 +649,64 @@ def test_video_export_limits_and_role_are_in_the_repo_config():
     assert cfg.models.role_reasoning.video == "low"
     with pytest.raises(ValueError):
         VideoExportLimits(shot_seconds_min=9, shot_seconds_max=3)
+
+
+# --- hạn tổng một lời gọi (D-113) và chữ có dấu trên console Windows ------------------------------
+
+
+async def test_the_real_run_refuses_an_unset_call_deadline_before_reading_any_key(tmp_path, capsys,
+                                                                                 monkeypatch):
+    """`limits.llm_call.deadline_seconds` null là lỗi CONFIG_LIMIT_NOT_SET, không phải vô hạn (D-113,
+    `llm.openrouter.call_deadline`), và lỗi ra trước khi đọc key."""
+    make_config(tmp_path, limits={"llm_call": {"deadline_seconds": None}})
+
+    def no_keys(*_a, **_k):
+        raise AssertionError("đọc key trước khi kiểm hạn lời gọi")
+
+    monkeypatch.setattr(video, "load_keys", no_keys)
+    code = await video.run(args(tmp_path, "--budget", "0.10", "--env-file",
+                                str(tmp_path / "khong-co.env")), source=source())
+    assert code == video.EXIT_CONFIG
+    assert ErrorCode.CONFIG_LIMIT_NOT_SET.value in capsys.readouterr().err
+    assert not (tmp_path / "out").exists()
+
+
+async def test_the_real_client_gets_the_configured_call_deadline(tmp_path, monkeypatch):
+    from types import SimpleNamespace
+
+    from pydantic import SecretStr
+
+    from writory.llm import openrouter
+
+    make_config(tmp_path)
+    built: list[float | None] = []
+
+    class Client(FakeLLM):
+        def __init__(self, key, *, deadline_s=None):
+            built.append(deadline_s)
+            scripted = FakeLLM.scripted(full_script(), cost_usd=0.002)
+            self.__dict__.update(scripted.__dict__)
+
+    monkeypatch.setattr(openrouter, "OpenRouterClient", Client)
+    monkeypatch.setattr(video, "load_keys",
+                        lambda *_a, **_k: SimpleNamespace(openrouter_api_key=SecretStr("sk-thu")))
+    code = await video.run(args(tmp_path, "--budget", "0.10", "--dialogue-lang", "zh"),
+                           source=source())
+    assert code == video.EXIT_OK
+    assert built == [load_config(tmp_path / "config").limits.llm_call.require("deadline_seconds")]
+
+
+def test_help_prints_on_a_cp1252_console(monkeypatch):
+    """Console Windows mặc định cp1252: `--help` có chữ Việt từng làm lệnh sập (UnicodeEncodeError).
+    Lệnh đổi stdout/stderr sang UTF-8 như các lệnh khác của repo."""
+    import io
+    import sys
+
+    raw = io.BytesIO()
+    console = io.TextIOWrapper(raw, encoding="cp1252")
+    monkeypatch.setattr(sys, "stdout", console)
+    with pytest.raises(SystemExit) as e:
+        video.main(["--help"])
+    assert e.value.code == 0
+    console.flush()
+    assert "Xuất kịch bản video" in raw.getvalue().decode("utf-8")
