@@ -1,4 +1,5 @@
-"""Bảng lỗi của lớp mock giao diện khớp máy chủ cho nhóm LLM_* (frontend/src/mock/messages.ts)."""
+"""Bảng lỗi của lớp mock giao diện khớp máy chủ cho nhóm LLM_* và lỗi của bộ định tuyến
+(frontend/src/mock/messages.ts)."""
 
 import re
 
@@ -18,4 +19,10 @@ def test_every_llm_error_has_the_same_text_and_status_in_the_mock_table():
     for code in ErrorCode:
         if not code.value.startswith("LLM_"):
             continue
+        assert _mock(code) == (MESSAGES[code].text(), HTTP_STATUS[code]), code.value
+
+
+def test_router_errors_have_the_same_text_and_status_in_the_mock_table():
+    """Lớp mock trả ROUTE_NOT_FOUND cho đường dẫn nó không biết, như máy chủ (`api/errors.py`)."""
+    for code in (ErrorCode.ROUTE_NOT_FOUND, ErrorCode.METHOD_NOT_ALLOWED):
         assert _mock(code) == (MESSAGES[code].text(), HTTP_STATUS[code]), code.value

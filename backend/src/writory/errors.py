@@ -65,6 +65,8 @@ class ErrorCode(StrEnum):
     INVITE_CODE_INVALID = "INVITE_CODE_INVALID"
     LOGIN_RATE_LIMITED = "LOGIN_RATE_LIMITED"
     REQUEST_ORIGIN_INVALID = "REQUEST_ORIGIN_INVALID"
+    ROUTE_NOT_FOUND = "ROUTE_NOT_FOUND"
+    METHOD_NOT_ALLOWED = "METHOD_NOT_ALLOWED"
 
 
 @dataclass(frozen=True)
@@ -327,6 +329,16 @@ MESSAGES: dict[ErrorCode, PlayerMessage] = {
     ErrorCode.REQUEST_ORIGIN_INVALID: PlayerMessage(
         "Yêu cầu bị từ chối vì không được gửi từ trang WriTory.",
         "Mở WriTory trực tiếp, tải lại trang rồi thử lại.",
+    ),
+    # Lỗi của bộ định tuyến (`api/errors.py`, G12): đường dẫn không có, router của người chơi chưa
+    # bật (D-41), sai phương thức. Không chép lại đường dẫn hay phương thức đã gửi.
+    ErrorCode.ROUTE_NOT_FOUND: PlayerMessage(
+        "Máy chủ không có chức năng ở địa chỉ vừa gọi.",
+        "Mở WriTory từ trang chủ rồi thử lại. " + _REPORT,
+    ),
+    ErrorCode.METHOD_NOT_ALLOWED: PlayerMessage(
+        "Máy chủ không nhận kiểu yêu cầu này ở địa chỉ vừa gọi.",
+        "Tải lại trang rồi thử lại. " + _REPORT,
     ),
 }
 

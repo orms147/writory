@@ -119,9 +119,10 @@ def get_session(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> SetupO
 
 
 def lock_setup(session_id: str, conn: deps.PgConn, owner: deps.Owner) -> Iterator[None]:
-    """Một phiên chỉ một lần gọi model cùng lúc, cho tạo lựa chọn từng bước lẫn chốt (G8, D-46,
-    D-56): lần thứ hai báo STORY_BUSY, không gọi model. Khoá nhả khi yêu cầu kết thúc, kể cả khi
-    lỗi. Kiểm chủ phiên trước khi giữ khoá (D-105), như `deps.lock_story`: phiên của người khác
+    """Một phiên chỉ một lần gọi model cùng lúc, cho tạo lựa chọn từng bước, chọn nhân vật (kiểm
+    duyệt phần sửa) lẫn chốt (G8, D-46, D-56): lần thứ hai báo STORY_BUSY, không gọi model. Khoá
+    nhả khi yêu cầu kết thúc (với `scope="function"`: khi hàm của route xong), kể cả khi lỗi.
+    Kiểm chủ phiên trước khi giữ khoá (D-105), như `deps.lock_story`: phiên của người khác
     là 404 dù phiên đang bận, và người khác không giữ được khoá của phiên này."""
     get_setup(conn, session_id, owner_id=owner)
     with job_lock(conn, "setup", session_id):
@@ -218,7 +219,10 @@ def _protagonist(option: dict, body: CharacterChoiceIn, limits: InputLimits) -> 
     return pc
 
 
-@router.put("/{session_id}/characters", response_model=SetupOut)
+# Gọi model kiểm duyệt nên giữ khoá của phiên (G8, G11). Phạm vi `function`: khoá nhả trước khi
+# phản hồi đi, vì giao diện gửi lệnh chốt ngay sau phản hồi này.
+@router.put("/{session_id}/characters", response_model=SetupOut,
+            dependencies=[Depends(lock_setup, scope="function")])
 async def choose_character(session_id: str, body: CharacterChoiceIn, conn: deps.PgConn,
                            owner: deps.Owner, config: deps.Config,
                            llm: deps.PlayerLLMs) -> SetupOut:

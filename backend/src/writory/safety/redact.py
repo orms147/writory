@@ -5,6 +5,9 @@ Regex ở đây chỉ kiểm định dạng chuỗi, không đọc ý định ng
 
 import logging
 import re
+from collections.abc import Callable, Iterator
+from contextlib import contextmanager
+from typing import Any
 
 REDACTED = "[REDACTED]"
 
@@ -70,8 +73,56 @@ class RedactSecretsFilter(logging.Filter):
         return True
 
 
+_FILTER = RedactSecretsFilter()
+
+
+class _RedactingFactory:
+    """LogRecord factory: tạo record bằng factory trước đó rồi redact ngay (`RedactSecretsFilter`)."""
+
+    def __init__(self, previous: Callable[..., logging.LogRecord]) -> None:
+        self.previous = previous
+
+    def __call__(self, *args: Any, **kwargs: Any) -> logging.LogRecord:
+        record = self.previous(*args, **kwargs)
+        try:
+            _FILTER.filter(record)
+        except Exception:  # noqa: BLE001 — chạy ở nơi gọi log: không làm hỏng việc đang chạy
+            # Fail closed: không đọc được chữ của record thì không ghi chữ đó.
+            record.msg, record.args = f"[bản ghi log của {record.name} không redact được]", None
+            record.exc_info = record.exc_text = record.stack_info = None
+        return record
+
+
+def log_records_redacted() -> bool:
+    return isinstance(logging.getLogRecordFactory(), _RedactingFactory)
+
+
+@contextmanager
+def redacting_log_records() -> Iterator[None]:
+    """Trong khối `with`, mọi record được redact ngay lúc tạo, trước mọi handler (G7). Đây là lớp
+    redaction của app (`api/app.py`, bật lúc khởi động).
+
+    Factory thay vì bộ lọc gắn vào handler: bộ lọc chỉ có ở handler đã có lúc gắn, nên record tới
+    handler khác thì lọt nguyên văn. Cấu hình log mặc định của uvicorn không cho root handler nào,
+    nên log `writory.*` đi thẳng ra `logging.lastResort`; handler thêm sau lúc khởi động hay một
+    `--log-config` khác cũng vậy. Mọi record tạo qua logger đều đi qua factory, dù có handler nào.
+    Lồng nhau thì chỉ bọc một lần; khối ngoài cùng trả lại factory cũ."""
+    previous = logging.getLogRecordFactory()
+    if isinstance(previous, _RedactingFactory):
+        yield
+        return
+    factory = _RedactingFactory(previous)
+    logging.setLogRecordFactory(factory)
+    try:
+        yield
+    finally:
+        if logging.getLogRecordFactory() is factory:
+            logging.setLogRecordFactory(previous)
+
+
 def install_log_redaction(logger: logging.Logger | None = None) -> None:
-    """Gắn bộ lọc vào mọi handler của logger (mặc định: root).
+    """Gắn bộ lọc vào mọi handler của logger (mặc định: root). Dùng ở lệnh chạy tay (bench, xuất
+    video) sau `logging.basicConfig`; app dùng `redacting_log_records`.
 
     Gắn vào handler chứ không vào logger, vì filter của logger không chạy với record
     truyền lên từ logger con.

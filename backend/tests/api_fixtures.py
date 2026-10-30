@@ -159,6 +159,25 @@ def own_connections() -> Iterator[psycopg.Connection]:
         conn.close()
 
 
+def lock_is_free(scope: str, key: str) -> bool:
+    """Khoá chống chạy đôi `scope:key` (`db.job_lock`) không ai giữ: thử giữ trên một kết nối
+    riêng rồi nhả ngay."""
+    from writory.db import job_lock
+    from writory.errors import ErrorCode, WritoryError
+
+    holder = own_connections()
+    conn = next(holder)
+    try:
+        with job_lock(conn, scope, key):
+            return True
+    except WritoryError as exc:
+        if exc.code is not ErrorCode.STORY_BUSY:
+            raise
+        return False
+    finally:
+        holder.close()
+
+
 class CountedConnections:
     """Như `own_connections`, và đếm số kết nối đã đóng. Kết nối đóng sau mọi dependency khác của
     yêu cầu (kể cả nhả khoá của truyện), nên số đếm = số yêu cầu đã chạy xong hẳn phía máy chủ:
@@ -256,18 +275,21 @@ async def asgi_request(app, method: str, path: str, body: dict | None = None,
     return status, data
 
 
-class CaptureLogs(logging.Handler):
-    """Gắn thẳng vào logger gốc của gói `writory` và vào root: không qua bộ lọc redaction, nên chỉ
-    xanh khi chính code không ghi key (G7)."""
+class CaptureLogs:
+    """Chữ của mọi record, chép lúc record vừa tạo (xem `captured_logs`)."""
 
     def __init__(self) -> None:
-        super().__init__(level=logging.DEBUG)
         self.lines: list[str] = []
 
-    def emit(self, record: logging.LogRecord) -> None:
-        self.lines.append(record.getMessage())
+    def take(self, record: logging.LogRecord) -> None:
+        try:
+            self.lines.append(record.getMessage())
+        except (TypeError, ValueError):  # msg và args không khớp: vẫn giữ chữ gốc
+            self.lines.append(f"{record.msg} {record.args}")
         if record.exc_info:
             self.lines.append(logging.Formatter().formatException(record.exc_info))
+        if record.stack_info:
+            self.lines.append(record.stack_info)
 
     @property
     def text(self) -> str:
@@ -276,15 +298,30 @@ class CaptureLogs(logging.Handler):
 
 @contextmanager
 def captured_logs() -> Iterator[CaptureLogs]:
-    handler = CaptureLogs()
+    """Bắt record ngay lúc tạo, ở LogRecord factory, trước mọi handler và DƯỚI lớp redaction của
+    app (`safety.redact.redacting_log_records`, app bọc factory đang có lúc khởi động): chữ bắt
+    được là chữ code tạo ra, chưa redact, nên chỉ xanh khi chính code không ghi key (G7). Vào khối
+    này trước khi app khởi động (trước `TestClient`); vào sau thì báo lỗi ngay, vì lúc đó record
+    tới đây đã qua redact."""
+    from writory.safety.redact import log_records_redacted
+
+    assert not log_records_redacted(), "vào captured_logs() trước khi app khởi động"
+    capture = CaptureLogs()
+    previous = logging.getLogRecordFactory()
+
+    def factory(*args, **kwargs) -> logging.LogRecord:
+        record = previous(*args, **kwargs)
+        capture.take(record)
+        return record
+
     loggers = [logging.getLogger(n) for n in ("", "writory", "uvicorn", "uvicorn.error")]
     old_levels = [lg.level for lg in loggers]
+    logging.setLogRecordFactory(factory)
     for lg in loggers:
-        lg.addHandler(handler)
         lg.setLevel(logging.DEBUG)
     try:
-        yield handler
+        yield capture
     finally:
+        logging.setLogRecordFactory(previous)
         for lg, level in zip(loggers, old_levels, strict=True):
-            lg.removeHandler(handler)
             lg.setLevel(level)

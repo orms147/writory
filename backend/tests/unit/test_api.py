@@ -1,18 +1,21 @@
 """Khung API (D-29): lỗi theo G12, redaction log (G7), /health. TestClient, không cần Docker."""
 
-import logging
+import os
+import subprocess
+import sys
 
 import pytest
+from fastapi import HTTPException
 from fastapi.testclient import TestClient
 
+from tests.api_fixtures import captured_logs
 from writory.api import create_app
 from writory.api.errors import HTTP_STATUS
 from writory.config import Settings
 from writory.errors import MESSAGES, ErrorCode, WritoryError
-from writory.safety.redact import REDACTED, RedactSecretsFilter
+from writory.safety.redact import REDACTED
 
 FAKE_KEY = "sk-or-v1-" + "c0ffee12" * 8
-UVICORN_LOGGERS = ("uvicorn", "uvicorn.error", "uvicorn.access")
 
 
 def settings() -> Settings:
@@ -57,28 +60,12 @@ def test_writory_error_returns_player_payload_and_status():
     assert FAKE_KEY not in resp.text
 
 
-class _Capture(logging.Handler):
-    """Gắn thẳng vào logger của module: chạy trước handler của root, không có bộ lọc redaction,
-    nên chỉ xanh khi chính code đã redact (không nhờ install_log_redaction)."""
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.lines: list[str] = []
-
-    def emit(self, record: logging.LogRecord) -> None:
-        self.lines.append(record.getMessage())
-
-
 def test_unexpected_error_is_generic_and_leaks_nothing():
-    capture = _Capture()
-    logger = logging.getLogger("writory.api.errors")
-    logger.addHandler(capture)
-    try:
-        with TestClient(build(), raise_server_exceptions=False) as c:
-            resp = c.get("/test/boom")
-    finally:
-        logger.removeHandler(capture)
-    logged = "\n".join(capture.lines)
+    # `captured_logs` bắt record lúc tạo, dưới lớp redaction của app: chỉ xanh khi chính
+    # `api/errors.py` đã redact, không nhờ lớp đó.
+    with captured_logs() as logs, TestClient(build(), raise_server_exceptions=False) as c:
+        resp = c.get("/test/boom")
+    logged = logs.text
     assert resp.status_code == 500
     assert resp.json() == {
         "code": "INTERNAL_ERROR",
@@ -91,23 +78,118 @@ def test_unexpected_error_is_generic_and_leaks_nothing():
     assert FAKE_KEY not in logged  # ...nhưng đã redact
 
 
-@pytest.fixture
-def uvicorn_handlers():
-    """Giả lập cấu hình log của uvicorn: mỗi logger có handler riêng, không truyền lên root."""
-    added = []
-    for name in (*UVICORN_LOGGERS, ""):
-        handler = logging.StreamHandler()
-        logging.getLogger(name or None).addHandler(handler)
-        added.append((name, handler))
-    yield {name: handler for name, handler in added}
-    for name, handler in added:
-        logging.getLogger(name or None).removeHandler(handler)
+# Tiến trình riêng chạy app như `uvicorn writory.api:create_app --factory` của
+# deploy/backend.Dockerfile: `uvicorn.Config` dựng cấu hình log mặc định của uvicorn
+# (`LOGGING_CONFIG`: handler chỉ ở logger `uvicorn*`, root không có handler) TRƯỚC khi gọi factory.
+_UVICORN_DEFAULT_LOGGING = r'''
+import logging, sys
+import uvicorn
+from fastapi.testclient import TestClient
+from writory.api import create_app
+from writory.config import Settings
+
+key = sys.argv[1]
+uvicorn.Config("writory.api:create_app", factory=True)
+assert logging.getLogger().handlers == [], logging.getLogger().handlers
+
+async def ok():
+    return True
+
+app = create_app(Settings(_env_file=None, neo4j_uri="bolt://neo4j.invalid:7687", neo4j_user="neo4j",
+                          neo4j_password="pw", postgres_dsn="postgresql://u:p@pg.invalid/db",
+                          player_key_encryption_key="enc"), health_checks={"neo4j": ok})
+
+@app.get("/test/log")
+async def emit():
+    logging.getLogger("writory.api.errors").info("app info %s", key)
+    logging.getLogger("writory.pipeline.chapter").warning("app warning %s", key)
+    try:
+        raise RuntimeError(f"model failed {key}")
+    except RuntimeError:
+        logging.getLogger("writory.llm.openrouter").exception("app exception")
+    logging.getLogger("httpx").warning("library warning %s", key)
+    logging.getLogger("uvicorn.error").warning("uvicorn warning %s", key)
+    return {}
+
+with TestClient(app) as client:
+    assert client.get("/test/log").status_code == 200
+'''
 
 
-def test_startup_installs_redaction_on_root_and_uvicorn_loggers(uvicorn_handlers):
-    with TestClient(build()):
-        for name, handler in uvicorn_handlers.items():
-            assert any(isinstance(f, RedactSecretsFilter) for f in handler.filters), name or "root"
+def test_app_logs_reach_output_redacted_under_uvicorn_default_logging():
+    """Hồi quy (rà soát 30/10/2026, G7): bộ lọc chỉ gắn vào handler có sẵn lúc khởi động, mà cấu
+    hình log mặc định của uvicorn không cho root handler nào, nên log `writory.*` rơi vào
+    `logging.lastResort` không qua redact (key hiện nguyên) và dòng INFO bị bỏ. Chạy tiến trình
+    riêng để có đúng cấu hình đó, không có handler nào của pytest ở root."""
+    env = {**os.environ, "PYTHONIOENCODING": "utf-8"}
+    proc = subprocess.run([sys.executable, "-c", _UVICORN_DEFAULT_LOGGING, FAKE_KEY],
+                          capture_output=True, env=env, timeout=300, check=False)
+    out = proc.stdout.decode("utf-8") + proc.stderr.decode("utf-8")
+    assert proc.returncode == 0, out
+    assert FAKE_KEY not in out
+    for line in (f"INFO writory.api.errors: app info {REDACTED}",
+                 f"WARNING writory.pipeline.chapter: app warning {REDACTED}",
+                 "ERROR writory.llm.openrouter: app exception",
+                 f"RuntimeError: model failed {REDACTED}",
+                 f"WARNING httpx: library warning {REDACTED}",
+                 f"uvicorn warning {REDACTED}"):
+        assert line in out, out
+
+
+def test_backend_image_runs_uvicorn_with_its_default_logging():
+    """Test trên dựng cấu hình log mặc định của uvicorn vì image prod chạy uvicorn không có
+    `--log-config` (deploy/backend.Dockerfile); đổi lệnh đó thì test trên phải đổi theo."""
+    from writory.config import REPO_ROOT
+
+    dockerfile = (REPO_ROOT / "deploy" / "backend.Dockerfile").read_text(encoding="utf-8")
+    [cmd] = [ln for ln in dockerfile.splitlines() if ln.startswith("CMD ")]
+    assert '"uvicorn", "writory.api:create_app", "--factory"' in cmd
+    assert "--log-config" not in dockerfile
+
+
+# --- lỗi của router: route không có, sai phương thức, router chưa bật (G12) ----------------------
+
+
+def test_unknown_route_and_wrong_method_get_their_own_code():
+    with TestClient(build(), raise_server_exceptions=False) as client:
+        unknown = client.get("/khong-co")
+        wrong = client.delete("/health")
+        closed = client.get("/stories")  # router người chơi không mount khi cờ dev tắt (D-41)
+    for resp in (unknown, closed):
+        assert resp.status_code == 404 == HTTP_STATUS[ErrorCode.ROUTE_NOT_FOUND]
+        assert resp.json() == WritoryError(ErrorCode.ROUTE_NOT_FOUND).player_payload()
+    assert wrong.status_code == 405 == HTTP_STATUS[ErrorCode.METHOD_NOT_ALLOWED]
+    assert wrong.json() == WritoryError(ErrorCode.METHOD_NOT_ALLOWED).player_payload()
+    assert wrong.headers["allow"] == "GET"
+
+
+def test_router_refused_by_api_guard_gets_route_not_found():
+    """`deps.api_guard`: router đã mount nhưng chưa bật cho app này thì 404 như route không có."""
+    from tests.api_fixtures import dev_settings
+
+    app = create_app(dev_settings(dev=True), health_checks={"neo4j": ok})
+    app.state.player_routes_enabled = False
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.get("/stories")
+    assert (resp.status_code, resp.json()) == (
+        404, WritoryError(ErrorCode.ROUTE_NOT_FOUND).player_payload())
+
+
+@pytest.mark.parametrize(("status", "code"), [(400, ErrorCode.REQUEST_INVALID),
+                                              (413, ErrorCode.REQUEST_INVALID),
+                                              (503, ErrorCode.INTERNAL_ERROR)])
+def test_other_http_errors_get_a_code_and_never_echo_their_detail(status, code):
+    app = build()
+
+    @app.get("/test/http")
+    async def http_error():
+        raise HTTPException(status_code=status, detail=f"parse error near {FAKE_KEY}")
+
+    with TestClient(app, raise_server_exceptions=False) as client:
+        resp = client.get("/test/http")
+    assert (resp.status_code, resp.json()) == (HTTP_STATUS[code],
+                                               WritoryError(code).player_payload())
+    assert FAKE_KEY not in resp.text and "parse error" not in resp.text
 
 
 def test_health_reports_ok_or_down_only():
