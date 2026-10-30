@@ -51,8 +51,9 @@ from writory.safety.wrap import (
 # outline-9, writer-9: dòng "PHẢI đổi tình thế" khi nhân vật chính ở yên nhiều chương (D-98).
 # outline-10, writer-10: đề v3 thành mặc định (D-111).
 # outline-11, writer-11: dòng mốc đã xảy ra rồi trong mục tiêu chương (D-116).
-OUTLINE_PROMPT_VERSION = "outline-11"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-11"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-12, writer-12: dòng hành động vượt luật trong mục tiêu chương, chỉ khi có (G6, D-138).
+OUTLINE_PROMPT_VERSION = "outline-12"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-12"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong hiện hành (v3, D-111) là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"

@@ -292,7 +292,7 @@ function RunPage({
 
   let footer = null;
   if (blocked) {
-    footer = <ErrorBlock className="mt-10" tone="paper" error={blocked} onRetry={onRetry} />;
+    footer = <ErrorBlock className="mt-10" tone="paper" error={blocked} onRetry={onRetry} onBackToChoices={onRefresh} />;
   } else if (error && !network) {
     footer = (
       <ErrorBlock className="mt-10" tone="paper" sheetOnMobile error={error} onRetry={onRetry} onReload={onRefresh} onBackToChoices={onRefresh} />

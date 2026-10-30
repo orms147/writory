@@ -40,6 +40,7 @@ def client():
         lambda story_id: StoryRecord(story_id, "dev", "short", 3))
     app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(
         {"acts": [{"name": "một", "from_chapter": 1, "to_chapter": 6}]})
+    app.dependency_overrides[deps.get_story_brief] = lambda: ""  # ô tự viết đọc thiết lập (D-138)
     with TestClient(app, raise_server_exceptions=False) as c:
         yield c
 
@@ -126,10 +127,18 @@ class _PlayerLLM:
         return MeteredClient(self.llm, CostTracker(CFG.limits.cost_usd))
 
 
-def _action_client(monkeypatch, llm):
+BRIEF = "Cổ trang, không phép thuật. Nhân vật chính: Minh, thầy đồ chép sách."
+
+
+def _action_client(monkeypatch, llm, rows: list[dict] | None = None):
     saved: list[str] = []
-    monkeypatch.setattr("writory.api.play.save_action",
-                        lambda conn, story_id, chapter, **kw: saved.append(kw["text"]))
+
+    def save(conn, story_id, chapter, **kw):
+        saved.append(kw["text"])
+        if rows is not None:
+            rows.append(kw)
+
+    monkeypatch.setattr("writory.api.play.save_action", save)
     app = create_app(dev_settings(), health_checks={"neo4j": ok}, config=CFG)
     app.dependency_overrides[deps.get_pg_conn] = lambda: None
     # Kết nối None: khoá chống chạy đôi (D-56) thay bằng bản không làm gì; khoá thật ở test graph.
@@ -138,12 +147,34 @@ def _action_client(monkeypatch, llm):
         lambda story_id: StoryRecord(story_id, "dev", "short", 3))
     app.dependency_overrides[deps.get_story_plan] = lambda: StoryPlan.model_validate(
         {"acts": [{"name": "một", "from_chapter": 1, "to_chapter": 6}]})
+    app.dependency_overrides[deps.get_story_brief] = lambda: BRIEF
     app.dependency_overrides[deps.get_player_llm] = lambda: _PlayerLLM(llm)
     return TestClient(app, raise_server_exceptions=False), saved
 
 
-def _classify(label: str = "in_story_action") -> str:
-    return json.dumps({"label": label, "reason": "thử"}, ensure_ascii=False)
+def _classify(label: str = "in_story_action", feasibility: str = "within_rules") -> str:
+    return json.dumps({"label": label, "feasibility": feasibility, "reason": "thử"},
+                      ensure_ascii=False)
+
+
+@pytest.mark.parametrize("feasibility", ["within_rules", "beyond_world_rules", "beyond_character"])
+def test_custom_action_is_saved_with_its_feasibility_but_the_response_has_none(monkeypatch,
+                                                                              feasibility):
+    """G6 (D-138): bộ phân loại nhận thiết lập truyện (bọc như dữ liệu) và kết quả `feasibility` lưu
+    cùng hành động; phản hồi cho người chơi không có trường đó."""
+    from tests.moderation_fixtures import ModeratedLLM
+    from writory.llm.fake import FakeLLM
+
+    fake = FakeLLM.scripted([_classify(feasibility=feasibility)])
+    rows: list[dict] = []
+    client, _ = _action_client(monkeypatch, ModeratedLLM(fake), rows)
+    with client as c:
+        resp = c.post("/stories/s1/action", json={"text": "Tôi bay lên trời."})
+    assert resp.status_code == 200
+    assert resp.json() == {"for_chapter": 4, "source": "custom", "text": "Tôi bay lên trời."}
+    assert [(r["source"], r["feasibility"]) for r in rows] == [("custom", feasibility)]
+    user = fake.calls[0][-1].content
+    assert f'<player_data source="story_setup">\n{BRIEF}\n</player_data>' in user
 
 
 def test_blocked_action_is_moderated_before_classify_and_not_saved(monkeypatch):

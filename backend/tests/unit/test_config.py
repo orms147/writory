@@ -176,7 +176,7 @@ def test_narrator_limits_exist_in_config():
 def test_provisional_roles_use_the_project_model_with_low_reasoning():
     """D-47, D-100: các vai chưa có bài đo riêng dùng tạm model của dự án; vai trả JSON suy luận thấp."""
     models = load_config().models
-    for role in ("outline", "choices", "narrator", "classify", "setup"):
+    for role in ("outline", "choices", "narrator", "classify", "setup", "overreach"):
         assert models.roles.require(role) == PROJECT_MODEL
         assert getattr(models.role_reasoning, role) == "low"
 

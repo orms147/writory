@@ -150,6 +150,7 @@ from writory.quality.bench_d import (  # một chỗ cho giữ chỗ ngân sách
 )
 from writory.safety.leak import leak_names
 from writory.safety.moderate import LINES_HEADER_RE, ChoicesModerationOutput, ModerationOutput
+from writory.safety.overreach import OverreachCheck
 from writory.safety.redact import install_log_redaction, redact
 
 log = logging.getLogger(__name__)
@@ -163,7 +164,8 @@ REJECTED_BODY_MAX_CHARS = 20_000
 
 # Lỗi mà người chơi gặp thì bấm thử lại (câu G12 của các mã này đều bảo bấm thử lại).
 RETRYABLE = frozenset({
-    ErrorCode.SCENE_LEAK_BLOCKED, ErrorCode.CHOICES_LEAK_BLOCKED, ErrorCode.LLM_BAD_RESPONSE,
+    ErrorCode.SCENE_LEAK_BLOCKED, ErrorCode.SCENE_OVERREACH_BLOCKED, ErrorCode.CHOICES_LEAK_BLOCKED,
+    ErrorCode.LLM_BAD_RESPONSE,
     ErrorCode.RETRY_LIMIT_REACHED, ErrorCode.LLM_UNAVAILABLE, ErrorCode.LLM_TIMEOUT,
     ErrorCode.STORY_SETUP_INVALID,
 })
@@ -341,6 +343,7 @@ ROLE_BY_SCHEMA_NAME: dict[str, str] = {
     SceneOutline.__name__: "outline", ExtractOutput.__name__: "extract",
     ChoicesOutput.__name__: "choices", SummaryOutput.__name__: "summary",
     ModerationOutput.__name__: "moderate", ChoicesModerationOutput.__name__: "moderate",
+    OverreachCheck.__name__: "overreach",  # G6, D-138: chỉ chương có hành động tự viết vượt luật
 }
 _SETUP_STEP_BY_SCHEMA = dict(zip(
     (SettingsOutput.__name__, PlotsOutput.__name__, CharactersOutput.__name__,
@@ -1022,7 +1025,8 @@ class StoryRun:
                     shown.append(event.text)
             out = run.outcome
             self._record_attempt(number, attempt, out, action)
-            code = out.error or (ErrorCode.SCENE_LEAK_BLOCKED if out.blocked_scene else None)
+            code = out.error or (out.blocked_code or ErrorCode.SCENE_LEAK_BLOCKED
+                                 if out.blocked_scene else None)
             if out.committed:
                 assert out.package is not None
                 self.packages[number] = out.package
@@ -1827,7 +1831,7 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
         t = report["tokens"].get(role, {"prompt": 0, "completion": 0})
         lines.append(f"| {role} | {report['calls']['by_role'].get(role, 0)} | {usd:.5f} "
                      f"| {t['prompt']} | {t['completion']} |")
-    roles = ("setup", "outline", "writer", "extract", "summary", "choices", "moderate")
+    roles = ("setup", "outline", "writer", "extract", "summary", "choices", "moderate", "overreach")
     lines += ["", "## Chi phí theo chương (USD, mọi lượt)", "",
               "| Chương | " + " | ".join(roles) + " | Tổng |",
               "|---|" + "---|" * (len(roles) + 1)]

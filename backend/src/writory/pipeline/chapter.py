@@ -2,7 +2,8 @@
 
 Mỗi cảnh: dựng ngữ cảnh và mục tiêu của chương (`pipeline.pacing`, D-49) → dàn ý → viết → soát
 (chuẩn hoá dấu gạch, kiểm văn, trích thay đổi, tự hé lộ tên trang vừa nêu, người canh, dò lộ,
-kiểm duyệt nội dung G9) → viết lại tối đa `limits.retries.rewrite_per_scene` lần → hiện. Dàn ý
+kiểm duyệt nội dung G9, và kiểm vượt luật G6 khi hành động tự viết vượt luật, D-138) → viết lại tối
+đa `limits.retries.rewrite_per_scene` lần → hiện. Dàn ý
 cảnh cuối mà không dàn ý nào của chương định gỡ mạch đến hạn thì thử lại trong ngân sách của dàn
 ý; hết lượt thì viết tiếp với dàn ý cuối (D-82). Bộ trích nhận mạch phải gỡ đang mở ở mọi lượt.
 Bản viết lại có lỗi chặn mà bản trước không có thì hiện bản trước (D-50, bổ sung D-36). Hết cảnh
@@ -91,6 +92,7 @@ from writory.quality import (
     narration_instruction,
     normalize_dashes,
 )
+from writory.safety.classify import BEYOND_RULES, Feasibility
 from writory.safety.leak import (
     LeakHit,
     LeakKind,
@@ -100,6 +102,8 @@ from writory.safety.leak import (
     protected_ids,
 )
 from writory.safety.moderate import Source, Verdict, moderate, rewrite_feedback
+from writory.safety.overreach import check_overreach, needs_rewrite
+from writory.safety.overreach import rewrite_feedback as overreach_feedback
 from writory.safety.redact import redact
 from writory.safety.reveal import auto_reveals
 
@@ -120,6 +124,10 @@ class ChapterRequest:
 
     `choice`: khi `player_action` đến từ một lựa chọn có sẵn (không phải ô tự viết), truyền cả lựa
     chọn đó để lời nói dối và nội tâm của nó được ghi vào gói của chính chương này (D-55).
+
+    `feasibility`: bộ phân loại chấm hành động tự viết (G6, D-138). Vượt luật (`BEYOND_RULES`) thì
+    mục tiêu chương đòi thất bại hay cái giá, và mỗi bản viết qua `safety.overreach`. None (lựa chọn
+    có sẵn, chương 1) hay trong luật: không có gì thêm.
     """
 
     present_ids: tuple[str, ...]  # nhân vật có mặt đầu chương (nhân vật chính luôn được thêm)
@@ -131,6 +139,7 @@ class ChapterRequest:
     darkness_level: str | None = None
     commit_id: str | None = None  # None = tự sinh
     choice: Choice | None = None  # lựa chọn dẫn tới chương này; tác động của nó vào gói (D-55)
+    feasibility: Feasibility | None = None  # G6, D-138: chỉ có với hành động tự viết
 
 
 @dataclass(frozen=True)
@@ -138,7 +147,7 @@ class ReviewIssue:
     """Một lỗi của bản viết. `feedback` đưa cho model viết lại (được thấy lớp truth): không bao giờ
     vào log hay tới người chơi."""
 
-    source: Literal["quality", "guard", "leak", "moderation"]
+    source: Literal["quality", "guard", "leak", "moderation", "overreach"]
     kind: str
     block: bool  # còn ở bản cuối thì không hiện cảnh (G2)
     feedback: str
@@ -193,6 +202,7 @@ class ChapterOutcome:
     package: ChangePackage | None = None
     committed: bool = False
     blocked_scene: int | None = None
+    blocked_code: ErrorCode | None = None  # mã của `scene_blocked` (D-138: G2 hay G6)
     choices: list[Choice] = field(default_factory=list)
     finished: bool = False  # chương cuối của kế hoạch đã ghi: truyện kết, không có lựa chọn
     summary: str | None = None  # tóm tắt chương vừa ghi (D-49); chữ nội bộ, không tới người chơi
@@ -326,6 +336,7 @@ class _State(TypedDict, total=False):
     reviews: list[ReviewRecord]
     accepted: list[AcceptedScene]
     blocked_scene: int
+    blocked_code: ErrorCode
     package: ChangePackage
     committed: bool
     choices: list[Choice]
@@ -358,7 +369,7 @@ def writer_tier(config: AppConfig, tier_id: str | None) -> WriterTier:
     raise ValueError(f"không có mức model viết {tier_id!r}")
 
 
-CHAPTER_ROLES = ("outline", "extract", "summary", "choices", "moderate")
+CHAPTER_ROLES = ("outline", "extract", "summary", "choices", "moderate", "overreach")
 
 
 def config_problems(config: AppConfig, tier_id: str | None = None) -> list[WritoryError]:
@@ -408,6 +419,13 @@ def config_problems(config: AppConfig, tier_id: str | None = None) -> list[Writo
 # Ngưỡng ngôi kể dùng tới, theo ngôi đã chốt (D-51).
 _NARRATION_LIMIT = {"first": "first_person_min_per_100_words",
                     "third": "first_person_max_per_100_words"}
+
+
+def overreach_of(request: ChapterRequest) -> Feasibility | None:
+    """Loại vượt luật của hành động dẫn tới chương (G6, D-138), hay None nếu không phải."""
+    if request.player_action and request.feasibility in BEYOND_RULES:
+        return request.feasibility
+    return None
 
 
 def _preflight(d: _Deps) -> None:
@@ -653,7 +671,8 @@ async def _context(state: _State, runtime: Runtime[_Deps]) -> dict:
                 standstill_chapters=_require(d.config.limits.context, "standstill_chapters"),
                 unplanned_goal=d.config.limits.context.unplanned_chapter_goal,
                 idle_chapters=d.config.limits.context.idle_chapters,
-                phase_shift_every=d.config.limits.context.phase_shift_every)}
+                phase_shift_every=d.config.limits.context.phase_shift_every,
+                overreach=overreach_of(d.request))}
 
 
 async def _outline(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -865,6 +884,19 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
             for category in mod.categories
         ]
 
+    # 7. G6 (D-138): hành động tự viết vượt luật thì trang, tính tới hết cảnh này, không được chiều
+    # theo: vượt luật thế giới chỉ được thất bại, vượt sức nhân vật thì thất bại hay trả giá
+    # (`overreach.PASSES`). Không qua là lỗi chặn: viết lại trong cùng giới hạn, còn thì không hiện.
+    overreach = overreach_of(d.request)
+    if overreach is not None:
+        assert d.request.player_action is not None
+        judged = await check_overreach(
+            action=d.request.player_action, feasibility=overreach,
+            earlier=[s.text for s in state["accepted"]], scene_text=text, llm=d.llm, config=cfg)
+        if needs_rewrite(overreach, judged.verdict):
+            issues.append(ReviewIssue("overreach", judged.verdict.value, True,
+                                      overreach_feedback(overreach)))
+
     review = Review(text, package, tuple(issues), tuple(result.rejected), result.milestones)
     if result.rejected:
         log.info("chương %s cảnh %s lượt %s: bộ trích bỏ %s cạnh", chapter, scene, attempt,
@@ -917,13 +949,23 @@ async def _accept(state: _State, runtime: Runtime[_Deps]) -> dict:
     return out
 
 
+def blocked_code(issues: Sequence[ReviewIssue]) -> ErrorCode:
+    """Mã của `scene_blocked`: SCENE_OVERREACH_BLOCKED khi lỗi chặn duy nhất là trang chiều theo
+    hành động vượt luật (G6, D-138); còn lỗi chặn nào khác thì câu trung tính như cũ (D-26)."""
+    blocking = {i.source for i in issues if i.block}
+    if blocking == {"overreach"}:
+        return ErrorCode.SCENE_OVERREACH_BLOCKED
+    return ErrorCode.SCENE_LEAK_BLOCKED
+
+
 async def _blocked(state: _State, runtime: Runtime[_Deps]) -> dict:
     review, scene = state["review"], state["scene"]
     assert review is not None
     log.warning("chương %s cảnh %s: không hiện cảnh sau %s lượt (%s)", state["chapter"], scene,
                 state["attempt"], _kinds([i for i in review.issues if i.block]))
-    runtime.stream_writer(blocked_event(scene))
-    return {"blocked_scene": scene}
+    code = blocked_code(review.issues)
+    runtime.stream_writer(blocked_event(scene, code))
+    return {"blocked_scene": scene, "blocked_code": code}
 
 
 async def _commit(state: _State, runtime: Runtime[_Deps]) -> dict:
@@ -1160,6 +1202,7 @@ class ChapterRun:
         out.package = final.get("package")
         out.committed = bool(final.get("committed", False))
         out.blocked_scene = final.get("blocked_scene")
+        out.blocked_code = final.get("blocked_code")
         out.choices = list(final.get("choices", []))
         out.finished = bool(final.get("finished", False))
         out.summary = final.get("summary")

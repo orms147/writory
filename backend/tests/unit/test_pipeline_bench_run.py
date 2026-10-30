@@ -149,7 +149,7 @@ async def test_dry_run_goes_all_the_way_and_writes_every_file(tmp_path):
     assert meta["status"] == "done" and meta["exit_code"] == 0 and meta["dry_run"] is True
     assert meta["seed"] == run.scenario.seed and meta["git"]["commit"]
     assert set(meta["models"]) == {"setup", "outline", "writer", "extract", "summary", "choices",
-                                 "moderate"}
+                                 "moderate", "overreach"}
     assert meta["models"]["writer"]["reasoning"] == "none"
     assert meta["config"]["sha256"] and meta["scenario"]["content"]["tags"]["genre"] == "tu tiên"
     chapter_1 = (out / "chapters" / "ch01.md").read_text(encoding="utf-8")
