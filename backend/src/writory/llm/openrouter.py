@@ -33,7 +33,7 @@ from typing import Any
 import httpx
 from pydantic import BaseModel, SecretStr
 
-from writory.config import AppConfig, LimitNotSetError
+from writory.config import AppConfig, LimitNotSetError, is_meta_model
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import (
     ChatResult,
@@ -192,6 +192,13 @@ class OpenRouterClient(LLMClient):
         self._url = base + "/chat/completions"
         self._generation_url = base + "/generation"
 
+    @staticmethod
+    def _refuse_meta(model: str) -> None:
+        """Model Meta chỉ đi qua `MetaClient` của bộ đo (D-140): gửi nó tới OpenRouter là sai nhà cung cấp."""
+        if is_meta_model(model):
+            raise WritoryError(ErrorCode.CONFIG_MODEL_NOT_SET,
+                               detail=f"{model} là model Meta (chỉ bộ đo dùng), không gửi tới OpenRouter")
+
     def _headers(self) -> dict[str, str]:
         return {
             "Authorization": f"Bearer {self._key.get_secret_value()}",
@@ -241,6 +248,7 @@ class OpenRouterClient(LLMClient):
         response_schema: type[BaseModel] | None = None,
         extra: Mapping[str, Any] | None = None,
     ) -> ChatResult:
+        self._refuse_meta(model)
         body = self._body(
             model, messages, stream=False, response_schema=response_schema, extra=extra
         )
@@ -282,6 +290,7 @@ class OpenRouterClient(LLMClient):
         )
 
     async def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
+        self._refuse_meta(model)
         body = self._body(model, messages, stream=True)
         usage: Usage | None = None
         gen_id: str | None = None

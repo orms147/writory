@@ -249,6 +249,14 @@ class RoleModels(_Section):
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
 
+# Model Meta chỉ cho bộ đo (D-140): id trong config có tiền tố này, và `llm/meta.py` bỏ nó khi gửi. Sản phẩm cho
+# người chơi chạy bằng key OpenRouter của họ nên không nhận model mang tiền tố này.
+META_MODEL_PREFIX = "meta/"
+
+
+def is_meta_model(model: str | None) -> bool:
+    return bool(model) and model.startswith(META_MODEL_PREFIX)
+
 
 class RoleReasoning(_Strict):
     """Mức suy luận (reasoning effort của OpenRouter) cho từng vai; null = mặc định của model."""
@@ -281,6 +289,9 @@ class ModelPrice(_Strict):
     model_config = ConfigDict(extra="forbid", frozen=True, populate_by_name=True)
     input: NonNegativeFloat = Field(alias="in")
     output: NonNegativeFloat = Field(alias="out")
+    # Giá token vào đọc từ cache (USD / 1 triệu token); null = tính như token vào thường. Chỉ model Meta của bộ đo
+    # cần: chi phí của nó tính từ token x giá chứ không có `usage.cost` (D-140).
+    cached_in: NonNegativeFloat | None = None
 
 
 class ModelsConfig(_Strict):
@@ -514,9 +525,34 @@ def _load_file(path: Path, schema: type[BaseModel]) -> BaseModel:
         raise ConfigError(f"{path.name}: sai schema: {problems}") from e
 
 
+def config_file(config_dir: Path, name: str) -> Path:
+    """File config `name` của `config_dir`. Thư mục config của bộ đo chỉ cần chứa phần KHÁC `config/` (ví dụ
+    `evals/config/meta/models.yaml`, D-140): file không có ở đó thì lấy từ `config/`, để số trong `limits.yaml`
+    vẫn chỉ ở một chỗ."""
+    path = config_dir / name
+    return path if config_dir == REPO_CONFIG_DIR or path.exists() else REPO_CONFIG_DIR / name
+
+
+def config_files(config_dir: Path) -> dict[str, Path]:
+    """Các file config có hiệu lực của `config_dir` (theo tên, đúng thứ tự `_FILES`)."""
+    return {name: config_file(config_dir, name) for name, _ in _FILES.values()}
+
+
 def load_config(config_dir: Path = REPO_CONFIG_DIR) -> AppConfig:
-    parts = {key: _load_file(config_dir / name, schema) for key, (name, schema) in _FILES.items()}
+    if config_dir != REPO_CONFIG_DIR and not any(config_dir.glob("*.yaml")):
+        # Không để đường dẫn gõ sai lặng lẽ thành config/ thật.
+        raise ConfigError(f"{config_dir}: không có file config nào (*.yaml)")
+    parts = {key: _load_file(config_file(config_dir, name), schema) for key, (name, schema) in _FILES.items()}
     return AppConfig(**parts)
+
+
+def product_model_problems(config: AppConfig) -> list[str]:
+    """Chỗ nào trong config của sản phẩm có model Meta (D-140). Rỗng là đủ. Người chơi chạy bằng key OpenRouter của
+    họ (D-2); model Meta chỉ bộ đo dùng, bằng key của chủ dự án."""
+    problems = [f"roles.{role}: {model}" for role, model in config.models.roles.model_dump().items()
+                if is_meta_model(model)]
+    problems += [f"writer_tiers[{t.id}]: {t.model}" for t in config.models.writer_tiers if is_meta_model(t.model)]
+    return problems
 
 
 # --- biến môi trường -------------------------------------------------------------------
