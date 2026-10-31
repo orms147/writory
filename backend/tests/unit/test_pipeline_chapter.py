@@ -87,14 +87,14 @@ def request(**kw) -> ChapterRequest:
 
 
 async def run(script, tmp_path, *, store=None, config=None, cost_usd=0.0, req=None,
-              moderation=(), moderation_cost=0.0, plan=PLAN, **cfg):
+              moderation=(), moderation_cost=0.0, plan=PLAN, story_style="prose", **cfg):
     config = config or make_config(tmp_path, **cfg)
     store = store or MemoryStore()
     llm = ScriptedLLM(script, cost_usd=cost_usd, moderation=moderation,
                       moderation_cost=moderation_cost)
     chapter_run = ChapterRun(
         req or request(), llm=llm, store=store, config=config, plan=plan,
-        tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE,
+        tracker=CostTracker(config.limits.cost_usd), style_guide=STYLE, story_style=story_style,
     )
     events = [e async for e in chapter_run.events()]
     return events, chapter_run.outcome, llm, store
@@ -2055,3 +2055,25 @@ async def test_a_chapter_without_choices_never_calls_the_choices_model(tmp_path)
     assert "choices_ready" not in kinds(events) and kinds(events)[-1] == "chapter_committed"
     assert calls_of(llm, "choices") == [] and outcome.committed and outcome.choices == []
     assert store.commits
+
+
+# --- truyện audio: thoại phải nghe ra ai nói (D-156) ---------------------------------------------
+
+SCENE_1_RUN = SCENE_1 + "\n- Một.\n- Hai.\n- Ba."  # ba lượt thoại liền nhau, không câu dẫn
+
+
+async def test_an_audio_scene_with_unattributed_dialogue_is_rewritten_once(tmp_path):
+    script = [outline_reply(), SCENE_1_RUN, EXTRACT_1, SCENE_1, EXTRACT_1,
+              outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    events, _, llm, _ = await run(script, tmp_path, story_style="audio")
+    writers = calls_of(llm, "writer")
+    assert len(writers) == 3 and "ai nói" in writers[1][-1].content
+    assert of_type(events, "scene_ready")[0].text == normalize_dashes(SCENE_1)
+
+
+async def test_a_prose_scene_keeps_long_dialogue_runs(tmp_path):
+    script = [outline_reply(), SCENE_1_RUN, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY,
+              choices_reply()]
+    events, _, llm, _ = await run(script, tmp_path)
+    assert len(calls_of(llm, "writer")) == 2
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]

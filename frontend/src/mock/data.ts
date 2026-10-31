@@ -21,8 +21,8 @@ export const MOCK_LENGTH_LEVELS: (StoryLengthOption & { player_selectable: boole
   { key: 'novel', label: 'Tiểu thuyết mỏng', chapters_min: 30, chapters_max: 60, style: 'prose', minutes: null, player_selectable: false },
   // Truyện kịch bản audio có mức riêng, đo bằng phút nghe; `/setup` từ chối mức khác kiểu truyện.
   { key: 'audio_30', label: 'Audio ~30 phút', chapters_min: 3, chapters_max: 4, style: 'audio', minutes: 30, player_selectable: true },
-  { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 6, style: 'audio', minutes: 45, player_selectable: true },
-  { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 7, chapters_max: 8, style: 'audio', minutes: 60, player_selectable: true },
+  { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 5, style: 'audio', minutes: 45, player_selectable: true },
+  { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 6, chapters_max: 7, style: 'audio', minutes: 60, player_selectable: true },
 ];
 
 export const MOCK_CONFIG: PublicConfig = {

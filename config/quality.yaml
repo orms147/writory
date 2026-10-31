@@ -4,6 +4,9 @@
 # Độ dài cảnh lấy từ story_lengths.yaml (chapter_chars chia cho số cảnh của chương).
 
 dialogue_style: dash            # D-18. "quotes" để dành, chưa hỗ trợ.
+# Truyện audio (D-156; số tạm, Claude chọn): quá ngần này lượt thoại liền nhau, không dòng kể nào xen giữa, thì cảnh
+# được viết lại (một giọng đọc máy không cho người nghe biết ai nói). Khớp luật trong style_guide_audio_vi.md.
+audio_dialogue_max_run: 2
 
 repetition:
   ngram_words: 4             # độ dài cụm từ, tính bằng số từ

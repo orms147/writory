@@ -478,6 +478,8 @@ class QualityConfig(_Strict):
     foreign_script: ForeignScriptConfig
     cliches: ClicheConfig
     narration: NarrationConfig
+    # Truyện audio (D-156): số lượt thoại liền nhau tối đa không có câu dẫn ai nói; None = không kiểm.
+    audio_dialogue_max_run: PositiveInt | None = None
 
 
 # --- guard.yaml ------------------------------------------------------------------------
