@@ -1,0 +1,30 @@
+# Config bộ đo dùng model Meta thay OpenRouter (D-140): `--config-dir evals/config/meta`. Thư mục này chỉ chứa
+# phần KHÁC config/ (file thiếu lấy từ config/), nên số ở limits.yaml vẫn chỉ ở một chỗ. Chỉ bộ đo dùng: sản phẩm
+# cho người chơi từ chối id có tiền tố `meta/` (config.product_model_problems).
+# Giá: danh sách niêm yết chủ dự án cung cấp 28/10/2026 (USD / 1 triệu token). Chi phí của Meta tính từ token x giá
+# này (không có usage.cost). KHÔNG dùng bản `-contributor` (Meta dùng dữ liệu của bản đó để huấn luyện).
+# Chỉ có phần khác config/models.yaml (loader gộp từng khoá): `role_reasoning` lấy từ config/; `none` không có ở
+# Meta nên MetaClient gửi `minimal`. `writer_tiers` là danh sách nên bị thay cả: sửa config/models.yaml thì sửa theo
+# (test_meta_config bắt lệch). `prices` gộp thêm giá Muse vào giá Luna của config/.
+
+roles:
+  outline: meta/muse-wonder-1.0
+  extract: meta/muse-wonder-1.0
+  choices: meta/muse-wonder-1.0
+  narrator: meta/muse-wonder-1.0
+  classify: meta/muse-wonder-1.0
+  setup: meta/muse-wonder-1.0
+  summary: meta/muse-wonder-1.0
+  moderate: meta/muse-wonder-1.0
+  video: meta/muse-wonder-1.0
+  overreach: meta/muse-wonder-1.0
+
+writer_tiers:
+  - id: standard
+    label: "Tiêu chuẩn"
+    model: "meta/muse-wonder-1.0"
+    eval_result: "evals/results/2026-10-20-quality-r2/"
+    reasoning: none
+
+prices:
+  meta/muse-wonder-1.0: {in: 4.0, cached_in: 0.2, out: 20.0}
