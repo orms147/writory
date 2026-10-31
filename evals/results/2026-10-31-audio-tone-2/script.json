@@ -1,0 +1,1068 @@
+{
+  "format": "writory-audio-script/1",
+  "meta": {
+    "premise_id": "i2",
+    "premise": "Cô Em Trà Xanh Nhầm Người: Gia Huy, thiếu gia thật của nhà họ Phạm, bị tráo lúc mới sinh và lớn lên trong một gia đình bình thường, còn tiểu thư giả Tú Anh được nuông chiều giữa hào môn. Khi trở về ở tuổi hai mươi sáu, anh bị Tú Anh dựng chuyện là kẻ tham tiền và cố quyến rũ vị hôn thê của cô. Gia Huy không tranh cãi, mà nhận lời giúp một công ty đối thủ điều tra những hợp đồng ma do Tú Anh đứng tên. Đến ngày cô định công khai đuổi anh khỏi nhà, chính các đối tác lại kéo đến đòi cô giải thích.\nCảnh đáng chờ: Tú Anh giả vờ bị Gia Huy bắt nạt trước cả nhà, nhưng đoạn ghi âm trong điện thoại khiến màn kịch sụp đổ.; Cô ta khoe món quà đắt tiền là do mình mua, rồi tái mặt khi Gia Huy đưa hóa đơn mang tên người khác.; Trong tiệc ký kết, đối tác đồng loạt rút lui và nêu rõ ai mới là người làm giả hồ sơ.",
+    "minutes": 30,
+    "words_per_minute": 150,
+    "target_words": 4500,
+    "segments_planned": 5,
+    "words_per_segment": 900,
+    "words": 4843,
+    "est_minutes": 32.3,
+    "model": "openai/gpt-6-luna",
+    "provider": "openrouter",
+    "prompt_version": "audio-2",
+    "moderation": true,
+    "dry_run": false,
+    "budget_usd": 0.3,
+    "generated": "2026-10-31",
+    "git": {
+      "commit": "50e0974a2a75ba6b67ac1dfa15d141d9ae4cda46",
+      "dirty": false
+    },
+    "config_sha256": "8e08db19391c2f736f4144af25f9abf2c15cbba15843cb8d50047f85009143cf",
+    "calls": 16,
+    "cost_usd": 0.01871
+  },
+  "plan": {
+    "title": "Cô Em Trà Xanh Nhầm Người",
+    "logline": "Gia Huy, thiếu gia thật bị tráo từ lúc mới sinh, trở về nhà họ Phạm sau hai mươi sáu năm và lập tức bị Tú Anh vu oan là kẻ tham tiền, chuyên giành giật vị hôn phu của cô. Anh chẳng buồn cãi, âm thầm lần theo những hợp đồng ma mang tên Tú Anh, chờ đến ngày cô tự đứng trên sân khấu để nhận cú vả mặt lớn nhất đời mình.",
+    "protagonist_id": "gia_huy",
+    "cast": [
+      {
+        "id": "gia_huy",
+        "name": "Gia Huy",
+        "gender": "nam",
+        "age": 26,
+        "role": "Thiếu gia thật nhà họ Phạm, lớn lên trong gia đình bình thường; ít lời, lạnh lùng, giỏi đọc hợp đồng và lần dấu dòng tiền.",
+        "voice": "Nam trầm, điềm tĩnh, nói chậm vừa đủ; câu đáp ngắn và lạnh",
+        "romance": false
+      },
+      {
+        "id": "tu_anh",
+        "name": "Tú Anh",
+        "gender": "nữ",
+        "age": 25,
+        "role": "Tiểu thư giả được nhà họ Phạm nuông chiều; kiêu căng, quen sai khiến người khác, giỏi giả yếu đuối và đổ lỗi khéo.",
+        "voice": "Nữ ngọt lịm giả tạo, khi hoảng thì cao và đứt quãng",
+        "romance": false
+      },
+      {
+        "id": "pham_kien",
+        "name": "Phạm Kiên",
+        "gender": "nam",
+        "age": 56,
+        "role": "Chủ tịch nhà họ Phạm, cha ruột của Gia Huy; tin vẻ ngoài hào nhoáng và nhiều lần vội vàng bênh Tú Anh.",
+        "voice": "Nam trung niên trầm, uy quyền nhưng dễ chùng xuống khi biết mình sai",
+        "romance": false
+      },
+      {
+        "id": "lan_phuong",
+        "name": "Lan Phương",
+        "gender": "nữ",
+        "age": 53,
+        "role": "Mẹ ruột của Gia Huy; day dứt vì đã không nhận ra con, ban đầu bị Tú Anh dẫn dắt nhưng dần đứng về phía sự thật.",
+        "voice": "Nữ trung niên ấm, nghẹn ngào khi xúc động, rõ ràng khi quyết đoán",
+        "romance": false
+      },
+      {
+        "id": "minh_khang",
+        "name": "Minh Khang",
+        "gender": "nam",
+        "age": 28,
+        "role": "Vị hôn phu của Tú Anh, người thường hùa theo cô để lấy lòng nhà họ Phạm; phải đối diện bằng chứng mình từng tiếp tay ký xác nhận qua loa.",
+        "voice": "Nam sáng, tự tin lúc đầu, về sau lúng túng và hụt hơi",
+        "romance": false
+      },
+      {
+        "id": "thanh_van",
+        "name": "Thanh Vân",
+        "gender": "nữ",
+        "age": 34,
+        "role": "Giám đốc công ty đối thủ thuê Gia Huy rà soát các hợp đồng đáng ngờ; sắc sảo, chỉ tin bằng chứng.",
+        "voice": "Nữ thấp, gọn, dứt khoát như đọc kết luận",
+        "romance": false
+      }
+    ],
+    "secrets": [
+      {
+        "id": "ghi_am_man_kich",
+        "text": "Tú Anh cố tình dàn cảnh để Gia Huy trông như đang bắt nạt mình; điện thoại của cô ghi lại cả đoạn cô tập lời thoại và dặn người làm đứng về phía mình.",
+        "reveal_segment": 2
+      },
+      {
+        "id": "hoa_don_mon_qua",
+        "text": "Món quà đắt tiền Tú Anh khoe tự mua thực ra được thanh toán bằng ngân sách tiếp khách của công ty; hóa đơn có tên người đặt hàng và dấu xác nhận cô đã tìm cách giấu.",
+        "reveal_segment": 3
+      },
+      {
+        "id": "hop_dong_ma",
+        "text": "Các hợp đồng đứng tên Tú Anh là giao dịch khống, dùng hồ sơ nhà cung cấp giả để chuyển tiền khỏi công ty; Minh Khang từng ký xác nhận mà không kiểm tra và Tú Anh biết rõ mình đang làm gì.",
+        "reveal_segment": 4
+      },
+      {
+        "id": "vu_trao_doi",
+        "text": "Tú Anh biết Gia Huy mới là con ruột nhà họ Phạm từ trước ngày anh trở về; cô từng thấy hồ sơ bị tráo và chủ động giấu nó để giữ địa vị, nhưng không phải người gây ra vụ tráo đổi lúc mới sinh.",
+        "reveal_segment": 5
+      }
+    ],
+    "segments": [
+      {
+        "title": "Người mới về đã bị đuổi",
+        "beats": [
+          "Mở bằng câu móc: “Ngày đầu bước vào nhà họ Phạm, tôi đã nghe Tú Anh bảo bố mẹ đuổi tôi đi cho sạch cửa.” Gia Huy vừa nhận kết quả xác nhận thân phận thì Tú Anh lập tức gọi anh là kẻ tham tiền.",
+          "Trong bữa tối, Tú Anh diễn cảnh bị Gia Huy xúc phạm, còn Minh Khang phụ họa rằng anh đang cố chen vào mối hôn sự của họ. Người làm và họ hàng nhìn Gia Huy như kẻ ăn nhờ.",
+          "Gia Huy chỉ đáp: “Cô cứ nói tiếp. Lát nữa đừng bảo tôi cắt lời.” Anh không tranh cãi, khiến Phạm Kiên càng giận và ra lệnh anh tránh xa chuyện công ty.",
+          "Thanh Vân tìm đến, đề nghị Gia Huy giúp rà soát loạt hợp đồng đáng ngờ có chữ ký phê duyệt của Tú Anh. Anh nhận lời, nhưng yêu cầu được xem bản gốc.",
+          "Tú Anh khoe trước cả nhà món quà xa xỉ là do mình tự mua, rồi mỉa Gia Huy đến đôi giày cũng không tự sắm nổi. Gia Huy nhìn hóa đơn ló ra khỏi túi quà và im lặng."
+        ]
+      },
+      {
+        "title": "Nước mắt có ghi âm",
+        "beats": [
+          "Tú Anh cố tình chặn Gia Huy ở hành lang rồi lớn tiếng kêu cứu, diễn như thể anh vừa đe dọa mình; cô còn ngã xuống ngay trước mặt cả nhà.",
+          "Phạm Kiên quát Gia Huy, Minh Khang đòi gọi bảo vệ, còn Tú Anh rơm rớm: “Em chỉ muốn anh ấy được ở lại thôi.” Gia Huy không đỡ cô, chỉ yêu cầu mọi người nghe hết đoạn ghi âm.",
+          "Điện thoại của Tú Anh phát rõ giọng cô tập lời thoại, dặn người làm đứng về phía mình và tính sẵn cách khiến Gia Huy bị đuổi. Màn kịch sụp xuống, đám đông im bặt.",
+          "Tú Anh chối quanh, nói đó chỉ là câu đùa; Gia Huy lạnh lùng đáp: “Cô diễn khá. Tiếc là quên tắt máy.” Lan Phương bắt đầu nghi ngờ những lời con gái nuôi vẫn kể.",
+          "Gia Huy tìm được các hợp đồng có mã thanh toán lặp lại, nhưng bản lưu quan trọng nhất vừa bị xóa khỏi hệ thống. Thanh Vân báo có người đang dọn dấu vết."
+        ]
+      },
+      {
+        "title": "Món quà không thuộc về cô",
+        "beats": [
+          "Gia Huy và Thanh Vân đối chiếu bản lưu bên đối tác, phát hiện nhiều khoản tiền được hợp thức hóa bằng hóa đơn tiếp khách và nhà cung cấp không có địa chỉ hoạt động.",
+          "Trong buổi tiếp khách tại nhà, Tú Anh lại khoe món quà đắt tiền và nói Gia Huy ghen tị nên bịa chuyện. Cả nhà hùa theo cô, còn Minh Khang cười khẩy.",
+          "Gia Huy đặt hóa đơn lên bàn: món quà được thanh toán bằng ngân sách công ty, tên người đặt hàng là Tú Anh. Anh nói gọn: “Quà cô mua, bằng tiền của người khác.”",
+          "Tú Anh tái mặt rồi giả khóc, đổ cho nhân viên làm sai. Phạm Kiên buộc cô đưa sổ chi, nhưng cô tuyên bố Gia Huy không có quyền đụng vào việc nhà họ Phạm.",
+          "Thanh Vân xác nhận đối tác chủ chốt sắp dự tiệc ký kết sẽ yêu cầu giải trình trực tiếp. Tú Anh hả hê tuyên bố sẽ nhân dịp đó công khai đuổi Gia Huy khỏi nhà."
+        ]
+      },
+      {
+        "title": "Sân khấu dành cho ai",
+        "beats": [
+          "Gia Huy lần theo hồ sơ nhà cung cấp, phát hiện địa chỉ đăng ký là một căn phòng bỏ trống; các khoản thanh toán đều chảy về một chuỗi tài khoản liên quan đến những hợp đồng Tú Anh phê duyệt.",
+          "Minh Khang bị đối chất, thừa nhận đã ký xác nhận một số hồ sơ theo lời Tú Anh mà không kiểm tra. Tú Anh lập tức quay sang trách anh hèn nhát, rồi rưng rưng bảo mình bị Gia Huy gài bẫy.",
+          "Tại tiệc ký kết, Tú Anh giành micro, kể mình bị Gia Huy chèn ép và yêu cầu Phạm Kiên đuổi anh khỏi nhà trước mặt khách mời.",
+          "Các đối tác đồng loạt đặt bản sao hợp đồng lên bàn, tuyên bố rút khỏi thỏa thuận và chỉ rõ hồ sơ giả được lập dưới quyền phê duyệt của Tú Anh. Gia Huy không cần tranh luận; Thanh Vân lần lượt đọc từng khoản trùng khớp.",
+          "Tú Anh bị dồn vào góc vẫn khăng khăng mình là tiểu thư duy nhất của nhà họ Phạm. Lan Phương nhìn cô và hỏi: “Cô đã biết Gia Huy là con tôi từ bao giờ?”"
+        ]
+      },
+      {
+        "title": "Cô tiểu thư tự tay lật mặt",
+        "beats": [
+          "Trước mặt khách mời, Tú Anh vỡ lời rằng cô đã thấy hồ sơ thân phận của Gia Huy từ trước ngày anh về, nhưng giấu đi vì sợ mất vị trí; cô vẫn chối mình không biết gì về vụ tráo đổi khi mới sinh.",
+          "Gia Huy đưa ra hồ sơ đối chiếu cùng lời xác nhận từ cơ sở lưu trữ, làm rõ anh là con ruột nhà họ Phạm và không có bằng chứng nào cho thấy Tú Anh gây ra vụ tráo đổi. Lan Phương xin lỗi con trai; Phạm Kiên thừa nhận mình đã để thành kiến dẫn dắt.",
+          "Tú Anh bị đối tác công khai chất vấn về hợp đồng ma ngay trên sân khấu. Minh Khang phải đứng ra nhận phần trách nhiệm vì đã ký xác nhận ẩu, không thể tiếp tục núp sau cô.",
+          "Tú Anh khóc lóc xin mọi người tin mình và quay sang đổ cho Gia Huy. Anh chỉ đáp: “Tôi không cần cô nhận lỗi. Cứ trả lời họ đi.” Những người từng a dua nay đồng loạt tránh mặt cô.",
+          "Phạm Kiên công bố Tú Anh bị tước quyền ký duyệt và phải đối diện việc hoàn trả các khoản chi sai; trước bàn tiệc, khách mời tận mắt chứng kiến cô bị chính người cô khinh thường bóc trần. Gia Huy từ chối màn xin lỗi phô trương, chọn trở về thăm gia đình đã nuôi mình và đặt ranh giới rõ ràng với nhà họ Phạm."
+        ]
+      }
+    ],
+    "ending": "Gia Huy lấy lại thân phận nhưng không dùng nó để trả thù; anh buộc nhà họ Phạm nhìn thẳng vào những sai lầm của mình. Tú Anh mất quyền lực và danh tiếng sau màn vạch mặt công khai, còn những kẻ từng hùa theo phải tận mắt chứng kiến cô không thể dùng nước mắt che lấp sự thật nữa."
+  },
+  "stop": null,
+  "segments": [
+    {
+      "index": 1,
+      "title": "Người mới về đã bị đuổi",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Ngày đầu bước vào nhà họ Phạm, tôi đã nghe Tú Anh bảo bố mẹ đuổi tôi đi cho sạch cửa. Tôi vừa nhận kết quả xác nhận thân phận, còn chưa kịp ngồi ấm ghế, cô ta đã nhìn tôi như nhìn món đồ bẩn vừa bị đem vào phòng khách.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi tên Gia Huy. Hai mươi sáu tuổi. Trước hôm đó, tôi sống trong một gia đình bình thường, có bữa cơm giản dị và cha mẹ luôn chờ tôi về. Còn nhà họ Phạm trước mặt tôi rộng đến mức tiếng bước chân cũng vang lên lạnh ngắt. Người giúp việc xếp thành hàng. Họ hàng ngồi quanh bàn ăn. Ai nấy đều đang chờ xem cậu con trai thất lạc này có làm trò gì không.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Kết quả đã xác nhận rồi. Gia Huy là con ruột của tôi và Lan Phương. Từ hôm nay, nó sẽ ở lại nhà này.",
+          "cue": "nghiêm giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Phạm Kiên nói như đang công bố một thương vụ. Mẹ tôi, Lan Phương, ngồi bên cạnh, mắt đỏ hoe. Bà định đưa tay nắm lấy tay tôi, nhưng Tú Anh đã nhanh hơn. Cô ta khẽ hít mũi, rồi cúi đầu, dáng vẻ tủi thân vừa đủ để cả bàn chú ý.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Bố mẹ cứ nhận anh ấy về đi. Con không có ý kiến đâu. Chỉ là anh ấy vừa bước vào đã hỏi phòng nào lớn nhất, rồi còn nói người trong nhà phải biết nhường chỗ cho chủ nhân thật sự. Con nghe mà sợ quá.",
+          "cue": "nghẹn ngào giả vờ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi còn chưa hỏi phòng nào. Nhưng lời cô ta vừa rơi xuống, cả bàn ăn lập tức nhìn tôi như thể tôi đã giơ tay đòi lấy nhà. Một người cô khẽ lắc đầu. Người làm cúi mặt. Tú Anh che khóe môi, vẫn để lộ nụ cười mỏng như sợi chỉ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_khang",
+          "text": "Tú Anh đã nhường nhịn đủ rồi. Anh vừa về đã chen vào chuyện của cô ấy, còn muốn giành cả chỗ đứng lẫn hôn sự sao? Người như anh đừng tưởng mang họ Phạm là muốn làm gì cũng được.",
+          "cue": "mỉa mai",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Minh Khang là vị hôn phu của Tú Anh. Anh ta nói câu ấy rất trơn tru, như thể đã tập trước gương. Tú Anh dựa nhẹ vào vai anh ta, yếu ớt đến mức tôi suýt hỏi có cần gọi bác sĩ không. Nhưng tôi nhịn. Ngày đầu về nhà, tôi không định thi xem ai diễn sâu hơn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đặt đũa xuống. Cả bàn im bặt. Tôi nhìn Tú Anh, giọng bình thản.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Cô cứ nói tiếp. Lát nữa đừng bảo tôi cắt lời.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh khựng lại. Cô ta định khóc tiếp, nhưng bị câu nói của tôi chặn ngang, mặt thoáng cứng ra. Phạm Kiên lập tức cau mày. Ông không hỏi cô ta vừa bịa gì. Ông chỉ nhìn tôi, như thể sự im lặng của tôi cũng là một tội lớn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Đủ rồi. Cậu vừa về, đừng gây chuyện. Chuyện trong công ty không đến lượt cậu xen vào. Cứ ở yên trong nhà, đừng làm ảnh hưởng đến Tú Anh.",
+          "cue": "quát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi gật đầu. Không phải vì ông nói đúng. Chỉ là giải thích với người đã chọn tin ai đó còn mệt hơn khiêng cả bàn ăn ra sân. Tú Anh lập tức cúi đầu, vai run run. Đám đông lại nhìn tôi. Tôi suýt bật cười. Cô ta còn chưa biết mình sắp phải đối diện với những gì.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bữa tối chưa kết thúc, chuông cửa đã vang lên. Một người phụ nữ mặc vest bước vào, đi thẳng đến chỗ tôi. Đó là Thanh Vân, giám đốc một công ty đối thủ. Tôi từng nhận việc rà soát hợp đồng cho cô ấy trước khi trở về nhà họ Phạm. Cô không vòng vo, cũng chẳng giả vờ thân thiết.",
+          "cue": "",
+          "sfx": "tiếng chuông cửa"
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Gia Huy, tôi cần anh xem giúp một loạt hợp đồng có dấu hiệu bất thường. Hồ sơ phê duyệt có chữ ký của Tú Anh. Tôi muốn biết chúng có vấn đề gì, nhưng phải xem bản gốc.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Căn phòng lặng như vừa có ai rút hết không khí. Tú Anh nhìn Thanh Vân, rồi nhìn tôi. Nụ cười trên mặt cô ta biến mất trong chớp mắt. Phạm Kiên thì đập bàn, giọng đầy cảnh cáo.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Cô đến nhà tôi để nghi ngờ con gái tôi sao?",
+          "cue": "giận dữ",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Tôi đến tìm người có thể đọc hồ sơ. Nếu hợp đồng trong sạch, bản gốc sẽ chứng minh điều đó.",
+          "cue": "lạnh nhạt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn Thanh Vân rồi nhìn Tú Anh. Tôi không cần kết luận thay ai. Tôi chỉ cần giấy tờ. Tôi nhận lời, với một điều kiện.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Được. Nhưng tôi chỉ xem bản gốc. Không bản gốc, tôi không ký tên vào bất kỳ nhận xét nào.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh bật cười, cố kéo lại vẻ kiêu căng. Cô ta khoe chiếc túi quà đặt cạnh ghế, bảo đó là món quà xa xỉ cô tự mua để thưởng cho mình. Rồi cô liếc xuống đôi giày cũ của tôi, cố tình nói thật to.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Có người đến đôi giày cũng không tự sắm nổi mà đã bày đặt đòi xem giấy tờ. Anh cứ lo giữ chỗ trong nhà đi. Chuyện của người lớn, anh không hiểu đâu.",
+          "cue": "khinh khỉnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Vài tiếng cười bật ra quanh bàn. Tôi không cười theo. Mép hóa đơn thò ra khỏi túi quà, chỉ vừa đủ để tôi thấy một dòng chữ in đậm. Tôi không rút nó ra. Chưa phải lúc. Tú Anh vẫn đang khoe khoang, hoàn toàn không nhận ra tôi đã nhìn thấy.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Phạm Kiên ra lệnh người làm đưa tôi lên phòng, như thể muốn tống tôi khỏi bàn ăn trước khi có thêm rắc rối. Tôi đứng dậy, không tranh cãi. Sau lưng, Tú Anh thở phào, còn Minh Khang cười đắc thắng. Nhưng Thanh Vân vẫn đứng đó, tay giữ chiếc cặp hồ sơ chưa mở.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô chờ mọi người tản đi rồi mới nói nhỏ với tôi: bản gốc đang trên đường đến đây. Khi chiếc xe dừng trước cổng, người đầu tiên bước xuống lại khiến Tú Anh tái mặt.",
+          "cue": "",
+          "sfx": ""
+        }
+      ],
+      "words": 1021,
+      "target_words": 900,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Gia Huy vừa được xác nhận là con ruột nhà họ Phạm đã bị Tú Anh vu là tham tiền và bắt nạt cô, còn Minh Khang hùa theo trước mặt cả nhà. Phạm Kiên nổi giận, yêu cầu Gia Huy tránh xa chuyện công ty, trong khi Lan Phương vẫn day dứt và lúng túng. Thanh Vân đến nhờ Gia Huy rà soát hợp đồng đáng ngờ có chữ ký phê duyệt của Tú Anh; anh chỉ đồng ý xem bản gốc. Tú Anh khoe quà đắt tiền và mỉa đôi giày của anh, còn Gia Huy kín đáo nhìn thấy mép hóa đơn nhưng chưa tiết lộ điều gì; cuối đoạn, bản gốc sắp được đưa tới và người vừa xuống xe làm Tú Anh tái mặt.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 2,
+      "title": "Nước mắt có ghi âm",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Người vừa bước xuống xe là một nhân viên giao hồ sơ của công ty Thanh Vân. Anh ta ôm chiếc cặp niêm phong, đi nhanh vào nhà. Tú Anh đứng bật dậy. Mặt cô ta trắng bệch, nhưng chỉ trong một giây đã cố nặn ra nụ cười.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Chỉ là mấy tờ giấy thôi mà. Anh làm gì như bắt được vàng vậy? Người ngoài đem chuyện công ty đến tận nhà, đúng là thiếu chuyên nghiệp.",
+          "cue": "cười gượng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta nói với Thanh Vân, nhưng mắt lại ghim vào tôi. Tôi hiểu rồi. Cô ta sợ thứ trong chiếc cặp. Còn tôi chỉ thấy buồn cười. Người càng la lớn, thường càng mong người khác đừng mở hồ sơ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Đây là bản gốc theo yêu cầu của anh Gia Huy. Có người của công ty tôi đi cùng để xác nhận niêm phong. Mọi người có thể xem, nhưng xin đừng tự ý lấy tài liệu.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Phạm Kiên nhíu mày. Ông không muốn người ngoài bước vào nhà, nhưng cũng chẳng thể đuổi Thanh Vân khi chính ông vừa đòi chứng cứ. Tôi kéo ghế ngồi xuống. Đặt hồ sơ trước mặt. Không cần mở miệng mà cả phòng đã im.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Gia Huy, cậu xem cho rõ. Nếu không có vấn đề, đừng làm tổn hại danh dự của Tú Anh.",
+          "cue": "cứng rắn",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi mở từng trang. Mã thanh toán, ngày ký, tên nhà cung cấp. Tôi đọc chậm, đối chiếu từng dòng. Minh Khang đứng phía sau Tú Anh, mặt căng như dây đàn. Còn cô ta cứ nhìn tôi, rồi nhìn chiếc điện thoại đặt cạnh tay.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Tôi chưa kết luận gì. Nhưng có vài mã thanh toán lặp lại ở những hợp đồng khác nhau. Tôi cần bản lưu đối chiếu từ hệ thống để xác minh.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh lập tức chớp lấy cơ hội. Cô ta bước tới, đứng chắn trước hồ sơ. Rồi bất ngờ lảo đảo, ngã xuống ngay giữa phòng khách. Tiếng ghế xê dịch. Lan Phương hốt hoảng đứng lên.",
+          "cue": "",
+          "sfx": "tiếng ghế xô mạnh"
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Anh đừng ép em nữa! Em chỉ muốn anh ấy được ở lại thôi. Em không hiểu sao anh cứ nhằm vào em. Em có làm gì sai đâu?",
+          "cue": "nức nở giả vờ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta ngồi dưới sàn, hai mắt đỏ hoe. Cả nhà nhìn tôi như thể tôi vừa đẩy cô xuống. Tôi không đưa tay đỡ. Tôi cũng không giải thích. Tôi chỉ nhìn chiếc điện thoại của cô, màn hình vẫn sáng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Gia Huy! Cậu còn định làm loạn đến bao giờ? Đứng tránh xa Tú Anh ra!",
+          "cue": "quát lớn",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_khang",
+          "text": "Chú Phạm, để cháu gọi bảo vệ. Người như anh ta không thể muốn làm gì thì làm trong nhà này.",
+          "cue": "hùa theo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn Minh Khang. Anh ta vừa nói xong đã né mắt. Tôi suýt bật cười. Người chưa biết chuyện gì mà đòi gọi bảo vệ, thường là người sợ nhất bị bảo vệ hỏi đến.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Trước khi gọi ai, mọi người nghe hết đoạn ghi âm trong điện thoại của cô ấy đã.",
+          "cue": "bình thản",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh lập tức ôm điện thoại vào ngực. Nhưng Thanh Vân đã kịp nhìn thấy màn hình. Cô không chạm vào máy, chỉ nói chiếc điện thoại đang phát âm thanh qua loa ngoài. Trong lúc cả nhà còn ngỡ ngàng, một giọng nói vang lên.",
+          "cue": "",
+          "sfx": "tiếng điện thoại phát lại"
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Lát nữa tôi sẽ chặn anh ta ở hành lang. Cứ để anh ta nói vài câu, rồi tôi ngã xuống. Nhớ đứng về phía tôi, đừng để anh ta giải thích. Chỉ cần bố nổi giận, anh ta sẽ bị đuổi khỏi nhà.",
+          "cue": "giọng ghi âm, rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Đoạn ghi âm chưa dừng. Giọng Tú Anh lại vang lên, lần này còn bình tĩnh hơn. Cô ta dặn người làm phải đứng về phía mình, rồi tự tập câu kêu cứu. Màn kịch vừa diễn trước mắt mọi người, hóa ra đã được cô ta sắp sẵn từng bước.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Đó chỉ là câu đùa thôi! Em nói linh tinh với người làm, có gì mà mọi người nghiêm trọng hóa? Anh Gia Huy, anh cố tình gài em đúng không?",
+          "cue": "cuống quýt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cả phòng im bặt. Phạm Kiên nhìn Tú Anh, rồi nhìn tôi. Minh Khang lùi nửa bước. Lan Phương không còn tiến tới đỡ cô ta. Bà nhìn con gái nuôi bằng ánh mắt xa lạ, như thể lần đầu nghe thấy giọng nói thật của cô.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Cô diễn khá. Tiếc là quên tắt máy.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh tái mặt. Mấy người làm cúi đầu, không ai dám nhìn cô. Đám đông vừa nãy còn nghi tôi, giờ lại xôn xao. Có người lẩm bẩm rằng cô ta thật biết tính toán. Tôi chẳng cần nói thêm. Chính giọng cô ta đã tự tát vào mặt cô ta trước cả nhà.",
+          "cue": "",
+          "sfx": "tiếng xì xào"
+        },
+        {
+          "speaker": "lan_phuong",
+          "text": "Tú Anh, con đã kể với mẹ chuyện gì về Gia Huy? Có bao nhiêu lần con cũng dựng chuyện như vậy?",
+          "cue": "đau lòng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh không trả lời. Cô ta chỉ khóc to hơn, nhưng lần này chẳng ai chạy đến dỗ dành. Phạm Kiên nắm chặt tay. Ông vẫn chưa xin lỗi tôi, nhưng ít nhất đã không quát thêm. Với nhà này, vậy đã là một bước tiến.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi quay lại hồ sơ. Những mã thanh toán lặp lại không phải lỗi đánh máy. Tôi xin Thanh Vân cho truy cập bản lưu đối chiếu. Cô ấy mở máy tính bảng, nhập mật khẩu, rồi cau mày. Bản lưu quan trọng nhất vừa bị xóa khỏi hệ thống.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Có người đang dọn dấu vết. Tôi vừa nhận cảnh báo có tài khoản truy cập trái phép. Gia Huy, người đó biết chúng ta đang xem hồ sơ.",
+          "cue": "căng thẳng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi ngẩng lên. Tú Anh vẫn ngồi dưới sàn, nước mắt chưa khô. Nhưng ánh mắt cô ta đã đổi khác. Sau lưng cô, màn hình máy tính bảng tối đen. Bản lưu đã biến mất. Và kẻ xóa nó có thể vẫn đang ở ngay trong căn nhà này.",
+          "cue": "",
+          "sfx": ""
+        }
+      ],
+      "words": 979,
+      "target_words": 900,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "ghi_am_man_kich",
+          "quote": "Đoạn ghi âm chưa dừng. Giọng Tú Anh lại vang lên, lần này còn bình tĩnh hơn. Cô ta dặn người làm phải đứng về phía mình, rồi tự tập câu kêu cứu."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Tú Anh ngã xuống trước mặt cả nhà và vu cho Gia Huy ép mình, khiến Phạm Kiên quát anh còn Minh Khang đòi gọi bảo vệ. Gia Huy yêu cầu mọi người nghe ghi âm, qua đó cả nhà biết Tú Anh đã tập lời thoại, dặn người làm đứng về phía mình và tính cách khiến anh bị đuổi. Lan Phương bắt đầu nghi ngờ những lời Tú Anh từng kể, còn đám đông đổi thái độ và Tú Anh mất mặt ngay tại phòng khách. Gia Huy phát hiện các mã thanh toán lặp lại trong hồ sơ, nhưng Thanh Vân báo bản lưu quan trọng vừa bị xóa và có người đang dọn dấu vết.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 3,
+      "title": "Món quà không thuộc về cô",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh vẫn ngồi dưới sàn, nước mắt còn đọng trên mi. Nhưng ánh mắt cô ta đã đổi khác. Bản lưu vừa biến mất, và kẻ xóa nó có thể vẫn đang ở ngay trong căn nhà này.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Tôi đã lưu được bản đối chiếu bên đối tác trước khi bản trong hệ thống bị xóa. Có những khoản chi được ghi là tiếp khách, nhưng địa chỉ nhà cung cấp thì không tồn tại.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Thanh Vân đặt máy tính bảng xuống bàn. Phạm Kiên lập tức nhìn sang cô. Ông vừa mới thấy con gái nuôi tự tay dựng chuyện hại tôi. Bây giờ, ông không còn dễ dàng gạt đi những con số trước mặt nữa.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Cứ nói rõ. Khoản nào có vấn đề?",
+          "cue": "nghiêm giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Tôi chưa kết luận điều gì. Nhưng bản lưu cho thấy nhiều mã thanh toán lặp lại. Có hóa đơn tiếp khách khớp với khoản mua quà có giá trị rất lớn.",
+          "cue": "sắc lạnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh bỗng đứng bật dậy. Cô ta phủi váy, cố kéo vẻ kiêu hãnh trở lại. Trên cổ tay cô là chiếc vòng vừa được khen suốt buổi. Cô ta giơ tay lên, như thể món đồ ấy là huy chương của riêng mình.",
+          "cue": "",
+          "sfx": "tiếng ghế xê dịch"
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Mọi người đừng nghe họ nói linh tinh. Chiếc vòng này là quà tôi tự mua bằng tiền của mình. Tôi thích thì tôi mua, có gì phải giải thích với một người mới về như anh ta?",
+          "cue": "khinh khỉnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mấy vị khách nhìn nhau. Minh Khang lập tức cười khẩy, như thể chỉ chờ dịp để đứng về phía cô ta lần nữa. Còn Phạm Kiên vẫn im lặng. Tú Anh tưởng sự im lặng ấy là đồng ý, nên càng nói lớn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_khang",
+          "text": "Gia Huy, anh đừng thấy người khác có đồ tốt rồi ghen tị. Chuyện công ty đâu phải cứ soi một tờ giấy là vu được người ta.",
+          "cue": "mỉa mai",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi suýt bật cười. Hôm trước anh ta còn hùa theo Tú Anh để đòi gọi bảo vệ. Hôm nay lại làm như mình là người hiểu chuyện. Tôi không tranh cãi. Tôi mở tập hồ sơ Thanh Vân mang tới, rút ra một tờ giấy đã gấp ngay ngắn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Cô nói tự mua? Vậy nhìn kỹ tên người đặt hàng trên hóa đơn đi.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đặt hóa đơn lên bàn, ngay giữa phòng khách. Mọi người đều nhìn thấy con dấu xác nhận và dòng tên in rõ ràng. Tú Anh chộp lấy tờ giấy, nhưng ngón tay cô ta run lên. Càng cố che, cô ta càng khiến ai cũng chú ý.",
+          "cue": "",
+          "sfx": "tiếng giấy đặt xuống bàn"
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Quà cô mua, bằng tiền của người khác.",
+          "cue": "đanh gọn",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Trên hóa đơn ghi rõ, chiếc vòng được thanh toán bằng ngân sách tiếp khách của công ty. Tên người đặt hàng là Tú Anh. Dấu xác nhận cũng mang chữ ký của cô ta. Đây không phải lời đồn, càng không phải tôi bịa ra để trả đũa. Chính giấy tờ đã nói thay tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Căn phòng lập tức xôn xao. Người vừa khen chiếc vòng đẹp nhất bắt đầu lùi ra xa. Một vị khách đặt tách trà xuống, nhìn Tú Anh đầy ngờ vực. Nụ cười trên mặt Minh Khang cứng đờ. Tôi nhìn cô ta. Cô ta còn chưa biết mình sắp mất gì.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Không thể nào! Chắc nhân viên làm sai rồi. Tôi chỉ bảo họ chuẩn bị thanh toán, tôi đâu biết họ lấy tiền từ khoản nào. Mọi người đang bắt nạt tôi đấy!",
+          "cue": "nức nở giả tạo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta lại khóc. Lần này, không ai vội vàng đưa khăn. Hóa đơn nằm ngay trước mặt mọi người, tên cô ta rõ đến mức chẳng thể đổ cho người khác. Phạm Kiên cầm tờ giấy lên, sắc mặt tối sầm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Nếu là nhân viên làm sai, con đưa sổ chi ra. Đối chiếu từng khoản ngay bây giờ.",
+          "cue": "lạnh giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh lùi lại. Cô ta siết chiếc vòng trong tay, rồi nhìn tôi như muốn xé nát tờ hóa đơn. Đám đông không còn nhìn tôi như kẻ ghen tị nữa. Họ đang nhìn cô ta, người vừa khoe món quà bằng tiền công ty trước mặt tất cả.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Anh không có quyền đụng vào việc nhà họ Phạm! Tôi sẽ tự giải thích với bố. Còn anh, đừng tưởng có vài tờ giấy là được lên mặt.",
+          "cue": "căm tức",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không đáp. Càng giận, cô ta càng tự phơi ra rằng mình không muốn ai xem sổ chi. Thanh Vân xác nhận hóa đơn này trùng với bản lưu bên đối tác. Những khoản khác vẫn cần đối chiếu, nhưng món quà đã đủ khiến buổi tiếp khách đổi hẳn không khí.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Đối tác chủ chốt sẽ dự tiệc ký kết sắp tới. Họ đã yêu cầu người phụ trách trực tiếp giải trình các khoản này. Nếu không có câu trả lời, họ sẽ không ký.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh khựng lại một nhịp. Rồi cô ta bật cười, cố biến nỗi sợ thành vẻ kiêu căng. Cô ta nhìn quanh căn phòng, như thể vẫn tin mọi người sẽ nghe theo mình.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Càng hay. Đến buổi tiệc đó, tôi sẽ nói rõ ai mới là người không thuộc về nhà này. Gia Huy, tôi sẽ công khai đuổi anh khỏi đây trước mặt tất cả mọi người!",
+          "cue": "hả hê",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta tưởng mình vừa tuyên chiến với tôi. Thật ra, cô ta vừa tự chọn sân khấu cho cú ngã tiếp theo. Tôi nhìn hóa đơn trên bàn rồi nhìn sang Thanh Vân. Cô ấy khẽ gật đầu. Nhưng ngay lúc ấy, điện thoại của Phạm Kiên rung lên. Ông đọc tin nhắn, rồi sắc mặt biến đổi.",
+          "cue": "căng thẳng",
+          "sfx": "tiếng điện thoại rung"
+        }
+      ],
+      "words": 933,
+      "target_words": 900,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "hoa_don_mon_qua",
+          "quote": "Trên hóa đơn ghi rõ, chiếc vòng được thanh toán bằng ngân sách tiếp khách của công ty."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Gia Huy và Thanh Vân đối chiếu bản lưu bên đối tác, thấy các mã thanh toán lặp lại và hóa đơn đáng ngờ. Trước mặt cả nhà và khách, Gia Huy đưa ra hóa đơn chứng minh chiếc vòng Tú Anh khoe được mua bằng ngân sách tiếp khách, với tên đặt hàng và dấu xác nhận của cô. Tú Anh tái mặt, đổ lỗi cho nhân viên rồi từ chối để Gia Huy xem sổ chi; Phạm Kiên yêu cầu cô giải trình. Thanh Vân báo đối tác chủ chốt sẽ yêu cầu giải thích tại buổi tiệc ký kết, còn Tú Anh tuyên bố sẽ đuổi Gia Huy khỏi nhà; cuối đoạn, Phạm Kiên nhận một tin nhắn khiến sắc mặt đổi khác.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 4,
+      "title": "Sân khấu dành cho ai",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tin nhắn khiến Phạm Kiên đổi sắc mặt. Ông nhìn tôi, rồi nhìn Tú Anh. Cuối cùng, ông tuyên bố buổi tiệc ký kết tối nay vẫn diễn ra, nhưng người phụ trách phải tự mình giải trình trước đối tác.",
+          "cue": "trầm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh lập tức lấy lại vẻ đắc thắng. Cô ta tưởng cha nuôi vẫn đang chống lưng cho mình. Còn tôi thì biết, tin nhắn kia chỉ là lời báo trước. Cơn bão thật sự đang chờ cô ta trên sân khấu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Trước buổi tiệc, tôi cùng Thanh Vân lần theo hồ sơ nhà cung cấp. Địa chỉ đăng ký nằm trong một con hẻm nhỏ. Đó là căn phòng bỏ trống, cửa khóa bụi phủ, chẳng có lấy một dấu hiệu của công ty đang hoạt động.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Các khoản thanh toán từ những hồ sơ này đều chảy qua một chuỗi tài khoản. Mã giao dịch trùng với các hợp đồng Tú Anh phê duyệt.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi lật từng trang. Hồ sơ nhà cung cấp thì giả. Địa chỉ thì rỗng. Còn chữ ký phê duyệt lại ngay ngắn nằm dưới tên Tú Anh. Mọi con đường đều dẫn về cùng một người.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Minh Khang đứng cạnh bàn, mặt trắng bệch. Tôi đẩy một bản xác nhận về phía anh ta. Anh ta nhìn chữ ký của mình, không nói được câu nào.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Anh đã xác nhận hồ sơ này. Anh có kiểm tra nhà cung cấp không?",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_khang",
+          "text": "Tú Anh nói đó chỉ là thủ tục. Tôi ký vài tờ, không kiểm tra kỹ. Tôi thề, tôi không biết tiền bị chuyển đi đâu.",
+          "cue": "lúng túng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh lập tức quay phắt sang anh ta. Cô ta chẳng buồn hỏi vì sao hồ sơ là giả. Cô ta chỉ sợ Minh Khang mở miệng thêm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Anh hèn vừa thôi! Chính anh tự ký, giờ lại đổ hết cho tôi à? Gia Huy gài bẫy chúng ta, anh cũng tin sao? Tôi đã bảo anh phải đứng về phía tôi!",
+          "cue": "cáu kỉnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Rồi cô ta quay sang mọi người, mắt lập tức đỏ hoe. Một màn khóc khác. Cùng một bài cũ. Chỉ tiếc lần này, trước mặt cô ta không phải căn phòng khách dễ dắt mũi, mà là cả bàn đối tác đang chờ câu trả lời.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Tôi bị ép đến đường cùng rồi. Gia Huy muốn cướp mọi thứ của tôi, nên mới tìm cách hủy hoại danh dự tôi!",
+          "cue": "nức nở",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tối đó, buổi tiệc ký kết sáng choang ánh đèn. Tú Anh giành micro trước khi khách mời kịp ngồi yên. Cô ta đứng trên sân khấu, chiếc váy lộng lẫy, giọng nói vang khắp sảnh.",
+          "cue": "",
+          "sfx": "tiếng micro hú nhẹ"
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Tôi đã nhẫn nhịn đủ rồi. Gia Huy liên tục chèn ép tôi, bịa chuyện về tôi. Bố, hãy đuổi anh ta khỏi nhà ngay trước mặt mọi người! Nhà họ Phạm không cần loại người tham tiền như anh ta!",
+          "cue": "đanh thép",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta còn chỉ tay về phía tôi. Phạm Kiên đứng dưới sân khấu, vẻ mặt khó xử. Lan Phương siết chặt hai tay. Khách mời nhìn nhau, chờ ông lên tiếng. Nhưng trước khi ông kịp đáp, cửa sảnh mở ra.",
+          "cue": "",
+          "sfx": "tiếng cửa mở"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Các đối tác chủ chốt bước vào, mỗi người cầm một tập hồ sơ. Họ không lên sân khấu để chúc mừng. Họ đặt bản sao hợp đồng lên bàn, ngay trước mặt Tú Anh.",
+          "cue": "",
+          "sfx": "tiếng giấy đặt xuống"
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Chúng tôi rút khỏi thỏa thuận. Địa chỉ nhà cung cấp là căn phòng bỏ trống. Hồ sơ pháp lý không có thật. Các khoản thanh toán lại chảy qua những tài khoản liên quan đến hợp đồng do Tú Anh phê duyệt.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cả sảnh xôn xao. Thanh Vân đọc từng khoản, từng mã giao dịch. Không cần tôi tranh cãi. Những con số xếp hàng ngay ngắn, tự bóc trần lời nói dối.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Sự thật nằm ngay trên bàn: Các hợp đồng đứng tên Tú Anh là giao dịch khống, dùng hồ sơ nhà cung cấp giả để chuyển tiền khỏi công ty. Minh Khang đã ký xác nhận mà không kiểm tra, còn Tú Anh biết rõ mình đang làm gì.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh tái mặt. Cô ta lùi sát mép sân khấu, nhưng vẫn cố ngẩng cằm. Đám đông đang nhìn cô ta như nhìn một kẻ vừa tự tay kéo màn, để lộ cả hậu trường bẩn thỉu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Các người nhầm rồi! Tôi mới là tiểu thư duy nhất của nhà họ Phạm. Gia Huy chẳng qua chỉ là người vừa được nhận về. Mọi người dựa vào đâu mà dám kết tội tôi?",
+          "cue": "hoảng hốt",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Cô vừa bảo tôi tham tiền. Vậy thì giải thích đi: nhà cung cấp không tồn tại, tiền lại chảy qua hợp đồng của cô. Chẳng lẽ cả đống giấy tờ này cũng đang bắt nạt cô?",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Một tiếng cười bật lên giữa khách mời. Rồi thêm vài tiếng nữa. Minh Khang cúi gằm, không dám nhìn ai. Phạm Kiên đứng chết lặng. Cú vả mặt này không cần ai giơ tay; chính lời cô ta vừa nói đã quay lại tát cô ta trước toàn bộ khách khứa.",
+          "cue": "hả hê",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lan Phương bước lên một bước. Bà không nhìn tôi. Bà nhìn Tú Anh, ánh mắt đau đớn nhưng tỉnh táo. Sảnh tiệc im bặt.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "lan_phuong",
+          "text": "Cô đã biết Gia Huy là con tôi từ bao giờ?",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        }
+      ],
+      "words": 876,
+      "target_words": 900,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "hop_dong_ma",
+          "quote": "Sự thật nằm ngay trên bàn: Các hợp đồng đứng tên Tú Anh là giao dịch khống, dùng hồ sơ nhà cung cấp giả để chuyển tiền khỏi công ty."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Gia Huy và Thanh Vân lần ra địa chỉ nhà cung cấp giả, đồng thời đối chiếu dòng tiền với các hợp đồng Tú Anh phê duyệt. Minh Khang thừa nhận đã ký xác nhận theo lời Tú Anh mà không kiểm tra, còn cô ta đổ lỗi cho anh rồi giả vờ bị Gia Huy hãm hại. Tại tiệc ký kết, các đối tác công khai hồ sơ khống và rút khỏi thỏa thuận, khiến Tú Anh mất mặt trước khách mời. Lan Phương đối diện Tú Anh và hỏi cô đã biết Gia Huy là con ruột của bà từ bao giờ.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 5,
+      "title": "Cô tiểu thư tự tay lật mặt",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Câu hỏi của mẹ tôi rơi xuống giữa sảnh tiệc. Tiếng ly chạm nhau cũng tắt. Tú Anh nhìn bà, rồi nhìn những tập hồ sơ trên bàn. Cô ta vừa mất đường lui. Nhưng vẫn cố cười.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Mẹ đừng nghe anh ta. Anh ta mới về đã muốn cướp hết mọi thứ của con. Con chỉ là người bị kẹt giữa những chuyện người lớn thôi.",
+          "cue": "run rẩy giả vờ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta đưa tay lau mắt. Không có giọt nước nào rơi. Lan Phương không bước tới dỗ dành như mọi lần. Bà chỉ nhìn thẳng vào cô ta, chờ câu trả lời.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "lan_phuong",
+          "text": "Tú Anh, mẹ hỏi con đã biết chuyện gì. Đừng đổi câu hỏi thành lời than thân nữa.",
+          "cue": "đau lòng nhưng kiên định",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh siết chặt váy. Ánh mắt cô ta chợt lướt qua tôi. Tôi không thúc ép. Cô ta tự chọn cách kết thúc màn diễn của mình.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Con đã thấy hồ sơ đó trước ngày anh ta trở về. Trong hồ sơ ghi Gia Huy mới là con ruột của mẹ. Con biết vị trí của mình sẽ không còn như trước, nên con giấu nó đi.",
+          "cue": "lạc giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cả sảnh sững lại. Sự thật đã lộ ra từ chính miệng cô ta. Tú Anh biết thân phận tôi từ trước, nhưng đã chọn im lặng để giữ chiếc ghế tiểu thư. Cô ta không gây ra vụ tráo đổi khi tôi mới sinh; cô ta chỉ che giấu hồ sơ khi có cơ hội nói thật.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Nhưng con không tráo anh ta! Con không biết ai làm chuyện đó. Con chỉ không muốn mất gia đình này. Con có lỗi vì đã giấu hồ sơ, nhưng các người đừng đổ hết lên đầu con!",
+          "cue": "hoảng hốt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta lại đổ lỗi, như thể chỉ cần nói nhanh hơn là có thể xóa sạch những gì vừa thừa nhận. Tôi lấy tập hồ sơ đối chiếu từ Thanh Vân, đặt cạnh bản sao lưu trữ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Đây là kết quả đối chiếu thân phận. Cơ sở lưu trữ đã xác nhận hồ sơ gốc và quá trình bàn giao. Tôi là con ruột của nhà họ Phạm. Trong tài liệu hiện có, không có bằng chứng nào cho thấy Tú Anh gây ra vụ tráo đổi.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Đối tác kiểm tra dấu xác nhận. Họ gật đầu. Không ai còn có thể lấy chuyện thân phận để phủi đi những hợp đồng khống. Phạm Kiên nhìn tập giấy, rồi nhìn tôi. Lần đầu tiên, ông không vội bênh cô con gái mình đã nuôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Bố đã để vẻ ngoài và những lời kể một phía dẫn dắt mình. Bố đã trách con khi chưa chịu nhìn bằng chứng. Bố xin lỗi.",
+          "cue": "nặng nề",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lan Phương bước đến trước mặt tôi. Bàn tay bà run lên, nhưng bà không ép tôi phải nắm lấy.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "lan_phuong",
+          "text": "Mẹ xin lỗi con. Mẹ đã để con phải tự chịu những lời oan ức ngay trong nhà mình.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi im lặng một nhịp. Tôi không cần một lời xin lỗi để lập tức quên hết. Nhưng ít nhất, hôm nay bà đã nhìn thẳng vào sự thật.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_van",
+          "text": "Còn các hợp đồng, chúng tôi cần Tú Anh giải thích từng khoản. Hồ sơ nhà cung cấp là giả. Tiền đã rời khỏi công ty. Không thể lấy chuyện gia đình để thay cho câu trả lời.",
+          "cue": "sắc lạnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Một đối tác đẩy bản xác nhận về phía Minh Khang. Anh ta đứng dậy, mặt trắng bệch. Lần này không còn chỗ cho anh trốn sau lưng Tú Anh.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_khang",
+          "text": "Tôi đã ký xác nhận mà không kiểm tra. Tôi chịu trách nhiệm về phần chữ ký của mình. Nhưng tôi không thể thay cô ấy giải thích những nhà cung cấp không tồn tại.",
+          "cue": "xấu hổ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tú Anh quay phắt sang anh. Minh Khang lùi lại. Những người vừa nãy còn cười nói với cô ta giờ đồng loạt tránh ánh mắt. Tôi suýt bật cười. Cô ta từng nghĩ chỉ cần khóc là cả phòng sẽ đứng về phía mình.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Mọi người tin lời anh ta sao? Gia Huy mới là người hại tôi! Anh ta cố tình sắp xếp tất cả để cướp vị trí của tôi!",
+          "cue": "khóc lóc, tức giận",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn cô ta. Không giận. Cũng chẳng buồn tranh cãi thêm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Tôi không cần cô nhận lỗi. Cứ trả lời họ đi.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Câu nói ngắn ngủi khiến Tú Anh cứng họng. Phạm Kiên bước lên sân khấu, cầm lấy micro. Trước mặt khách mời, ông tuyên bố cô bị tước quyền ký duyệt và phải hoàn trả những khoản chi sai. Không còn là lời dọa kín trong phòng. Mọi người đều nghe rõ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "pham_kien",
+          "text": "Từ hôm nay, Tú Anh không còn quyền ký duyệt thay mặt công ty. Những khoản chi sai phải được hoàn trả và làm rõ theo quy định. Không ai được dùng quan hệ trong nhà để né trách nhiệm.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Đám đông xôn xao. Có người cúi đầu tránh mặt Tú Anh. Có người lặng lẽ rời khỏi bàn tiệc. Cô ta đứng giữa sân khấu, trước chiếc vòng từng khoe là do mình mua và những hợp đồng mang tên mình. Lần này, nước mắt không cứu nổi cô ta.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "tu_anh",
+          "text": "Gia Huy, anh là em trai của tôi. Anh không thể đối xử với tôi như vậy!",
+          "cue": "van xin",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không đáp. Tôi đã không đến đây để giành lấy sự thương hại, càng không muốn dùng thân phận mới để trả thù. Tôi từ chối lời xin lỗi phô trương trước micro. Chuyện giữa chúng tôi không thể được xóa bằng vài câu nói trước đám đông.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "gia_huy",
+          "text": "Tôi sẽ về thăm gia đình đã nuôi tôi. Còn nhà họ Phạm, tôi cần thời gian. Đừng dùng thân phận để buộc tôi phải tha thứ hay lập tức gọi nơi này là nhà.",
+          "cue": "kiên định",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lan Phương khẽ gật đầu. Phạm Kiên không ngăn tôi. Sau tất cả, tôi lấy lại được tên tuổi của mình, nhưng không đánh đổi nó lấy quyền làm tổn thương bất kỳ ai. Tú Anh mất quyền lực, mất danh tiếng, và mất cả những người từng vây quanh cô ta. Tôi bước ra khỏi sảnh tiệc, nhẹ lòng hơn khi biết từ nay không ai có thể bắt tôi sống theo lời nói dối của họ nữa.",
+          "cue": "",
+          "sfx": ""
+        }
+      ],
+      "words": 1034,
+      "target_words": 900,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "vu_trao_doi",
+          "quote": "Tú Anh biết thân phận tôi từ trước, nhưng đã chọn im lặng để giữ chiếc ghế tiểu thư."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Trước khách mời, Tú Anh thừa nhận đã thấy hồ sơ thân phận của Gia Huy trước ngày anh trở về và giấu nó để giữ vị trí, đồng thời khẳng định mình không gây ra vụ tráo đổi. Gia Huy đưa hồ sơ đối chiếu và xác nhận của cơ sở lưu trữ, làm rõ anh là con ruột nhà họ Phạm; Lan Phương và Phạm Kiên lần lượt xin lỗi anh. Thanh Vân chất vấn các hợp đồng ma, Minh Khang nhận trách nhiệm vì ký xác nhận qua loa, còn Phạm Kiên tước quyền ký duyệt của Tú Anh và yêu cầu hoàn trả khoản chi sai. Gia Huy từ chối lời xin lỗi phô trương, chọn thăm gia đình đã nuôi mình và đặt ranh giới với nhà họ Phạm.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    }
+  ]
+}
