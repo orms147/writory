@@ -286,15 +286,10 @@ def test_a_segment_still_short_after_retries_is_kept_and_flagged(tmp_path):
 
 
 class _BlockSecond(DryRunAudioLLM):
-    """Kiểm duyệt chặn đoạn 2."""
-
-    def __init__(self) -> None:
-        super().__init__()
-        self.moderations = 0
+    """Kiểm duyệt chặn đoạn 2 ở mọi lần (cả bản viết lại)."""
 
     def moderation_reply(self, text):
-        self.moderations += 1
-        if self.moderations == 2:
+        if "Đoạn 2 chạy thử" in text or "riêng đoạn hai" in text:
             return {"findings": [{"category": "real_world_harm", "intensity": "strong"}], "reason": "x"}
         return super().moderation_reply(text)
 
@@ -494,3 +489,38 @@ def test_injection_in_summaries_recent_lines_and_notes_stays_data():
     assert user.count(CLOSE_TAG) == user.count(OPEN_TAG_START)  # ghi chú không đóng được khối nào
     for start in [i for i in range(len(user)) if user.startswith(INJECTION, i)][:2]:
         assert user.rfind(OPEN_TAG_START, 0, start) > user.rfind(CLOSE_TAG, 0, start)
+
+
+# --- sau lượt 80 phút thứ hai: đoạn kết bị chặn real_world_harm, mất cả đoạn kết đã trả tiền ----------
+
+
+class _BlockOnce(DryRunAudioLLM):
+    """Chặn lần kiểm duyệt đầu của đoạn 2 với `category`, cho qua bản viết lại."""
+
+    def __init__(self, category: str) -> None:
+        super().__init__()
+        self.category, self.blocked = category, 0
+
+    def moderation_reply(self, text):
+        if "Đoạn 2 chạy thử" in text and not self.blocked:
+            self.blocked += 1
+            return {"findings": [{"category": self.category, "intensity": "strong"}], "reason": "x"}
+        return super().moderation_reply(text)
+
+
+def test_a_blocked_segment_is_rewritten_once_with_the_category_and_moderated_again(tmp_path):
+    llm = _BlockOnce("real_world_harm")
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run"), llm=llm)) == EXIT_OK
+    seg2 = json.loads((tmp_path / "out" / "p1" / "script.json").read_text(encoding="utf-8"))["segments"][1]
+    assert seg2["status"] == "ok" and seg2["moderation_rewrites"] == 1 and seg2["lines"]
+    writes = [c[-1].content for c in llm.calls if "Viết đoạn 2/" in c[-1].content]
+    assert len(writes) == 2 and "real_world_harm" in writes[1] and "kiểm duyệt" in writes[1]
+    assert LIMITS.moderation_rewrites == 1
+
+
+def test_a_hard_blocked_segment_is_never_rewritten(tmp_path):
+    llm = _BlockOnce("sexual_minors")
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run"), llm=llm)) == EXIT_ERRORS
+    seg2 = json.loads((tmp_path / "out" / "p1" / "script.json").read_text(encoding="utf-8"))["segments"][1]
+    assert seg2["status"] == "withheld_moderation" and seg2["lines"] == []
+    assert len([c for c in llm.calls if "Viết đoạn 2/" in c[-1].content]) == 1

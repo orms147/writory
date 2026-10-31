@@ -142,6 +142,7 @@ class SegmentOut:
     length_off: bool = False  # hết lượt viết lại mà số chữ vẫn lệch mục tiêu quá `length_tolerance`
     reveals: list[dict[str, str]] = field(default_factory=list)
     reveal_slipped: list[str] = field(default_factory=list)  # bí mật đến hạn đoạn không lộ: dời sang đoạn sau
+    moderation_rewrites: int = 0  # số lần viết lại vì kiểm duyệt chặn ở mức BLOCKED
     summary: str = ""
     moderation: dict[str, Any] | None = None
     error: str | None = None

@@ -380,13 +380,14 @@ async def write_segment(
     llm: LLMClient, model: str, plan: PlanOutput, *, premise: Premise, targets: Targets, index: int,
     summaries: Sequence[str], recent_lines: Sequence[Mapping[str, Any]], limits: AudioScriptLimits,
     quality: QualityConfig, retries: RetryLimits, extra: Mapping[str, Any] | None = None,
-    slipped: Mapping[str, int] | None = None,
+    slipped: Mapping[str, int] | None = None, extra_notes: Sequence[str] = (),
 ) -> SegmentResult:
     """Viết lại có ghi chú khi bản trước sai, tối đa `limits.schema_retries` lần. Hết lượt (hay chạm trần giữa
     chừng) mà bản gần nhất chỉ lệch độ dài hay chỉ thiếu bí mật đến hạn thì nhận nó, đánh dấu `length_off`,
-    `missed`; lỗi khác thì báo lỗi như mọi lời gọi JSON."""
+    `missed`; lỗi khác thì báo lỗi như mọi lời gọi JSON. `extra_notes`: ghi chú của nơi gọi cho mọi lần viết (ví dụ
+    vì sao bản trước bị kiểm duyệt chặn)."""
     tolerance = limits.require("length_tolerance")
-    notes: list[str] = []
+    notes: list[str] = list(extra_notes)
     usable: list[SegmentResult] = []
 
     async def call() -> SegmentResult:
@@ -399,7 +400,7 @@ async def write_segment(
         if problems:
             if not check.hard:
                 usable.append(SegmentResult(output, check.words, bool(check.length), tuple(check.missing)))
-            notes[:] = problems
+            notes[:] = [*extra_notes, *problems]
             raise _bad(problems, "SegmentOutput")
         return SegmentResult(output, check.words, False)
 

@@ -209,39 +209,57 @@ async def build_script(premise: Premise, targets: Targets, *, config: AppConfig,
     slipped: dict[str, int] = {}
     keep = limits.require("recent_lines")
     for k, seg_plan in enumerate(plan.segments, 1):
-        held = 0.0
-        try:
-            if moderator is not None:  # đoạn chỉ được viết khi còn tiền cho cả lời gọi kiểm duyệt đi sau nó
-                held = llm.hold(moderator, targets.words_per_segment * _CHARS_PER_WORD + _PROMPT_CHARS)
+        rewrites_left = limits.require("moderation_rewrites") if options.moderate else 0
+        mod_notes: list[str] = []
+        rewrites = 0
+        while True:
+            held = 0.0
             try:
-                result = await drama.write_segment(
-                    llm, model, plan, premise=premise, targets=targets, index=k, summaries=summaries,
-                    recent_lines=recent, limits=limits, quality=config.quality, retries=retries, extra=extra,
-                    slipped=slipped)
-            finally:
-                if held:
-                    llm.release(held)
-        except WritoryError as e:
-            budget = e.code is ErrorCode.COST_LIMIT_STORY
-            script.segments.append(SegmentOut(k, seg_plan.title, "skipped_budget" if budget else "error",
-                                              target_words=targets.words_per_segment,
-                                              error=None if budget else str(e)[:600]))
-            script.stop = "budget" if budget else f"segment {k}: {e.code.value}"
+                if moderator is not None:  # đoạn chỉ được viết khi còn tiền cho cả lời gọi kiểm duyệt đi sau nó
+                    held = llm.hold(moderator, targets.words_per_segment * _CHARS_PER_WORD + _PROMPT_CHARS)
+                try:
+                    result = await drama.write_segment(
+                        llm, model, plan, premise=premise, targets=targets, index=k, summaries=summaries,
+                        recent_lines=recent, limits=limits, quality=config.quality, retries=retries, extra=extra,
+                        slipped=slipped, extra_notes=mod_notes)
+                finally:
+                    if held:
+                        llm.release(held)
+            except WritoryError as e:
+                budget = e.code is ErrorCode.COST_LIMIT_STORY
+                seg = SegmentOut(k, seg_plan.title, "skipped_budget" if budget else "error",
+                                 target_words=targets.words_per_segment, moderation_rewrites=rewrites,
+                                 error=None if budget else str(e)[:600])
+                break
+            out = result.output
+            seg = SegmentOut(k, seg_plan.title, "ok", lines=[line.model_dump() for line in out.lines],
+                             words=result.words, target_words=targets.words_per_segment,
+                             length_off=result.length_off, reveals=[r.model_dump() for r in out.reveals],
+                             summary=out.summary, reveal_slipped=list(result.missed), moderation_rewrites=rewrites)
+            if options.moderate:
+                await _moderate_segment(seg, llm=llm, config=config)
+            # Bị chặn ở mức BLOCKED (không phải chặn cứng G9) thì viết lại có giới hạn, kèm loại bị chặn, rồi kiểm
+            # duyệt lại từ đầu; vẫn bị chặn thì giữ lại như cũ.
+            if (seg.status == "withheld_moderation" and (seg.moderation or {}).get("verdict") == Verdict.BLOCKED.value
+                    and rewrites_left > 0):
+                rewrites_left -= 1
+                rewrites += 1
+                cats = ", ".join((seg.moderation or {}).get("categories", [])) or "không rõ"
+                mod_notes = [(f"bản trước bị kiểm duyệt chặn (loại: {cats}); viết lại đúng các nhịp của đoạn, kể "
+                              "sự việc ở mức truyện, không mô tả cách làm cụ thể dùng được ngoài đời, không nhắm vào "
+                              "người hay nhóm có thật")]
+                continue
             break
-        out = result.output
-        seg = SegmentOut(k, seg_plan.title, "ok", lines=[line.model_dump() for line in out.lines],
-                         words=result.words, target_words=targets.words_per_segment, length_off=result.length_off,
-                         reveals=[r.model_dump() for r in out.reveals], summary=out.summary,
-                         reveal_slipped=list(result.missed))
-        for sid in result.missed:
-            if k < len(plan.segments):
-                slipped[sid] = k + 1
-        if options.moderate:
-            await _moderate_segment(seg, llm=llm, config=config)
         script.segments.append(seg)
         if seg.status != "ok":
-            script.stop = "budget" if seg.status == "skipped_budget" else f"moderation: segment {k} {seg.status}"
+            if seg.status in ("skipped_budget", "error"):
+                script.stop = "budget" if seg.status == "skipped_budget" else f"segment {k}: {seg.error.split(':')[0]}"
+            else:
+                script.stop = f"moderation: segment {k} {seg.status}"
             break
+        for sid in seg.reveal_slipped:
+            if k < len(plan.segments):
+                slipped[sid] = k + 1
         summaries.append(f"Đoạn {k}: {seg.summary}")
         recent = seg.lines[-keep:]
     words = sum(s.words for s in script.segments if s.status == "ok")
