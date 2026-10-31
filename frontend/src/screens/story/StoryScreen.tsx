@@ -9,6 +9,7 @@ import { lengthText, useStoryLength } from '../../config/PublicConfig';
 import { errorGroup } from '../../lib/errorGroups';
 import { useResource } from '../../lib/useResource';
 import { clearRun, isRunning, startRun, useChapterRun, type ChapterRunState } from '../../state/chapterRun';
+import { ScriptDownload } from './AudioScript';
 import { ChapterPage, type Writing } from './ChapterPage';
 import { ChoicePanel } from './ChoicePanel';
 import { Finished } from './Finished';
@@ -150,6 +151,10 @@ export function StoryScreen() {
   const data = story.data;
 
   const chapterShown = run ? run.chapter : data.chapter;
+  // Số chương đã ghi: kịch bản audio chỉ gồm chương đã ghi.
+  const committedChapters = run?.committed ? run.chapter : data.chapter;
+  const script = (className?: string) =>
+    data.style === 'audio' ? <ScriptDownload storyId={id} chapters={committedChapters} className={className} /> : null;
   const panels = (
     <>
       <NotebookPanel
@@ -184,6 +189,7 @@ export function StoryScreen() {
         error={err}
         idle={false}
         handlers={{ onRetry: () => void retryRun(), onReload: refresh, onBackToChoices: refresh }}
+        extra={script('justify-end')}
       />
     );
   }
@@ -197,6 +203,7 @@ export function StoryScreen() {
         lastExcerpt={summary?.last_excerpt ?? null}
         chapters={data.chapter}
         spentUsd={spent}
+        extra={script('justify-center')}
       />
     );
   }
@@ -213,6 +220,7 @@ export function StoryScreen() {
         idle={data.next_ready}
         onStart={() => begin(data, null)}
         handlers={{ onReload: refresh }}
+        extra={script('justify-end')}
       />
     );
   }
@@ -229,6 +237,7 @@ export function StoryScreen() {
         onCycleSize={cycleSize}
         narratorOpen={narratorOpen}
       />
+      {data.style === 'audio' && <div className="px-4 pt-3 md:px-5">{script('mx-auto max-w-reading')}</div>}
       <div className="px-0 pt-0 md:px-5 md:pt-9">
         {run ? (
           <RunPage

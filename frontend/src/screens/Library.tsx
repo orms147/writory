@@ -9,6 +9,7 @@ import { capitalize, formatUsd, numberWords, relativeTime, roman } from '../lib/
 import { useResource } from '../lib/useResource';
 import { isRunning, useAnyRun } from '../state/chapterRun';
 import { maskedKey, usePlayerKey } from '../state/PlayerKey';
+import { AudioBadge } from './story/AudioScript';
 
 // Tủ truyện kiểu "Mục lục" (D-/M-ThuVien, D-ThuVienRong, M-Rong): chữ lớn, số La Mã, không thẻ.
 
@@ -116,6 +117,7 @@ export function Library() {
                     </span>
                     <span className="col-start-2 mt-2 text-[13px] text-ink-200 md:col-start-auto md:mt-0">
                       {lengthText(level(s.length_level), s.length_label)}
+                      {s.style === 'audio' && <AudioBadge label="Audio" className="ml-2 align-middle" />}
                     </span>
                     <span className={cx('col-start-2 text-[14px] md:col-start-auto', status.tone)}>{status.text}</span>
                     <span aria-hidden="true" className="hidden text-ink-500 transition-transform group-hover:translate-x-1 md:block">

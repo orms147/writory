@@ -11,9 +11,11 @@ import type {
   StageEvent,
   SetupOut,
   SetupStartIn,
+  StoryStyle,
   StorySummary,
 } from '../api/types';
 import {
+  AUDIO_SCENES,
   CHARACTERS,
   END_SCENE,
   FINISHED_SCENES,
@@ -31,6 +33,7 @@ interface MockStory {
   id: string;
   title: string;
   length_level: string;
+  style: StoryStyle;
   total: number; // số chương của bản kế hoạch giả: ẩn với giao diện như ở máy chủ thật
   chapter: number;
   scenes: Record<number, string[]>;
@@ -65,6 +68,7 @@ export const MOCK_INVITE_CODE = 'wt-mock-mock-mock-mock-mock-mock-mock-mock';
 const MOCK_INVITE_NAME = 'Bạn thử';
 
 const KEY_PREFIX = 'sk-or-';
+const STYLES: StoryStyle[] = ['prose', 'audio'];
 
 function jsonResponse(body: unknown, status = 200): Response {
   return new Response(JSON.stringify(body), { status, headers: { 'content-type': 'application/json' } });
@@ -126,21 +130,27 @@ export function createMockServer(options: MockOptions = {}) {
 
   if (!empty) {
     const a: MockStory = {
-      id: 's-chuong', title: 'Chuông Đồng Đèo Gió', length_level: 'short', total: 4, chapter: 2,
+      id: 's-chuong', title: 'Chuông Đồng Đèo Gió', length_level: 'short', style: 'prose', total: 4, chapter: 2,
       scenes: { 1: [SCENES[0] ?? '', SCENES[1] ?? ''], 2: [SCENES[2] ?? '', SCENES[3] ?? ''] },
       choices: { 2: makeChoices(1) }, action: null, spent: 0.09, updated_at: daysAgo(0.1),
       narratorUsed: {}, busy: false,
     };
     const b: MockStory = {
-      id: 's-ngo', title: 'Ngõ Mười Ba Đèn Lồng', length_level: 'short', total: 2, chapter: 2,
+      id: 's-ngo', title: 'Ngõ Mười Ba Đèn Lồng', length_level: 'short', style: 'prose', total: 2, chapter: 2,
       scenes: { 1: [FINISHED_SCENES[0] ?? ''], 2: [FINISHED_SCENES[1] ?? ''] },
       choices: {}, action: null, spent: 0.22, updated_at: daysAgo(3), narratorUsed: {}, busy: false,
     };
     const c: MockStory = {
-      id: 's-haidang', title: 'Hải Đăng Không Người Gác', length_level: 'medium', total: 12, chapter: 0,
+      id: 's-haidang', title: 'Hải Đăng Không Người Gác', length_level: 'medium', style: 'prose', total: 12, chapter: 0,
       scenes: {}, choices: {}, action: null, spent: 0.02, updated_at: daysAgo(9), narratorUsed: {}, busy: false,
     };
-    for (const s of [a, b, c]) stories.set(s.id, s);
+    // Kiểu kịch bản audio: màn truyện có nút tải kịch bản .txt.
+    const d: MockStory = {
+      id: 's-dai', title: 'Đài Phát Thanh Nửa Đêm', length_level: 'short', style: 'audio', total: 4, chapter: 1,
+      scenes: { 1: [AUDIO_SCENES[0] ?? '', AUDIO_SCENES[1] ?? ''] },
+      choices: { 1: makeChoices(1, 'audio') }, action: null, spent: 0.05, updated_at: daysAgo(1), narratorUsed: {}, busy: false,
+    };
+    for (const s of [a, b, c, d]) stories.set(s.id, s);
   }
 
   const wait = (ms: number, signal?: AbortSignal | null) =>
@@ -166,14 +176,14 @@ export function createMockServer(options: MockOptions = {}) {
     const level = MOCK_LENGTH_LEVELS.find((l) => l.key === s.length_level);
     return {
       story_id: s.id, title: s.title, length_level: s.length_level, length_label: level?.label ?? s.length_level,
-      chapter: s.chapter, finished: s.chapter >= s.total, last_excerpt: lastExcerpt(s), updated_at: s.updated_at,
+      style: s.style, chapter: s.chapter, finished: s.chapter >= s.total, last_excerpt: lastExcerpt(s), updated_at: s.updated_at,
     };
   }
 
   function storyOut(s: MockStory) {
     const finished = s.chapter >= s.total;
     return {
-      story_id: s.id, length_level: s.length_level, chapter: s.chapter, pending: false,
+      story_id: s.id, length_level: s.length_level, style: s.style, chapter: s.chapter, pending: false,
       choices: s.chapter >= 1 ? (s.choices[s.chapter] ?? []) : [],
       action: s.action && s.action.for_chapter === s.chapter + 1 ? s.action : null,
       next_ready: !finished && (s.chapter === 0 || (s.action !== null && s.action.for_chapter === s.chapter + 1)),
@@ -207,8 +217,9 @@ export function createMockServer(options: MockOptions = {}) {
           await wait(700, signal);
           send(stage('outline'));
           await wait(900, signal);
-          const base = ((chapter - 1) * 2) % SCENES.length;
-          const texts = [SCENES[base] ?? '', SCENES[(base + 1) % SCENES.length] ?? ''];
+          const pool = s.style === 'audio' ? AUDIO_SCENES : SCENES;
+          const base = ((chapter - 1) * 2) % pool.length;
+          const texts = [pool[base] ?? '', pool[(base + 1) % pool.length] ?? ''];
           const isLast = chapter >= s.total;
           const finalTexts = isLast ? [texts[0] ?? '', END_SCENE] : texts;
           for (let i = 0; i < finalTexts.length; i++) {
@@ -242,7 +253,7 @@ export function createMockServer(options: MockOptions = {}) {
           }
           send(stage('choices'));
           await wait(900, signal);
-          const choices = makeChoices(chapter);
+          const choices = makeChoices(chapter, s.style);
           s.choices[chapter] = choices;
           send({ type: 'choices_ready', chapter, choices });
         } catch (err) {
@@ -278,6 +289,7 @@ export function createMockServer(options: MockOptions = {}) {
       tags: { genre: body.tags.genre, era: null, voice: body.tags.voice ?? null },
       darkness_level: body.darkness_level ?? null,
       length_level: body.length_level,
+      style: body.style ?? 'prose',
       naming: body.naming ?? { names: 'han_viet', places: 'hu_cau' },
       settings: null, setting_index: null, plots: null, plot_index: null, characters: null,
       character_index: null, protagonist: null, story_id: null,
@@ -365,6 +377,17 @@ export function createMockServer(options: MockOptions = {}) {
       if (!s) return errorResponse('STORY_NOT_FOUND');
       const rest = parts.slice(2).join('/');
       if (rest === '' && method === 'GET') return jsonResponse(storyOut(s));
+      if (rest === 'script.txt' && method === 'GET') {
+        // Văn mọi chương đã ghi, theo thứ tự; giữa hai chương một dòng trống; chưa có chương thì rỗng.
+        const text = Array.from({ length: s.chapter }, (_, i) => (s.scenes[i + 1] ?? []).join('\n')).join('\n\n');
+        return new Response(text, {
+          status: 200,
+          headers: {
+            'content-type': 'text/plain; charset=utf-8',
+            'content-disposition': `attachment; filename="${s.id}.txt"`,
+          },
+        });
+      }
       if (rest === 'estimate' && method === 'GET') {
         // Giả: trung bình chi phí đã tiêu trên số chương đã viết; chưa viết chương nào thì số mặc định.
         const measured = s.chapter >= 1;
@@ -392,7 +415,7 @@ export function createMockServer(options: MockOptions = {}) {
       if (rest === 'choices' && method === 'POST') {
         if (s.chapter === 0 || s.chapter >= s.total) return jsonResponse({ chapter: s.chapter, choices: [] });
         await wait(1200, signal);
-        const choices = s.choices[s.chapter] ?? makeChoices(s.chapter);
+        const choices = s.choices[s.chapter] ?? makeChoices(s.chapter, s.style);
         s.choices[s.chapter] = choices;
         return jsonResponse({ chapter: s.chapter, choices });
       }
@@ -450,6 +473,7 @@ export function createMockServer(options: MockOptions = {}) {
       const length = MOCK_LENGTH_LEVELS.find((l) => l.key === start.length_level);
       if (!length) return errorResponse('REQUEST_INVALID', ['length_level']);
       if (!length.player_selectable) return errorResponse('STORY_LENGTH_NOT_OPEN', ['length_level']);
+      if (start.style !== undefined && !STYLES.includes(start.style)) return errorResponse('REQUEST_INVALID', ['style']);
       const out = newSetup(start);
       setups.set(out.session_id, { out });
       return jsonResponse(out);
@@ -519,7 +543,7 @@ export function createMockServer(options: MockOptions = {}) {
         const id = `s-moi${seq}`;
         const setting = o.settings?.[o.setting_index ?? 0];
         stories.set(id, {
-          id, title: setting?.title ?? 'Truyện mới', length_level: o.length_level, total: 4, chapter: 0,
+          id, title: setting?.title ?? 'Truyện mới', length_level: o.length_level, style: o.style, total: 4, chapter: 0,
           scenes: {}, choices: {}, action: null, spent: 0, updated_at: now().toISOString(), narratorUsed: {}, busy: false,
         });
         spend(stories.get(id) ?? null, 0.03);
