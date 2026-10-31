@@ -30,7 +30,7 @@ from writory.llm.retry import with_json_retries
 from writory.quality.checks import check_foreign_script, check_meta_leak
 from writory.safety.wrap import DATA_NOTICE, UserAuthored, escape_text, system_message, user_message
 
-PROMPT_VERSION = "audio-1"  # đổi chữ prompt thì tăng số
+PROMPT_VERSION = "audio-2"  # đổi chữ prompt thì tăng số; audio-2: giọng lố hơn (D-152)
 ROLE = "audio"
 _ID_RE = re.compile(r"[a-z][a-z0-9_]{0,31}")
 CAST_MIN, CAST_MAX, SECRETS_MAX, BEATS_MAX = 2, 12, 6, 8
@@ -245,8 +245,9 @@ voice: gợi ý giọng đọc cho TTS (trầm ấm, the thé, ngọt giả tạ
 (đoạn người nghe biết sự thật). Rải các cú lật, để cú lớn nhất gần cuối.
 - segments: ĐÚNG số đoạn được giao, theo thứ tự; mỗi đoạn có title và 2 đến 6 beats (nhịp ngắn). Đoạn 1 mở bằng \
 một câu móc ngay trong 30 giây đầu. Mỗi đoạn có ít nhất một cảnh mâu thuẫn hay vả mặt và kết bằng một câu treo, \
-trừ đoạn cuối. Đoạn cuối gỡ mọi mạch và để phản diện trả giá.
+trừ đoạn cuối. Đoạn cuối gỡ mọi mạch và để phản diện trả giá bằng một màn mất mặt công khai trước mọi người, không chỉ bằng thủ tục giấy tờ.
 - ending: cái kết, 1 đến 2 câu.
+Giọng thể loại: lố và đã tai. Phản diện kiêu căng, khinh người ra mặt; trà xanh diễn sâu (giả yếu đuối, rơm rớm nước mắt, đổ lỗi khéo); người xung quanh a dua theo kẻ mạnh rồi quay ngoắt khi gió đổi chiều. Nhân vật chính nói ít, lạnh, mỗi câu đáp trả là một cú vả.
 {_CONTENT_RULES} Trả JSON đúng schema."""
 
 SEGMENT_SYSTEM_PROMPT = f"""Bạn viết lời cho một truyện audio tiếng Việt thể loại sảng văn ("chết não"), một \
@@ -267,6 +268,7 @@ Bám các nhịp của đoạn và giữ đúng mọi điều đã xảy ra ở 
 nguyên văn từ text của đoạn cho thấy sự thật lộ ra); "chưa được lộ" thì chỉ gieo nghi ngờ, không nói ra, không ghi \
 vào reveals; "đã lộ" thì không lộ lại như chuyện mới. Kết đoạn bằng một câu treo khiến người nghe muốn nghe tiếp, \
 trừ đoạn cuối: đoạn cuối khép truyện theo cái kết của kế hoạch.
+Giọng sảng văn ("chết não"), lố và đã tai: câu ngắn, nhịp dồn. Phản diện và trà xanh lộ rõ thói xấu qua lời thoại (khoe khoang, mỉa mai, giả vờ yếu đuối, đổ lỗi). Mỗi đoạn có ít nhất một màn vả mặt trước đám đông: nhân vật chính đáp bằng một câu đanh hay tung một bằng chứng đúng lúc, kẻ ác tái mặt, đám đông xôn xao rồi đổi thái độ. Người kể được bình luận cay và hả hê với người nghe ("Tôi suýt bật cười.", "Cô ta còn chưa biết mình sắp mất gì."). Trừng phạt phải là cảnh mất mặt rõ ràng trước mọi người, không kết khô bằng biên bản hay kiểm toán.
 summary: tóm tắt đoạn vừa viết, 3 đến 5 câu, ghi rõ ai biết gì, ai ở đâu, quan hệ đổi thế nào.
 {_CONTENT_RULES} Trả JSON đúng schema."""
 
