@@ -4,6 +4,8 @@
 //
 // Kịch bản lỗi: thêm `?loi=<MÃ>` vào URL trang (ví dụ `/truyen/s-chuong?loi=COST_LIMIT_CHAPTER`).
 // Tủ trống, chưa có khoá: `?mock=rong`.
+// "Tự viết đến hết" (`chapters/next?auto=true`): không cần hành động đã lưu, không gửi
+// `choices_ready`; truyện mẫu chưa kết (`s-chuong`, `s-dai`) tới chương cuối sau vài chương.
 
 import type {
   ChapterEvent,
@@ -196,7 +198,7 @@ export function createMockServer(options: MockOptions = {}) {
     if (s) s.spent += usd;
   }
 
-  function sseResponse(s: MockStory, signal?: AbortSignal | null): Response {
+  function sseResponse(s: MockStory, signal: AbortSignal | null, auto: boolean): Response {
     const chapter = s.chapter + 1;
     const f = fault();
     const enc = new TextEncoder();
@@ -251,6 +253,7 @@ export function createMockServer(options: MockOptions = {}) {
             send({ type: 'story_finished', chapter });
             return;
           }
+          if (auto) return; // chế độ auto: bỏ bước tạo lựa chọn, luồng đóng sau chapter_committed
           send(stage('choices'));
           await wait(900, signal);
           const choices = makeChoices(chapter, s.style);
@@ -307,7 +310,8 @@ export function createMockServer(options: MockOptions = {}) {
 
   async function handle(url: string, init?: RequestInit): Promise<Response> {
     const method = (init?.method ?? 'GET').toUpperCase();
-    const path = url.replace(/^.*?\/api/, '').split('?')[0] ?? '';
+    const [path = '', search = ''] = url.replace(/^.*?\/api/, '').split('?');
+    const query = new URLSearchParams(search);
     const signal = init?.signal ?? null;
     const body = await readBody(init);
     const f = fault();
@@ -399,12 +403,14 @@ export function createMockServer(options: MockOptions = {}) {
         });
       }
       if (rest === 'chapters/next' && method === 'POST') {
+        const auto = query.get('auto') === 'true';
         if (!key) return errorResponse('PLAYER_KEY_MISSING');
         if (s.busy) return errorResponse('STORY_BUSY');
         if (s.chapter >= s.total) return errorResponse('STORY_COMPLETE');
-        if (s.chapter >= 1 && !(s.action && s.action.for_chapter === s.chapter + 1)) return errorResponse('CHOICE_REQUIRED');
+        // Chế độ auto không cần hành động đã lưu; có thì máy chủ vẫn dùng.
+        if (!auto && s.chapter >= 1 && !(s.action && s.action.for_chapter === s.chapter + 1)) return errorResponse('CHOICE_REQUIRED');
         if (f && PRE_STREAM.has(f)) return errorResponse(f);
-        return sseResponse(s, signal);
+        return sseResponse(s, signal, auto);
       }
       if (parts[2] === 'chapters' && parts[3] && method === 'GET') {
         const n = Number(parts[3]);
