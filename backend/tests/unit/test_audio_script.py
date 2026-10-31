@@ -157,8 +157,8 @@ def test_an_early_reveal_and_a_missing_due_reveal_are_hard_problems():
     early = _segment([("narrator", "Tô Nhã biết mình bị tráo từ đầu, tôi nghe rõ.")],
                      reveals=[{"secret_id": "hoan_doi", "quote": "Tô Nhã biết mình bị tráo"}])
     assert any("hoan_doi" in p and "sớm" in p for p in _check(early, 1).hard)
-    missing = _segment([("narrator", "Tôi chờ cô ta nói thật nhưng cô im lặng mãi.")])
-    assert any("hoan_doi" in p for p in _check(missing, 2).hard)
+    missing = _check(_segment([("narrator", "Tôi chờ cô ta nói thật nhưng cô im lặng mãi.")]), 2)
+    assert missing.missing == ["hoan_doi"] and missing.hard == []  # dời được sang đoạn sau, không phải lỗi cứng
 
 
 def test_a_reveal_quote_must_be_in_the_segment_text():
@@ -353,3 +353,144 @@ def test_propose_writes_ideas_that_write_can_read_back(tmp_path):
     assert "thiếu gia" in (out / "ideas.md").read_text(encoding="utf-8")
     assert main(["write", "--premise-file", str(out / "ideas.yaml"), "--pick", ideas[1]["id"],
                  "--minutes", "10", "--out", str(tmp_path / "w"), "--dry-run"]) == EXIT_OK
+
+
+# --- sau lượt chạy thật 80 phút: đoạn 5 hết lượt viết lại, không rõ vì sao ---------------------------
+
+
+def test_segment_retries_come_from_the_audio_limits_not_the_extractor():
+    assert LIMITS.schema_retries is not None and LIMITS.schema_retries >= 2
+
+
+class _NeverReveals(DryRunAudioLLM):
+    """Model không bao giờ lộ bí mật đến hạn: đoạn vẫn được giữ, bí mật dời sang đoạn sau."""
+
+    def segment_reply(self, index, total, target, due):
+        return super().segment_reply(index, total, target, []) if index == 2 else super().segment_reply(
+            index, total, target, due)
+
+
+def test_a_due_secret_still_missing_after_retries_slips_to_the_next_segment(tmp_path):
+    llm = _NeverReveals()
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run"), llm=llm)) == EXIT_OK
+    data = json.loads((tmp_path / "out" / "p1" / "script.json").read_text(encoding="utf-8"))
+    seg2, seg3 = data["segments"][1], data["segments"][2]
+    assert seg2["status"] == "ok" and seg2["reveal_slipped"] == ["hoan_doi"]
+    assert [r["secret_id"] for r in seg3["reveals"]] == ["hoan_doi"] and seg3["reveal_slipped"] == []
+    third = next(c for c in llm.calls if "Viết đoạn 3/" in c[-1].content)[-1].content
+    assert "Bí mật phải lộ trong đoạn này (id): hoan_doi." in third
+    assert len([c for c in llm.calls if "Viết đoạn 2/" in c[-1].content]) == LIMITS.schema_retries + 1
+
+
+class _BadSpeakerAt(DryRunAudioLLM):
+    def segment_reply(self, index, total, target, due):
+        body = super().segment_reply(index, total, target, due)
+        if index == 2:
+            body["lines"][0] = {"speaker": "nguoi_la", "text": "Tôi là ai?", "cue": "", "sfx": ""}
+        return body
+
+
+def test_a_failed_segment_records_why_in_the_script(tmp_path):
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run"), llm=_BadSpeakerAt())) == EXIT_ERRORS
+    seg = json.loads((tmp_path / "out" / "p1" / "script.json").read_text(encoding="utf-8"))["segments"][1]
+    assert seg["status"] == "error" and "nguoi_la" in seg["error"] and seg["lines"] == []
+
+
+# --- hồi quy sau review (D-151) -------------------------------------------------------------------
+
+
+@pytest.mark.parametrize("bad", ["nan", "inf", "-inf"])
+def test_a_budget_that_is_not_a_finite_number_is_refused(tmp_path, bad):
+    llm = DryRunAudioLLM()
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run", f"--budget={bad}"), llm=llm)) == EXIT_CONFIG
+    assert llm.calls == []
+
+
+def test_an_output_folder_with_other_files_is_refused_before_any_call(tmp_path):
+    (tmp_path / "out" / "p1").mkdir(parents=True)
+    (tmp_path / "out" / "p1" / "ghi-chu.txt").write_text("của admin", encoding="utf-8")
+    llm = DryRunAudioLLM()
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run"), llm=llm)) == EXIT_CONFIG
+    assert llm.calls == [] and (tmp_path / "out" / "p1" / "ghi-chu.txt").exists()
+
+
+class _MarkedBlockSecond(_BlockSecond):
+    """Đoạn 2 có chữ riêng ở mọi trường để kiểm không còn chữ nào của nó sau khi bị giữ lại."""
+
+    def segment_reply(self, index, total, target, due):
+        body = super().segment_reply(index, total, target, due)
+        if index == 2:
+            body["lines"][1] = {"speaker": "nha", "text": "Câu riêng của đoạn hai.", "cue": "giọng riêng đoạn hai",
+                                "sfx": "âm thanh riêng đoạn hai"}
+            body["summary"] = "Tóm tắt riêng đoạn hai."
+        return body
+
+
+def test_a_withheld_segment_leaves_none_of_its_text_and_moderation_saw_every_field(tmp_path):
+    llm = _MarkedBlockSecond()
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run"), llm=llm)) == EXIT_ERRORS
+    out = tmp_path / "out" / "p1"
+    for name in ("tts.txt", "script.md", "script.json"):
+        text = (out / name).read_text(encoding="utf-8")
+        assert "riêng" not in text and "Phần 2" not in text.split("## Đoạn 2")[-1][:80], name
+    second = [c for c in llm.calls if "riêng" in c[-1].content and "Viết đoạn" not in c[-1].content]
+    seen = second[0][-1].content
+    assert all(w in seen for w in ("Câu riêng", "giọng riêng", "âm thanh riêng", "Tóm tắt riêng"))
+
+
+def test_a_segment_is_not_written_unless_its_moderation_call_also_fits(tmp_path):
+    # Giá giả thấp hơn ước tính tối đa (tính theo max_tokens) như ngoài đời: giữ chỗ thì kiểm duyệt luôn còn tiền.
+    llm = DryRunAudioLLM(cost_usd=0.005)
+    assert asyncio.run(run(_write_args(tmp_path, "--dry-run", "--budget", "0.03"), llm=llm)) == EXIT_BUDGET
+    calls = [json.loads(line) for line in (tmp_path / "out" / "p1" / "calls.jsonl").read_text(
+        encoding="utf-8").splitlines()]
+    roles = [c["role"] for c in calls]
+    assert roles.count("audio:segment") == roles.count("moderate")
+
+
+def test_premises_that_cannot_start_within_the_budget_get_no_folder(tmp_path):
+    f = tmp_path / "premises.yaml"
+    f.write_text(yaml.safe_dump([{"id": i, "premise": f"Hướng {i}.", "minutes": 10} for i in "abc"],
+                                allow_unicode=True), encoding="utf-8")
+    llm = DryRunAudioLLM(cost_usd=0.01)
+    args = ["write", "--premise-file", str(f), "--out", str(tmp_path / "out"), "--dry-run", "--budget", "0.06"]
+    assert asyncio.run(run(args, llm=llm)) == EXIT_BUDGET
+    folders = sorted(p.name for p in (tmp_path / "out").iterdir() if not p.name.startswith("."))
+    assert folders and "c" not in folders
+    for name in folders:
+        data = json.loads((tmp_path / "out" / name / "script.json").read_text(encoding="utf-8"))
+        assert data["plan"] is not None
+
+
+def test_exit_code_prefers_errors_over_budget():
+    from writory.audio.script import overall_exit
+    assert overall_exit([EXIT_BUDGET, EXIT_ERRORS, EXIT_OK]) == EXIT_ERRORS
+    assert overall_exit([EXIT_OK, EXIT_BUDGET]) == EXIT_BUDGET
+    assert overall_exit([]) == EXIT_OK
+
+
+@pytest.mark.parametrize("extra", [["--count", "0"], ["--count", "99"]])
+def test_propose_count_zero_or_too_many_is_refused(tmp_path, extra):
+    assert main(["propose", "--tags", "x", "--out", str(tmp_path / "o"), "--dry-run", *extra]) == EXIT_CONFIG
+
+
+def test_wpm_zero_and_an_empty_pick_are_refused(tmp_path):
+    assert main(_write_args(tmp_path, "--dry-run", "--wpm", "0")) == EXIT_CONFIG
+    assert main(_write_args(tmp_path, "--dry-run", "--pick", ",")) == EXIT_CONFIG
+
+
+def test_hooks_given_as_one_string_stay_one_hook():
+    got = parse_premises([{"premise": "Một hướng.", "hooks": "Vả mặt giữa tiệc"}], max_chars=500)
+    assert got[0].text.endswith("Cảnh đáng chờ: Vả mặt giữa tiệc")
+
+
+def test_injection_in_summaries_recent_lines_and_notes_stays_data():
+    t = targets(30, LIMITS)
+    msgs = drama.segment_messages(_plan(t.segments), premise=Premise("p1", "x"), targets=t, index=3,
+                                  summaries=[INJECTION], recent_lines=[{"speaker": "nha", "text": INJECTION}],
+                                  notes=[f"người nói không có trong cast: {CLOSE_TAG} {INJECTION}"])
+    assert INJECTION not in _all_system(msgs)
+    user = msgs[-1].content
+    assert user.count(CLOSE_TAG) == user.count(OPEN_TAG_START)  # ghi chú không đóng được khối nào
+    for start in [i for i in range(len(user)) if user.startswith(INJECTION, i)][:2]:
+        assert user.rfind(OPEN_TAG_START, 0, start) > user.rfind(CLOSE_TAG, 0, start)

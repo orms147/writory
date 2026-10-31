@@ -41,7 +41,7 @@ def targets(minutes: int, limits: AudioScriptLimits, *, words_per_minute: int | 
     low, high = limits.require("minutes_min"), limits.require("minutes_max")
     if not low <= minutes <= high:
         raise ConfigError(f"--minutes {minutes}: phải trong [{low}, {high}] (limits.audio_script.minutes_*)")
-    wpm = words_per_minute or limits.require("words_per_minute")
+    wpm = limits.require("words_per_minute") if words_per_minute is None else words_per_minute
     if wpm <= 0:
         raise ConfigError("--wpm phải > 0")
     total = minutes * wpm
@@ -67,7 +67,10 @@ class Premise:
 def _premise_text(item: dict[str, Any]) -> str:
     text = str(item.get("premise") or "").strip()
     title = str(item.get("title") or "").strip()
-    hooks = [str(h).strip() for h in item.get("hooks") or [] if str(h).strip()]
+    raw_hooks = item.get("hooks") or []
+    if isinstance(raw_hooks, str):
+        raw_hooks = [raw_hooks]
+    hooks = [str(h).strip() for h in raw_hooks if str(h).strip()]
     if text and title:
         text = f"{title}: {text}"
     if text and hooks:
@@ -138,6 +141,7 @@ class SegmentOut:
     target_words: int = 0
     length_off: bool = False  # hết lượt viết lại mà số chữ vẫn lệch mục tiêu quá `length_tolerance`
     reveals: list[dict[str, str]] = field(default_factory=list)
+    reveal_slipped: list[str] = field(default_factory=list)  # bí mật đến hạn đoạn không lộ: dời sang đoạn sau
     summary: str = ""
     moderation: dict[str, Any] | None = None
     error: str | None = None
@@ -189,12 +193,14 @@ def render_markdown(script: AudioScript) -> str:
     if plan.get("ending"):
         out += ["", f"**Kết:** {plan['ending']}"]
     for seg in script.segments:
-        out += ["", f"## Đoạn {seg.index}: {seg.title}", ""]
-        if seg.status != "ok":
-            out.append(f"*Đoạn này bị giữ lại hay chưa viết ({seg.status}"
-                       f"{', ' + seg.error if seg.error else ''}).*")
+        if seg.status != "ok":  # không chữ nào của đoạn bị giữ lại, kể cả tiêu đề
+            out += ["", f"## Đoạn {seg.index} (không có chữ)", "",
+                    f"*Đoạn này bị giữ lại hay chưa viết ({seg.status}{': ' + seg.error if seg.error else ''}).*"]
             continue
+        out += ["", f"## Đoạn {seg.index}: {seg.title}", ""]
         flag = " · **lệch độ dài**" if seg.length_off else ""
+        if seg.reveal_slipped:
+            flag += f" · bí mật dời sang đoạn sau: {', '.join(seg.reveal_slipped)}"
         out += [f"*{seg.words}/{seg.target_words} chữ{flag}*", ""]
         for line in seg.lines:
             if line.get("sfx"):
@@ -243,10 +249,16 @@ def dumps(data: Any) -> str:
 
 
 def check_fresh(out: Path, names: Sequence[str]) -> None:
-    """Từ chối khi thư mục đã có kết quả: lần chạy sau không đè kịch bản đã trả tiền."""
-    found = [n for n in names if (out / n).exists()]
-    if found:
-        raise ConfigError(f"đã có kết quả ở {out} ({', '.join(found)}); dùng --out khác hoặc xoá thư mục đó")
+    """Gọi TRƯỚC mọi lời gọi tốn tiền. Từ chối khi `out` là file, hay là thư mục đã có gì bên trong: lần chạy sau
+    không đè kịch bản đã trả tiền, và bước ghi cuối (đổi tên thư mục tạm) không hỏng vì thư mục đích có file lạ."""
+    if not out.exists():
+        return
+    if not out.is_dir():
+        raise ConfigError(f"{out} là file, không phải thư mục; dùng --out khác")
+    if any(out.iterdir()):
+        found = [n for n in names if (out / n).exists()]
+        what = f"kết quả ({', '.join(found)})" if found else "file khác"
+        raise ConfigError(f"đã có {what} ở {out}; dùng --out khác hoặc xoá thư mục đó")
 
 
 def write_dir(out: Path, files: Mapping[str, str], names: Sequence[str]) -> list[Path]:
@@ -258,10 +270,13 @@ def write_dir(out: Path, files: Mapping[str, str], names: Sequence[str]) -> list
     try:
         for name, text in files.items():
             (tmp / name).write_text(text, encoding="utf-8", newline="\n")
-        if out.exists():
-            out.rmdir()  # thư mục rỗng có sẵn
-        tmp.rename(out)
     except BaseException:
         shutil.rmtree(tmp, ignore_errors=True)
         raise
+    try:
+        if out.exists():
+            out.rmdir()  # thư mục rỗng có sẵn
+        tmp.rename(out)
+    except OSError as e:  # bản đã trả tiền nằm đủ trong thư mục tạm: giữ lại, báo chỗ của nó
+        raise OSError(f"không đổi tên được {tmp} thành {out} ({type(e).__name__}); bản đã viết nằm ở {tmp}") from None
     return [out / name for name in files]

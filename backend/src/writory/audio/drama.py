@@ -15,8 +15,8 @@ chế độ `strict`; mọi ràng buộc kiểm bằng code ở `plan_problems`,
 """
 
 import re
-from collections.abc import Callable, Mapping, Sequence
-from dataclasses import dataclass
+from collections.abc import Mapping, Sequence
+from dataclasses import dataclass, field
 from typing import Any, Literal
 
 from pydantic import BaseModel, ConfigDict
@@ -152,10 +152,14 @@ def plan_problems(plan: PlanOutput, *, segments: int) -> list[str]:
     return problems
 
 
-def secret_status(plan: PlanOutput, index: int) -> dict[str, str]:
-    """Trạng thái từng bí mật ở đoạn `index`: done (đã lộ ở đoạn trước), due (phải lộ ở đoạn này), later."""
-    return {s.id: "done" if s.reveal_segment < index else "due" if s.reveal_segment == index else "later"
-            for s in plan.secrets}
+def secret_status(plan: PlanOutput, index: int, slipped: Mapping[str, int] | None = None) -> dict[str, str]:
+    """Trạng thái từng bí mật ở đoạn `index`: done (đã lộ ở đoạn trước), due (phải lộ ở đoạn này), later.
+    `slipped`: id -> đoạn mới, cho bí mật đến hạn mà đoạn của nó vẫn không lộ sau mọi lượt viết lại."""
+    out = {}
+    for s in plan.secrets:
+        due = max(s.reveal_segment, (slipped or {}).get(s.id, 0))
+        out[s.id] = "done" if due < index else "due" if due == index else "later"
+    return out
 
 
 @dataclass(frozen=True)
@@ -163,6 +167,7 @@ class SegmentCheck:
     hard: list[str]  # lỗi phải viết lại
     length: str | None  # lệch số chữ mục tiêu; hết lượt viết lại thì vẫn nhận và đánh dấu
     words: int
+    missing: list[str] = field(default_factory=list)  # bí mật đến hạn đoạn không lộ; hết lượt thì dời sang đoạn sau
 
 
 def segment_text(output: SegmentOutput) -> str:
@@ -170,7 +175,8 @@ def segment_text(output: SegmentOutput) -> str:
 
 
 def segment_problems(output: SegmentOutput, *, plan: PlanOutput, index: int, target_words: int,
-                     tolerance: float, quality: QualityConfig) -> SegmentCheck:
+                     tolerance: float, quality: QualityConfig,
+                     slipped: Mapping[str, int] | None = None) -> SegmentCheck:
     hard: list[str] = []
     speakers = {NARRATOR, *(c.id for c in plan.cast)}
     unknown = sorted({line.speaker for line in output.lines} - speakers)
@@ -185,7 +191,7 @@ def segment_problems(output: SegmentOutput, *, plan: PlanOutput, index: int, tar
         hard.append("lẫn chữ của đề bài hay ghi chú của model vào lời đọc")
     if not output.summary.strip():
         hard.append("summary rỗng")
-    status = secret_status(plan, index)
+    status = secret_status(plan, index, slipped)
     claimed = {r.secret_id for r in output.reveals}
     for r in output.reveals:
         state = status.get(r.secret_id)
@@ -195,14 +201,16 @@ def segment_problems(output: SegmentOutput, *, plan: PlanOutput, index: int, tar
             hard.append(f"bí mật {r.secret_id} lộ sớm: chưa tới đoạn của nó")
         elif not quote_in_text(r.quote, text):
             hard.append(f"bí mật {r.secret_id}: câu trích không có nguyên văn trong đoạn")
-    for sid, state in status.items():
-        if state == "due" and sid not in claimed:
-            hard.append(f"bí mật {sid} phải lộ trong đoạn này (reveals kèm câu trích)")
+    missing = [sid for sid, state in status.items() if state == "due" and sid not in claimed]
     words = word_count(text)
     low, high = round(target_words * (1 - tolerance)), round(target_words * (1 + tolerance))
     length = None if low <= words <= high else (
         f"đoạn {'quá ngắn' if words < low else 'quá dài'}: {words} chữ, cần khoảng {target_words} ({low}..{high})")
-    return SegmentCheck(hard, length, words)
+    return SegmentCheck(hard, length, words, missing)
+
+
+def missing_text(missing: Sequence[str]) -> list[str]:
+    return [f"bí mật {sid} phải lộ trong đoạn này (reveals kèm câu trích)" for sid in missing]
 
 
 # --- đề -------------------------------------------------------------------------------------------
@@ -278,8 +286,7 @@ def plan_messages(premise: Premise, targets: Targets) -> list[Message]:
                          f"mỗi đoạn khoảng {targets.words_per_segment} chữ.")]
 
 
-def _plan_block(plan: PlanOutput, index: int) -> str:
-    status = secret_status(plan, index)
+def _plan_block(plan: PlanOutput, index: int, status: Mapping[str, str]) -> str:
     lines = [f"Tên truyện: {plan.title}", f"Logline: {plan.logline}",
              f"Nhân vật chính (người kể, xưng tôi): {plan.protagonist_id}", "Nhân vật:"]
     lines += [f"- {c.id}: {c.name}, {c.gender}, {c.age} tuổi, {c.role}" for c in plan.cast]
@@ -298,10 +305,10 @@ def _plan_block(plan: PlanOutput, index: int) -> str:
 
 def segment_messages(plan: PlanOutput, *, premise: Premise, targets: Targets, index: int,
                      summaries: Sequence[str], recent_lines: Sequence[Mapping[str, Any]],
-                     notes: Sequence[str] = ()) -> list[Message]:
-    """`notes`: ghi chú của code cho lần viết lại (vì sao bản trước bị trả lại)."""
+                     notes: Sequence[str] = (), slipped: Mapping[str, int] | None = None) -> list[Message]:
+    """`notes`: ghi chú của code cho lần viết lại (vì sao bản trước bị trả lại). `slipped`: như `secret_status`."""
     names = {NARRATOR: "Người kể", **{c.id: c.name for c in plan.cast}}
-    status = secret_status(plan, index)
+    status = secret_status(plan, index, slipped)
     due = [sid for sid, s in status.items() if s == "due"]
     later = [sid for sid, s in status.items() if s == "later"]
     title = plan.segments[index - 1].title if index <= len(plan.segments) else ""
@@ -310,7 +317,7 @@ def segment_messages(plan: PlanOutput, *, premise: Premise, targets: Targets, in
         f"Số chữ mục tiêu: khoảng {targets.words_per_segment} chữ.",
         f"Bí mật phải lộ trong đoạn này (id): {', '.join(due) or 'không có'}.",
         f"Bí mật chưa được lộ (id): {', '.join(later) or 'không có'}.",
-        "Kế hoạch:", UserAuthored(_plan_block(plan, index), "audio_plan"),
+        "Kế hoạch:", UserAuthored(_plan_block(plan, index, status), "audio_plan"),
         "Hướng đi gốc:", UserAuthored(premise.text, "audio_premise"),
     ]
     if summaries:
@@ -330,7 +337,7 @@ def segment_messages(plan: PlanOutput, *, premise: Premise, targets: Targets, in
 
 
 async def make_ideas(llm: LLMClient, model: str, tags: str, *, count: int, retries: RetryLimits,
-                     extra: Mapping[str, Any] | None = None) -> list[Idea]:
+                     schema_retries: int, extra: Mapping[str, Any] | None = None) -> list[Idea]:
     messages = propose_messages(tags, count=count)
 
     async def call() -> list[Idea]:
@@ -340,13 +347,13 @@ async def make_ideas(llm: LLMClient, model: str, tags: str, *, count: int, retri
             raise _bad(problems, "ProposeOutput")
         return list(output.ideas)
 
-    return await with_json_retries(call, schema_retries=retries.extract_schema_retry,
+    return await with_json_retries(call, schema_retries=schema_retries,
                                    transient_retries=retries.llm_transient,
                                    backoff=retries.transient_backoff_seconds)
 
 
 async def make_plan(llm: LLMClient, model: str, premise: Premise, targets: Targets, *, retries: RetryLimits,
-                    extra: Mapping[str, Any] | None = None) -> PlanOutput:
+                    schema_retries: int, extra: Mapping[str, Any] | None = None) -> PlanOutput:
     messages = plan_messages(premise, targets)
 
     async def call() -> PlanOutput:
@@ -356,7 +363,7 @@ async def make_plan(llm: LLMClient, model: str, premise: Premise, targets: Targe
             raise _bad(problems, "PlanOutput")
         return output
 
-    return await with_json_retries(call, schema_retries=retries.extract_schema_retry,
+    return await with_json_retries(call, schema_retries=schema_retries,
                                    transient_retries=retries.llm_transient,
                                    backoff=retries.transient_backoff_seconds)
 
@@ -366,42 +373,44 @@ class SegmentResult:
     output: SegmentOutput
     words: int
     length_off: bool
+    missed: tuple[str, ...] = ()  # bí mật đến hạn mà đoạn không lộ: nơi gọi dời sang đoạn sau
 
 
 async def write_segment(
     llm: LLMClient, model: str, plan: PlanOutput, *, premise: Premise, targets: Targets, index: int,
     summaries: Sequence[str], recent_lines: Sequence[Mapping[str, Any]], limits: AudioScriptLimits,
     quality: QualityConfig, retries: RetryLimits, extra: Mapping[str, Any] | None = None,
-    on_messages: Callable[[list[Message]], None] | None = None,
+    slipped: Mapping[str, int] | None = None,
 ) -> SegmentResult:
-    """Viết lại có ghi chú khi bản trước sai. Hết lượt mà bản gần nhất chỉ lệch độ dài thì nhận nó và đánh dấu
-    `length_off`; lỗi khác thì báo lỗi như mọi lời gọi JSON."""
+    """Viết lại có ghi chú khi bản trước sai, tối đa `limits.schema_retries` lần. Hết lượt (hay chạm trần giữa
+    chừng) mà bản gần nhất chỉ lệch độ dài hay chỉ thiếu bí mật đến hạn thì nhận nó, đánh dấu `length_off`,
+    `missed`; lỗi khác thì báo lỗi như mọi lời gọi JSON."""
     tolerance = limits.require("length_tolerance")
     notes: list[str] = []
-    length_only: list[SegmentResult] = []
+    usable: list[SegmentResult] = []
 
     async def call() -> SegmentResult:
         messages = segment_messages(plan, premise=premise, targets=targets, index=index, summaries=summaries,
-                                    recent_lines=recent_lines, notes=notes)
-        if on_messages is not None:
-            on_messages(messages)
+                                    recent_lines=recent_lines, notes=notes, slipped=slipped)
         output, _ = await llm.chat_json(model, messages, SegmentOutput, extra=extra)
         check = segment_problems(output, plan=plan, index=index, target_words=targets.words_per_segment,
-                                 tolerance=tolerance, quality=quality)
-        problems = check.hard + ([check.length] if check.length else [])
+                                 tolerance=tolerance, quality=quality, slipped=slipped)
+        problems = check.hard + missing_text(check.missing) + ([check.length] if check.length else [])
         if problems:
             if not check.hard:
-                length_only.append(SegmentResult(output, check.words, True))
+                usable.append(SegmentResult(output, check.words, bool(check.length), tuple(check.missing)))
             notes[:] = problems
             raise _bad(problems, "SegmentOutput")
         return SegmentResult(output, check.words, False)
 
     try:
-        return await with_json_retries(call, schema_retries=retries.extract_schema_retry,
+        return await with_json_retries(call, schema_retries=limits.require("schema_retries"),
                                        transient_retries=retries.llm_transient,
                                        backoff=retries.transient_backoff_seconds)
     except WritoryError as e:
-        # Hết lượt thử lại thì `with_retries` báo RETRY_LIMIT_REACHED; bản gần nhất chỉ lệch độ dài vẫn dùng được.
-        if e.code in (ErrorCode.LLM_BAD_RESPONSE, ErrorCode.RETRY_LIMIT_REACHED) and length_only:
-            return length_only[-1]
+        # Hết lượt thử lại thì `with_retries` báo RETRY_LIMIT_REACHED; chạm trần giữa chừng là COST_LIMIT_STORY. Bản
+        # gần nhất chỉ lệch độ dài hay chỉ thiếu bí mật đến hạn đã trả tiền và vẫn dùng được.
+        if e.code in (ErrorCode.LLM_BAD_RESPONSE, ErrorCode.RETRY_LIMIT_REACHED,
+                      ErrorCode.COST_LIMIT_STORY) and usable:
+            return usable[-1]
         raise

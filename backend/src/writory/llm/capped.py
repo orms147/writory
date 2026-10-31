@@ -38,6 +38,21 @@ class CappedClient(LLMClient):
     def spent_usd(self) -> float:
         return self._budget.spent_usd
 
+    def hold(self, model: str, chars: int) -> float:
+        """Giữ chỗ trước cho một lời gọi SẮP TỚI (`chars` ký tự vào, tối đa `max_tokens` ra), để không trả tiền cho
+        một lời gọi mà lời gọi bắt buộc đi sau nó (kiểm duyệt) không còn tiền. Không đủ thì COST_LIMIT_STORY."""
+        price = self._prices[model]
+        estimate = (math.ceil(chars / EST_CHARS_PER_TOKEN) * price.input + self._max_tokens * price.output) / 1e6
+        try:
+            return self._budget.reserve(estimate)
+        except BudgetExceeded as e:
+            self.halted = str(e)
+            raise WritoryError(ErrorCode.COST_LIMIT_STORY, detail=f"trần --budget: {e}") from None
+
+    def release(self, held: float) -> None:
+        """Trả lại chỗ đã giữ bằng `hold` mà chưa tiêu."""
+        self._budget.settle(held, 0.0)
+
     def estimate(self, model: str, messages: Sequence[Message],
                  schema: type[BaseModel] | None) -> float:
         price = self._prices[model]

@@ -577,7 +577,7 @@ def check_budget(config: AppConfig, budget: float | None, *, real: bool) -> floa
         return budget
     if budget is None:
         raise ConfigError("chạy thật cần --budget (USD)")
-    if budget <= 0 or budget > cap:
+    if not (math.isfinite(budget) and 0 < budget <= cap):  # nan, inf: qua được phép so, nên kiểm thẳng
         raise ConfigError(f"--budget {budget} phải trong (0, {cap}] (limits.video_export.max_budget_usd)")
     return budget
 

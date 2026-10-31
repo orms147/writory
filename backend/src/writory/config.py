@@ -202,6 +202,7 @@ class AudioScriptLimits(_Section):
     propose_count: PositiveInt | None = None  # số hướng đi `propose` đề xuất khi không có `--count`
     propose_max: PositiveInt | None = None  # trần của `--count`
     recent_lines: PositiveInt | None = None  # số dòng cuối của đoạn trước đưa nguyên văn vào đề đoạn sau
+    schema_retries: NonNegativeInt | None = None  # lần hỏi lại mỗi lời gọi khi code trả câu trả lời về
 
     @model_validator(mode="after")
     def _minutes_ordered(self) -> Self:

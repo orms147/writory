@@ -57,8 +57,12 @@ from writory.safety.redact import install_log_redaction, redact
 DEFAULT_OUT_ROOT = REPO_ROOT / "exports"  # .gitignore: không commit bản xuất
 EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ERRORS = 0, 1, 2, 3
 DRY_RUN_COST_USD = 0.0001
-_ROLES = {"ProposeOutput": drama.ROLE, "PlanOutput": drama.ROLE, "SegmentOutput": drama.ROLE,
-          "ModerationOutput": "moderate"}
+_ROLES = {"ProposeOutput": f"{drama.ROLE}:propose", "PlanOutput": f"{drama.ROLE}:plan",
+          "SegmentOutput": f"{drama.ROLE}:segment", "ModerationOutput": "moderate"}
+# Ước lượng chữ để giữ chỗ trước (G8): chữ mỗi từ tiếng Việt kể cả dấu cách, và chữ đề của lời gọi kiểm duyệt, lập
+# kế hoạch. Chỉ để giữ chỗ; chi phí thật lấy từ nhà cung cấp.
+_CHARS_PER_WORD = 7
+_PROMPT_CHARS = 8000
 
 
 # --- model giả cho --dry-run và test --------------------------------------------------------------
@@ -168,7 +172,9 @@ def _meta(premise: Premise, targets: Targets, *, config: AppConfig, model: str, 
 async def _moderate_segment(seg: SegmentOut, *, llm: LLMClient, config: AppConfig) -> None:
     """G9 fail-closed như bộ xuất video: bị chặn hay không kiểm được vì bất kỳ lỗi nào thì đoạn bị giữ lại, không
     còn chữ nào của nó trong bản xuất. Quá mức u tối thì giữ đoạn và ghi lại để admin quyết."""
-    text = "\n".join(line["text"] for line in seg.lines)
+    # Mọi chữ của đoạn đi vào bản xuất: lời đọc, cách đọc, âm thanh và tóm tắt.
+    parts = [p for line in seg.lines for p in (line["text"], line.get("cue", ""), line.get("sfx", "")) if p]
+    text = "\n".join([*parts, seg.summary])
     try:
         result = await moderate(text, source=Source.SCENE, llm=llm, config=config)
     except WritoryError as e:
@@ -182,39 +188,54 @@ async def _moderate_segment(seg: SegmentOut, *, llm: LLMClient, config: AppConfi
         seg.lines, seg.reveals, seg.summary = [], [], ""
 
 
-async def build_script(premise: Premise, targets: Targets, *, config: AppConfig, llm: LLMClient,
+async def build_script(premise: Premise, targets: Targets, *, config: AppConfig, llm: CappedClient,
                        options: WriteOptions, today: date | None = None) -> AudioScript:
-    """Lập kế hoạch rồi viết từng đoạn. `llm` nên là `CappedClient` (trần G8). Dừng ở đoạn đầu tiên lỗi, bị giữ
-    lại hay chạm trần: các đoạn sau dựa vào nó."""
+    """Lập kế hoạch rồi viết từng đoạn, qua `llm` có trần (G8). Dừng ở đoạn đầu tiên lỗi, bị giữ lại hay chạm trần:
+    các đoạn sau dựa vào nó. Bí mật đến hạn mà đoạn không lộ sau mọi lượt viết lại thì dời sang đoạn sau."""
     limits, retries = config.limits.audio_script, config.limits.retries
     model = require_model(config.models.roles, drama.ROLE)
+    moderator = require_model(config.models.roles, "moderate") if options.moderate else None
     extra = role_extra(config.models, drama.ROLE)
     script = AudioScript(_meta(premise, targets, config=config, model=model, options=options, today=today))
     try:
-        plan = await drama.make_plan(llm, model, premise, targets, retries=retries, extra=extra)
+        plan = await drama.make_plan(llm, model, premise, targets, retries=retries,
+                                     schema_retries=limits.require("schema_retries"), extra=extra)
     except WritoryError as e:
         script.stop = "budget" if e.code is ErrorCode.COST_LIMIT_STORY else f"plan: {e.code.value}"
         return script
     script.plan = plan.model_dump()
     summaries: list[str] = []
     recent: list[dict[str, Any]] = []
+    slipped: dict[str, int] = {}
     keep = limits.require("recent_lines")
     for k, seg_plan in enumerate(plan.segments, 1):
+        held = 0.0
         try:
-            result = await drama.write_segment(
-                llm, model, plan, premise=premise, targets=targets, index=k, summaries=summaries,
-                recent_lines=recent, limits=limits, quality=config.quality, retries=retries, extra=extra)
+            if moderator is not None:  # đoạn chỉ được viết khi còn tiền cho cả lời gọi kiểm duyệt đi sau nó
+                held = llm.hold(moderator, targets.words_per_segment * _CHARS_PER_WORD + _PROMPT_CHARS)
+            try:
+                result = await drama.write_segment(
+                    llm, model, plan, premise=premise, targets=targets, index=k, summaries=summaries,
+                    recent_lines=recent, limits=limits, quality=config.quality, retries=retries, extra=extra,
+                    slipped=slipped)
+            finally:
+                if held:
+                    llm.release(held)
         except WritoryError as e:
             budget = e.code is ErrorCode.COST_LIMIT_STORY
             script.segments.append(SegmentOut(k, seg_plan.title, "skipped_budget" if budget else "error",
                                               target_words=targets.words_per_segment,
-                                              error=None if budget else e.code.value))
+                                              error=None if budget else str(e)[:600]))
             script.stop = "budget" if budget else f"segment {k}: {e.code.value}"
             break
         out = result.output
         seg = SegmentOut(k, seg_plan.title, "ok", lines=[line.model_dump() for line in out.lines],
                          words=result.words, target_words=targets.words_per_segment, length_off=result.length_off,
-                         reveals=[r.model_dump() for r in out.reveals], summary=out.summary)
+                         reveals=[r.model_dump() for r in out.reveals], summary=out.summary,
+                         reveal_slipped=list(result.missed))
+        for sid in result.missed:
+            if k < len(plan.segments):
+                slipped[sid] = k + 1
         if options.moderate:
             await _moderate_segment(seg, llm=llm, config=config)
         script.segments.append(seg)
@@ -270,7 +291,7 @@ def build_parser() -> argparse.ArgumentParser:
 
 def check_budget(config: AppConfig, budget: float | None, *, real: bool) -> float | None:
     cap = config.limits.audio_script.require("max_budget_usd")
-    if budget is not None and (budget <= 0 or budget > cap):
+    if budget is not None and not (math.isfinite(budget) and 0 < budget <= cap):  # nan qua được phép so
         raise ConfigError(f"--budget {budget} phải trong (0, {cap}] (limits.audio_script.max_budget_usd)")
     if real and budget is None:
         raise ConfigError("chạy thật cần --budget (USD)")
@@ -283,8 +304,10 @@ def _premises(args: argparse.Namespace, config: AppConfig) -> list[Premise]:
         raise ConfigError("dùng --premise hoặc --premise-file, không cả hai")
     found = (render.load_premises(Path(args.premise_file), max_chars=max_chars) if args.premise_file
              else render.parse_premises(list(args.premise), max_chars=max_chars))
-    if args.pick:
+    if args.pick is not None:
         wanted = [p.strip() for p in args.pick.split(",") if p.strip()]
+        if not wanted:
+            raise ConfigError("--pick trống: ghi id hướng đi, cách nhau dấu phẩy")
         missing = sorted(set(wanted) - {p.id for p in found})
         if missing:
             raise ConfigError(f"--pick: không có hướng đi {', '.join(missing)}")
@@ -317,6 +340,18 @@ async def run(argv: Sequence[str] | argparse.Namespace, *, llm: LLMClient | None
     except (ConfigError, LimitNotSetError, ValueError, WritoryError) as e:
         print(f"lỗi: {redact(str(e))}", file=sys.stderr)
         return EXIT_CONFIG
+    except OSError as e:  # sau các lời gọi: không ghi được file; `render.write_dir` giữ bản tạm và nêu chỗ của nó
+        print(f"lỗi AUDIO_WRITE_FAILED: {redact(str(e))}. Kiểm quyền ghi và chỗ trống của ổ đĩa, rồi chép bản tạm "
+              "sang chỗ khác.", file=sys.stderr)
+        return EXIT_ERRORS
+
+
+def overall_exit(codes: Sequence[int]) -> int:
+    """Mã thoát của cả lệnh: có hướng đi lỗi hay bị giữ lại (3) thì báo 3, kể cả khi hướng đi khác chạm trần (2)."""
+    for code in (EXIT_ERRORS, EXIT_BUDGET, EXIT_CONFIG):
+        if code in codes:
+            return code
+    return EXIT_OK
 
 
 def _client(inner: LLMClient, config: AppConfig, budget: Budget, calls: list[dict[str, Any]]) -> CappedClient:
@@ -328,7 +363,7 @@ def _client(inner: LLMClient, config: AppConfig, budget: Budget, calls: list[dic
 async def _propose(args: argparse.Namespace, *, config: AppConfig, model: str, budget: float | None,
                    llm: LLMClient | None, stamp: str) -> int:
     limits = config.limits.audio_script
-    count = args.count or limits.require("propose_count")
+    count = limits.require("propose_count") if args.count is None else args.count
     if not 1 <= count <= limits.require("propose_max"):
         raise ConfigError(f"--count {count} phải trong [1, {limits.propose_max}] (limits.audio_script.propose_max)")
     out = Path(args.out) if args.out else DEFAULT_OUT_ROOT / f"audio-ideas-{stamp}"
@@ -338,6 +373,7 @@ async def _propose(args: argparse.Namespace, *, config: AppConfig, model: str, b
     client = _client(llm or _inner_llm(config, args, [model]), config, spend, calls)
     try:
         ideas = await drama.make_ideas(client, model, args.tags, count=count, retries=config.limits.retries,
+                                       schema_retries=limits.require("schema_retries"),
                                        extra=role_extra(config.models, drama.ROLE))
     except WritoryError as e:
         print(f"lỗi {e.code.value}: không đề xuất được hướng đi ({redact(e.detail or '')}). Chạy lại, hay nâng "
@@ -361,7 +397,7 @@ async def _write(args: argparse.Namespace, *, config: AppConfig, model: str, bud
     premises = _premises(args, config)
     plans: list[tuple[Premise, Targets]] = []
     for p in premises:
-        minutes = p.minutes or args.minutes
+        minutes = args.minutes if p.minutes is None else p.minutes
         if minutes is None:
             raise ConfigError(f"hướng đi {p.id}: cần --minutes (hay minutes trong file)")
         plans.append((p, render.targets(minutes, limits, words_per_minute=args.wpm)))
@@ -381,22 +417,28 @@ async def _write(args: argparse.Namespace, *, config: AppConfig, model: str, bud
     codes: list[int] = []
     for p, t in plans:
         out = root / p.id
-        if spend.spent_usd >= spend.cap_usd:
-            print(f"{p.id}: bỏ qua, đã chạm --budget", file=sys.stderr)
+        calls: list[dict[str, Any]] = []
+        client = _client(inner, config, spend, calls)
+        try:  # không đủ tiền cho lời gọi lập kế hoạch thì không bắt đầu, không tạo thư mục
+            client.release(client.hold(model, _PROMPT_CHARS))
+        except WritoryError:
+            print(f"{p.id}: bỏ qua, không còn đủ --budget để bắt đầu", file=sys.stderr)
             codes.append(EXIT_BUDGET)
             continue
-        calls: list[dict[str, Any]] = []
         before = spend.spent_usd
-        script = await build_script(p, t, config=config, llm=_client(inner, config, spend, calls), options=options,
-                                    today=today)
+        script = await build_script(p, t, config=config, llm=client, options=options, today=today)
         script.meta["calls"] = len(calls)
         script.meta["cost_usd"] = round(spend.spent_usd - before, 6)
+        if script.plan is None and script.stop == "budget":
+            print(f"{p.id}: chạm --budget khi lập kế hoạch, không ghi gì", file=sys.stderr)
+            codes.append(EXIT_BUDGET)
+            continue
         write_script(script, out, calls)
         print(f"{p.id}: {out} · {script.meta['words']} chữ (~{script.meta['est_minutes']} phút) · "
               f"{script.meta['calls']} lời gọi · {script.meta['cost_usd']:.4f} USD"
               + (f" · DỪNG: {script.stop}" if script.stop else ""), file=sys.stderr)
         codes.append(EXIT_BUDGET if script.stop == "budget" else EXIT_ERRORS if script.stop else EXIT_OK)
-    return max(codes, default=EXIT_OK) if EXIT_BUDGET not in codes else EXIT_BUDGET
+    return overall_exit(codes)
 
 
 def main(argv: Sequence[str] | None = None) -> int:

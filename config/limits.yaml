@@ -117,6 +117,7 @@ audio_script:
   propose_count: 5           # số hướng đi `propose` đề xuất khi không có `--count`
   propose_max: 10            # trần của `--count`
   recent_lines: 12           # số dòng cuối của đoạn trước đưa nguyên văn vào đề đoạn sau
+  schema_retries: 2          # lần hỏi lại mỗi lời gọi khi JSON sai hay phép kiểm bằng code trả về (riêng bộ này)
 facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; số tạm, D-47). 0 = tắt
   max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
   text_max_chars: 160          # chữ của Fact: một câu ngắn
