@@ -59,6 +59,7 @@ curl -X POST http://127.0.0.1:8000/setup/<session_id>/finalize -H 'content-type:
 Viết chương (SSE, D-46) rồi chọn hành động cho chương sau:
 ```bash
 curl -N -X POST http://127.0.0.1:8000/stories/<story_id>/chapters/next -H 'content-type: application/json'   # event: stage | scene_ready | … | choices_ready
+curl -N -X POST 'http://127.0.0.1:8000/stories/<story_id>/chapters/next?auto=true' -H 'content-type: application/json'   # tự viết (D-154): không cần lựa chọn, không tạo bộ lựa chọn
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: application/json' -d '{"choice_id": "choice-…"}'
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
 curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện

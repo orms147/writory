@@ -140,6 +140,9 @@ class ChapterRequest:
     commit_id: str | None = None  # None = tự sinh
     choice: Choice | None = None  # lựa chọn dẫn tới chương này; tác động của nó vào gói (D-55)
     feasibility: Feasibility | None = None  # G6, D-138: chỉ có với hành động tự viết
+    # Tự viết đến hết (D-154): False thì không tạo bộ lựa chọn cuối chương (không ai đọc, đỡ tiền); người chơi
+    # quay lại chơi tay thì `POST /stories/{id}/choices` tạo khi cần.
+    make_choices: bool = True
 
 
 @dataclass(frozen=True)
@@ -1012,6 +1015,8 @@ async def _summary(state: _State, runtime: Runtime[_Deps]) -> dict:
 
 async def _choices(state: _State, runtime: Runtime[_Deps]) -> dict:
     d = runtime.context
+    if not d.request.make_choices:  # tự viết đến hết (D-154): không gọi model, không phát sự kiện lựa chọn
+        return {"choices": []}
     runtime.stream_writer(stage("choices"))
     d.llm.tracker.start_scene()  # trần mỗi cảnh áp cho bước lựa chọn như một bước riêng
     chapter = state["chapter"]

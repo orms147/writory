@@ -22,6 +22,8 @@ export interface ChapterRunState {
   error: ApiError | null;
   /** Chữ người chơi đã chọn dẫn tới chương này (hiện ở màn chờ), nếu có. */
   chosen: string | null;
+  /** Viết ở chế độ "Tự viết đến hết" (`?auto=true`): không có lựa chọn cuối chương. */
+  auto: boolean;
   startedAt: number;
 }
 
@@ -74,27 +76,37 @@ export function isRunning(storyId: string): boolean {
 }
 
 /** Bắt đầu viết chương `chapter`. Đang có lần viết chạy cho truyện này thì trả lại lần đó. */
-export function startRun(storyId: string, chapter: number, chosen: string | null = null): ChapterRunState {
+export function startRun(
+  storyId: string,
+  chapter: number,
+  chosen: string | null = null,
+  { auto = false }: { auto?: boolean } = {},
+): ChapterRunState {
   const existing = runs.get(storyId);
   if (existing?.status === 'running') return existing;
   const state: ChapterRunState = {
     storyId, chapter, status: 'running', stages: [], scenes: [], committed: false, choices: null,
-    finished: false, blocked: null, error: null, chosen, startedAt: Date.now(),
+    finished: false, blocked: null, error: null, chosen, auto, startedAt: Date.now(),
   };
   runs.set(storyId, state);
   const controller = new AbortController();
   controllers.set(storyId, controller);
   emit(storyId);
-  void consume(storyId, controller.signal);
+  void consume(storyId, controller.signal, auto);
   return state;
 }
 
-async function consume(storyId: string, signal: AbortSignal) {
+async function consume(storyId: string, signal: AbortSignal, auto: boolean) {
   let terminal = false;
   try {
-    for await (const event of streamChapter(storyId, signal)) {
+    for await (const event of streamChapter(storyId, signal, auto)) {
       update(storyId, (s) => applyEvent(s, event));
       if (isTerminal(event)) terminal = true;
+    }
+    // Chế độ auto: luồng đóng ngay sau `chapter_committed`, không có `choices_ready`.
+    if (!terminal && auto && runs.get(storyId)?.committed) {
+      update(storyId, (s) => (s.status === 'running' ? { ...s, status: 'done' } : s));
+      return;
     }
     if (!terminal) throw clientError('CLIENT_STREAM_CUT');
   } catch (err) {

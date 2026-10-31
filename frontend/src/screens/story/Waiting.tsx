@@ -45,6 +45,7 @@ export function Waiting({
   onStart,
   handlers,
   extra,
+  auto,
 }: {
   title: string;
   chapter: number;
@@ -57,6 +58,8 @@ export function Waiting({
   handlers: ErrorHandlers;
   /** Hàng phụ dưới thanh trên (nút tải kịch bản của truyện audio). */
   extra?: ReactNode;
+  /** "Tự viết đến hết": nút bắt đầu, hoặc tiến độ và nút dừng khi đang tự viết. */
+  auto?: ReactNode;
 }) {
   const steps = stageSteps(stages);
   const word = numberWords(chapter);
@@ -126,6 +129,7 @@ export function Waiting({
             </div>
           </>
         )}
+        {auto && !error && <div className="mt-6">{auto}</div>}
       </section>
     </main>
   );

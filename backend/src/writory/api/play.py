@@ -192,8 +192,12 @@ class ChapterJob:
 
 
 def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4jDriver,
-                    config: deps.Config, plan: Plan, llm: deps.PlayerLLMs) -> Iterator[ChapterJob]:
+                    config: deps.Config, plan: Plan, llm: deps.PlayerLLMs,
+                    auto: bool = False) -> Iterator[ChapterJob]:
     """Mọi điều kiện kiểm được trước khi viết, để lỗi là JSON có status thay vì sự kiện SSE.
+
+    `auto` (`?auto=true`, D-154): tự viết đến hết. Không đòi lựa chọn của người chơi (hành động đã lưu thì vẫn
+    dùng), và chương không tạo bộ lựa chọn cuối chương: bản kế hoạch và đồ thị lái truyện như mọi chương.
 
     Giữ khoá của truyện (`db.job_lock`) từ trước các phép kiểm tới khi yêu cầu kết thúc: stream
     xong, lỗi, hay người chơi ngắt kết nối (FastAPI thoát dependency có `yield` sau khi stream
@@ -206,7 +210,7 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
         if chapter > plan.total_chapters:
             raise WritoryError(ErrorCode.STORY_COMPLETE, detail=f"truyện {story.id}: {committed}")
         action = load_action(conn, story.id, chapter)
-        if action is None and committed >= 1:
+        if action is None and committed >= 1 and not auto:
             raise WritoryError(ErrorCode.CHOICE_REQUIRED, detail=f"truyện {story.id}, ch{chapter}")
         brief = load_story_brief(conn, story.id)
         if brief is None:
@@ -219,6 +223,7 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
             story_brief=brief, player_action=None if action is None else action.text,
             choice=_picked_choice(conn, story.id, committed, action),
             darkness_level=story.darkness_level, feasibility=_feasibility(action),
+            make_choices=not auto,
         )
         run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
                          config=config, plan=plan, tracker=tracker,
