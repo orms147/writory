@@ -58,11 +58,15 @@ export interface ChapterEstimateOut {
 
 // --- tủ truyện, chi phí -------------------------------------------------------------------------
 
+/** Kiểu truyện chọn lúc khởi tạo: văn xuôi, hay kịch bản để đọc thành tiếng bằng TTS một giọng. */
+export type StoryStyle = 'prose' | 'audio';
+
 export interface StorySummary {
   story_id: string;
   title: string;
   length_level: string;
   length_label: string;
+  style: StoryStyle;
   chapter: number;
   finished: boolean;
   last_excerpt: string | null;
@@ -104,6 +108,8 @@ export interface SetupStartIn {
   length_level: string;
   darkness_level?: string | null;
   naming: { names: NamesStyle; places: PlacesStyle } | null;
+  /** Bỏ trống là `prose`. */
+  style?: StoryStyle;
 }
 
 export interface SettingOption {
@@ -130,6 +136,7 @@ export interface SetupOut {
   tags: { genre: string; era: string | null; voice: string | null };
   darkness_level: string | null;
   length_level: string;
+  style: StoryStyle;
   naming: { names: string; places: string };
   settings: SettingOption[] | null;
   setting_index: number | null;
@@ -181,6 +188,7 @@ export interface ChapterOut {
 export interface StoryOut {
   story_id: string;
   length_level: string;
+  style: StoryStyle;
   chapter: number;
   pending: boolean;
   choices: PlayerChoice[];

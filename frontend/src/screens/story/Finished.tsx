@@ -1,3 +1,4 @@
+import type { ReactNode } from 'react';
 import { Link } from 'react-router';
 import { LinkButton } from '../../components/ui';
 import { formatUsd } from '../../lib/format';
@@ -10,6 +11,7 @@ export function Finished({
   lastExcerpt,
   chapters,
   spentUsd,
+  extra,
 }: {
   storyId: string;
   title: string;
@@ -17,6 +19,8 @@ export function Finished({
   lastExcerpt: string | null;
   chapters: number;
   spentUsd: number | null;
+  /** Hàng phụ dưới các nút (nút tải kịch bản của truyện audio). */
+  extra?: ReactNode;
 }) {
   return (
     <main className="wt relative min-h-screen overflow-hidden px-4 pb-16 pt-5 md:px-[100px] md:pt-6">
@@ -58,6 +62,7 @@ export function Finished({
             Bắt đầu một đời mới
           </LinkButton>
         </div>
+        {extra && <div className="wt-rise wt-d4 mt-6">{extra}</div>}
       </section>
     </main>
   );

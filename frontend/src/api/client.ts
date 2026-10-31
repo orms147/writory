@@ -33,8 +33,8 @@ export function setFetch(fn: FetchLike): void {
   fetchImpl = fn;
 }
 
-async function send(method: string, path: string, body?: unknown, signal?: AbortSignal): Promise<Response> {
-  const init: RequestInit = { method, headers: { accept: 'application/json' } };
+async function send(method: string, path: string, body?: unknown, signal?: AbortSignal, accept = 'application/json'): Promise<Response> {
+  const init: RequestInit = { method, headers: { accept } };
   // Mọi yêu cầu ghi gửi `content-type: application/json`, kể cả khi không có thân: máy chủ dùng nó
   // để chống CSRF ở mọi chế độ (D-89, `deps.api_guard`). Cookie phiên đi kèm vì cùng
   // origin (`credentials` mặc định `same-origin`).
@@ -54,6 +54,18 @@ export async function request<T>(method: string, path: string, body?: unknown, s
   if (!response.ok) throw await errorFromResponse(response);
   try {
     return (await response.json()) as T;
+  } catch (err) {
+    if (isAbortError(err)) throw err;
+    throw clientError('CLIENT_BAD_RESPONSE');
+  }
+}
+
+/** GET một tệp chữ (`text/plain`). Lỗi vẫn là JSON G12 như mọi route. */
+export async function requestText(path: string, signal?: AbortSignal): Promise<string> {
+  const response = await send('GET', path, undefined, signal, 'text/plain');
+  if (!response.ok) throw await errorFromResponse(response);
+  try {
+    return await response.text();
   } catch (err) {
     if (isAbortError(err)) throw err;
     throw clientError('CLIENT_BAD_RESPONSE');
@@ -92,6 +104,8 @@ export const api = {
     request<ActionOut>('POST', `/stories/${enc(id)}/choice`, { choice_id: choiceId }),
   customAction: (id: string, text: string) => request<ActionOut>('POST', `/stories/${enc(id)}/action`, { text }),
 
+  /** Kịch bản audio: văn mọi chương đã ghi, theo thứ tự; rỗng khi chưa có chương nào. */
+  script: (id: string) => requestText(`/stories/${enc(id)}/script.txt`),
   chapterEstimate: (id: string) => request<ChapterEstimateOut>('GET', `/stories/${enc(id)}/estimate`),
   notebook: (id: string) => request<NotebookOut>('GET', `/stories/${enc(id)}/notebook`),
   narratorQuota: (id: string) => request<NarratorQuotaOut>('GET', `/stories/${enc(id)}/narrator`),

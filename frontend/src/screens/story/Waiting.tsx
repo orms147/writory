@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, type ReactNode } from 'react';
 import { Link } from 'react-router';
 import type { ApiError } from '../../api/errors';
 import type { StageEvent } from '../../api/types';
@@ -44,6 +44,7 @@ export function Waiting({
   idle,
   onStart,
   handlers,
+  extra,
 }: {
   title: string;
   chapter: number;
@@ -54,6 +55,8 @@ export function Waiting({
   idle: boolean;
   onStart?: () => void;
   handlers: ErrorHandlers;
+  /** Hàng phụ dưới thanh trên (nút tải kịch bản của truyện audio). */
+  extra?: ReactNode;
 }) {
   const steps = stageSteps(stages);
   const word = numberWords(chapter);
@@ -65,6 +68,7 @@ export function Waiting({
         </Link>
         <span className="truncate text-right">{title}</span>
       </header>
+      {extra && <div className="mt-3 flex justify-end">{extra}</div>}
 
       <div className="mt-10 grid flex-1 content-center gap-10 md:mt-0 md:grid-cols-[1fr_440px] md:items-end md:gap-16">
         <h1 className="font-display font-medium leading-[0.85] text-ink-50">

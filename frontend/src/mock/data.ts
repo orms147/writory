@@ -9,6 +9,7 @@ import type {
   PublicConfig,
   SettingOption,
   StoryLengthOption,
+  StoryStyle,
 } from '../api/types';
 
 /** Mọi mức độ dài của máy chủ giả, như `config/story_lengths.yaml`. `/config/public` chỉ trả mức
@@ -94,6 +95,37 @@ export const SCENES: string[] = [
   ].join('\n'),
 ];
 
+/** Cảnh của truyện mẫu kiểu kịch bản audio: viết để đọc thành tiếng (người kể xưng tôi, câu ngắn,
+ *  lời thoại có câu dẫn). */
+export const AUDIO_SCENES: string[] = [
+  [
+    'Tôi là người trực đêm của đài phát thanh thị trấn Sông Lam.',
+    'Đúng nửa đêm, tôi tắt nhạc. Tôi đọc bản tin cuối cùng. Rồi tôi ngồi chờ.',
+    'Ngọn đèn đỏ trên bàn bỗng sáng. Có người gọi vào đường dây trực tiếp.',
+    'Tôi nhấc máy. Một ông lão nói, giọng chậm và khàn: "Cô còn trực à? Tôi muốn xin một bài hát."',
+    'Tôi hỏi ông: "Ông muốn tặng bài hát cho ai?"',
+  ].join('\n'),
+  [
+    'Ông lão im lặng rất lâu. Tôi nghe thấy tiếng mưa ở đầu dây bên kia.',
+    'Rồi ông đáp: "Tặng cho cô gái đã gọi vào đây đêm qua. Cô không nhớ sao?"',
+    'Tôi không nhớ. Đêm qua, đài tắt máy phát vì mất điện.',
+    'Tôi nói với ông: "Đêm qua không có ai trực cả, thưa ông."',
+    'Ông lão cười khẽ. Ông nói: "Vậy thì người nghe máy đêm qua là ai?"',
+  ].join('\n'),
+  [
+    'Sáng hôm sau, tôi mở sổ trực của đài.',
+    'Trang của đêm mất điện không trống. Có một dòng chữ, nét mực xanh, giống hệt chữ của tôi.',
+    'Dòng chữ viết: "Một cuộc gọi lúc nửa đêm. Một ông lão xin bài hát cho chính mình."',
+    'Tôi gập sổ lại. Tay tôi lạnh ngắt.',
+  ].join('\n'),
+  [
+    'Đêm đó, tôi đến đài sớm hơn thường lệ.',
+    'Ông Sáu bảo vệ đứng ở cổng. Ông hỏi tôi: "Cô trực tiếp à? Hôm nay đâu phải ca của cô."',
+    'Tôi đáp: "Tôi chỉ muốn nghe lại băng ghi âm đêm qua."',
+    'Ông Sáu lắc đầu. Ông nói: "Đêm qua mất điện. Làm gì có băng nào."',
+  ].join('\n'),
+];
+
 /** Cảnh kết của truyện mẫu (chương cuối của bản kế hoạch giả). */
 export const END_SCENE = [
   'Sáng hôm sau, tuyết ngừng rơi. Kha Diệp treo chiếc đèn lồng giấy đỏ lên cột chuông và thắp nó giữa ban ngày.',
@@ -126,8 +158,15 @@ const CHOICE_SETS: Omit<PlayerChoice, 'id'>[][] = [
   ],
 ];
 
-export function makeChoices(chapter: number): PlayerChoice[] {
-  const set = CHOICE_SETS[(chapter - 1) % CHOICE_SETS.length] ?? CHOICE_SETS[0] ?? [];
+const AUDIO_CHOICES: Omit<PlayerChoice, 'id'>[] = [
+  { kind: 'action', kind_label: 'Hành động', tone: null, tone_label: null, text: 'Tua lại cuộn băng trực của đêm mất điện.' },
+  { kind: 'dialogue', kind_label: 'Lời thoại', tone: 'truth', tone_label: 'nói thật', text: 'Kể cho ông Sáu bảo vệ về cuộc gọi lúc nửa đêm.' },
+  { kind: 'inner', kind_label: 'Nội tâm', tone: null, tone_label: null, text: 'Tự hỏi vì sao giọng ông lão nghe quen đến thế.' },
+];
+
+/** `style`: truyện kịch bản audio có bộ lựa chọn riêng, hợp với truyện của nó. */
+export function makeChoices(chapter: number, style: StoryStyle = 'prose'): PlayerChoice[] {
+  const set = style === 'audio' ? AUDIO_CHOICES : (CHOICE_SETS[(chapter - 1) % CHOICE_SETS.length] ?? CHOICE_SETS[0] ?? []);
   return set.map((c) => ({ ...c, id: choiceId() }));
 }
 
