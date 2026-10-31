@@ -13,11 +13,15 @@ export interface ApiErrorBody {
 
 // --- giới hạn công khai (GET /config/public) ---------------------------------------------------
 
+/** Mức độ dài thuộc đúng một kiểu truyện; `/setup` từ chối mức khác kiểu (`REQUEST_INVALID`,
+ *  `fields: ["length_level"]`). `minutes`: số phút nghe của mức audio; null với mức truyện chữ. */
 export interface StoryLengthOption {
   key: string;
   label: string;
   chapters_min: number;
   chapters_max: number;
+  style: StoryStyle;
+  minutes: number | null;
 }
 
 export interface DarknessLevelOption {

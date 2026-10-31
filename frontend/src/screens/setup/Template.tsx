@@ -74,7 +74,10 @@ export function Template() {
   const [sending, setSending] = useState(false);
 
   const custom = names !== null || places !== null;
-  const level = config.story_lengths.find((l) => l.key === length) ?? null;
+  // Mỗi mức độ dài thuộc một kiểu truyện; chỉ hiện và chỉ gửi mức đúng kiểu đang chọn
+  // (`/setup` từ chối mức khác kiểu).
+  const levels = config.story_lengths.filter((l) => l.style === style);
+  const level = levels.find((l) => l.key === length) ?? null;
   const darkLabel = config.darkness_levels.find((d) => d.key === darkness)?.label ?? null;
   const ready = genre !== null && level !== null && !sending;
 
@@ -85,6 +88,13 @@ export function Template() {
   const pickPlaces = (k: PlacesStyle | null) => {
     setPlaces(k);
     if (k !== null && names === null) setNames(NAMES[0]?.key ?? 'han_viet');
+  };
+  /** Đổi kiểu truyện: giữ mức độ dài nếu đã đúng kiểu, không thì chọn mức đầu của kiểu mới. */
+  const pickStyle = (k: StoryStyle | null) => {
+    const next = k ?? 'prose';
+    setStyle(next);
+    const kept = config.story_lengths.find((l) => l.key === length && l.style === next);
+    if (!kept) setLength(config.story_lengths.find((l) => l.style === next)?.key ?? null);
   };
 
   const summary = [
@@ -232,7 +242,7 @@ export function Template() {
               labelledBy={ids.style}
               options={STYLES}
               value={style}
-              onChange={(k) => setStyle(k ?? 'prose')}
+              onChange={pickStyle}
               className="grid gap-3 md:max-w-[640px] md:grid-cols-2"
               optionClassName={(_, c) =>
                 cx('wt-card rounded-[12px] border px-4 py-3', c ? 'border-cinnabar-400 bg-cinnabar-400/10' : 'border-ink-700')
@@ -249,15 +259,15 @@ export function Template() {
           <Section id={ids.length} title="D · Độ dài">
             <RadioGroup
               labelledBy={ids.length}
-              options={config.story_lengths}
-              value={length}
+              options={levels}
+              value={level?.key ?? null}
               onChange={setLength}
-              className={cx('grid gap-3 sm:grid-cols-2', config.story_lengths.length > 2 && 'lg:grid-cols-4')}
+              className={cx('grid gap-3 sm:grid-cols-2', levels.length === 3 && 'lg:grid-cols-3', levels.length > 3 && 'lg:grid-cols-4')}
               optionClassName={(_, c) =>
                 cx('wt-card flex min-h-[120px] flex-col justify-end rounded-[16px] border p-5', c ? 'border-cinnabar-400 bg-[#201D1A]' : 'border-ink-750 bg-[#181715]')
               }
               render={(o, c) => {
-                const i = config.story_lengths.indexOf(o);
+                const i = levels.indexOf(o);
                 return (
                   <>
                     <span aria-hidden="true" className="mb-4 flex items-end gap-1">
@@ -271,6 +281,7 @@ export function Template() {
                     </span>
                     <span className="block font-display text-[26px] font-medium leading-tight">{o.label}</span>
                     <span className="mt-1 block text-[13px] text-ink-200">
+                      {o.minutes !== null && `khoảng ${o.minutes} phút nghe · `}
                       {o.chapters_min}–{o.chapters_max} chương
                     </span>
                   </>

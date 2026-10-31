@@ -148,7 +148,7 @@ export function createMockServer(options: MockOptions = {}) {
     };
     // Kiểu kịch bản audio: màn truyện có nút tải kịch bản .txt.
     const d: MockStory = {
-      id: 's-dai', title: 'Đài Phát Thanh Nửa Đêm', length_level: 'short', style: 'audio', total: 4, chapter: 1,
+      id: 's-dai', title: 'Đài Phát Thanh Nửa Đêm', length_level: 'audio_30', style: 'audio', total: 4, chapter: 1,
       scenes: { 1: [AUDIO_SCENES[0] ?? '', AUDIO_SCENES[1] ?? ''] },
       choices: { 1: makeChoices(1, 'audio') }, action: null, spent: 0.05, updated_at: daysAgo(1), narratorUsed: {}, busy: false,
     };
@@ -480,6 +480,8 @@ export function createMockServer(options: MockOptions = {}) {
       if (!length) return errorResponse('REQUEST_INVALID', ['length_level']);
       if (!length.player_selectable) return errorResponse('STORY_LENGTH_NOT_OPEN', ['length_level']);
       if (start.style !== undefined && !STYLES.includes(start.style)) return errorResponse('REQUEST_INVALID', ['style']);
+      // Mức độ dài thuộc một kiểu truyện; thiếu `style` là truyện chữ, như máy chủ thật.
+      if (length.style !== (start.style ?? 'prose')) return errorResponse('REQUEST_INVALID', ['length_level']);
       const out = newSetup(start);
       setups.set(out.session_id, { out });
       return jsonResponse(out);
