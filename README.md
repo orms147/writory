@@ -20,7 +20,7 @@ Stack: FastAPI · LangGraph · Neo4j · PostgreSQL · React/TypeScript · OpenRo
 
 ## Chạy máy local
 
-Cần Docker, Python và uv. Các bước, biến môi trường, chạy API và chạy cả một truyện từ dòng lệnh: [docs/runbook.md](docs/runbook.md).
+Cần Docker, Python và uv, Node 20.19+. Nhanh nhất: `make run` (GNU Make, Windows + PowerShell 7) cài phụ thuộc, bật Neo4j + Postgres, chạy migration rồi mở backend và giao diện ở http://localhost:5173; `make help` xem các lệnh khác. Các bước, biến môi trường, chạy API và chạy cả một truyện từ dòng lệnh: [docs/runbook.md](docs/runbook.md).
 
 ## Đã đo được gì
 

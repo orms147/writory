@@ -6,6 +6,7 @@
 - Node 20.19+ và npm (cho frontend, mục Frontend)
 
 ## Chạy máy local
+**Nhanh:** `make run` ở gốc repo (GNU Make; công thức chạy bằng PowerShell 7 `pwsh`, file `makefile`). Lệnh kiểm `.env` (chưa có thì chép từ `.env.example` rồi dừng để bạn điền), `uv sync` cho backend, `npm ci` cho frontend lần đầu, `docker compose up -d`, chạy migration (thử lại tới khi Postgres nhận kết nối), rồi chạy backend `127.0.0.1:8000` với `ENABLE_DEV_ROUTES=true` và giao diện `http://localhost:5173` cùng lúc; Ctrl+C dừng cả hai. `make mock` chỉ chạy giao diện với máy chủ giả, `make test` chạy test nhanh, `make stop` tắt Docker (giữ dữ liệu), `make help` xem hết. Các bước tay bên dưới làm đúng những việc đó.
 ```bash
 cp .env.example .env          # điền mật khẩu local và key OpenRouter của bạn
 docker compose up -d          # Neo4j (http://localhost:7474) + Postgres
