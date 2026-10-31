@@ -1,0 +1,2591 @@
+{
+  "format": "writory-audio-script/1",
+  "meta": {
+    "premise_id": "i1",
+    "premise": "Thiếu Gia Về Đúng Chỗ: Minh Quân, chàng trai hai mươi bốn tuổi bị hoán đổi thân phận từ nhỏ, trở về nhà họ Lê sau khi tiểu thư giả Bảo Châu tìm cách đuổi anh khỏi gia tộc. Bề ngoài anh chẳng có vẻ gì giống thiếu gia, nhưng lại nắm trong tay sổ sách chứng minh Bảo Châu âm thầm rút ruột công ty. Cú lật lớn nhất là người phát hiện vụ hoán đổi năm xưa chính là bà nội, người đã lặng lẽ chờ anh trưởng thành để trao lại quyền quyết định. Minh Quân vạch mặt kẻ giả tạo ngay trong tiệc mừng thọ, rồi tự chọn con đường riêng thay vì tranh giành gia sản.\nCảnh đáng chờ: Bảo Châu diễn cảnh yếu đuối trước khách quý, Minh Quân bình thản bật bản ghi âm cô ta tập lời vu oan.; Trong buổi họp gia tộc, anh lật từng khoản chi đáng ngờ khiến người vừa mắng anh phải đổi giọng xin lỗi.; Bà nội công bố lá thư cũ, hé lộ bà đã biết thân phận thật từ lâu.",
+    "minutes": 80,
+    "words_per_minute": 150,
+    "target_words": 12000,
+    "segments_planned": 12,
+    "words_per_segment": 1000,
+    "words": 13554,
+    "est_minutes": 90.4,
+    "model": "openai/gpt-6-luna",
+    "provider": "openrouter",
+    "prompt_version": "audio-1",
+    "moderation": true,
+    "dry_run": false,
+    "budget_usd": 0.5,
+    "generated": "2026-10-31",
+    "git": {
+      "commit": "58148ff9c8d5b0b3ee3921e7a7e48c44374914dc",
+      "dirty": false
+    },
+    "config_sha256": "da52c30fad3413fd6af79695eb5d21ed683c0aa231f61f634625e888b323a3fb",
+    "calls": 32,
+    "cost_usd": 0.036764
+  },
+  "plan": {
+    "title": "Thiếu Gia Về Đúng Chỗ",
+    "logline": "Bị tiểu thư giả Bảo Châu đuổi khỏi nhà họ Lê, Minh Quân bình thản mang theo sổ sách chứng minh cô ta rút ruột công ty. Anh trở về không phải để tranh gia sản, mà để lật mặt kẻ giả tạo và tự chọn con đường của mình.",
+    "protagonist_id": "minh_quan",
+    "cast": [
+      {
+        "id": "minh_quan",
+        "name": "Minh Quân",
+        "gender": "nam",
+        "age": 24,
+        "role": "Nhân vật chính, người thừa kế ruột bị hoán đổi thân phận từ nhỏ; bình tĩnh, sắc sảo, không ham gia sản.",
+        "voice": "Nam trung trầm, điềm tĩnh, càng bị ép càng lạnh",
+        "romance": false
+      },
+      {
+        "id": "bao_chau",
+        "name": "Bảo Châu",
+        "gender": "nữ",
+        "age": 24,
+        "role": "Tiểu thư giả được nhà họ Lê nuôi lớn; giỏi diễn yếu đuối, âm thầm rút ruột công ty và muốn đuổi Minh Quân.",
+        "voice": "Nữ ngọt giả tạo, lúc khóc lóc the thé, lúc tức giận sắc lạnh",
+        "romance": false
+      },
+      {
+        "id": "ba_noi",
+        "name": "Lê Ngọc Diệp",
+        "gender": "nữ",
+        "age": 76,
+        "role": "Bà nội nhà họ Lê; phát hiện vụ hoán đổi từ lâu nhưng âm thầm chờ Minh Quân trưởng thành để trao quyền quyết định cho anh.",
+        "voice": "Nữ lớn tuổi trầm ấm, ít lời mà uy nghiêm",
+        "romance": false
+      },
+      {
+        "id": "le_khai",
+        "name": "Lê Khải",
+        "gender": "nam",
+        "age": 52,
+        "role": "Cha Minh Quân, chủ tịch công ty; từng tin Bảo Châu và lạnh nhạt với Minh Quân, phải đối diện trách nhiệm của mình.",
+        "voice": "Nam trung niên khô khan, ban đầu áp đặt, về sau nặng nề hối hận",
+        "romance": false
+      },
+      {
+        "id": "thanh_tung",
+        "name": "Trần Thanh Tùng",
+        "gender": "nam",
+        "age": 39,
+        "role": "Kế toán trưởng lâu năm, bị Bảo Châu lợi dụng để che giấu các khoản chi; nắm giữ chứng cứ then chốt.",
+        "voice": "Nam hơi khàn, dè dặt, khi khai thật thì dứt khoát",
+        "romance": false
+      },
+      {
+        "id": "mai_linh",
+        "name": "Phạm Mai Linh",
+        "gender": "nữ",
+        "age": 31,
+        "role": "Luật sư độc lập được bà nội mời hỗ trợ kiểm tra hồ sơ và bảo đảm cuộc họp gia tộc diễn ra minh bạch.",
+        "voice": "Nữ rõ chữ, sắc sảo, nhịp nói nhanh và chuyên nghiệp",
+        "romance": false
+      }
+    ],
+    "secrets": [
+      {
+        "id": "so_sach_that",
+        "text": "Các khoản chi bất thường Minh Quân tìm thấy không phải sai sót kế toán: Bảo Châu dùng công ty trung gian đứng tên người quen để rút tiền công ty.",
+        "reveal_segment": 3
+      },
+      {
+        "id": "ke_toan_bi_ep",
+        "text": "Thanh Tùng từng giúp hợp thức hóa một phần chứng từ vì bị Bảo Châu nắm điểm yếu; ông đã âm thầm sao lưu hồ sơ gốc để tự cứu mình và làm chứng.",
+        "reveal_segment": 6
+      },
+      {
+        "id": "ghi_am_vu_oan",
+        "text": "Bản ghi âm Minh Quân nắm giữ là đoạn Bảo Châu tập trước lời vu oan rằng anh trộm hồ sơ, được ghi lại khi cô ta vô tình gọi điện cho anh.",
+        "reveal_segment": 8
+      },
+      {
+        "id": "ba_noi_biet_som",
+        "text": "Bà nội phát hiện vụ hoán đổi thân phận từ nhiều năm trước, giữ lại thư và hồ sơ xác minh, nhưng chọn chờ Minh Quân đủ trưởng thành để tự quyết định có nhận thân phận hay không.",
+        "reveal_segment": 11
+      }
+    ],
+    "segments": [
+      {
+        "title": "Bị đuổi khỏi nhà họ Lê",
+        "beats": [
+          "Mở bằng câu móc: “Bảo Châu vừa khóc vừa chỉ vào vali của tôi: Anh đi khỏi nhà này ngay tối nay.”",
+          "Trong phòng khách, Bảo Châu kể lể rằng Minh Quân làm gia đình mất mặt; Lê Khải lạnh lùng yêu cầu anh rời đi.",
+          "Minh Quân không cãi vã, chỉ hỏi vì sao người đang nắm chìa khóa kho hồ sơ lại sợ anh kiểm tra sổ sách.",
+          "Anh xách vali bước khỏi cổng, để lại một câu rằng ngày mai họ sẽ hiểu ai mới là người nên lo lắng.",
+          "Trên đường đi, anh mở cuốn sổ ghi các khoản chi lệch và nhận được tin nhắn nặc danh: Đừng quay lại một mình."
+        ]
+      },
+      {
+        "title": "Cuốn sổ không thể chối",
+        "beats": [
+          "Minh Quân gặp Mai Linh, người được bà nội âm thầm cử đến để kiểm tra hồ sơ công ty.",
+          "Anh đối chiếu những khoản chi trong sổ với báo cáo công khai, phát hiện nhiều khoản thanh toán lặp lại qua các công ty trung gian.",
+          "Bảo Châu gọi điện, giả vờ khuyên anh về nhà rồi buông lời đe dọa khi anh từ chối.",
+          "Mai Linh xác nhận chứng cứ đủ để yêu cầu giải trình, nhưng cần hồ sơ gốc và người trong công ty làm chứng.",
+          "Minh Quân nhận được giấy mời họp gia tộc, kèm lời nhắn rằng Bảo Châu đã chuẩn bị một màn tố cáo anh."
+        ]
+      },
+      {
+        "title": "Cuộc họp đổi giọng",
+        "beats": [
+          "Bảo Châu trình bày rằng Minh Quân làm thất thoát tài sản và lợi dụng danh nghĩa nhà họ Lê.",
+          "Minh Quân lần lượt đưa ra các khoản chi có ngày tháng, chữ ký duyệt và công ty nhận tiền; những người vừa mắng anh bắt đầu im lặng.",
+          "Lê Khải gằn giọng đòi giải thích, còn Bảo Châu lập tức nói đó chỉ là lỗi đánh máy.",
+          "Mai Linh yêu cầu tạm khóa quyền truy cập tài chính của người liên quan để kiểm tra độc lập.",
+          "Một bản chứng từ mới được gửi tới, cho thấy có người trong phòng họp đã ký xác nhận cho các khoản đáng ngờ."
+        ]
+      },
+      {
+        "title": "Kẻ đứng sau chứng từ",
+        "beats": [
+          "Bảo Châu đổ mọi trách nhiệm lên Thanh Tùng, kế toán trưởng lâu năm, khiến ông bị cả phòng chất vấn.",
+          "Minh Quân chỉ ra rằng một số chứng từ đã bị sửa sau ngày thanh toán, chứng tỏ có người đang cố dựng vật chứng.",
+          "Thanh Tùng lúng túng phủ nhận rồi bất ngờ xin tạm dừng họp, khiến Bảo Châu thoáng lộ vẻ hoảng hốt.",
+          "Lê Khải vẫn nghi ngờ Minh Quân vì cho rằng anh chỉ muốn chiếm quyền trong công ty.",
+          "Tối đó, Thanh Tùng nhắn Minh Quân đến kho lưu trữ một mình và nói rằng ông có hồ sơ gốc."
+        ]
+      },
+      {
+        "title": "Kho hồ sơ bị niêm phong",
+        "beats": [
+          "Minh Quân cùng Mai Linh đến kho lưu trữ và phát hiện cửa đã bị niêm phong bằng lệnh nội bộ.",
+          "Bảo Châu xuất hiện, cáo buộc họ đột nhập, rồi diễn cảnh sợ hãi trước nhân viên bảo vệ.",
+          "Minh Quân bình tĩnh yêu cầu gọi người lập biên bản và chỉ ra lệnh niêm phong mang chữ ký không hợp lệ.",
+          "Thanh Tùng xuất hiện với bản sao lưu hồ sơ, xác nhận nhiều chứng từ đã bị thay thế.",
+          "Ông tiết lộ mình từng tiếp tay cho việc hợp thức hóa sổ sách, nhưng bản gốc vẫn còn; trước khi ông nói rõ lý do, điện thoại của ông đổ chuông liên tục."
+        ]
+      },
+      {
+        "title": "Lời khai của người trong cuộc",
+        "beats": [
+          "Thanh Tùng thú nhận Bảo Châu đã ép ông sửa chứng từ bằng cách đe dọa công khai sai phạm cũ của ông.",
+          "Ông trao bản sao hồ sơ gốc cho Mai Linh và nhận trách nhiệm phần mình, đổi lại sẽ làm chứng đầy đủ.",
+          "Minh Quân không bao che cho Thanh Tùng, nhưng yêu cầu mọi người phân biệt người nhận tiền với người bị ép ký.",
+          "Bảo Châu tung tin Minh Quân mua chuộc kế toán trưởng, khiến hội đồng gia tộc chia phe.",
+          "Bà nội gọi Minh Quân đến gặp riêng và dặn anh hãy chuẩn bị cho một sự thật còn lớn hơn chuyện tiền bạc."
+        ]
+      },
+      {
+        "title": "Cái bẫy mang tên vu oan",
+        "beats": [
+          "Bảo Châu công khai buộc tội Minh Quân lấy cắp hồ sơ mật, đòi gia đình đuổi anh lần nữa.",
+          "Lê Khải ngập ngừng tin lời cô ta khi một tập tài liệu bị phát hiện trong phòng Minh Quân.",
+          "Mai Linh chỉ ra tài liệu bị đặt vào đó sau thời điểm Minh Quân rời nhà, nhưng Bảo Châu vẫn khóc lóc diễn vai nạn nhân.",
+          "Minh Quân đề nghị chờ đến tiệc mừng thọ bà nội để đối chất công khai, khiến Bảo Châu tưởng anh đã hết đường lui.",
+          "Trên đường về, anh nghe lại một đoạn ghi âm cũ và nhận ra giọng nói quen thuộc đang tập lời vu oan."
+        ]
+      },
+      {
+        "title": "Bản ghi âm giữa tiệc",
+        "beats": [
+          "Trong buổi chuẩn bị tiệc mừng thọ, Bảo Châu diễn cảnh yếu đuối trước khách quý và tố Minh Quân làm cô tổn thương.",
+          "Cô ta tiếp tục dựng chuyện anh trộm tài liệu, khiến Lê Khải yêu cầu anh xin lỗi để giữ thể diện gia đình.",
+          "Minh Quân bình thản bật bản ghi âm, trong đó Bảo Châu tập từng câu vu oan và tự dặn mình phải khóc đúng lúc.",
+          "Khách dự tiệc xôn xao; Bảo Châu đổi giọng, nói bản ghi bị cắt ghép và đòi kiểm tra thiết bị.",
+          "Mai Linh xác nhận bản ghi có nguồn gốc rõ ràng, nhưng Bảo Châu lập tức tuyên bố sẽ đưa ra bằng chứng cho thấy Minh Quân mới là kẻ làm giả."
+        ]
+      },
+      {
+        "title": "Tiệc mừng thọ thành phiên đối chất",
+        "beats": [
+          "Bà nội yêu cầu mọi người ngồi lại, biến buổi tiệc thành cuộc đối chất trước các thành viên gia tộc.",
+          "Minh Quân trình bày sổ sách, hồ sơ gốc và đường đi của tiền; Mai Linh giải thích từng mối nối bằng chứng.",
+          "Bảo Châu cãi rằng các khoản chuyển tiền là kế hoạch kinh doanh được Lê Khải đồng ý.",
+          "Lê Khải yêu cầu cô đưa ra văn bản phê duyệt, nhưng Bảo Châu chỉ có những bản chụp thiếu chữ ký.",
+          "Bà nội đặt lên bàn một phong thư cũ, nói rằng trước khi quyết định ai được giữ quyền điều hành, gia đình phải biết sự thật về Minh Quân."
+        ]
+      },
+      {
+        "title": "Lá thư bị giữ kín",
+        "beats": [
+          "Bà nội mở phong thư, công bố hồ sơ cho thấy Minh Quân mới là người con ruột của nhà họ Lê, còn Bảo Châu bị hoán đổi thân phận từ nhỏ.",
+          "Bà nội thừa nhận đã phát hiện sự thật từ nhiều năm trước nhưng không muốn Minh Quân bị biến thành quân cờ tranh gia sản.",
+          "Bà trao cho anh quyền quyết định có nhận lại thân phận và tham gia điều hành hay không.",
+          "Bảo Châu sững sờ rồi gào lên rằng cả nhà đã lừa dối cô; Minh Quân đáp rằng sự thật về thân phận không xóa được những việc cô đã làm.",
+          "Bảo Châu đòi bỏ đi, nhưng Mai Linh thông báo hồ sơ tài chính đã được chuyển cho cơ quan có thẩm quyền và cô sẽ phải giải trình."
+        ]
+      },
+      {
+        "title": "Không tranh giành gia sản",
+        "beats": [
+          "Bảo Châu cố thuyết phục Lê Khải rằng cô chỉ mắc sai lầm vì sợ mất vị trí trong gia đình.",
+          "Minh Quân chỉ ra những lần cô chủ động đổ tội, dựng chứng cứ và rút tiền; anh không chấp nhận lời xin lỗi để đổi lấy im lặng.",
+          "Thanh Tùng làm chứng về việc sửa sổ sách, còn Mai Linh xác nhận hồ sơ đã được bàn giao đầy đủ.",
+          "Lê Khải xin Minh Quân ở lại tiếp quản công ty, nhưng anh từ chối biến cuộc đời mình thành phần thưởng của một cuộc tranh đoạt.",
+          "Bà nội hỏi anh sẽ chọn con đường nào nếu không cần chứng minh mình thuộc về nhà họ Lê."
+        ]
+      },
+      {
+        "title": "Trở về đúng chỗ",
+        "beats": [
+          "Minh Quân nói anh nhận lại thân phận, nhưng không nhận quyền điều hành theo kiểu được ban phát; anh sẽ tự xây dựng sự nghiệp riêng.",
+          "Bà nội tôn trọng lựa chọn, còn Lê Khải lần đầu xin lỗi vì đã để Bảo Châu thay mình quyết định ai được coi là người nhà.",
+          "Gia đình thống nhất kiểm toán độc lập, thu hồi quyền quản lý của Bảo Châu và xử lý các khoản tiền theo kết luận chính thức.",
+          "Bảo Châu phải rời vị trí trong công ty, đối diện việc hoàn trả tài sản và trách nhiệm pháp lý; cô không còn được che chắn bằng vai nạn nhân.",
+          "Minh Quân rời buổi tiệc cùng cuốn sổ cũ, không phải như kẻ bị đuổi đi mà như người tự chọn nơi mình thuộc về."
+        ]
+      }
+    ],
+    "ending": "Bảo Châu mất vị trí trong công ty và phải chịu trách nhiệm về những khoản tiền đã rút; Thanh Tùng cũng nhận phần trách nhiệm của mình. Minh Quân nhận lại sự thật về thân phận nhưng không tranh gia sản, chọn con đường riêng và giữ quyền quyết định cuộc đời mình."
+  },
+  "stop": null,
+  "segments": [
+    {
+      "index": 1,
+      "title": "Bị đuổi khỏi nhà họ Lê",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu vừa khóc vừa chỉ vào vali của tôi: Anh đi khỏi nhà này ngay tối nay.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Câu ấy vang lên giữa phòng khách rộng đến mức tiếng nấc của cô ta cũng nghe thật đáng thương. Mấy người làm đứng nép bên hành lang. Cha tôi ngồi ở ghế chủ vị, mặt lạnh tanh. Còn chiếc vali cũ của tôi nằm chỏng chơ dưới chân cầu thang, như thể nó đã chờ sẵn ở đó từ lâu.",
+          "cue": "bình thản",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn Bảo Châu. Cô mặc chiếc váy màu kem, mắt đỏ hoe, hai bàn tay siết lấy khăn giấy. Nếu không biết cô đang cố đuổi tôi khỏi nhà, có lẽ tôi cũng tưởng cô mới là người bị dồn vào đường cùng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Em không muốn làm mọi chuyện thành ra thế này. Nhưng anh cứ gây chuyện, khiến cả nhà mất mặt. Hôm nay trước mặt bao nhiêu người, anh còn nghi ngờ em động vào hồ sơ công ty. Em thật sự không chịu nổi nữa.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta nói nhỏ, vừa đủ để những người xung quanh nghe thấy. Mỗi câu đều mềm mỏng. Mỗi chữ lại đẩy tôi thành kẻ ngang ngược.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không nhìn những người làm. Tôi nhìn cha mình. Lê Khải đặt tách trà xuống bàn. Ông không hỏi tôi chuyện gì đã xảy ra. Cũng không hỏi Bảo Châu vì sao lại có chiếc vali ở đây. Ông chỉ nhìn tôi như thể tôi đã khiến ông thất vọng thêm một lần nữa.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, chuyện trong nhà hôm nay dừng ở đây. Con thu dọn đồ rồi rời đi. Đừng khiến mọi người khó xử thêm.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe rõ từng chữ. Hai mươi bốn năm ở căn nhà này, đến lúc phải đi, tôi cũng không nhận được một lời hỏi han. Chỉ có một mệnh lệnh ngắn gọn, lạnh hơn cả gió ngoài cổng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu khẽ cúi đầu, như thể đang cố ngăn nước mắt. Nhưng khóe môi cô thoáng cong lên. Rất nhanh. Nhanh đến mức người khác có thể cho rằng mình nhìn nhầm.",
+          "cue": "chậm rãi",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không nhìn nhầm. Từ ngày cô bước vào nhà họ Lê, mọi thứ quanh tôi đều bị xếp lại. Phòng ngủ đổi chủ. Những lời khen của cha đổi người nhận. Ngay cả những câu chuyện về tương lai gia đình cũng dần chẳng còn chỗ cho tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi từng nghĩ chỉ cần mình im lặng, mọi chuyện sẽ yên. Tôi đã nhầm. Có những người xem im lặng là đồng ý. Còn có người xem nhẫn nhịn là dễ bắt nạt.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh đừng trách cha. Là em không biết phải sống thế nào nếu ngày nào cũng bị anh nghi ngờ. Em chỉ muốn gia đình bình yên thôi.",
+          "cue": "tủi thân",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta vừa nói vừa nhìn sang cha tôi. Một ánh mắt đủ để ông càng thêm tin rằng người cần được bảo vệ trong căn nhà này là cô.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Bảo Châu không cần phải giải thích với con. Con tự biết mình đã làm gì. Đi đi.",
+          "cue": "cứng rắn",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi khẽ gật đầu. Không phải vì đồng tình. Chỉ là tôi đã hiểu, tối nay chẳng ai định nghe sự thật từ miệng tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi cúi xuống kéo chiếc vali đứng dậy. Bánh xe lăn qua nền đá, phát ra tiếng khô khốc. Không ai bước tới giúp. Bảo Châu né sang một bên, nhường đường bằng vẻ mặt hiền lành của người vừa thắng một cuộc tranh cãi.",
+          "cue": "",
+          "sfx": "tiếng bánh vali lăn trên nền đá"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đi được vài bước thì dừng lại. Phía cuối hành lang là cánh cửa kho hồ sơ. Chìa khóa vẫn nằm trong tay người vừa nói mình chỉ muốn gia đình bình yên.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi quay lại nhìn Bảo Châu. Lần này, tôi không buồn cười nữa. Tôi chỉ muốn hỏi một câu mà cô ta đã cố tránh từ đầu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi chỉ hỏi một điều. Vì sao người đang nắm chìa khóa kho hồ sơ lại sợ tôi kiểm tra sổ sách?",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cả phòng khách im bặt. Bảo Châu ngừng khóc. Khăn giấy trong tay cô bị bóp nhàu. Cha tôi hơi cau mày, còn mấy người đứng gần đó lập tức nhìn nhau.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh lại định vu khống em sao? Em giữ chìa khóa theo yêu cầu của cha. Anh đừng có nói như thể em làm chuyện gì khuất tất.",
+          "cue": "run giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô nói nhanh hơn lúc nãy. Vẫn là giọng yếu đuối ấy, nhưng lần này sự hoảng hốt đã lọt ra giữa những chữ mềm mại.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Đủ rồi. Con vừa bị yêu cầu rời khỏi nhà, đừng còn kiếm chuyện với Bảo Châu.",
+          "cue": "tức giận",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn cha. Ông không hỏi vì sao tôi nhắc đến sổ sách. Ông cũng chẳng yêu cầu mở kho để làm rõ. Ông chỉ muốn cuộc nói chuyện kết thúc trước khi có ai đó phải đối diện với một câu hỏi khó chịu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi kéo vali đi tiếp. Qua khung cửa, tôi thấy bà nội đứng trên cầu thang. Bà không lên tiếng. Đôi mắt già nua dõi theo tôi, sâu và lặng. Tôi không biết bà đang nghĩ gì. Nhưng ánh nhìn ấy là thứ duy nhất trong căn nhà khiến tôi thấy mình chưa bị coi như người dưng.",
+          "cue": "xúc động nhẹ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Khi tôi bước qua cửa chính, sau lưng vang lên tiếng Bảo Châu thút thít lần nữa. Cánh cửa đóng lại. Âm thanh ấy như cắt đứt sợi dây cuối cùng giữ tôi ở nhà họ Lê.",
+          "cue": "",
+          "sfx": "tiếng cửa đóng sầm"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ngoài cổng, gió đêm quất vào mặt. Tôi đặt vali xuống, lấy điện thoại gọi một chiếc xe. Không có ai hỏi tôi sẽ đi đâu. Cũng chẳng có ai tiễn tôi thêm vài bước.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Chiếc xe đến muộn. Trong lúc chờ, tôi mở túi bên cạnh vali. Cuốn sổ bìa đen vẫn nằm ở đó. Tôi giữ nó đã nhiều ngày, bên trong là những khoản chi lệch mà tôi ghi lại từng dòng. Chưa đủ để kết luận điều gì. Nhưng đủ để tôi biết mình không thể cứ giả vờ như chưa nhìn thấy.",
+          "cue": "trầm ngâm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi lật đến trang cuối. Một dãy ngày tháng, vài con số, tên những khoản mục không khớp nhau. Tôi không định tranh nhà, cũng không định giành lấy thứ gì của cha. Nhưng nếu công ty đang có vấn đề, tôi không thể để những con số ấy biến mất cùng cánh cửa kho bị khóa.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Điện thoại rung lên. Một tin nhắn từ số lạ hiện trên màn hình. Không tên người gửi. Không lời chào. Chỉ có một câu ngắn ngủi.",
+          "cue": "",
+          "sfx": "tiếng điện thoại rung"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Đừng quay lại một mình.",
+          "cue": "thấp giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn dòng chữ ấy rất lâu. Rồi ngẩng đầu nhìn qua cánh cổng sắt, nơi căn nhà họ Lê chìm trong ánh đèn vàng. Nếu người gửi tin biết tôi sẽ quay lại, vậy họ còn biết những gì nữa?",
+          "cue": "hồi hộp",
+          "sfx": ""
+        }
+      ],
+      "words": 1128,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Bảo Châu khóc lóc đổ lỗi cho Minh Quân, còn Lê Khải yêu cầu anh rời khỏi nhà họ Lê. Minh Quân không tranh cãi, nhưng chất vấn vì sao Bảo Châu nắm chìa khóa kho hồ sơ mà lại sợ anh kiểm tra sổ sách; sự nghi ngờ trong phòng khách bắt đầu lộ rõ. Anh rời khỏi nhà với cuốn sổ ghi những khoản chi lệch, nhưng chưa thể kết luận nguyên nhân. Trên đường đi, Minh Quân nhận tin nhắn nặc danh cảnh báo đừng quay lại một mình.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 2,
+      "title": "Cuốn sổ không thể chối",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tôi không trả lời tin nhắn nặc danh. Chưa biết người gửi là ai, tôi không thể tin họ. Nhưng tôi cũng không thể coi lời cảnh báo ấy như chưa từng tồn tại.",
+          "cue": "trầm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Chiếc xe dừng bên đường. Tôi cất cuốn sổ vào trong áo khoác, rồi đọc địa chỉ bà nội gửi từ mấy hôm trước. Đó là một văn phòng nhỏ gần trung tâm, không phải nhà họ Lê.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Người chờ tôi ở cửa là Phạm Mai Linh. Cô mặc áo sơ mi trắng, tay cầm một tập hồ sơ mỏng. Vẻ mặt bình thản, nhưng ánh mắt lập tức dừng trên cuốn sổ trong tay tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Anh Minh Quân phải không? Bà cụ nhờ tôi hỗ trợ kiểm tra một số hồ sơ công ty. Bà dặn tôi không được tự ý kết luận thay anh.",
+          "cue": "điềm đạm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn cô, chưa vội bước vào. Bà nội đã âm thầm sắp xếp người giúp tôi. Nhưng bà không nói với tôi chuyện này. Trong nhà họ Lê, đôi khi sự im lặng còn khiến người ta phải đoán nhiều hơn một lời nói dối.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Cô biết chuyện tôi bị đuổi khỏi nhà tối nay chứ?",
+          "cue": "lạnh nhạt",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tôi biết. Nhưng tôi không đến để khuyên anh quay về, cũng không đến để bảo anh phải đối đầu với ai. Tôi chỉ có thể giúp anh xác định những gì cuốn sổ này chứng minh được.",
+          "cue": "thẳng thắn",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Câu trả lời ấy khiến tôi bớt đề phòng một chút. Tôi đưa cuốn sổ cho cô. Mai Linh không lật vội. Cô rửa tay, kéo ghế, rồi đặt một tờ giấy trắng bên cạnh như thể đây là buổi làm việc bình thường, chứ không phải đêm tôi vừa bị đuổi khỏi nhà.",
+          "cue": "",
+          "sfx": "tiếng ghế kéo nhẹ"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi mở sổ từ những trang đầu. Mỗi dòng đều có ngày, số tiền và mục chi. Có khoản nhỏ đến mức chẳng ai để ý. Có khoản lớn đến mức chỉ cần nhìn qua cũng biết nó không thể biến mất trong một lần ký nhầm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Anh ghi các khoản này từ báo cáo nội bộ?",
+          "cue": "tập trung",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Một phần từ những bảng công khai. Phần còn lại là các con số tôi ghi được khi đối chiếu những lần thanh toán. Tôi chưa có hồ sơ gốc.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh lấy máy tính, mở các báo cáo công khai rồi lần lượt đối chiếu. Căn phòng yên tĩnh đến mức tôi nghe rõ tiếng phím bấm. Cứ mỗi lần cô dừng lại, tôi lại thấy mình nín thở.",
+          "cue": "",
+          "sfx": "tiếng gõ phím"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Một khoản chi xuất hiện hai lần trong cùng tháng. Một khoản khác được ghi dưới tên dịch vụ tư vấn, rồi lại xuất hiện trong báo cáo ở một mục khác. Nhiều ngày thanh toán nối nhau, nhưng tên đơn vị nhận tiền không nằm trong danh sách quen thuộc của công ty.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Những điểm này đủ để yêu cầu giải trình. Nhưng chỉ nhìn sổ và báo cáo công khai thì chưa thể kết luận tiền đã đi đâu, hay ai chịu trách nhiệm.",
+          "cue": "nghiêm túc",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn những con số. Chúng chẳng biết khóc, chẳng biết run rẩy, cũng chẳng biết diễn vai người bị hại. Chúng chỉ nằm đó, lặp lại theo đúng thứ tự. Vậy mà trong căn nhà tối nay, một người nói năng rất khéo lại dễ được tin hơn cả chúng.",
+          "cue": "chua chát",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Muốn làm rõ, chúng ta cần hồ sơ gốc và người trong công ty xác nhận?",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Đúng vậy. Cần chứng từ, quy trình phê duyệt và lời giải thích của những người trực tiếp xử lý. Nếu thiếu những thứ đó, bất cứ ai cũng có thể nói cuốn sổ này do anh tự ghi để trả đũa.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi khép sổ lại. Đó chính là điều Bảo Châu muốn. Biến mọi câu hỏi thành thù riêng. Biến những con số thành một màn vu khống. Rồi chỉ cần mọi người tin rằng tôi cay cú, cô ta sẽ chẳng cần trả lời gì cả.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Điện thoại rung trên mặt bàn. Tên Bảo Châu hiện lên. Tôi nhìn màn hình một lúc mới bắt máy, bật loa ngoài. Mai Linh không nói gì, chỉ kéo tập hồ sơ lại gần.",
+          "cue": "",
+          "sfx": "tiếng điện thoại rung"
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh đang ở đâu? Cha rất giận. Anh cứ về nhà đi, em sẽ nói giúp anh vài câu. Chúng ta là người một nhà, đừng làm mọi chuyện căng thẳng thêm.",
+          "cue": "dịu dàng giả tạo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Giọng cô ta mềm đến mức nghe như một lời nhường nhịn. Tôi suýt bật cười. Cô vừa khóc trước mặt cả nhà, còn tôi thì mang vali đi giữa đêm. Vậy mà bây giờ cô lại đóng vai người muốn cứu vãn tình thân.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi không về. Tôi cần những hồ sơ liên quan đến các khoản thanh toán.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh nghĩ mấy dòng ghi chép đó có thể làm gì được em sao? Anh không còn ở nhà, cũng không có quyền đụng vào việc của công ty. Đừng tự biến mình thành trò cười.",
+          "cue": "hạ giọng, đe dọa",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lời tử tế biến mất nhanh thật. Tôi không hỏi cô đang sợ điều gì. Cũng không cần tranh cãi. Mai Linh đã nghe rõ. Còn những gì cô ta vừa nói, tôi sẽ tự nhớ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Cảm ơn cô đã nhắc. Tôi sẽ không về để xin ai cho phép mình đặt câu hỏi.",
+          "cue": "bình thản",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi ngắt máy. Mai Linh nhìn tôi, không tỏ vẻ thương hại. Tôi thích cách đó. Tôi không cần ai thương hại. Tôi cần một con đường đủ rõ để bước tiếp.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tôi sẽ giúp anh gửi yêu cầu bảo toàn hồ sơ và chuẩn bị danh sách tài liệu cần đối chiếu. Nhưng từ giờ, anh phải cẩn thận. Đừng tự ý quay lại kho hồ sơ một mình.",
+          "cue": "cảnh giác",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhớ tin nhắn nặc danh. Đừng quay lại một mình. Lời Mai Linh không giải thích được ai đã gửi tin, nhưng nó khiến cảnh báo kia nặng hơn. Có người biết chuyện đang diễn ra, và người ấy muốn tôi tránh xa một nơi nào đó.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi còn chưa kịp hỏi thêm thì điện thoại nhận được một thư điện tử mới. Giấy mời họp gia tộc. Thời gian là sáng mai. Bên dưới là lời nhắn ngắn, ghi rằng Bảo Châu đã chuẩn bị tố cáo tôi trước mọi người.",
+          "cue": "",
+          "sfx": "tiếng báo thư đến"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn cuốn sổ bìa đen. Đêm nay, nó chỉ đủ để đặt câu hỏi. Sáng mai, trước cả gia tộc, Bảo Châu định biến tôi thành kẻ có tội. Nhưng lần này, tôi sẽ không bước vào căn nhà ấy tay không.",
+          "cue": "căng thẳng",
+          "sfx": ""
+        }
+      ],
+      "words": 1080,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Minh Quân gặp Mai Linh, người được bà nội nhờ hỗ trợ kiểm tra hồ sơ, và đưa cô xem cuốn sổ ghi các khoản chi lệch. Họ đối chiếu với báo cáo công khai, thấy nhiều khoản thanh toán lặp lại hoặc không khớp, nhưng chưa đủ chứng cứ kết luận; Mai Linh nói cần hồ sơ gốc và người trong công ty làm chứng. Bảo Châu gọi điện giả vờ khuyên Minh Quân về nhà, rồi đe dọa khi anh từ chối. Minh Quân nhận giấy mời họp gia tộc vào sáng hôm sau, kèm tin Bảo Châu đã chuẩn bị tố cáo anh.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 3,
+      "title": "Cuộc họp đổi giọng",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Sáng hôm sau, tôi bước vào phòng họp nhà họ Lê cùng Mai Linh. Cuốn sổ bìa đen nằm trong tay tôi. Mọi ánh mắt đều dừng lại ở đó, như thể chỉ cần nhìn nó, họ đã có thể kết tội tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cha tôi ngồi ở đầu bàn. Bảo Châu ngồi bên cạnh ông, mặc bộ đồ trắng nhã nhặn, hai mắt đỏ hoe. Cô ta diễn vai nạn nhân rất đúng lúc. Những người hôm qua còn mắng tôi đã có mặt đầy đủ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu đứng lên trước. Cô ta đặt tay lên ngực, giọng run run, vừa đủ để ai cũng nghe thấy.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Con không muốn làm lớn chuyện. Nhưng Minh Quân đã lợi dụng danh nghĩa nhà họ Lê, tự ý tiếp cận hồ sơ nội bộ và khiến công ty thất thoát. Con chỉ muốn mọi người hiểu rõ sự việc trước khi anh ấy gây thêm tổn thất.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Có người lập tức quay sang nhìn tôi. Một người họ hàng lớn tuổi gõ ngón tay lên bàn. Người khác lắc đầu, như thể lời buộc tội đã là kết luận cuối cùng. Tôi không vội đáp. Tôi đợi Bảo Châu nói hết.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta lau khóe mắt, rồi nhìn cha tôi. Cử chỉ ấy giống hệt những lần trước. Chỉ cần cô ta rơi một giọt nước mắt, mọi câu hỏi đều biến thành sự vô lý của người đặt câu hỏi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, con có nghe chưa? Con lấy tư cách gì để tự ý lục hồ sơ công ty? Nếu có gì cần nói, nói ngay tại đây.",
+          "cue": "lạnh giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đứng dậy. Không cao giọng. Không cần phải cao giọng. Tôi mở cuốn sổ, lật đến trang đầu tiên đã đánh dấu, rồi đặt nó ngay ngắn giữa bàn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi sẽ nói về những khoản chi. Ngày mười hai tháng ba, công ty chuyển một khoản tiền lớn với nội dung thanh toán dịch vụ kho vận. Ba ngày sau, cùng đơn vị nhận thêm một khoản gần bằng, nhưng không có hạng mục công việc tương ứng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đọc ngày tháng, mã khoản chi và số tiền. Rồi tôi đưa bản đối chiếu cho người ngồi gần nhất. Người ấy nhìn xuống, vẻ mặt đổi khác. Tôi lật sang dòng tiếp theo.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Ngày hai mươi sáu tháng ba, lại có một khoản chi mang nội dung tư vấn quản lý. Người duyệt là Bảo Châu. Công ty nhận tiền là An Thành. Tên đơn vị này xuất hiện nhiều lần trong sổ, nhưng báo cáo hoạt động của công ty không ghi nhận dịch vụ tương ứng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu không còn nhìn tôi. Cô ta nhìn chằm chằm vào trang giấy, rồi lập tức ngẩng lên. Nụ cười yếu ớt trở lại trên môi, nhưng đã cứng hơn ban nãy.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Đó chỉ là lỗi đánh máy. Phòng kế toán đôi khi nhập nhầm tên đơn vị hoặc nội dung thanh toán. Anh lấy vài dòng ghi chép không đầy đủ để vu khống em, như vậy có công bằng không?",
+          "cue": "bối rối",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe xong, vẫn lật trang. Lỗi đánh máy có thể giải thích một dòng. Nhưng nó không thể tự nhân lên thành nhiều lần chuyển tiền, nhiều ngày khác nhau, cùng một mẫu chứng từ và cùng một người phê duyệt.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Nếu là lỗi, vậy xin giải thích vì sao tiền không đến những đơn vị cung cấp dịch vụ thật. Tôi đã đối chiếu thông tin đăng ký của An Thành. Đây là công ty trung gian, đứng tên một người quen của Bảo Châu. Các khoản tiền được chuyển qua đó, rồi rời khỏi hệ thống công ty.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Căn phòng im bặt. Tôi nhìn từng gương mặt. Những người vừa rồi còn muốn đuổi tôi ra khỏi cuộc họp giờ cúi xuống đọc giấy. Một người hắng giọng, nhưng không nói được câu nào.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi chỉ vào bản sao kê và dòng ghi trong sổ. Số tiền, ngày chuyển và đơn vị nhận khớp nhau. Những khoản chi bất thường không phải sai sót kế toán. Bảo Châu dùng công ty trung gian đứng tên người quen để rút tiền công ty.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Bảo Châu, con giải thích chuyện này đi. Nếu những con số là thật, tại sao lại có một đơn vị trung gian nhận tiền? Ai cho phép con ký duyệt?",
+          "cue": "gằn giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cha tôi nhìn cô ta, không nhìn tôi. Lần đầu tiên trong buổi sáng ấy, ông không lập tức đứng về phía Bảo Châu. Cô ta siết chặt hai bàn tay dưới bàn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Cha, con đã nói rồi, đó là lỗi đánh máy. Anh ấy không có hồ sơ gốc, chỉ mang một cuốn sổ không rõ lấy từ đâu. Mọi người không thể vì vài dòng này mà kết luận con làm sai.",
+          "cue": "gấp gáp",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh lúc này mới đứng lên. Cô không công kích Bảo Châu, cũng không bênh tôi bằng cảm tính. Cô đặt trước mặt mọi người danh sách tài liệu cần kiểm tra.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tôi đề nghị tạm khóa quyền truy cập tài chính của những người có liên quan trong thời gian kiểm tra độc lập. Đồng thời, cần bảo toàn chứng từ gốc và nhật ký phê duyệt. Nếu mọi thứ đều hợp lệ, việc rà soát sẽ chứng minh điều đó.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu lập tức quay sang cô. Nhưng Mai Linh đã đặt giấy tờ trước mặt từng người. Cô nói rõ rằng đây không phải kết luận có tội. Chỉ là biện pháp để hồ sơ không bị sửa đổi trong lúc đối chiếu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Tôi đồng ý cho kiểm tra. Không ai được xóa hay di chuyển chứng từ liên quan. Ai có quyền truy cập vào các khoản chi này sẽ tạm dừng cho đến khi có kết quả.",
+          "cue": "nghiêm khắc",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Một vài người trong phòng gật đầu. Bảo Châu vẫn ngồi im, môi mím chặt. Chỉ ít phút trước, cô ta còn chắc chắn rằng cả căn phòng sẽ đứng về phía mình. Giờ đây, từng ánh mắt đã đổi hướng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi khép cuốn sổ lại. Tôi không cảm thấy thắng lợi. Những con số mới chỉ mở ra một cánh cửa. Phía sau nó còn có người ký duyệt, chứng từ gốc và những câu trả lời mà tôi chưa có.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Đúng lúc ấy, điện thoại của thư ký rung lên. Cô mở thư điện tử mới, nhìn màn hình rồi tái mặt. Một bản chứng từ vừa được gửi tới cho cả nhóm dự họp.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh nhận bản in trước. Cô đọc rất nhanh, rồi dừng ở dòng cuối cùng. Tôi thấy trên đó có chữ ký xác nhận cho một trong những khoản đáng ngờ. Chữ ký ấy không thuộc về Bảo Châu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh ngẩng lên, nhìn quanh bàn. Người ký đang ngồi ngay trong căn phòng này.",
+          "cue": "",
+          "sfx": ""
+        }
+      ],
+      "words": 1135,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "so_sach_that",
+          "quote": "Những khoản chi bất thường không phải sai sót kế toán. Bảo Châu dùng công ty trung gian đứng tên người quen để rút tiền công ty."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Trong cuộc họp gia tộc, Bảo Châu tố Minh Quân gây thất thoát và lợi dụng danh nghĩa nhà họ Lê. Minh Quân đưa ra ngày tháng, khoản tiền, chữ ký duyệt và thông tin công ty trung gian, khiến mọi người biết Bảo Châu đã dùng công ty đứng tên người quen để rút tiền. Lê Khải đồng ý tạm dừng quyền truy cập tài chính của người liên quan để kiểm tra độc lập, còn thái độ của những người từng trách Minh Quân bắt đầu đổi khác. Một chứng từ mới xuất hiện, cho thấy có người trong phòng ký xác nhận khoản đáng ngờ, nhưng danh tính người đó chưa được nêu.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 4,
+      "title": "Kẻ đứng sau chứng từ",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Không ai lên tiếng ngay. Tờ chứng từ nằm giữa bàn, mỏng đến mức tưởng như chỉ cần một cơn gió cũng đủ thổi bay. Nhưng nét mực ở dòng xác nhận lại nặng trĩu, kéo ánh mắt của cả căn phòng về phía người ngồi cuối bàn.",
+          "cue": "căng thẳng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu là người phá vỡ im lặng trước. Cô ta không nhìn tôi. Cô ta nhìn thẳng vào Thanh Tùng, kế toán trưởng đã làm việc cho nhà họ Lê hơn mười năm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Chú Tùng, chữ ký này là của chú. Chú phụ trách kế toán, chú kiểm tra chứng từ, chú xác nhận khoản thanh toán. Nếu có sai sót thì chú phải chịu trách nhiệm. Đừng để người khác phải gánh thay chú.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mấy người trong phòng lập tức quay sang ông. Thanh Tùng vẫn ngồi thẳng, nhưng hai bàn tay đặt trên đùi đã siết chặt. Ông nhìn tờ giấy, rồi nhìn Bảo Châu. Chỉ trong khoảnh khắc, tôi thấy sự mệt mỏi thoáng qua trên gương mặt ông.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Anh Tùng, đây có phải chữ ký của anh không?",
+          "cue": "nghiêm giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Là chữ ký của tôi. Nhưng tôi cần xem hồ sơ đầy đủ trước khi trả lời về khoản này.",
+          "cue": "lúng túng",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Hồ sơ đầy đủ đang ở trước mặt chú rồi. Chú ký xác nhận, chú chịu trách nhiệm. Đừng nói với mọi người rằng có ai ép chú làm việc đó.",
+          "cue": "cay nghiệt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta nói nhanh hơn ban nãy. Mỗi câu đều như đóng đinh Thanh Tùng xuống ghế. Cô ta muốn mọi người tin rằng một người duy nhất đã làm sai, còn cô ta chỉ vô tình đứng gần. Tôi nhìn tờ chứng từ thêm lần nữa. Có thứ gì đó không ổn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi chỉ vào phần ngày tháng. Ngày thanh toán đã ghi rõ ở đầu trang. Nhưng dấu xác nhận và phần diễn giải bên dưới lại có nét mực khác, màu đậm hơn. Quan trọng hơn, ngày tạo bản in muộn hơn ngày khoản tiền được chuyển đi.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Khoan đã. Chứng từ này được in sau ngày thanh toán. Phần xác nhận có thể đã được sửa hoặc bổ sung sau đó. Một chữ ký trên bản in hiện tại chưa chứng minh được ai đã duyệt khoản tiền ban đầu.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Căn phòng lại im bặt. Mai Linh cầm tờ giấy lên, đối chiếu dòng thời gian với bản sao thư điện tử. Cô không kết luận thay ai, chỉ khẽ gật đầu khi thấy hai mốc ngày không khớp.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Anh Minh Quân nói đúng về điểm cần kiểm tra. Bản chứng từ này được tạo sau thời điểm thanh toán. Chúng ta phải xem lịch sử chỉnh sửa và bản lưu ban đầu, không thể chỉ dựa vào bản giấy vừa nhận.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu lập tức ngồi thẳng lại. Vẻ mềm yếu cô ta thường mang ra trước mặt cha tôi biến mất trong một nhịp thở. Rồi cô ta nở nụ cười, nhưng khóe môi cứng đờ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh ấy chỉ đang cố kéo dài thời gian. Chữ ký của chú Tùng vẫn ở đó. Còn chuyện ngày in, có thể là do hệ thống cập nhật lại. Chúng ta đừng để một chi tiết nhỏ làm chệch hướng.",
+          "cue": "gượng bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe cô ta nói, không tranh cãi. Nếu thật sự chỉ là hệ thống cập nhật, nhật ký lưu sẽ nói lên tất cả. Nhưng trước khi ai kịp đề nghị kiểm tra tiếp, Thanh Tùng đã đứng bật dậy.",
+          "cue": "",
+          "sfx": "tiếng ghế kéo mạnh"
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Xin tạm dừng cuộc họp. Tôi cần xác minh lại một số việc trước khi nói tiếp.",
+          "cue": "căng thẳng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ông nói xong thì cúi đầu, như thể chỉ cần nhìn vào ai đó lâu hơn một giây, ông sẽ không còn giữ được bình tĩnh. Bảo Châu thoáng tái mặt. Rất nhanh, cô ta lại quay đi, nhưng tôi đã thấy.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Anh Tùng, chúng ta đang họp về việc của công ty. Anh có thể nói ngay những gì anh biết.",
+          "cue": "khó chịu",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi chưa thể trả lời lúc này. Xin mọi người cho tôi một khoảng thời gian.",
+          "cue": "nghẹn",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải nhìn ông, rồi nhìn sang tôi. Sự nghi ngờ trong mắt cha tôi vẫn còn nguyên. Ông dường như đã quyết định rằng tôi lợi dụng cuộc rà soát để giành quyền trong công ty, còn mọi thứ tôi đưa ra chỉ là một nước cờ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, đừng tưởng có vài con số là con có thể thay đổi vị trí của mình ở đây. Cha sẽ không giao công ty cho con chỉ vì con khiến mọi người nghi ngờ Bảo Châu.",
+          "cue": "lạnh giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn ông. Tôi muốn nói rằng tôi chưa từng đòi công ty, cũng chẳng muốn lấy thứ gì từ tay ông. Nhưng tôi biết, nói thêm lúc này cũng không khiến ông tin. Tôi chỉ khép tập giấy trước mặt.",
+          "cue": "kiềm chế",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Con không xin vị trí nào cả. Con chỉ muốn những gì đã bị sửa phải được kiểm tra cho rõ.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cuộc họp tạm dừng. Người này rời khỏi phòng trước, người kia ở lại thì thầm. Bảo Châu đi ngang qua Thanh Tùng mà không nói một lời. Nhưng ánh mắt cô ta lướt qua ông sắc như lưỡi dao. Thanh Tùng không ngẩng lên.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Đến tối, tôi đã về căn hộ nhỏ mình thuê. Mai Linh vẫn đang sắp xếp những bản sao được phép mang đi. Điện thoại tôi rung lên. Một tin nhắn hiện ra từ số của Thanh Tùng.",
+          "cue": "",
+          "sfx": "tiếng điện thoại rung"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tin nhắn chỉ có một dòng: Đến kho lưu trữ một mình. Tôi có hồ sơ gốc.",
+          "cue": "trầm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn dòng chữ ấy rất lâu. Thanh Tùng đã xin dừng cuộc họp, Bảo Châu đã hoảng hốt, còn cha tôi vẫn nghĩ tôi đang tranh quyền. Tôi vừa định trả lời thì một tin nhắn thứ hai hiện lên.",
+          "cue": "căng thẳng",
+          "sfx": "tiếng điện thoại báo tin"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lần này, ông viết: Đừng để ai biết tôi đã nhắn cho cậu. Có người đang chờ sẵn ở kho.",
+          "cue": "thấp giọng",
+          "sfx": ""
+        }
+      ],
+      "words": 980,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Bảo Châu đổ trách nhiệm cho kế toán trưởng Thanh Tùng vì chữ ký trên chứng từ. Minh Quân chỉ ra chứng từ được in sau ngày thanh toán và có dấu hiệu chỉnh sửa, nên Mai Linh yêu cầu kiểm tra lịch sử lưu hồ sơ. Thanh Tùng xin tạm dừng cuộc họp, còn Lê Khải vẫn nghi Minh Quân muốn chiếm quyền công ty. Tối đó, Thanh Tùng nhắn Minh Quân đến kho lưu trữ một mình, nói có hồ sơ gốc và cảnh báo rằng có người đang chờ sẵn.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 5,
+      "title": "Kho hồ sơ bị niêm phong",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tôi không trả lời tin nhắn ngay. Đọc đi đọc lại hai lần, tôi vẫn thấy cái câu cuối như một bàn tay lạnh đặt lên gáy. Có người đang chờ sẵn ở kho. Nếu đó là bẫy, tôi càng không thể để Mai Linh bước vào một mình.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Anh định đi thật à?",
+          "cue": "lo lắng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh ngẩng lên khỏi chồng giấy. Cô không hỏi tôi đang nghĩ gì. Chắc cô đã đoán được qua vẻ mặt của tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi sẽ đi. Nhưng không đi một mình, cũng không bước vào nếu không có người lập biên bản.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi gọi lại cho Thanh Tùng. Ông không nghe máy. Tôi nhắn rằng tôi sẽ đến cùng luật sư và yêu cầu đại diện công ty có mặt. Một phút trôi qua. Rồi thêm một phút nữa. Điện thoại vẫn im lìm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Anh vừa nói không đi một mình. Vậy thì tôi đi cùng anh. Tôi sẽ gọi người phụ trách an ninh và yêu cầu họ ghi nhận tình trạng kho trước khi mở cửa.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Chúng tôi lái xe đến khu lưu trữ của công ty. Đêm đã xuống hẳn. Tòa nhà thấp, nằm tách khỏi khu văn phòng chính, chỉ còn vài ngọn đèn hành lang sáng vàng. Tôi vừa bước qua cổng đã thấy một nhân viên bảo vệ đứng chặn trước lối vào.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Hai người đến đây làm gì? Kho hồ sơ đã bị niêm phong theo lệnh nội bộ. Không ai được vào cả.",
+          "cue": "lạnh lùng",
+          "sfx": "tiếng bước chân trên nền gạch"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhận ra Bảo Châu trước khi cô ta bước hẳn ra khỏi bóng tối. Cô mặc áo khoác sáng màu, tóc tai chỉnh tề, gương mặt cố giữ vẻ bình thản. Nhưng bàn tay đang nắm chặt chiếc túi đã tố cáo cô ta.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi đến kiểm tra kho theo đề nghị của người giữ hồ sơ. Còn cô đến đây trước chúng tôi để làm gì?",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh còn dám hỏi tôi? Tôi nhận được tin có người định đột nhập. Tôi đến ngăn chuyện đó lại. Anh đã bị đình chỉ quyền truy cập, chẳng lẽ còn chưa đủ sao?",
+          "cue": "giận dữ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu quay sang nhân viên bảo vệ. Giọng cô ta bỗng nhỏ đi. Đôi mắt đỏ lên nhanh đến mức nếu không từng thấy cô diễn ở phòng khách nhà họ Lê, có lẽ tôi đã tưởng cô thật sự sợ hãi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Tôi không muốn làm lớn chuyện. Nhưng anh ấy cứ ép tôi. Tôi chỉ sợ lại xảy ra chuyện như lần trước.",
+          "cue": "run rẩy",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta vừa nói vừa lùi nửa bước. Người bảo vệ lập tức nhìn tôi bằng ánh mắt đề phòng. Màn diễn này quen đến phát chán. Chỉ cần có người nhìn, Bảo Châu lập tức biến mình thành nạn nhân.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Đừng tự tiện gán cho tôi chuyện chưa xảy ra. Anh bảo vệ, xin gọi người lập biên bản. Tôi yêu cầu ghi nhận ai ra lệnh niêm phong, giờ thực hiện, và hiện trạng cửa kho.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tôi là luật sư độc lập được mời hỗ trợ việc kiểm tra hồ sơ. Chúng tôi không yêu cầu phá cửa. Chúng tôi chỉ yêu cầu xác minh lệnh niêm phong và người chịu trách nhiệm.",
+          "cue": "chuyên nghiệp",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu khựng lại. Cô ta tưởng chúng tôi sẽ nổi nóng, sẽ giằng co, hoặc ít nhất sẽ cố mở cửa để cô có cớ buộc tội. Nhưng Mai Linh đã lấy sổ ghi chép ra. Còn tôi chỉ nhìn tờ giấy dán ngang ổ khóa.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tờ lệnh này ghi thời điểm niêm phong là chiều nay. Nhưng người ký được cho là đang ở cuộc họp gia tộc vào đúng thời điểm đó. Chữ ký cũng không khớp với mẫu lưu trong hồ sơ công ty.",
+          "cue": "bình thản",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh cúi sát tờ giấy, không chạm vào. Cô chụp ảnh dấu niêm phong, số văn bản và phần chữ ký. Người bảo vệ nhìn qua nhìn lại, vẻ mặt càng lúc càng lúng túng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tôi đề nghị giữ nguyên hiện trạng, không ai được bóc niêm phong hay di chuyển tài liệu. Chúng tôi sẽ gửi yêu cầu xác minh chính thức ngay tối nay.",
+          "cue": "nghiêm nghị",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Các người đang cố dựng chuyện để bôi nhọ tôi. Kho này không phải chỗ để anh ta tìm thêm thứ gì đổ lên đầu tôi.",
+          "cue": "cáu kỉnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lần này giọng cô ta không còn run. Câu nói bật ra quá nhanh, quá thật. Nhân viên bảo vệ cũng nghe thấy. Bảo Châu nhận ra điều đó, lập tức mím môi, nhưng đã muộn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Đừng cãi nhau ở đây. Tôi có thứ cậu cần, Minh Quân.",
+          "cue": "mệt mỏi",
+          "sfx": "tiếng cửa xe đóng"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Thanh Tùng từ chiếc xe đỗ phía bên kia đường bước xuống. Ông cầm một tập bìa hồ sơ mỏng, áo sơ mi nhăn nhúm, gương mặt hốc hác hơn lúc họp. Bảo Châu nhìn ông, sắc mặt đổi hẳn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh Tùng, anh không được mang tài liệu công ty ra ngoài. Anh biết rõ quy định.",
+          "cue": "đe dọa",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi biết. Vì vậy đây chỉ là bản sao lưu. Hồ sơ gốc vẫn còn trong kho.",
+          "cue": "kiệt sức",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ông đưa tập giấy cho Mai Linh. Cô kiểm tra từng trang, đối chiếu ngày tháng và dấu xác nhận. Tôi không chen vào. Tôi muốn nghe chính Thanh Tùng nói, không phải đoán từ những mảnh giấy rời.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Những bản này cho thấy chứng từ trong hệ thống đã bị thay thế. Có trang được in lại sau ngày thanh toán, nhưng bản lưu của ông giữ nguyên dữ liệu cũ.",
+          "cue": "tập trung",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Ông lưu chúng từ khi nào?",
+          "cue": "kiềm chế",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Từ lúc tôi nhận ra có chứng từ không còn giống bản mình từng ký. Tôi đã sao lưu những gì có thể, nhưng không dám đưa ra trước đây.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ông ngừng lại, cúi nhìn đôi tay mình. Không ai hỏi dồn. Bảo Châu nhìn ông như muốn dùng ánh mắt ép ông im lặng. Nhưng Thanh Tùng đã đứng trước mặt chúng tôi, mang theo bản sao mà cô ta không thể biến mất chỉ bằng một câu phủ nhận.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi cũng phải nhận trách nhiệm. Có một phần chứng từ tôi đã giúp hợp thức hóa. Bản gốc vẫn còn, nhưng trước khi tôi nói rõ vì sao, tôi cần—",
+          "cue": "nặng nề",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Điện thoại trong túi ông rung lên. Một lần. Rồi thêm lần nữa. Thanh Tùng nhìn màn hình, mặt tái đi. Cuộc gọi thứ ba đến ngay sau đó, dồn dập đến mức ông suýt đánh rơi tập giấy.",
+          "cue": "",
+          "sfx": "điện thoại rung liên tục"
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Ông Tùng, ai đang gọi cho ông?",
+          "cue": "căng thẳng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Thanh Tùng không trả lời. Ông nhìn tôi, rồi nhìn Bảo Châu. Bên kia cánh cửa bị niêm phong, kho hồ sơ vẫn im lìm. Nhưng tiếng chuông trong tay ông cứ vang lên, như thể người ở đầu dây bên kia biết chính xác chúng tôi đang đứng ở đâu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Và rồi, Thanh Tùng bấm nhận cuộc gọi.",
+          "cue": "hồi hộp",
+          "sfx": ""
+        }
+      ],
+      "words": 1126,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Minh Quân và Mai Linh đến kho lưu trữ, nơi Bảo Châu đã có mặt và dùng vẻ sợ hãi để tố họ định đột nhập. Minh Quân chỉ ra lệnh niêm phong có thời điểm và chữ ký đáng ngờ, còn Mai Linh yêu cầu lập biên bản và giữ nguyên hiện trạng. Thanh Tùng xuất hiện với bản sao lưu cho thấy chứng từ trong hệ thống đã bị thay thế, đồng thời thừa nhận ông từng giúp hợp thức hóa một phần giấy tờ nhưng chưa nói lý do. Quan hệ giữa Minh Quân và Thanh Tùng chuyển từ nghi ngờ sang bước đầu hợp tác, nhưng cuộc gọi dồn dập khiến lời giải thích bị ngắt ngang.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 6,
+      "title": "Lời khai của người trong cuộc",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Thanh Tùng áp điện thoại lên tai. Ông không bật loa ngoài. Nhưng giọng Bảo Châu ở đầu dây bên kia vẫn vang đủ lớn giữa kho hồ sơ yên ắng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh Tùng, anh đang ở đâu? Tôi nghe nói anh mang tài liệu ra khỏi kho. Đừng làm chuyện khiến mọi người hiểu lầm.",
+          "cue": "dịu dàng giả tạo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ông nhìn tập giấy trong tay Mai Linh. Rồi ông nhìn tôi. Tôi không giục. Lần này, ông phải tự chọn mình sẽ tiếp tục im lặng hay nói ra.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi đang ở kho lưu trữ. Cô biết rõ tôi ở đâu mà.",
+          "cue": "mệt mỏi",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh nói gì vậy? Tôi chỉ muốn nhắc anh rằng những bản sao đó không chứng minh được điều gì. Nếu anh tiếp tục, chuyện cũ của anh cũng sẽ bị đưa ra ánh sáng.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu không còn giả vờ lo lắng. Cô ta vừa tự nói ra điều khiến Thanh Tùng sợ hãi suốt bấy lâu. Mai Linh đặt tập hồ sơ xuống bàn, ra hiệu cho ông cứ nói tiếp.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Cô đã dùng sai phạm cũ của tôi để ép tôi sửa chứng từ. Cô dọa gửi hồ sơ đó cho ban kiểm soát, rồi nói tôi sẽ bị đổ hết trách nhiệm nếu không làm theo.",
+          "cue": "đau đớn nhưng dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh đang vu khống tôi. Anh ký, anh đóng dấu. Không ai bắt anh cầm bút cả.",
+          "cue": "giận dữ",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Đúng. Không ai cầm tay tôi. Tôi đã ký. Tôi không phủ nhận phần sai của mình. Nhưng cô biết điểm yếu của tôi, rồi dùng nó để bắt tôi hợp thức hóa những khoản chi mà tôi từng cảnh báo là không ổn.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe giọng ông run lên. Ông không xin ai thương hại. Ông cũng không tìm cách biến mình thành người vô can. Điều đó khiến lời thú nhận nặng hơn, nhưng cũng thật hơn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Ông Tùng, ông đã sửa những chứng từ nào? Và có bao nhiêu khoản tiền đi qua những giấy tờ đó?",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi sẽ liệt kê đầy đủ. Có những giấy tờ tôi sửa theo yêu cầu của Bảo Châu, có những lần tôi chỉ ký xác nhận sau khi cô ấy đưa hồ sơ đã chuẩn bị sẵn. Tôi biết có chỗ không đúng, nhưng tôi vẫn làm.",
+          "cue": "xấu hổ",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Vậy ông sẽ chịu trách nhiệm cho phần ông đã làm. Tôi không thể bao che cho ông chỉ vì ông bị ép. Nhưng cũng không ai được đánh đồng người ký giấy với người nhận tiền.",
+          "cue": "kiên quyết",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Câu nói ấy khiến Thanh Tùng ngẩng lên. Bảo Châu im bặt một nhịp. Mấy người trong gia tộc đứng ngoài cửa nhìn nhau. Họ muốn một câu trả lời đơn giản, một kẻ có thể gánh hết mọi lỗi lầm. Nhưng sự thật chưa bao giờ đơn giản như vậy.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tôi sẽ lập biên bản lời khai ngay tại đây. Ông Tùng, ông có thể giao cho tôi bản sao hồ sơ gốc, kèm danh sách những chứng từ ông đã can thiệp. Những tài liệu này sẽ được niêm phong để kiểm tra độc lập.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi đồng ý. Tôi sẽ làm chứng đầy đủ, kể cả những việc khiến tôi phải chịu trách nhiệm. Đây là bản sao lưu tôi giữ lại. Tôi sẽ giao hết cho cô.",
+          "cue": "kiên định",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ông đẩy tập giấy về phía Mai Linh. Cô kiểm lại từng trang, ghi nhận thời điểm nhận và yêu cầu hai người làm chứng ký tên. Không có tiếng vỗ tay. Không ai tuyên bố mọi chuyện đã sáng tỏ. Nhưng lần đầu tiên, lời khai và chứng cứ cùng nằm trên một bàn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Hay thật. Một người bị điều tra vì sai phạm cũ, một kẻ muốn cướp công ty, rồi hai người bắt tay dựng chuyện. Minh Quân đã mua chuộc kế toán trưởng để đổi lời khai. Mọi người còn định tin họ đến bao giờ?",
+          "cue": "đầy vẻ khinh miệt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu vừa cúp máy, điện thoại của mấy người đứng ngoài đã sáng lên. Tin nhắn được chuyển đi nhanh đến mức tôi chưa kịp hỏi ai gửi. Cô ta không cần chứng minh tôi mua chuộc Thanh Tùng. Cô ta chỉ cần gieo câu đó vào đầu những người vốn đã nghi ngờ tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, chuyện này không thể chỉ nghe lời một phía. Nếu có việc mua chuộc, công ty phải làm rõ.",
+          "cue": "căng thẳng",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Vậy hãy kiểm tra mọi thứ. Lịch sử liên lạc, thời gian giao tài liệu, bản gốc trong kho và lời khai của từng người. Nếu tôi sai, tôi sẽ chịu trách nhiệm. Nhưng đừng lấy một tin đồn để xóa dấu vết trên chứng từ.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Một người chú lên tiếng đòi tạm dừng việc kiểm tra. Người khác lại nói cần giữ nguyên quyền truy cập của Bảo Châu cho đến khi có kết luận. Cả căn phòng chia thành hai phe. Có người nhìn tôi như một kẻ tính toán. Có người nhìn Bảo Châu lần đầu tiên mà không tin ngay vẻ mặt yếu đuối của cô ta.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Không ai được tự ý lấy hồ sơ hoặc thay đổi dữ liệu nữa. Tôi đề nghị lập danh sách người tiếp cận kho, sao lưu hệ thống và ghi nhận toàn bộ tài liệu vừa nhận. Mọi kết luận sẽ dựa trên chứng cứ, không dựa trên tin nhắn lan truyền.",
+          "cue": "cứng rắn",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh bình tĩnh giữ cuộc họp khỏi biến thành một trận cãi vã. Thanh Tùng ngồi xuống ký vào biên bản. Nét chữ của ông run, nhưng không dừng lại. Tôi không thấy nhẹ nhõm. Một lời khai không thể xóa những gì ông đã làm. Nhưng ít nhất, ông đã thôi trốn sau sự im lặng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi xin nhận phần trách nhiệm của mình. Tôi sẽ không sửa lời khai để làm vừa lòng ai. Nếu cần đối chất, tôi sẽ có mặt.",
+          "cue": "chân thành",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu quay đi, nhưng vẻ bình tĩnh trên mặt cô ta đã rạn. Cô ta biết những bản sao ấy còn đó. Cô ta cũng biết Thanh Tùng đã nói ra cách mình bị khống chế. Thế mà cô ta vẫn có thể khiến cả nhà họ Lê nghi ngờ tôi chỉ bằng một lời buộc tội.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Minh Quân, theo bà vào phòng bên. Có chuyện bà cần nói riêng với cháu.",
+          "cue": "trầm tĩnh",
+          "sfx": "tiếng gậy khẽ chạm sàn"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội đứng ở cuối hành lang. Bà không nhìn Bảo Châu, cũng không hỏi Thanh Tùng thêm. Ánh mắt bà đặt lên tôi, nặng hơn thường ngày. Tôi bước theo bà, còn tiếng tranh cãi phía sau dần bị cánh cửa khép lại.",
+          "cue": "",
+          "sfx": "tiếng cửa khép nhẹ"
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Bà muốn nói chuyện gì ạ?",
+          "cue": "thận trọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Chuyện hôm nay mới chỉ là tiền bạc. Cháu cần chuẩn bị cho một sự thật lớn hơn, có thể khiến mọi thứ cháu nghĩ về nhà họ Lê thay đổi.",
+          "cue": "nghiêm nghị",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn bà. Bà không giải thích thêm. Chỉ đặt tay lên cánh cửa trước mặt, như thể sau nó là điều bà đã chờ rất lâu mới có thể nói ra.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Và rồi bà nội bảo tôi rằng, trước khi nghe sự thật ấy, tôi phải tự trả lời một câu hỏi: mình có còn muốn biết mình thật sự là ai không.",
+          "cue": "lặng người",
+          "sfx": ""
+        }
+      ],
+      "words": 1182,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "ke_toan_bi_ep",
+          "quote": "Cô đã dùng sai phạm cũ của tôi để ép tôi sửa chứng từ."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Thanh Tùng thú nhận Bảo Châu đã dùng sai phạm cũ của ông để ép ông sửa chứng từ, đồng thời nhận phần trách nhiệm của mình và giao bản sao hồ sơ gốc cho Mai Linh. Minh Quân không bao che cho ông, nhưng yêu cầu mọi người phân biệt người ký chứng từ với người nhận tiền. Bảo Châu tung tin Minh Quân mua chuộc Thanh Tùng, khiến các thành viên nhà họ Lê chia phe. Bà nội đưa Minh Quân sang phòng riêng và cảnh báo rằng phía trước còn một sự thật lớn hơn chuyện tiền bạc.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 7,
+      "title": "Cái bẫy mang tên vu oan",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tôi không trả lời ngay. Câu hỏi của bà nội cứ mắc lại trong đầu, nhưng bên ngoài cánh cửa, cuộc họp vẫn chưa kết thúc. Tôi nói với bà rằng mình muốn biết sự thật, nhưng không phải lúc này. Nếu Bảo Châu còn đang giăng bẫy, tôi không thể bỏ mặc những người vừa đứng ra làm chứng.",
+          "cue": "trầm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Được. Bà sẽ không ép cháu. Chuyện nào cần nói, bà sẽ nói khi cháu sẵn sàng.",
+          "cue": "dịu dàng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội không giữ tôi lại. Tôi trở ra phòng họp. Lê Khải đã đứng cạnh cửa sổ, còn Bảo Châu ngồi giữa mấy người họ hàng, hai mắt đỏ hoe. Cô ta vừa khóc vừa kể rằng hồ sơ gốc có thể đã bị tôi lấy đi trước khi kho bị niêm phong.",
+          "cue": "",
+          "sfx": "tiếng cửa mở"
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Con không muốn nghi oan cho anh Quân. Nhưng tập hồ sơ mật biến mất sau khi anh ấy đến kho. Bây giờ lại có người đứng ra làm chứng cho anh. Chẳng lẽ mọi chuyện trùng hợp đến thế sao?",
+          "cue": "nức nở",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cả phòng quay sang nhìn tôi. Bảo Châu không chỉ vu oan. Cô ta còn khéo léo biến người làm chứng thành đồng phạm, biến câu hỏi thành bản án. Lê Khải cau mày, nhưng vẫn không lên tiếng ngay.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Tập hồ sơ đó có danh sách các khoản chi và giấy xác nhận nội bộ. Con đã thấy nó ở kho trước khi bị niêm phong. Giờ nó nằm trong phòng Minh Quân. Nếu anh ấy không lấy, sao nó lại ở đó?",
+          "cue": "run rẩy giả tạo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta vừa dứt lời, một người họ hàng đặt tập tài liệu lên bàn. Trên bìa có dấu mật của công ty. Mai Linh lập tức mang găng tay, kiểm tra từng trang mà không để ai chạm vào. Tôi nhìn tập giấy, rồi nhìn Bảo Châu. Cô ta đã chọn đúng thứ khiến người ta dễ hoảng nhất: một bằng chứng trông thật đến mức không ai muốn hỏi nó xuất hiện bằng cách nào.",
+          "cue": "căng thẳng",
+          "sfx": "tiếng giấy đặt xuống bàn"
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, con có thể giải thích vì sao tài liệu này ở trong phòng con không?",
+          "cue": "do dự",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải nhìn tôi. Trong mắt ông có nghi ngờ, nhưng cũng có chút mệt mỏi. Tôi không trách ông vì đã hỏi. Tôi chỉ thấy đau vì ông lại chọn tin vào thứ được đặt sẵn trước mặt, thay vì nhớ đến những gì tôi đã đưa ra.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi không lấy tập hồ sơ này. Căn phòng đó đã không còn là nơi tôi ở kể từ ngày tôi bị đuổi khỏi nhà. Ai có chìa khóa, ai ra vào, đều có thể kiểm tra.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu cúi mặt, hai vai run lên. Cô ta biết cách khiến sự im lặng của mình giống một lời nhẫn nhịn. Nhưng Mai Linh đã lật đến tờ biên bản niêm phong và chỉ vào dấu thời gian.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Theo nhật ký ra vào và biên bản bàn giao, Minh Quân rời khỏi nhà trước khi tập tài liệu này được đưa vào phòng. Tôi đề nghị kiểm tra camera hành lang, sổ giao nhận và người có quyền vào khu vực đó. Tạm thời không ai được kết luận đây là tài liệu do anh ấy lấy.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Một vài người họ hàng nhìn nhau. Câu nói của Mai Linh không kết tội Bảo Châu, nhưng nó đẩy lời vu oan ra khỏi chỗ an toàn. Bảo Châu lập tức bật khóc lớn hơn, như thể chính việc bị yêu cầu kiểm tra đã làm cô ta đau đớn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Em chỉ muốn bảo vệ gia đình. Em không ngờ chỉ cần nói ra điều mình thấy, em lại bị nghi ngờ. Anh Quân, nếu anh không làm, sao anh không để mọi người xem phòng anh ngay từ đầu?",
+          "cue": "nức nở",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta vẫn ép tôi vào một lựa chọn giả. Nếu tôi im lặng, cô ta gọi đó là nhận tội. Nếu tôi phản ứng, cô ta đóng vai người bị bắt nạt. Tôi bước đến cạnh bàn, không chạm vào tập hồ sơ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Cứ kiểm tra phòng tôi. Nhưng phải có người lập biên bản, ghi lại từng bước và giữ nguyên dấu vết. Tôi không chấp nhận một cuộc khám xét lén lút rồi mai lại có thêm thứ gì đó xuất hiện.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh gật đầu, lập tức yêu cầu bảo vệ ghi nhận người tham gia. Bảo Châu lau nước mắt, không phản đối nữa. Cô ta nghĩ mình đã thắng, vì trong mắt mọi người, cái bẫy đã có hình dạng. Nhưng tôi biết điều cô ta muốn nhất không phải một cuộc khám xét. Cô ta muốn tôi nổi nóng, muốn tôi tự phá hỏng vị trí của mình trước mặt cả nhà.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Chúng ta sẽ kiểm tra theo đúng thủ tục. Bảo Châu, con cũng phải giao danh sách những người đã vào khu vực đó.",
+          "cue": "ngập ngừng nhưng nghiêm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu gật đầu, vẫn khóc. Cô ta không mất vai diễn, chỉ mất đi chút chắc chắn trong ánh mắt. Tôi không vạch mặt cô ta ngay. Những lời buộc tội cần được giữ nguyên, cùng với thời điểm tập hồ sơ được đưa vào phòng tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi đề nghị việc đối chất chính thức diễn ra tại tiệc mừng thọ bà nội. Khi đó, trước mặt mọi người, chúng ta sẽ trình bày đầy đủ chứng cứ và lời khai. Ai đúng, ai sai, sẽ không còn chỗ để nói khác đi.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Căn phòng lặng đi. Bảo Châu ngừng khóc trong một thoáng, rồi lại cúi đầu. Có lẽ cô ta tưởng tôi đã cạn đường lui, nên mới dám tự chọn nơi đông người để kết thúc chuyện này. Tôi không sửa lại suy nghĩ ấy của cô ta. Đôi khi, để cái bẫy khép lại, cứ để người giăng bẫy tin rằng mình đang thắng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Được thôi. Nếu anh muốn làm lớn chuyện trước mặt khách khứa, em cũng sẽ không trốn tránh.",
+          "cue": "nhẹ nhõm giả tạo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cuộc họp tạm dừng. Mai Linh ở lại cùng Lê Khải để niêm phong tài liệu và sao lưu nhật ký ra vào. Tôi rời nhà họ Lê một mình. Trên đường về, điện thoại rung lên. Một tệp ghi âm cũ nằm trong thư mục riêng mà tôi chưa mở từ lâu.",
+          "cue": "",
+          "sfx": "tiếng điện thoại rung"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi cắm tai nghe. Ban đầu chỉ có tiếng sột soạt và tiếng thở khẽ. Rồi một giọng nữ vang lên, quen đến mức sống lưng tôi lạnh đi. Giọng ấy đang tập từng câu, chậm rãi, rõ ràng, như thể đã chuẩn bị sẵn cả vẻ mặt lẫn nước mắt.",
+          "cue": "lạnh người",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhận ra giọng Bảo Châu. Và câu đầu tiên cô ta tập nói lại chính là lời buộc tội tôi đã lấy cắp hồ sơ mật.",
+          "cue": "dồn nén",
+          "sfx": ""
+        }
+      ],
+      "words": 1117,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Bảo Châu công khai tố Minh Quân lấy hồ sơ mật, dù Mai Linh chỉ ra tập tài liệu được đưa vào phòng anh sau khi anh rời nhà. Lê Khải vẫn do dự, nhưng đồng ý kiểm tra theo thủ tục và yêu cầu Bảo Châu giao danh sách người ra vào. Minh Quân đề nghị đối chất công khai tại tiệc mừng thọ, khiến Bảo Châu tưởng anh đã hết đường lui. Trên đường về, Minh Quân nghe lại bản ghi âm cũ và nhận ra Bảo Châu đã tập lời vu oan cho anh.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 8,
+      "title": "Bản ghi âm giữa tiệc",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe đi nghe lại đoạn ghi âm suốt đêm. Càng nghe, tôi càng bình tĩnh. Không phải vì tôi không tức giận. Mà vì tôi biết, nếu nóng vội, Bảo Châu sẽ lại có cớ biến mình thành nạn nhân.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Sáng hôm sau, nhà họ Lê bận rộn chuẩn bị tiệc mừng thọ bà nội. Khách quý lần lượt đến. Hoa tươi phủ kín đại sảnh, bàn tiệc bày ngay ngắn, ai nhìn vào cũng tưởng hôm nay chỉ có lời chúc tụng và tiếng cười.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đến cùng Mai Linh. Cô mang theo bản sao hồ sơ đã được niêm phong, còn tôi giữ điện thoại có đoạn ghi âm. Lê Khải đứng gần sân khấu, vẻ mặt nặng nề. Ông nhìn tôi, rồi nhìn những vị khách đang trò chuyện. Ông vẫn muốn mọi chuyện được giải quyết kín đáo.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu xuất hiện trong bộ váy trắng, khuôn mặt nhợt nhạt vừa đủ. Cô ta đi từng bàn chào hỏi, nói năng nhỏ nhẹ. Có người hỏi cô ta gần đây có chuyện gì, cô ta lập tức cúi đầu, mắt đỏ lên.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Không có gì đâu ạ. Chỉ là trong nhà có chút hiểu lầm. Em không muốn làm ảnh hưởng đến ngày vui của bà.",
+          "cue": "yếu đuối",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta không cần nói tên tôi. Những vị khách đã biết chuyện trong nhà họ Lê tự hiểu phải nhìn về phía nào. Một vài người lắc đầu thương hại. Một vài người kín đáo quan sát tôi. Bảo Châu vừa khóc vừa giữ được vẻ rộng lượng. Đúng là diễn rất khéo.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Khi các thành viên gia đình tập trung ở đại sảnh, cô ta mới bước đến trước mặt tôi. Vai cô ta run nhẹ. Giọng cũng nghẹn lại đúng lúc.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh Quân, em đã cố nhẫn nhịn rồi. Nhưng chuyện anh lấy tài liệu trong phòng làm việc, em không thể giả vờ như chưa thấy. Em chỉ mong anh trả lại, đừng khiến mọi người khó xử.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tiếng trò chuyện quanh chúng tôi dần tắt. Tôi nhìn thẳng vào cô ta. Không hỏi cô ta đã thấy gì, cũng không hỏi tài liệu nằm ở đâu. Tôi đã nghe cô ta tập lời buộc tội ấy từ trước.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, hôm nay là tiệc mừng thọ bà nội. Nếu con đã khiến Bảo Châu tổn thương, hãy xin lỗi em con trước mặt mọi người. Chuyện tài liệu để sau hãy nói.",
+          "cue": "nghiêm giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe rõ từng chữ. Lê Khải vẫn chọn giữ thể diện trước, còn sự thật để sau. Ông đã từng làm vậy khi đuổi tôi khỏi nhà. Lần này, ông cũng muốn tôi cúi đầu cho buổi tiệc được yên ổn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Tôi không lấy tài liệu. Cũng sẽ không xin lỗi vì một việc mình không làm.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu khẽ nấc. Cô ta quay sang khách khứa, như thể chính sự bình tĩnh của tôi mới là điều tàn nhẫn nhất.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Em biết anh không thích em. Nhưng em chưa từng muốn tranh giành gì với anh. Em chỉ muốn nhà mình yên ổn thôi.",
+          "cue": "tủi thân",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mấy lời ấy khiến vài người bắt đầu trách tôi. Có người bảo tôi nên nhường một bước. Có người nói chuyện gia đình không đáng làm ầm giữa tiệc. Tôi không tranh luận. Tôi lấy điện thoại ra, đặt lên chiếc bàn gần đó.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Nếu đã nói trước mặt mọi người, vậy nghe hết rồi hãy kết luận.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu nhìn chiếc điện thoại. Trong khoảnh khắc, vẻ yếu đuối trên mặt cô ta khựng lại. Rồi cô ta lập tức cau mày, như thể tôi đang cố tình làm nhục cô.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh định làm gì? Anh muốn biến tiệc mừng thọ thành nơi đấu tố em sao?",
+          "cue": "bức xúc",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không đáp. Tôi bấm phát. Đầu tiên là tiếng sột soạt, rồi giọng Bảo Châu vang lên giữa đại sảnh. Không khóc. Không run. Bình thản và rõ ràng.",
+          "cue": "",
+          "sfx": "tiếng ghi âm bật lên"
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Anh ta lấy hồ sơ mật, em tận mắt nhìn thấy. Cứ nói như vậy, rồi khóc đúng lúc, mọi người sẽ tin em.",
+          "cue": "trong bản ghi âm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Không ai cử động. Đoạn ghi âm tiếp tục chạy. Bảo Châu tự nhắc mình phải kể chuyện ở phòng làm việc, phải nhìn xuống khi nói, phải để giọng nghẹn lại ở cuối câu. Cô ta lặp lại từng lời buộc tội, chỉnh đi chỉnh lại cho đến khi vừa ý.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Tắt đi! Đó là giọng của em, nhưng đoạn ghi âm bị cắt ghép. Anh làm giả nó để hại em!",
+          "cue": "hoảng hốt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta lao về phía chiếc điện thoại. Mai Linh đứng chắn trước bàn, không chạm vào Bảo Châu, chỉ yêu cầu cô ta giữ khoảng cách. Những vị khách bắt đầu xôn xao. Người vừa thương cảm cho Bảo Châu giờ nhìn cô ta bằng ánh mắt khác.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Xin mọi người bình tĩnh. Tôi đã kiểm tra tệp ghi âm và thông tin lưu trữ. Tệp này có nguồn gốc rõ ràng, được lưu từ cuộc gọi mà Bảo Châu vô tình thực hiện cho Minh Quân. Bản gốc còn nguyên, có thể kiểm tra độc lập.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải nhìn Bảo Châu. Ông không nói gì. Trên mặt ông hiện lên vẻ khó tin, rồi nhanh chóng bị thay bằng sự nặng nề. Cuốn sổ và chứng từ trước đó đã khiến ông nghi ngờ. Bây giờ, chính giọng nói của Bảo Châu tự xé bỏ lớp mặt nạ cuối cùng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Bảo Châu, con giải thích đi. Đây là giọng của con. Con đã nói những lời ấy khi nào?",
+          "cue": "nặng nề",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu đứng chết lặng trong một nhịp. Nhưng cô ta rất nhanh lấy lại vẻ bình tĩnh. Cô lau nước mắt, nhìn quanh, rồi nhìn thẳng vào tôi. Sự hoảng sợ trên mặt cô ta nhường chỗ cho tức giận.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Một đoạn ghi âm không chứng minh được gì cả. Ai biết anh đã cắt ghép bao nhiêu lần? Tôi sẽ đưa ra bằng chứng cho thấy người làm giả chính là Minh Quân.",
+          "cue": "lạnh giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Câu nói ấy khiến tiếng xôn xao lắng xuống. Bảo Châu vừa tự nhận đoạn ghi âm là giả, nhưng lại tuyên bố có bằng chứng chống lại tôi. Cô ta đang đặt quân bài cuối cùng lên bàn. Tôi nhìn cô ta, không hỏi đó là bằng chứng gì.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh khép tập hồ sơ lại. Lê Khải vẫn chưa lên tiếng. Còn Bảo Châu đã ngẩng cao đầu, như thể chỉ cần nói có bằng chứng thì mọi người sẽ quên những gì vừa nghe.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi cất điện thoại. Bản ghi âm đã làm rõ một chuyện. Nhưng lời đe dọa mới của Bảo Châu cho thấy cô ta còn chuẩn bị một màn khác. Và lần này, cô ta định dùng thứ gì để biến tôi thành kẻ có tội?",
+          "cue": "",
+          "sfx": ""
+        }
+      ],
+      "words": 1129,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "ghi_am_vu_oan",
+          "quote": "Tệp này có nguồn gốc rõ ràng, được lưu từ cuộc gọi mà Bảo Châu vô tình thực hiện cho Minh Quân."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Trong buổi chuẩn bị tiệc mừng thọ, Bảo Châu diễn cảnh tổn thương và tố Minh Quân lấy tài liệu, còn Lê Khải yêu cầu anh xin lỗi để giữ thể diện. Minh Quân bật bản ghi âm, để mọi người nghe Bảo Châu tập lời vu oan và tự dặn mình phải khóc đúng lúc; Mai Linh xác nhận nguồn gốc tệp rõ ràng. Khách dự tiệc bắt đầu nghi ngờ Bảo Châu, còn Lê Khải buộc phải đối diện với sự thật vừa nghe. Bảo Châu phủ nhận bản ghi, rồi tuyên bố sẽ đưa ra bằng chứng rằng Minh Quân mới là kẻ làm giả.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 9,
+      "title": "Tiệc mừng thọ thành phiên đối chất",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Câu hỏi của tôi vẫn còn treo giữa phòng tiệc. Bảo Châu vừa tuyên bố có bằng chứng chống lại tôi, nhưng chưa kịp đưa ra thì bà nội đã gõ nhẹ cây gậy xuống sàn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Đủ rồi. Khách quý có thể về trước. Người nhà họ Lê ở lại. Hôm nay là tiệc mừng thọ của tôi, nhưng chuyện công ty và danh dự của gia đình không thể cứ để người ngoài nghe lời một phía.",
+          "cue": "điềm tĩnh",
+          "sfx": "tiếng gậy gõ nhẹ"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Khách khứa lần lượt đứng dậy. Không ai còn nhìn Bảo Châu bằng ánh mắt thương cảm ban nãy. Cô ta mím môi, rõ ràng muốn phản đối, nhưng bà nội chỉ nhìn một cái, cô ta đành im lặng. Cánh cửa khép lại. Bữa tiệc biến thành phiên đối chất.",
+          "cue": "",
+          "sfx": "tiếng cửa đóng"
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Minh Quân, con trình bày. Mai Linh kiểm tra từng phần. Không ai được ngắt lời khi chưa đến lượt.",
+          "cue": "uy nghiêm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi bước đến chiếc bàn dài. Cuốn sổ ghi những khoản chi lệch nằm cạnh hồ sơ gốc Thanh Tùng giao nộp. Tôi không muốn giành ghế của ai. Tôi chỉ muốn mọi người nhìn thẳng vào những con số, thay vì nhìn vào vẻ mặt của người đang nói.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Đây là các khoản thanh toán lặp lại, cùng chuyển đến những đơn vị trung gian. Ngày chuyển tiền, số tiền và người nhận đều có trong hồ sơ. Công ty đứng tên người quen của Bảo Châu nhận tiền, sau đó tiền được chia nhỏ và chuyển tiếp.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi mở từng trang sổ. Mai Linh đặt các bản sao chứng từ bên cạnh, sắp theo ngày. Những người thân từng nghi ngờ tôi giờ cúi xuống đọc. Lê Khải đứng ở đầu bàn, mặt ông căng cứng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Các khoản này khớp với hồ sơ gốc do kế toán trưởng lưu lại. Chứng từ trong hệ thống đã bị thay thế sau ngày thanh toán. Bản gốc cho thấy tiền đi qua công ty trung gian, chứ không phải khoản chi trực tiếp cho dự án như báo cáo đã ghi.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh lần lượt chỉ từng mốc. Một hóa đơn thiếu nội dung. Một lệnh chuyển tiền có ngày sửa. Rồi đến bản xác nhận mang chữ ký của Thanh Tùng. Ông ngồi cuối bàn, hai tay đan chặt, không tránh né ánh nhìn của mọi người.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi đã ký xác nhận một phần chứng từ. Tôi nhận trách nhiệm về việc đó. Nhưng hồ sơ gốc cho thấy tiền không vào công ty, và tôi không phải người nhận khoản tiền ấy.",
+          "cue": "nặng nề",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Không ai lên tiếng bênh ông. Cũng không ai còn có thể đổ hết mọi chuyện cho ông. Tôi nhìn sang Bảo Châu. Cô ta vẫn ngồi thẳng lưng, như thể chỉ cần không cúi đầu thì sự thật sẽ tự biến mất.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Đó là kế hoạch kinh doanh. Cha đã đồng ý cho em triển khai. Những khoản tiền kia có mục đích, chỉ là mọi người không biết hết nội tình.",
+          "cue": "cứng giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải ngẩng lên. Ông đã im lặng từ lúc bản ghi âm phát ra. Lần này, ông nhìn thẳng vào Bảo Châu, không nhìn tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Nếu cha đã đồng ý, văn bản phê duyệt đâu? Đưa ra đây.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu khựng lại. Cô ta lục túi hồ sơ, rút ra mấy tờ giấy in. Cô đẩy chúng qua bàn, nhưng không ai vội cầm. Mai Linh xem từng tờ rồi đặt xuống trước mặt Lê Khải.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Đây chỉ là bản chụp. Không có chữ ký phê duyệt, không có dấu xác nhận, và nội dung cũng không khớp với hồ sơ lưu tại công ty. Chúng không chứng minh được ông Lê Khải đã đồng ý.",
+          "cue": "khách quan",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu siết chặt mép bàn. Cô ta định nói, nhưng không tìm được lời nào đủ sức lấp khoảng trống trên những tờ giấy ấy. Lê Khải cầm một bản lên, xem qua rồi đặt xuống. Gương mặt ông tối lại.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Cha không ký những giấy này. Bảo Châu, con đã dùng tên cha để che cho các khoản chuyển tiền?",
+          "cue": "đau đớn",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Cha nghe anh ta với luật sư của anh ta rồi kết tội con sao? Con ở nhà này bao nhiêu năm. Chẳng lẽ bao nhiêu đó vẫn không đủ để cha tin con?",
+          "cue": "uất ức",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta quay sang nhìn mọi người, chờ một người đứng về phía mình. Nhưng lần này, không ai lên tiếng. Tôi không thấy hả hê. Chỉ thấy mệt mỏi. Một gia đình mà lòng tin phải được dựng bằng nước mắt thì sớm muộn cũng sẽ vỡ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Lê Khải, chuyện này phải được giao cho người độc lập rà soát. Bảo Châu, con tạm ngừng mọi quyền hạn ở công ty cho đến khi có kết luận. Thanh Tùng cũng phải chịu trách nhiệm về phần việc của mình.",
+          "cue": "dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội không bênh ai. Bà cũng không tuyên bố ai thắng. Bà chỉ buộc mọi người nhìn vào hồ sơ, và lần đầu tiên trong nhiều năm, tôi thấy Lê Khải không còn tìm cách đẩy câu hỏi sang chỗ khác.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, cha đã nghi ngờ con quá lâu. Cha xin lỗi. Chuyện này cha sẽ không để con tự gánh nữa.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Con cần sự thật được làm rõ, không cần ai nhận lỗi thay cho người khác. Những gì đã xảy ra phải được xử lý theo chứng cứ.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải cúi đầu. Bảo Châu quay mặt đi. Quan hệ giữa cha con tôi chưa thể trở lại như cũ chỉ bằng một câu xin lỗi, nhưng ít nhất, ông đã thôi xem tôi là kẻ gây chuyện.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Trước khi quyết định ai được giữ quyền điều hành, gia đình phải biết một sự thật về Minh Quân.",
+          "cue": "trầm xuống",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội lấy từ chiếc túi bên cạnh một phong thư cũ. Mép giấy đã ngả vàng, niêm phong vẫn còn nguyên. Bà đặt nó lên bàn. Tôi nhìn phong thư, rồi nhìn bà. Mọi người quanh bàn nín thở.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Chuyện trong phong thư này không liên quan đến những khoản tiền kia. Nhưng con có quyền được biết trước khi chọn điều gì cho đời mình.",
+          "cue": "dịu lại",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi đưa tay về phía phong thư, nhưng bà nội khẽ giữ nó lại. Ánh mắt bà đầy điều muốn nói. Rồi bà nhìn tôi, hỏi một câu khiến căn phòng lặng ngắt.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Minh Quân, con đã sẵn sàng biết mình thật sự là ai chưa?",
+          "cue": "trầm mặc",
+          "sfx": "tiếng giấy khẽ sột soạt"
+        }
+      ],
+      "words": 1063,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Bà nội cho khách rời tiệc và biến buổi mừng thọ thành cuộc đối chất của gia đình. Minh Quân cùng Mai Linh trình bày sổ sách, hồ sơ gốc và đường đi của tiền; Thanh Tùng nhận trách nhiệm về phần chứng từ mình ký. Bảo Châu nói các khoản chuyển tiền đã được Lê Khải phê duyệt nhưng chỉ đưa ra bản chụp thiếu chữ ký, khiến Lê Khải yêu cầu cô tạm ngừng quyền hạn để chờ rà soát. Lê Khải xin lỗi Minh Quân, quan hệ cha con có bước thay đổi nhưng chưa thể hàn gắn ngay. Bà nội đặt một phong thư cũ lên bàn và hỏi Minh Quân đã sẵn sàng biết mình thật sự là ai chưa.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 10,
+      "title": "Lá thư bị giữ kín",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Câu hỏi của bà nội vẫn còn vang trong căn phòng. Tôi nhìn phong thư trên bàn. Mép giấy vàng úa, nhưng con dấu sáp chưa vỡ. Chỉ cần mở nó ra, có lẽ mọi thứ tôi từng nghĩ về mình sẽ đổi khác.",
+          "cue": "trầm lắng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không đưa tay lấy thư ngay. Bao năm qua, tôi đã quen với việc người khác định đoạt tôi là ai. Đứa con bị đuổi khỏi nhà. Kẻ bị nghi ngờ. Người ngoài cuộc trong chính gia đình mình. Tôi không muốn thêm một cái tên nào được áp lên đời mình mà chưa hiểu rõ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Con muốn biết sự thật. Nhưng con muốn nghe từ bà, không phải chỉ nhìn vài tờ giấy.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội gật đầu. Bàn tay bà hơi run khi đặt phong thư trước mặt tôi. Lê Khải đứng bên kia bàn, sắc mặt nặng nề. Bảo Châu thì khoanh tay, cố tỏ ra thờ ơ, nhưng ánh mắt cô ta không rời khỏi phong thư.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Trong này có thư và hồ sơ xác minh. Bà muốn mọi người nghe rõ, để không ai có thể nói Minh Quân bịa chuyện hay dùng nó để tranh quyền.",
+          "cue": "nghiêm nghị",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh bước tới, kiểm tra niêm phong trước mặt mọi người. Cô xác nhận phong thư còn nguyên. Bà nội tự tay bóc lớp sáp. Tiếng giấy khô khốc vang lên giữa căn phòng im phăng phắc.",
+          "cue": "",
+          "sfx": "tiếng giấy mở"
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà lấy ra một lá thư đã cũ và một tập hồ sơ kẹp bên dưới. Trên trang đầu là tên hai đứa trẻ, ngày sinh, cùng những dòng xác nhận từ cơ sở y tế. Tôi nhìn thấy tên mình. Rồi nhìn sang cái tên Bảo Châu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Kết quả xác minh này cho thấy Minh Quân mới là con ruột của nhà họ Lê. Bảo Châu đã bị hoán đổi thân phận với con từ khi còn nhỏ.",
+          "cue": "chậm rãi",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nghe rõ từng chữ. Vậy mà trong khoảnh khắc đầu tiên, tôi không cảm thấy vui mừng. Cũng không thấy mình vừa thắng được điều gì. Chỉ có một khoảng trống lớn mở ra trong lòng, như thể những năm tháng vừa qua bỗng bị kéo khỏi chỗ cũ.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải đưa tay đỡ lấy mép bàn. Mặt ông trắng bệch. Bảo Châu nhìn chằm chằm vào tập hồ sơ, môi run lên. Cô ta như muốn phủ nhận, nhưng không tìm được lời nào đủ sức cất thành tiếng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Không thể nào. Con nói rõ đi, mẹ. Đây là kết quả của ai? Đã xác minh ra sao?",
+          "cue": "bàng hoàng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội không né tránh câu hỏi. Bà chỉ tay vào các dấu xác nhận, giải thích rằng hồ sơ đã được đối chiếu từ nhiều nguồn. Mai Linh xem từng trang, ghi nhận số hiệu và ngày tháng. Cô không kết luận thay cơ quan chuyên môn, nhưng nói những giấy tờ này cần được bảo quản, kiểm tra độc lập.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Tài liệu có dấu hiệu đầy đủ để tiến hành xác minh chính thức. Tôi sẽ lập biên bản việc công bố và niêm phong bản gốc. Không ai được tự ý lấy hoặc sửa hồ sơ.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn lá thư. Chữ viết của bà nội đã nhòe ở vài chỗ. Bà không đọc hết từng dòng, chỉ nói trong thư có lời xác nhận và những điều bà muốn chính tay nói với tôi. Tôi nhận ra bà đang cố giữ bình tĩnh, nhưng hơi thở đã nặng hơn.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Bà xin lỗi vì để con phải sống với quá nhiều câu hỏi. Nhưng bà không muốn con bị biến thành quân cờ trong cuộc tranh giành của người lớn. Quyết định con có nhận lại thân phận này hay không, bà sẽ không thay con chọn.",
+          "cue": "xúc động",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nói vậy, nhưng không nói rõ bà biết chuyện từ khi nào. Tôi thấy trong lời bà có những khoảng ngừng, những điều bị giữ lại sau nhiều năm. Tôi không hỏi ngay. Hôm nay tôi cần hiểu sự thật trước mắt, không cần ép bà kể mọi chuyện trong một hơi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu bật dậy. Chiếc ghế kéo mạnh trên sàn khiến mọi người giật mình. Gương mặt cô ta đỏ bừng, đôi mắt ánh lên vẻ không tin nổi. Lớp bình tĩnh cô ta cố giữ cuối cùng cũng vỡ tan.",
+          "cue": "",
+          "sfx": "tiếng ghế kéo"
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Vậy là cả nhà đều biết sao? Mọi người lừa tôi suốt bao nhiêu năm! Tôi ở đây từ nhỏ, tôi mới là người sống trong căn nhà này!",
+          "cue": "phẫn nộ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Không ai trả lời ngay. Lê Khải cúi mặt. Bà nội nhìn Bảo Châu, ánh mắt buồn nhưng không còn chiều theo từng lời cô ta nói. Tôi hiểu cô ta vừa nghe một sự thật có thể làm lung lay cả cuộc đời mình. Nhưng điều đó không thể xóa những việc cô ta đã làm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Sự thật về thân phận của chúng ta không xóa được những khoản tiền đã bị rút, những chứng từ bị sửa, hay lời vu oan cô đã chuẩn bị cho tôi.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu quay phắt sang tôi. Cô ta muốn nói gì đó, nhưng tôi không lùi bước. Tôi không định dùng thân phận mới phát hiện để kết tội cô. Những việc đó đã có hồ sơ, nhân chứng và quy trình xử lý riêng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Tôi không ở lại đây nghe các người sỉ nhục nữa. Tôi đi!",
+          "cue": "giận dữ",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta chộp túi, bước về phía cửa. Mai Linh đứng lên, không chặn đường nhưng lên tiếng trước khi cô ta kịp ra khỏi phòng. Giọng cô bình tĩnh, dứt khoát, không để ai hiểu nhầm đây chỉ là một cuộc cãi vã trong nhà.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Cô có thể rời khỏi đây, nhưng hồ sơ tài chính đã được chuyển cho cơ quan có thẩm quyền. Cô sẽ phải giải trình về các khoản tiền và chứng từ liên quan.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu đứng khựng lại. Cánh cửa cách cô chỉ vài bước, nhưng lần này không còn là lối thoát khỏi những câu hỏi. Cô quay đầu nhìn Lê Khải, rồi nhìn bà nội. Không ai chạy theo giữ cô lại.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi cúi nhìn tập hồ sơ. Trên giấy, tên tôi nằm cạnh hai chữ con ruột. Nhưng trong lòng, tôi vẫn là Minh Quân, người đã tự bước ra khỏi căn nhà này và tự tìm đường quay lại. Tôi chưa biết mình sẽ nhận điều gì, cũng chưa biết quan hệ với cha sẽ đi đến đâu.",
+          "cue": "trầm ngâm",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội đưa lá thư cho tôi. Tôi chưa mở trang cuối. Bên trong còn một tờ giấy gấp làm tư, nét mực trên mặt ngoài đã nhạt gần như không đọc được. Bà nhìn tôi, rồi khẽ nói rằng còn một chuyện bà chưa kể.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Minh Quân, trước khi con quyết định, hãy nghe bà nói hết về ngày hồ sơ này được lập.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi ngẩng lên. Căn phòng lại chìm vào im lặng. Bà nội đặt tay lên tờ giấy cuối cùng, nhưng chưa mở ra. Tôi chợt hiểu rằng sự thật vừa được công bố có thể mới chỉ là cánh cửa đầu tiên.",
+          "cue": "",
+          "sfx": ""
+        }
+      ],
+      "words": 1178,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Bà nội công bố hồ sơ xác minh cho thấy Minh Quân là con ruột nhà họ Lê, còn Bảo Châu bị hoán đổi thân phận từ nhỏ. Bà trao quyền quyết định việc nhận lại thân phận cho Minh Quân nhưng không nói rõ mình đã biết chuyện từ khi nào. Bảo Châu nổi giận, còn Mai Linh thông báo hồ sơ tài chính đã chuyển cho cơ quan có thẩm quyền và cô sẽ phải giải trình. Minh Quân không xem thân phận mới là lý do để bỏ qua sai phạm; quan hệ giữa anh và gia đình đổi khác, nhưng anh vẫn chưa quyết định con đường của mình.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 11,
+      "title": "Không tranh giành gia sản",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Bà nội không vội mở tờ giấy. Bà nhìn quanh bàn, nơi mọi người vẫn chưa thoát khỏi cú sốc vừa rồi. Rồi bà quay sang tôi, ánh mắt không né tránh.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Bà phát hiện chuyện hoán đổi từ nhiều năm trước. Khi ấy, bà đã giữ lại lá thư và hồ sơ xác minh này.",
+          "cue": "trầm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi sững người. Vậy là bà không vừa biết sự thật cùng chúng tôi. Bà đã mang nó trong lòng suốt bao năm, nhìn tôi lớn lên mà không nói ra. Cơn giận chưa kịp thành hình đã bị một câu hỏi khác lấn át.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Bà biết từ khi nào? Vì sao bà không nói với con?",
+          "cue": "bối rối",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội khẽ vuốt mép tờ giấy. Bà không tìm cách tự bào chữa. Bà nói chậm rãi, như đã chuẩn bị cho câu hỏi này từ rất lâu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Bà đã xác minh khi con còn nhỏ. Nhưng bà không muốn dùng sự thật ấy để quyết định thay con. Bà chờ con trưởng thành, đủ sức tự chọn mình có muốn nhận thân phận này hay không.",
+          "cue": "đau lòng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Căn phòng im phăng phắc. Bảo Châu đứng gần cửa, bàn tay vẫn nắm chặt quai túi. Lê Khải cúi đầu. Tôi nhìn bà nội, cố ghép lời bà với những năm tháng mình đã sống. Bà không trao cho tôi một chiếc ghế hay một phần gia sản. Bà trao lại quyền lựa chọn mà lẽ ra tôi phải có từ đầu.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Bà giữ kín vì muốn con tự quyết, hay vì sợ nhà mình phải đối diện với chuyện này?",
+          "cue": "kìm nén",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội không né câu hỏi. Bà bảo cả hai điều đều có. Bà từng sợ sự thật làm gia đình tan vỡ, nhưng bà cũng biết nếu nói quá sớm, mọi người có thể biến thân phận của tôi thành một cuộc tranh đoạt khác. Nghe vậy, tôi không thể lập tức tha thứ. Nhưng ít nhất, bà không giả vờ rằng mình chưa từng do dự.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Bà xin lỗi vì đã để con phải tự tìm đường về đây. Nhưng từ giờ, không ai được chọn thay con nữa.",
+          "cue": "nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi gật đầu rất khẽ. Rồi tôi quay sang Bảo Châu. Cô ta vẫn đỏ mắt, nhưng vẻ yếu đuối ban nãy đã biến mất. Tôi không cần đoán cô đang tiếc vị trí, tiếc căn nhà hay thật sự đau vì mọi thứ đảo lộn. Điều tôi biết là những gì cô đã làm không thể chỉ đổi lấy một lời xin lỗi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Tôi chỉ sợ bị đẩy ra ngoài. Tôi đã sống ở đây cả đời. Tôi không muốn mất tất cả.",
+          "cue": "run rẩy",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Cô ta nhìn sang Lê Khải, như chờ ông đứng về phía mình. Lê Khải vẫn im lặng. Bảo Châu vội nói thêm rằng cô chỉ mắc sai lầm vì sợ mất vị trí trong gia đình. Nhưng những lời ấy đến sau khi sổ sách, bản ghi âm và hồ sơ gốc đã nằm trên bàn. Nỗi sợ không tự viết những chứng từ giả. Cũng không tự chọn người để vu oan.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Cô từng chủ động đổ tội cho tôi, dựng chuyện tôi lấy hồ sơ, rồi tập trước lời vu oan. Cô còn dùng công ty trung gian để rút tiền. Tôi không chấp nhận lời xin lỗi để đổi lấy im lặng.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nói xong, không thấy nhẹ nhõm như mình tưởng. Tôi chỉ muốn mọi việc được gọi đúng tên. Bảo Châu cúi mặt, còn Lê Khải ngẩng lên nhìn tôi. Nhưng tôi không chờ ông phán xét thay cơ quan đang xử lý hồ sơ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi xác nhận mình từng sửa một phần sổ sách theo yêu cầu của Bảo Châu. Tôi đã giao hồ sơ gốc và bản sao lưu. Tôi cũng sẽ chịu trách nhiệm về phần việc mình đã làm.",
+          "cue": "day dứt",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Thanh Tùng đứng dậy, giọng khàn đi nhưng không lảng tránh. Ông không còn là người chỉ biết giữ mình sau những tờ chứng từ. Mai Linh mở cặp, kiểm tra từng mục rồi xác nhận hồ sơ đã được bàn giao đầy đủ, có biên nhận và danh sách tài liệu kèm theo. Từ đây, không ai có thể âm thầm rút một trang giấy rồi bảo rằng chẳng có gì xảy ra.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Hồ sơ đã được tiếp nhận và bàn giao đầy đủ. Mọi người sẽ được yêu cầu giải trình theo đúng quy trình.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải chống tay lên bàn, trông mệt mỏi hơn tuổi. Ông nói ông đã sai khi tin Bảo Châu mà không chịu nghe tôi, rồi hỏi tôi có thể ở lại tiếp quản công ty hay không. Ông nói tôi là con ruột, là người có quyền thừa kế. Cả căn phòng lại nhìn về phía tôi.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Minh Quân, ở lại đi. Cha sẽ giao công ty cho con. Cha muốn con có lại những gì vốn thuộc về con.",
+          "cue": "tha thiết",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn ông. Đây là điều mà có lẽ nhiều người từng nghĩ tôi quay về để giành lấy. Nhưng tôi đã trở lại vì không muốn bị đẩy đi bằng một lời vu oan. Tôi muốn sự thật được phơi bày. Tôi không muốn biến phần đời còn lại thành cuộc chứng minh mình xứng đáng ngồi vào chiếc ghế của nhà họ Lê.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Con không ở lại để nhận công ty như phần thưởng cho cuộc tranh đoạt này. Con cũng không cần ai bù đắp bằng một chức vụ. Chuyện sai thì cứ xử lý theo hồ sơ. Còn đời con, con tự chọn.",
+          "cue": "bình tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải không đáp ngay. Lần đầu tiên, ông không ra lệnh cho tôi phải làm gì. Tôi hiểu một câu từ chối không thể lập tức hàn gắn những năm tháng lạnh nhạt, nhưng ít nhất nó đặt một ranh giới rõ ràng. Tôi có thể nhận sự thật về thân phận mà không nhận lấy mọi thứ đi kèm với nó.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Nếu không cần chứng minh mình thuộc về nhà họ Lê, con sẽ chọn con đường nào?",
+          "cue": "dịu dàng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn tờ giấy cuối cùng, rồi nhìn những gương mặt quanh bàn. Tôi chưa có câu trả lời hoàn chỉnh. Nhưng lần này, không ai có thể dùng huyết thống, gia sản hay lòng thương hại để ép tôi chọn. Tôi vừa định nói ra điều đầu tiên mình thật sự muốn làm, thì ngoài cửa vang lên tiếng gõ dồn dập.",
+          "cue": "",
+          "sfx": "tiếng gõ cửa dồn dập"
+        }
+      ],
+      "words": 1065,
+      "target_words": 1000,
+      "length_off": false,
+      "reveals": [
+        {
+          "secret_id": "ba_noi_biet_som",
+          "quote": "Bà đã xác minh khi con còn nhỏ."
+        }
+      ],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Bà nội tiết lộ đã phát hiện và xác minh vụ hoán đổi từ khi Minh Quân còn nhỏ, nhưng chờ anh trưởng thành để tự quyết định có nhận thân phận hay không. Bà xin lỗi vì đã giữ kín; Minh Quân chưa thể tha thứ ngay nhưng hiểu quyền lựa chọn hiện thuộc về mình. Bảo Châu viện cớ sợ mất vị trí, còn Minh Quân bác bỏ lời xin lỗi dùng để đổi lấy im lặng; Thanh Tùng nhận trách nhiệm và Mai Linh xác nhận hồ sơ đã được bàn giao đầy đủ. Lê Khải mời Minh Quân ở lại tiếp quản công ty, nhưng anh từ chối tranh giành gia sản và tự chọn đời mình. Khi bà nội hỏi anh sẽ chọn con đường nào, tiếng gõ cửa dồn dập vang lên trước khi anh kịp trả lời.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    },
+    {
+      "index": 12,
+      "title": "Trở về đúng chỗ",
+      "status": "ok",
+      "lines": [
+        {
+          "speaker": "narrator",
+          "text": "Tiếng gõ cửa vang lên dồn dập. Cả căn phòng im bặt. Mai Linh đứng dậy, nhìn qua cửa kính rồi mở cửa. Hai nhân viên phụ trách hồ sơ bước vào, đưa cho bà nội một tập giấy xác nhận việc tiếp nhận tài liệu. Không ai bị còng tay. Không có màn kết tội ầm ĩ. Chỉ có giấy tờ, chữ ký và những quy trình không thể bị nước mắt hay lời nói chặn lại.",
+          "cue": "",
+          "sfx": "tiếng gõ cửa dồn dập"
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Đây là xác nhận đã tiếp nhận hồ sơ và đề nghị bảo toàn tài sản liên quan. Những người có trách nhiệm sẽ được mời làm việc. Từ giờ, mọi quyết định về tài chính cần qua kiểm soát độc lập.",
+          "cue": "điềm tĩnh",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bà nội nhận giấy, đọc kỹ từng dòng rồi gật đầu. Lê Khải ra hiệu cho mọi người ngồi xuống. Ông không còn nói chuyện giao công ty cho tôi. Có lẽ ông cũng hiểu, một chiếc ghế không thể vá lại những năm tháng ông đã bỏ mặc tôi. Bà nội nhìn tôi, ánh mắt vừa buồn vừa nhẹ nhõm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Minh Quân, bà sẽ tôn trọng lựa chọn của con. Con nhận lại thân phận, nhưng không có nghĩa phải nhận lấy một con đường bà hay cha con sắp sẵn. Bà chỉ mong con đừng vì những tổn thương này mà nghĩ mình không còn nơi nào để trở về.",
+          "cue": "ấm áp, nghẹn ngào",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi nhìn bà. Trong lòng vẫn còn những câu hỏi chưa thể trả lời, cả những giận hờn không thể tan đi chỉ sau một đêm. Nhưng tôi không muốn bà thay tôi quyết định thêm lần nào nữa. Tôi đã có thể nhận sự thật về mình, đồng thời giữ lại quyền chọn cách sống.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Con nhận lại thân phận của mình. Con cũng nhận bà là bà nội, nhận cha là cha. Nhưng con không nhận quyền điều hành như một món quà để bù đắp. Con sẽ tự xây dựng sự nghiệp riêng, bằng năng lực của con. Nếu một ngày con muốn trở lại, đó sẽ là quyết định của con.",
+          "cue": "bình tĩnh, dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Lê Khải cúi đầu. Ông không tìm cách thuyết phục tôi thêm. Một lúc lâu sau, ông đứng dậy, nhìn thẳng vào tôi. Lần này, ông không gọi tôi bằng danh phận người thừa kế. Ông gọi tôi là con.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Cha xin lỗi. Cha đã để Bảo Châu thay cha quyết định ai được coi là người nhà. Cha tin lời cô ấy, còn con thì phải tự chịu mọi nghi ngờ. Cha không thể bắt con tha thứ ngay, nhưng cha sẽ không trốn tránh phần lỗi của mình nữa.",
+          "cue": "hối lỗi",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi không nói rằng mình tha thứ. Tôi cũng không đẩy ông ra xa. Có những mối quan hệ cần nhiều hơn một câu xin lỗi để bắt đầu lại. Nhưng ít nhất, hôm nay ông đã không yêu cầu tôi im lặng để giữ thể diện cho gia đình. Tôi gật đầu, vừa đủ để ông biết tôi đã nghe.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "le_khai",
+          "text": "Từ ngày mai, công ty sẽ thuê đơn vị kiểm toán độc lập. Quyền quản lý và quyền truy cập tài chính của Bảo Châu bị thu hồi ngay lập tức. Những khoản tiền liên quan sẽ được xử lý theo kết luận chính thức, không ai được tự ý xóa, sửa hay thỏa thuận ngoài hồ sơ.",
+          "cue": "nghiêm nghị",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mấy thành viên trong nhà cùng đồng ý. Mai Linh ghi nhận quyết định vào biên bản, yêu cầu từng người ký xác nhận. Bảo Châu ngồi bất động. Gương mặt từng khiến cả phòng lập tức mềm lòng giờ không còn đủ sức khiến ai quên những tài liệu đã được giao đi. Cô nhìn cha tôi, nhưng ông không lên tiếng bênh vực.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "bao_chau",
+          "text": "Mọi người thật sự định đối xử với tôi như người ngoài sao? Tôi cũng sống ở đây từ nhỏ. Tôi đâu muốn mọi chuyện thành ra thế này.",
+          "cue": "run rẩy, cố níu kéo",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Không ai vội trả lời. Tôi nhìn cô, nhớ lại những lần cô khóc trước mặt mọi người, những lần lời buộc tội của cô khiến tôi phải tự chứng minh mình vô tội. Tôi không cần làm nhục cô. Sự thật đã có hồ sơ, người làm chứng và nơi tiếp nhận. Vai nạn nhân không còn là tấm chắn để cô xóa trách nhiệm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Cô có thể giải thích với người có thẩm quyền. Không phải với tôi. Tôi không quyết định cô phải chịu hình phạt nào, cũng không thể thay hồ sơ kết luận. Nhưng cô sẽ không còn dùng thân phận trong nhà này để giữ vị trí hay ngăn việc kiểm tra.",
+          "cue": "lạnh lùng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh đặt biên bản trước mặt Bảo Châu. Cô đọc từng dòng, môi mím chặt rồi ký nhận việc bị đình chỉ quyền quản lý. Cô phải rời vị trí trong công ty, bàn giao tài khoản và tài liệu, đồng thời đối diện yêu cầu hoàn trả tài sản cùng trách nhiệm pháp lý theo kết luận chính thức. Bảo Châu không còn chiếc ghế để núp sau nó.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "mai_linh",
+          "text": "Việc thu hồi tài sản và xác định trách nhiệm sẽ căn cứ vào kết quả kiểm toán và quyết định của cơ quan có thẩm quyền. Bảo Châu, cô cần bàn giao quyền truy cập, không được tự ý liên hệ nhân viên để thay đổi hồ sơ.",
+          "cue": "rõ ràng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Bảo Châu nhìn quanh căn phòng. Không còn ai chạy đến đỡ lời cho cô. Thanh Tùng cũng không quay mặt đi. Ông đã nhận phần trách nhiệm của mình, và sẽ phải chịu phần hậu quả tương ứng. Nhưng ông đã giao hồ sơ gốc, không tiếp tục che giấu sai phạm. Tôi không gọi đó là chiến thắng. Chỉ là mọi người cuối cùng cũng đứng trước việc mình đã làm.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "thanh_tung",
+          "text": "Tôi sẽ phối hợp kiểm toán và giải trình toàn bộ phần việc của mình. Tôi không xin được miễn trách nhiệm. Tôi chỉ mong hồ sơ được xem xét đầy đủ, cả những gì tôi đã làm sai lẫn những gì tôi đã lưu lại để làm rõ sự thật.",
+          "cue": "trầm giọng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Mai Linh xác nhận ông sẽ được liên hệ theo đúng thủ tục. Bà nội khép tập giấy, rồi nhìn tôi lần nữa. Tôi không hứa sẽ thường xuyên quay về. Tôi cũng không nói rằng mọi chuyện đã ổn. Nhưng tôi không còn là chàng trai bị đuổi khỏi nhà trong đêm, mang theo một cuốn sổ và những câu hỏi không ai chịu nghe.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "ba_noi",
+          "text": "Khi nào muốn về, cánh cửa vẫn mở. Không phải vì con phải kế thừa điều gì. Chỉ vì đây là nhà của con, nếu con muốn coi nó là nhà.",
+          "cue": "dịu dàng",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi cầm cuốn sổ cũ đặt bên cạnh tập hồ sơ. Những trang giấy đã sờn mép, từng là thứ duy nhất chứng minh tôi không tưởng tượng ra những khoản tiền bất thường. Bây giờ, tôi không cần dùng nó để xin ai tin mình nữa. Tôi khép sổ, cất vào túi áo rồi nhìn từng người trong phòng.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "minh_quan",
+          "text": "Con sẽ đi tìm việc của mình. Khi nào sẵn sàng, con sẽ tự quay về. Lần này, con không rời đi vì bị ai đuổi. Con đi vì con đã chọn.",
+          "cue": "nhẹ nhõm, dứt khoát",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Tôi bước ra khỏi phòng tiệc. Bà nội không giữ tay tôi. Lê Khải cũng không gọi tôi lại. Sau lưng, cuộc họp tiếp tục với biên bản, lịch kiểm toán và những việc cần bàn giao. Bảo Châu phải đối diện với khoản tiền đã rút cùng trách nhiệm của mình. Thanh Tùng cũng phải trả lời về những chứng từ ông từng sửa. Không ai được miễn trừ chỉ vì mang cùng một họ.",
+          "cue": "",
+          "sfx": ""
+        },
+        {
+          "speaker": "narrator",
+          "text": "Ngoài hiên, gió đêm thổi qua, làm lòng bàn tay tôi mát lạnh. Tôi vẫn chưa biết con đường riêng sẽ đưa mình đến đâu. Nhưng tôi biết mình không còn cần giành một chiếc ghế để chứng minh mình thuộc về nơi nào. Tôi nhận lại tên tuổi, nhận lại sự thật, rồi tự mình bước về phía ngày mai. Cuốn sổ cũ nằm trong túi áo, và lần này, tôi mang nó đi không phải như kẻ bị đuổi khỏi nhà, mà như người đã tự chọn nơi mình thuộc về.",
+          "cue": "ấm áp, khép lại",
+          "sfx": "tiếng cửa khép nhẹ"
+        }
+      ],
+      "words": 1371,
+      "target_words": 1000,
+      "length_off": true,
+      "reveals": [],
+      "reveal_slipped": [],
+      "moderation_rewrites": 0,
+      "summary": "Minh Quân nhận lại thân phận nhưng từ chối quyền điều hành được trao như sự bù đắp, chọn tự xây dựng sự nghiệp riêng. Bà nội tôn trọng lựa chọn ấy, còn Lê Khải xin lỗi vì đã để Bảo Châu quyết định ai được xem là người nhà. Gia đình thống nhất kiểm toán độc lập, thu hồi quyền quản lý của Bảo Châu và xử lý các khoản tiền theo kết luận chính thức; Thanh Tùng cũng nhận phần trách nhiệm của mình. Minh Quân rời buổi tiệc với cuốn sổ cũ trong tay, không còn là người bị đuổi đi mà là người tự quyết định cuộc đời mình.",
+      "moderation": {
+        "verdict": "allow",
+        "categories": []
+      },
+      "error": null
+    }
+  ]
+}
