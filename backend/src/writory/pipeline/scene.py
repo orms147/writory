@@ -77,9 +77,14 @@ dàn ý:
 - Không dựng cảnh chỉ để xác nhận lại điều người nghe đã biết. Sự thật đã lộ chỉ được nhắc kèm một hậu quả mới.
 - Không hoãn cao trào bằng hẹn gặp, cuộc họp để sau hay "sáng mai". Việc đã hẹn thì cảnh kế tiếp giải quyết luôn.
 - Ít cảnh thủ tục (luật sư, biên bản, giấy tờ, kiểm toán): giấy tờ chỉ là đạo cụ để lật mặt, không phải cả cảnh.
+- Phản diện không tự thú khi chưa bị dồn bằng một chứng cứ không chối được xuất hiện ngay trên trang (giấy tờ gốc, \
+ghi âm, nhân chứng tận mắt). Vật chứng đổi tay thì nói rõ ai đang giữ.
+- Mỗi màn vả mặt nặng hơn màn trước một bậc hậu quả; không lặp lại cùng một kiểu bẽ mặt (khách im lặng, hạ ly, tránh \
+đứng cạnh).
 - Cảnh mở chương nói ngay cho người nghe biết đang ở đâu, lúc nào, có ai.
 - Chương cuối: chốt hẳn danh phận và quyền lợi của nhân vật chính, phản diện chịu hình phạt công khai và cụ thể, \
-mọi mạch đã mở đều được gỡ, kết bằng một hình ảnh dư âm. Không để mạch nào lửng, không hẹn phần sau."""
+mọi mạch đã mở đều được gỡ, kết bằng một hình ảnh dư âm. Không công bố lại điều đã công bố ở chương trước: chỉ nói \
+hậu quả mới. Không để mạch nào lửng, không hẹn phần sau."""
 
 
 def outline_note_for(style: str) -> str | None:

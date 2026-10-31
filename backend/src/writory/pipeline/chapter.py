@@ -87,6 +87,7 @@ from writory.pipeline.story_plan import StoryPlan
 from writory.pipeline.summary import SUMMARY_CHAPTERS, summarize_chapter
 from writory.quality import (
     IssueKind,
+    check_dialogue_attribution,
     check_meta_leak,
     check_scene,
     narration_instruction,
@@ -311,6 +312,7 @@ class _Deps:
     on_quotes: Callable[[dict[str, Any]], None] | None = None
     prompts: PromptTexts | None = None  # chỉ bộ đo: đề ghi đè (D-109)
     outline_note: str | None = None  # ghi chú đề dàn ý theo kiểu truyện (D-155)
+    story_style: str = "prose"  # kiểu truyện (D-153): truyện audio có thêm phép kiểm câu dẫn thoại (D-156)
 
 
 class _State(TypedDict, total=False):
@@ -777,6 +779,7 @@ _QUALITY_LABELS = {
     IssueKind.UNCLOSED_QUOTE: "ngoặc kép không đóng",
     IssueKind.META_LEAK: "lọt chữ của đề bài hoặc suy nghĩ của người viết",
     IssueKind.NARRATION_PERSON: "ngôi kể",
+    IssueKind.DIALOGUE_UNATTRIBUTED: "thoại liền nhau không rõ ai nói (giọng đọc máy không phân biệt được người nói)",
 }
 
 
@@ -791,6 +794,8 @@ async def _review(state: _State, runtime: Runtime[_Deps]) -> dict:
     quality = check_scene(text, scenes_in_chapter=d.request.scene_count, quality=cfg.quality,
                           lengths=cfg.story_lengths, names=state["entity_names"]
                           ) + check_meta_leak(text)
+    if d.story_style == "audio" and cfg.quality.audio_dialogue_max_run:  # D-156: chỉ truyện audio
+        quality += check_dialogue_attribution(text, cfg.quality.audio_dialogue_max_run)
     issues = [
         ReviewIssue("quality", q.kind.value, q.kind is IssueKind.META_LEAK,
                     f"{_QUALITY_LABELS[q.kind]}: {q.detail}; đoạn: «{q.excerpt}»")
@@ -1097,7 +1102,7 @@ class ChapterRun:
         self, request: ChapterRequest, *, llm: LLMClient, store: ChapterStore,
         config: AppConfig, plan: StoryPlan, tracker: CostTracker, style_guide: str | None = None,
         on_quotes: Callable[[dict[str, Any]], None] | None = None,
-        prompts: PromptTexts | None = None, outline_note: str | None = None,
+        prompts: PromptTexts | None = None, outline_note: str | None = None, story_style: str = "prose",
     ) -> None:
         allowed = config.story_lengths.scenes_per_chapter
         if not allowed.min <= request.scene_count <= allowed.max:
@@ -1108,7 +1113,7 @@ class ChapterRun:
         # Câu ngôi kể lấy từ cùng config mà kiểm văn dùng để bắt lệch ngôi (D-51).
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,
                            f"{guide}\n\n{narration_instruction(config.quality)}", on_quotes,
-                           prompts, outline_note)
+                           prompts, outline_note, story_style)
         self.outcome = ChapterOutcome()
         self._task: asyncio.Task[None] | None = None
         self._cancel_sent = False

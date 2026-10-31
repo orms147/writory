@@ -187,7 +187,7 @@ sequenceDiagram
 
 ## 5. Đường đi một chương
 
-Kiểu truyện (`stories.style`, D-153) đổi system prompt của model viết: `api/play.py` truyền `pipeline.scene.style_guide_for(story.style)` vào `ChapterRun` (`None` là bản truyện chữ mặc định), và với truyện audio thêm một ghi chú vào system của đề dàn ý (`outline_note_for`, D-155). Khởi tạo truyện audio cũng có ghi chú riêng trong system (`pipeline/setup.AUDIO_SETUP_NOTE`). Mọi bước khác dưới đây giống nhau cho mọi kiểu.
+Kiểu truyện (`stories.style`, D-153) đổi system prompt của model viết: `api/play.py` truyền `pipeline.scene.style_guide_for(story.style)` vào `ChapterRun` (`None` là bản truyện chữ mặc định), và với truyện audio thêm một ghi chú vào system của đề dàn ý (`outline_note_for`, D-155). Khởi tạo truyện audio cũng có ghi chú riêng trong system (`pipeline/setup.AUDIO_SETUP_NOTE`), và bước soát cảnh của truyện audio thêm phép kiểm câu dẫn thoại (`quality.check_dialogue_attribution`, `ChapterRun.story_style`, D-156). Mọi bước khác dưới đây giống nhau cho mọi kiểu.
 
 Đồ thị LangGraph thật, dựng trong `_build` (`pipeline/chapter.py`) và biên dịch một lần:
 

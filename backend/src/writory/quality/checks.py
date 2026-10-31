@@ -27,6 +27,7 @@ class IssueKind(StrEnum):
     UNCLOSED_QUOTE = "unclosed_quote"
     META_LEAK = "meta_leak"
     NARRATION_PERSON = "narration_person"
+    DIALOGUE_UNATTRIBUTED = "dialogue_unattributed"  # truyện audio: thoại liền nhau không rõ ai nói (D-156)
 
 
 @dataclass(frozen=True)
@@ -319,6 +320,33 @@ def check_dialogue(text: str, quality: QualityConfig) -> list[QualityIssue]:
         for pos in _unclosed_quotes(line):
             issues.append(_issue(text, IssueKind.UNCLOSED_QUOTE, m.start() + pos, m.end(),
                                  "ngoặc kép mở nhưng không đóng trong cùng đoạn"))
+    return issues
+
+
+def check_dialogue_attribution(text: str, max_run: int) -> list[QualityIssue]:
+    """Truyện audio (D-156): giọng đọc máy một giọng không cho người nghe biết ai nói, nên quá `max_run` dòng thoại
+    ("- ...") liền nhau, không có dòng kể nào xen giữa, là một lỗi cho mỗi chuỗi như vậy. Dòng trống không cắt chuỗi.
+    Chỉ bước soát cảnh của truyện audio gọi; truyện chữ không kiểm."""
+    text = normalize_dashes(_nfc(text))
+    issues: list[QualityIssue] = []
+    run: list[re.Match[str]] = []
+
+    def close() -> None:
+        if len(run) > max_run:
+            start = run[0].start() + (len(run[0].group()) - len(run[0].group().lstrip()))
+            issues.append(_issue(text, IssueKind.DIALOGUE_UNATTRIBUTED, start, run[-1].end(),
+                                 f"{len(run)} lượt thoại liền nhau không có câu dẫn ai nói (tối đa {max_run})"))
+        run.clear()
+
+    for m in re.finditer(r"[^\n]+", text):
+        body = m.group().strip()
+        if not body:
+            continue
+        if body.startswith(_DIALOGUE_DASH + " "):
+            run.append(m)
+        else:
+            close()
+    close()
     return issues
 
 

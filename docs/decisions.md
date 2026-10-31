@@ -1485,3 +1485,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Giao diện: chọn kiểu audio thì chỉ thấy các mức theo phút.
 - **Hệ quả:** đo lại bằng lượt chạy thật và Muse chấm: `evals/results/2026-11-01-audio-length-check/notes.md` (khi xong). Truyện audio tạo trước D-155 với mức Ngắn, Vừa vẫn chạy như cũ.
 - **Người quyết:** Chủ dự án (độ dài 30 phút tới 1 tiếng, có kết, giao Claude tự quyết, 1/11/2026), Claude (số chương, chỉ dẫn, số tạm), nhánh feature/audio-length · 1/11/2026
+
+## D-156 · Truyện audio: kiểm câu dẫn thoại bằng code, chỉnh số chương, thêm chỉ dẫn chống tự thú và lặp vả mặt (bổ sung D-155)
+- **Bối cảnh:** sau D-155, lượt chạy thật mức ~30 phút (3 chương, 4.111 chữ, 0,040 USD) và ~1 tiếng (8 chương, 10.913 chữ, khoảng 73 phút, 0,085 USD) đều tới kết; Meta Muse chấm 4,5 và 5/10 (trước D-155: 4,5). Mục "lời thoại và câu dẫn cho TTS" 4/10 ở cả ba lượt dù hướng dẫn văn phong đã dặn: lời dặn trong đề không đủ. Thêm: phản diện tự thú quá dễ, vả mặt lặp một kiểu, kết công bố lại điều đã công bố, mức ~1 tiếng dài quá (1/11/2026, chủ dự án giao Claude tự quyết).
+- **Quyết định:**
+  - `quality.check_dialogue_attribution`: quá `quality.audio_dialogue_max_run` (2) dòng thoại liền nhau, không dòng kể xen giữa (dòng trống không tính), là lỗi kiểm văn `dialogue_unattributed`; bước soát cảnh chỉ chạy nó cho truyện audio (`ChapterRun.story_style`), viết lại trong `rewrite_per_scene` như mọi lỗi kiểm văn. Truyện chữ không kiểm.
+  - Số chương: `audio_45` 5 chương, `audio_60` 6–7 chương (đo: khoảng 8,5 phút một chương ở 160 âm tiết/phút; model thường chọn số tối đa).
+  - Chỉ dẫn dàn ý và văn phong audio thêm: phản diện không tự thú khi chưa bị dồn bằng chứng ngay trên trang, vật chứng đổi tay thì nói ai giữ, mỗi màn vả mặt nặng hơn màn trước, kết không công bố lại điều đã công bố, giới thiệu họ tên và vai lần đầu xuất hiện.
+- **Hệ quả:** thêm lượt viết lại khi model để thoại trơn, tức thêm chi phí có giới hạn. Đo lại: `evals/results/2026-11-01-audio-length-check/notes.md`.
+- **Người quyết:** Claude (chủ dự án giao tự quyết, 1/11/2026), nhánh feature/audio-tts-checks · 1/11/2026

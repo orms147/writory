@@ -148,8 +148,8 @@ describe('khởi tạo: kiểu truyện', () => {
       expect.objectContaining({ key: 'short', style: 'prose', minutes: null }),
       expect.objectContaining({ key: 'medium', style: 'prose', minutes: null }),
       { key: 'audio_30', label: 'Audio ~30 phút', chapters_min: 3, chapters_max: 4, style: 'audio', minutes: 30 },
-      { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 6, style: 'audio', minutes: 45 },
-      { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 7, chapters_max: 8, style: 'audio', minutes: 60 },
+      { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 5, style: 'audio', minutes: 45 },
+      { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 6, chapters_max: 7, style: 'audio', minutes: 60 },
     ]);
   });
 

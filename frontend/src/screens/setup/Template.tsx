@@ -282,7 +282,7 @@ export function Template() {
                     <span className="block font-display text-[26px] font-medium leading-tight">{o.label}</span>
                     <span className="mt-1 block text-[13px] text-ink-200">
                       {o.minutes !== null && `khoảng ${o.minutes} phút nghe · `}
-                      {o.chapters_min}–{o.chapters_max} chương
+                      {o.chapters_min === o.chapters_max ? o.chapters_min : `${o.chapters_min}–${o.chapters_max}`} chương
                     </span>
                   </>
                 );
