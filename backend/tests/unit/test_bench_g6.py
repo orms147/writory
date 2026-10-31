@@ -2,6 +2,7 @@
 model. Đo với model thật: `writory.safety.bench_g6` (docs/eval.md, mục Red-team)."""
 
 import json
+from pathlib import Path
 
 import yaml
 
@@ -123,3 +124,100 @@ def test_dry_run_makes_no_paid_call(capsys, monkeypatch):
     assert bench_g6.main(["--dry-run"]) == 0
     out = capsys.readouterr().out
     assert f"cả bộ: đúng {len(CASES)}/{len(CASES)}" in out and f"{len(CASES)} lời gọi" in out
+
+
+def test_round_two_hard_cases_cover_seen_only_others_pay_and_real_exposure():
+    """D-141: người chấm tính nhầm cái giá là thứ người khác trả, hay chỉ là bị nhìn thấy. Ca mới
+    (không sửa nhãn ca cũ): thấy nhưng không hậu quả, người khác gánh, và bị lộ có hậu quả thật."""
+    round2 = [c for c in CASES if "round2" in c["tags"]]
+    assert len(round2) >= 8 and all(c["set"] == "hard" for c in round2)
+    by_tag: dict[str, list[dict]] = {}
+    for c in round2:
+        for tag in c["tags"]:
+            by_tag.setdefault(tag, []).append(c)
+    assert {"seen-only", "unrelated-cost", "exposure-cost", "real-cost"} <= set(by_tag)
+    assert all(c["expected"] == "granted" for c in by_tag["seen-only"] + by_tag["unrelated-cost"])
+    assert all(c["expected"] == "cost" for c in by_tag["exposure-cost"] + by_tag["real-cost"])
+    # Ca sai ở vòng một cần phải viết lại (vượt sức nhân vật: granted thì viết lại, cost thì qua).
+    assert all(c["feasibility"] == "beyond_character" for c in by_tag["seen-only"])
+    assert all(rewrite(c) for c in by_tag["seen-only"] + by_tag["unrelated-cost"])
+    assert not any(rewrite(c) for c in by_tag["exposure-cost"] + by_tag["real-cost"])
+    # Hai thế giới (phố bến sông không phép, thế giới tu tiên).
+    assert {c["action"] for c in round2} >= {"doi-linh"} and len({c["action"] for c in round2}) >= 2
+    old_ids = {c["id"] for c in CASES if not {"round2", "round3"} & set(c["tags"])}
+    assert len(old_ids) == 24 and not {c["id"] for c in round2} & old_ids
+
+
+# --- vòng ba (D-146): hậu quả của việc thử, và cái giá chỉ được nhắc --------------------------------
+
+ROUND3 = [c for c in CASES if "round3" in c["tags"]]
+
+
+def _fold(text: str) -> str:
+    import unicodedata
+
+    plain = unicodedata.normalize("NFD", text.lower()).replace("đ", "d")
+    return "".join(ch for ch in plain if not unicodedata.combining(ch))
+
+
+def _shingles(text: str, n: int = 4) -> set[tuple[str, ...]]:
+    import re
+
+    words = re.sub(r"[^\w\s]", " ", _fold(text)).split()
+    return {tuple(words[i:i + n]) for i in range(max(len(words) - n + 1, 0))}
+
+
+def test_round_three_cases_cover_the_attempt_that_hurts_and_the_cost_that_is_only_mentioned():
+    assert len(ROUND3) >= 9 and all(c["set"] == "hard" for c in ROUND3)
+    by_tag: dict[str, list[dict]] = {}
+    for c in ROUND3:
+        for tag in c["tags"]:
+            by_tag.setdefault(tag, []).append(c)
+    assert {"failed-after-try", "mention-only", "control"} <= set(by_tag)
+    tried = by_tag["failed-after-try"]
+    assert len(tried) >= 4 and all(c["expected"] == "failed" for c in tried)
+    # Chỉ vượt luật thế giới mới đổi quyết định giữa `failed` và `cost` (cost bị viết lại).
+    assert all(c["feasibility"] == "beyond_world_rules" for c in tried)
+    assert any(c.get("earlier_refs") for c in tried)  # một ca có cú ngã nằm ở cảnh trước
+    mentioned = by_tag["mention-only"]
+    assert len(mentioned) >= 3 and all(c["expected"] == "granted" for c in mentioned)
+    assert all(c["feasibility"] == "beyond_character" for c in mentioned)
+    assert all(rewrite(c) for c in mentioned)
+    # Hai ca đối chứng chống sửa quá tay: giá thật vẫn là `cost`, điều bất khả xảy ra một phần vẫn là `cost`.
+    controls = by_tag["control"]
+    assert {c["feasibility"] for c in controls} == {"beyond_character", "beyond_world_rules"}
+    assert all(c["expected"] == "cost" for c in controls)
+    assert {c["action"] for c in ROUND3} >= {"doi-linh", "chem-nguyen-anh"}
+
+
+OVERREACH3_PROMPT = (Path(__file__).parents[3] / "evals" / "results" / "2026-10-31-g6-check-3"
+                     / "overreach3_system_prompt.txt")  # đề đã thử, không dùng (D-146)
+
+
+def test_round_three_cases_are_new_and_the_prompt_does_not_echo_any_case():
+    """Ca vòng ba viết bằng chữ khác các ca phát triển (hai ca ổn định sai ở lần đo đầu) và các ca cũ;
+    đề `overreach-3` (đã thử, lưu ở file cạnh notes) nêu quy tắc chung, không chép cụm của ca nào (cụm bốn từ)."""
+    def case_text(c: dict) -> str:
+        inputs = case_inputs(c, DOC)
+        return " ".join([inputs["action"], *inputs["earlier"], inputs["scene_text"]])
+
+    from writory.safety.overreach import SYSTEM_PROMPT
+
+    prompt = _shingles(SYSTEM_PROMPT) | _shingles(OVERREACH3_PROMPT.read_text(encoding="utf-8"))
+    others = [c for c in CASES if "round3" not in c["tags"]]
+    dev_ids = {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}
+    for case in CASES:
+        if case["id"] in dev_ids or "round3" in case["tags"]:  # ca cũ khác cố ý bắt chước giọng đề (tấn công)
+            assert not prompt & _shingles(case_text(case)), case["id"]
+    def page_text(c: dict) -> str:
+        """Văn của ca trừ câu hành động và đoạn mở đầu của cảnh (dựng tình huống, dùng chung giữa các ca:
+        cùng một cuộc vây lính, khác kết quả); phần so là diễn biến và kết quả."""
+        inputs = case_inputs(c, DOC)
+        outcome = inputs["scene_text"].split("\n\n", 1)[-1]
+        return " ".join([*inputs["earlier"], outcome])
+
+    old = set().union(*(_shingles(page_text(c)) for c in others))
+    for case in ROUND3:
+        assert len(_shingles(page_text(case)) & old) <= 2, case["id"]
+    dev = {c["id"] for c in CASES if c["id"] in {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}}
+    assert dev == {"truoc-nga-nay-im", "hc2-thang-lai-bi-lo-chi-duoc-nhac"}  # ca phát triển còn nguyên

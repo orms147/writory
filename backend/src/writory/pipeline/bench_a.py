@@ -14,6 +14,10 @@ Hai hệ đồ thị đọc đồ thị CHỈ qua `GraphState` của lớp graph
 truyện mẫu, hoặc các gói chương của lượt chạy pipeline, vào Neo4j, `story_id` riêng), chạy khô qua
 `OverlayState` (cùng nghĩa "ở chương N"; test so hai nền: tests/graph/test_bench_a_graph_parity.py).
 
+Hai hệ người kể (`narrator`, `narrator_pages`; `pipeline.bench_a_narrator`, D-143) chỉ chạy khi nêu
+tên ở `--systems`: chúng hỏi đúng đường người kể của sản phẩm (đề narrator-3 và narrator-4), không
+dùng model trả lời chung, và chỉ trên truyện do pipeline viết.
+
 Trần: `--budget` (OpenRouter), USD, tính cả các lần chạy trước trong cùng thư mục. Trước mỗi lời gọi
 giữ chỗ chi phí tối đa (`bench_run.BudgetedClient`, `bench_d.Budget`). Key: chỉ OPENROUTER_API_KEY
 (`bench_d.load_keys`); không in, không ghi (G7). `--dry-run`: model giả, không key, không mạng.
@@ -60,8 +64,10 @@ from writory.llm.base import (
     require_model,
     role_extra,
 )
+from writory.llm.cost import CostTracker, MeteredClient
 from writory.llm.provider import llm_identity
 from writory.llm.retry import with_json_retries
+from writory.pipeline import bench_a_narrator as narr
 from writory.pipeline.bench_a_data import (
     DATA_DIR,
     DISTANCE_BINS,
@@ -90,7 +96,9 @@ from writory.pipeline.bench_a_systems import (
     context_rag,
     context_rolling,
 )
+from writory.pipeline.bench_e import TYPICAL_NARRATOR_OUTPUT_TOKENS
 from writory.pipeline.bench_run import BudgetedClient, StepTracker, merged_prices
+from writory.pipeline.narrator import BlockReason, NarratorOutput
 from writory.pipeline.summary import SummaryOutput, summarize_chapter
 from writory.quality.bench_d import (
     EST_CHARS_PER_TOKEN,
@@ -106,6 +114,9 @@ from writory.safety.wrap import DATA_NOTICE, UserAuthored, system_message, user_
 RESULTS_DIR = REPO_ROOT / "evals" / "results"
 STORY_ID = "bench-a-sample"  # story_id trên Neo4j của truyện mẫu
 RUN_STORY_ID = "bench-a-run"  # story_id trên Neo4j của truyện do pipeline viết (D-83)
+# Sáu hệ bộ nhớ cộng hai hệ người kể (chỉ chạy khi nêu tên, D-143).
+ALL_SYSTEMS = (*SYSTEMS, *narr.NARRATOR_SYSTEMS)
+LABELS = SYSTEM_LABELS | narr.NARRATOR_LABELS
 
 ANSWER_PROMPT_VERSION = "a-answer-1"  # đổi chữ prompt thì tăng số: kết quả cũ không còn so được
 EXIT_OK, EXIT_CONFIG, EXIT_BUDGET, EXIT_ABORT = 0, 1, 2, 3
@@ -178,7 +189,9 @@ class FakeAnswerer(LLMClient):
       các hệ đó dựng đúng ngữ cảnh; các hệ khác, và hệ đồ thị trên truyện do pipeline viết (đồ thị
       do bộ trích dựng, D-83), cho biết trần của chúng nếu model đọc hoàn hảo.
     - null: luôn "Không biết". - wrong: luôn một câu sai (không phải kiêng cữ).
-    Tóm tắt (SummaryOutput) trả một câu giả không chứa gì của chương.
+    Tóm tắt (SummaryOutput) trả một câu giả không chứa gì của chương. Người kể (NarratorOutput):
+    `bench_a_narrator.fake_reply`, cùng ba chế độ, đủ chứng cứ khi câu trích nằm trong sổ tay hay
+    đoạn trên trang nó nhận.
     """
 
     def __init__(self, data: BenchData, mode: Literal["oracle", "null", "wrong"] = "oracle") -> None:
@@ -207,6 +220,8 @@ class FakeAnswerer(LLMClient):
         if response_schema is SummaryOutput:
             number = re.search(r"Chương (\d+)", messages[-1].content)
             body = {"summary": f"Tóm tắt giả của chương {number.group(1) if number else '?'}."}
+        elif response_schema is NarratorOutput:  # hai hệ người kể (D-143)
+            body = narr.fake_reply(self._data, messages, self._mode, self._names)
         else:
             q, ctx = self._lookup(messages)
             if self._mode == "null" or (self._mode == "oracle" and (
@@ -362,9 +377,9 @@ def check_options(opts: RunOptions) -> None:
     if opts.graph_style not in GRAPH_STYLES:
         raise ConfigError(f"--graph-style chọn trong {', '.join(GRAPH_STYLES)}; nhận "
                           f"{opts.graph_style!r}")
-    unknown = sorted(set(opts.systems) - set(SYSTEMS))
+    unknown = sorted(set(opts.systems) - set(ALL_SYSTEMS))
     if unknown:
-        raise ConfigError(f"--systems chọn trong {', '.join(SYSTEMS)}; không biết: {unknown}")
+        raise ConfigError(f"--systems chọn trong {', '.join(ALL_SYSTEMS)}; không biết: {unknown}")
     bad = sorted(set(opts.groups) - set(GROUPS))
     if bad:
         raise ConfigError(f"--groups chọn trong {', '.join(GROUPS)}; không biết: {bad}")
@@ -376,13 +391,14 @@ def check_options(opts: RunOptions) -> None:
 
 def resolve_systems(run: RunFile, requested: Sequence[str]) -> list[str]:
     """Hệ sẽ chạy: `requested`, hoặc các hệ đang bật trong run.yaml khi bỏ trống. Chọn một hệ tuỳ
-    chọn đang tắt là lỗi: run.yaml là tham số khai trước, không bật ngầm (D-81)."""
-    unknown = sorted(set(requested) - set(SYSTEMS))
+    chọn đang tắt là lỗi: run.yaml là tham số khai trước, không bật ngầm (D-81). Hai hệ người kể
+    không thuộc bộ mặc định, chỉ chạy khi nêu tên (tham số ở `limits.narrator_pages`, D-143)."""
+    unknown = sorted(set(requested) - set(ALL_SYSTEMS))
     if unknown:
-        raise ConfigError(f"--systems chọn trong {', '.join(SYSTEMS)}; không biết: {unknown}")
+        raise ConfigError(f"--systems chọn trong {', '.join(ALL_SYSTEMS)}; không biết: {unknown}")
     if not requested:
         return list(run.systems)
-    off = [s for s in requested if s not in run.systems]
+    off = [s for s in requested if s not in run.systems and s not in narr.NARRATOR_SYSTEMS]
     if off:
         flags = ", ".join(f"{s}.enabled" for s in off)
         raise ConfigError(f"hệ {', '.join(off)} đang tắt trong run.yaml ({flags}); bật ở đó "
@@ -414,6 +430,14 @@ def run_problems(config: AppConfig, data: BenchData, systems: Sequence[str] = SY
     needed = [("cost_usd", "per_scene"), ("cost_usd", "per_chapter"), ("cost_usd", "per_story")]
     if "rolling" in systems:
         needed.append(("context", "summary_max_chars"))
+    if set(systems) & set(narr.NARRATOR_SYSTEMS):  # đường người kể của sản phẩm (D-40, D-59, D-143)
+        needed += [("rate_limit", "narrator_questions_per_chapter"),
+                   ("input", "narrator_question_max_chars"),
+                   *(("narrator_notebook", n) for n in ("max_entries", "max_chars",
+                                                        "recent_entries", "keyword_entries")),
+                   ("narrator_pages", "top_k")]
+    if "narrator_pages" in systems:
+        needed += [("narrator_pages", "chunk_chars"), ("narrator_pages", "max_chars")]
     for section, name in needed:
         try:
             getattr(config.limits, section).require(name)
@@ -446,6 +470,11 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "answer_prompt_sha256": _sha256(f"{ANSWER_SYSTEM}\n{DATA_NOTICE}".encode()),
         "page_quotes": page_settings(config, opts.page_neighbors),
         "graph_style": opts.graph_style,
+        # Hai hệ người kể (D-143): đề của từng hệ, chữ hai đề, số đoạn trên trang, file khởi tạo.
+        "narrator_prompts": narr.prompt_versions(config),
+        "narrator_prompt_sha256": _sha256(narr.prompt_sha_parts().encode()),
+        "narrator_pages": config.limits.narrator_pages.model_dump(),
+        "narrator_story_sha256": narr.story_hashes(data),
     }
 
 
@@ -502,6 +531,8 @@ class Runner:
                                       page_neighbors=page["neighbors"] or 0,
                                       page_max_chars=page["max_chars"],
                                       graph_style=opts.graph_style)
+        self.narrator = (narr.NarratorSide.load(data)
+                         if set(opts.systems) & set(narr.NARRATOR_SYSTEMS) else None)
         self.stop: tuple[str, str] | None = None
 
     def _halt(self, kind: str, message: str) -> None:
@@ -581,6 +612,9 @@ class Runner:
             self._error("harness", q.id, system, s, "HARNESS_ERROR", f"{type(e).__name__}: {e}")
 
     async def _ask(self, q: Question, system: str, s: int) -> None:
+        if system in narr.NARRATOR_SYSTEMS:
+            await self._ask_narrator(q, system, s)
+            return
         try:
             ctx = self.builder.build(system, q)
         except KeyError as e:  # hệ rolling thiếu tóm tắt (tóm tắt lỗi hoặc hết ngân sách)
@@ -628,6 +662,40 @@ class Runner:
         self._log(f"[hỏi] {q.id} · {system} · lần {s}: {mark}")
 
 
+    async def _ask_narrator(self, q: Question, system: str, s: int) -> None:
+        """Hai hệ người kể (D-143): đúng `ask_narrator_reply` của sản phẩm, mỗi câu hỏi một bộ đếm
+        trần như mỗi yêu cầu của người chơi, qua cùng cổng ngân sách."""
+        assert self.narrator is not None
+        calls: list[dict[str, Any]] = []
+        gate = self._gate(calls, q.ask_chapter, s + 1)
+        llm = MeteredClient(gate, CostTracker(self.config.limits.cost_usd))
+        started = self._clock()
+        try:
+            reply = await narr.ask(q, system, data=self.data, side=self.narrator, llm=llm,
+                                   config=self.config)
+        except WritoryError as e:
+            if gate.halted:
+                self._halt("budget", gate.halted)
+                if not calls:
+                    return  # chưa gọi gì: để lần chạy tiếp hỏi lại
+            self._error("answer", q.id, system, s, e.code.value, e.detail, calls=calls)
+            if e.code in FATAL or e.code is ErrorCode.LLM_REQUEST_INVALID:
+                self._halt("abort", f"{q.id} · {system}: {e.code.value}")
+            return
+        fields = narr.row_fields(q, system, reply, data=self.data, side=self.narrator,
+                                 config=self.config)
+        row = {"id": q.id, "group": q.group, "system": system, "sample": s,
+               "ask_chapter": q.ask_chapter, "fact_chapter": q.fact_chapter,
+               "distance": q.distance, "type": q.answer.type, "question": q.question, **fields,
+               "calls": calls, "cost_usd": sum(c.get("cost_usd") or 0.0 for c in calls),
+               "latency_s": round(self._clock() - started, 3), "time": _now()}
+        self.store.append(RESULTS, row)
+        self.done.add((q.id, system, s))
+        mark = "đúng" if row["correct"] else ("kiêng" if row["abstained"] else "sai")
+        self._log(f"[hỏi] {q.id} · {system} · lần {s}: {mark}"
+                  + (f" · chặn {row['blocked']}" if row["blocked"] else ""))
+
+
 def _open_results(store: Store, fp: dict[str, Any], meta_extra: dict[str, Any],
                   run_info: dict[str, Any]) -> None:
     meta = store.read_meta()
@@ -660,16 +728,17 @@ async def run_bench(
         answerer = FakeAnswerer(data, opts.fake)
 
     close: Callable[[], None] = lambda: None
+    # Hệ người kể đọc player_view từ gói trong bộ nhớ như bài E: không có hệ đồ thị thì không cần Neo4j.
+    needs_graph = bool(set(opts.systems) & {"graph", "graph_quotes"})
+    backend = opts.graph_backend or ("neo4j" if needs_graph and not opts.dry_run else "memory")
     if graph_state is None:
-        graph_state, close = open_graph_backend(
-            opts.graph_backend or ("memory" if opts.dry_run else "neo4j"), data,
-            story_id=opts.graph_story_id)
+        graph_state, close = open_graph_backend(backend, data, story_id=opts.graph_story_id)
     try:
         store = Store(opts.out)
         samples = opts.samples or data.run.samples
         run_info = {"started": _now(), **git_state(), "argv": list(argv), "samples": samples,
                     "concurrency": opts.concurrency, "systems": list(opts.systems),
-                    "graph_backend": opts.graph_backend or ("memory" if opts.dry_run else "neo4j"),
+                    "graph_backend": backend,
                     "questions": [q.id for q in questions]
                     if (opts.question_ids or opts.groups) else "all",
                     "budget": opts.budget,
@@ -760,6 +829,19 @@ def compute_report(data: BenchData, store: Store, systems: Sequence[str],
             "correct": correct,
             "cache": cache_stats(mine),
         }
+        if system in narr.NARRATOR_SYSTEMS:
+            called = [r for r in mine if r.get("raw") is not None]
+            leaked = [r for r in mine if r.get("final_leaks")]
+            out.setdefault("narrator", {})[system] = {
+                "rows": len(mine),
+                "blocked": dict(Counter(r["blocked"] for r in mine if r.get("blocked"))),
+                "final_leaks": len(leaked),
+                "final_leaks_off_page": sum(any(not h["on_page"] for h in r["final_leaks"])
+                                            for r in leaked),
+                "mean_passages": (sum(len(r.get("passages") or []) for r in called) / len(called)
+                                  if called else 0.0),
+                "wrong": sum(not r["correct"] and not r["abstained"] for r in mine),
+            }
     return out
 
 
@@ -783,7 +865,7 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
     systems = list(report["systems"]) if report else []
     if report is None:
         qs = list(data.questions.questions)
-        systems = [s for s in SYSTEMS if any(r["system"] == s for r in store.rows(RESULTS))]
+        systems = [s for s in ALL_SYSTEMS if any(r["system"] == s for r in store.rows(RESULTS))]
         report = compute_report(data, store, systems, qs, meta.get("runs", [{}])[0].get(
             "samples", data.run.samples))
     fp = meta.get("fingerprint", {})
@@ -813,7 +895,7 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
     for s in systems:
         r = report["systems"][s]
         lines.append(
-            f"| {SYSTEM_LABELS[s]} | {_cell(r['overall'])} | {r['overall']['abstained']} | "
+            f"| {LABELS[s]} | {_cell(r['overall'])} | {r['overall']['abstained']} | "
             f"{'—' if r['mean_context_chars'] is None else round(r['mean_context_chars'])} | "
             f"{_usd(r['cost_answer_usd'])} | {_usd(r['cost_build_usd'])} | "
             f"{_usd(r['cost_per_answer_usd'])} |")
@@ -821,14 +903,14 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
               "| Hệ | " + " | ".join(GROUP_LABEL[g] for g in GROUPS) + " |",
               "|---|" + "---|" * len(GROUPS)]
     for s in systems:
-        lines.append(f"| {SYSTEM_LABELS[s]} | " + " | ".join(
+        lines.append(f"| {LABELS[s]} | " + " | ".join(
             _pct(report["systems"][s]["by_group"][g]["k"], report["systems"][s]["by_group"][g]["n"])
             for g in GROUPS) + " |")
     lines += ["", "## Câu nhớ và câu suy luận (`inference`, tách riêng)", "",
               "| Hệ | Câu nhớ | Câu suy luận |", "|---|---|---|"]
     for s in systems:
         k = report["systems"][s]["by_kind"]
-        lines.append(f"| {SYSTEM_LABELS[s]} | {_pct(k['memory']['k'], k['memory']['n'])} | "
+        lines.append(f"| {LABELS[s]} | {_pct(k['memory']['k'], k['memory']['n'])} | "
                      f"{_pct(k['inference']['k'], k['inference']['n'])} |")
     if any(not q.graph_agrees for q in data.questions.questions):
         lines += ["", "## Đồ thị bộ trích có đáp án hay không (`graph_agrees`, D-83)", "",
@@ -837,13 +919,13 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
                   "", "| Hệ | Đồ thị có đáp án | Đồ thị thiếu hoặc sai |", "|---|---|---|"]
         for s in systems:
             g = report["systems"][s]["by_graph"]
-            lines.append(f"| {SYSTEM_LABELS[s]} | {_pct(g['agrees']['k'], g['agrees']['n'])} | "
+            lines.append(f"| {LABELS[s]} | {_pct(g['agrees']['k'], g['agrees']['n'])} | "
                          f"{_pct(g['disagrees']['k'], g['disagrees']['n'])} |")
     lines += ["", "## Theo khoảng cách (chương hỏi trừ chương của sự thật)", "",
               "| Hệ | " + " | ".join(f"cách {b} chương" for b in DISTANCE_BINS) + " |",
               "|---|" + "---|" * len(DISTANCE_BINS)]
     for s in systems:
-        lines.append(f"| {SYSTEM_LABELS[s]} | " + " | ".join(
+        lines.append(f"| {LABELS[s]} | " + " | ".join(
             _pct(report["systems"][s]["by_bin"][b]["k"], report["systems"][s]["by_bin"][b]["n"])
             for b in DISTANCE_BINS) + " |")
     lines += ["", "## Cache prompt (D-96)", "",
@@ -860,9 +942,21 @@ def build_summary(data: BenchData, store: Store, report: dict[str, Any] | None =
         share = "—" if not c["prompt_tokens"] else f"{100 * c['cached_tokens'] / c['prompt_tokens']:.0f}%"
         per_cold = "—" if c["cold_usd_per_call"] is None else f"{c['cold_usd_per_call']:.6f}"
         per_warm = "—" if c["warm_usd_per_call"] is None else f"{c['warm_usd_per_call']:.6f}"
-        lines.append(f"| {SYSTEM_LABELS[s]} | {c['cold_calls']} | {per_cold} | {c['warm_calls']} | "
+        lines.append(f"| {LABELS[s]} | {c['cold_calls']} | {per_cold} | {c['warm_calls']} | "
                      f"{per_warm} | {c['unknown_calls']} | {share} |")
-    err_lines = [f"- {SYSTEM_LABELS[s]}: " + ", ".join(
+    if report.get("narrator"):
+        reasons = ", ".join(f"`{r.value}`" for r in BlockReason)
+        lines += ["", "## Người kể: lý do chặn và lộ", "",
+                  ("Câu \"Bạn chưa biết điều này.\" tính là kiêng. Lý do: " + reasons + ". Lộ: bộ "
+                   "chấm chặt của bài E trên câu cuối; \"ngoài trang\" = chuỗi trúng không có trong "
+                   "văn chương 1..N người chơi đã đọc."),
+                  "", ("| Hệ | Lý do chặn | Lộ ở câu cuối | Lộ ngoài trang | Sai (không kiêng) | "
+                  "Đoạn TB mỗi lời gọi |"), "|---|---|---|---|---|---|"]
+        for s, n in report["narrator"].items():
+            blocked = ", ".join(f"{k} ×{v}" for k, v in sorted(n["blocked"].items())) or "—"
+            lines.append(f"| {LABELS[s]} | {blocked} | {n['final_leaks']} | "
+                         f"{n['final_leaks_off_page']} | {n['wrong']} | {n['mean_passages']:.1f} |")
+    err_lines = [f"- {LABELS[s]}: " + ", ".join(
         f"{c} ×{n}" for c, n in sorted(report["systems"][s]["errors"].items()))
         for s in systems if report["systems"][s]["errors"]]
     if err_lines:
@@ -887,31 +981,40 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int,
     cap = config.limits.context.summary_max_chars or 1000
     fake_summaries = {k: "x" * cap for k in range(1, max(data.chapters))}
     builder = ContextBuilder(data, data.state_at, fake_summaries)
+    side = (narr.NarratorSide.load(data) if set(systems) & set(narr.NARRATOR_SYSTEMS) else None)
     questions = list(data.questions.questions)
     lines = [
         (f"Bài A: {len(questions)} câu × {samples} lần × {len(systems)} hệ; model trả lời {model} "
         f"(giá vào {price.input}, ra {price.output} USD / 1 triệu token)."),
         "ƯỚC TÍNH THÔ (token ra chưa đo); chi phí thật ghi trong kết quả.", "",
-        "| Hệ | Lời gọi | Ngữ cảnh TB (ký tự) | Ước USD |", "|---|---|---|---|"]
+        "| Hệ | Lời gọi | Ngữ cảnh TB (ký tự) | Token vào / ra (ước) | Ước USD |",
+        "|---|---|---|---|---|"]
     total = 0.0
     for s in systems:
         chars = []
         for q in questions:
+            if s in narr.NARRATOR_SYSTEMS:
+                assert side is not None
+                chars.append(sum(len(m.content) for m in narr.messages_for(
+                    q, s, data=data, side=side, config=config)))
+                continue
             ctx = builder.build(s, q)
             chars.append(len(ANSWER_SYSTEM) + len(DATA_NOTICE) + len(ctx.text) + len(q.question))
         tokens_in = sum(math.ceil(c / EST_CHARS_PER_TOKEN) for c in chars) * samples
-        tokens_out = TYPICAL_ANSWER_OUTPUT_TOKENS * len(questions) * samples
+        out_each = (TYPICAL_NARRATOR_OUTPUT_TOKENS if s in narr.NARRATOR_SYSTEMS
+                    else TYPICAL_ANSWER_OUTPUT_TOKENS)
+        tokens_out = out_each * len(questions) * samples
         usd = (tokens_in * price.input + tokens_out * price.output) / 1e6
         total += usd
-        lines.append(f"| {SYSTEM_LABELS[s]} | {len(questions) * samples} | "
-                     f"{round(sum(chars) / len(chars))} | {usd:.4f} |")
+        lines.append(f"| {LABELS[s]} | {len(questions) * samples} | "
+                     f"{round(sum(chars) / len(chars))} | {tokens_in} / {tokens_out} | {usd:.4f} |")
     if "rolling" in systems:
         sprice = prices.get(require_model(config.models.roles, "summary"), price)
         sums = sum(math.ceil(len(data.story[k]) / EST_CHARS_PER_TOKEN) for k in fake_summaries)
         usd = (sums * sprice.input + TYPICAL_SUMMARY_OUTPUT_TOKENS * len(fake_summaries)
                * sprice.output) / 1e6
         total += usd
-        lines.append(f"| (dựng tóm tắt, tính cho hệ tóm tắt) | {len(fake_summaries)} | — | "
+        lines.append(f"| (dựng tóm tắt, tính cho hệ tóm tắt) | {len(fake_summaries)} | — | — | "
                      f"{usd:.4f} |")
     lines += ["", f"Tổng ước tính: {total:.4f} USD. Trần `--budget` nên đặt cao hơn vài lần."]
     return "\n".join(lines)
@@ -1034,8 +1137,9 @@ def _parser() -> argparse.ArgumentParser:
                           "(0 = như trước D-96); có ghi vào meta.json")
     run.add_argument("--samples", type=int, help="số lần hỏi mỗi câu (mặc định: run.yaml)")
     run.add_argument("--concurrency", type=int, default=4)
-    run.add_argument("--systems", help=f"chỉ các hệ này, cách nhau dấu phẩy ({', '.join(SYSTEMS)}); "
-                                       "mặc định: các hệ đang bật trong run.yaml")
+    run.add_argument("--systems", help=f"chỉ các hệ này, cách nhau dấu phẩy ({', '.join(ALL_SYSTEMS)}); "
+                                       "mặc định: các hệ đang bật trong run.yaml (hai hệ người kể chỉ "
+                                       "chạy khi nêu tên, D-143)")
     run.add_argument("--questions", help="chỉ các id này, cách nhau dấu phẩy")
     run.add_argument("--groups", help=f"chỉ các nhóm này ({', '.join(GROUPS)})")
     run.add_argument("--graph-backend", choices=("memory", "neo4j"),

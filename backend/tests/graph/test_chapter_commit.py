@@ -13,6 +13,7 @@ from writory.db import (
     PendingChapterError,
     chapter_records,
     commit_chapter,
+    committed_package,
     committed_player_view,
     create_story,
     current_chapter,
@@ -233,3 +234,24 @@ def test_stored_error_is_redacted(pg, driver, new_db_story_id, monkeypatch):
     assert stored.status == "failed"
     assert fake_key not in stored.error and "[REDACTED]" in stored.error
     assert fake_key not in str(info.value)
+
+
+def test_committed_package_returns_only_what_was_committed(pg, driver, new_db_story_id, monkeypatch):
+    """Lệnh đo ghi checkpoint lúc commit bằng gói này (D-148): chương pending, failed hay chưa có thì không có gói."""
+    sid = new_db_story_id()
+    _story_with(pg, driver, sid, 1)
+    assert committed_package(pg, sid, 1) == SAMPLE.chapters[1].package
+    assert committed_package(pg, sid, 2) is None
+
+    def down(*_args, **_kwargs):
+        raise ServiceUnavailable("neo4j tắt")
+
+    monkeypatch.setattr(chapters_mod, "apply_package", down)
+    with pytest.raises(ServiceUnavailable):
+        _commit(pg, driver, sid, 2)
+    assert _statuses(pg, sid)[-1] == (2, "pending")
+    assert committed_package(pg, sid, 2) is None
+    monkeypatch.undo()
+    reconcile_pending(pg, driver, story_id=sid)
+    assert committed_package(pg, sid, 2) == SAMPLE.chapters[2].package
+    assert committed_package(pg, "không-có-truyện", 1) is None

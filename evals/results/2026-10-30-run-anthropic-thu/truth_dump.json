@@ -1,0 +1,25 @@
+{
+ "story_id": "run-20261030-anthropic-thu-498b4e91",
+ "plan": null,
+ "plan_progress": null,
+ "packages": {},
+ "final": null,
+ "chapters": {},
+ "errors": [
+  {
+   "where": "setup:build",
+   "attempt": 1,
+   "code": "LLM_REQUEST_INVALID",
+   "detail": "HTTP 400: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.'}, 'request_id': 'req_011CgYkCTDMQHNxpTPFyv8D3'}"
+  },
+  {
+   "where": "setup:build",
+   "code": "LLM_REQUEST_INVALID",
+   "detail": "HTTP 400: Error code: 400 - {'type': 'error', 'error': {'type': 'invalid_request_error', 'message': 'The compiled grammar is too large, which would cause performance issues. Simplify your tool schemas or reduce the number of strict tools.'}, 'request_id': 'req_011CgYkCTDMQHNxpTPFyv8D3'}"
+  }
+ ],
+ "setup_repairs": [],
+ "thread_shifts": [],
+ "answers_dropped": [],
+ "quotes": []
+}

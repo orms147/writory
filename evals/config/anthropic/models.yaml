@@ -1,0 +1,37 @@
+# Config bộ đo dùng Claude qua Anthropic API thay OpenRouter (D-145): `--config-dir evals/config/anthropic`. Thư mục này
+# chỉ chứa phần KHÁC config/models.yaml (loader gộp từng khoá, D-140): `role_reasoning` lấy từ config/; mức `none` thành
+# `thinking: disabled`, `minimal` thành effort `low`. `writer_tiers` là danh sách nên bị thay cả: sửa config/models.yaml
+# thì sửa theo (test_anthropic_config bắt lệch). Chỉ bộ đo dùng: sản phẩm cho người chơi từ chối id `anthropic-api/`
+# (config.product_model_problems); tiền tố khác `anthropic/` của OpenRouter.
+# Model: Claude Haiku 5.5, model Claude rẻ nhất hiện hành (skill claude-api, tra 30/10/2026): 1M ngữ cảnh, 128K output, JSON
+# theo schema qua output_config.format, giá bằng Luna nên trần chi phí của config/ dùng nguyên. Tokenizer mới đếm
+# nhiều hơn khoảng 30% token cho cùng chữ so với Haiku 4.5.
+# Giá USD / 1 triệu token, từ skill claude-api (tra 30/10/2026): 0,10 vào và 0,50 ra cho prompt đến 100 nghìn token, 0,50 và
+# 2,50 cho prompt dài hơn (áp cả lời gọi); đọc cache bằng 0,1 giá vào; ghi cache 5 phút bằng 1,25 giá vào.
+
+roles:
+  outline: anthropic-api/claude-haiku-5-5
+  extract: anthropic-api/claude-haiku-5-5
+  choices: anthropic-api/claude-haiku-5-5
+  narrator: anthropic-api/claude-haiku-5-5
+  classify: anthropic-api/claude-haiku-5-5
+  setup: anthropic-api/claude-haiku-5-5
+  summary: anthropic-api/claude-haiku-5-5
+  moderate: anthropic-api/claude-haiku-5-5
+  video: anthropic-api/claude-haiku-5-5
+  overreach: anthropic-api/claude-haiku-5-5
+
+writer_tiers:
+  - id: standard
+    label: "Tiêu chuẩn"
+    model: "anthropic-api/claude-haiku-5-5"
+    eval_result: "evals/results/2026-10-20-quality-r2/"
+    reasoning: none
+
+prices:
+  anthropic-api/claude-haiku-5-5:
+    in: 0.10
+    out: 0.50
+    cached_in: 0.01
+    cache_write_in: 0.125
+    long_prompt: {over_tokens: 100000, in: 0.50, out: 2.50, cached_in: 0.05, cache_write_in: 0.625}

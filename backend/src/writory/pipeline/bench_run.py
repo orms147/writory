@@ -46,6 +46,7 @@ import hashlib
 import json
 import logging
 import math
+import os
 import random
 import re
 import sys
@@ -499,6 +500,10 @@ class RunStore(ChapterStore, Protocol):
         """Các cảnh đã ghi của một chương, theo thứ tự (chạy tiếp tạo lại lựa chọn, D-124)."""
         ...
 
+    def committed_package(self, number: int) -> ChangePackage | None:
+        """Gói thay đổi đã commit của một chương (None nếu chưa): checkpoint lúc commit dùng nó (D-148)."""
+        ...
+
 
 class GraphRunStore(GraphStore):
     """`GraphStore` (Neo4j + Postgres) với một story_id mới cho mỗi lần chạy."""
@@ -524,6 +529,11 @@ class GraphRunStore(GraphStore):
         from writory.db import chapter_scenes
 
         return list(chapter_scenes(self._conn, self.story_id, number) or [])  # None: chương chưa commit
+
+    def committed_package(self, number: int) -> ChangePackage | None:
+        from writory.db import committed_package
+
+        return committed_package(self._conn, self.story_id, number)
 
 
 # --- ghi đè đề (D-109) -------------------------------------------------------------------------
@@ -666,6 +676,17 @@ RESUME_KEYS = (
 )
 
 
+def write_atomic(path: Path, text: str) -> None:
+    """Ghi `text` vào file tạm cạnh `path` rồi đổi tên đè lên (D-148): đang ghi mà chết thì `path` vẫn là bản đủ trước
+    đó, chỉ còn file `.tmp` dở. Có `fsync` để mất điện cũng không để lại bản rỗng."""
+    tmp = path.with_name(path.name + ".tmp")
+    with open(tmp, "w", encoding="utf-8", newline="\n") as f:
+        f.write(text)
+        f.flush()
+        os.fsync(f.fileno())
+    os.replace(tmp, path)
+
+
 def output_in_use(out: Path) -> bool:
     """Thư mục kết quả đã có file (kết quả cũ, hay lượt chạy tiếp sao chép dở chưa kịp ghi meta.json):
     ghi tiếp vào đó thì nối thêm một bản calls.jsonl, events.jsonl và đếm đôi chi phí (D-130)."""
@@ -799,12 +820,16 @@ class StoryRun:
         self.metered = MeteredClient(self.budgeted, self.tracker)
         self.started = datetime.now().astimezone().isoformat(timespec="seconds")
         self.files.write_meta(self._meta("running"))
+        if self._resume is not None:
+            self._checkpoint()  # lượt chạy tiếp cũng sống sót nếu bị ngắt cứng trước checkpoint đầu của nó
         try:
             with watch_rejections(self._on_rejected):  # chỉ bộ đo cài móc này (D-115)
                 if self._resume is not None:
                     await self._resume_chapters()
-                elif await self._setup() and not self.options.setup_only:
-                    await self._chapters()
+                elif await self._setup():
+                    self._checkpoint()  # khởi tạo tốn tiền: chết ngay sau đó thì còn `--setup-from` (D-148)
+                    if not self.options.setup_only:
+                        await self._chapters()
         except Exception:  # noqa: BLE001 — lỗi của khung chạy: ghi lại, vẫn ghi đủ file
             self._stop("error", "harness", ErrorCode.INTERNAL_ERROR,
                        redact(traceback.format_exc()))
@@ -1039,6 +1064,8 @@ class StoryRun:
                              **event.model_dump(mode="json")})
                 if event.type == "scene_ready":
                     shown.append(event.text)
+                elif event.type == "chapter_committed":
+                    self._checkpoint_at_commit(number, attempt, action)
             out = run.outcome
             self._record_attempt(number, attempt, out, action)
             code = out.error or (out.blocked_code or ErrorCode.SCENE_LEAK_BLOCKED
@@ -1058,6 +1085,7 @@ class StoryRun:
                 status = None if picked is not None else (
                     f"đã ghi, không có lựa chọn: dừng vì {self.stop['code'] if self.stop else '?'}")
                 self._write_chapter(number, shown, action, choices, picked, status=status)
+                self._checkpoint()
                 self._print(f"[chương {number}] đã ghi, {len(out.scenes)} cảnh, đã tiêu "
                             f"{self.budgeted.spent_usd:.4f} USD")
                 if picked is None:
@@ -1339,7 +1367,10 @@ class StoryRun:
              "source": self.resumed_from, "spent_usd_before": prior,
              "from_commit": (old.get("git") or {}).get("commit"),
              "from_config_sha256": ((old.get("config") or {}).get("sha256") or {}).get("combined"),
-             "previous_stop": report.get("stop"), "chapters_inherited": inherited},
+             "previous_stop": report.get("stop") or (
+                 {"kind": "interrupted", "where": "hard kill (meta.json còn status running)", "code": "INTERRUPTED"}
+                 if old.get("status") == "running" else None),
+             "chapters_inherited": inherited},
         ]
         # Cộng dồn qua mọi lượt (D-130): phần đã khác ở lượt trước không mất khi lượt sau không khác.
         self.resume_drift = [*(old.get("resume_drift") or []),
@@ -1367,7 +1398,10 @@ class StoryRun:
         self._resume = {
             "last": last, "choices": last_choices, "picked": last_index, "entry": entry,
             "present": [name for scene in outlines[-1:] for name in scene.get("present", [])],
-            "attempts_before": sum(1 for a in self.attempts if a["chapter"] == last + 1),
+            # Lượt chết có thể đã gọi model cho chương dở mà chưa kịp ghi attempt đó vào report: lấy số lớn hơn.
+            "attempts_before": max(
+                sum(1 for a in self.attempts if a["chapter"] == last + 1),
+                max((c["attempt"] for c in calls if c.get("chapter") == last + 1), default=0)),
             "setup_from": old.get("setup_from"),
         }
 
@@ -1442,6 +1476,7 @@ class StoryRun:
         picked = self._pick_choice(number, choices)
         self._write_chapter(number, scenes, entry.get("player_action"), choices, picked,
                             status=None)
+        self._checkpoint()
         return choices, picked
 
     # -- kết thúc --
@@ -1474,19 +1509,7 @@ class StoryRun:
         except Exception:  # noqa: BLE001 — như trên
             self.errors.append({"where": "plan_progress", "code": ErrorCode.INTERNAL_ERROR.value,
                                 "detail": redact(traceback.format_exc())})
-        truth = {
-            "story_id": self.store.story_id,
-            "plan": self.plan.model_dump(mode="json") if self.plan else None,
-            # Kế hoạch so với kết quả, có id và chữ (bản không id ở report.json).
-            "plan_progress": asdict(self.progress) if self.progress else None,
-            "packages": {str(n): p.model_dump(mode="json", by_alias=True)
-                         for n, p in sorted(self.packages.items())},
-            "final": final, "chapters": self.truth_chapters, "errors": self.errors,
-            "setup_repairs": self.setup_repairs,
-            "thread_shifts": self.thread_shifts,
-            "answers_dropped": self.answers_dropped,
-            "quotes": self.quotes,
-        }
+        truth = self._truth_dump(final=final)
         self._write_json("truth_dump.json", truth)
         self._write_json("setup.json", self.setup_record)
         report = build_report(self)
@@ -1504,10 +1527,61 @@ class StoryRun:
         self._print(f"Xong ({report['status']}). Đã tiêu {report['cost']['total_usd']:.4f} USD. "
                     f"Kết quả: {self.options.out}")
 
+    def _truth_dump(self, *, final: dict[str, Any] | None, packages: Mapping[int, ChangePackage] | None = None,
+                    chapters: Mapping[str, Any] | None = None, checkpoint: bool = False) -> dict[str, Any]:
+        packages = self.packages if packages is None else packages
+        return {
+            "story_id": self.store.story_id,
+            "plan": self.plan.model_dump(mode="json") if self.plan else None,
+            # Kế hoạch so với kết quả, có id và chữ (bản không id ở report.json).
+            "plan_progress": asdict(self.progress) if self.progress else None,
+            "packages": {str(n): p.model_dump(mode="json", by_alias=True)
+                         for n, p in sorted(packages.items())},
+            "final": final, "chapters": self.truth_chapters if chapters is None else chapters,
+            "errors": self.errors, "setup_repairs": self.setup_repairs,
+            "thread_shifts": self.thread_shifts,
+            "answers_dropped": self.answers_dropped,
+            "quotes": self.quotes,
+            **({"checkpoint": True} if checkpoint else {}),
+        }
+
+    def _checkpoint(self, *, packages: Mapping[int, ChangePackage] | None = None,
+                    chapters: Mapping[str, Any] | None = None) -> None:
+        """Ghi `truth_dump.json`, `setup.json`, `report.json` ở trạng thái hiện tại (D-148), mỗi file ghi tạm rồi đổi
+        tên. Lượt bị ngắt cứng (máy khởi động lại) không kịp `_finish` thì `--resume` vẫn đọc được các file này;
+        `meta.json` giữ `status: running` tới khi chạy xong. Không đọc đồ thị cả truyện (đó là việc của `_finish`),
+        nên chi phí mỗi lần chỉ là ghi ba file. Lỗi ghi (đĩa đầy) chỉ báo, không dừng lượt chạy."""
+        try:
+            truth = self._truth_dump(final=None, packages={**self.packages, **(packages or {})},
+                                     chapters=chapters, checkpoint=True)
+            self._write_json("truth_dump.json", truth)
+            self._write_json("setup.json", self.setup_record)
+            report = build_report(self)
+            report["status"] = "running"  # chưa chạy xong: `build_report` không biết, vì lượt chưa có `stop`
+            self._write_json("report.json", report)
+        except Exception as e:  # noqa: BLE001 — checkpoint là bảo hiểm, không được làm chết lượt chạy
+            self._print(f"!! không ghi được checkpoint ({type(e).__name__}); lượt chạy tiếp tục")
+
+    def _checkpoint_at_commit(self, number: int, attempt: int, action: str | None) -> None:
+        """Chương vừa commit vào kho: ghi checkpoint NGAY (gói lấy từ kho), trước khi tóm tắt và lựa chọn tốn vài chục
+        giây. Không thì lượt chết trong khoảng đó để kho đi trước thư mục kết quả và `--resume` từ chối. Mục truth của
+        chương chỉ có những gì đã biết; lựa chọn còn trống nên `--resume` tạo lại như người chơi bấm thử lại."""
+        try:
+            package = self.store.committed_package(number)
+        except Exception:  # noqa: BLE001 — như `_checkpoint`
+            return
+        if package is None:
+            return
+        entry = {"attempt": attempt, "commit_id": package.commit_id, "player_action": action,
+                 "error_detail": None, "summary": None, "outlines": [], "reviews": [], "choices": []}
+        chapters = {k: list(v) for k, v in self.truth_chapters.items()}
+        chapters.setdefault(str(number), []).append(entry)
+        self._checkpoint(packages={number: package}, chapters=chapters)
+
     def _write_json(self, name: str, data: Any) -> None:
         self.options.out.mkdir(parents=True, exist_ok=True)
         text = json.dumps(data, ensure_ascii=False, indent=1, default=str)
-        (self.options.out / name).write_text(text + "\n", encoding="utf-8", newline="\n")
+        write_atomic(self.options.out / name, text + "\n")
 
     def _meta(self, status: str) -> dict[str, Any]:
         path = self.options.scenario_path

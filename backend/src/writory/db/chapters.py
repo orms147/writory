@@ -149,6 +149,17 @@ def chapter_scenes(conn: psycopg.Connection, story_id: str, number: int) -> list
     return None if row is None else list(row[0])
 
 
+def committed_page_texts(conn: psycopg.Connection, story_id: str, upto: int) -> dict[int, str]:
+    """Văn đã hiện của các chương đã commit 1..`upto` (các cảnh nối bằng dòng trống), cho người kể
+    (D-143). Chương pending hay failed chưa hiện nên không có; chương 0 không có trang."""
+    rows = conn.execute(
+        "SELECT number, scenes FROM chapters WHERE story_id = %s AND status = 'committed' "
+        "AND number BETWEEN 1 AND %s ORDER BY number",
+        (story_id, upto),
+    ).fetchall()
+    return {number: "\n\n".join(scenes) for number, scenes in rows if scenes}
+
+
 def delete_story_record(conn: psycopg.Connection, story_id: str) -> None:
     """Xoá truyện khỏi Postgres (chương và gói xoá theo). Đồ thị xoá riêng: graph.delete_story."""
     require_story_id(story_id)
@@ -167,6 +178,15 @@ def committed_player_view(conn: psycopg.Connection, driver: Driver, story_id: st
     if chapter is None:
         return PlayerView(story_id, 0, (), ())
     return player_view(driver, story_id, chapter)
+
+
+def committed_package(conn: psycopg.Connection, story_id: str, number: int) -> ChangePackage | None:
+    """Gói thay đổi đã commit của một chương (outbox, D-6); None nếu chương chưa commit. Lệnh đo ghi checkpoint
+    ngay lúc commit bằng gói này (D-148)."""
+    row = conn.execute(
+        "SELECT p.package FROM chapters c JOIN change_packages p USING (story_id, commit_id) "
+        "WHERE c.story_id = %s AND c.number = %s AND c.status = 'committed'", (story_id, number)).fetchone()
+    return None if row is None else ChangePackage.model_validate(row[0])
 
 
 def chapter_records(conn: psycopg.Connection, story_id: str) -> list[ChapterRecord]:

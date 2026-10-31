@@ -12,16 +12,19 @@ from typing import Any
 import httpx
 from pydantic import BaseModel
 
-from writory.config import AppConfig, ConfigError, is_meta_model
+from writory.config import AppConfig, ConfigError, is_anthropic_model, is_meta_model
+from writory.llm.anthropic_client import AnthropicClient
 from writory.llm.base import ChatResult, GenerationCost, LLMClient, Message, StreamEvent
 from writory.llm.meta import MetaClient
 from writory.llm.openrouter import OpenRouterClient
 
-OPENROUTER, META = "openrouter", "meta"
+OPENROUTER, META, ANTHROPIC = "openrouter", "meta", "anthropic"
 
 
 def provider_of(model: str) -> str:
-    return META if is_meta_model(model) else OPENROUTER
+    if is_meta_model(model):
+        return META
+    return ANTHROPIC if is_anthropic_model(model) else OPENROUTER
 
 
 def config_models(config: AppConfig) -> list[str]:
@@ -42,8 +45,10 @@ def llm_identity(config: AppConfig, models: Iterable[str] | None = None) -> dict
 class RoutingClient(LLMClient):
     """Gửi mỗi lời gọi tới client của nhà cung cấp theo tiền tố id model."""
 
-    def __init__(self, *, meta: LLMClient | None, openrouter: LLMClient | None) -> None:
-        self._clients: Mapping[str, LLMClient | None] = {META: meta, OPENROUTER: openrouter}
+    def __init__(self, *, meta: LLMClient | None, openrouter: LLMClient | None,
+                 anthropic: LLMClient | None = None) -> None:
+        self._clients: Mapping[str, LLMClient | None] = {
+            META: meta, OPENROUTER: openrouter, ANTHROPIC: anthropic}
 
     def _for(self, model: str) -> LLMClient:
         provider = provider_of(model)
@@ -73,16 +78,21 @@ def bench_llm(config: AppConfig, env_file: Path, *, http: httpx.AsyncClient | No
 
     wanted = {provider_of(m) for m in (config_models(config) if models is None else models)}
     keys = load_keys(env_file, sorted(wanted))
-    openrouter = meta = None
+    openrouter = meta = anth = None
+    if ANTHROPIC in wanted:
+        assert keys.anthropic_api_key is not None
+        anth = AnthropicClient(keys.anthropic_api_key, config.models.prices, workspace_id=keys.anthropic_workspace_id,
+                               deadline_s=deadline_s,
+                               default_max_tokens=config.limits.llm_call.max_output_tokens or 16000)
     if OPENROUTER in wanted:
         assert keys.openrouter_api_key is not None
         openrouter = OpenRouterClient(keys.openrouter_api_key, http=http, deadline_s=deadline_s)
     if META in wanted:
         assert keys.meta_api_key is not None
         meta = MetaClient(keys.meta_api_key, config.models.prices, http=http, deadline_s=deadline_s)
-    if openrouter is not None and meta is not None:
-        return RoutingClient(meta=meta, openrouter=openrouter)
-    return meta or openrouter or _no_models()
+    if sum(c is not None for c in (openrouter, meta, anth)) > 1:
+        return RoutingClient(meta=meta, openrouter=openrouter, anthropic=anth)
+    return meta or openrouter or anth or _no_models()
 
 
 def _no_models() -> LLMClient:

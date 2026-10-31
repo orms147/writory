@@ -69,19 +69,21 @@ async def narrator(
     plan: Annotated[StoryPlan, Depends(deps.get_story_plan)],
     truth_names: Annotated[Mapping[str, tuple[str, ...]], Depends(deps.get_truth_names)],
     brief: deps.StoryBrief,
+    pages: deps.PageTexts,
     quota: Counter,
 ) -> NarratorAnswerOut:
     """Hỏi người kể: không mất lượt truyện; số câu mỗi chương có trần (G8). Câu hỏi qua kiểm duyệt
     (G9, D-57) sau khi kiểm độ dài, trước khi giữ lượt và trước model người kể. Câu trả lời sắp hiện
     qua kiểm duyệt đầu ra ở mức u tối của truyện, cùng client (G8); bị chặn thì
-    NARRATOR_ANSWER_BLOCKED và không mất lượt (D-137).
+    NARRATOR_ANSWER_BLOCKED và không mất lượt (D-137). Người kể đọc thêm vài đoạn văn của các
+    chương đã commit (`deps.get_page_texts`, D-143).
 
     Trả thêm số câu còn lại của chương (bộ đếm `narrator_questions`, sau khi giữ lượt) và chương
-    của các mục câu trả lời dẫn, tính từ `player_view` (D-65). Hết lượt: NARRATOR_LIMIT_REACHED
-    như cũ."""
+    của các mục câu trả lời dẫn, tính từ `player_view` (D-65), cộng chương của các đoạn trên trang
+    được dẫn (D-143). Hết lượt: NARRATOR_LIMIT_REACHED như cũ."""
     result = await ask_narrator(
         body.question, view, llm=llm, config=config, truth_names=truth_names, plan=plan,
-        story_brief=brief, quota=quota,
+        story_brief=brief, quota=quota, pages=pages,
         moderate=partial(_moderate_input, llm=llm, config=config),
         # Câu trả lời là văn model viết để hiện thành một đoạn: kiểm như văn cảnh (D-137).
         moderate_answer=partial(moderate, source=Source.SCENE, llm=llm, config=config,
@@ -90,7 +92,7 @@ async def narrator(
     return NarratorAnswerOut(
         answer=result.answer,
         remaining=await remaining_questions(quota, view.story_id, view.chapter, config),
-        source_chapters=source_chapters(view, result.refs),
+        source_chapters=source_chapters(view, result.refs, result.page_chapters),
     )
 
 
