@@ -1423,3 +1423,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Còn khoảng nhỏ giữa commit của kho và checkpoint sớm (và Postgres `pending`) mà chết thì `--resume` vẫn từ chối. Lời gọi đang bay lúc bị giết không có dòng trong `calls.jsonl`, tiền đó không tính vào trần tổng.
   - Cái giá: ba file ghi lại mỗi chương, số lần ghi có chặn trên (test).
 - **Người quyết:** Claude (điều phối giao việc 31/10/2026), nhánh feature/bench-checkpoint · 31/10/2026
+
+## D-149 · Báo cáo bộ đo: mốc kết không có dấu là `untracked`, không phải `missed` (bổ sung D-116)
+- **Bối cảnh:** bộ trích không được hỏi về mốc kết (`pacing._pending_milestones` bỏ `ending`), nên mốc kết không bao giờ có dấu. `plan_vs_result` vẫn ghi nó `missed` ở mọi truyện chạy hết kế hoạch (`long-after-ky-ao-2`, `ckr-tu-treat`), và notes phải giải thích lại mỗi lần. Đề xuất (b) của `evals/results/2026-10-29-milestone-diagnosis/notes.md`.
+- **Quyết định:** `bench_run.plan_vs_result`: mốc `ending` không có dấu ghi `untracked`; `summary.md` in "không theo dõi (mốc kết)". Mốc khác giữ luật cũ. Không đổi bộ trích hay mục tiêu chương.
+- **Hệ quả:** số `missed` ở các `report.json` cũ có thể gồm cả mốc kết; đọc số cũ thì trừ ra. Muốn đo mốc kết thật thì phải cho bộ trích theo dõi nó, chưa làm.
+- **Người quyết:** Claude (điều phối), nhánh fix/ending-milestone-report · 31/10/2026

@@ -79,6 +79,22 @@ def test_report_lists_each_milestone_with_its_window_and_the_chapter_it_happened
     assert "mô tả" not in str(got)  # file chung không mang chữ lớp truth
 
 
+def test_the_ending_is_reported_as_untracked_not_missed():
+    """Bộ trích không theo dõi mốc kết (`pacing._pending_milestones`), nên mốc kết không có dấu là
+    `untracked`, kể cả khi truyện đã tới chương cuối; mốc khác quá hạn vẫn là `missed`."""
+    from writory.pipeline import bench_run
+
+    def report(chapter: int) -> dict:
+        return plan_vs_result(PlanProgress(chapter, 12, (), (), (
+            MilestoneProgress(1, "climax", "x", 9, 11, None),
+            MilestoneProgress(2, "ending", "y", 12, 12, None))))
+
+    assert [m["status"] for m in report(12)["milestones"]] == ["missed", "untracked"]
+    assert [m["status"] for m in report(6)["milestones"]] == ["pending", "untracked"]
+    lines = "\n".join(bench_run._plan_lines({"plan_vs_result": report(12), "story_finished": True}))
+    assert "| 2 | 12–12 | — | không theo dõi (mốc kết) |" in lines
+
+
 def test_plan_vs_result_lists_the_candidate_chapter_only_for_an_unconfirmed_early_climax():
     from writory.guard.plan import MilestoneProgress, PlanProgress
     from writory.pipeline.bench_run import plan_vs_result

@@ -1685,7 +1685,10 @@ def plan_vs_result(progress: PlanProgress | None) -> dict[str, Any] | None:
         "milestones": [
             {"n": m.number, "window": window(m.from_chapter, m.to_chapter),
              "done_chapter": m.done_chapter,
-             "status": _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter),
+             # Mốc kết không vào danh sách bộ trích đánh dấu (`pacing._pending_milestones`), nên
+             # không có dấu là `untracked`, không phải `missed`.
+             "status": ("untracked" if m.kind == "ending" and m.done_chapter is None
+                        else _item_status(progress, m.done_chapter, m.from_chapter, m.to_chapter)),
              # Cao trào có dấu trước khoảng, chưa xong (D-142); khoá chỉ có khi có.
              **({"candidate_chapter": m.candidate_chapter} if m.candidate_chapter is not None
                 else {})}
@@ -1948,7 +1951,8 @@ def build_summary(meta: dict[str, Any], report: dict[str, Any]) -> str:
 
 
 _STATUS_TEXT = {"on_time": "đúng khoảng", "early": "sớm", "late": "trễ",
-                "missed": "chưa có, đã quá hạn", "pending": "chưa tới hạn"}
+                "missed": "chưa có, đã quá hạn", "pending": "chưa tới hạn",
+                "untracked": "không theo dõi (mốc kết)"}
 
 
 def _plan_lines(report: dict[str, Any]) -> list[str]:
