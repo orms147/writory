@@ -33,7 +33,8 @@ def test_the_frontend_has_no_way_to_ask_for_an_audio_script():
         pytest.skip("không có frontend/src")
     for path in frontend.rglob("*"):
         if path.is_file() and path.suffix in {".ts", ".tsx"}:
-            assert not re.search(r"/audio\b", path.read_text(encoding="utf-8"), re.IGNORECASE), path
+            # Chuỗi đường dẫn trong dấu nháy (`'/audio...'`), không bắt nhầm regex của test giao diện (`/Audio ~45 phút/`).
+            assert not re.search(r"""["'`]/audio\b""", path.read_text(encoding="utf-8"), re.IGNORECASE), path
 
 
 def test_the_audio_tool_touches_no_database_and_not_the_truth_exporter():
