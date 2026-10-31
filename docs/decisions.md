@@ -1165,7 +1165,7 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Từ chối khi `git.commit`, hash config, đề, model, phiên bản đề lời gọi, cờ ngữ cảnh hay `dry_run` khác lần đầu; `--resume-allow-drift` cho qua và ghi vào `resume_drift` của meta. Seed khác thì luôn từ chối (không phát lại được dãy chọn). **Đã thay một phần (D-130):** `dry_run` khác thì luôn từ chối như seed, `--resume-allow-drift` không cho qua; `resume_drift` cộng dồn qua mọi lượt.
 - **Hệ quả:**
   - Lượt chạy tiếp ghép hai nửa chạy ở hai thời điểm; model thật không tất định, nên không bao giờ giống hệt chạy liền, chỉ giống ở các chương đã có. Kết quả cần ghi rõ `resume_points` khi so sánh.
-  - Lượt bị ngắt cứng (không kịp ghi `truth_dump.json`) không chạy tiếp được; dựng lại từ đồ thị là việc khác.
+  - Lượt bị ngắt cứng chạy tiếp được từ checkpoint sau mỗi chương, nhưng lượt chạy trước D-148 (không có checkpoint) thì không; dựng lại từ đồ thị là việc khác. **Đã thay một phần (D-148).**
   - Chưa thử trên Neo4j + Postgres thật với lượt thật (không gọi model trả tiền ở đợt này); test chạy bằng model giả và kho trong bộ nhớ, thêm test tích hợp ở `tests/graph/test_bench_run.py`.
 - **Người quyết:** Claude (writory-28 giao việc 29/10/2026)
 
@@ -1410,3 +1410,15 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Hệ quả:** các ca `round3` đã dùng để đo `overreach-3` nên không còn là bộ giữ riêng đối với đề này: đạt chứng minh không hồi quy trên bộ này và xử được các dạng đã nêu, không chứng minh G6 kín. Giả thuyết ở D-146 (câu về "cảnh trước" gây hồi quy) được ủng hộ gián tiếp, chưa tách riêng. Thay `overreach-2` (D-141) trong sản phẩm.
 - **Người quyết:** Claude (đề; điều phối giao việc 31/10/2026, chủ dự án đang giao điều phối tự làm tiếp), nhánh fix/overreach-4 · 31/10/2026
 
+## D-148 · Checkpoint của bộ đo: `truth_dump.json`, `setup.json`, `report.json` ghi nguyên tử sau mỗi chương, để lượt bị ngắt cứng vẫn `--resume` được (thay một phần D-124)
+- **Bối cảnh:** `evals/results/2026-10-31-run-ckr-ky-treat` bị ngắt cứng ở chương 15 vì máy khởi động lại, mất 8,12 USD credit Meta: các file D-124 cần đọc chỉ ghi lúc `_finish`, nên lượt chết thì thư mục không chạy tiếp được dù kho còn nguyên.
+- **Quyết định:**
+  - `pipeline/bench_run.py` có `write_atomic` (ghi file `.tmp` cạnh nó, `fsync`, rồi `os.replace`); mọi file JSON của lệnh ghi qua nó, nên chết giữa chừng chỉ để lại `.tmp` dở và bản đầy đủ trước đó. `--resume` bỏ qua `.tmp`.
+  - `_checkpoint` ghi `truth_dump.json` (đầu tiên, vì nó phải khớp kho), `setup.json`, `report.json` (có `status: running`) sau khởi tạo, sau mỗi chương ghi xong (kèm lựa chọn) và ngay lúc lượt chạy tiếp bắt đầu. `truth_dump.json` của checkpoint có `checkpoint: true`, `final: null`, không đọc đồ thị cả truyện (việc của `_finish`, một lần).
+  - Checkpoint sớm ngay khi nhận `chapter_committed`: gói lấy từ kho (`db.committed_package`), mục truth tạm thời chưa có dàn ý, lựa chọn, tóm tắt. Đóng khoảng giữa lúc kho commit và lúc tóm tắt/lựa chọn xong, nơi trước đây lượt chết thì kho đi trước thư mục và `--resume` từ chối.
+  - `meta.json` giữ `status: running` tới khi xong; `--resume` thấy trạng thái đó thì ghi `previous_stop` loại `interrupted`. Số lượt thử của chương dở lấy lớn hơn giữa `report.json` và `calls.jsonl`. Lỗi ghi checkpoint (đĩa đầy) chỉ báo, không dừng lượt.
+- **Hệ quả:**
+  - Chạy tiếp từ checkpoint sớm: chương vừa commit không có lựa chọn đã gieo, nên `--resume` tạo lại như người chơi bấm thử lại (D-124) và dàn ý chương sau chạy với danh sách hiện diện trống, kém trung thực hơn chạy liền.
+  - Còn khoảng nhỏ giữa commit của kho và checkpoint sớm (và Postgres `pending`) mà chết thì `--resume` vẫn từ chối. Lời gọi đang bay lúc bị giết không có dòng trong `calls.jsonl`, tiền đó không tính vào trần tổng.
+  - Cái giá: ba file ghi lại mỗi chương, số lần ghi có chặn trên (test).
+- **Người quyết:** Claude (điều phối giao việc 31/10/2026), nhánh feature/bench-checkpoint · 31/10/2026

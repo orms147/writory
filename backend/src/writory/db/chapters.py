@@ -180,6 +180,15 @@ def committed_player_view(conn: psycopg.Connection, driver: Driver, story_id: st
     return player_view(driver, story_id, chapter)
 
 
+def committed_package(conn: psycopg.Connection, story_id: str, number: int) -> ChangePackage | None:
+    """Gói thay đổi đã commit của một chương (outbox, D-6); None nếu chương chưa commit. Lệnh đo ghi checkpoint
+    ngay lúc commit bằng gói này (D-148)."""
+    row = conn.execute(
+        "SELECT p.package FROM chapters c JOIN change_packages p USING (story_id, commit_id) "
+        "WHERE c.story_id = %s AND c.number = %s AND c.status = 'committed'", (story_id, number)).fetchone()
+    return None if row is None else ChangePackage.model_validate(row[0])
+
+
 def chapter_records(conn: psycopg.Connection, story_id: str) -> list[ChapterRecord]:
     rows = conn.execute(
         "SELECT number, commit_id, status, error FROM chapters WHERE story_id = %s "
