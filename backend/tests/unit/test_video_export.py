@@ -546,7 +546,8 @@ def test_the_budget_must_be_set_and_under_the_configured_cap(tmp_path):
     cfg = config(tmp_path)
     cap = cfg.limits.video_export.require("max_budget_usd")
     assert video.check_budget(cfg, 0.1, real=True) == 0.1
-    for bad in (None, 0, -1, cap + 0.01):
+    # nan, inf: hồi quy review D-151, nan qua được phép so <= 0 và > cap nên trần không bao giờ chặn
+    for bad in (None, 0, -1, cap + 0.01, float("nan"), float("inf")):
         with pytest.raises(ConfigError):
             video.check_budget(cfg, bad, real=True)
     assert video.check_budget(cfg, None, real=False) is None  # dry-run và sheets-only không cần

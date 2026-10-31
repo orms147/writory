@@ -157,6 +157,24 @@ uv run python -m writory.export.video --story <id> --dialogue-lang zh --chapters
 ```
 `--chapters` nhận `N` hoặc `A-B` (mặc định cả truyện). `--dialogue-lang` là thẻ ngôn ngữ của lời thoại (zh, vi, en…). `--budget` không được vượt `limits.video_export.max_budget_usd`. Lời thoại của mỗi shot bị kiểm nhịp theo ngôn ngữ (`limits.video_export.dialogue_max_per_second`): quá dày thì model làm lại, vẫn dày thì code tách shot theo lượt thoại và đánh dấu `split_by_code` (D-127); lượt thoại quá dài cho mọi shot được đánh dấu `pace_over`. Kiểm duyệt G9 trên prompt cuối bật mặc định; `--no-moderate` tắt và in cảnh báo. Mặc định ghi `exports/<story>-<ngày>/` (git bỏ qua): `script.md` (đọc), `script.json` (máy đọc), `prompts.txt` (mỗi shot một prompt, dán thẳng vào app video), `calls.jsonl` (số liệu từng lời gọi, không có chữ truyện). Thư mục `--out` đã có kết quả thì lệnh từ chối ngay (đổi `--out` hay xoá thư mục), không đè bản trả tiền cũ. Cảnh có mức kiểm duyệt BLOCKED hay HARD_BLOCKED (`withheld_moderation`), hoặc không kiểm duyệt được (`withheld_unmoderated`), bị giữ lại hoàn toàn trong `script.json`; chỉ mức OVER_DARKNESS thì cảnh vẫn có và được đánh dấu để admin quyết. Mã thoát: 0 xong; 1 sai tham số, cấu hình hay dữ liệu (`EXPORT_STORY_NOT_FOUND`, `EXPORT_DB_UNAVAILABLE`, `EXPORT_ENV_MISSING`); 2 dừng vì chạm `--budget` (phần đã xong vẫn được ghi); 3 có cảnh lỗi hay có cảnh bị giữ vì không kiểm duyệt được. Truyện cũ không có ngoại hình: mô tả được sinh bù lúc xuất và đánh dấu `inferred`.
 
+## Viết kịch bản audio (admin, D-151)
+Công cụ của admin, không cần Docker hay DB: chỉ cần key của chủ dự án (`OPENROUTER_API_KEY` trong môi trường hoặc `--env-file`). Ghi vào `exports/` (git bỏ qua).
+```bash
+cd backend
+# 1. nhờ model đề xuất vài hướng đi từ tag: ideas.md để đọc, ideas.yaml để sửa và chọn
+uv run python -m writory.audio.script propose --tags "thiếu gia bị hoán đổi thân phận, tiểu thư giả, trà xanh" --count 5 --budget 0.05
+# 2. viết kịch bản từ hướng đi đã chọn (hay tự viết: --premise "...", lặp --premise để viết nhiều kịch bản)
+uv run python -m writory.audio.script write --premise-file ../exports/audio-ideas-<ngày>/ideas.yaml --pick i2 --minutes 30 --budget 0.30
+# chạy khô: model giả, không mạng, không key, không tốn tiền
+uv run python -m writory.audio.script write --premise "Thiếu gia thật bị tráo lúc sinh..." --minutes 30 --dry-run
+```
+- `--minutes` nằm trong `limits.audio_script.minutes_min`..`minutes_max`; số chữ cần = phút × `words_per_minute`, chia đều thành các đoạn không quá `segment_words` chữ, mỗi đoạn một lời gọi. Đo tốc độ đọc của TTS đang dùng (số chữ của `tts.txt` chia số phút của file audio) rồi chạy lại với `--wpm`.
+- File hướng đi: YAML là danh sách chữ hay `{id, premise, minutes}` (`ideas.yaml` của `propose` dùng được luôn); file chữ thì mỗi khối cách nhau một dòng trống. `minutes` của từng hướng đi đè `--minutes`; `--pick` chọn theo id.
+- `--budget` là trần của cả lệnh, không vượt `limits.audio_script.max_budget_usd`. Chạy bằng model của bộ đo (Muse, key Meta) thì thêm `--config-dir ../evals/config/meta`.
+- Mỗi hướng đi một thư mục `exports/audio-<ngày>/<id>/`: `tts.txt` (chữ đọc liền, dán thẳng vào TTS một giọng: không tên người nói, không âm thanh, không tiêu đề), `script.md` (kịch bản đọc được: nhân vật, giọng gợi ý, bí mật, từng đoạn có người nói, cách đọc, âm thanh), `script.json` (cho TTS nhiều giọng), `calls.jsonl` (số liệu từng lời gọi). Thư mục đã có kết quả thì lệnh từ chối ngay.
+- Mỗi đoạn được hỏi lại tối đa `limits.audio_script.schema_retries` lần khi code trả về. Đoạn lệch số chữ sau mọi lượt vẫn được giữ, đánh dấu `length_off`; đoạn không lộ bí mật đến hạn vẫn được giữ, bí mật dời sang đoạn sau (`reveal_slipped`). Đoạn bị kiểm duyệt chặn ở mức BLOCKED được viết lại tối đa `limits.audio_script.moderation_rewrites` lần (`moderation_rewrites` trong `script.json`). Đoạn lỗi khác (`error`, lý do trong `script.json`), vẫn bị kiểm duyệt chặn (`withheld_moderation`), không kiểm được (`withheld_unmoderated`) hay chạm trần (`skipped_budget`) không có chữ nào trong ba file, và kịch bản dừng ở đó. `--no-moderate` tắt kiểm duyệt và in cảnh báo.
+- Mã thoát: 0 xong; 1 sai tham số hay cấu hình, kể cả thư mục `--out` đã có file; 2 dừng vì chạm `--budget` (phần đã xong vẫn được ghi; hướng đi chưa bắt đầu thì không có thư mục); 3 có đoạn lỗi hay bị giữ lại (ưu tiên hơn 2), hay `AUDIO_WRITE_FAILED`.
+
 ## Biến môi trường
 `.env.example` có các biến thường dùng của chồng dev, chưa phải mọi biến: mục này ghi thêm `APP_ENV`, `TRUSTED_PROXIES`, `POSTGRES_TEST_DSN`; biến của chồng prod ở `.env.prod.example` (mục Deploy); biến của frontend (`WRITORY_API_URL`, `VITE_API_BASE`, `VITE_MOCK`) ở mục Frontend. Không commit `.env`.
 
@@ -181,6 +199,16 @@ Bản 1 chạy trên máy nhà của chủ dự án (Windows 11 + Docker Desktop
 **Chồng prod** (`docker-compose.prod.yml`, project `writory-prod`): `cloudflared` → `proxy` (Caddy, `deploy/Caddyfile`: bản build tĩnh của frontend và `/api/*` tới backend, bỏ tiền tố `/api` như proxy Vite; SSE không đệm) → `backend` (`deploy/backend.Dockerfile`, uvicorn một tiến trình, user không phải root) → `neo4j`, `postgres`. Không service nào mở cổng ra máy: đường vào duy nhất là tunnel, HTTPS kết thúc ở Cloudflare. Neo4j và Postgres nằm trong mạng `data` nội bộ, proxy và cloudflared không tới được. Dữ liệu nằm trong volume của project (`writory-prod_neo4j-data`, `writory-prod_postgres-data`, `writory-prod_caddy-*`).
 
 **Chạy chung máy với chồng dev.** Hai chồng không dùng chung project, mạng, volume hay cổng: chồng dev (`docker-compose.yml`) giữ 7474, 7687, 5432, app dev giữ 8000, 5173; chồng prod không mở cổng nào. RAM: hai Neo4j có thể chạy cùng lúc. Neo4j prod có heap và pagecache nhỏ hơn Neo4j dev (mặc định trong `docker-compose.prod.yml`, đổi bằng `NEO4J_HEAP`, `NEO4J_PAGECACHE` trong `.env.prod`), vì đồ thị của vài người bạn chỉ vài nghìn nút; Neo4j dev giữ số của `docker-compose.yml`. Không đặt `.wslconfig` thì Docker Desktop cấp cho máy ảo WSL tối đa một nửa RAM của máy. Không cần bật chồng dev lúc mở server.
+
+### Lần đầu, từng bước (chủ dự án tự làm)
+Tóm tắt cả quy trình; chi tiết ở các mục bên dưới. Chồng prod chưa chạy với tunnel thật lần nào (CLAUDE.md §9), nên lần đầu nên thử với chính mình trước khi gửi link.
+1. **Tên miền.** Mua ở Cloudflare (bảng điều khiển → Domain Registration → Register Domains), hoặc mua nơi khác rồi thêm vào Cloudflare (Domains → Onboard a domain) và đổi nameserver ở nơi bán; đợi tên miền báo Active. Không có tên miền thì không chơi được: Quick Tunnel (trycloudflare) không chạy SSE nên không viết được chương (phụ lục cuối mục).
+2. **Tunnel.** Zero Trust → Networks → Tunnels → Create a tunnel → Cloudflared, đặt tên `writory`, chép token (chuỗi sau `--token`). Thêm Public Hostname `writory.<tên miền>`, Service `HTTP`, URL `proxy:80`. Claude Code có plugin Cloudflare thì nhờ được việc tạo tunnel và hostname; token thì tự chép.
+3. **`.env.prod`.** Theo bước 2 của "Chuẩn bị một lần": token, mật khẩu Neo4j và Postgres, khoá mã hoá key người chơi, `PUBLIC_URL`. Cất một bản ở ngoài máy.
+4. **Bật.** Mở Docker Desktop, chạy `powershell -ExecutionPolicy Bypass -File deploy\prod-up.ps1 -Build`, đợi script báo app trả lời, tunnel đã nối và in link.
+5. **Thử với chính mình.** Tạo một mã mời (mục Mã mời), mở link trên điện thoại dùng 4G (ngoài mạng nhà), nhập mã, khởi tạo một truyện Ngắn và viết một chương: chữ hiện dần là SSE qua tunnel chạy được.
+6. **Mở cho bạn.** Gửi link và mỗi người một mã. Xem tình trạng bằng `prod-status.ps1`; xong thì `prod-down.ps1`.
+7. **Giữ dữ liệu.** Sao lưu trước khi cập nhật code (mục Sao lưu và khôi phục, Cập nhật phiên bản).
 
 ### Chuẩn bị một lần
 1. **Cloudflare:** tài khoản Cloudflare và một tên miền đã thêm vào Cloudflare (nameserver trỏ về Cloudflare). Bảng Zero Trust → Networks → Tunnels → Create a tunnel → Cloudflared, đặt tên (ví dụ `writory`), chép **token** ở bước cài đặt (chuỗi sau `--token`; không cần cài cloudflared lên máy, container dùng token). Thêm Public Hostname: tên miền con (ví dụ `writory.<tên miền>`), Service `HTTP`, URL `proxy:80`. Chưa có tên miền thì xem phụ lục "Thử nhanh bằng trycloudflare".

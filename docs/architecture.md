@@ -118,7 +118,21 @@ flowchart LR
   mod --> files["script.md, script.json, prompts.txt, calls.jsonl"]
   code --> files
 ```
-  Mọi lời gọi model đi qua `ExportClient`: giữ chỗ chi phí tối đa trong `--budget` trước khi gọi (G8), không ghi chữ truyện vào nhật ký. Lệnh chạy: `docs/runbook.md`.
+  Mọi lời gọi model đi qua `ExportClient` (tên vai của bộ xuất trên `llm/capped.py` `CappedClient`): giữ chỗ chi phí tối đa trong `--budget` trước khi gọi (G8), không ghi chữ truyện vào nhật ký. Lệnh chạy: `docs/runbook.md`.
+- **`audio/` (D-151) cũng chỉ là lệnh của admin.** Bộ viết kịch bản audio không đọc truyện đã chơi, không chạm Postgres, Neo4j hay `export/`, và không module nào ngoài chính nó nhập nó (test: `tests/unit/test_audio_script_security.py`). Luồng:
+
+```mermaid
+flowchart LR
+  tags["tag của admin"] -->|propose, vai audio| ideas["ideas.md, ideas.yaml"]
+  ideas -->|admin chọn, --pick| premise["hướng đi ngắn"]
+  premise -->|drama.make_plan, vai audio| plan["kế hoạch: nhân vật, bí mật kèm đoạn lộ, đúng số đoạn code tính từ số phút"]
+  plan --> seg["drama.write_segment, vai audio: một lời gọi mỗi đoạn, kiểm bằng code, sai thì viết lại kèm ghi chú"]
+  mem["tóm tắt các đoạn trước + dòng cuối của đoạn liền trước"] --> seg
+  seg --> mod["safety.moderate (G9) trên chữ của đoạn, fail-closed"]
+  mod --> mem
+  mod --> files["tts.txt, script.md, script.json, calls.jsonl"]
+```
+  Lời gọi đi qua `CappedClient` với trần `--budget` (G8). Lệnh chạy: `docs/runbook.md`.
 - **Bộ đo** nằm trong chính module được đo (D-24), ví dụ `guard/bench_b.py`, `pipeline/bench_a*.py`. Xem mục 12.
 
 ## 4. Khởi tạo truyện
@@ -339,6 +353,7 @@ flowchart LR
 | `overreach` | hành động tự viết dẫn tới chương, văn các cảnh trước của chương và bản đang soát (bọc); loại vượt luật là chữ của code | không | `OverreachCheck`, kết luận enum (G6, D-138) | `safety/overreach.py` `check_overreach`, từ `_review` |
 | `moderate` | chỉ chữ cần kiểm: đầu vào, cảnh, bộ lựa chọn, lựa chọn khởi tạo, câu trả lời người kể (bọc; D-137) | không | `ModerationOutput`, `ChoicesModerationOutput` | `safety/moderate.py` `moderate`, `ensure_input_allowed` |
 | `video` | nhân vật (ngoại hình, tính cách, quá khứ), nơi chốn, quan hệ, nơi của nhân vật chính, chữ cảnh đã ghi (chữ truyện và chữ người chơi bọc G4) | có, toàn bộ, kể cả bí mật; chỉ lệnh admin, không có đường tới người chơi (D-118, D-125) | `SheetOutput`, `SceneOutput` | `export/shots.py` `make_sheet`, `make_scene_shots`, gọi từ `export/video.py` |
+| `audio` | tag hay hướng đi của admin, kế hoạch, tóm tắt các đoạn trước, dòng cuối của đoạn liền trước (đều bọc G4) | không có lớp truth của truyện người chơi; kế hoạch có bí mật của chính kịch bản; chỉ lệnh admin (D-151) | `ProposeOutput`, `PlanOutput`, `SegmentOutput` | `audio/drama.py` `make_ideas`, `make_plan`, `write_segment`, gọi từ `audio/script.py` |
 
 Model của từng vai và danh sách mức model viết: `config/models.yaml` (`roles`, `writer_tiers`).
 

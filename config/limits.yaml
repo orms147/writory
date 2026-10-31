@@ -103,6 +103,22 @@ video_export:
     ja: 6
     vi: 5
     en: 3.5
+# Bộ viết kịch bản audio (D-151): chỉ admin chạy bằng lệnh `python -m writory.audio.script`, bằng key của chủ dự
+# án; không có đường từ API hay giao diện. Số tạm, Claude chọn, chờ chủ dự án duyệt.
+audio_script:
+  max_budget_usd: 3.00       # trần của `--budget`: chạy thật không được vượt (đủ cho 80 phút trên Muse của bộ đo)
+  minutes_min: 10            # thời lượng nói `--minutes` cho phép
+  minutes_max: 90
+  words_per_minute: 150      # tốc độ đọc của TTS, âm tiết mỗi phút; đo lại khi có file audio thật (`--wpm` đè)
+  segment_words: 1000        # số chữ tối đa của một đoạn (một lời gọi viết)
+  length_tolerance: 0.25     # đoạn lệch số chữ mục tiêu quá tỉ lệ này thì viết lại; hết lượt thì giữ và đánh dấu
+  max_output_tokens: 12000   # `max_tokens` của mỗi lời gọi (gồm token suy luận)
+  premise_max_chars: 2000    # một hướng đi admin đưa vào
+  propose_count: 5           # số hướng đi `propose` đề xuất khi không có `--count`
+  propose_max: 10            # trần của `--count`
+  recent_lines: 12           # số dòng cuối của đoạn trước đưa nguyên văn vào đề đoạn sau
+  schema_retries: 2          # lần hỏi lại mỗi lời gọi khi JSON sai hay phép kiểm bằng code trả về (riêng bộ này)
+  moderation_rewrites: 1     # lần viết lại đoạn bị kiểm duyệt chặn ở mức BLOCKED; chặn cứng G9 thì không bao giờ
 facts:   # Fact mới do bộ trích tạo sau chương 0, từ trang (D-93; số tạm, D-47). 0 = tắt
   max_new_per_chapter: 3       # trần cả chương (cộng các cảnh)
   text_max_chars: 160          # chữ của Fact: một câu ngắn

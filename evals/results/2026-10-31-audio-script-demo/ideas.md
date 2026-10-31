@@ -1,0 +1,46 @@
+# Hướng đi đề xuất
+
+- Tag: thiếu gia bị hoán đổi thân phận, tiểu thư giả, trà xanh, vả mặt, hào môn
+- Model `openai/gpt-6-luna` · 1 lời gọi · 0.0007 USD
+
+Chọn hướng đi bằng `write --premise-file ideas.yaml --pick <id>` (sửa file trước nếu muốn).
+
+## i1: Thiếu Gia Về Đúng Chỗ
+
+Minh Quân, chàng trai hai mươi bốn tuổi bị hoán đổi thân phận từ nhỏ, trở về nhà họ Lê sau khi tiểu thư giả Bảo Châu tìm cách đuổi anh khỏi gia tộc. Bề ngoài anh chẳng có vẻ gì giống thiếu gia, nhưng lại nắm trong tay sổ sách chứng minh Bảo Châu âm thầm rút ruột công ty. Cú lật lớn nhất là người phát hiện vụ hoán đổi năm xưa chính là bà nội, người đã lặng lẽ chờ anh trưởng thành để trao lại quyền quyết định. Minh Quân vạch mặt kẻ giả tạo ngay trong tiệc mừng thọ, rồi tự chọn con đường riêng thay vì tranh giành gia sản.
+
+- Bảo Châu diễn cảnh yếu đuối trước khách quý, Minh Quân bình thản bật bản ghi âm cô ta tập lời vu oan.
+- Trong buổi họp gia tộc, anh lật từng khoản chi đáng ngờ khiến người vừa mắng anh phải đổi giọng xin lỗi.
+- Bà nội công bố lá thư cũ, hé lộ bà đã biết thân phận thật từ lâu.
+
+## i2: Cô Em Trà Xanh Nhầm Người
+
+Gia Huy, thiếu gia thật của nhà họ Phạm, bị tráo lúc mới sinh và lớn lên trong một gia đình bình thường, còn tiểu thư giả Tú Anh được nuông chiều giữa hào môn. Khi trở về ở tuổi hai mươi sáu, anh bị Tú Anh dựng chuyện là kẻ tham tiền và cố quyến rũ vị hôn thê của cô. Gia Huy không tranh cãi, mà nhận lời giúp một công ty đối thủ điều tra những hợp đồng ma do Tú Anh đứng tên. Đến ngày cô định công khai đuổi anh khỏi nhà, chính các đối tác lại kéo đến đòi cô giải thích.
+
+- Tú Anh giả vờ bị Gia Huy bắt nạt trước cả nhà, nhưng đoạn ghi âm trong điện thoại khiến màn kịch sụp đổ.
+- Cô ta khoe món quà đắt tiền là do mình mua, rồi tái mặt khi Gia Huy đưa hóa đơn mang tên người khác.
+- Trong tiệc ký kết, đối tác đồng loạt rút lui và nêu rõ ai mới là người làm giả hồ sơ.
+
+## i3: Bản Di Chúc Không Có Tên Cô
+
+Khánh Duy, thiếu gia bị hoán đổi thân phận, trở về nhà họ Vũ ở tuổi hai mươi lăm thì phát hiện tiểu thư giả Ngọc Lan đã được cả nhà coi như người thừa kế duy nhất. Cô ta khéo léo đóng vai chị gái dịu dàng, nhưng sau lưng lại gài bẫy để anh mang tiếng làm thất thoát tài sản. Khánh Duy tìm thấy bản di chúc bổ sung của ông nội, trong đó quyền thừa kế chỉ được trao cho người bảo vệ nhân viên và giữ công ty khỏi bị bán tháo. Ngày họp cổ đông, anh cứu được công ty bằng một kế hoạch minh bạch, còn Ngọc Lan tự lộ bộ mặt khi cố chiếm công lao.
+
+- Ngọc Lan khóc lóc kể công trước họ hàng, nhưng nhân viên lâu năm lần lượt đứng lên nói sự thật.
+- Khánh Duy xuất trình bản di chúc tưởng đã bị xé bỏ, khiến cả phòng họp im bặt.
+- Cô ta giành micro nhận mình cứu công ty, rồi bị chính người ký hợp đồng làm chứng vạch trần.
+
+## i4: Trà Xanh Tự Đào Hố
+
+Bảo Nam, thiếu gia thật bị hoán đổi từ nhỏ, sống kín tiếng và chỉ trở về nhà họ Đỗ khi cha lâm bệnh. Tiểu thư giả Diệu My luôn tỏ ra vô tư, nhưng âm thầm gieo chuyện rằng anh là kẻ giả mạo để giữ vị trí trong gia đình. Bảo Nam phát hiện cô ta đang dùng danh nghĩa người thừa kế để dụ các đối tác góp vốn vào một dự án rỗng. Anh âm thầm gom bằng chứng, chờ đúng buổi ra mắt dự án để đưa sự thật ra ánh sáng, còn người cha cuối cùng cũng công khai nhận lỗi vì đã tin nhầm con gái giả.
+
+- Diệu My bày trò thử lòng, buộc Bảo Nam phải chứng minh thân phận trước họ hàng, nhưng anh đưa ra một manh mối chỉ gia đình biết.
+- Cô ta tuyên bố dự án là tâm huyết của mình, rồi màn hình sân khấu hiện lên những khoản tiền bị chuyển sai.
+- Người cha xin lỗi con trai trước đông đủ quan khách, còn Diệu My không thể viện cớ thêm lần nào nữa.
+
+## i5: Thiếu Gia Chỉ Muốn Đòi Tên
+
+Trọng Nghĩa, người con trai bị hoán đổi thân phận của nhà họ Trịnh, không màng gia sản mà chỉ muốn lấy lại tên tuổi sau nhiều năm bị tiểu thư giả Thanh Mai bôi nhọ. Cô ta dựng hình ảnh một người chị nhân hậu, đồng thời lén chiếm công trong quỹ thiện nguyện của gia đình. Nghĩa phát hiện những người bị mang tiếng nhận tiền trái phép đều là nhân viên cấp thấp, nên quyết định mở cuộc kiểm tra công khai thay vì âm thầm mặc cả. Kết quả khiến Thanh Mai mất lòng tin của cả nhà, còn Nghĩa được mọi người kính trọng vì chọn bảo vệ người vô tội.
+
+- Thanh Mai trao quà trước ống kính và nhận hết lời khen, nhưng người nhận quà xuất hiện để nói họ chưa từng thấy món đồ ấy.
+- Nghĩa từ chối đề nghị đổi lấy im lặng bằng tài sản, rồi công bố sổ quỹ ngay tại buổi họp gia đình.
+- Kẻ chuyên đổ lỗi cho nhân viên phải tự tay xin lỗi từng người trước mặt những người từng tin mình.

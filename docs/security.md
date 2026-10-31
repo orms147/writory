@@ -55,6 +55,14 @@ G1 với ngoại hình và cảnh sắc của khởi tạo (D-120, lớp `truth`
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
 
+## Bộ viết kịch bản audio (D-151)
+Công cụ admin, không đọc truyện của người chơi nên không có lớp truth để lộ; các ràng buộc sau đều có test (`backend/tests/unit/test_audio_script_security.py`, `test_audio_script.py`):
+- Không có đường nào từ app: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới audio, không file nào ngoài `audio/` nhập `writory.audio`, và `audio/` không nhập `db/`, `api/`, `export/`, `pipeline/`, lớp truy cập Neo4j hay driver DB.
+- G4: tag, hướng đi của admin và mọi chữ model viết từ đó (kế hoạch, tóm tắt, dòng của đoạn trước) vào prompt trong khối dữ liệu, không vào system; ghi chú viết lại của code qua `escape_text` (test có câu chèn lệnh ở hướng đi, tóm tắt, dòng trước và ghi chú). G7: chỉ key của chủ dự án, không in, không ghi. G8: chạy thật bắt buộc `--budget` là số hữu hạn (nan, inf bị từ chối, cả ở bộ xuất video), không vượt `limits.audio_script.max_budget_usd`; đoạn chỉ được viết khi còn tiền cho cả lời gọi kiểm duyệt của nó (`CappedClient.hold`); hướng đi không đủ tiền lập kế hoạch thì không bắt đầu; chạm trần thì dừng, ghi phần đã xong.
+- G9: mọi chữ của đoạn (lời đọc, cách đọc, âm thanh, tóm tắt) qua kiểm duyệt trong một lời gọi trước khi vào bản xuất, fail-closed. Mức BLOCKED được viết lại kèm loại bị chặn, tối đa `limits.audio_script.moderation_rewrites` lần, và bản viết lại qua kiểm duyệt lại từ đầu; HARD_BLOCKED không bao giờ được viết lại (test). Còn lại: bị chặn hay không kiểm được thì đoạn bị giữ lại (không còn chữ nào của nó, kể cả tiêu đề, trong cả ba file; test) và kịch bản dừng ở đó. Nhân vật có tuyến tình cảm phải từ 18 tuổi (kiểm bằng code trên kế hoạch). `--no-moderate` tắt và in cảnh báo.
+- Không lọt vào git: mặc định ghi `exports/` (`.gitignore`). Thư mục đích đã có gì bên trong thì bị từ chối trước mọi lời gọi tốn tiền; bước ghi cuối hỏng thì giữ thư mục tạm và báo `AUDIO_WRITE_FAILED` kèm chỗ của nó.
+- Chưa giải quyết: đề xuất hướng đi (`ideas.md`) và kế hoạch (nhân vật, bí mật, tiêu đề và nhịp các đoạn trong `script.json`, `script.md`) không qua kiểm duyệt, vì chỉ admin đọc, không đưa sang TTS; admin chịu trách nhiệm về nội dung trước khi đăng.
+
 ## Bản xuất kịch bản video (D-125, T9)
 Bản xuất đọc toàn bộ `truth` (D-118), nên G1 không áp cho nó; thay vào đó có các ràng buộc sau, đều có test (`backend/tests/unit/test_video_export_security.py`, `test_video_export.py`):
 - Không có đường nào tới người chơi: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới export hay video, và không file nào ngoài `export/` nhập `writory.export`. Chạy được chỉ khi có `POSTGRES_DSN` và `NEO4J_*` của máy (admin cầm DB).
