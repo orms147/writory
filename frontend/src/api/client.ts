@@ -75,9 +75,12 @@ export async function requestText(path: string, signal?: AbortSignal): Promise<s
 const enc = encodeURIComponent;
 
 /** Viết chương tiếp theo qua SSE. Lỗi kiểm được trước khi viết (key, trần, chương dở…) là JSON có
- *  status, nên ném ApiError trước khi có sự kiện nào (`api/play.py`). */
-export async function* streamChapter(storyId: string, signal?: AbortSignal): AsyncGenerator<ChapterEvent> {
-  const response = await send('POST', `/stories/${enc(storyId)}/chapters/next`, undefined, signal);
+ *  status, nên ném ApiError trước khi có sự kiện nào (`api/play.py`).
+ *  `auto` ("Tự viết đến hết"): không cần hành động đã lưu, máy chủ không tạo lựa chọn, luồng kết
+ *  thúc sau `chapter_committed` (chương cuối: sau `story_finished`). */
+export async function* streamChapter(storyId: string, signal?: AbortSignal, auto = false): AsyncGenerator<ChapterEvent> {
+  const query = auto ? '?auto=true' : '';
+  const response = await send('POST', `/stories/${enc(storyId)}/chapters/next${query}`, undefined, signal);
   if (!response.ok) throw await errorFromResponse(response);
   if (!response.body) throw clientError('CLIENT_BAD_RESPONSE');
   try {

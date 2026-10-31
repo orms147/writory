@@ -1,4 +1,4 @@
-import { useCallback, useEffect, useRef, useState } from 'react';
+import { useCallback, useEffect, useLayoutEffect, useRef, useState } from 'react';
 import { useLocation, useNavigate, useParams } from 'react-router';
 import { api } from '../../api/client';
 import { ApiError, asApiError } from '../../api/errors';
@@ -8,8 +8,10 @@ import { Button, Skeleton } from '../../components/ui';
 import { lengthText, useStoryLength } from '../../config/PublicConfig';
 import { errorGroup } from '../../lib/errorGroups';
 import { useResource } from '../../lib/useResource';
+import { startAuto, stopAuto, useAutoWrite } from '../../state/autoWrite';
 import { clearRun, isRunning, startRun, useChapterRun, type ChapterRunState } from '../../state/chapterRun';
 import { ScriptDownload } from './AudioScript';
+import { AutoWriteBar, AutoWritingFooter } from './AutoWrite';
 import { ChapterPage, type Writing } from './ChapterPage';
 import { ChoicePanel } from './ChoicePanel';
 import { Finished } from './Finished';
@@ -71,6 +73,7 @@ export function StoryScreen() {
   const list = useResource(() => api.stories(), `stories:${id}`);
   const costs = useResource(() => api.costs(), `costs:${id}`);
   const run = useChapterRun(id);
+  const auto = useAutoWrite(id);
   const [notebookOpen, setNotebookOpen] = useState(false);
   const [narratorOpen, setNarratorOpen] = useState(false);
   const [size, cycleSize] = useReadingSize();
@@ -99,6 +102,19 @@ export function StoryScreen() {
     if (committed) reloadCosts();
   }, [committed, reloadCosts]);
 
+  // Tự viết: sau mỗi chương, vòng lấy lại trạng thái truyện; trang đọc dùng bản đó để hiện chương
+  // vừa ghi. Chỉ bản tới sau khi trang mở: bản cũ của lần tự viết trước có thể đã lỗi thời.
+  const autoStory = auto?.story ?? null;
+  const setStory = story.set;
+  const reloadList = list.reload;
+  const seenAutoStory = useRef(autoStory);
+  useLayoutEffect(() => {
+    if (!autoStory || autoStory === seenAutoStory.current) return;
+    seenAutoStory.current = autoStory;
+    setStory(autoStory);
+    if (autoStory.finished) reloadList(); // đoạn trích cuối của màn kết truyện
+  }, [autoStory, setStory, reloadList]);
+
   const refresh = useCallback(() => {
     clearRun(id);
     story.reload();
@@ -117,6 +133,12 @@ export function StoryScreen() {
    *  được); chưa ghi thì viết lại chương từ đầu (máy chủ không giữ gì của lần lỗi, D-6). */
   const retryRun = useCallback(async () => {
     if (!run) return;
+    if (run.auto) {
+      // Lần viết của "Tự viết đến hết": thử lại là chạy tiếp vòng từ trạng thái máy chủ.
+      clearRun(id);
+      startAuto(id);
+      return;
+    }
     if (run.committed) return refresh();
     if (run.error && errorGroup(run.error.code) === 'network') {
       try {
@@ -150,7 +172,26 @@ export function StoryScreen() {
   }
   const data = story.data;
 
-  const chapterShown = run ? run.chapter : data.chapter;
+  const autoRunning = auto?.status === 'running';
+  // Đang tự viết và đã có chương ghi xong: trang đọc hiện chương ghi gần nhất như mọi chương đã
+  // xong, chương sau viết ngầm rồi thay vào. Chưa có chương nào thì hiện lần viết như thường.
+  const liveRun = autoRunning && data.chapter >= 1 ? null : run;
+  const canAuto =
+    !autoRunning && !data.finished && !data.pending && auto?.status !== 'finished' && !(run && (run.status !== 'done' || run.finished));
+  const autoBar = (className?: string) =>
+    autoRunning || canAuto || auto?.error ? (
+      <AutoWriteBar
+        running={autoRunning}
+        written={run?.committed ? run.chapter : data.chapter}
+        stopRequested={auto?.stopRequested ?? false}
+        error={auto?.error ?? null}
+        onStart={() => startAuto(id)}
+        onStop={() => stopAuto(id)}
+        className={className}
+      />
+    ) : null;
+
+  const chapterShown = liveRun ? liveRun.chapter : data.chapter;
   // Số chương đã ghi: kịch bản audio chỉ gồm chương đã ghi.
   const committedChapters = run?.committed ? run.chapter : data.chapter;
   const script = (className?: string) =>
@@ -177,24 +218,25 @@ export function StoryScreen() {
   );
 
   // --- đang viết, chưa có cảnh nào: màn chờ ---------------------------------------------------
-  if (run && run.scenes.length === 0) {
-    const err = run.error ?? (run.blocked ? new ApiError({ code: run.blocked.code, message: run.blocked.message }) : null);
+  if (liveRun && liveRun.scenes.length === 0) {
+    const err = liveRun.error ?? (liveRun.blocked ? new ApiError({ code: liveRun.blocked.code, message: liveRun.blocked.message }) : null);
     return (
       <Waiting
         title={title}
-        chapter={run.chapter}
-        stages={run.stages}
-        startedAt={run.startedAt}
-        chosen={run.chosen}
+        chapter={liveRun.chapter}
+        stages={liveRun.stages}
+        startedAt={liveRun.startedAt}
+        chosen={liveRun.chosen}
         error={err}
         idle={false}
         handlers={{ onRetry: () => void retryRun(), onReload: refresh, onBackToChoices: refresh }}
         extra={script('justify-end')}
+        auto={autoBar()}
       />
     );
   }
 
-  if (!run && data.finished) {
+  if (!liveRun && data.finished) {
     return (
       <Finished
         storyId={id}
@@ -208,7 +250,7 @@ export function StoryScreen() {
     );
   }
 
-  if (!run && data.chapter === 0) {
+  if (!liveRun && data.chapter === 0) {
     return (
       <Waiting
         title={title}
@@ -217,14 +259,16 @@ export function StoryScreen() {
         startedAt={null}
         chosen={null}
         error={null}
-        idle={data.next_ready}
+        idle={data.next_ready && !autoRunning}
         onStart={() => begin(data, null)}
         handlers={{ onReload: refresh }}
         extra={script('justify-end')}
+        auto={autoBar()}
       />
     );
   }
 
+  const topBar = autoBar('mx-auto max-w-reading');
   return (
     <div className="wt relative min-h-screen pb-28 md:pb-0">
       <ReaderHeader
@@ -237,18 +281,24 @@ export function StoryScreen() {
         onCycleSize={cycleSize}
         narratorOpen={narratorOpen}
       />
-      {data.style === 'audio' && <div className="px-4 pt-3 md:px-5">{script('mx-auto max-w-reading')}</div>}
+      {(data.style === 'audio' || topBar) && (
+        <div className="space-y-3 px-4 pt-3 md:px-5">
+          {script('mx-auto max-w-reading')}
+          {topBar}
+        </div>
+      )}
       <div className="px-0 pt-0 md:px-5 md:pt-9">
-        {run ? (
+        {liveRun ? (
           <RunPage
-            run={run}
+            run={liveRun}
+            autoRunning={autoRunning}
             storyId={id}
             sizeClass={READING_CLASS[size]}
             spent={spent}
             onRetry={() => void retryRun()}
             onRefresh={refresh}
             onChosen={(text) => {
-              const next = run.chapter + 1;
+              const next = liveRun.chapter + 1;
               clearRun(id);
               startRun(id, next, text);
             }}
@@ -258,6 +308,7 @@ export function StoryScreen() {
         ) : (
           <StaticPage
             story={data}
+            autoNext={autoRunning ? data.chapter + 1 : null}
             sizeClass={READING_CLASS[size]}
             spent={spent}
             onReload={story.reload}
@@ -275,6 +326,7 @@ export function StoryScreen() {
 
 function RunPage({
   run,
+  autoRunning,
   storyId,
   sizeClass,
   spent,
@@ -285,6 +337,8 @@ function RunPage({
   onNarrator,
 }: {
   run: ChapterRunState;
+  /** Vòng "Tự viết đến hết" đang chạy: chương auto vừa ghi không cần nút tạo lựa chọn. */
+  autoRunning: boolean;
   storyId: string;
   sizeClass: string;
   spent: number | null;
@@ -310,6 +364,8 @@ function RunPage({
     footer = <ChoicePanel storyId={storyId} chapter={run.chapter} choices={run.choices} spentUsd={spent} chosenBefore={null} onChosen={onChosen} />;
   } else if (run.finished) {
     footer = <StoryEnd onClose={onRefresh} />;
+  } else if (run.auto && run.status === 'done' && !autoRunning) {
+    footer = <NoChoices storyId={storyId} onDone={onRefresh} />;
   }
 
   return (
@@ -353,6 +409,7 @@ function StoryEnd({ onClose }: { onClose: () => void }) {
 
 function StaticPage({
   story,
+  autoNext,
   sizeClass,
   spent,
   onReload,
@@ -361,6 +418,8 @@ function StaticPage({
   onNarrator,
 }: {
   story: StoryOut;
+  /** Đang tự viết: số chương đang viết ngầm; cuối trang báo tiến độ thay cho lựa chọn. */
+  autoNext: number | null;
   sizeClass: string;
   spent: number | null;
   onReload: () => void;
@@ -369,7 +428,6 @@ function StaticPage({
   onNarrator: () => void;
 }) {
   const chapter = useResource(() => api.chapter(story.story_id, story.chapter), `${story.story_id}:${story.chapter}`);
-  const [regen, setRegen] = useState<{ busy: boolean; error: ApiError | null }>({ busy: false, error: null });
 
   if (chapter.error) {
     return (
@@ -388,18 +446,10 @@ function StaticPage({
     );
   }
 
-  const regenerate = async () => {
-    setRegen({ busy: true, error: null });
-    try {
-      await api.choices(story.story_id);
-      onReload();
-    } catch (err) {
-      setRegen({ busy: false, error: asApiError(err) });
-    }
-  };
-
   let footer;
-  if (story.choices.length > 0) {
+  if (autoNext !== null) {
+    footer = <AutoWritingFooter next={autoNext} />;
+  } else if (story.choices.length > 0) {
     footer = (
       <ChoicePanel
         storyId={story.story_id}
@@ -411,15 +461,7 @@ function StaticPage({
       />
     );
   } else {
-    footer = (
-      <div className="mt-10 flex flex-col items-center gap-3 border-t border-paper-400 pt-8 text-center">
-        <p className="text-[14px] text-paper-700">Chương này chưa có lựa chọn.</p>
-        <Button onClick={regenerate} disabled={regen.busy}>
-          {regen.busy ? 'Đang nghĩ lựa chọn…' : 'Tạo lựa chọn'}
-        </Button>
-        {regen.error && <ErrorBlock className="mt-3 w-full" tone="paper" error={regen.error} onRetry={regenerate} onReload={onReload} />}
-      </div>
-    );
+    footer = <NoChoices storyId={story.story_id} onDone={onReload} />;
   }
 
   return (
@@ -434,5 +476,29 @@ function StaticPage({
       onNotebook={onNotebook}
       onNarrator={onNarrator}
     />
+  );
+}
+
+/** Chương đã ghi mà chưa có lựa chọn (lỗi lúc tạo, hoặc chương viết ở chế độ tự viết): tạo bằng
+ *  `POST /stories/{id}/choices` rồi lấy lại trạng thái. */
+function NoChoices({ storyId, onDone }: { storyId: string; onDone: () => void }) {
+  const [regen, setRegen] = useState<{ busy: boolean; error: ApiError | null }>({ busy: false, error: null });
+  const regenerate = async () => {
+    setRegen({ busy: true, error: null });
+    try {
+      await api.choices(storyId);
+      onDone();
+    } catch (err) {
+      setRegen({ busy: false, error: asApiError(err) });
+    }
+  };
+  return (
+    <div className="mt-10 flex flex-col items-center gap-3 border-t border-paper-400 pt-8 text-center">
+      <p className="text-[14px] text-paper-700">Chương này chưa có lựa chọn.</p>
+      <Button onClick={regenerate} disabled={regen.busy}>
+        {regen.busy ? 'Đang nghĩ lựa chọn…' : 'Tạo lựa chọn'}
+      </Button>
+      {regen.error && <ErrorBlock className="mt-3 w-full" tone="paper" error={regen.error} onRetry={regenerate} onReload={onDone} />}
+    </div>
   );
 }
