@@ -512,5 +512,9 @@ class OverlayStore:
         self.commits.append((number, scenes))
         self.texts[number] = "\n\n".join(scenes)
 
+    def committed_package(self, number: int) -> ChangePackage | None:
+        """Gói đã commit của chương (D-148): `packages` đi theo thứ tự chương, từ chương 0."""
+        return self.packages[number] if 0 <= number < len(self.packages) else None
+
     def player_view(self, chapter: int) -> PlayerView:
         return player_view_of(self.state(), chapter, story_id=self.story_id)
