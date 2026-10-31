@@ -58,6 +58,9 @@ WRITER_PROMPT_VERSION = "writer-13"  # writer-2: system prompt có thêm câu ng
 # Hướng dẫn văn phong hiện hành (v3, D-111) là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
+# Kiểu truyện "kịch bản audio" (D-153): cùng đường viết, chỉ đổi văn phong của model viết.
+AUDIO_STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_audio_vi.md"
+STORY_STYLES = ("prose", "audio")  # khớp CHECK của cột stories.style (migration 0012)
 MIN_BEATS, MAX_BEATS = 2, 8
 
 
@@ -65,6 +68,14 @@ def load_style_guide(path: Path = STYLE_GUIDE_PATH) -> str:
     """Bỏ khối chú thích HTML (ghi chú phiên bản, nguồn) như bài đo D."""
     raw = path.read_text(encoding="utf-8")
     return re.sub(r"<!--.*?-->", "", raw, flags=re.DOTALL).strip()
+
+
+def style_guide_for(style: str) -> str | None:
+    """Văn phong của model viết theo kiểu truyện (D-153): None với truyện chữ (`ChapterRun` dùng bản mặc định như
+    trước), bản audio với kịch bản audio. Kiểu lạ là lỗi, không âm thầm dùng bản mặc định."""
+    if style not in STORY_STYLES:
+        raise ValueError(f"kiểu truyện {style!r} không có, chỉ có {', '.join(STORY_STYLES)}")
+    return None if style == "prose" else load_style_guide(AUDIO_STYLE_GUIDE_PATH)
 
 
 class SceneOutline(BaseModel):

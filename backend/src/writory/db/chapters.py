@@ -90,6 +90,7 @@ class StoryRecord:
     length_level: str
     committed_chapter: int | None
     darkness_level: str | None = None  # khoá moderation.darkness_levels; None = mặc định (D-67)
+    style: str = "prose"  # kiểu truyện (D-153): prose | audio
 
 
 @dataclass(frozen=True)
@@ -111,19 +112,19 @@ class ReconcileResult:
 
 def create_story(
     conn: psycopg.Connection, story_id: str, *, length_level: str, owner_id: str | None = None,
-    darkness_level: str | None = None,
+    darkness_level: str | None = None, style: str = "prose",
 ) -> StoryRecord:
     require_story_id(story_id)
     conn.execute(
-        "INSERT INTO stories (id, owner_id, length_level, darkness_level) VALUES (%s, %s, %s, %s)",
-        (story_id, owner_id, length_level, darkness_level),
+        "INSERT INTO stories (id, owner_id, length_level, darkness_level, style) VALUES (%s, %s, %s, %s, %s)",
+        (story_id, owner_id, length_level, darkness_level, style),
     )
     return get_story(conn, story_id)
 
 
 def get_story(conn: psycopg.Connection, story_id: str) -> StoryRecord:
     row = conn.execute(
-        "SELECT id, owner_id, length_level, committed_chapter, darkness_level FROM stories "
+        "SELECT id, owner_id, length_level, committed_chapter, darkness_level, style FROM stories "
         "WHERE id = %s",
         (story_id,),
     ).fetchone()

@@ -1455,3 +1455,14 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Đề `audio-2`: kế hoạch và mỗi đoạn đòi giọng lố, đã tai (phản diện kiêu căng, trà xanh diễn sâu, mỗi đoạn một màn vả mặt trước đám đông, người kể bình luận cay), trừng phạt là cảnh mất mặt công khai chứ không kết bằng thủ tục giấy tờ. Luật nội dung và mọi phép kiểm bằng code giữ nguyên.
 - **Hệ quả:** lượt thử thật một lần: `evals/results/2026-10-31-audio-tone-2/notes.md`. Chưa so A/B có giám khảo với `audio-1`.
 - **Người quyết:** Chủ dự án (duyệt số, đổi giọng, 31/10/2026), Claude (chữ đề), nhánh feature/audio-tone · 31/10/2026
+
+## D-153 · Kiểu truyện "kịch bản audio" trong app: cùng đường viết truyện, chỉ đổi văn phong (bổ sung D-151)
+- **Bối cảnh:** chủ dự án muốn dùng việc viết kịch bản audio ngay trên giao diện, không chỉ cho admin, và nói rõ: chỉ cần viết kịch bản, đồ thị gánh tính cách và nhân vật, tức là thêm một phong cách cho tính năng viết truyện (1/11/2026).
+- **Quyết định:**
+  - Lúc khởi tạo, người chơi chọn kiểu truyện `prose` (truyện chữ, mặc định, như trước) hay `audio`. Kiểu lưu theo truyện (cột `stories.style`, migration 0012) và trong phiên khởi tạo (`StoryChoices.style`).
+  - Truyện `audio` đi đúng đường của truyện chữ (khởi tạo, bản kế hoạch, đồ thị hai lớp, dàn ý, bộ trích, người canh, kiểm văn, kiểm duyệt, sổ tay, người kể, lựa chọn, key và trần của người chơi). Chỉ system prompt của model viết đổi: `evals/scenarios/quality/style_guide_audio_vi.md` (`pipeline/scene.style_guide_for`), giữ mọi luật kiểm văn bằng code chấm, đổi giọng sang sảng văn để TTS một giọng đọc: câu ngắn, lời thoại có câu dẫn, số viết bằng chữ, vả mặt, câu treo.
+  - `GET /stories/{id}/script.txt`: văn các chương đã commit, dòng thoại thành “…”, để tải về dán vào TTS. Chỉ chữ người chơi đã đọc (G1); mọi kiểu truyện tải được, giao diện chỉ hiện nút ở truyện `audio`.
+  - Giao diện: lựa chọn "Kiểu truyện" ở màn khởi tạo, nhãn và nút "Tải kịch bản (.txt)" ở màn truyện, nhãn "Audio" ở tủ truyện.
+  - Bộ viết kịch bản audio của admin (D-151, `audio/`) giữ nguyên, vẫn không có đường từ app.
+- **Hệ quả:** truyện `audio` có lựa chọn ở cuối chương như truyện chữ, nên người chơi lái được truyện; độ dài theo mức độ dài người chơi chọn (`story_lengths.yaml`). Bản hướng dẫn audio chưa đo bằng bài D hay chạy thật trong app.
+- **Người quyết:** Chủ dự án (mở cho người chơi, dùng lớp viết truyện, 1/11/2026), Claude (thiết kế, chữ hướng dẫn), nhánh feature/audio-style · 1/11/2026

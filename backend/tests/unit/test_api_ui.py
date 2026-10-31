@@ -122,6 +122,7 @@ def test_story_list_has_only_whitelisted_fields(monkeypatch):
         "story_id": "story-a", "title": "Ngọc bội rạn", "length_level": "short",
         "length_label": CFG.story_lengths.levels["short"].label, "chapter": 3, "finished": False,
         "last_excerpt": "Dưới chân nó, tro vẫn còn ấm.", "updated_at": "2026-10-21T08:30:00+00:00",
+        "style": "prose",  # kiểu truyện (D-153)
     }
 
 

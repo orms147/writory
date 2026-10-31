@@ -50,6 +50,7 @@ curl -X POST http://127.0.0.1:8000/stories/<story_id>/narrator -H 'content-type:
 Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
 ```bash
 curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "moderate"}'
+# kiểu truyện (D-153): thêm "style": "audio" để viết theo giọng kịch bản audio; bỏ trống là truyện chữ
 curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json'
 curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
 # tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:
@@ -61,6 +62,7 @@ curl -N -X POST http://127.0.0.1:8000/stories/<story_id>/chapters/next -H 'conte
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/choice -H 'content-type: application/json' -d '{"choice_id": "choice-…"}'
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/action -H 'content-type: application/json' -d '{"text": "Tôi xuống bến hỏi chuyện."}'
 curl http://127.0.0.1:8000/stories/<story_id>   # trạng thái để mở lại truyện
+curl -O -J http://127.0.0.1:8000/stories/<story_id>/script.txt   # kịch bản các chương đã ghi, dán vào TTS (D-153)
 ```
 Một truyện chỉ viết một chương một lúc, một phiên chỉ chốt một lần một lúc: lần gọi thứ hai trả 409 `STORY_BUSY` (D-46). Khoá giữ trên kết nối Postgres của yêu cầu, nên tự nhả khi yêu cầu kết thúc hay tiến trình chết. Người chơi ngắt kết nối giữa stream thì chương không ghi, lời gọi model đang chờ bị huỷ, và khoá chỉ nhả sau khi đường đi đã dừng hẳn (D-63): gọi lại ngay trong khoảng đó có thể nhận `STORY_BUSY`, thử lại sau.
 Danh sách route và schema: `http://127.0.0.1:8000/docs` (OpenAPI của FastAPI).

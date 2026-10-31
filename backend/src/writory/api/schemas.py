@@ -130,6 +130,8 @@ class SetupStartIn(_Out):
     naming: NamingIn | None = None  # None: mặc định theo thể loại (D-32)
     # Khoá trong config/moderation.yaml `darkness_levels`; None: `default_darkness_level` (D-67).
     darkness_level: str | None = Field(default=None, max_length=32)
+    # Kiểu truyện (D-153): "prose" truyện chữ như trước, "audio" kịch bản để TTS đọc.
+    style: Literal["prose", "audio"] = "prose"
 
 
 class OptionChoiceIn(_Out):
@@ -185,6 +187,7 @@ class SetupOut(_Out):
     length_level: str
     naming: NamingOut
     darkness_level: str | None  # khoá mức u tối đã chọn (D-67); None chỉ ở phiên tạo trước D-67
+    style: Literal["prose", "audio"]  # kiểu truyện (D-153)
     settings: list[SettingOut] | None
     setting_index: int | None
     plots: list[PlotOut] | None
@@ -220,6 +223,7 @@ class SetupOut(_Out):
             length_level=choices.length_level,
             naming=NamingOut(names=choices.naming.names, places=choices.naming.places),
             darkness_level=choices.darkness_level,
+            style=choices.style,
             settings=None if rec.settings is None else [
                 SettingOut(title=o["title"], intro=o["intro"]) for o in rec.settings],
             setting_index=rec.setting_index,
@@ -276,6 +280,7 @@ class StoryOut(_Out):
     action: ActionOut | None  # hành động đã chọn cho chương sau
     next_ready: bool  # viết được chương sau ngay
     finished: bool  # đã tới chương cuối theo kế hoạch
+    style: Literal["prose", "audio"]  # kiểu truyện (D-153)
 
 
 # --- giao diện: tủ truyện, cấu hình công khai, chi phí (D-66) -----------------------------------
@@ -314,6 +319,7 @@ class StorySummaryOut(_Out):
     finished: bool
     last_excerpt: str | None  # câu cuối của cảnh cuối đã hiện; None ở chương 0
     updated_at: str  # ISO 8601, UTC
+    style: Literal["prose", "audio"]  # kiểu truyện (D-153)
 
     @classmethod
     def from_record(cls, rec: StorySummaryRecord,
@@ -326,6 +332,7 @@ class StorySummaryOut(_Out):
             finished=rec.total_chapters is not None and chapter >= rec.total_chapters,
             last_excerpt=None if rec.last_scene is None else last_sentence(rec.last_scene),
             updated_at=rec.updated_at.astimezone(UTC).isoformat(),
+            style=rec.style,
         )
 
 

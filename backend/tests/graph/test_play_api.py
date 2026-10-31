@@ -55,11 +55,12 @@ from tests.pipeline_fixtures import (
 from writory.api import create_app, deps
 from writory.api.deps import DEV_OWNER_ID
 from writory.api.errors import HTTP_STATUS
-from writory.api.play import action_text, choice_record
+from writory.api.play import action_text, choice_record, script_text
 from writory.config import load_config
 from writory.db import (
     chapter_records,
     commit_chapter,
+    committed_page_texts,
     create_story_with_plan,
     current_chapter,
     delete_player_key,
@@ -77,7 +78,7 @@ from writory.graph import story_snapshot
 from writory.llm.base import GenerationCost, current_trace
 from writory.llm.cost import CostEstimator
 from writory.pipeline.choices import Choice, LieEffect
-from writory.pipeline.scene import SceneOutline
+from writory.pipeline.scene import AUDIO_STYLE_GUIDE_PATH, SceneOutline, load_style_guide
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.moderate import ChoicesModerationOutput, ModerationOutput
 from writory.safety.wrap import CLOSE_TAG
@@ -128,10 +129,10 @@ def story(pg, driver, new_db_story_id):
     """Truyện mẫu tới chương 3 của người chơi dev, có kế hoạch, thiết lập; key dev được dọn sau."""
 
     def make(*, action: str | None = "Ở nhà chờ tin.", plan: StoryPlan = PLAN,
-             darkness_level: str | None = None) -> str:
+             darkness_level: str | None = None, style: str = "prose") -> str:
         sid = new_db_story_id()
         create_story_with_plan(pg, sid, owner_id=DEV_OWNER_ID, length_level="short",
-                               brief=BRIEF, plan=plan, darkness_level=darkness_level)
+                               brief=BRIEF, plan=plan, darkness_level=darkness_level, style=style)
         for ch in SAMPLE.chapters[:4]:
             commit_chapter(pg, driver, sid, ch.number, [ch.text] if ch.text else [], ch.package)
         if action is not None:
@@ -564,7 +565,7 @@ def test_chapter_text_routes(pg, driver, story, tmp_path):
     assert state == {"story_id": sid, "length_level": "short", "chapter": 3, "pending": False,
                      "choices": [], "action": {"for_chapter": 4, "source": "custom",
                                                "text": "Ở nhà chờ tin."},
-                     "next_ready": True, "finished": False}
+                     "next_ready": True, "finished": False, "style": "prose"}
 
 
 # --- tác động của lựa chọn lên đồ thị (D-55) ----------------------------------------------------
@@ -1125,3 +1126,33 @@ def test_regenerated_choices_are_moderated_at_the_story_darkness_level(pg, drive
     else:
         assert resp.json()["code"] == "CHOICES_LEAK_BLOCKED"
         assert load_choices(pg, sid, 3) == []
+
+
+# --- kiểu truyện: kịch bản audio (D-153) ---------------------------------------------------------
+
+
+@pytest.mark.parametrize("style", ["prose", "audio"])
+def test_the_story_style_picks_the_writer_style_guide_and_nothing_else(pg, driver, story, tmp_path, style):
+    """Kiểu truyện chỉ đổi system prompt của model viết; dàn ý, trích, lựa chọn chạy như mọi truyện."""
+    sid = story(style=style)
+    script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    llm = ScriptedLLM(script)
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        events = sse(write_next(client, sid).text)
+        state = client.get(f"/stories/{sid}").json()
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    assert state["style"] == style and get_story(pg, sid).style == style
+    guide = load_style_guide(AUDIO_STYLE_GUIDE_PATH) if style == "audio" else load_style_guide()
+    writes = calls_of(llm, "writer")
+    assert len(writes) == 2 and all(call[0].content.startswith(guide) for call in writes)
+
+
+def test_the_script_has_every_shown_chapter_and_nothing_else(pg, driver, story, tmp_path):
+    sid = story(style="audio")
+    with TestClient(make_app(pg, driver, ScriptedLLM([]), tmp_path)) as client:
+        resp = client.get(f"/stories/{sid}/script.txt")
+        missing = client.get("/stories/story-khong-co-that/script.txt")
+    assert resp.status_code == 200 and resp.headers["content-type"].startswith("text/plain")
+    assert f'filename="{sid}.txt"' in resp.headers["content-disposition"]
+    assert resp.text.strip() and resp.text == script_text(committed_page_texts(pg, sid, current_chapter(pg, sid)))
+    assert missing.status_code == 404

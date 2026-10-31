@@ -187,6 +187,8 @@ sequenceDiagram
 
 ## 5. Đường đi một chương
 
+Kiểu truyện (`stories.style`, D-153) chỉ đổi system prompt của model viết: `api/play.py` truyền `pipeline.scene.style_guide_for(story.style)` vào `ChapterRun` (`None` là bản truyện chữ mặc định). Mọi bước khác dưới đây giống nhau cho mọi kiểu.
+
 Đồ thị LangGraph thật, dựng trong `_build` (`pipeline/chapter.py`) và biên dịch một lần:
 
 ```mermaid
@@ -417,7 +419,7 @@ Mọi router người chơi có dependency `deps.api_guard`. Cột "Đăng nhậ
 | `play` | `POST /stories/{id}/chapters/next` (SSE) | có | có | `story` |
 | `play` | `POST /stories/{id}/choices` (tạo lại khi chưa có) | có | khi chưa có | `story` |
 | `play` | `POST /stories/{id}/action` (ô tự viết) | có | có | `story` |
-| `play` | `GET /stories/{id}`; `GET /stories/{id}/chapters/{n}` | có | | |
+| `play` | `GET /stories/{id}`; `GET /stories/{id}/chapters/{n}`; `GET /stories/{id}/script.txt` (D-153) | có | | |
 | `play` | `POST /stories/{id}/choice` | có | | `story` (D-133) |
 | `setup` | `POST /setup`; `GET /setup/{sid}`; `PUT /setup/{sid}/settings`, `plots` | có | | |
 | `setup` | `PUT /setup/{sid}/characters` | có | khi có phần sửa | `setup` (D-133) |

@@ -21,8 +21,10 @@ def test_nothing_in_the_app_imports_or_serves_the_audio_tool():
         if AUDIO_SRC in path.parents:
             continue
         assert not re.search(r"(from|import)\s+writory\.audio|from\s+writory\s+import\s+audio", text), path
+    # Không route nào tới công cụ admin: không đường dẫn chứa "audio". Giá trị kiểu truyện "audio" (D-153) không phải
+    # đường dẫn, và bộ viết kịch bản admin vẫn không được nhập từ app (phép kiểm import ở trên).
     for path, text in _sources(SRC / "api").items():
-        assert not re.search(r"""["'/]\w*audio\w*["']""", text, re.IGNORECASE), path
+        assert not re.search(r"""["']/[^"']*audio""", text, re.IGNORECASE), path
 
 
 def test_the_frontend_has_no_way_to_ask_for_an_audio_script():
