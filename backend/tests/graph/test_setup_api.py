@@ -851,7 +851,8 @@ def test_option_moderation_that_fails_saves_nothing(pg, driver, created):
 def test_the_story_style_chosen_at_setup_is_stored_on_the_story(pg, driver, created):
     fake = FakeLLM.scripted(script())
     with TestClient(make_app(pg, driver, fake)) as client:
-        body = client.post("/setup", json=START | {"style": "audio"}).json()
+        # Bản kế hoạch mẫu có 6 chương: khớp mức audio ~45 phút (5–6 chương, D-155).
+        body = client.post("/setup", json=START | {"style": "audio", "length_level": "audio_45"}).json()
         created[0].append(body["session_id"])
         assert body["style"] == "audio"
         sid = body["session_id"]
@@ -871,3 +872,12 @@ def test_an_unknown_story_style_is_refused_before_any_call(pg, driver, created):
     with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
         resp = client.post("/setup", json=START | {"style": "radio"})
     assert resp.status_code == 422 and fake.calls == []
+
+
+@pytest.mark.parametrize(("style", "level"), [("audio", "short"), ("prose", "audio_60")])
+def test_a_length_level_of_the_other_story_style_is_refused(pg, driver, created, style, level):
+    """Truyện audio chỉ chọn mức đo bằng phút, truyện chữ chỉ chọn mức cũ (D-155); sai thì không gọi model nào."""
+    fake = FakeLLM.scripted(script())
+    with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
+        resp = client.post("/setup", json=START | {"style": style, "length_level": level})
+    assert resp.status_code == 422 and resp.json()["fields"] == ["length_level"] and fake.calls == []

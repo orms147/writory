@@ -278,7 +278,10 @@ describe('chữ máy chủ hiện nguyên văn', () => {
 describe('độ dài truyện chỉ gồm mức đang mở (D-88)', () => {
   it('màn khởi tạo hiện đúng các mức /config/public trả về, không mức nào khác', async () => {
     withMock();
-    const config = { ...oddConfig(), story_lengths: [{ key: 'thu', label: 'Truyện thử', chapters_min: 3, chapters_max: 5 }] };
+    const config = {
+      ...oddConfig(),
+      story_lengths: [{ key: 'thu', label: 'Truyện thử', chapters_min: 3, chapters_max: 5, style: 'prose' as const, minutes: null }],
+    };
     renderApp(<Template />, { config });
     const radios = within(screen.getByRole('radiogroup', { name: 'D · Độ dài' })).getAllByRole('radio');
     expect(radios).toHaveLength(1);
@@ -291,7 +294,7 @@ describe('độ dài truyện chỉ gồm mức đang mở (D-88)', () => {
   it('máy chủ giả: /config/public chỉ trả mức mở; mức đóng bị /setup từ chối bằng mã riêng', async () => {
     withMock();
     const config = await api.publicConfig();
-    expect(config.story_lengths.map((l) => l.key)).toEqual(['short', 'medium']);
+    expect(config.story_lengths.map((l) => l.key)).toEqual(['short', 'medium', 'audio_30', 'audio_45', 'audio_60']);
     const err = await api.startSetup({ tags: { genre: 'kiếm hiệp', voice: null }, length_level: 'long', naming: null }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect((err as ApiError).code).toBe('STORY_LENGTH_NOT_OPEN');

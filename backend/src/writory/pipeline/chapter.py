@@ -310,6 +310,7 @@ class _Deps:
     # Chỉ cho bộ đo (evals): nhận câu hỏi và id đoạn của mỗi lần lấy đoạn trên trang (D-85).
     on_quotes: Callable[[dict[str, Any]], None] | None = None
     prompts: PromptTexts | None = None  # chỉ bộ đo: đề ghi đè (D-109)
+    outline_note: str | None = None  # ghi chú đề dàn ý theo kiểu truyện (D-155)
 
 
 class _State(TypedDict, total=False):
@@ -496,7 +497,7 @@ def _brief(d: _Deps, state: _State) -> SceneBrief:
         openings=tuple(state.get("openings", ())),
         forbidden=tuple(forbidden),
         forbidden_max=_require(d.config.limits.context, "forbidden_names_max"),
-        prompts=d.prompts,
+        prompts=d.prompts, outline_note=d.outline_note,
     )
 
 
@@ -1096,7 +1097,7 @@ class ChapterRun:
         self, request: ChapterRequest, *, llm: LLMClient, store: ChapterStore,
         config: AppConfig, plan: StoryPlan, tracker: CostTracker, style_guide: str | None = None,
         on_quotes: Callable[[dict[str, Any]], None] | None = None,
-        prompts: PromptTexts | None = None,
+        prompts: PromptTexts | None = None, outline_note: str | None = None,
     ) -> None:
         allowed = config.story_lengths.scenes_per_chapter
         if not allowed.min <= request.scene_count <= allowed.max:
@@ -1107,7 +1108,7 @@ class ChapterRun:
         # Câu ngôi kể lấy từ cùng config mà kiểm văn dùng để bắt lệch ngôi (D-51).
         self._deps = _Deps(request, MeteredClient(llm, tracker), store, config, plan,
                            f"{guide}\n\n{narration_instruction(config.quality)}", on_quotes,
-                           prompts)
+                           prompts, outline_note)
         self.outcome = ChapterOutcome()
         self._task: asyncio.Task[None] | None = None
         self._cancel_sent = False

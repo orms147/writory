@@ -1,5 +1,5 @@
 // Kiểu truyện kịch bản audio: chọn lúc khởi tạo, nút tải kịch bản .txt ở màn truyện, nhãn ở tủ truyện.
-import { render, screen, waitFor } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
 import { Route, Routes } from 'react-router';
 import { beforeAll, describe, expect, it, vi } from 'vitest';
@@ -58,6 +58,99 @@ describe('khởi tạo: kiểu truyện', () => {
     expect(start?.body).toMatchObject({ style: 'audio' });
     const out = await (await server.fetch('/api/setup/setup-mock1')).json();
     expect(out.style).toBe('audio');
+  });
+
+  it('độ dài theo kiểu truyện: audio chỉ hiện mức audio và gửi mức audio; đổi lại truyện chữ thì hiện và gửi mức truyện chữ', async () => {
+    const { seen } = recordingMock();
+    renderApp(<Template />);
+    const lengths = () =>
+      within(screen.getByRole('radiogroup', { name: 'D · Độ dài' }))
+        .getAllByRole('radio')
+        .map((r) => r.textContent ?? '');
+    const checkedLength = () =>
+      within(screen.getByRole('radiogroup', { name: 'D · Độ dài' }))
+        .getAllByRole('radio')
+        .find((r) => r.getAttribute('aria-checked') === 'true');
+    const posts = () => seen.filter((r) => r.url.endsWith('/setup') && r.method === 'POST');
+
+    // Truyện chữ (mặc định): chỉ mức truyện chữ.
+    expect(lengths()).toEqual([expect.stringMatching(/^Truyện ngắn/), expect.stringMatching(/^Truyện vừa/)]);
+    await userEvent.click(screen.getByRole('radio', { name: 'Cổ trang' }));
+    await userEvent.click(screen.getByRole('radio', { name: /Truyện vừa/ }));
+
+    // Đổi sang audio: chỉ mức audio, mức đầu được chọn thay mức truyện chữ, có số phút.
+    await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
+    expect(lengths()).toEqual([
+      expect.stringMatching(/^Audio ~30 phút/),
+      expect.stringMatching(/^Audio ~45 phút/),
+      expect.stringMatching(/^Audio ~1 tiếng/),
+    ]);
+    expect(screen.queryByRole('radio', { name: /Truyện ngắn|Truyện vừa/ })).toBeNull();
+    expect(checkedLength()).toHaveTextContent('Audio ~30 phút');
+    expect(checkedLength()).toHaveTextContent('khoảng 30 phút nghe · 3–4 chương');
+    await userEvent.click(screen.getByRole('radio', { name: /Audio ~45 phút/ }));
+    await userEvent.click(screen.getByRole('button', { name: /Gợi ý bối cảnh/ }));
+    await waitFor(() => expect(posts()).toHaveLength(1));
+    expect(posts()[0]?.body).toMatchObject({ style: 'audio', length_level: 'audio_45' });
+  });
+
+  it('đổi lại truyện chữ: hiện mức truyện chữ, chọn mức đầu, gửi mức truyện chữ không kèm style', async () => {
+    const { seen } = recordingMock();
+    renderApp(<Template />);
+    await userEvent.click(screen.getByRole('radio', { name: 'Cổ trang' }));
+    await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
+    await userEvent.click(screen.getByRole('radio', { name: /Audio ~1 tiếng/ }));
+    await userEvent.click(screen.getByRole('radio', { name: /^Truyện chữ/ }));
+    const group = within(screen.getByRole('radiogroup', { name: 'D · Độ dài' }));
+    expect(group.getAllByRole('radio').map((r) => r.textContent)).toEqual([
+      expect.stringMatching(/^Truyện ngắn/),
+      expect.stringMatching(/^Truyện vừa/),
+    ]);
+    expect(screen.queryByText(/Audio ~/)).toBeNull();
+    expect(group.getByRole('radio', { name: /Truyện ngắn/ })).toHaveAttribute('aria-checked', 'true');
+    await userEvent.click(screen.getByRole('button', { name: /Gợi ý bối cảnh/ }));
+    await waitFor(() => expect(seen.some((r) => r.url.endsWith('/setup') && r.method === 'POST')).toBe(true));
+    const start = seen.find((r) => r.url.endsWith('/setup') && r.method === 'POST');
+    expect(start?.body).toMatchObject({ length_level: 'short' });
+    expect(start?.body).not.toHaveProperty('style');
+  });
+
+  it('bấm lại kiểu đang chọn: mức độ dài đã đúng kiểu thì giữ nguyên', async () => {
+    recordingMock();
+    renderApp(<Template />);
+    await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
+    await userEvent.click(screen.getByRole('radio', { name: /Audio ~45 phút/ }));
+    await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
+    expect(screen.getByRole('radio', { name: /Audio ~45 phút/ })).toHaveAttribute('aria-checked', 'true');
+  });
+
+  it('máy chủ giả: mức độ dài khác kiểu truyện bị /setup từ chối bằng REQUEST_INVALID ở length_level', async () => {
+    const server = withMock();
+    const post = (body: Record<string, unknown>) =>
+      server.fetch('/api/setup', {
+        method: 'POST',
+        headers: { 'content-type': 'application/json' },
+        body: JSON.stringify({ tags: { genre: 'Cổ trang' }, naming: null, ...body }),
+      });
+    for (const body of [{ length_level: 'short', style: 'audio' }, { length_level: 'audio_30' }, { length_level: 'audio_30', style: 'prose' }]) {
+      const res = await post(body);
+      expect(res.status).toBe(422);
+      expect(await res.json()).toMatchObject({ code: 'REQUEST_INVALID', fields: ['length_level'] });
+    }
+    expect((await post({ length_level: 'audio_60', style: 'audio' })).status).toBe(200);
+    expect((await post({ length_level: 'medium' })).status).toBe(200);
+  });
+
+  it('máy chủ giả: /config/public có style và minutes cho mỗi mức', async () => {
+    const server = withMock();
+    const config = await (await server.fetch('/api/config/public')).json();
+    expect(config.story_lengths).toEqual([
+      expect.objectContaining({ key: 'short', style: 'prose', minutes: null }),
+      expect.objectContaining({ key: 'medium', style: 'prose', minutes: null }),
+      { key: 'audio_30', label: 'Audio ~30 phút', chapters_min: 3, chapters_max: 4, style: 'audio', minutes: 30 },
+      { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 6, style: 'audio', minutes: 45 },
+      { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 7, chapters_max: 8, style: 'audio', minutes: 60 },
+    ]);
   });
 
   it('máy chủ giả từ chối style lạ bằng REQUEST_INVALID', async () => {

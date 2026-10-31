@@ -15,10 +15,14 @@ import type {
 /** Mọi mức độ dài của máy chủ giả, như `config/story_lengths.yaml`. `/config/public` chỉ trả mức
  *  `player_selectable`; `/setup` từ chối mức đóng bằng `STORY_LENGTH_NOT_OPEN` (D-88). */
 export const MOCK_LENGTH_LEVELS: (StoryLengthOption & { player_selectable: boolean })[] = [
-  { key: 'short', label: 'Truyện ngắn', chapters_min: 4, chapters_max: 8, player_selectable: true },
-  { key: 'medium', label: 'Truyện vừa', chapters_min: 10, chapters_max: 20, player_selectable: true },
-  { key: 'long', label: 'Truyện dài', chapters_min: 20, chapters_max: 35, player_selectable: false },
-  { key: 'novel', label: 'Tiểu thuyết mỏng', chapters_min: 30, chapters_max: 60, player_selectable: false },
+  { key: 'short', label: 'Truyện ngắn', chapters_min: 4, chapters_max: 8, style: 'prose', minutes: null, player_selectable: true },
+  { key: 'medium', label: 'Truyện vừa', chapters_min: 10, chapters_max: 20, style: 'prose', minutes: null, player_selectable: true },
+  { key: 'long', label: 'Truyện dài', chapters_min: 20, chapters_max: 35, style: 'prose', minutes: null, player_selectable: false },
+  { key: 'novel', label: 'Tiểu thuyết mỏng', chapters_min: 30, chapters_max: 60, style: 'prose', minutes: null, player_selectable: false },
+  // Truyện kịch bản audio có mức riêng, đo bằng phút nghe; `/setup` từ chối mức khác kiểu truyện.
+  { key: 'audio_30', label: 'Audio ~30 phút', chapters_min: 3, chapters_max: 4, style: 'audio', minutes: 30, player_selectable: true },
+  { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 6, style: 'audio', minutes: 45, player_selectable: true },
+  { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 7, chapters_max: 8, style: 'audio', minutes: 60, player_selectable: true },
 ];
 
 export const MOCK_CONFIG: PublicConfig = {
@@ -32,11 +36,13 @@ export const MOCK_CONFIG: PublicConfig = {
   narrator_questions_per_chapter: 3,
   rewrite_per_scene: 1,
   cost_usd: { per_scene: 0.02, per_chapter: 0.08, per_story: 1 },
-  story_lengths: MOCK_LENGTH_LEVELS.filter((l) => l.player_selectable).map(({ key, label, chapters_min, chapters_max }) => ({
+  story_lengths: MOCK_LENGTH_LEVELS.filter((l) => l.player_selectable).map(({ key, label, chapters_min, chapters_max, style, minutes }) => ({
     key,
     label,
     chapters_min,
     chapters_max,
+    style,
+    minutes,
   })),
   darkness_levels: [
     { key: 'light', label: 'Nhẹ' },

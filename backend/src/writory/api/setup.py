@@ -115,6 +115,9 @@ def start_setup(body: SetupStartIn, conn: deps.PgConn, owner: deps.Owner,
     if body.length_level not in config.story_lengths.player_levels():
         raise WritoryError(ErrorCode.STORY_LENGTH_NOT_OPEN, fields=["length_level"],
                            detail=f"mức độ dài {body.length_level!r} chưa mở cho người chơi")
+    if config.story_lengths.levels[body.length_level].style != body.style:
+        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["length_level"],
+                           detail=f"mức độ dài {body.length_level!r} không dành cho kiểu truyện {body.style!r} (D-155)")
     darkness = body.darkness_level or config.moderation.default_darkness_level
     if darkness not in config.moderation.darkness_levels:
         raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["darkness_level"],

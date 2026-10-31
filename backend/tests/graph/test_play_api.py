@@ -78,7 +78,12 @@ from writory.graph import story_snapshot
 from writory.llm.base import GenerationCost, current_trace
 from writory.llm.cost import CostEstimator
 from writory.pipeline.choices import Choice, LieEffect
-from writory.pipeline.scene import AUDIO_STYLE_GUIDE_PATH, SceneOutline, load_style_guide
+from writory.pipeline.scene import (
+    AUDIO_OUTLINE_NOTE,
+    AUDIO_STYLE_GUIDE_PATH,
+    SceneOutline,
+    load_style_guide,
+)
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.moderate import ChoicesModerationOutput, ModerationOutput
 from writory.safety.wrap import CLOSE_TAG
@@ -1145,6 +1150,8 @@ def test_the_story_style_picks_the_writer_style_guide_and_nothing_else(pg, drive
     guide = load_style_guide(AUDIO_STYLE_GUIDE_PATH) if style == "audio" else load_style_guide()
     writes = calls_of(llm, "writer")
     assert len(writes) == 2 and all(call[0].content.startswith(guide) for call in writes)
+    outlines = calls_of(llm, "outline")  # ghi chú dàn ý chỉ có ở truyện audio (D-155)
+    assert outlines and all((AUDIO_OUTLINE_NOTE in call[0].content) == (style == "audio") for call in outlines)
 
 
 def test_the_script_has_every_shown_chapter_and_nothing_else(pg, driver, story, tmp_path):
