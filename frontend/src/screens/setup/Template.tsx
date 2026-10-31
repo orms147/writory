@@ -2,7 +2,7 @@ import { useId, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { api } from '../../api/client';
 import { asApiError, type ApiError } from '../../api/errors';
-import type { NamesStyle, PlacesStyle, SetupStartIn } from '../../api/types';
+import type { NamesStyle, PlacesStyle, SetupStartIn, StoryStyle } from '../../api/types';
 import { ErrorBlock } from '../../components/ErrorBlock';
 import { RadioGroup } from '../../components/RadioGroup';
 import { Button, Kicker, cx } from '../../components/ui';
@@ -24,6 +24,16 @@ const NAMES: { key: NamesStyle; label: string; example: string }[] = [
 const PLACES: { key: PlacesStyle; label: string; example: string }[] = [
   { key: 'hu_cau', label: 'Hư cấu', example: 'đèo Lạc Nhạn, bến Vạn Thuỷ' },
   { key: 'that', label: 'Có thật', example: 'phố Hàng Bạc, chợ Bến Thành' },
+];
+
+/** Kiểu truyện: văn xuôi (mặc định) hay kịch bản để đọc thành tiếng bằng TTS một giọng. */
+const STYLES: { key: StoryStyle; label: string; hint: string }[] = [
+  { key: 'prose', label: 'Truyện chữ', hint: 'Văn xuôi để đọc trên trang.' },
+  {
+    key: 'audio',
+    label: 'Kịch bản audio',
+    hint: 'Viết để đọc thành tiếng bằng TTS: người kể xưng tôi, câu ngắn, lời thoại có câu dẫn. Tải kịch bản .txt ở màn truyện.',
+  },
 ];
 
 const chip = (checked: boolean) =>
@@ -52,10 +62,11 @@ function Section({ id, title, aside, children }: { id: string; title: string; as
 export function Template() {
   const config = usePublicConfig();
   const navigate = useNavigate();
-  const ids = { genre: useId(), naming: useId(), names: useId(), places: useId(), voice: useId(), dark: useId(), length: useId(), pov: useId() };
+  const ids = { genre: useId(), naming: useId(), names: useId(), places: useId(), voice: useId(), dark: useId(), style: useId(), length: useId(), pov: useId() };
   const [genre, setGenre] = useState<string | null>(null);
   const [voice, setVoice] = useState<string | null>(null);
   const [darkness, setDarkness] = useState<string | null>(config.default_darkness_level);
+  const [style, setStyle] = useState<StoryStyle>('prose');
   const [length, setLength] = useState<string | null>(null);
   const [names, setNames] = useState<NamesStyle | null>(null);
   const [places, setPlaces] = useState<PlacesStyle | null>(null);
@@ -80,6 +91,7 @@ export function Template() {
     genre ?? 'chưa chọn thể loại',
     voice?.toLocaleLowerCase('vi'),
     darkLabel && `u tối ${darkLabel.toLocaleLowerCase('vi')}`,
+    style === 'audio' && 'kịch bản audio',
     custom
       ? `${NAMES.find((n) => n.key === names)?.label.toLocaleLowerCase('vi')}, địa danh ${PLACES.find((p) => p.key === places)?.label.toLocaleLowerCase('vi')}`
       : 'tên theo thể loại',
@@ -97,6 +109,8 @@ export function Template() {
       length_level: level.key,
       naming: custom && names && places ? { names, places } : null,
       ...(darkness ? { darkness_level: darkness } : {}),
+      // Truyện chữ là mặc định của máy chủ: chỉ gửi khi chọn kiểu khác.
+      ...(style !== 'prose' ? { style } : {}),
     };
     try {
       const out = await once('setup:start', () => api.startSetup(body));
@@ -211,6 +225,25 @@ export function Template() {
                 />
               </>
             )}
+            <p id={ids.style} className="mb-2 mt-6 text-[15px] font-semibold">
+              Kiểu truyện
+            </p>
+            <RadioGroup
+              labelledBy={ids.style}
+              options={STYLES}
+              value={style}
+              onChange={(k) => setStyle(k ?? 'prose')}
+              className="grid gap-3 md:max-w-[640px] md:grid-cols-2"
+              optionClassName={(_, c) =>
+                cx('wt-card rounded-[12px] border px-4 py-3', c ? 'border-cinnabar-400 bg-cinnabar-400/10' : 'border-ink-700')
+              }
+              render={(o) => (
+                <>
+                  <span className="block text-[15px] font-semibold">{o.label}</span>
+                  <span className="mt-1 block text-[13px] text-ink-200">{o.hint}</span>
+                </>
+              )}
+            />
           </Section>
 
           <Section id={ids.length} title="D · Độ dài">

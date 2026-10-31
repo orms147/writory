@@ -192,6 +192,8 @@ class StoryChoices(_Strict):
     naming: Naming
     # Khoá trong config/moderation.yaml `darkness_levels` (D-67); None = `default_darkness_level`.
     darkness_level: str | None = None
+    # Kiểu truyện (D-153): chỉ đổi văn phong của model viết; phiên tạo trước D-153 là truyện chữ.
+    style: Literal["prose", "audio"] = "prose"
 
     def level(self, config: AppConfig) -> LengthLevel:
         try:

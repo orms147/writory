@@ -55,6 +55,9 @@ G1 với ngoại hình và cảnh sắc của khởi tạo (D-120, lớp `truth`
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
 
+## Kịch bản tải về của truyện (D-153)
+`GET /stories/{id}/script.txt` ghép văn các chương đã commit (`db.committed_page_texts`, như người kể ở D-143: không có chương pending hay failed) của truyện thuộc người đang dùng (`deps.OwnedStory`, G10). Đó đúng là chữ người chơi đã đọc trên trang, đã qua bộ dò lộ và kiểm duyệt lúc viết, nên không mở thêm đường nào tới lớp `truth` (G1). Kiểu truyện chỉ đổi system prompt của model viết; mọi guardrail của đường viết chương giữ nguyên. Test: `tests/graph/test_play_api.py::test_the_script_has_every_shown_chapter_and_nothing_else`, `::test_the_story_style_picks_the_writer_style_guide_and_nothing_else`, `tests/unit/test_story_style.py`.
+
 ## Bộ viết kịch bản audio (D-151)
 Công cụ admin, không đọc truyện của người chơi nên không có lớp truth để lộ; các ràng buộc sau đều có test (`backend/tests/unit/test_audio_script_security.py`, `test_audio_script.py`):
 - Không có đường nào từ app: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới audio, không file nào ngoài `audio/` nhập `writory.audio`, và `audio/` không nhập `db/`, `api/`, `export/`, `pipeline/`, lớp truy cập Neo4j hay driver DB.

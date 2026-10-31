@@ -25,6 +25,7 @@ class StorySummaryRecord:
     title: str | None
     total_chapters: int | None  # theo kế hoạch ẩn; None khi truyện không có kế hoạch
     last_scene: str | None  # cảnh cuối của chương đã commit cuối; None ở chương 0
+    style: str = "prose"  # kiểu truyện (D-153)
 
 
 _SELECT = """
@@ -32,7 +33,8 @@ SELECT s.id, s.length_level, s.committed_chapter, s.updated_at,
        COALESCE((ss.plots -> ss.plot_index) ->> 'title',
                 (ss.settings -> ss.setting_index) ->> 'title'),
        p.plan,
-       c.scenes ->> -1
+       c.scenes ->> -1,
+       s.style
 FROM stories s
 LEFT JOIN setup_sessions ss ON ss.story_id = s.id AND ss.owner_id = s.owner_id
 LEFT JOIN story_plans p ON p.story_id = s.id
@@ -46,8 +48,8 @@ ORDER BY s.updated_at DESC, s.id
 def owned_story_summaries(conn: psycopg.Connection, owner_id: str) -> list[StorySummaryRecord]:
     """Truyện của `owner_id`, mới nhất trước (G10: chỉ của người này)."""
     out = []
-    for sid, level, chapter, updated, title, plan, last_scene in conn.execute(
+    for sid, level, chapter, updated, title, plan, last_scene, style in conn.execute(
             _SELECT, (owner_id,)).fetchall():
         total = None if plan is None else StoryPlan.model_validate(plan).total_chapters
-        out.append(StorySummaryRecord(sid, level, chapter, updated, title, total, last_scene))
+        out.append(StorySummaryRecord(sid, level, chapter, updated, title, total, last_scene, style))
     return out

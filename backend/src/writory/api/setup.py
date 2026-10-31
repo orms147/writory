@@ -123,7 +123,7 @@ def start_setup(body: SetupStartIn, conn: deps.PgConn, owner: deps.Owner,
     naming = (Naming(**body.naming.model_dump()) if body.naming is not None
               else default_naming(tags.genre))
     choices = StoryChoices(tags=tags, length_level=body.length_level, naming=naming,
-                           darkness_level=darkness)
+                           darkness_level=darkness, style=body.style)
     rec = create_setup(conn, _new_id("setup"), owner_id=owner,
                        choices=choices.model_dump(mode="json"))
     return SetupOut.from_record(rec)
@@ -330,7 +330,7 @@ async def finalize(session_id: str, conn: deps.PgConn, driver: deps.Neo4jDriver,
     darkness = choices.darkness_level or config.moderation.default_darkness_level
     start_story(conn, driver, story_id, owner_id=owner, length_level=choices.length_level,
                 brief=story_brief(choices, setting, plot, pc, moderation=config.moderation),
-                plan=built.plan, initial=built.package, darkness_level=darkness)
+                plan=built.plan, initial=built.package, darkness_level=darkness, style=choices.style)
     try:
         rec = finish_setup(conn, rec.id, story_id)
     except BaseException:

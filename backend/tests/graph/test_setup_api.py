@@ -843,3 +843,31 @@ def test_option_moderation_that_fails_saves_nothing(pg, driver, created):
     # Hết lượt thử lại lỗi mạng (D-14): lỗi có mã, không có bộ lựa chọn nào.
     assert (resp.status_code, resp.json()["code"]) == (503, "RETRY_LIMIT_REACHED")
     assert "Bối cảnh" not in resp.text and body["settings"] is None
+
+
+# --- kiểu truyện (D-153) -----------------------------------------------------------------------------
+
+
+def test_the_story_style_chosen_at_setup_is_stored_on_the_story(pg, driver, created):
+    fake = FakeLLM.scripted(script())
+    with TestClient(make_app(pg, driver, fake)) as client:
+        body = client.post("/setup", json=START | {"style": "audio"}).json()
+        created[0].append(body["session_id"])
+        assert body["style"] == "audio"
+        sid = body["session_id"]
+        for step in ("settings", "plots"):
+            client.post(f"/setup/{sid}/{step}", headers=JSON_HEADERS)
+            client.put(f"/setup/{sid}/{step}", json={"index": 0})
+        client.post(f"/setup/{sid}/characters", headers=JSON_HEADERS)
+        client.put(f"/setup/{sid}/characters", json={"index": 0})
+        done = client.post(f"/setup/{sid}/finalize", headers=JSON_HEADERS).json()
+        listed = {s["story_id"]: s["style"] for s in client.get("/stories").json()["stories"]}
+    created[1].append(done["story_id"])
+    assert get_story(pg, done["story_id"]).style == "audio" and listed[done["story_id"]] == "audio"
+
+
+def test_an_unknown_story_style_is_refused_before_any_call(pg, driver, created):
+    fake = FakeLLM.scripted(script())
+    with TestClient(make_app(pg, driver, fake), raise_server_exceptions=False) as client:
+        resp = client.post("/setup", json=START | {"style": "radio"})
+    assert resp.status_code == 422 and fake.calls == []

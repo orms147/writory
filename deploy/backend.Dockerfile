@@ -26,6 +26,7 @@ RUN uv sync --locked --no-default-groups
 # File app đọc lúc chạy, ngoài mã: config/ và hướng dẫn văn phong (system prompt của model viết).
 COPY config /app/config
 COPY evals/scenarios/quality/style_guide_vi.md /app/evals/scenarios/quality/style_guide_vi.md
+COPY evals/scenarios/quality/style_guide_audio_vi.md /app/evals/scenarios/quality/style_guide_audio_vi.md
 
 RUN useradd --system --uid 10001 --no-create-home --shell /usr/sbin/nologin writory
 USER writory

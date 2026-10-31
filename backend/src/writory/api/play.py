@@ -36,6 +36,7 @@ from functools import partial
 from typing import Annotated, Any
 
 from fastapi import APIRouter, Depends
+from fastapi.responses import PlainTextResponse
 from fastapi.sse import EventSourceResponse, ServerSentEvent
 
 from writory.api import deps
@@ -51,6 +52,7 @@ from writory.db import (
     ActionRecord,
     chapter_records,
     chapter_scenes,
+    committed_page_texts,
     job_lock,
     load_action,
     load_choice,
@@ -75,6 +77,7 @@ from writory.pipeline.events import (
     error_event,
 )
 from writory.pipeline.pacing import stalled_after
+from writory.pipeline.scene import style_guide_for
 from writory.pipeline.store import GraphStore
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.classify import (
@@ -218,7 +221,8 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
             darkness_level=story.darkness_level, feasibility=_feasibility(action),
         )
         run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
-                         config=config, plan=plan, tracker=tracker)
+                         config=config, plan=plan, tracker=tracker,
+                         style_guide=style_guide_for(story.style))  # kiểu truyện chỉ đổi văn phong (D-153)
         yield ChapterJob(story.id, chapter, run)
 
 
@@ -271,7 +275,7 @@ def story_state(story: deps.OwnedStory, conn: deps.PgConn, plan: Plan) -> StoryO
     finished = chapter >= plan.total_chapters
     return StoryOut(
         story_id=story.id, length_level=story.length_level, chapter=chapter, pending=pending,
-        choices=choices, action=action, finished=finished,
+        choices=choices, action=action, finished=finished, style=story.style,
         next_ready=not finished and not pending and (chapter == 0 or action is not None),
     )
 
@@ -283,6 +287,30 @@ def chapter_text(number: int, story: deps.OwnedStory, conn: deps.PgConn) -> Chap
     if not scenes:
         raise WritoryError(ErrorCode.CHAPTER_NOT_FOUND, detail=f"{story.id} ch{number}")
     return ChapterOut(number=number, scenes=scenes)
+
+
+_DIALOGUE = "- "  # dấu thoại sau chuẩn hoá (D-31)
+
+
+def script_text(texts: dict[int, str]) -> str:
+    """Kịch bản đọc liền cho TTS (D-153): văn đã hiện của các chương theo thứ tự, mỗi chương cách một dòng trống;
+    dòng thoại "- ..." thành “...” để giọng đọc không đọc dấu gạch."""
+    chapters = []
+    for number in sorted(texts):
+        lines = [f"“{line[len(_DIALOGUE):].strip()}”" if line.startswith(_DIALOGUE) else line
+                 for line in texts[number].splitlines()]
+        chapters.append("\n".join(lines).strip())
+    body = "\n\n".join(c for c in chapters if c)
+    return body + "\n" if body else ""
+
+
+@router.get("/{story_id}/script.txt", response_class=PlainTextResponse)
+def story_script(story: deps.OwnedStory, conn: deps.PgConn) -> PlainTextResponse:
+    """Kịch bản của truyện tới chương đã ghi cuối, để tải về dán vào TTS (D-153). Chỉ văn người chơi đã đọc
+    (chương đã commit; G1), không có gì của lớp truth. Mọi kiểu truyện đều tải được."""
+    text = script_text(committed_page_texts(conn, story.id, _committed(story)))
+    return PlainTextResponse(text, headers={
+        "Content-Disposition": f'attachment; filename="{story.id}.txt"'})
 
 
 # --- lựa chọn và hành động ----------------------------------------------------------------------
