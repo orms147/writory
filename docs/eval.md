@@ -15,7 +15,7 @@ Mục đích và lý do chia bài: design §9, D-7. File này chứa cách làm 
     - Văn chương: `chapters/chNN.md`, bỏ tiêu đề, ghi chú in nghiêng của lệnh chạy và mục lựa chọn cuối chương. Đồ thị: các gói chương 0..N trong `truth_dump.json`. Chạy thật trên Neo4j thì áp lần lượt các gói đó vào một `story_id` riêng.
     - Đồ thị ở đây do bộ trích dựng nên không là đáp án. Đáp án gốc lấy từ trang (`evidence`). Mỗi câu khai `graph_agrees`: true thì `derive` bắt buộc và phải ra đúng đáp án; false thì đồ thị thiếu hoặc sai, có `derive` thì code kiểm nó ra khác đáp án, không có thì là đồ thị không có cạnh nào để tính. `derive` trỏ tới id không có là lỗi đề. `summary.md` thêm bảng tách điểm theo cờ này, để biết hệ đồ thị sai vì bộ trích hay vì đọc.
     - Hiện có `questions-ky-ao-vua-1.yaml` cho `evals/results/2026-10-21-run-ky-ao-vua-1/` (Truyện vừa, 10 chương): chủ dự án đã duyệt (22/10/2026). Quy ước soạn ghi ở đầu file.
-    - `questions-long-ky-ao-2.yaml` cho `evals/results/2026-10-29-run-long-after-ky-ao-2/` (Truyện dài, 24 chương): chủ dự án đã duyệt (31/10/2026). Câu hỏi nơi chốn của nhân vật để ở nhóm `relation`. Quy ước soạn ghi ở đầu file.
+    - `questions-long-ky-ao-2.yaml` cho `evals/results/2026-10-29-run-long-after-ky-ao-2/` (Truyện dài, 24 chương): chủ dự án đã duyệt (31/10/2026); đã chạy thật trên Meta Muse (`evals/results/2026-10-31-bench-a-long/notes.md`). Câu hỏi nơi chốn của nhân vật để ở nhóm `relation`. Quy ước soạn ghi ở đầu file.
 - **Sáu hệ trả lời** (mỗi hệ dựng ngữ cảnh từ chương 1..N, không hệ nào thấy chương sau N; `src/writory/pipeline/bench_a_systems.py`):
 
   | Hệ (`--systems`) | Ngữ cảnh |
