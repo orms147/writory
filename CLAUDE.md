@@ -37,7 +37,7 @@ Truyện tương tác tiếng Việt có trí nhớ thế giới dạng đồ th
 
 ## 3. Cấu trúc thư mục
 ```
-CLAUDE.md  README.md  docker-compose.yml  .env.example
+CLAUDE.md  README.md  docker-compose.yml  .env.example  makefile (make run: chạy app dev, docs/runbook.md)
 docker-compose.prod.yml  .env.prod.example   chồng prod (D-103)
 deploy/            backend.Dockerfile, proxy.Dockerfile, Caddyfile, script PowerShell bật/tắt/sao lưu chồng prod (D-103)
 config/            số và lựa chọn runtime: models.yaml, limits.yaml, story_lengths.yaml, quality.yaml, guard.yaml, moderation.yaml
@@ -105,6 +105,7 @@ Mỗi lỗi tìm được thêm thành **test hồi quy** trước khi sửa. B�
 
 ## 7. Lệnh thường dùng
 ```bash
+make run                             # cài, bật Docker, migration, backend :8000 + giao diện :5173 (make help)
 docker compose up -d                 # Neo4j :7474/:7687, Postgres :5432
 cd backend && uv sync                # cài phụ thuộc
 uv run pytest -m "not graph"         # test nhanh
