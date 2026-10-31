@@ -70,6 +70,25 @@ def load_style_guide(path: Path = STYLE_GUIDE_PATH) -> str:
     return re.sub(r"<!--.*?-->", "", raw, flags=re.DOTALL).strip()
 
 
+AUDIO_OUTLINE_NOTE = """Truyện này là kịch bản audio sảng văn, một giọng đọc máy đọc cho người nghe (D-155). Khi lập \
+dàn ý:
+- Mỗi cảnh có một bước lật thế rõ: một bên được hay mất một thứ cụ thể (tiền, chức, quyền, hôn ước, thể diện trước \
+đám đông). Mỗi chương có ít nhất một màn vả mặt phản diện kèm một mất mát cụ thể của phản diện.
+- Không dựng cảnh chỉ để xác nhận lại điều người nghe đã biết. Sự thật đã lộ chỉ được nhắc kèm một hậu quả mới.
+- Không hoãn cao trào bằng hẹn gặp, cuộc họp để sau hay "sáng mai". Việc đã hẹn thì cảnh kế tiếp giải quyết luôn.
+- Ít cảnh thủ tục (luật sư, biên bản, giấy tờ, kiểm toán): giấy tờ chỉ là đạo cụ để lật mặt, không phải cả cảnh.
+- Cảnh mở chương nói ngay cho người nghe biết đang ở đâu, lúc nào, có ai.
+- Chương cuối: chốt hẳn danh phận và quyền lợi của nhân vật chính, phản diện chịu hình phạt công khai và cụ thể, \
+mọi mạch đã mở đều được gỡ, kết bằng một hình ảnh dư âm. Không để mạch nào lửng, không hẹn phần sau."""
+
+
+def outline_note_for(style: str) -> str | None:
+    """Ghi chú thêm vào đề dàn ý theo kiểu truyện (D-155): None với truyện chữ (đề như trước)."""
+    if style not in STORY_STYLES:
+        raise ValueError(f"kiểu truyện {style!r} không có, chỉ có {', '.join(STORY_STYLES)}")
+    return None if style == "prose" else AUDIO_OUTLINE_NOTE
+
+
 def style_guide_for(style: str) -> str | None:
     """Văn phong của model viết theo kiểu truyện (D-153): None với truyện chữ (`ChapterRun` dùng bản mặc định như
     trước), bản audio với kịch bản audio. Kiểu lạ là lỗi, không âm thầm dùng bản mặc định."""
@@ -176,6 +195,7 @@ class SceneBrief:
     forbidden: tuple[ForbiddenName, ...] = ()
     forbidden_max: int | None = None  # số nút tối đa trong mục tên cấm; None = không giới hạn (D-94)
     prompts: PromptTexts | None = None  # chỉ bộ đo (D-109)
+    outline_note: str | None = None  # ghi chú thêm vào đề dàn ý theo kiểu truyện (D-155)
     # (chương, câu mở) của các chương gần nhất, cũ trước: chữ đã hiện trên trang, nên luôn bọc như
     # dữ liệu (G4). Chỉ vào đề viết, cảnh 1 (D-110). Rỗng = tắt.
     openings: tuple[tuple[int, str], ...] = ()
@@ -426,7 +446,8 @@ def outline_messages(
     _earlier(out, brief, names, edge_ends)
     _goals(out, brief, thread_ids=True)
     system = (brief.prompts.outline_system if brief.prompts is not None else None)
-    return [system_message(system or OUTLINE_SYSTEM_PROMPT, DATA_NOTICE),
+    note = [brief.outline_note] if brief.outline_note else []
+    return [system_message(system or OUTLINE_SYSTEM_PROMPT, *note, DATA_NOTICE),
             user_message(*out.done())]
 
 

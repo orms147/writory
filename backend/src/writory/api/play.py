@@ -77,7 +77,7 @@ from writory.pipeline.events import (
     error_event,
 )
 from writory.pipeline.pacing import stalled_after
-from writory.pipeline.scene import style_guide_for
+from writory.pipeline.scene import outline_note_for, style_guide_for
 from writory.pipeline.store import GraphStore
 from writory.pipeline.story_plan import StoryPlan
 from writory.safety.classify import (
@@ -227,7 +227,8 @@ def get_chapter_job(story: deps.OwnedStory, conn: deps.PgConn, driver: deps.Neo4
         )
         run = ChapterRun(request, llm=client, store=GraphStore(conn, driver, story.id),
                          config=config, plan=plan, tracker=tracker,
-                         style_guide=style_guide_for(story.style))  # kiểu truyện chỉ đổi văn phong (D-153)
+                         style_guide=style_guide_for(story.style),  # kiểu truyện chỉ đổi văn phong (D-153)
+                         outline_note=outline_note_for(story.style))  # và thêm ghi chú dàn ý cho audio (D-155)
         yield ChapterJob(story.id, chapter, run)
 
 

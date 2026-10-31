@@ -50,7 +50,8 @@ curl -X POST http://127.0.0.1:8000/stories/<story_id>/narrator -H 'content-type:
 Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
 ```bash
 curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "moderate"}'
-# kiểu truyện (D-153): thêm "style": "audio" để viết theo giọng kịch bản audio; bỏ trống là truyện chữ
+# kiểu truyện (D-153): thêm "style": "audio" để viết theo giọng kịch bản audio; bỏ trống là truyện chữ.
+# truyện audio chỉ nhận mức độ dài audio_30, audio_45, audio_60 (D-155), ví dụ "length_level": "audio_30"
 curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json'
 curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
 # tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:

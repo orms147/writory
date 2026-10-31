@@ -658,6 +658,17 @@ _TAG_LABELS = (("genre", "thể loại"), ("era", "thời đại"), ("voice", "g
                ("darkness", "mức độ u tối"))
 
 
+AUDIO_SETUP_NOTE = """Truyện này là kịch bản audio sảng văn (hào môn, thân phận thật giả, trà xanh, vả mặt): một giọng \
+đọc máy đọc cho người nghe, không ai nhìn thấy chữ (D-155).
+- Tên: mỗi nhân vật quan trọng có tên gọi khác hẳn nhau khi nghe (khác âm đầu và vần; không hai tên na ná như Khang \
+và Khánh). Người cùng nhà có thể cùng họ nhưng được gọi bằng tên riêng hay vai trong nhà (ông nội, bà cả) khác nhau.
+- Xung đột leo thang: mỗi mốc cốt truyện là một lần lật thế, phản diện mất một thứ cụ thể trước đám đông (tiền, chức, \
+quyền, hôn ước, thể diện).
+- Mỗi bí mật lộ đúng một lần rồi kéo theo hậu quả; không bí mật nào chỉ để xác nhận đi xác nhận lại.
+- Cái kết chốt danh phận và quyền lợi của nhân vật chính và một hình phạt công khai, cụ thể cho phản diện; không kết \
+bằng lời hứa hay một cuộc họp để sau."""
+
+
 def _naming_rule(naming: Naming) -> str:
     return (
         f"Quy ước tên và địa danh (bắt buộc): {NAMES_TEXT[naming.names]}; "
@@ -697,7 +708,8 @@ def _messages(
         UserAuthored(darkness_brief(config.moderation, choices.darkness_level), "darkness_level"),
     ]
     return [
-        system_message(_COMMON, _naming_rule(choices.naming), task, DATA_NOTICE),
+        system_message(_COMMON, _naming_rule(choices.naming),
+                       *([AUDIO_SETUP_NOTE] if choices.style == "audio" else []), task, DATA_NOTICE),
         user_message(*brief, *parts),
     ]
 

@@ -242,10 +242,13 @@ def test_every_configured_role_is_used_and_guard_has_no_model_role():
 
 
 def test_story_lengths_open_to_players_are_short_and_medium():
-    """D-88 (chủ dự án, 22/10/2026): bản 1 mở Ngắn và Vừa; Dài, Tiểu thuyết mở sau khi đo thật.
-    Mỗi mức phải ghi rõ `player_selectable` (test dưới: thiếu là sai schema)."""
+    """D-88 (chủ dự án, 22/10/2026): bản 1 mở Ngắn và Vừa cho truyện chữ; Dài, Tiểu thuyết mở sau khi đo thật.
+    Truyện audio có ba mức riêng đo bằng phút nghe (D-155). Mỗi mức phải ghi rõ `player_selectable` (test dưới:
+    thiếu là sai schema)."""
     lengths = load_config().story_lengths
-    assert list(lengths.player_levels()) == ["short", "medium"]
+    open_levels = lengths.player_levels()
+    assert [k for k, v in open_levels.items() if v.style == "prose"] == ["short", "medium"]
+    assert [k for k, v in open_levels.items() if v.style == "audio"] == ["audio_30", "audio_45", "audio_60"]
     assert {k for k, v in lengths.levels.items() if not v.player_selectable} == {"long", "novel"}
 
 

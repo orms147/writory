@@ -407,6 +407,15 @@ class LengthLevel(_Strict):
     # Người chơi được chọn mức này lúc khởi tạo (D-88). Bắt buộc ghi rõ ở từng mức. Mức đóng vẫn
     # chạy được bằng lệnh đo (`pipeline/bench_run.py`), để đo trước khi mở.
     player_selectable: bool
+    # Kiểu truyện dùng mức này (D-155): truyện audio có mức riêng đo bằng phút nghe, truyện chữ giữ mức cũ.
+    style: Literal["prose", "audio"] = "prose"
+    minutes: PositiveInt | None = None  # phút nghe ước tính; bắt buộc với mức audio
+
+    @model_validator(mode="after")
+    def _audio_has_minutes(self) -> Self:
+        if self.style == "audio" and self.minutes is None:
+            raise ValueError("mức độ dài audio cần minutes (số phút nghe)")
+        return self
 
 
 class StoryLengthsConfig(_Strict):

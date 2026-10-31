@@ -359,6 +359,8 @@ class StoryLengthOut(_Out):
     label: str
     chapters_min: int
     chapters_max: int
+    style: Literal["prose", "audio"]  # kiểu truyện dùng mức này (D-155)
+    minutes: int | None  # phút nghe ước tính của mức audio; None với truyện chữ
 
 
 class WriterTierOut(_Out):
@@ -403,7 +405,7 @@ class PublicConfigOut(_Out):
                                  per_story=lim.cost_usd.per_story),
             story_lengths=[
                 StoryLengthOut(key=k, label=v.label, chapters_min=v.chapters.min,
-                               chapters_max=v.chapters.max)
+                               chapters_max=v.chapters.max, style=v.style, minutes=v.minutes)
                 for k, v in config.story_lengths.player_levels().items()
             ],
             writer_tier=WriterTierOut(label=writer_label),

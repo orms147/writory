@@ -195,7 +195,7 @@ def expected_public(cfg) -> dict:
                      "per_story": lim.cost_usd.per_story},
         "story_lengths": [
             {"key": k, "label": v.label, "chapters_min": v.chapters.min,
-             "chapters_max": v.chapters.max}
+             "chapters_max": v.chapters.max, "style": v.style, "minutes": v.minutes}
             for k, v in cfg.story_lengths.levels.items() if v.player_selectable
         ],
         "writer_tier": {"label": cfg.models.writer_tiers[0].label},
