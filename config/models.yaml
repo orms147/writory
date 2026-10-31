@@ -16,6 +16,7 @@ roles:
   summary: openai/gpt-6-luna    # tóm tắt chương vừa ghi cho đề các chương sau (D-49; tạm, D-47)
   moderate: openai/gpt-6-luna   # kiểm duyệt nội dung đầu vào và đầu ra, G9 (D-57; tạm, D-47)
   video: openai/gpt-6-luna      # bộ xuất kịch bản video: mô tả cố định, chia shot, dịch thoại (D-125; tạm, D-47)
+  audio: openai/gpt-6-luna      # bộ viết kịch bản audio, chỉ admin (D-151; tạm, Claude)
   # Chấm trang có để hành động vượt luật của người chơi thành công trọn vẹn không, G6 (D-138). Chỉ gọi ở
   # chương mà hành động tự viết bị bộ phân loại chấm vượt luật. Model như các vai khác (tạm, Claude chọn,
   # chờ chủ dự án duyệt).
@@ -33,6 +34,7 @@ role_reasoning:
   moderate: low
   video: low
   overreach: low
+  audio: low
 
 # Mức người chơi chọn: chỉ đổi model viết. Chỉ thêm model đã qua bài đo D.
 # D-33 (Chủ dự án, 20/10/2026): một mức duy nhất, GPT-6 Luna. Không có mức GPT-6.1 Sol (đắt).

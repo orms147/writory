@@ -55,6 +55,14 @@ G1 với ngoại hình và cảnh sắc của khởi tạo (D-120, lớp `truth`
 
 Model giả (`llm/fake.py`) có chế độ `echo` trả lại nguyên context, dùng cho test G1.
 
+## Bộ viết kịch bản audio (D-151)
+Công cụ admin, không đọc truyện của người chơi nên không có lớp truth để lộ; các ràng buộc sau đều có test (`backend/tests/unit/test_audio_script_security.py`, `test_audio_script.py`):
+- Không có đường nào từ app: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới audio, không file nào ngoài `audio/` nhập `writory.audio`, và `audio/` không nhập `db/`, `api/`, `export/`, `pipeline/`, lớp truy cập Neo4j hay driver DB.
+- G4: tag, hướng đi của admin và mọi chữ model viết từ đó (kế hoạch, tóm tắt, dòng của đoạn trước) vào prompt trong khối dữ liệu, không vào system (test có câu chèn lệnh ở hướng đi). G7: chỉ key của chủ dự án, không in, không ghi. G8: chạy thật bắt buộc `--budget`, không vượt `limits.audio_script.max_budget_usd`; chạm trần thì dừng, ghi phần đã xong.
+- G9: mỗi đoạn qua kiểm duyệt trước khi vào bản xuất, fail-closed: bị chặn hay không kiểm được thì đoạn bị giữ lại (không còn chữ nào của nó trong cả ba file) và kịch bản dừng ở đó. Nhân vật có tuyến tình cảm phải từ 18 tuổi (kiểm bằng code trên kế hoạch). `--no-moderate` tắt và in cảnh báo.
+- Không lọt vào git: mặc định ghi `exports/` (`.gitignore`). Thư mục đã có kết quả thì bị từ chối trước mọi lời gọi tốn tiền.
+- Chưa giải quyết: đề xuất hướng đi (`ideas.md`) và kế hoạch không qua kiểm duyệt, vì chỉ admin đọc, không đưa sang TTS; admin chịu trách nhiệm về nội dung trước khi đăng.
+
 ## Bản xuất kịch bản video (D-125, T9)
 Bản xuất đọc toàn bộ `truth` (D-118), nên G1 không áp cho nó; thay vào đó có các ràng buộc sau, đều có test (`backend/tests/unit/test_video_export_security.py`, `test_video_export.py`):
 - Không có đường nào tới người chơi: không endpoint, không nút; `api/` và `frontend/src` không nhắc tới export hay video, và không file nào ngoài `export/` nhập `writory.export`. Chạy được chỉ khi có `POSTGRES_DSN` và `NEO4J_*` của máy (admin cầm DB).

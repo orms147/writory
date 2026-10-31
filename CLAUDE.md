@@ -53,6 +53,7 @@ backend/
     safety/        phân loại đầu vào, bọc chữ người chơi, dò lộ bí mật, kiểm duyệt
     db/            Postgres: tài khoản, truyện, chương, key (mã hoá), nhật ký
     export/        xuất kịch bản video từ toàn bộ truth: lệnh của admin, chỉ đọc, không có đường tới API (D-125)
+    audio/         viết kịch bản audio từ hướng đi ngắn: lệnh của admin, không DB, không có đường tới API (D-151)
   tests/
     unit/          test nhanh, không mạng
     graph/         cần Neo4j Docker (marker `graph`)

@@ -24,7 +24,7 @@ import math
 import re
 import shutil
 import sys
-from collections.abc import AsyncIterator, Callable, Mapping, Sequence
+from collections.abc import Callable, Mapping, Sequence
 from dataclasses import asdict, dataclass, field
 from datetime import date
 from pathlib import Path
@@ -32,7 +32,7 @@ from typing import Any, ClassVar
 
 import psycopg
 from neo4j.exceptions import DriverError, Neo4jError
-from pydantic import BaseModel, SecretStr, ValidationError
+from pydantic import SecretStr, ValidationError
 from pydantic_settings import BaseSettings, SettingsConfigDict
 
 from writory.config import (
@@ -51,17 +51,14 @@ from writory.guard.state import GraphState
 from writory.llm.base import (
     ChatResult,
     LLMClient,
-    Message,
-    StreamEvent,
     Usage,
     require_model,
     role_extra,
-    trace_call,
 )
-from writory.llm.cost import maybe_billed
+from writory.llm.capped import CappedClient
 from writory.llm.fake import FakeLLM
 from writory.llm.provider import llm_identity
-from writory.quality.bench_d import EST_CHARS_PER_TOKEN, Budget, BudgetExceeded
+from writory.quality.bench_d import EST_CHARS_PER_TOKEN, Budget
 from writory.safety.moderate import Source, Verdict, moderate
 from writory.safety.redact import install_log_redaction, redact
 
@@ -112,80 +109,14 @@ def parse_chapters(spec: str | None, last: int) -> list[int]:
 _ROLE_BY_SCHEMA = {"SheetOutput": shots.ROLE, "SceneOutput": shots.ROLE, "ModerationOutput": "moderate"}
 
 
-class ExportClient(LLMClient):
-    """Giữ chỗ chi phí tối đa của lời gọi trong ngân sách của cả lần xuất trước khi gọi, gửi kèm
-    `max_tokens`, và ghi mỗi lời gọi một dòng (vai, model, token, chi phí). Không ghi chữ của lời gọi hay
-    của câu trả lời (chữ truyện là truth).
-
-    Trần là trần của giữ chỗ, như D-10: một lời gọi chỉ bắt đầu khi đã tiêu + đang giữ + ước tính tối đa
-    của nó không vượt trần. Ước tính dùng `max_tokens` nên chi phí thật thường thấp hơn; nếu nhà cung cấp
-    tính cao hơn ước tính thì tổng có thể vượt trần một lời gọi, và lời gọi kế bị từ chối. Lời gọi lỗi tính
-    theo `llm.cost.maybe_billed` (D-64)."""
+class ExportClient(CappedClient):
+    """`CappedClient` (llm/capped.py) với tên vai của bộ xuất: giữ chỗ chi phí tối đa trước mỗi lời gọi trong trần
+    `--budget` của cả lần xuất, ghi mỗi lời gọi một dòng, không ghi chữ (chữ truyện là truth)."""
 
     def __init__(self, inner: LLMClient, *, budget: Budget, prices: Mapping[str, ModelPrice],
                  max_tokens: int, record: Callable[[dict[str, Any]], None]) -> None:
-        self._inner, self._budget, self._prices = inner, budget, prices
-        self._max_tokens, self._record = max_tokens, record
-        self.halted: str | None = None
-        self._seq = 0
-
-    @property
-    def spent_usd(self) -> float:
-        return self._budget.spent_usd
-
-    def estimate(self, model: str, messages: Sequence[Message],
-                 schema: type[BaseModel] | None) -> float:
-        price = self._prices[model]
-        chars = sum(len(m.content) for m in messages)
-        if schema is not None:
-            chars += len(json.dumps(schema.model_json_schema(), ensure_ascii=False))
-        return (math.ceil(chars / EST_CHARS_PER_TOKEN) * price.input
-                + self._max_tokens * price.output) / 1e6
-
-    async def chat(self, model: str, messages: list[Message], *,
-                   response_schema: type[BaseModel] | None = None,
-                   extra: Mapping[str, Any] | None = None) -> ChatResult:
-        if model not in self._prices:
-            raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET,
-                               detail=f"models.yaml không có giá cho {model}")
-        estimate = self.estimate(model, messages, response_schema)
-        try:
-            held = self._budget.reserve(estimate)
-        except BudgetExceeded as e:
-            self.halted = str(e)
-            raise WritoryError(ErrorCode.COST_LIMIT_STORY, detail=f"trần --budget: {e}") from None
-        body = dict(extra or {})
-        body["max_tokens"] = min(body.get("max_tokens", self._max_tokens), self._max_tokens)
-        self._seq += 1
-        row = {"seq": self._seq,
-               "role": _ROLE_BY_SCHEMA.get(response_schema.__name__ if response_schema else "", "?"),
-               "model": model, "reserved_usd": round(estimate, 6)}
-        with trace_call() as trace:
-            try:
-                result = await self._inner.chat(model, messages, response_schema=response_schema,
-                                                extra=body)
-            except WritoryError as e:
-                billed = estimate if maybe_billed(e, trace) else 0.0
-                self._budget.settle(held, billed)
-                self._record(row | {"status": e.code.value, "cost_usd": None,
-                                    "cost_estimated_usd": billed or None})
-                raise
-            except BaseException:
-                self._budget.settle(held, estimate)  # có thể đã bị tính tiền: tính theo mức tối đa
-                self._record(row | {"status": "INTERRUPTED", "cost_usd": None,
-                                    "cost_estimated_usd": estimate})
-                raise
-        cost = result.usage.cost_usd
-        self._budget.settle(held, estimate if cost is None else cost)
-        self._record(row | {
-            "status": "ok", "served_model": result.model, "cost_usd": cost,
-            "cost_estimated_usd": estimate if cost is None else None,
-            "prompt_tokens": result.usage.prompt_tokens,
-            "completion_tokens": result.usage.completion_tokens})
-        return result
-
-    def stream(self, model: str, messages: list[Message]) -> AsyncIterator[StreamEvent]:
-        raise NotImplementedError("bộ xuất không dùng stream")
+        super().__init__(inner, budget=budget, prices=prices, max_tokens=max_tokens, record=record,
+                         roles=_ROLE_BY_SCHEMA)
 
 
 # --- model giả cho --dry-run và test -------------------------------------------------------------

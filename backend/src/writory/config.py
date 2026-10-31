@@ -185,6 +185,32 @@ class VideoExportLimits(_Section):
         return self
 
 
+class AudioScriptLimits(_Section):
+    """Bộ viết kịch bản audio (D-151): chỉ admin chạy bằng lệnh, bằng key của chủ dự án. Số tạm, Claude chọn,
+    chờ chủ dự án duyệt."""
+
+    _path = "audio_script"
+    _file = "limits.yaml"
+    max_budget_usd: NonNegativeFloat | None = None  # trần của `--budget`; chạy thật không được vượt
+    minutes_min: PositiveInt | None = None  # `--minutes` cho phép
+    minutes_max: PositiveInt | None = None
+    words_per_minute: PositiveInt | None = None  # tốc độ đọc của TTS (âm tiết mỗi phút): đổi phút ra số chữ
+    segment_words: PositiveInt | None = None  # số chữ tối đa của một đoạn (một lời gọi viết)
+    length_tolerance: float | None = Field(default=None, gt=0, lt=1)  # lệch số chữ quá tỉ lệ này thì viết lại
+    max_output_tokens: PositiveInt | None = None  # `max_tokens` của mỗi lời gọi (gồm token suy luận)
+    premise_max_chars: PositiveInt | None = None  # một hướng đi admin đưa vào
+    propose_count: PositiveInt | None = None  # số hướng đi `propose` đề xuất khi không có `--count`
+    propose_max: PositiveInt | None = None  # trần của `--count`
+    recent_lines: PositiveInt | None = None  # số dòng cuối của đoạn trước đưa nguyên văn vào đề đoạn sau
+
+    @model_validator(mode="after")
+    def _minutes_ordered(self) -> Self:
+        low, high = self.minutes_min, self.minutes_max
+        if low is not None and high is not None and low > high:
+            raise ValueError(f"minutes_min ({low}) lớn hơn minutes_max ({high})")
+        return self
+
+
 class LLMCallLimits(_Section):
     """Mọi lời gọi model trả bằng key người chơi (D-64): `max_output_tokens` được gửi làm
     `max_tokens` (gồm token suy luận), nên cũng là chặn trên của chi phí ước tính khi lời gọi không
@@ -243,6 +269,7 @@ class LimitsConfig(_Strict):
     chapter_estimate: ChapterEstimateLimits = ChapterEstimateLimits()
     auth: AuthLimits = AuthLimits()
     video_export: VideoExportLimits = VideoExportLimits()
+    audio_script: AudioScriptLimits = AudioScriptLimits()
 
 
 # --- models.yaml -----------------------------------------------------------------------
@@ -261,6 +288,7 @@ class RoleModels(_Section):
     moderate: str | None = None  # kiểm duyệt nội dung, G9 (D-57)
     video: str | None = None  # bộ xuất kịch bản video, chỉ admin chạy bằng lệnh (D-125)
     overreach: str | None = None  # trang có chiều theo hành động vượt luật không, G6 (D-138)
+    audio: str | None = None  # bộ viết kịch bản audio, chỉ admin chạy bằng lệnh (D-151)
 
 
 ReasoningEffort = Literal["none", "minimal", "low", "medium", "high"]
@@ -301,6 +329,7 @@ class RoleReasoning(_Strict):
     moderate: ReasoningEffort | None = None
     video: ReasoningEffort | None = None
     overreach: ReasoningEffort | None = None
+    audio: ReasoningEffort | None = None
 
 
 class WriterTier(_Strict):
