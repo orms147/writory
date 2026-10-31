@@ -1,0 +1,687 @@
+# Bài đo A — bộ nhớ trên truyện DÀI 24 chương do pipeline viết: evals/results/2026-10-29-run-long-after-ky-ao-2/
+# (độ dài `long`, 24/24 chương, đã kết truyện; docs/eval.md "Bài A"; D-72, D-73, D-81, D-83). Khai TRƯỚC khi chạy.
+#
+# TRẠNG THÁI: CHỦ DỰ ÁN DUYỆT 31/10/2026 (cả 50 câu như soạn, câu nơi chốn giữ ở nhóm `relation`).
+# Soạn: Claude (nhánh eval/questions-long-ky-ao), 30/10/2026.
+# Chưa chạy thật. Đã chạy thật rồi thì không sửa đè: tăng `version`.
+# Dùng với: --questions-file questions-long-ky-ao-2.yaml (run.yaml dùng chung với đề truyện mẫu).
+#
+# Nguồn truyện: `run_dir`, đọc thẳng thư mục kết quả như đề truyện vừa (D-83).
+#   - Văn chương: chapters/chNN.md, bỏ dòng tiêu đề, dòng ghi chú in nghiêng của lệnh chạy và mục
+#     "Lựa chọn cuối chương" (lựa chọn không phải chữ trên trang, không dùng làm chứng cứ).
+#   - Đồ thị: các gói chương 0..24 trong truth_dump.json, phủ lên nhau.
+#   - `run_sha256`: hash các file đã đọc. Lệch là đề không load được.
+#
+# Đáp án gốc lấy từ trang (`evidence`, code kiểm câu trích có thật); `graph_agrees` khai theo đồ thị bộ
+# trích như đề truyện vừa (D-83): true thì `derive` bắt buộc và code kiểm derive == gold; false thì đồ thị
+# thiếu hoặc sai, có `derive` thì code kiểm derive != gold, không có thì không op nào tính được từ đồ thị.
+# Đọc truth_dump.json trước khi soạn (khác truyện vừa, bộ trích ở đây ghi nhiều hơn hẳn):
+#   - KNOWS của nhân vật chính về ba bí mật ghi đúng chương lộ trên trang (7, 11, 16); `told_by` có ở
+#     luật Biển Muối (ch2) và bí mật Đoàn Khương (ch16), KHÔNG có ở bí mật Bến Cầu Gãy (ch11, how "chứng kiến").
+#   - Bản đồ Nếp Gấp: HOLDS protagonist 0–2, ta_van 2–22, protagonist 22–24, protagonist từ 24 (ném sang
+#     Tạ Vân rồi nhận lại ở ch24 chỉ còn là đóng rồi mở lại cạnh của nhân vật chính, như vụ cho mượn thẻ ở
+#     truyện vừa). Thẻ Cân Nước: ta_van từ ch1. Chuỗi Khóa Gỗ: vo_ngan 0–14.
+#   - KNOWS chỉ có ở nhân vật chính và người tự biết: Tạ Vân không có KNOWS nào về lời nói dối ch2, về
+#     nét mực ch3, về bí mật Đinh Lộc giấu lối đi dù đã nghe làm chứng ở ch9; Lâm Kha không có KNOWS nào.
+#   - LOCATED_AT của nhân vật chính trễ một chương ở ch8 (rung_suong tới ch9) và ghi bien_muoi ở ch19.
+#   - Nhiều việc chỉ còn trong chữ của Fact mới (D-93): câu `text` với `node_text` đo được phần đó.
+#
+# Quy ước (cùng định dạng đề truyện vừa cho phần còn lại):
+#   - Ưu tiên câu cần trí nhớ dài: phần lớn hỏi ở chương 20–24 về chuyện chương 1–16. Chi tiết được nhắc
+#     lại về sau thì `fact_chapter` là chương nhắc lại gần nhất (<= ask_chapter), nên khoảng cách là thật.
+#   - Nhân vật chính "Mai Thảo" kể ngôi thứ nhất; tên có trên trang từ ch1 ("Thảo") và ch3 ("Mai Thảo").
+#     Đáp án là nhân vật chính thì nhận cả "nhân vật chính", "người kể", "tôi", "Thảo" (`aliases`).
+#   - Câu hỏi "ở đâu" (nơi chốn của nhân vật) để ở nhóm `relation` (trạng thái hiện tại của nhân vật), vì
+#     code chỉ có năm nhóm; chủ dự án quyết có tách nhóm hay không.
+#   - Câu entities nêu sẵn trong câu hỏi những thực thể dễ bị nhắc kèm (Tạ Vân, Tuần Muối, tấm bản đồ...),
+#     vì thực thể đã có trong câu hỏi không bị tính là thừa.
+#   - KHÔNG hỏi điều chỉ có ở lớp sự thật (Đoàn Khương muốn độc quyền lối vượt, Phùng Yên từng sửa sổ theo
+#     lệnh Khương, Võ Ngân sống sót sau chuyến vượt chặng) và chỗ trang tự mâu thuẫn hay mơ hồ: giới tính
+#     và cách gọi của Tạ Vân (chị/bà/anh), Phùng Yên (cô/chị/anh), Đinh Lộc (anh/ông); ch10 Kha hỏi có định
+#     giấu Tuần Muối chuyện Lộc giấu lối đi trong khi ch9 đã khai trước phiên chợ; ván trượt gãy ở ch15
+#     nhưng ch16 còn dùng ván; số phận Võ Ngân sau ch15; nơi chốn ở ch19 và ch23–24 ("lối trở về Bến Cầu
+#     Gãy" trong lúc đang ở bến); ai bị giữ ở đâu trong ch23–24.
+
+version: 1
+status: "CHỦ DỰ ÁN DUYỆT 31/10/2026"
+story: run
+run_dir: evals/results/2026-10-29-run-long-after-ky-ao-2
+run_sha256:
+  truth_dump.json: fd8b68360d8a8d5d2f81f945aad2e3e5bbda51f590e751cdefec55c0377f92c1
+  chapters/ch01.md: f66b99c27eaae01393a5e9882a1f2640e8f417fc8ff6a972b740311b61d25fc7
+  chapters/ch02.md: a7df48bf17af3793fa2ecca5faaa1c3f3a131a6d77d246a8292fd669c6e71db7
+  chapters/ch03.md: 3deabed262f2c8804ed245407293befdb58da24ab4b79880c5feb61eed22d861
+  chapters/ch04.md: e197808ad2730b7a887888ce851dc9d68f68b345ade38489adea3be2d5505f39
+  chapters/ch05.md: d4589c2369a85cc885b399cb1f038b1fc2693c64e49282ebf04115776de02b97
+  chapters/ch06.md: e2c8c2091145202e10d16f7e151848d91b760736c3813b1ea778ad5f4ca02184
+  chapters/ch07.md: 60ce50a7d9208aa75dbbcd84bdb36d352bd507419eac0b06a7072242b1d5c8ed
+  chapters/ch08.md: e509d9d0730977845b8b2e20b27fda9e71b264bed5e95db91d949f55fd930cb2
+  chapters/ch09.md: 23342610e1dff5665376db24a7825ce9b58eedd4b3f5e66ffc9220fc558b0646
+  chapters/ch10.md: 3f79062268a5848769e927856dac73fa2f901dfefb04c8a24109298ef53cdd22
+  chapters/ch11.md: 82cb401acee0abd8966fa158f279827994d46fba1985b68a24fe246f8549e338
+  chapters/ch12.md: d92a9cce56bc55ef8b37f07d8b6f1ebf257c8236a6c91bb7042386bb75de9212
+  chapters/ch13.md: ccc69e0fd8dbdf9d915f3d9526afe3b3e58cea27c5c8e4992f6845bb3a488146
+  chapters/ch14.md: a4bc60bb86f2b7003cfa6ab2a791f9c1efc8ed063f4e3b792cd58a0ae2975323
+  chapters/ch15.md: 7f7106f8a45c1b90cd56d811f89d2843281486517c4ab071f129ac0affadaa76
+  chapters/ch16.md: c1ef90bef07f0dd4b4015dfb7a7cfe907f4b7e77eb38fa48144391443939a251
+  chapters/ch17.md: dd5093bf8debb484b98a6f580a4b8546bd54db0f212a1e20ce2292bcdf008f51
+  chapters/ch18.md: de3e7a806f52a387f37c5664dd10aa9483a7989d6c2f76b82a5cd767edcb6b11
+  chapters/ch19.md: aa62903880d5db0a18d6bf7a817851e3486e95caf35ab0b031de80e79708bb03
+  chapters/ch20.md: 7c43852cb37c4f17665d8c586af6aca206d340c36526a9d5b508f9597117338f
+  chapters/ch21.md: 78e131e99e1d2789b94bcacdde2913cff72b2139bb033a5dcf0aaaa51d694043
+  chapters/ch22.md: bf678b92455d396905c494f4844b70ba9e810cdec3f710169b2e9cf0c51354eb
+  chapters/ch23.md: 65032bcff1fa1a334a22452ff08cc07f479eb95f34e36c3da8161874b41c64ac
+  chapters/ch24.md: 4a62e25b2db6a9686a38d122ab483d03780193e47b83e268163aed99cf5a9b89
+
+questions:
+  # ---------------------------------------------------------------- đồ vật
+  - id: item-01
+    group: item
+    fact_chapter: 1
+    ask_chapter: 24
+    as_of: 1
+    question: "Vào cuối chương 1, khi Mai Thảo đi cùng Tạ Vân rời mép chợ, ai đang giữ tấm bản đồ?"
+    answer:
+      type: entities
+      gold: [protagonist]
+      aliases:
+        protagonist: &nvc ["nhân vật chính", "người kể chuyện", "người kể", "người dẫn chuyện", "tôi",
+                           "Thảo"]
+    graph_agrees: true
+    derive: {op: holders, item: ban_do_nep_gap}
+    evidence: [{chapter: 1, quote: "Tôi bước khỏi mép chợ bên cạnh Tạ Vân, tay còn lại giữ chặt tấm bản đồ dưới áo."}]
+
+  - id: item-02
+    group: item
+    fact_chapter: 2
+    ask_chapter: 24
+    question: "Ở chương 2, Tạ Vân giật tấm bản đồ ra khỏi áo của ai?"
+    answer: {type: entities, gold: [protagonist], aliases: {protagonist: *nvc}}
+    graph_agrees: true
+    derive: {op: handed_over, item: ban_do_nep_gap, to: ta_van}
+    evidence: [{chapter: 2, quote: "Chị giật tấm bản đồ khỏi áo tôi trước khi tôi kịp che lại."}]
+
+  - id: item-03
+    group: item
+    fact_chapter: 9
+    ask_chapter: 24
+    as_of: 9
+    question: "Vào cuối chương 9, ai đang giữ Bản đồ Nếp Gấp và Thẻ Cân Nước của Mai Thảo?"
+    answer: {type: entities, gold: [ta_van], aliases: {ta_van: ["Vân"]}}
+    graph_agrees: true
+    derive: {op: holders, item: ban_do_nep_gap}
+    evidence: [{chapter: 9, quote: "Tấm Bản đồ Nếp Gấp không ở đó. Nó vẫn nằm trong tay Tạ Vân, cùng Thẻ Cân Nước."}]
+
+  - id: item-04
+    group: item
+    fact_chapter: 22
+    ask_chapter: 24
+    as_of: 22
+    question: "Vào cuối chương 22, sau khi Tạ Vân bị mắc lại bên kia vết nứt, ai đang giữ Bản đồ Nếp Gấp?"
+    answer: {type: entities, gold: [protagonist], aliases: {protagonist: *nvc}}
+    graph_agrees: true
+    derive: {op: holders, item: ban_do_nep_gap}
+    evidence: [{chapter: 22, quote: "Tấm bản đồ bay qua khe, lật một vòng giữa hai bờ. Tôi chụp được nó vào ngực."},
+               {chapter: 22, quote: "Tôi giữ bản đồ bên này"}]
+
+  - id: item-05
+    group: item
+    fact_chapter: 22
+    ask_chapter: 24
+    question: "Sau khi bị Tạ Vân lấy mất ở chương 2, tấm bản đồ trở lại tay Mai Thảo lần đầu ở chương nào? Chọn một: chương 9, chương 16, chương 20, chương 22, chương 24."
+    answer:
+      type: choice
+      gold: "chương 22"
+      options: ["chương 9", "chương 16", "chương 20", "chương 22", "chương 24"]
+    graph_agrees: false  # đồ thị: HOLDS protagonist đang hiệu lực ở ch24 mở từ chương 24 (đóng rồi mở lại ở ch24)
+    derive: {op: edge_since, type: HOLDS, from: protagonist, to: ban_do_nep_gap}
+    evidence: [{chapter: 2, quote: "Chị giật tấm bản đồ khỏi áo tôi trước khi tôi kịp che lại."},
+               {chapter: 22, quote: "Tấm bản đồ bay qua khe, lật một vòng giữa hai bờ. Tôi chụp được nó vào ngực."}]
+
+  - id: item-06
+    group: item
+    fact_chapter: 24
+    ask_chapter: 24
+    question: "Ở chương 24, khi tấm ván dưới chân sắp trượt khỏi trụ, Mai Thảo ném Bản đồ Nếp Gấp qua khe cho ai?"
+    answer: {type: entities, gold: [ta_van], aliases: {ta_van: ["Vân"]}}
+    graph_agrees: false  # không có HOLDS nào của Tạ Vân ở ch24; chỉ đóng rồi mở lại cạnh của nhân vật chính
+    evidence: [{chapter: 24, quote: "Tôi kéo tấm bản đồ khỏi áo, gấp nó làm đôi rồi quăng qua khe."},
+               {chapter: 24, quote: "Anh chụp được. Bản đồ nằm gọn trong tay anh"},
+               {chapter: 24, quote: "Tôi nhìn sang Tạ Vân."}]
+
+  - id: item-07
+    group: item
+    fact_chapter: 24
+    ask_chapter: 24
+    question: "Cuối chương 24, Tạ Vân hay Mai Thảo đang giữ Bản đồ Nếp Gấp?"
+    answer: {type: entities, gold: [protagonist], aliases: {protagonist: *nvc}}
+    graph_agrees: true
+    derive: {op: holders, item: ban_do_nep_gap}
+    evidence: [{chapter: 24, quote: "Bản đồ qua tay tôi."},
+               {chapter: 24, quote: "Tôi giữ bản đồ rách trong tay"}]
+
+  - id: item-08
+    group: item
+    fact_chapter: 24
+    ask_chapter: 24
+    question: "Ở chương 24, Mai Thảo xé khỏi Bản đồ Nếp Gấp dải giấy ghi lối nào?"
+    answer:
+      type: text
+      gold: [["lối trở về", "lối về", "đường về", "đường trở về", "đường quay về", "lối quay về", "quay về"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c24s2_1, keywords: [["lối trở về"]]}
+    evidence: [{chapter: 24, quote: "Ở rìa bản đồ, một dải mực mảnh ghi lối trở về."},
+               {chapter: 24, quote: "Dải giấy có đường về cuộn lại trong lòng bàn tay."}]
+
+  - id: item-09
+    group: item
+    fact_chapter: 15
+    ask_chapter: 24
+    as_of: 15
+    question: "Vào cuối chương 15, chuỗi khóa gỗ còn đeo bên hông Võ Ngân không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: true
+    derive: {op: edge_exists, type: HOLDS, from: vo_ngan, to: chuoi_khoa_go}
+    evidence: [{chapter: 15, quote: "Sợi dây đeo ở đó đã trống không, chỉ còn một đoạn tua sờn quệt vào áo."},
+               {chapter: 15, quote: "Lúc kéo cô lên, nó bật khỏi hông. Chắc rơi xuống hố rồi."}]
+
+  - id: item-10
+    group: item
+    fact_chapter: 7
+    ask_chapter: 24
+    question: "Dải vải Mai Thảo xé từ gấu áo và buộc lên thân cây ở chương 5 cuối cùng rơi xuống đâu?"
+    answer:
+      type: text
+      gold: [["khe bùn", "xuống khe", "khe", "bùn"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c7s1_2, keywords: [["khe bùn"]]}
+    evidence: [{chapter: 5, quote: "Tôi xé một dải vải ở gấu áo, quấn quanh thân cây gần nhất rồi thắt nút."},
+               {chapter: 7, quote: "Dải vải ấy từng buộc trên cây để đánh dấu đường."},
+               {chapter: 7, quote: "Tôi rút dao cắt phựt. Mảnh vải rơi xuống khe bùn"}]
+
+  # ---------------------------------------------------------------- sống / chết
+  - id: alive-01
+    group: alive
+    fact_chapter: 3
+    ask_chapter: 14
+    question: "Ở chương 3, khi có người giật mạnh mép ván làm Tạ Vân hụt chân, ai đã chụp tay ghì Tạ Vân lại?"
+    answer: {type: entities, gold: [protagonist], aliases: {protagonist: *nvc}}
+    graph_agrees: false  # gói ch3 không có gì về việc này
+    evidence: [{chapter: 3, quote: "Tạ Vân hụt chân."},
+               {chapter: 3, quote: "Tôi chụp lấy cánh tay chị, ghì lại trước khi chị ngã vào người phía sau."}]
+
+  - id: alive-02
+    group: alive
+    fact_chapter: 10
+    ask_chapter: 24
+    question: "Ở chương 10, khi lớp muối nứt và trượt dưới chân Lâm Kha, Mai Thảo đã làm gì? Trả lời bằng một câu ngắn."
+    answer:
+      type: text
+      gold: [["kéo", "chộp", "túm", "lôi"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c10s1_1, keywords: [["kéo"]]}
+    evidence: [{chapter: 10, quote: "Tiếng rạn bật lên dưới chân Kha."},
+               {chapter: 10, quote: "Tôi chộp lấy tay áo anh, kéo mạnh sang dải đất chắc."}]
+
+  - id: alive-03
+    group: alive
+    fact_chapter: 15
+    ask_chapter: 24
+    question: "Ở chương 14, khi bờ muối trượt đi kéo Mai Thảo về phía khoảng trắng, ai đã chụp cổ tay kéo cô lên?"
+    answer:
+      type: text
+      gold: [["Võ Ngân", "Ngân"]]
+    graph_agrees: true  # chỉ còn trong chữ Fact mới của ch15 (chuỗi khóa bật ra "khi cô kéo Mai Thảo lên")
+    derive: {op: node_text, node: fact_c15s1_1, keywords: [["Võ Ngân"]]}
+    evidence: [{chapter: 14, quote: "Võ Ngân quăng người xuống, chụp lấy cổ tay tôi."},
+               {chapter: 15, quote: "Lúc kéo cô lên, nó bật khỏi hông."}]
+
+  - id: alive-04
+    group: alive
+    fact_chapter: 18
+    ask_chapter: 24
+    question: "Ở chương 18, sau khi Mai Thảo nhảy xuống nước rồi bơi tới cọc đỏ, ai nắm cổ tay kéo cô về phía thang gỗ?"
+    answer:
+      type: text
+      gold: [["Phùng Yên", "Yên"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c18s1_2, keywords: [["Phùng Yên"]]}
+    evidence: [{chapter: 18, quote: "Phùng Yên nhìn tôi thêm một nhịp rồi nắm cổ tay, kéo tôi về phía thang gỗ."}]
+
+  - id: alive-05
+    group: alive
+    fact_chapter: 22
+    ask_chapter: 24
+    question: "Ở chương 22, khi Mai Thảo bước sang phần nền mềm phía Tạ Vân, ai lao tới chụp cánh tay kéo cô về phía cọc?"
+    answer: {type: entities, gold: [dinh_loc], aliases: {dinh_loc: ["Lộc"]}}
+    graph_agrees: false  # gói ch22 không có gì về việc này
+    evidence: [{chapter: 22, quote: "Tạ Vân cúi nhìn chỗ chân mình, còn Đinh Lộc đã lao tới từ phía sau."},
+               {chapter: 22, quote: "Anh chụp lấy cánh tay tôi, kéo mạnh về phía cọc."}]
+
+  - id: alive-06
+    group: alive
+    fact_chapter: 24
+    ask_chapter: 24
+    question: "Cuối chương 24, Đinh Lộc còn sống không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    graph_agrees: true
+    derive: {op: alive, character: dinh_loc}
+    evidence: [{chapter: 24, quote: "Đinh Lộc bước bên cạnh tôi."}]
+
+  - id: alive-07
+    group: alive
+    fact_chapter: 6
+    ask_chapter: 24
+    question: "Ở chương 5, khi mặt đất trong rừng sụp xuống, Mai Thảo và Lâm Kha rơi xuống đâu?"
+    answer:
+      type: text
+      gold: [["hõm", "hố"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c5s2_1, keywords: [["hõm"]]}
+    evidence: [{chapter: 5, quote: "Chúng tôi trượt qua một sườn dốc ngắn, va vào đám rễ mềm rồi rơi xuống hõm sâu bên dưới."},
+               {chapter: 6, quote: "Kha bò theo ngay sau, vừa thoát khỏi miệng hõm thì đất sụp xuống ầm một tiếng."}]
+
+  # ---------------------------------------------------------------- ai biết gì
+  - id: knows-01
+    group: knows
+    fact_chapter: 6
+    ask_chapter: 12
+    as_of: 6
+    question: "Vào cuối chương 6, Mai Thảo đã biết Đinh Lộc cố ý giấu một lối đi trên tấm bản đồ để Hội Trạm Nước không tìm thấy chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: true
+    derive: {op: edge_exists, type: KNOWS, from: protagonist, to: dinh_loc_giau_loi_di}
+    evidence: [{chapter: 6, quote: "Có người che một lối đi ở đây."}]
+
+  - id: knows-02
+    group: knows
+    fact_chapter: 7
+    ask_chapter: 24
+    question: "Mai Thảo tự suy ra Đinh Lộc đã giấu một lối đi trên tấm bản đồ để Hội Trạm Nước không tìm thấy từ chương nào? Chọn một: chương 5, chương 6, chương 7, chương 8, chương 9."
+    answer:
+      type: choice
+      gold: "chương 7"
+      options: ["chương 5", "chương 6", "chương 7", "chương 8", "chương 9"]
+    graph_agrees: true
+    derive: {op: edge_since, type: KNOWS, from: protagonist, to: dinh_loc_giau_loi_di}
+    evidence: [{chapter: 7, quote: "Lộc đã giấu một lối đi trên tấm bản đồ để Hội Trạm Nước không tìm thấy nó."}]
+
+  - id: knows-03
+    group: knows
+    fact_chapter: 9
+    ask_chapter: 24
+    as_of: 9
+    question: "Vào cuối chương 9, Tạ Vân đã nghe Mai Thảo xác nhận rằng Đinh Lộc cố ý giấu lối đi để Hội Trạm Nước không tìm ra chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    graph_agrees: false  # không có KNOWS nào của Tạ Vân về bí mật này
+    derive: {op: edge_exists, type: KNOWS, from: ta_van, to: dinh_loc_giau_loi_di}
+    evidence: [{chapter: 9, quote: "Cô xác nhận điều đó?"},
+               {chapter: 9, quote: "Tôi xác nhận Lộc đã cố ý giấu lối đi để Hội Trạm Nước không tìm ra."}]
+
+  - id: knows-04
+    group: knows
+    fact_chapter: 9
+    ask_chapter: 24
+    question: "Ở chương 9, hai người nào đứng trước Tạ Vân và phiên chợ làm chứng rằng lối đi Đinh Lộc giấu trên bản đồ đã đưa họ qua rừng an toàn?"
+    answer:
+      type: entities
+      gold: [protagonist, lam_kha]
+      aliases: {protagonist: *nvc}
+    graph_agrees: false  # đồ thị: chỉ nhân vật chính có KNOWS về bí mật, Lâm Kha không có
+    derive: {op: edge_sources, type: KNOWS, to: dinh_loc_giau_loi_di}
+    evidence: [{chapter: 9, quote: "Tôi đi cùng cô ấy. Chúng tôi thoát khỏi rừng bằng lối bị giấu trên bản đồ."},
+               {chapter: 9, quote: "Tôi xác nhận Lộc đã cố ý giấu lối đi để Hội Trạm Nước không tìm ra."},
+               {chapter: 9, quote: "Hai nhân chứng đã xác nhận lối đi bị giấu dẫn họ qua rừng an toàn."}]
+
+  - id: knows-05
+    group: knows
+    fact_chapter: 9
+    ask_chapter: 24
+    question: "Ở chương 9, sau lời khai của hai nhân chứng, Tạ Vân tuyên bố gì về cáo buộc rằng Đinh Lộc bán bản đồ nhằm hại khách qua đường?"
+    answer:
+      type: text
+      gold: [["bác bỏ", "bác", "gạt bỏ"]]
+    graph_agrees: false  # chỉ có câu trích của cạnh RESOLVED_IN minh_oan_dinh_loc; không op nào đọc câu trích cạnh
+    evidence: [{chapter: 9, quote: "Căn cứ hiện có đủ để bác bỏ cáo buộc rằng Lộc bán bản đồ nhằm hại khách qua đường."}]
+
+  - id: knows-06
+    group: knows
+    fact_chapter: 4
+    ask_chapter: 24
+    as_of: 4
+    question: "Vào cuối chương 4, theo lời Tạ Vân, cáo buộc rằng Đinh Lộc cố ý bán bản đồ để hại khách đã được chứng minh chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: false
+    evidence: [{chapter: 4, quote: "Tôi nói cáo buộc cố ý hại khách chưa được chứng minh."}]
+
+  - id: knows-07
+    group: knows
+    fact_chapter: 2
+    ask_chapter: 24
+    question: "Ai đã nói cho Mai Thảo nghe luật chợ ở Biển Muối: ai nói dối trước cân nước phải nộp thêm một ngụm?"
+    answer: {type: entities, gold: [ta_van], aliases: {ta_van: ["Vân"]}}
+    graph_agrees: true
+    derive: {op: edge_prop, type: KNOWS, from: protagonist, to: luat_bien_muoi, prop: told_by}
+    evidence: [{chapter: 2, quote: "Luật chợ rõ rồi. Ai nói dối trước cân nước phải nộp thêm một ngụm."},
+               {chapter: 2, quote: "Tạ Vân quay về phía đám đông."}]
+
+  - id: knows-08
+    group: knows
+    fact_chapter: 11
+    ask_chapter: 24
+    question: "Ở chương 11, ai là người đầu tiên nói với Mai Thảo rằng dấu hai trụ nghiêng với nhịp cầu gãy dẫn tới Bến Cầu Gãy?"
+    answer:
+      type: text
+      gold: [["Phùng Yên", "Yên"]]
+    graph_agrees: false  # KNOWS protagonist>loi_di_la_duong_cuu có how "chứng kiến", không có told_by
+    evidence: [{chapter: 11, quote: "Dấu này dẫn tới Bến Cầu Gãy, cô nói."},
+               {chapter: 11, quote: "Yên xuất hiện ở đầu dãy giá bên kia."}]
+
+  - id: knows-09
+    group: knows
+    fact_chapter: 10
+    ask_chapter: 20
+    as_of: 10
+    question: "Vào cuối chương 10, Mai Thảo đã biết dòng sổ bị sửa ở Cảng Lơ dính tới lộ trình dẫn tới Bến Cầu Gãy chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: true
+    derive: {op: edge_exists, type: KNOWS, from: protagonist, to: loi_di_la_duong_cuu}
+    evidence: [{chapter: 10, quote: "Không có tên bến đến, cũng chẳng còn đủ nét để đoán người ta đã chở gì."},
+               {chapter: 10, quote: "không có câu trả lời chuyến hàng đã tới đâu"}]
+
+  - id: knows-10
+    group: knows
+    fact_chapter: 11
+    ask_chapter: 24
+    question: "Mai Thảo biết lối đi bị giấu dẫn tới Bến Cầu Gãy, nơi có thể nối lại những đường đi đã đứt, từ chương nào? Chọn một: chương 9, chương 10, chương 11, chương 12, chương 13."
+    answer:
+      type: choice
+      gold: "chương 11"
+      options: ["chương 9", "chương 10", "chương 11", "chương 12", "chương 13"]
+    graph_agrees: true
+    derive: {op: edge_since, type: KNOWS, from: protagonist, to: loi_di_la_duong_cuu}
+    evidence: [{chapter: 11, quote: "Tôi đã thấy rõ dấu tuyến đưa tới Bến Cầu Gãy, nơi có thể nối lại những đường đi đã đứt."}]
+
+  - id: knows-11
+    group: knows
+    fact_chapter: 15
+    ask_chapter: 20
+    as_of: 15
+    question: "Vào cuối chương 15, Mai Thảo đã biết Đoàn Khương là người thúc đẩy vụ bắt Đinh Lộc chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: true
+    derive: {op: edge_exists, type: KNOWS, from: protagonist, to: khuong_dieu_phoi_vu_bat}
+    evidence: [{chapter: 15, quote: "Chừng đó không giống một vụ thu hồi món hàng lạc luật nữa."}]
+
+  - id: knows-12
+    group: knows
+    fact_chapter: 16
+    ask_chapter: 24
+    question: "Mai Thảo biết chuyện Đoàn Khương thúc đẩy vụ bắt Đinh Lộc từ chương nào? Chọn một: chương 13, chương 14, chương 15, chương 16, chương 17, chương 18."
+    answer:
+      type: choice
+      gold: "chương 16"
+      options: ["chương 13", "chương 14", "chương 15", "chương 16", "chương 17", "chương 18"]
+    graph_agrees: true
+    derive: {op: edge_since, type: KNOWS, from: protagonist, to: khuong_dieu_phoi_vu_bat}
+    evidence: [{chapter: 16, quote: "Đoàn Khương thúc đẩy vụ bắt Đinh Lộc để thu hồi Bản đồ Nếp Gấp."}]
+
+  - id: knows-13
+    group: knows
+    fact_chapter: 16
+    ask_chapter: 24
+    question: "Ở chương 16, giữa lúc Tuần Muối truy đuổi, ai đã cho Mai Thảo biết Đoàn Khương thúc đẩy vụ bắt Đinh Lộc để thu hồi Bản đồ Nếp Gấp?"
+    answer: {type: entities, gold: [ta_van], aliases: {ta_van: ["Vân"]}}
+    graph_agrees: true
+    derive: {op: edge_prop, type: KNOWS, from: protagonist, to: khuong_dieu_phoi_vu_bat, prop: told_by}
+    evidence: [{chapter: 16, quote: "Đoàn Khương thúc đẩy vụ bắt Đinh Lộc để thu hồi Bản đồ Nếp Gấp. Tôi nhận lệnh truy dấu sau đó."},
+               {chapter: 16, quote: "Vân không đáp ngay."}]
+
+  - id: knows-14
+    group: knows
+    fact_chapter: 3
+    ask_chapter: 24
+    question: "Ở chương 3, khi nước muối bắn vào góc bản đồ và nét mực trượt đi, Tạ Vân có nhìn thấy không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    graph_agrees: false  # chỉ nhân vật chính có KNOWS về Fact nét mực ch3
+    derive: {op: edge_exists, type: KNOWS, from: ta_van, to: fact_c3s1_1}
+    evidence: [{chapter: 3, quote: "Tạ Vân cũng nhìn thấy."}]
+
+  - id: knows-15
+    group: knows
+    fact_chapter: 6
+    ask_chapter: 24
+    question: "Nét mực trên tấm bản đồ Mai Thảo đổi được trượt đi, đổi chỗ khi gặp thứ gì?"
+    answer:
+      type: text
+      gold: [["nước muối", "nước mặn"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c3s1_1, keywords: [["nước muối"]]}
+    evidence: [{chapter: 3, quote: "nước muối bắn lên, văng trúng góc bản đồ."},
+               {chapter: 3, quote: "Tôi thấy vài nét mực ở mép giấy nhòe đi rồi trượt sang bên"},
+               {chapter: 6, quote: "Tôi đã thấy kiểu mực ấy trên tấm bản đồ, sau khi nước muối bắn vào góc giấy."}]
+
+  - id: knows-16
+    group: knows
+    fact_chapter: 9
+    ask_chapter: 15
+    question: "Tấm bản đồ Mai Thảo đổi được ở phiên chợ chương 1 có tên gọi đầy đủ là gì?"
+    answer:
+      type: text
+      gold: [["Nếp Gấp"]]
+    graph_agrees: true
+    derive: {op: node_text, node: ban_do_nep_gap, keywords: [["Nếp Gấp"]]}
+    evidence: [{chapter: 1, quote: "Tấm bản đồ là của tôi. Tôi vừa đổi lấy nó."},
+               {chapter: 9, quote: "Tấm Bản đồ Nếp Gấp không ở đó."}]
+
+  - id: knows-17
+    group: knows
+    fact_chapter: 3
+    ask_chapter: 19
+    inference: true  # trang không nói thẳng "Lộc Bản Đồ là Đinh Lộc": nối tiếng gọi của đám đông với vụ bắt ở ch1
+    question: "Ở chương 3, đám đông hỏi vì sao lính tuần tra bắt \"Lộc Bản Đồ\". Tên đầy đủ của người đó là gì?"
+    answer: {type: entities, gold: [dinh_loc]}
+    graph_agrees: true
+    derive: {op: resolve_alias, alias: "Lộc Bản Đồ"}
+    evidence: [{chapter: 1, quote: "Tiếng rao trên những tấm ván trượt chồng lên tiếng người hỏi dồn Đinh Lộc."},
+               {chapter: 3, quote: "Sao lính tuần tra bắt Lộc Bản Đồ vì thứ đó?"}]
+
+  # ---------------------------------------------------------------- lời nói dối
+  - id: lie-01
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 24
+    question: "Ở chương 2, Mai Thảo đã nói dối Tạ Vân điều gì? Trả lời bằng một câu ngắn."
+    answer:
+      type: text
+      gold: [["không còn giữ", "không giữ", "không có", "không còn"], ["bản đồ"]]
+    graph_agrees: true
+    derive: {op: node_text, node: "lie:choice-04300e749db9", keywords: [["không còn giữ"], ["bản đồ"]]}
+    evidence: [{chapter: 2, quote: "Vậy giờ cô bảo không còn giữ nó?"},
+               {chapter: 2, quote: "Tôi không còn giữ nó."},
+               {chapter: 2, quote: "Tôi đã nói dối."}]
+
+  - id: lie-02
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 13
+    question: "Mai Thảo đã nói dối ai rằng mình không còn giữ tấm bản đồ?"
+    answer: {type: entities, gold: [ta_van], aliases: {ta_van: ["Vân"]}}
+    graph_agrees: true
+    derive: {op: edge_targets, type: TOLD_TO, from: "lie:choice-04300e749db9"}
+    evidence: [{chapter: 2, quote: "Vậy giờ cô bảo không còn giữ nó?"},
+               {chapter: 2, quote: "Cô đã nói dối. Giờ đưa bản đồ đây."}]
+
+  - id: lie-03
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 24
+    as_of: 2
+    question: "Vào cuối chương 2, Tạ Vân đã biết lời Mai Thảo nói \"không còn giữ bản đồ\" là dối chưa? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: true}
+    graph_agrees: false  # lời nói dối chỉ có KNOWS của nhân vật chính
+    derive: {op: edge_exists, type: KNOWS, from: ta_van, to: "lie:choice-04300e749db9"}
+    evidence: [{chapter: 2, quote: "Cô đã nói dối. Giờ đưa bản đồ đây."},
+               {chapter: 2, quote: "Chị giật tấm bản đồ khỏi áo tôi trước khi tôi kịp che lại."}]
+
+  - id: lie-04
+    group: lie
+    fact_chapter: 4
+    ask_chapter: 24
+    question: "Ở chương 2, vì nói dối trước cân nước, Mai Thảo phải chịu phạt thế nào?"
+    answer:
+      type: text
+      gold: [["nước phạt", "ngụm", "chén nước", "nộp thêm"]]
+    graph_agrees: true
+    derive: {op: node_text, node: fact_c2s1_1, keywords: [["nước phạt"]]}
+    evidence: [{chapter: 2, quote: "Phần nước phạt. Đừng lục áo tôi."},
+               {chapter: 2, quote: "Tôi nhận chén, uống cạn."},
+               {chapter: 4, quote: "Ngụm nước phạt lúc trước chẳng còn lại gì ngoài vị mặn chát trên lưỡi"}]
+
+  - id: lie-05
+    group: lie
+    fact_chapter: 2
+    ask_chapter: 24
+    question: "Ở chương 2, chuyện gì khiến tấm bản đồ Mai Thảo giấu trong áo lộ ra trước mắt Tạ Vân?"
+    answer:
+      type: text
+      gold: [["móc", "mắc"]]
+    graph_agrees: false  # gói ch2 chỉ có cạnh HOLDS kèm câu trích, không có gì về cách lộ
+    evidence: [{chapter: 2, quote: "Vạt áo mắc vào một chiếc móc sạp; lớp vải bật khỏi hông, để lộ một góc giấy sẫm màu."}]
+
+  # ---------------------------------------------------------------- quan hệ, trạng thái hiện tại (cả nơi chốn)
+  - id: rel-01
+    group: relation
+    fact_chapter: 1
+    ask_chapter: 12
+    question: "Ở chương 1, khi Lâm Kha bảo Mai Thảo chạy trốn cùng tấm bản đồ, cô có nghe theo không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: false
+    evidence: [{chapter: 1, quote: "Chạy được đấy. Cậu giữ bản đồ, tôi kiếm cớ níu họ lại."},
+               {chapter: 1, quote: "Không. Tôi ở lại giải thích vụ đổi."}]
+
+  - id: rel-02
+    group: relation
+    fact_chapter: 2
+    ask_chapter: 16
+    as_of: 2
+    question: "Ở chương 2, lời nói dối về tấm bản đồ ảnh hưởng thế nào tới lòng tin giữa Mai Thảo và Tạ Vân? Chọn một: mất lòng tin, tin nhau hơn, không thay đổi."
+    answer:
+      type: choice
+      gold: "mất lòng tin"
+      options: ["mất lòng tin", "tin nhau hơn", "không thay đổi"]
+    graph_agrees: true
+    derive: {op: relation_kind, from: protagonist, to: ta_van}
+    evidence: [{chapter: 2, quote: "Lời chối vừa rồi khiến khoảng tin ít ỏi giữa tôi với Tạ Vân lại mẻ thêm một miếng."}]
+
+  - id: rel-03
+    group: relation
+    fact_chapter: 6
+    ask_chapter: 24
+    question: "Trước khi truyện bắt đầu, Mai Thảo từng làm trong đoàn nào?"
+    answer:
+      type: entities
+      gold: [tho_cau_luu_dong]
+      aliases: {tho_cau_luu_dong: ["đoàn thợ cầu", "đoàn thợ sửa cầu", "thợ sửa cầu", "thợ cầu"]}
+    graph_agrees: true
+    derive: {op: edge_targets, type: MEMBER_OF, from: protagonist}
+    evidence: [{chapter: 5, quote: "chiếc áo cũ tôi vá lại hồi ở đoàn thợ cầu"},
+               {chapter: 6, quote: "Tôi từng thấy nét ấy trên những thanh chống cầu cũ của đoàn thợ sửa cầu"}]
+
+  - id: rel-04
+    group: relation
+    fact_chapter: 13
+    ask_chapter: 24
+    question: "Mai Thảo gặp lại Võ Ngân ở chương nào? Chọn một: chương 11, chương 12, chương 13, chương 14, chương 15, chương 16."
+    answer:
+      type: choice
+      gold: "chương 13"
+      options: ["chương 11", "chương 12", "chương 13", "chương 14", "chương 15", "chương 16"]
+    graph_agrees: true
+    derive: {op: edge_since, type: KNOWS, from: protagonist, to: fact_c13s2_1}
+    evidence: [{chapter: 13, quote: "Dưới chiếc khăn quấn kín tóc, đôi mắt quen thuộc nhìn tôi không chớp. Võ Ngân."},
+               {chapter: 13, quote: "Cũng lâu rồi mới gặp, Ngân."}]
+
+  - id: rel-05
+    group: relation
+    fact_chapter: 20
+    ask_chapter: 24
+    question: "Ở chương 20, sau khi Mai Thảo nói đừng giữ Đinh Lộc làm con tin, ai buông Đinh Lộc ra và bảo đi đi?"
+    answer: {type: entities, gold: [ta_van], aliases: {ta_van: ["Vân"]}}
+    graph_agrees: false  # chỉ có câu trích của cạnh RESOLVED_IN so_phan_dinh_loc
+    evidence: [{chapter: 20, quote: "Đừng giữ anh ấy làm con tin cho câu trả lời của tôi."},
+               {chapter: 20, quote: "Bàn tay Tạ Vân rời khỏi cánh tay Đinh Lộc."}]
+
+  - id: rel-06
+    group: relation
+    fact_chapter: 11
+    ask_chapter: 24
+    inference: true  # câu phủ định: trang không nhắc lại Lâm Kha sau ch11
+    question: "Sau khi Lâm Kha thoát qua cửa sau khu sổ cũ ở chương 11, Mai Thảo có gặp lại Kha trước khi truyện kết thúc không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: false  # đồ thị không có cạnh nào nói gặp hay không gặp
+    evidence: [{chapter: 11, quote: "Kha thoát qua cửa sau."},
+               {chapter: 11, quote: "Sau lưng, những sàn ván chằng chịt nuốt mất bóng Kha và Yên."}]
+
+  - id: rel-07
+    group: relation
+    fact_chapter: 6
+    ask_chapter: 24
+    as_of: 6
+    question: "Vào cuối chương 6, Mai Thảo và Lâm Kha đang ở vùng đất nào?"
+    answer: {type: entities, gold: [rung_suong]}
+    graph_agrees: true
+    derive: {op: edge_targets, type: LOCATED_AT, from: protagonist}
+    evidence: [{chapter: 4, quote: "Lối vào Rừng Rủ Sương ở đằng kia."},
+               {chapter: 6, quote: "còn chúng tôi bị cuốn sâu hơn vào lối dốc giữa rừng."},
+               {chapter: 8, quote: "Tôi đã tìm được đường ra khỏi Rừng Rủ Sương."}]
+
+  - id: rel-08
+    group: relation
+    fact_chapter: 8
+    ask_chapter: 24
+    as_of: 8
+    question: "Vào cuối chương 8, Mai Thảo còn ở trong Rừng Rủ Sương không? Trả lời Có hoặc Không."
+    answer: {type: bool, gold: false}
+    graph_agrees: false  # LOCATED_AT protagonist>rung_suong chỉ đóng ở chương 9
+    derive: {op: edge_exists, type: LOCATED_AT, from: protagonist, to: rung_suong}
+    evidence: [{chapter: 8, quote: "Tôi đã tìm được đường ra khỏi Rừng Rủ Sương."},
+               {chapter: 8, quote: "Những dấu lõm chạy ra khỏi rừng, ngoặt về phía chân trời trắng lóa. Tôi bước theo chúng."}]
+
+  - id: rel-09
+    group: relation
+    fact_chapter: 9
+    ask_chapter: 24
+    as_of: 9
+    question: "Vào cuối chương 9, lính Tuần Muối giữ Đinh Lộc lại ở vùng đất nào?"
+    answer: {type: entities, gold: [bien_muoi]}
+    graph_agrees: true
+    derive: {op: edge_targets, type: LOCATED_AT, from: dinh_loc}
+    evidence: [{chapter: 9, quote: "Tới Biển Muối, tôi sẽ làm chứng."},
+               {chapter: 9, quote: "Ở giữa lối đi, Lộc bị hai lính Tuần Muối giữ hai bên."},
+               {chapter: 9, quote: "Hai lính Tuần Muối kéo Lộc về phía quầy canh."}]
+
+  - id: rel-10
+    group: relation
+    fact_chapter: 11
+    ask_chapter: 24
+    as_of: 11
+    question: "Vào cuối chương 11, khi lính Tuần Muối dẫn Mai Thảo đi, Lâm Kha đang ở vùng đất nào?"
+    answer: {type: entities, gold: [cang_noi]}
+    graph_agrees: true
+    derive: {op: edge_targets, type: LOCATED_AT, from: lam_kha}
+    evidence: [{chapter: 11, quote: "Tôi và Kha rời lối tra cứu, đi sâu vào phần Cảng Lơ mà những mái bạt thấp che gần kín trời."},
+               {chapter: 11, quote: "Kha thoát qua cửa sau."}]
+
+  - id: rel-11
+    group: relation
+    fact_chapter: 20
+    ask_chapter: 24
+    as_of: 20
+    question: "Ở chương 20, Mai Thảo thấy Đinh Lộc đang bị Tạ Vân giữ ở nơi nào?"
+    answer: {type: entities, gold: [ben_cau_gay]}
+    graph_agrees: true
+    derive: {op: edge_targets, type: LOCATED_AT, from: dinh_loc}
+    evidence: [{chapter: 19, quote: "Một vệt khói mỏng bốc lên ở hướng Bến Cầu Gãy."},
+               {chapter: 20, quote: "Vệt khói hóa ra bốc lên từ một cái nồi méo mó đặt trên bếp cát."},
+               {chapter: 20, quote: "Trên phần sàn phía bên kia, Đinh Lộc bị Tạ Vân giữ lại."}]
