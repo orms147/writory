@@ -416,7 +416,7 @@ Mọi router người chơi có dependency `deps.api_guard`. Cột "Đăng nhậ
 | `keys` | `GET`, `PUT`, `DELETE /player/key`; `GET /player/costs` | có | | |
 | `stories` | `GET /stories`; `GET /stories/{id}/notebook`; `GET /stories/{id}/narrator`; `GET /stories/{id}/estimate` | có | | |
 | `stories` | `POST /stories/{id}/narrator` | có | có | `narrator` |
-| `play` | `POST /stories/{id}/chapters/next` (SSE) | có | có | `story` |
+| `play` | `POST /stories/{id}/chapters/next` (SSE; `?auto=true` tự viết: không cần lựa chọn, không tạo bộ lựa chọn, D-154) | có | có | `story` |
 | `play` | `POST /stories/{id}/choices` (tạo lại khi chưa có) | có | khi chưa có | `story` |
 | `play` | `POST /stories/{id}/action` (ô tự viết) | có | có | `story` |
 | `play` | `GET /stories/{id}`; `GET /stories/{id}/chapters/{n}`; `GET /stories/{id}/script.txt` (D-153) | có | | |

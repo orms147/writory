@@ -1466,3 +1466,12 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Bộ viết kịch bản audio của admin (D-151, `audio/`) giữ nguyên, vẫn không có đường từ app.
 - **Hệ quả:** truyện `audio` có lựa chọn ở cuối chương như truyện chữ, nên người chơi lái được truyện; độ dài theo mức độ dài người chơi chọn (`story_lengths.yaml`). Bản hướng dẫn audio chưa đo bằng bài D hay chạy thật trong app.
 - **Người quyết:** Chủ dự án (mở cho người chơi, dùng lớp viết truyện, 1/11/2026), Claude (thiết kế, chữ hướng dẫn), nhánh feature/audio-style · 1/11/2026
+
+## D-154 · Tự viết đến hết: chương không cần lựa chọn và không tạo bộ lựa chọn (bổ sung D-46, D-153)
+- **Bối cảnh:** chủ dự án muốn người không muốn chơi vẫn làm được cả kịch bản (thường là truyện kiểu audio, D-153): máy tự đi tới chương cuối, tối ưu chi phí (1/11/2026).
+- **Quyết định:**
+  - `POST /stories/{id}/chapters/next?auto=true`: không đòi lựa chọn của người chơi (bỏ `CHOICE_REQUIRED`; hành động đã lưu thì vẫn dùng). Bản kế hoạch ẩn và đồ thị lái chương như mọi chương.
+  - Chương tự viết không tạo bộ lựa chọn cuối chương (`ChapterRequest.make_choices=False`): không lời gọi model lựa chọn, không lời gọi kiểm duyệt bộ lựa chọn, không sự kiện `choices_ready`. Đó là phần chi phí bớt được; mọi bước khác (dàn ý, viết, trích, người canh, kiểm duyệt, tóm tắt) giữ nguyên vì chương sau cần chúng. Quay lại chơi tay thì `POST /stories/{id}/choices` tạo lựa chọn khi cần (đường có sẵn).
+  - Giao diện: nút "Tự viết đến hết" ở màn truyện, viết từng chương tới chương cuối, có nút dừng sau chương đang viết; trang phải mở trong lúc viết (vòng lặp chạy ở trình duyệt, không có việc nền phía máy chủ).
+- **Hệ quả:** khoá `story`, trần chi phí mỗi chương và mỗi truyện, kiểm duyệt áp như chương thường (G8, G9). Tổng số chương của kế hoạch vẫn không lộ cho người chơi, nên tiến độ chỉ đếm chương đã xong. Đóng trang thì dừng sau chương đang viết dở (chương dở không ghi, D-63); bấm lại để viết tiếp.
+- **Người quyết:** Chủ dự án (tính năng, 1/11/2026), Claude (thiết kế), nhánh feature/auto-write · 1/11/2026

@@ -2042,3 +2042,16 @@ async def test_aftermath_off_leaves_a_done_climax_outside_its_window_unlisted(tm
                              req=request(commit_id="c-ch5"),
                              limits={"context": {"climax_aftermath_chapters": None}})
     assert "HẬU QUẢ của nó" not in calls_of(llm, "outline")[0][-1].content
+
+
+# --- tự viết đến hết (D-154) -------------------------------------------------------------------------
+
+
+async def test_a_chapter_without_choices_never_calls_the_choices_model(tmp_path):
+    """`make_choices=False`: chương ghi và tóm tắt như thường, nhưng không gọi model tạo lựa chọn, không phát
+    sự kiện lựa chọn, kết quả không có lựa chọn."""
+    script = full_script()[:-1]  # bỏ câu trả lời của model lựa chọn: nếu bị gọi thì kịch bản cạn và test đỏ
+    events, outcome, llm, store = await run(script, tmp_path, req=request(make_choices=False))
+    assert "choices_ready" not in kinds(events) and kinds(events)[-1] == "chapter_committed"
+    assert calls_of(llm, "choices") == [] and outcome.committed and outcome.choices == []
+    assert store.commits

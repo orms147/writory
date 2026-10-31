@@ -1156,3 +1156,47 @@ def test_the_script_has_every_shown_chapter_and_nothing_else(pg, driver, story, 
     assert f'filename="{sid}.txt"' in resp.headers["content-disposition"]
     assert resp.text.strip() and resp.text == script_text(committed_page_texts(pg, sid, current_chapter(pg, sid)))
     assert missing.status_code == 404
+
+
+# --- tự viết đến hết (D-154) -------------------------------------------------------------------------
+
+
+def write_auto(client, sid):
+    return client.post(f"/stories/{sid}/chapters/next?auto=true", headers=JSON_HEADERS)
+
+
+def test_auto_writes_a_chapter_without_a_choice_and_makes_no_choices(pg, driver, story, tmp_path):
+    """Chế độ tự viết: không cần lựa chọn của người chơi, và không gọi model tạo lựa chọn ở cuối chương
+    (không ai đọc chúng). Chế độ thường vẫn đòi lựa chọn."""
+    sid = story(action=None)
+    llm = ScriptedLLM([outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY])
+    with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
+        manual = write_next(client, sid)
+        events = sse(write_auto(client, sid).text)
+        state = client.get(f"/stories/{sid}").json()
+    assert (manual.status_code, manual.json()["code"]) == (409, "CHOICE_REQUIRED")
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed"]
+    assert calls_of(llm, "choices") == [] and load_choices(pg, sid, 4) == []
+    assert current_chapter(pg, sid) == 4 and state["chapter"] == 4 and state["choices"] == []
+
+
+def test_auto_reaches_the_last_chapter_and_finishes(pg, driver, story, tmp_path):
+    final = PLAN.model_copy(update={"acts": [PLAN.acts[0].model_copy(update={"to_chapter": 4})],
+                                    "secrets": []})
+    sid = story(plan=final, action=None)
+    llm = ScriptedLLM(final_chapter_script())
+    with TestClient(make_app(pg, driver, llm, tmp_path), raise_server_exceptions=False) as client:
+        events = sse(write_auto(client, sid).text)
+        again = write_auto(client, sid)
+        state = client.get(f"/stories/{sid}").json()
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "story_finished"]
+    assert state["finished"] is True and (again.status_code, again.json()["code"]) == (409, "STORY_COMPLETE")
+
+
+def test_auto_still_uses_an_action_the_player_saved(pg, driver, story, tmp_path):
+    sid = story(action="Tôi xuống bến hỏi chuyện.")
+    llm = ScriptedLLM([outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY])
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        events = sse(write_auto(client, sid).text)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed"]
+    assert any("Tôi xuống bến hỏi chuyện." in call[-1].content for call in calls_of(llm, "outline"))
