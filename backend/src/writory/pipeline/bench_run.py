@@ -552,7 +552,7 @@ class RunPrompts:
 # Ba cờ ngữ cảnh của đề "v3" (D-110, bật mặc định ở D-111): nằm ở `limits.context`, `meta.json` ghi
 # giá trị đã dùng để hai lượt A/B so được.
 CONTEXT_FLAGS = ("character_personality_max_chars", "previous_openings", "unplanned_chapter_goal",
-                 "phase_shift_every")
+                 "phase_shift_every", "climax_aftermath_chapters")  # D-142: để phép đo thấy cờ trong meta
 
 
 def prompts_from_args(args: argparse.Namespace, *,
