@@ -1494,3 +1494,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
   - Chỉ dẫn dàn ý và văn phong audio thêm: phản diện không tự thú khi chưa bị dồn bằng chứng ngay trên trang, vật chứng đổi tay thì nói ai giữ, mỗi màn vả mặt nặng hơn màn trước, kết không công bố lại điều đã công bố, giới thiệu họ tên và vai lần đầu xuất hiện.
 - **Hệ quả:** thêm lượt viết lại khi model để thoại trơn, tức thêm chi phí có giới hạn. Đo lại: `evals/results/2026-11-01-audio-length-check/notes.md`.
 - **Người quyết:** Claude (chủ dự án giao tự quyết, 1/11/2026), nhánh feature/audio-tts-checks · 1/11/2026
+
+## D-157 · Truyện audio: số mốc tối đa ít nhất 4, câu dẫn không gắn vào dòng thoại (sửa D-155, D-156)
+- **Bối cảnh:** lượt kiểm chứng D-156 (1/11/2026): khởi tạo mức `audio_30` thất bại `STORY_SETUP_INVALID` vì "milestones" vẫn sai sau lượt sửa. Đề khởi tạo đòi mỗi hồi một mốc và đúng một mốc kết; mức `audio_30` cho tối đa 3 mốc, nên kế hoạch 4 hồi không bao giờ hợp lệ. Muse cũng chỉ ra dòng thoại "- ..., bà nói." thành “..., bà nói.” trong kịch bản tải về, giọng đọc máy đọc câu dẫn như lời thoại (2/123 dòng).
+- **Quyết định:** `audio_30` 2–4 mốc, `audio_45` 3–5 mốc; test: mọi mức mở cho người chơi có số mốc tối đa ít nhất min(số chương tối đa, 4). Hướng dẫn văn phong audio: câu dẫn đứng ở dòng kể riêng, không gắn vào cuối dòng thoại.
+- **Hệ quả:** phép kiểm câu dẫn của D-156 gần như không đổi gì trên dữ liệu đã thấy (không chuỗi nào quá 2 lượt; chuỗi đúng 2 lượt hiếm); điểm "không rõ ai nói" của Muse đi cùng câu dẫn chỉ dùng đại từ (3–24% số câu dẫn). Kết quả và số đo: `evals/results/2026-11-01-audio-length-check/notes.md`.
+- **Người quyết:** Claude (chủ dự án giao tự quyết, 1/11/2026), nhánh fix/audio-milestones · 1/11/2026

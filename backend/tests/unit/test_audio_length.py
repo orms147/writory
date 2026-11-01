@@ -57,3 +57,10 @@ def test_only_audio_stories_get_the_setup_note_and_prose_prompts_are_unchanged()
     assert prose[0].content == audio[0].content.replace("\n\n" + AUDIO_SETUP_NOTE, "")
     for must in ("tên", "hình phạt", "một lần"):
         assert must in AUDIO_SETUP_NOTE, must
+
+
+def test_every_open_level_allows_one_milestone_per_act_of_a_four_act_story():
+    """Hồi quy 1/11/2026: đề khởi tạo đòi mỗi hồi một mốc và đúng một mốc kết; mức audio_30 cho tối đa 3 mốc nên kế
+    hoạch 4 hồi (mở đầu, phát triển, cao trào, kết) luôn sai quy tắc sau lượt sửa (STORY_SETUP_INVALID, D-157)."""
+    for key, level in CONFIG.story_lengths.player_levels().items():
+        assert level.milestones.max >= min(level.chapters.max, 4), key

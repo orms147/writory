@@ -17,11 +17,12 @@ levels:
   # Kịch bản audio (D-155, D-156; số tạm, Claude chọn, chờ chủ dự án duyệt): đo bằng phút nghe. Độ dài thật do số
   # chương quyết (target_chars không vào đề viết). Đo 1/11/2026: một chương audio 2 cảnh ra khoảng 1360 âm tiết, tức
   # khoảng 8,5 phút ở 160 âm tiết/phút (tốc độ sách nói tiếng Anh 150–160 từ/phút, chưa đo trên TTS tiếng Việt thật);
-  # model thường chọn số chương tối đa, nên mức 45 và 60 phút là một số chương. target_chars = phút × 730 (ghi chú).
+  # model thường chọn số chương tối đa, nên mức 45 phút là một số chương. Số mốc tối đa ít nhất 4: đề khởi tạo đòi
+  # mỗi hồi một mốc, truyện 4 hồi cần 4 mốc (D-157). target_chars = phút × 730 (ghi chú).
   audio_30: {label: "Audio ~30 phút", target_chars: 21900, chapters: {min: 3, max: 4}, style: audio, minutes: 30,
-             milestones: {min: 2, max: 3}, max_due_per_chapter: 3, player_selectable: true}
+             milestones: {min: 2, max: 4}, max_due_per_chapter: 3, player_selectable: true}
   audio_45: {label: "Audio ~45 phút", target_chars: 32850, chapters: {min: 5, max: 5}, style: audio, minutes: 45,
-             milestones: {min: 3, max: 4}, max_due_per_chapter: 3, player_selectable: true}
+             milestones: {min: 3, max: 5}, max_due_per_chapter: 3, player_selectable: true}
   audio_60: {label: "Audio ~1 tiếng", target_chars: 43800, chapters: {min: 6, max: 7}, style: audio, minutes: 60,
              milestones: {min: 3, max: 5}, max_due_per_chapter: 3, player_selectable: true}
   novel:  {label: "Tiểu thuyết mỏng", target_chars: 300000, chapters: {min: 30, max: 60},
