@@ -155,7 +155,9 @@ def test_public_config_genres():
 
 def test_genre_note_none_without_text():
     assert genre_note(CFG.genres, (), "setup_brief") is None
-    assert genre_note(CFG.genres, ("do_thi",), "voice_brief") is None  # đô thị chưa có voice_brief
+    cfg = CFG.model_copy(deep=True)
+    cfg.genres.genres[0] = cfg.genres.genres[0].model_copy(update={"voice_brief": None})
+    assert genre_note(cfg.genres, (cfg.genres.genres[0].key,), "voice_brief") is None  # thể loại không có giọng riêng
 
 
 def test_audio_notes_have_no_sang_van_tropes():

@@ -83,6 +83,15 @@ Frontend (Vite, `http://localhost:5173`) gọi API qua proxy của Vite, nên tr
 4. Proxy của Vite chỉ chuyển `/api/*` tới backend (mặc định `http://localhost:8000`) và bỏ tiền tố `/api` (`frontend/vite.config.ts`; đổi đích, đổi tiền tố: mục Frontend). Đường của trang (`/truyen/...`, `/moi`, `/khoa`) không bắt đầu bằng `/api`.
 5. Viết chương là SSE trên `POST` (D-46): đọc stream bằng `fetch`, không dùng `EventSource`. SSE qua proxy của Vite đã chạy được trong lần chạy thử đầu cuối với model thật (21/10/2026, CLAUDE.md §9); chưa đo riêng proxy có giữ sự kiện lại lâu hơn không.
 
+## Thêm hay sửa thể loại (D-160)
+
+Danh mục thể loại ở `config/genres.yaml`. Chú thích đầu file là yêu cầu cho người soạn (các trường, luật nội dung, trần ký tự ở `limits`), nên có thể đưa nguyên file cho AI soạn thêm. Sau khi sửa:
+
+1. Kiểm file: `cd backend && uv run python -c "from writory.config import load_config; print(len(load_config().genres.genres))"`. Sai thì lỗi nói mục nào: khoá trùng, quá trần ký tự, thiếu trường, `styles` rỗng, thiếu `sang_van`.
+2. Khởi động lại backend (`make run`, hoặc đóng cửa sổ WriTory rồi bấm icon).
+
+Không đổi `key` của thể loại đã có truyện dùng: truyện lưu khoá (`stories.genres`). Xoá một thể loại thì truyện đang dùng nó vẫn viết tiếp, chỉ thiếu đề của thể loại đó. `sang_van` phải còn, vì truyện audio tạo trước D-160 dùng nó. Máy chủ giả của giao diện (`npm run dev:mock`) có danh mục riêng ở `frontend/src/mock/data.ts` (`MOCK_GENRES`); sửa theo nếu muốn thấy thể loại mới khi chạy giao diện không backend. Lượt soạn danh mục bằng Meta Muse Wonder và chấm bằng Claude Sonnet: `evals/results/2026-11-03-genres-gen/` (script, thang chấm, D-161).
+
 ## Frontend
 React + TypeScript + Tailwind, dựng bằng Vite, trong `frontend/` (D-68). Cần Node 20.19+ và npm (lockfile `package-lock.json`).
 ```bash

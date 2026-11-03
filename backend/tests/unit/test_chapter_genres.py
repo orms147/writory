@@ -44,4 +44,6 @@ def test_legacy_audio_story_keeps_its_voice():
 
 def test_genre_without_voice_keeps_default_guide():
     """Thể loại không có `voice_brief`, `outline_brief`: truyện chữ giữ văn phong mặc định của `ChapterRun`."""
-    assert chapter_notes("prose", ("do_thi",), CFG.genres) == (None, None)
+    cfg = CFG.model_copy(deep=True)
+    cfg.genres.genres[0] = cfg.genres.genres[0].model_copy(update={"voice_brief": None, "outline_brief": None})
+    assert chapter_notes("prose", (cfg.genres.genres[0].key,), cfg.genres) == (None, None)
