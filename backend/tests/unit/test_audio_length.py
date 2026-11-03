@@ -14,7 +14,10 @@ LEVELS = CONFIG.story_lengths.levels
 
 def test_audio_levels_are_measured_in_minutes_and_open_to_players():
     audio = {k: v for k, v in LEVELS.items() if v.style == "audio"}
-    assert [(k, v.minutes) for k, v in audio.items()] == [("audio_30", 30), ("audio_45", 45), ("audio_60", 60)]
+    # Nhãn và phút theo số đo của chủ dự án (D-159): audio_60 (6–7 chương) ra khoảng 30 phút với TTS thật.
+    assert [(k, v.label, v.minutes) for k, v in audio.items()] == [
+        ("audio_30", "Audio ~15 phút", 15), ("audio_45", "Audio ~23 phút", 23), ("audio_60", "Audio ~30 phút", 30),
+        ("audio_xl", "Audio siêu dài", 45)]
     assert all(v.player_selectable for v in audio.values())
     ranges = [(v.chapters.min, v.chapters.max) for v in audio.values()]
     assert ranges == sorted(ranges) and ranges[0][0] >= 3  # dài hơn thì nhiều chương hơn
@@ -31,7 +34,7 @@ def test_an_audio_level_must_say_how_many_minutes_it_is():
 
 def test_public_config_tells_the_ui_the_style_and_minutes_of_each_level():
     out = {lv.key: lv for lv in PublicConfigOut.from_config(CONFIG, writer_label="x").story_lengths}
-    assert (out["audio_60"].style, out["audio_60"].minutes) == ("audio", 60)
+    assert (out["audio_60"].style, out["audio_60"].minutes) == ("audio", 30)
     assert (out["short"].style, out["short"].minutes) == ("prose", None)
 
 
@@ -64,3 +67,11 @@ def test_every_open_level_allows_one_milestone_per_act_of_a_four_act_story():
     hoạch 4 hồi (mở đầu, phát triển, cao trào, kết) luôn sai quy tắc sau lượt sửa (STORY_SETUP_INVALID, D-157)."""
     for key, level in CONFIG.story_lengths.player_levels().items():
         assert level.milestones.max >= min(level.chapters.max, 4), key
+
+
+def test_super_long_audio_level_has_nine_to_ten_chapters():
+    """Chủ dự án (3/11/2026): thêm mức dài hơn mức audio dài nhất khoảng 1/3, "tầm 10 chương là đủ" (D-159)."""
+    level = LEVELS["audio_xl"]
+    assert (level.chapters.min, level.chapters.max) == (9, 10)
+    assert (level.style, level.player_selectable) == ("audio", True)
+    assert level.milestones.max >= 4

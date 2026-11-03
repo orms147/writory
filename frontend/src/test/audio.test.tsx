@@ -81,14 +81,15 @@ describe('khởi tạo: kiểu truyện', () => {
     // Đổi sang audio: chỉ mức audio, mức đầu được chọn thay mức truyện chữ, có số phút.
     await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
     expect(lengths()).toEqual([
+      expect.stringMatching(/^Audio ~15 phút/),
+      expect.stringMatching(/^Audio ~23 phút/),
       expect.stringMatching(/^Audio ~30 phút/),
-      expect.stringMatching(/^Audio ~45 phút/),
-      expect.stringMatching(/^Audio ~1 tiếng/),
+      expect.stringMatching(/^Audio siêu dài/),
     ]);
     expect(screen.queryByRole('radio', { name: /Truyện ngắn|Truyện vừa/ })).toBeNull();
-    expect(checkedLength()).toHaveTextContent('Audio ~30 phút');
-    expect(checkedLength()).toHaveTextContent('khoảng 30 phút nghe · 3–4 chương');
-    await userEvent.click(screen.getByRole('radio', { name: /Audio ~45 phút/ }));
+    expect(checkedLength()).toHaveTextContent('Audio ~15 phút');
+    expect(checkedLength()).toHaveTextContent('khoảng 15 phút nghe · 3–4 chương');
+    await userEvent.click(screen.getByRole('radio', { name: /Audio ~23 phút/ }));
     await userEvent.click(screen.getByRole('button', { name: /Gợi ý bối cảnh/ }));
     await waitFor(() => expect(posts()).toHaveLength(1));
     expect(posts()[0]?.body).toMatchObject({ style: 'audio', length_level: 'audio_45' });
@@ -99,7 +100,7 @@ describe('khởi tạo: kiểu truyện', () => {
     renderApp(<Template />);
     await userEvent.click(screen.getByRole('radio', { name: 'Cổ trang' }));
     await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
-    await userEvent.click(screen.getByRole('radio', { name: /Audio ~1 tiếng/ }));
+    await userEvent.click(screen.getByRole('radio', { name: /Audio siêu dài/ }));
     await userEvent.click(screen.getByRole('radio', { name: /^Truyện chữ/ }));
     const group = within(screen.getByRole('radiogroup', { name: 'D · Độ dài' }));
     expect(group.getAllByRole('radio').map((r) => r.textContent)).toEqual([
@@ -119,9 +120,9 @@ describe('khởi tạo: kiểu truyện', () => {
     recordingMock();
     renderApp(<Template />);
     await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
-    await userEvent.click(screen.getByRole('radio', { name: /Audio ~45 phút/ }));
+    await userEvent.click(screen.getByRole('radio', { name: /Audio ~23 phút/ }));
     await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
-    expect(screen.getByRole('radio', { name: /Audio ~45 phút/ })).toHaveAttribute('aria-checked', 'true');
+    expect(screen.getByRole('radio', { name: /Audio ~23 phút/ })).toHaveAttribute('aria-checked', 'true');
   });
 
   it('máy chủ giả: mức độ dài khác kiểu truyện bị /setup từ chối bằng REQUEST_INVALID ở length_level', async () => {
@@ -147,9 +148,10 @@ describe('khởi tạo: kiểu truyện', () => {
     expect(config.story_lengths).toEqual([
       expect.objectContaining({ key: 'short', style: 'prose', minutes: null }),
       expect.objectContaining({ key: 'medium', style: 'prose', minutes: null }),
-      { key: 'audio_30', label: 'Audio ~30 phút', chapters_min: 3, chapters_max: 4, style: 'audio', minutes: 30 },
-      { key: 'audio_45', label: 'Audio ~45 phút', chapters_min: 5, chapters_max: 5, style: 'audio', minutes: 45 },
-      { key: 'audio_60', label: 'Audio ~1 tiếng', chapters_min: 6, chapters_max: 7, style: 'audio', minutes: 60 },
+      { key: 'audio_30', label: 'Audio ~15 phút', chapters_min: 3, chapters_max: 4, style: 'audio', minutes: 15 },
+      { key: 'audio_45', label: 'Audio ~23 phút', chapters_min: 5, chapters_max: 5, style: 'audio', minutes: 23 },
+      { key: 'audio_60', label: 'Audio ~30 phút', chapters_min: 6, chapters_max: 7, style: 'audio', minutes: 30 },
+      { key: 'audio_xl', label: 'Audio siêu dài', chapters_min: 9, chapters_max: 10, style: 'audio', minutes: 45 },
     ]);
   });
 

@@ -3,7 +3,7 @@ import { api } from '../api/client';
 import type { StorySummary } from '../api/types';
 import { ErrorBlock } from '../components/ErrorBlock';
 import { TopNav } from '../components/TopNav';
-import { Kicker, Skeleton, cx } from '../components/ui';
+import { Kicker, LinkButton, Skeleton, cx } from '../components/ui';
 import { lengthText, usePublicConfig } from '../config/PublicConfig';
 import { capitalize, formatUsd, numberWords, relativeTime, roman } from '../lib/format';
 import { useResource } from '../lib/useResource';
@@ -52,6 +52,8 @@ export function Library() {
   const hasKey = key.data?.has_key ?? false;
   const level = (k: string) => config.story_lengths.find((l) => l.key === k) ?? null;
   const firstOpen = list?.findIndex((s) => !s.finished && s.chapter > 0) ?? -1;
+  // Cùng luật với hàng cuối "Mở một trang chưa viết": tủ trống và chưa có khoá thì chưa mở truyện được.
+  const locked = list !== null && list.length === 0 && !hasKey;
 
   return (
     <main className="wt relative min-h-screen overflow-hidden pb-16">
@@ -67,6 +69,20 @@ export function Library() {
             <p className="mt-2 text-[15px] leading-relaxed text-ink-200">
               {list === null ? '' : list.length === 0 ? 'Tủ còn trống. Trang đầu tiên của một đời khác đang chờ bạn.' : summaryLine(list)}
             </p>
+            {/* Nút truyện mới ở đầu trang (D-159): thấy ngay, không phải cuộn tới hàng cuối. Hiện sau khi tủ tải
+                xong, để không nhảy từ bật sang tắt khi tủ trống và chưa có khoá. */}
+            {list === null ? null : locked ? (
+              <span
+                aria-disabled="true"
+                className="mt-5 inline-flex min-h-tap items-center gap-2 rounded-[12px] border border-ink-700 px-5 text-[15px] font-semibold text-ink-400"
+              >
+                Viết truyện mới <span className="text-[13px] font-normal">· sau khi có khoá</span>
+              </span>
+            ) : (
+              <LinkButton to="/moi" className="mt-5" arrow>
+                Viết truyện mới
+              </LinkButton>
+            )}
           </div>
         </section>
 

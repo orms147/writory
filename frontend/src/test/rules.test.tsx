@@ -294,7 +294,7 @@ describe('độ dài truyện chỉ gồm mức đang mở (D-88)', () => {
   it('máy chủ giả: /config/public chỉ trả mức mở; mức đóng bị /setup từ chối bằng mã riêng', async () => {
     withMock();
     const config = await api.publicConfig();
-    expect(config.story_lengths.map((l) => l.key)).toEqual(['short', 'medium', 'audio_30', 'audio_45', 'audio_60']);
+    expect(config.story_lengths.map((l) => l.key)).toEqual(['short', 'medium', 'audio_30', 'audio_45', 'audio_60', 'audio_xl']);
     const err = await api.startSetup({ tags: { genre: 'kiếm hiệp', voice: null }, length_level: 'long', naming: null }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect((err as ApiError).code).toBe('STORY_LENGTH_NOT_OPEN');
