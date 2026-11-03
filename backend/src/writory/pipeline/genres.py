@@ -8,11 +8,12 @@ from collections.abc import Sequence
 from typing import Literal
 
 from writory.config import LEGACY_AUDIO_GENRE, GenresConfig
+from writory.pipeline.scene import load_style_guide, outline_note_for, style_guide_for
 
 log = logging.getLogger(__name__)
 
-__all__ = ["GENRE_PRECEDENCE", "IDEA_RULE", "LEGACY_AUDIO_GENRE", "genre_note", "genres_label", "join_notes",
-           "story_genre_keys"]
+__all__ = ["GENRE_PRECEDENCE", "IDEA_RULE", "LEGACY_AUDIO_GENRE", "chapter_notes", "genre_note", "genres_label",
+           "join_notes", "story_genre_keys"]
 
 GenrePart = Literal["setup_brief", "outline_brief", "voice_brief"]
 
@@ -66,3 +67,19 @@ def story_genre_keys(stored: Sequence[str], style: str, genres: GenresConfig) ->
     if len(known) != len(stored):
         log.warning("bỏ %d khoá thể loại không còn trong config/genres.yaml", len(stored) - len(known))
     return known
+
+
+def chapter_notes(style: str, stored: Sequence[str], genres: GenresConfig) -> tuple[str | None, str | None]:
+    """(văn phong model viết, ghi chú dàn ý) cho một chương của truyện kiểu `style` có khoá thể loại `stored`.
+
+    Văn phong: bản theo kiểu truyện (D-153) nối `voice_brief` các thể loại; None khi truyện chữ không thể loại nào có
+    giọng riêng, để `ChapterRun` dùng bản mặc định như trước. Ghi chú dàn ý: ghi chú audio (D-155) nối
+    `outline_brief` các thể loại; None khi không có gì."""
+    keys = story_genre_keys(stored, style, genres)
+    voice = genre_note(genres, keys, "voice_brief")
+    base = style_guide_for(style)
+    if base is None and voice is not None:
+        base = load_style_guide()
+    guide = join_notes(base, voice) if base is not None else None
+    return guide, join_notes(outline_note_for(style), genre_note(genres, keys, "outline_brief"))
+

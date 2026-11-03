@@ -134,10 +134,11 @@ def story(pg, driver, new_db_story_id):
     """Truyện mẫu tới chương 3 của người chơi dev, có kế hoạch, thiết lập; key dev được dọn sau."""
 
     def make(*, action: str | None = "Ở nhà chờ tin.", plan: StoryPlan = PLAN,
-             darkness_level: str | None = None, style: str = "prose") -> str:
+             darkness_level: str | None = None, style: str = "prose", genres: tuple[str, ...] = ()) -> str:
         sid = new_db_story_id()
         create_story_with_plan(pg, sid, owner_id=DEV_OWNER_ID, length_level="short",
-                               brief=BRIEF, plan=plan, darkness_level=darkness_level, style=style)
+                               brief=BRIEF, plan=plan, darkness_level=darkness_level, style=style,
+                               genres=genres)
         for ch in SAMPLE.chapters[:4]:
             commit_chapter(pg, driver, sid, ch.number, [ch.text] if ch.text else [], ch.package)
         if action is not None:
@@ -1152,6 +1153,23 @@ def test_the_story_style_picks_the_writer_style_guide_and_nothing_else(pg, drive
     assert len(writes) == 2 and all(call[0].content.startswith(guide) for call in writes)
     outlines = calls_of(llm, "outline")  # ghi chú dàn ý chỉ có ở truyện audio (D-155)
     assert outlines and all((AUDIO_OUTLINE_NOTE in call[0].content) == (style == "audio") for call in outlines)
+
+
+def test_story_genres_reach_outline_and_writer(pg, driver, story, tmp_path):
+    """Đề thể loại của truyện (D-160) vào system của dàn ý và model viết mọi cảnh; truyện chữ không thể loại thì
+    văn phong và dàn ý như trước (test trên)."""
+    sang_van = load_config().genres.get("sang_van")
+    sid = story(genres=("trinh_tham", "sang_van"))
+    script = [outline_reply(), SCENE_1, EXTRACT_1, outline_reply(), SCENE_2, EXTRACT_2, SUMMARY, choices_reply()]
+    llm = ScriptedLLM(script)
+    with TestClient(make_app(pg, driver, llm, tmp_path)) as client:
+        events = sse(write_next(client, sid).text)
+    assert kinds(events) == ["scene_ready", "scene_ready", "chapter_committed", "choices_ready"]
+    writes, outlines = calls_of(llm, "writer"), calls_of(llm, "outline")
+    assert writes and all(call[0].content.startswith(load_style_guide()) for call in writes)
+    assert all(sang_van.voice_brief in call[0].content for call in writes)
+    assert outlines and all(sang_van.outline_brief in call[0].content for call in outlines)
+    assert all(AUDIO_OUTLINE_NOTE not in call[0].content for call in outlines)
 
 
 def test_the_script_has_every_shown_chapter_and_nothing_else(pg, driver, story, tmp_path):

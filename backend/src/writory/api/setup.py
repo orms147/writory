@@ -354,7 +354,8 @@ async def finalize(session_id: str, conn: deps.PgConn, driver: deps.Neo4jDriver,
     darkness = choices.darkness_level or config.moderation.default_darkness_level
     start_story(conn, driver, story_id, owner_id=owner, length_level=choices.length_level,
                 brief=story_brief(choices, setting, plot, pc, moderation=config.moderation),
-                plan=built.plan, initial=built.package, darkness_level=darkness, style=choices.style)
+                plan=built.plan, initial=built.package, darkness_level=darkness, style=choices.style,
+                genres=choices.genres)
     try:
         rec = finish_setup(conn, rec.id, story_id)
     except BaseException:
