@@ -51,6 +51,7 @@ from writory.db import (
 )
 from writory.errors import ErrorCode, WritoryError
 from writory.llm.base import LLMClient
+from writory.pipeline.genres import genres_label
 from writory.pipeline.setup import (
     CharacterOption,
     Naming,
@@ -59,7 +60,6 @@ from writory.pipeline.setup import (
     StoryChoices,
     StoryTags,
     build_story,
-    default_naming,
     propose_characters,
     propose_plots,
     propose_settings,
@@ -89,6 +89,11 @@ def _tags_text(tags: StoryTags) -> str:
     return "\n".join(t for t in (tags.genre, tags.era, tags.voice, tags.darkness) if t)
 
 
+def _player_text(choices: StoryChoices) -> str:
+    """Chữ người chơi của phiên cần kiểm duyệt trước lời gọi model đầu (G9): tag và ý tưởng (D-160)."""
+    return "\n".join(t for t in (_tags_text(choices.tags), choices.idea) if t)
+
+
 def _edited_text(body: CharacterChoiceIn) -> str:
     """Chỉ phần người chơi sửa (chữ gốc của lựa chọn do model tạo, không phải chữ người chơi)."""
     return "\n".join(v for v in (body.name, body.personality, body.backstory) if v is not None)
@@ -105,6 +110,30 @@ def _limit(limits: InputLimits, name: str) -> int:
         raise WritoryError(ErrorCode.CONFIG_LIMIT_NOT_SET, detail=str(e)) from None
 
 
+def _start_choices(body: SetupStartIn, config: AppConfig) -> StoryChoices:
+    """Lựa chọn của phiên từ thân yêu cầu: mức u tối, thể loại (D-160), ý tưởng (D-160), quy ước tên. Sai thì
+    REQUEST_INVALID chỉ đúng trường (G12). Không chạm Postgres hay model."""
+    darkness = body.darkness_level or config.moderation.default_darkness_level
+    if darkness not in config.moderation.darkness_levels:
+        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["darkness_level"],
+                           detail=f"mức u tối {darkness!r} không có trong config")
+    keys = tuple(body.genres)
+    genres = [config.genres.get(k) for k in keys]
+    if (not keys or len(keys) > config.genres.max_selected or len(set(keys)) != len(keys)
+            or any(g is None or body.style not in g.styles for g in genres)):
+        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["genres"],
+                           detail=f"{len(keys)} khoá thể loại không hợp lệ cho kiểu {body.style!r} (D-160)")
+    idea = (body.idea or "").strip() or None
+    if idea is not None and len(idea) > _limit(config.limits.input, "story_idea_max_chars"):
+        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["idea"], detail=f"ý tưởng {len(idea)} ký tự")
+    tags = StoryTags(genre=genres_label(config.genres, keys), **body.tags.model_dump())
+    first = genres[0]
+    assert first is not None  # đã kiểm ở trên
+    naming = Naming(**(body.naming or first.naming).model_dump())
+    return StoryChoices(tags=tags, length_level=body.length_level, naming=naming, darkness_level=darkness,
+                        style=body.style, genres=keys, idea=idea)
+
+
 @router.post("", response_model=SetupOut)
 def start_setup(body: SetupStartIn, conn: deps.PgConn, owner: deps.Owner,
                 config: deps.Config) -> SetupOut:
@@ -118,15 +147,7 @@ def start_setup(body: SetupStartIn, conn: deps.PgConn, owner: deps.Owner,
     if config.story_lengths.levels[body.length_level].style != body.style:
         raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["length_level"],
                            detail=f"mức độ dài {body.length_level!r} không dành cho kiểu truyện {body.style!r} (D-155)")
-    darkness = body.darkness_level or config.moderation.default_darkness_level
-    if darkness not in config.moderation.darkness_levels:
-        raise WritoryError(ErrorCode.REQUEST_INVALID, fields=["darkness_level"],
-                           detail=f"mức u tối {darkness!r} không có trong config")
-    tags = StoryTags(**body.tags.model_dump())
-    naming = (Naming(**body.naming.model_dump()) if body.naming is not None
-              else default_naming(tags.genre))
-    choices = StoryChoices(tags=tags, length_level=body.length_level, naming=naming,
-                           darkness_level=darkness, style=body.style)
+    choices = _start_choices(body, config)
     rec = create_setup(conn, _new_id("setup"), owner_id=owner,
                        choices=choices.model_dump(mode="json"))
     return SetupOut.from_record(rec)
@@ -201,7 +222,7 @@ async def _propose(step: SetupStep, session_id: str, conn, owner: str, config: A
     client = llm.metered(setup_id=rec.id)
     if step == "settings":
         # Lời gọi model đầu tiên của phiên: tag tự gõ qua kiểm duyệt trước (G9, D-57).
-        await ensure_input_allowed(_tags_text(choices.tags), llm=client, config=config)
+        await ensure_input_allowed(_player_text(choices), llm=client, config=config)
 
     # Thử lại mạng nằm ở từng lời gọi model trong pipeline (`pipeline.setup._ask`, D-14, D-105).
     propose: Callable[[], Awaitable[list]]

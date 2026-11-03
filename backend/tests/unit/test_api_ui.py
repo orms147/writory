@@ -188,6 +188,7 @@ def expected_public(cfg) -> dict:
             "personality_max_chars": lim.input.personality_max_chars,
             "backstory_max_chars": lim.input.backstory_max_chars,
             "narrator_question_max_chars": lim.input.narrator_question_max_chars,
+            "story_idea_max_chars": lim.input.story_idea_max_chars,
         },
         "narrator_questions_per_chapter": lim.rate_limit.narrator_questions_per_chapter,
         "rewrite_per_scene": lim.retries.rewrite_per_scene,
@@ -203,6 +204,9 @@ def expected_public(cfg) -> dict:
                             for k, v in cfg.moderation.darkness_levels.items()],
         "default_darkness_level": cfg.moderation.default_darkness_level,
         "chapter_estimate_default_usd": lim.chapter_estimate.default_usd,
+        "genres": [{"key": g.key, "label": g.label, "hint": g.hint, "styles": list(g.styles)}
+                   for g in cfg.genres.genres],
+        "max_genres": cfg.genres.max_selected,
     }
 
 

@@ -64,7 +64,7 @@ def _plan_window(setup, thread_id: str) -> tuple[int, int]:
 
 
 def test_schema_and_prompt_ask_for_the_link():
-    assert PROMPT_VERSION == "setup-11"
+    assert PROMPT_VERSION == "setup-12"
     assert "answered_by" in OutThread.model_json_schema()["required"]  # JSON schema strict
     for phrase in ("`answered_by`", "`fact_id`", "`reveal_from_chapter`", "`due_from_chapter`"):
         assert phrase in BUILD_TASK, phrase

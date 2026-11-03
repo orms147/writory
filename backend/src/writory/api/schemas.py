@@ -104,6 +104,8 @@ class PlayerKeyOut(_Out):
 
 TAG_MAX_CHARS = 60  # tag là nhãn ngắn; trần cứng để thân yêu cầu không phình
 EDIT_HARD_MAX_CHARS = 5000  # trần cứng của trường sửa nhân vật; giới hạn thật: limits.input
+GENRES_HARD_MAX = 10  # trần cứng số thể loại trong thân yêu cầu; giới hạn thật: config/genres.yaml max_selected
+IDEA_HARD_MAX_CHARS = 5000  # trần cứng của ý tưởng; giới hạn thật: limits.input.story_idea_max_chars
 
 Tag = Annotated[str, StringConstraints(strip_whitespace=True, min_length=1,
                                        max_length=TAG_MAX_CHARS)]
@@ -113,8 +115,8 @@ Edit = Annotated[str | None, Field(max_length=EDIT_HARD_MAX_CHARS)]
 
 
 class StoryTagsIn(_Out):
-    # Không còn `darkness` chữ tự do: mức u tối là `SetupStartIn.darkness_level` (D-67).
-    genre: Tag
+    # Không còn `darkness` chữ tự do: mức u tối là `SetupStartIn.darkness_level` (D-67). Không còn `genre` chữ tự
+    # do: thể loại là khoá trong config/genres.yaml, `SetupStartIn.genres` (D-160).
     era: Tag | None = None
     voice: Tag | None = None
 
@@ -125,7 +127,11 @@ class NamingIn(_Out):
 
 
 class SetupStartIn(_Out):
-    tags: StoryTagsIn
+    # Khoá thể loại trong config/genres.yaml, theo thứ tự người chơi chọn (D-160); kiểm số lượng và khoá ở API.
+    genres: list[Annotated[str, StringConstraints(max_length=64)]] = Field(max_length=GENRES_HARD_MAX)
+    tags: StoryTagsIn = StoryTagsIn()
+    # Ý tưởng người chơi (D-160), không bắt buộc; trần thật kiểm ở API theo limits.input.story_idea_max_chars.
+    idea: str | None = Field(default=None, max_length=IDEA_HARD_MAX_CHARS)
     length_level: str = Field(max_length=32)  # khoá trong config/story_lengths.yaml
     naming: NamingIn | None = None  # None: mặc định theo thể loại (D-32)
     # Khoá trong config/moderation.yaml `darkness_levels`; None: `default_darkness_level` (D-67).
@@ -346,6 +352,16 @@ class InputLimitsOut(_Out):
     personality_max_chars: int | None
     backstory_max_chars: int | None
     narrator_question_max_chars: int | None
+    story_idea_max_chars: int | None  # ý tưởng lúc khởi tạo (D-160)
+
+
+class GenreOut(_Out):
+    """Thể loại cho màn khởi tạo (D-160). Không có đề (`*_brief`): đó là đề của model, giao diện không cần."""
+
+    key: str
+    label: str
+    hint: str
+    styles: list[Literal["prose", "audio"]]
 
 
 class CostCapsOut(_Out):
@@ -385,6 +401,8 @@ class PublicConfigOut(_Out):
     darkness_levels: list[DarknessLevelOut]  # theo thứ tự trong config/moderation.yaml
     default_darkness_level: str
     chapter_estimate_default_usd: float | None  # số cho màn không gắn truyện (D-87)
+    genres: list[GenreOut]  # theo thứ tự trong config/genres.yaml (D-160)
+    max_genres: int  # người chơi chọn tối đa bấy nhiêu thể loại
 
     @classmethod
     def from_config(cls, config: AppConfig, *, writer_label: str) -> "PublicConfigOut":
@@ -397,6 +415,7 @@ class PublicConfigOut(_Out):
                 personality_max_chars=lim.input.personality_max_chars,
                 backstory_max_chars=lim.input.backstory_max_chars,
                 narrator_question_max_chars=lim.input.narrator_question_max_chars,
+                story_idea_max_chars=lim.input.story_idea_max_chars,
             ),
             narrator_questions_per_chapter=lim.rate_limit.narrator_questions_per_chapter,
             rewrite_per_scene=lim.retries.rewrite_per_scene,
@@ -413,6 +432,9 @@ class PublicConfigOut(_Out):
                              for k, v in mod.darkness_levels.items()],
             default_darkness_level=mod.default_darkness_level,
             chapter_estimate_default_usd=lim.chapter_estimate.default_usd,
+            genres=[GenreOut(key=g.key, label=g.label, hint=g.hint, styles=list(g.styles))
+                    for g in config.genres.genres],
+            max_genres=config.genres.max_selected,
         )
 
 

@@ -14,7 +14,7 @@ from writory.pipeline.scene import (
     style_guide_for,
 )
 
-START = {"tags": {"genre": "đô thị", "era": "hiện đại", "voice": "lạnh"}, "length_level": "short"}
+START = {"genres": ["do_thi"], "tags": {"era": "hiện đại", "voice": "lạnh"}, "length_level": "short"}
 
 
 def test_prose_keeps_the_default_guide_and_audio_gets_its_own():
