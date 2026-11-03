@@ -1,0 +1,130 @@
+# Danh mục thể loại (D-160). Người chơi chọn từ 1 tới `max_selected` thể loại lúc khởi tạo; đề của các thể loại đã
+# chọn vào system của đề khởi tạo (bối cảnh, hướng đi, nhân vật, bản kế hoạch), đề dàn ý và đề viết của MỌI chương.
+# Thêm thể loại: thêm một mục vào `genres`, khởi động lại backend. App kiểm file lúc khởi động (writory/config.py
+# `GenresConfig`); sai thì không chạy và báo mục nào sai.
+#
+# YÊU CẦU CHO NGƯỜI (HAY AI) SOẠN THỂ LOẠI
+# Mỗi mục có các trường:
+#   key            chữ thường không dấu, chỉ a-z 0-9 _, duy nhất. Lưu trên truyện: KHÔNG đổi sau khi đã có truyện dùng.
+#   label          chữ trên nút chọn, ngắn (trần ở `limits.label`).
+#   hint           một câu giải thích thể loại cho người chơi (trần `limits.hint`).
+#   styles         kiểu truyện dùng được: [prose] truyện chữ, [audio] kịch bản audio, hoặc cả hai. Bỏ trống là cả hai.
+#   naming         quy ước tên mặc định: names han_viet (tên Hán Việt) | viet (tên Việt); places hu_cau (địa danh hư
+#                  cấu) | that (được dùng địa danh có thật). Người chơi đổi được.
+#   setup_brief    BẮT BUỘC. Đề cho bước khởi tạo: thế giới và luật của nó, kiểu xung đột, kiểu nhân vật, kiểu bí mật
+#                  và cú lật, cái giá nhân vật chính phải trả, kiểu kết.
+#   outline_brief  tuỳ chọn. Nhịp cảnh và chương của thể loại cho bước dàn ý: một cảnh của thể loại này phải làm gì.
+#   voice_brief    tuỳ chọn. Giọng văn cho model viết: không khí, nhịp câu, kiểu lời thoại, kiểu hài hay lạnh.
+# Luật nội dung:
+# - Tiếng Việt có dấu, tự nhiên. Viết như dặn một nhà văn, gạch đầu dòng ngắn.
+# - Không chép tác phẩm, nhân vật, thương hiệu hay người có thật. Không đặt tên riêng cố định cho nhân vật hay nơi
+#   chốn (khởi tạo tự đặt tên theo quy ước tên).
+# - CHỈ mô tả thể loại. Không nói định dạng, JSON, số chương, độ dài, ngôi kể, quy ước tên, mức u tối hay an toàn:
+#   hệ thống giữ những thứ đó và đề thể loại không đổi được chúng.
+# - Không đòi nội dung tình dục; không đòi u tối hơn mức người chơi chọn (mức u tối là trần của cả truyện).
+# - Viết như khuynh hướng và kho lựa chọn (vài kiểu xung đột, vài kiểu cú lật, vài kiểu kết), dặn mỗi truyện chọn
+#   khác nhau; KHÔNG viết một cốt truyện cố định, vì mọi truyện cùng thể loại sẽ giống nhau.
+# - Hợp với cách chơi: người chơi sống qua mắt nhân vật chính, chọn hướng đi mỗi chương; truyện có bí mật lộ dần và
+#   kết bằng gỡ hết mạch đã mở.
+# - Người chơi có thể chọn vài thể loại cùng lúc: đề nên nói cái lõi của thể loại, đừng cấm thể loại khác.
+# - Thể loại hợp kịch bản audio (nghe, không đọc) thì styles có audio; thể loại chỉ hay khi đọc thì chỉ [prose].
+# Thứ tự ưu tiên khi các nguồn kéo khác hướng (hệ thống tự thêm vào đề): ý tưởng người chơi gõ > giọng văn người
+# chơi chọn > đề thể loại; luật hệ thống và mức u tối đứng trên cả ba.
+
+max_selected: 3   # số tạm (D-160)
+limits: {label: 60, hint: 140, setup_brief: 1500, outline_brief: 1200, voice_brief: 1200}   # số ký tự tối đa, tạm
+
+genres:
+  - key: ky_ao_tu_tien
+    label: "Kỳ ảo · tu tiên"
+    hint: "Thế giới tu luyện, cảnh giới, tông môn, pháp bảo và cái giá của sức mạnh."
+    naming: {names: han_viet, places: hu_cau}
+    setup_brief: |
+      - Thế giới có hệ tu luyện rõ luật: cảnh giới, tài nguyên khan hiếm, cái giá khi phá cảnh giới.
+      - Xung đột chọn một trong: tranh đoạt tài nguyên, ân oán tông môn, bí mật thân thế, kẻ thù cùng tu vi cao hơn.
+      - Nhân vật chính khởi đầu yếu thế; sức mạnh đến từ lựa chọn và cái giá, không từ may mắn vô cớ.
+      - Cú lật: sư môn có điều giấu, bảo vật có chủ cũ, người tốt có toan tính.
+      - Kết: nhân vật chính đạt hay mất một cảnh giới quan trọng, ân oán chính được giải.
+  - key: co_trang
+    label: "Cổ trang"
+    hint: "Triều đình, gia tộc, lễ giáo phong kiến và những bí mật sau tường cao."
+    naming: {names: han_viet, places: hu_cau}
+    setup_brief: |
+      - Xã hội phong kiến hư cấu: thứ bậc, lễ giáo, gia tộc, triều đình; danh tiếng là tài sản.
+      - Xung đột chọn một trong: tranh quyền trong phủ, hôn ước ép buộc, oan án cũ, đấu trí quan trường.
+      - Bí mật thường là thân thế, một vụ án bị che, hay thư từ có thể lật cả gia tộc.
+      - Kết: danh phận được định lại, kẻ gây oan trả giá theo luật của thế giới đó.
+  - key: lich_su
+    label: "Lịch sử"
+    hint: "Người thường giữa biến cố lịch sử Việt Nam, bám không khí thời đại."
+    naming: {names: viet, places: that}
+    setup_brief: |
+      - Bối cảnh một thời kỳ lịch sử Việt Nam; nhân vật chính là người thường, không thay đổi sự kiện lớn có thật.
+      - Không gán lời nói hay việc làm bịa cho nhân vật lịch sử có thật; họ chỉ đứng ở hậu cảnh.
+      - Xung đột chọn một trong: sống sót qua biến động, giữ gia đình, lựa chọn phe, bảo vệ một điều quý.
+      - Cú lật: người thân có đời sống bí mật, một vật cũ mang câu chuyện khác.
+      - Kết: số phận riêng của nhân vật chính khép lại, trong khi thời cuộc vẫn đi tiếp.
+  - key: trinh_tham
+    label: "Trinh thám"
+    hint: "Một vụ án, manh mối công bằng với người chơi, nghi phạm nào cũng có lý do."
+    naming: {names: viet, places: that}
+    setup_brief: |
+      - Một vụ án trung tâm; manh mối gieo công bằng để người chơi tự đoán được trước khi lộ.
+      - Ít nhất ba nghi phạm có động cơ; một manh mối giả dẫn sai hướng.
+      - Bí mật: hung thủ, động cơ thật, và một sự thật phụ khiến vụ án khác hẳn bề ngoài.
+      - Kết: lời giải khớp mọi manh mối đã gieo, hung thủ bị lật mặt bằng chứng cứ có trên trang.
+  - key: do_thi
+    label: "Đô thị"
+    hint: "Thành phố hôm nay: công việc, tiền, tình thân và những lựa chọn đời thường."
+    naming: {names: viet, places: that}
+    setup_brief: |
+      - Đời sống thành phố hiện nay: công việc, nhà trọ, gia đình, bạn bè, mạng xã hội.
+      - Xung đột chọn một trong: nợ nần, cạnh tranh nghề nghiệp, rạn nứt gia đình, một lời nói dối lớn dần.
+      - Bí mật gần gũi: người thân giấu chuyện, đồng nghiệp hai mặt, quá khứ quay lại.
+      - Kết: nhân vật chính có một thay đổi thật trong đời sống, được và mất rõ ràng.
+  - key: hien_dai
+    label: "Hiện đại"
+    hint: "Thế giới hiện đại hư cấu: tập đoàn, gia tộc, bí ẩn ngay dưới vẻ bình thường."
+    naming: {names: viet, places: hu_cau}
+    setup_brief: |
+      - Thế giới hiện đại với thành phố, công ty, gia tộc hư cấu.
+      - Xung đột chọn một trong: tranh đoạt tài sản, âm mưu doanh nghiệp, bí mật gia đình, mối quan hệ bị thao túng.
+      - Cú lật: đồng minh là kẻ giật dây, nạn nhân không vô tội, một hợp đồng cũ đổi cục diện.
+      - Kết: cán cân quyền lực đổi hẳn, mạch chính được gỡ.
+  - key: tuong_lai
+    label: "Tương lai giả tưởng"
+    hint: "Công nghệ, xã hội tương lai hay hậu tận thế, và cái giá con người phải trả."
+    naming: {names: viet, places: hu_cau}
+    setup_brief: |
+      - Thế giới tương lai có một luật công nghệ hay xã hội rõ ràng, nhất quán, tác động tới đời thường.
+      - Xung đột chọn một trong: sinh tồn, hệ thống kiểm soát, ký ức hay danh tính bị can thiệp, tài nguyên cạn kiệt.
+      - Cú lật: hệ thống không như nó tự nhận, nhân vật chính là một phần của vấn đề.
+      - Kết: nhân vật chính chọn giữa an toàn và tự do, cái giá thấy rõ.
+  - key: sang_van
+    label: "Sảng văn · hào môn"
+    hint: "Thân phận thật giả, hào môn, trà xanh, vả mặt: đã tai, lật thế liên tục."
+    naming: {names: viet, places: hu_cau}
+    setup_brief: |
+      - Sảng văn hào môn: thân phận thật giả, gia tộc giàu có, trà xanh, vả mặt.
+      - Xung đột leo thang: mỗi mốc cốt truyện là một lần lật thế, phản diện mất một thứ cụ thể trước đám đông (tiền,
+        chức, quyền, hôn ước, thể diện).
+      - Cái kết chốt danh phận và quyền lợi của nhân vật chính và một hình phạt công khai, cụ thể cho phản diện;
+        không kết bằng lời hứa hay một cuộc họp để sau.
+    outline_brief: |
+      - Mỗi cảnh có một bước lật thế rõ: một bên được hay mất một thứ cụ thể (tiền, chức, quyền, hôn ước, thể diện
+        trước đám đông). Mỗi chương có ít nhất một màn vả mặt phản diện kèm một mất mát cụ thể của phản diện.
+      - Phản diện không tự thú khi chưa bị dồn bằng một chứng cứ không chối được xuất hiện ngay trên trang (giấy tờ
+        gốc, ghi âm, nhân chứng tận mắt). Vật chứng đổi tay thì nói rõ ai đang giữ.
+      - Mỗi màn vả mặt nặng hơn màn trước một bậc hậu quả; không lặp lại cùng một kiểu bẽ mặt (khách im lặng, hạ ly,
+        tránh đứng cạnh).
+      - Chương cuối: phản diện chịu hình phạt công khai và cụ thể.
+    voice_brief: |
+      - Lố và đã tai. Phản diện kiêu căng, khinh người ra mặt; kẻ giả nai diễn sâu (rơm rớm nước mắt, giả yếu đuối,
+        đổ lỗi khéo); người xung quanh a dua theo kẻ mạnh rồi quay ngoắt khi gió đổi chiều.
+      - Nhân vật chính nói ít mà sắc. Mỗi lần đáp trả là một cú vả: một câu đanh, hay một bằng chứng tung ra đúng
+        lúc. Kẻ ác tái mặt, đám đông xôn xao, ai đó bật cười khẩy.
+      - Người kể là nhân vật chính: được bình luận cay, hả hê, châm chọc ngắn ("Tôi suýt bật cười.", "Cô ta còn chưa
+        biết mình sắp mất gì."). Không giảng giải, không đạo lý.
+      - Mỗi màn vả mặt kết bằng một mất mát cụ thể của phản diện, không chỉ tái mặt hay cúi đầu. Trừng phạt là cảnh
+        mất mặt rõ ràng trước mọi người, không kết khô bằng biên bản, thủ tục hay giấy tờ.
+      - Mỗi nhân vật phụ có một kiểu nói nhận ra bằng tai: câu cửa miệng, cách xưng, nói cụt hay nói dài.
