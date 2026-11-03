@@ -248,7 +248,7 @@ def test_story_lengths_open_to_players_are_short_and_medium():
     lengths = load_config().story_lengths
     open_levels = lengths.player_levels()
     assert [k for k, v in open_levels.items() if v.style == "prose"] == ["short", "medium"]
-    assert [k for k, v in open_levels.items() if v.style == "audio"] == ["audio_30", "audio_45", "audio_60"]
+    assert [k for k, v in open_levels.items() if v.style == "audio"] == ["audio_30", "audio_45", "audio_60", "audio_xl"]
     assert {k for k, v in lengths.levels.items() if not v.player_selectable} == {"long", "novel"}
 
 

@@ -1506,3 +1506,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** `make desktop` tạo `WriTory.lnk` trên Desktop trỏ tới `make start` ở thư mục repo, icon `deploy/writory.ico` (ấn chu sa chữ W, màu nút chính của giao diện). `make start` như `make run` rồi tự mở http://localhost:5173 khi `/health` trả 200 và cổng 5173 đã nghe; giao diện đang chạy thì chỉ mở trình duyệt; cổng 8000 bận thì báo và dừng; lỗi thì giữ cửa sổ cho đọc. `make db` (nên cả `make run`) tự bật Docker Desktop nếu engine chưa chạy, tìm file chạy từ chỗ cài lệnh `docker`, đợi tối đa khoảng 3 phút. Không thêm script: mọi thứ nằm trong `makefile`.
 - **Hệ quả:** chỉ cho máy dev Windows có GNU Make và PowerShell 7, không đụng chồng prod (D-103). Phép chờ giao diện kiểm cổng nghe chứ không gọi HTTP: Vite chỉ nghe 127.0.0.1, `Invoke-WebRequest` tới `localhost` thử ::1 trước và quá hạn. Dời repo thì chạy lại `make desktop`.
 - **Người quyết:** chủ dự án yêu cầu; Claude chọn cách làm. Nhánh feature/desktop-icon · 3/11/2026
+
+## D-159 · Mức audio siêu dài, nhãn phút theo số đo TTS thật của chủ dự án (sửa D-155)
+- **Bối cảnh:** chủ dự án chạy mức audio dài nhất (`audio_60`, 6–7 chương) ra khoảng 30 phút với TTS thật, không phải "~1 tiếng" như nhãn (ước tính cũ 8,5 phút mỗi chương ở 160 âm tiết/phút); muốn một mức dài hơn khoảng 1/3, "tầm 10 chương là đủ".
+- **Quyết định:** thêm mức `audio_xl` "Audio siêu dài", 9–10 chương, 4–6 mốc, mở cho người chơi. Nhãn và `minutes` các mức audio theo số đo của chủ dự án (khoảng 4,5 phút mỗi chương): `audio_30` ~15 phút, `audio_45` ~23 phút, `audio_60` ~30 phút, `audio_xl` ~45 phút. Khoá giữ nguyên vì truyện đã lưu `length_level`; `target_chars` vẫn là số chữ thật. Số trong `config/story_lengths.yaml`.
+- **Người quyết:** chủ dự án (mức 9–10 chương, đổi nhãn theo số đo; chọn 3/11/2026). Nhánh feature/library-audio-xl · 3/11/2026
+

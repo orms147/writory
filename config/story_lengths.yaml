@@ -14,16 +14,19 @@ levels:
            milestones: {min: 4, max: 8},  max_due_per_chapter: 3, player_selectable: true}
   long:   {label: "Truyện dài",       target_chars: 180000, chapters: {min: 20, max: 35},
            milestones: {min: 6, max: 12}, max_due_per_chapter: 3, player_selectable: false}
-  # Kịch bản audio (D-155, D-156; số tạm, Claude chọn, chờ chủ dự án duyệt): đo bằng phút nghe. Độ dài thật do số
-  # chương quyết (target_chars không vào đề viết). Đo 1/11/2026: một chương audio 2 cảnh ra khoảng 1360 âm tiết, tức
-  # khoảng 8,5 phút ở 160 âm tiết/phút (tốc độ sách nói tiếng Anh 150–160 từ/phút, chưa đo trên TTS tiếng Việt thật);
-  # model thường chọn số chương tối đa, nên mức 45 phút là một số chương. Số mốc tối đa ít nhất 4: đề khởi tạo đòi
-  # mỗi hồi một mốc, truyện 4 hồi cần 4 mốc (D-157). target_chars = phút × 730 (ghi chú).
-  audio_30: {label: "Audio ~30 phút", target_chars: 21900, chapters: {min: 3, max: 4}, style: audio, minutes: 30,
+  # Kịch bản audio (D-155, D-156, D-159): đo bằng phút nghe. Độ dài thật do số chương quyết (target_chars không vào đề
+  # viết; ghi số chữ thật, khoảng 6200 ký tự mỗi chương: một chương 2 cảnh ra khoảng 1360 âm tiết, đo 1/11/2026). Phút
+  # nghe theo số đo của chủ dự án (3/11/2026): mức 6–7 chương ra khoảng 30 phút với TTS thật, tức khoảng 4,5 phút
+  # mỗi chương; ước tính cũ 8,5 phút/chương (160 âm tiết/phút) chậm hơn TTS thật. Khoá giữ nguyên vì truyện đã lưu
+  # length_level. Số mốc tối đa ít nhất 4: đề khởi tạo đòi mỗi hồi một mốc, truyện 4 hồi cần 4 mốc (D-157).
+  audio_30: {label: "Audio ~15 phút", target_chars: 21900, chapters: {min: 3, max: 4}, style: audio, minutes: 15,
              milestones: {min: 2, max: 4}, max_due_per_chapter: 3, player_selectable: true}
-  audio_45: {label: "Audio ~45 phút", target_chars: 32850, chapters: {min: 5, max: 5}, style: audio, minutes: 45,
+  audio_45: {label: "Audio ~23 phút", target_chars: 32850, chapters: {min: 5, max: 5}, style: audio, minutes: 23,
              milestones: {min: 3, max: 5}, max_due_per_chapter: 3, player_selectable: true}
-  audio_60: {label: "Audio ~1 tiếng", target_chars: 43800, chapters: {min: 6, max: 7}, style: audio, minutes: 60,
+  audio_60: {label: "Audio ~30 phút", target_chars: 43800, chapters: {min: 6, max: 7}, style: audio, minutes: 30,
              milestones: {min: 3, max: 5}, max_due_per_chapter: 3, player_selectable: true}
+  # Siêu dài (chủ dự án, 3/11/2026): dài hơn mức 6–7 chương khoảng 1/3, "tầm 10 chương là đủ".
+  audio_xl: {label: "Audio siêu dài", target_chars: 59000, chapters: {min: 9, max: 10}, style: audio, minutes: 45,
+             milestones: {min: 4, max: 6}, max_due_per_chapter: 3, player_selectable: true}
   novel:  {label: "Tiểu thuyết mỏng", target_chars: 300000, chapters: {min: 30, max: 60},
            milestones: {min: 8, max: 16}, max_due_per_chapter: 3, player_selectable: false}
