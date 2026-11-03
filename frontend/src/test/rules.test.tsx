@@ -295,11 +295,11 @@ describe('độ dài truyện chỉ gồm mức đang mở (D-88)', () => {
     withMock();
     const config = await api.publicConfig();
     expect(config.story_lengths.map((l) => l.key)).toEqual(['short', 'medium', 'audio_30', 'audio_45', 'audio_60', 'audio_xl']);
-    const err = await api.startSetup({ tags: { genre: 'kiếm hiệp', voice: null }, length_level: 'long', naming: null }).catch((e: unknown) => e);
+    const err = await api.startSetup({ genres: ['co_trang'], tags: { voice: null }, length_level: 'long', naming: null }).catch((e: unknown) => e);
     expect(err).toBeInstanceOf(ApiError);
     expect((err as ApiError).code).toBe('STORY_LENGTH_NOT_OPEN');
     expect((err as ApiError).fields).toEqual(['length_level']);
-    const unknown = await api.startSetup({ tags: { genre: 'kiếm hiệp', voice: null }, length_level: 'khong-co', naming: null }).catch((e: unknown) => e);
+    const unknown = await api.startSetup({ genres: ['co_trang'], tags: { voice: null }, length_level: 'khong-co', naming: null }).catch((e: unknown) => e);
     expect((unknown as ApiError).code).toBe('REQUEST_INVALID');
   });
 });

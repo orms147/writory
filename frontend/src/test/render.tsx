@@ -21,6 +21,7 @@ export function oddConfig(): PublicConfig {
       personality_max_chars: 211,
       backstory_max_chars: 457,
       narrator_question_max_chars: 89,
+      story_idea_max_chars: 911,
     },
     cost_usd: { per_scene: 0.37, per_chapter: 1.23, per_story: 4.56 },
     chapter_estimate_default_usd: 0.0377,

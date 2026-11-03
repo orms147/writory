@@ -1,16 +1,7 @@
 // Dữ liệu mẫu cho lớp mock (D-69). Truyện bịa riêng cho giao diện; không chép truyện mẫu của repo
 // (`data/sample-story/`) hay chữ trong ảnh thiết kế. Mọi con số ở đây là số mẫu của máy chủ giả.
 
-import type {
-  CharacterOption,
-  NotebookOut,
-  PlayerChoice,
-  PlotOption,
-  PublicConfig,
-  SettingOption,
-  StoryLengthOption,
-  StoryStyle,
-} from '../api/types';
+import type { CharacterOption, GenreOption, NotebookOut, PlayerChoice, PlotOption, PublicConfig, SettingOption, StoryLengthOption, StoryStyle } from '../api/types';
 
 /** Mọi mức độ dài của máy chủ giả, như `config/story_lengths.yaml`. `/config/public` chỉ trả mức
  *  `player_selectable`; `/setup` từ chối mức đóng bằng `STORY_LENGTH_NOT_OPEN` (D-88). */
@@ -26,6 +17,18 @@ export const MOCK_LENGTH_LEVELS: (StoryLengthOption & { player_selectable: boole
   { key: 'audio_xl', label: 'Audio siêu dài', chapters_min: 9, chapters_max: 10, style: 'audio', minutes: 45, player_selectable: true },
 ];
 
+/** Danh mục thể loại của máy chủ giả, như `config/genres.yaml` (D-160): khoá, nhãn, gợi ý, kiểu truyện. */
+export const MOCK_GENRES: GenreOption[] = [
+  { key: 'ky_ao_tu_tien', label: 'Kỳ ảo · tu tiên', hint: 'Thế giới tu luyện, cảnh giới, tông môn, pháp bảo và cái giá của sức mạnh.', styles: ['prose', 'audio'] },
+  { key: 'co_trang', label: 'Cổ trang', hint: 'Triều đình, gia tộc, lễ giáo phong kiến và những bí mật sau tường cao.', styles: ['prose', 'audio'] },
+  { key: 'lich_su', label: 'Lịch sử', hint: 'Người thường giữa biến cố lịch sử Việt Nam, bám không khí thời đại.', styles: ['prose', 'audio'] },
+  { key: 'trinh_tham', label: 'Trinh thám', hint: 'Một vụ án, manh mối công bằng với người chơi, nghi phạm nào cũng có lý do.', styles: ['prose', 'audio'] },
+  { key: 'do_thi', label: 'Đô thị', hint: 'Thành phố hôm nay: công việc, tiền, tình thân và những lựa chọn đời thường.', styles: ['prose', 'audio'] },
+  { key: 'hien_dai', label: 'Hiện đại', hint: 'Thế giới hiện đại hư cấu: tập đoàn, gia tộc, bí ẩn ngay dưới vẻ bình thường.', styles: ['prose', 'audio'] },
+  { key: 'tuong_lai', label: 'Tương lai giả tưởng', hint: 'Công nghệ, xã hội tương lai hay hậu tận thế, và cái giá con người phải trả.', styles: ['prose', 'audio'] },
+  { key: 'sang_van', label: 'Sảng văn · hào môn', hint: 'Thân phận thật giả, hào môn, trà xanh, vả mặt: đã tai, lật thế liên tục.', styles: ['prose', 'audio'] },
+];
+
 export const MOCK_CONFIG: PublicConfig = {
   input: {
     custom_action_max_chars: 200,
@@ -33,6 +36,7 @@ export const MOCK_CONFIG: PublicConfig = {
     personality_max_chars: 300,
     backstory_max_chars: 600,
     narrator_question_max_chars: 300,
+    story_idea_max_chars: 1500,
   },
   narrator_questions_per_chapter: 3,
   rewrite_per_scene: 1,
@@ -53,6 +57,8 @@ export const MOCK_CONFIG: PublicConfig = {
   default_darkness_level: 'medium',
   writer_tier: { label: 'Tiêu chuẩn' },
   chapter_estimate_default_usd: 0.01,
+  genres: MOCK_GENRES,
+  max_genres: 3,
 };
 
 export const SCENES: string[] = [
