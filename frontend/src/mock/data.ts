@@ -1,16 +1,7 @@
 // Dữ liệu mẫu cho lớp mock (D-69). Truyện bịa riêng cho giao diện; không chép truyện mẫu của repo
 // (`data/sample-story/`) hay chữ trong ảnh thiết kế. Mọi con số ở đây là số mẫu của máy chủ giả.
 
-import type {
-  CharacterOption,
-  NotebookOut,
-  PlayerChoice,
-  PlotOption,
-  PublicConfig,
-  SettingOption,
-  StoryLengthOption,
-  StoryStyle,
-} from '../api/types';
+import type { CharacterOption, GenreOption, NotebookOut, PlayerChoice, PlotOption, PublicConfig, SettingOption, StoryLengthOption, StoryStyle } from '../api/types';
 
 /** Mọi mức độ dài của máy chủ giả, như `config/story_lengths.yaml`. `/config/public` chỉ trả mức
  *  `player_selectable`; `/setup` từ chối mức đóng bằng `STORY_LENGTH_NOT_OPEN` (D-88). */
@@ -26,6 +17,34 @@ export const MOCK_LENGTH_LEVELS: (StoryLengthOption & { player_selectable: boole
   { key: 'audio_xl', label: 'Audio siêu dài', chapters_min: 9, chapters_max: 10, style: 'audio', minutes: 45, player_selectable: true },
 ];
 
+/** Danh mục thể loại của máy chủ giả, như `config/genres.yaml` (D-160): khoá, nhãn, gợi ý, kiểu truyện. */
+export const MOCK_GENRES: GenreOption[] = [
+  { key: 'ky_ao_tu_tien', label: 'Kỳ ảo · tu tiên', hint: 'Tu luyện, tông môn và bí cảnh trong thế giới linh khí, nơi mỗi lần đột phá đều phải trả giá.', styles: ['prose', 'audio'] },
+  { key: 'co_trang', label: 'Cổ trang', hint: 'Triều đình, gia tộc và giang hồ thời xưa, nơi mưu trí, lễ giáo và danh phận quyết định thắng thua.', styles: ['prose', 'audio'] },
+  { key: 'lich_su', label: 'Lịch sử', hint: 'Sống giữa một thời kỳ có thật, làm người nhỏ bé mà lựa chọn vẫn chạm vào biến cố lớn.', styles: ['prose', 'audio'] },
+  { key: 'trinh_tham', label: 'Trinh thám', hint: 'Theo dấu manh mối, lật mặt thủ phạm bằng suy luận công bằng: mọi lời giải đều đã được gieo từ trước.', styles: ['prose', 'audio'] },
+  { key: 'do_thi', label: 'Đô thị', hint: 'Thành phố chật chội, đắt đỏ và đầy cơ hội, nơi tiền thuê nhà, công việc và quan hệ kéo nhau đi lên hoặc xuống.', styles: ['prose', 'audio'] },
+  { key: 'hien_dai', label: 'Hiện đại', hint: 'Đời sống hôm nay với công việc, gia đình, tình cảm và những lựa chọn rất người, rất gần.', styles: ['prose', 'audio'] },
+  { key: 'tuong_lai', label: 'Tương lai giả tưởng', hint: 'Công nghệ và xã hội của ngày mai đặt con người trước những lựa chọn chưa từng có tiền lệ.', styles: ['prose', 'audio'] },
+  { key: 'sang_van', label: 'Sảng văn · hào môn', hint: 'Thân phận thật giả, hào môn, trà xanh, vả mặt: đã tai, lật thế liên tục.', styles: ['prose', 'audio'] },
+  { key: 'mat_the_sinh_ton', label: 'Mạt thế · sinh tồn', hint: 'Thế giới sụp đổ, thiếu ăn thiếu thuốc: mỗi lựa chọn đổi bằng một thứ không lấy lại được.', styles: ['prose', 'audio'] },
+  { key: 'vo_hiep_giang_ho', label: 'Võ hiệp · giang hồ', hint: 'Môn phái, ân oán và một chiêu thức thất truyền: danh tiếng đi trước người, nợ phải trả.', styles: ['prose', 'audio'] },
+  { key: 'ngon_tinh_hien_dai', label: 'Ngôn tình · hiện đại', hint: 'Hai người lớn va vào nhau giữa đời thường: rung động có thật, rào cản cũng có thật.', styles: ['prose', 'audio'] },
+  { key: 'trong_sinh_lam_lai', label: 'Trọng sinh · làm lại đời', hint: 'Sống lại với ký ức đời trước: biết trước một đoạn đường, nhưng đời đã rẽ khác.', styles: ['prose', 'audio'] },
+  { key: 'he_thong_tro_choi', label: 'Hệ thống · như trò chơi', hint: 'Nhiệm vụ, cấp bậc và phần thưởng hiện trước mắt: lên cấp thật, cái giá cũng thật.', styles: ['prose'] },
+  { key: 'hoc_duong_thanh_xuan', label: 'Học đường · thanh xuân', hint: 'Bạn cùng bàn, kỳ thi và mối tình đầu chưa dám nói: những năm tháng không quay lại.', styles: ['prose', 'audio'] },
+  { key: 'dien_van_lam_giau', label: 'Điền văn · làm giàu ở quê', hint: 'Về quê dựng lại từ mảnh vườn, gian bếp: giàu lên chậm rãi bằng tay nghề và tình làng.', styles: ['prose', 'audio'] },
+  { key: 'xuyen_khong', label: 'Xuyên không · lạc sang đời khác', hint: 'Lạc vào thân phận và thời thế xa lạ, phải sống sót bằng trí nhớ cũ và học lại luật mới.', styles: ['prose', 'audio'] },
+  { key: 'cung_dau', label: 'Cung đấu · hậu cung', hint: 'Giữa lễ nghi và vị phân, một câu nói, một món quà cũng có thể đổi mạng người.', styles: ['prose', 'audio'] },
+  { key: 'hai_huoc_doi_thuong', label: 'Hài hước · đời thường', hint: 'Xóm giềng, nhà trọ, chuyện mưu sinh vụn vặt: càng nghiêm túc tính toán càng sai bét.', styles: ['prose', 'audio'] },
+  { key: 'the_thao_thi_dau', label: 'Thể thao · thi đấu', hint: 'Tập luyện, chấn thương, đối thủ xứng tầm và trận đấu mà thắng thua đổi cả mùa giải.', styles: ['prose', 'audio'] },
+  { key: 'am_thuc', label: 'Ẩm thực · vị nhớ', hint: 'Một món ăn mở ra bí mật gia đình, một gian bếp nhỏ tranh nhau bằng tay nghề thật.', styles: ['prose'] },
+  { key: 'phieu_luu_kham_pha', label: 'Phiêu lưu · khám phá', hint: 'Bản đồ thiếu, đất lạ và đồng đội bất đắc dĩ: mỗi chặng đi mở một bí mật lớn hơn.', styles: ['prose', 'audio'] },
+  { key: 'quan_su_chien_tranh', label: 'Quân sự · chiến tranh hư cấu', hint: 'Mặt trận hư cấu, mệnh lệnh và đồng đội phải đưa nhau qua từng chặng của một chiến dịch.', styles: ['prose'] },
+  { key: 'linh_di_dan_gian', label: 'Kinh dị · linh dị dân gian', hint: 'Làng quê, lệ làng, vật bị yểm và điều cấm kỵ: sợ từ những thứ quen thuộc nhất.', styles: ['prose', 'audio'] },
+  { key: 'tam_ly_toi_pham', label: 'Tâm lý tội phạm', hint: 'Đọc hành vi, lần vào suy nghĩ của kẻ gây án qua thẩm vấn và đàm phán trước lần gây án tiếp theo.', styles: ['prose'] },
+];
+
 export const MOCK_CONFIG: PublicConfig = {
   input: {
     custom_action_max_chars: 200,
@@ -33,6 +52,7 @@ export const MOCK_CONFIG: PublicConfig = {
     personality_max_chars: 300,
     backstory_max_chars: 600,
     narrator_question_max_chars: 300,
+    story_idea_max_chars: 1500,
   },
   narrator_questions_per_chapter: 3,
   rewrite_per_scene: 1,
@@ -53,6 +73,8 @@ export const MOCK_CONFIG: PublicConfig = {
   default_darkness_level: 'medium',
   writer_tier: { label: 'Tiêu chuẩn' },
   chapter_estimate_default_usd: 0.01,
+  genres: MOCK_GENRES,
+  max_genres: 3,
 };
 
 export const SCENES: string[] = [

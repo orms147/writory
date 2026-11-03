@@ -1,20 +1,21 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { api } from '../../api/client';
 import { asApiError, type ApiError } from '../../api/errors';
 import type { NamesStyle, PlacesStyle, SetupStartIn, StoryStyle } from '../../api/types';
+import { ChipMultiSelect } from '../../components/ChipMultiSelect';
 import { ErrorBlock } from '../../components/ErrorBlock';
 import { RadioGroup } from '../../components/RadioGroup';
 import { Button, Kicker, cx } from '../../components/ui';
 import { usePublicConfig } from '../../config/PublicConfig';
 import { once } from '../../lib/inflight';
+import { readSetupDraft, saveSetupDraft } from '../../state/setupDraft';
 import { SetupHeader } from './SetupHeader';
 
-// Khởi tạo · khuôn truyện (D-KhoiTao-Khuon, M-Khuon). Thể loại và giọng văn là nhãn giao diện
-// (gửi nguyên chữ làm tag, chữ người chơi chọn: G4). Độ dài và mức u tối lấy từ `/config/public`.
-// Quy ước tên: mặc định để máy chủ đặt theo thể loại (`naming: null`, D-32).
-
-export const GENRES = ['Kỳ ảo · tu tiên', 'Cổ trang', 'Lịch sử', 'Trinh thám', 'Đô thị', 'Hiện đại', 'Tương lai giả tưởng'];
+// Khởi tạo · khuôn truyện (D-KhoiTao-Khuon, M-Khuon). Thể loại là khoá trong danh mục `/config/public` (chọn
+// nhiều, theo thứ tự chọn, D-160); giọng văn là nhãn giao diện (gửi nguyên chữ làm tag, G4). Độ dài và mức u tối
+// lấy từ `/config/public`. Ý tưởng tuỳ chọn, trần ký tự từ config. Quy ước tên: mặc định để máy chủ đặt theo thể
+// loại chọn đầu (`naming: null`, D-32, D-160).
 export const VOICES = ['Trầm, lạnh', 'Trữ tình', 'Gai góc', 'Hóm hỉnh'];
 
 const NAMES: { key: NamesStyle; label: string; example: string }[] = [
@@ -62,12 +63,18 @@ function Section({ id, title, aside, children }: { id: string; title: string; as
 export function Template() {
   const config = usePublicConfig();
   const navigate = useNavigate();
-  const ids = { genre: useId(), naming: useId(), names: useId(), places: useId(), voice: useId(), dark: useId(), style: useId(), length: useId(), pov: useId() };
-  const [genre, setGenre] = useState<string | null>(null);
-  const [voice, setVoice] = useState<string | null>(null);
+  const ids = { genre: useId(), idea: useId(), ideaCount: useId(), naming: useId(), names: useId(), places: useId(), voice: useId(), dark: useId(), style: useId(), length: useId(), pov: useId() };
+  // Nháp từ lần trước (D-160): quay lại sửa khi ý tưởng bị chặn thì không mất chữ đã gõ.
+  const [draft] = useState(readSetupDraft);
+  const [style, setStyle] = useState<StoryStyle>(draft.style ?? 'prose');
+  const [genres, setGenres] = useState<string[]>(() =>
+    (draft.genres ?? []).filter((k) => config.genres.some((g) => g.key === k && g.styles.includes(draft.style ?? 'prose'))).slice(0, config.max_genres),
+  );
+  const [idea, setIdea] = useState(draft.idea ?? '');
+  const [voice, setVoice] = useState<string | null>(draft.voice ?? null);
   const [darkness, setDarkness] = useState<string | null>(config.default_darkness_level);
-  const [style, setStyle] = useState<StoryStyle>('prose');
-  const [length, setLength] = useState<string | null>(null);
+  const [length, setLength] = useState<string | null>(draft.length ?? null);
+  useEffect(() => saveSetupDraft({ genres, idea, style, length, voice }), [genres, idea, style, length, voice]);
   const [names, setNames] = useState<NamesStyle | null>(null);
   const [places, setPlaces] = useState<PlacesStyle | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
@@ -79,7 +86,11 @@ export function Template() {
   const levels = config.story_lengths.filter((l) => l.style === style);
   const level = levels.find((l) => l.key === length) ?? null;
   const darkLabel = config.darkness_levels.find((d) => d.key === darkness)?.label ?? null;
-  const ready = genre !== null && level !== null && !sending;
+  // Thể loại mở cho kiểu truyện đang chọn, theo thứ tự danh mục; tên hiện theo thứ tự người chơi chọn.
+  const genreOptions = config.genres.filter((g) => g.styles.includes(style));
+  const genreLabels = genres.map((k) => config.genres.find((g) => g.key === k)?.label ?? k);
+  const ideaMax = config.input.story_idea_max_chars;
+  const ready = genres.length > 0 && level !== null && !sending;
 
   const pickNames = (k: NamesStyle | null) => {
     setNames(k);
@@ -93,12 +104,15 @@ export function Template() {
   const pickStyle = (k: StoryStyle | null) => {
     const next = k ?? 'prose';
     setStyle(next);
+    // Thể loại không dùng được cho kiểu mới thì bỏ chọn, không gửi lên (máy chủ từ chối).
+    setGenres((cur) => cur.filter((key) => config.genres.find((g) => g.key === key)?.styles.includes(next)));
     const kept = config.story_lengths.find((l) => l.key === length && l.style === next);
     if (!kept) setLength(config.story_lengths.find((l) => l.style === next)?.key ?? null);
   };
 
   const summary = [
-    genre ?? 'chưa chọn thể loại',
+    genreLabels.length ? genreLabels.join(' + ') : 'chưa chọn thể loại',
+    idea.trim() && 'có ý tưởng riêng',
     voice?.toLocaleLowerCase('vi'),
     darkLabel && `u tối ${darkLabel.toLocaleLowerCase('vi')}`,
     style === 'audio' && 'kịch bản audio',
@@ -111,11 +125,14 @@ export function Template() {
     .join(' · ');
 
   const submit = async () => {
-    if (!ready || !genre || !level) return;
+    if (!ready || !level) return;
+    const trimmed = idea.trim();
     setSending(true);
     setError(null);
     const body: SetupStartIn = {
-      tags: { genre, voice },
+      genres,
+      tags: { voice },
+      ...(trimmed ? { idea: trimmed } : {}),
       length_level: level.key,
       naming: custom && names && places ? { names, places } : null,
       ...(darkness ? { darkness_level: darkness } : {}),
@@ -137,17 +154,54 @@ export function Template() {
       <div className="mx-auto grid w-full max-w-[1440px] gap-10 px-4 md:grid-cols-[1fr_300px] md:px-[100px] lg:gap-16">
         <div className="min-w-0">
           <h1 className="mt-8 font-display text-[34px] font-medium leading-tight md:mt-11 md:text-[50px]">Bạn muốn sống trong loại truyện nào?</h1>
-          <p className="mt-2 text-[15px] text-ink-200">Chọn một thể loại chính. Phần còn lại để ngòi bút đề xuất.</p>
+          <p className="mt-2 text-[15px] text-ink-200">{`Chọn tới ${config.max_genres} thể loại, thêm ý tưởng nếu muốn. Phần còn lại để ngòi bút đề xuất.`}</p>
 
-          <Section id={ids.genre} title="A · Thể loại chính — chọn một">
-            <RadioGroup
+          <Section
+            id={ids.genre}
+            title={`A · Thể loại — chọn tối đa ${config.max_genres}`}
+            aside={<span className="text-[13px] text-ink-400">{`${genres.length}/${config.max_genres}`}</span>}
+          >
+            <ChipMultiSelect
               labelledBy={ids.genre}
-              options={GENRES.map((g) => ({ key: g }))}
-              value={genre}
-              onChange={setGenre}
+              options={genreOptions}
+              value={genres}
+              onChange={setGenres}
+              max={config.max_genres}
               className="flex flex-wrap gap-2.5"
-              optionClassName={(_, c) => chip(c)}
-              render={(o) => o.key}
+              chipClassName={(c) => chip(c)}
+            />
+            {genres.length > 0 && (
+              <ul className="mt-3 space-y-1 text-[13px] text-ink-200">
+                {genres.map((k) => {
+                  const g = config.genres.find((x) => x.key === k);
+                  return g ? (
+                    <li key={k}>
+                      <span className="font-semibold text-ink-100">{g.label}:</span> {g.hint}
+                    </li>
+                  ) : null;
+                })}
+              </ul>
+            )}
+          </Section>
+
+          <Section
+            id={ids.idea}
+            title="Ý tưởng của bạn · không bắt buộc"
+            aside={
+              ideaMax !== null ? (
+                <span id={ids.ideaCount} className="text-[13px] text-ink-400">{`${idea.length}/${ideaMax}`}</span>
+              ) : undefined
+            }
+          >
+            <textarea
+              aria-labelledby={ids.idea}
+              aria-describedby={ideaMax !== null ? ids.ideaCount : undefined}
+              value={idea}
+              onChange={(e) => setIdea(e.target.value)}
+              maxLength={ideaMax ?? undefined}
+              rows={4}
+              placeholder="Một hay nhiều câu: bối cảnh, nhân vật, giọng hài hay phản pháo, bạn thân đồng lòng hay ganh ghét… Để trống thì ngòi bút tự sáng tác."
+              className="w-full rounded-[12px] border border-ink-700 bg-ink-900 px-4 py-3 font-reading text-[15px] text-ink-50 placeholder:text-ink-400"
             />
           </Section>
 
@@ -321,7 +375,7 @@ export function Template() {
                 {sending ? 'Đang mở phiên…' : 'Gợi ý bối cảnh'}
               </Button>
               <p className="mt-2 text-center text-[12px] text-ink-400">
-                {genre && level ? 'Ngòi bút sẽ đưa ra ba bối cảnh để bạn chọn.' : 'Chọn thể loại chính và độ dài trước.'}
+                {genres.length > 0 && level ? 'Ngòi bút sẽ đưa ra ba bối cảnh để bạn chọn.' : 'Chọn ít nhất một thể loại và độ dài trước.'}
               </p>
             </div>
             {error && <ErrorBlock className="mt-4" error={error} onRetry={submit} />}

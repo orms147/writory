@@ -5,6 +5,7 @@ nào đưa nó ra API (G1).
 """
 
 import logging
+from collections.abc import Sequence
 
 import psycopg
 from neo4j import Driver
@@ -23,7 +24,7 @@ log = logging.getLogger(__name__)
 def start_story(
     conn: psycopg.Connection, driver: Driver, story_id: str, *, owner_id: str, length_level: str,
     brief: str, plan: StoryPlan, initial: ChangePackage, darkness_level: str | None = None,
-    style: str = "prose",
+    style: str = "prose", genres: Sequence[str] = (),
 ) -> StoryRecord:
     """Tạo truyện, bản kế hoạch và chương 0 (gói `initial`), tất cả hoặc không gì (G11, D-45).
 
@@ -33,7 +34,8 @@ def start_story(
     tiến trình khác không đụng chương 0 đang ghi dở (`db.reconcile_idle_stories`, D-105)."""
     with job_lock(conn, "story", story_id):
         create_story_with_plan(conn, story_id, owner_id=owner_id, length_level=length_level,
-                               brief=brief, plan=plan, darkness_level=darkness_level, style=style)
+                               brief=brief, plan=plan, darkness_level=darkness_level, style=style,
+                               genres=genres)
         try:
             commit_chapter(conn, driver, story_id, 0, [], initial)
         except BaseException:
@@ -56,7 +58,7 @@ def discard_story(conn: psycopg.Connection, driver: Driver, story_id: str) -> No
 
 def create_story_with_plan(
     conn: psycopg.Connection, story_id: str, *, owner_id: str, length_level: str, brief: str,
-    plan: StoryPlan, darkness_level: str | None = None, style: str = "prose",
+    plan: StoryPlan, darkness_level: str | None = None, style: str = "prose", genres: Sequence[str] = (),
 ) -> StoryRecord:
     """Tạo truyện cùng bản kế hoạch và thiết lập trong một transaction: có cả hai hoặc không có gì.
     `darkness_level`: mức u tối người chơi chọn (D-67); None = mức mặc định của config. `style`: kiểu truyện
@@ -64,9 +66,9 @@ def create_story_with_plan(
     require_story_id(story_id)
     with conn.transaction():
         conn.execute(
-            "INSERT INTO stories (id, owner_id, length_level, brief, darkness_level, style) "
-            "VALUES (%s, %s, %s, %s, %s, %s)",
-            (story_id, owner_id, length_level, brief, darkness_level, style),
+            "INSERT INTO stories (id, owner_id, length_level, brief, darkness_level, style, genres) "
+            "VALUES (%s, %s, %s, %s, %s, %s, %s)",
+            (story_id, owner_id, length_level, brief, darkness_level, style, list(genres)),
         )
         conn.execute(
             "INSERT INTO story_plans (story_id, plan) VALUES (%s, %s)",

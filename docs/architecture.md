@@ -187,7 +187,7 @@ sequenceDiagram
 
 ## 5. Đường đi một chương
 
-Kiểu truyện (`stories.style`, D-153) đổi system prompt của model viết: `api/play.py` truyền `pipeline.scene.style_guide_for(story.style)` vào `ChapterRun` (`None` là bản truyện chữ mặc định), và với truyện audio thêm một ghi chú vào system của đề dàn ý (`outline_note_for`, D-155). Khởi tạo truyện audio cũng có ghi chú riêng trong system (`pipeline/setup.AUDIO_SETUP_NOTE`), và bước soát cảnh của truyện audio thêm phép kiểm câu dẫn thoại (`quality.check_dialogue_attribution`, `ChapterRun.story_style`, D-156). Mọi bước khác dưới đây giống nhau cho mọi kiểu.
+Kiểu truyện (`stories.style`, D-153) và thể loại của truyện (`stories.genres`, D-160) đổi system prompt của model viết và của dàn ý: `api/play.py` gọi `pipeline.genres.chapter_notes(story.style, story.genres, config.genres)`, hàm này ghép văn phong theo kiểu truyện (`pipeline.scene.style_guide_for`; `None` là bản truyện chữ mặc định) với `voice_brief` của các thể loại, và ghi chú dàn ý audio (`outline_note_for`, D-155) với `outline_brief` của các thể loại cùng câu nhắc giữ kín cú lật trong ý tưởng người chơi. Đề thể loại là chữ của chủ dự án (`config/genres.yaml`) nên vào system; ý tưởng người chơi chỉ đi trong thiết lập truyện đã bọc (G4). Truyện audio tạo trước D-160 (không khoá thể loại) coi như thể loại `sang_van`. Khởi tạo truyện audio cũng có ghi chú riêng trong system (`pipeline/setup.AUDIO_SETUP_NOTE`), và bước soát cảnh của truyện audio thêm phép kiểm câu dẫn thoại (`quality.check_dialogue_attribution`, `ChapterRun.story_style`, D-156). Mọi bước khác dưới đây giống nhau cho mọi kiểu.
 
 Đồ thị LangGraph thật, dựng trong `_build` (`pipeline/chapter.py`) và biên dịch một lần:
 

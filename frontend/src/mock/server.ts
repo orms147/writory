@@ -22,6 +22,7 @@ import {
   END_SCENE,
   FINISHED_SCENES,
   MOCK_CONFIG,
+  MOCK_GENRES,
   MOCK_LENGTH_LEVELS,
   PLOTS,
   SCENES,
@@ -289,7 +290,11 @@ export function createMockServer(options: MockOptions = {}) {
     seq += 1;
     return {
       session_id: `setup-mock${seq}`, step: 'settings',
-      tags: { genre: body.tags.genre, era: null, voice: body.tags.voice ?? null },
+      tags: {
+        genre: body.genres.map((k) => MOCK_GENRES.find((g) => g.key === k)?.label ?? k).join(', '),
+        era: null,
+        voice: body.tags?.voice ?? null,
+      },
       darkness_level: body.darkness_level ?? null,
       length_level: body.length_level,
       style: body.style ?? 'prose',
@@ -475,11 +480,19 @@ export function createMockServer(options: MockOptions = {}) {
     // --- khởi tạo ---
     if (path === '/setup' && method === 'POST') {
       const start = body as unknown as SetupStartIn;
-      if (!start.tags?.genre) return errorResponse('REQUEST_INVALID', ['tags.genre']);
+      // Kiểu truyện lạ bị từ chối trước (máy chủ thật: lỗi schema).
+      if (start.style !== undefined && !STYLES.includes(start.style)) return errorResponse('REQUEST_INVALID', ['style']);
+      // Thể loại là khoá trong danh mục (D-160): 1..max_genres khoá, không trùng, mở cho kiểu truyện.
+      const style = start.style ?? 'prose';
+      const keys = Array.isArray(start.genres) ? start.genres : [];
+      const known = keys.map((k) => MOCK_GENRES.find((g) => g.key === k));
+      if (keys.length === 0 || keys.length > MOCK_CONFIG.max_genres || new Set(keys).size !== keys.length || known.some((g) => !g || !g.styles.includes(style)))
+        return errorResponse('REQUEST_INVALID', ['genres']);
+      const ideaMax = MOCK_CONFIG.input.story_idea_max_chars;
+      if (typeof start.idea === 'string' && ideaMax !== null && start.idea.trim().length > ideaMax) return errorResponse('REQUEST_INVALID', ['idea']);
       const length = MOCK_LENGTH_LEVELS.find((l) => l.key === start.length_level);
       if (!length) return errorResponse('REQUEST_INVALID', ['length_level']);
       if (!length.player_selectable) return errorResponse('STORY_LENGTH_NOT_OPEN', ['length_level']);
-      if (start.style !== undefined && !STYLES.includes(start.style)) return errorResponse('REQUEST_INVALID', ['style']);
       // Mức độ dài thuộc một kiểu truyện; thiếu `style` là truyện chữ, như máy chủ thật.
       if (length.style !== (start.style ?? 'prose')) return errorResponse('REQUEST_INVALID', ['length_level']);
       const out = newSetup(start);

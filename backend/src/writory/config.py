@@ -97,6 +97,7 @@ class InputLimits(_Section):
     backstory_max_chars: PositiveInt | None
     personality_max_chars: PositiveInt | None  # nhân vật chính người chơi sửa (D-45)
     narrator_question_max_chars: PositiveInt | None  # câu hỏi người kể (D-40)
+    story_idea_max_chars: PositiveInt | None = None  # ý tưởng người chơi gõ lúc khởi tạo (D-160)
 
 
 class NarratorNotebookLimits(_Section):
@@ -435,6 +436,97 @@ class StoryLengthsConfig(_Strict):
         return {k: v for k, v in self.levels.items() if v.player_selectable}
 
 
+# --- genres.yaml -----------------------------------------------------------------------
+# Danh mục thể loại (D-160): chủ dự án thêm thể loại bằng cách sửa file. Đề của thể loại là chữ của chủ dự án, vào
+# system của đề khởi tạo, dàn ý và model viết; yêu cầu cho người soạn ghi ở đầu file.
+
+GENRE_KEY_PATTERN = r"^[a-z0-9_]+$"
+# Truyện audio tạo trước D-160 không có khoá thể loại và luôn được viết giọng sảng văn: coi như có thể loại này.
+LEGACY_AUDIO_GENRE = "sang_van"
+GENRE_BRIEFS = ("setup_brief", "outline_brief", "voice_brief")
+StoryStyle = Literal["prose", "audio"]
+
+
+class GenreLimits(_Strict):
+    """Trần số ký tự của từng trường (số tạm, D-160)."""
+
+    label: PositiveInt
+    hint: PositiveInt
+    setup_brief: PositiveInt
+    outline_brief: PositiveInt
+    voice_brief: PositiveInt
+
+
+class GenreNaming(_Strict):
+    """Quy ước tên mặc định của thể loại (D-32); cùng giá trị với `pipeline.setup.Naming`."""
+
+    names: Literal["han_viet", "viet"]
+    places: Literal["hu_cau", "that"]
+
+
+class Genre(_Strict):
+    key: str = Field(pattern=GENRE_KEY_PATTERN)  # lưu trên truyện (`stories.genres`): không đổi sau khi đã dùng
+    label: str = Field(min_length=1)
+    hint: str = Field(min_length=1)
+    styles: tuple[StoryStyle, ...] = ("prose", "audio")
+    naming: GenreNaming
+    setup_brief: str = Field(min_length=1)
+    outline_brief: str | None = None
+    voice_brief: str | None = None
+
+    @field_validator("label", "hint", "setup_brief", "outline_brief", "voice_brief", mode="before")
+    @classmethod
+    def _strip(cls, value: Any) -> Any:
+        if isinstance(value, str):
+            value = value.strip()
+            return value or None
+        return value
+
+    @field_validator("styles")
+    @classmethod
+    def _styles_set(cls, value: tuple[str, ...]) -> tuple[str, ...]:
+        if not value:
+            raise ValueError("styles: cần ít nhất một kiểu truyện (prose, audio)")
+        if len(set(value)) != len(value):
+            raise ValueError("styles: có kiểu truyện lặp")
+        return value
+
+
+class GenresConfig(_Strict):
+    max_selected: PositiveInt  # người chơi chọn tối đa bấy nhiêu thể loại cho một truyện
+    limits: GenreLimits
+    genres: list[Genre] = Field(min_length=1)
+
+    @model_validator(mode="after")
+    def _consistent(self) -> Self:
+        problems: list[str] = []
+        keys = [g.key for g in self.genres]
+        if dupes := sorted({k for k in keys if keys.count(k) > 1}):
+            problems.append(f"khoá thể loại trùng: {', '.join(dupes)}")
+        for g in self.genres:
+            for field in ("label", "hint", *GENRE_BRIEFS):
+                text = getattr(g, field)
+                cap = getattr(self.limits, field)
+                if text is not None and len(text) > cap:
+                    problems.append(f"{g.key}.{field}: {len(text)} ký tự, quá trần {cap}")
+        legacy = self.get(LEGACY_AUDIO_GENRE)
+        if legacy is None or "audio" not in legacy.styles:
+            problems.append(f"cần thể loại {LEGACY_AUDIO_GENRE} mở cho audio (truyện audio cũ dùng nó)")
+        for style in ("prose", "audio"):
+            if not self.for_style(style):
+                problems.append(f"kiểu {style} chưa có thể loại nào")
+        if problems:
+            raise ValueError("; ".join(problems))
+        return self
+
+    def get(self, key: str) -> Genre | None:
+        return next((g for g in self.genres if g.key == key), None)
+
+    def for_style(self, style: str) -> list[Genre]:
+        """Thể loại mở cho kiểu truyện `style`, theo thứ tự trong file."""
+        return [g for g in self.genres if style in g.styles]
+
+
 # --- quality.yaml ----------------------------------------------------------------------
 
 
@@ -583,6 +675,7 @@ class AppConfig(_Strict):
     quality: QualityConfig
     guard: GuardConfig
     moderation: ModerationConfig
+    genres: GenresConfig
 
 
 _FILES: dict[str, tuple[str, type[BaseModel]]] = {
@@ -592,6 +685,7 @@ _FILES: dict[str, tuple[str, type[BaseModel]]] = {
     "quality": ("quality.yaml", QualityConfig),
     "guard": ("guard.yaml", GuardConfig),
     "moderation": ("moderation.yaml", ModerationConfig),
+    "genres": ("genres.yaml", GenresConfig),
 }
 
 

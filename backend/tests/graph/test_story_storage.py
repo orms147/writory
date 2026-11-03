@@ -20,6 +20,7 @@ from writory.db import (
     delete_player_key,
     finish_setup,
     get_setup,
+    get_story,
     load_action,
     load_choice,
     load_choices,
@@ -86,6 +87,16 @@ def test_story_with_plan_roundtrip(pg, new_db_story_id):
                            brief="Kiếm hiệp, giọng trầm.", plan=PLAN)
     assert load_story_plan(pg, sid) == PLAN
     assert load_story_brief(pg, sid) == "Kiếm hiệp, giọng trầm."
+
+
+def test_story_genres_roundtrip(pg, new_db_story_id):
+    """Khoá thể loại lưu trên truyện theo thứ tự chọn (D-160); truyện tạo không kèm thể loại là rỗng."""
+    sid, old = new_db_story_id(), new_db_story_id()
+    create_story_with_plan(pg, sid, owner_id="dev", length_level="short", brief="b", plan=PLAN,
+                           genres=("trinh_tham", "do_thi"))
+    create_story(pg, old, length_level="short")
+    assert get_story(pg, sid).genres == ("trinh_tham", "do_thi")
+    assert get_story(pg, old).genres == ()
 
 
 def test_story_without_plan_loads_none(pg, new_db_story_id):

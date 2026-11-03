@@ -58,7 +58,7 @@ def test_only_audio_stories_get_the_setup_note_and_prose_prompts_are_unchanged()
     prose = _messages("Việc: thử.", _choices("prose", "short"), CONFIG)
     assert AUDIO_SETUP_NOTE in audio[0].content and AUDIO_SETUP_NOTE not in prose[0].content
     assert prose[0].content == audio[0].content.replace("\n\n" + AUDIO_SETUP_NOTE, "")
-    for must in ("tên", "hình phạt", "một lần"):
+    for must in ("tên", "một lần", "gỡ hết"):
         assert must in AUDIO_SETUP_NOTE, must
 
 

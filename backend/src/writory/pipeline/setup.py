@@ -60,12 +60,14 @@ from writory.graph.schema import EDGE_ENDPOINTS, NAMED_LABELS
 from writory.guard.state import EmptyState, OverlayState, player_view_of
 from writory.llm.base import LLMClient, Message, require_model, role_extra
 from writory.llm.retry import with_json_retries
+from writory.pipeline.genres import IDEA_RULE, genre_note
 from writory.pipeline.story_plan import (
     MilestoneKind,
     StoryPlan,
     WindowShift,
     align_thread_windows,
 )
+from writory.safety.leak import BRIEF_IDEA_PREFIX
 from writory.safety.moderate import darkness_brief
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -85,7 +87,7 @@ log = logging.getLogger(__name__)
 # setup-10: ngoại hình chỉ tả điều nhìn thấy, không mở bằng "Trông", mỗi người khác những người còn lại
 # (D-122). setup-11: mạch phải gỡ khai bí mật trả lời nó (`answered_by`), khoảng gỡ không bắt đầu
 # trước khoảng lộ của bí mật đó (D-135).
-PROMPT_VERSION = "setup-11"
+PROMPT_VERSION = "setup-12"  # setup-12: đề thể loại và ý tưởng người chơi (D-160)
 ROLE = "setup"  # config/models.yaml roles.setup, role_reasoning.setup
 OPTION_COUNT = 3  # design §4.1: 3 bối cảnh, 3 hướng, 3 nhân vật
 SECRETS_MIN, SECRETS_MAX = 1, 3  # design §6.1: 1–3 bí mật lớn
@@ -194,6 +196,10 @@ class StoryChoices(_Strict):
     darkness_level: str | None = None
     # Kiểu truyện (D-153): chỉ đổi văn phong của model viết; phiên tạo trước D-153 là truyện chữ.
     style: Literal["prose", "audio"] = "prose"
+    # Khoá thể loại trong config/genres.yaml theo thứ tự chọn (D-160); phiên tạo trước D-160 không có.
+    genres: tuple[str, ...] = ()
+    # Ý tưởng người chơi gõ lúc khởi tạo (D-160): chữ người chơi, luôn bọc (G4); None = để AI tự sáng tác.
+    idea: str | None = None
 
     def level(self, config: AppConfig) -> LengthLevel:
         try:
@@ -658,15 +664,14 @@ _TAG_LABELS = (("genre", "thể loại"), ("era", "thời đại"), ("voice", "g
                ("darkness", "mức độ u tối"))
 
 
-AUDIO_SETUP_NOTE = """Truyện này là kịch bản audio sảng văn (hào môn, thân phận thật giả, trà xanh, vả mặt): một giọng \
-đọc máy đọc cho người nghe, không ai nhìn thấy chữ (D-155).
+AUDIO_SETUP_NOTE = """Truyện này là kịch bản audio: một giọng đọc máy đọc cho người nghe, không ai nhìn thấy chữ \
+(D-155). Giọng và kiểu xung đột theo thể loại người chơi chọn (D-160).
 - Tên: mỗi nhân vật quan trọng có tên gọi khác hẳn nhau khi nghe (khác âm đầu và vần; không hai tên na ná như Khang \
 và Khánh). Người cùng nhà có thể cùng họ nhưng được gọi bằng tên riêng hay vai trong nhà (ông nội, bà cả) khác nhau.
-- Xung đột leo thang: mỗi mốc cốt truyện là một lần lật thế, phản diện mất một thứ cụ thể trước đám đông (tiền, chức, \
-quyền, hôn ước, thể diện).
+- Mỗi mốc cốt truyện là một lần đổi thế người nghe nhận ra ngay, kèm một được mất cụ thể.
 - Mỗi bí mật lộ đúng một lần rồi kéo theo hậu quả; không bí mật nào chỉ để xác nhận đi xác nhận lại.
-- Cái kết chốt danh phận và quyền lợi của nhân vật chính và một hình phạt công khai, cụ thể cho phản diện; không kết \
-bằng lời hứa hay một cuộc họp để sau."""
+- Cái kết gỡ hết các mạch đã mở và chốt số phận của nhân vật chính; không kết bằng lời hứa hay một cuộc hẹn để \
+sau."""
 
 
 def _naming_rule(naming: Naming) -> str:
@@ -707,9 +712,14 @@ def _messages(
         "Mức u tối người chơi đã chọn:",
         UserAuthored(darkness_brief(config.moderation, choices.darkness_level), "darkness_level"),
     ]
+    if choices.idea:  # D-160: chữ người chơi, chỉ trong khối bọc
+        brief += ["Ý tưởng người chơi gửi cho truyện:", UserAuthored(choices.idea, "player_idea")]
+    # Đề thể loại là chữ của chủ dự án (config/genres.yaml): vào system (D-160).
+    genre = genre_note(config.genres, choices.genres, "setup_brief")
     return [
         system_message(_COMMON, _naming_rule(choices.naming),
-                       *([AUDIO_SETUP_NOTE] if choices.style == "audio" else []), task, DATA_NOTICE),
+                       *([AUDIO_SETUP_NOTE] if choices.style == "audio" else []),
+                       *([genre] if genre else []), *([IDEA_RULE] if choices.idea else []), task, DATA_NOTICE),
         user_message(*brief, *parts),
     ]
 
@@ -797,6 +807,8 @@ def story_brief(
     darkness = [] if moderation is None else [darkness_brief(moderation, choices.darkness_level)]
     return "\n".join([
         _tags_text(choices.tags),
+        # D-160: một dòng (xuống dòng gộp lại), để bộ dò lộ nhận ra dòng này (`safety.leak.BRIEF_IDEA_PREFIX`).
+        *([BRIEF_IDEA_PREFIX + " ".join(choices.idea.split())] if choices.idea else []),
         *darkness,  # D-67
         _POV_TEXT[choices.pov],
         f"Quy ước tên và địa danh: {NAMES_TEXT[naming.names]}; {PLACES_TEXT[naming.places]}.",

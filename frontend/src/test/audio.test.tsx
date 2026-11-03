@@ -29,7 +29,7 @@ function recordingMock() {
 }
 
 async function fillTemplate() {
-  await userEvent.click(screen.getByRole('radio', { name: 'Cổ trang' }));
+  await userEvent.click(screen.getByRole('checkbox', { name: 'Cổ trang' }));
   await userEvent.click(screen.getByRole('radio', { name: /Truyện ngắn/ }));
 }
 
@@ -75,7 +75,7 @@ describe('khởi tạo: kiểu truyện', () => {
 
     // Truyện chữ (mặc định): chỉ mức truyện chữ.
     expect(lengths()).toEqual([expect.stringMatching(/^Truyện ngắn/), expect.stringMatching(/^Truyện vừa/)]);
-    await userEvent.click(screen.getByRole('radio', { name: 'Cổ trang' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Cổ trang' }));
     await userEvent.click(screen.getByRole('radio', { name: /Truyện vừa/ }));
 
     // Đổi sang audio: chỉ mức audio, mức đầu được chọn thay mức truyện chữ, có số phút.
@@ -98,7 +98,7 @@ describe('khởi tạo: kiểu truyện', () => {
   it('đổi lại truyện chữ: hiện mức truyện chữ, chọn mức đầu, gửi mức truyện chữ không kèm style', async () => {
     const { seen } = recordingMock();
     renderApp(<Template />);
-    await userEvent.click(screen.getByRole('radio', { name: 'Cổ trang' }));
+    await userEvent.click(screen.getByRole('checkbox', { name: 'Cổ trang' }));
     await userEvent.click(screen.getByRole('radio', { name: /^Kịch bản audio/ }));
     await userEvent.click(screen.getByRole('radio', { name: /Audio siêu dài/ }));
     await userEvent.click(screen.getByRole('radio', { name: /^Truyện chữ/ }));
@@ -131,7 +131,7 @@ describe('khởi tạo: kiểu truyện', () => {
       server.fetch('/api/setup', {
         method: 'POST',
         headers: { 'content-type': 'application/json' },
-        body: JSON.stringify({ tags: { genre: 'Cổ trang' }, naming: null, ...body }),
+        body: JSON.stringify({ genres: ['co_trang'], naming: null, ...body }),
       });
     for (const body of [{ length_level: 'short', style: 'audio' }, { length_level: 'audio_30' }, { length_level: 'audio_30', style: 'prose' }]) {
       const res = await post(body);
@@ -160,7 +160,7 @@ describe('khởi tạo: kiểu truyện', () => {
     const res = await server.fetch('/api/setup', {
       method: 'POST',
       headers: { 'content-type': 'application/json' },
-      body: JSON.stringify({ tags: { genre: 'Cổ trang' }, length_level: 'short', naming: null, style: 'video' }),
+      body: JSON.stringify({ genres: ['co_trang'], length_level: 'short', naming: null, style: 'video' }),
     });
     expect(res.status).toBe(422);
     expect(await res.json()).toMatchObject({ code: 'REQUEST_INVALID', fields: ['style'] });

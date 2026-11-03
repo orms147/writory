@@ -68,22 +68,23 @@ def test_character_choice_body_is_checked(client, body, fields):
 
 
 @pytest.mark.parametrize(("body", "fields"), [
-    ({"tags": {"genre": ""}, "length_level": "short"}, {"tags.genre"}),
-    ({"tags": {"genre": "kiếm hiệp" * 20}, "length_level": "short"}, {"tags.genre"}),
-    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "khong-co"}, {"length_level"}),
-    ({"tags": {"genre": "kiếm hiệp"}}, {"length_level"}),
-    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "pov": "many"}, {"pov"}),
-    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short",
+    # Thể loại là khoá trong config/genres.yaml (D-160): chữ tự do `tags.genre` không còn nhận.
+    ({"tags": {"genre": "kiếm hiệp"}, "genres": ["do_thi"], "length_level": "short"}, {"tags.genre"}),
+    ({"genres": ["x" * 65], "length_level": "short"}, {"genres.0"}),
+    ({"genres": ["do_thi"], "length_level": "khong-co"}, {"length_level"}),
+    ({"genres": ["do_thi"]}, {"length_level"}),
+    ({"genres": ["do_thi"], "length_level": "short", "pov": "many"}, {"pov"}),
+    ({"genres": ["do_thi"], "length_level": "short",
       "naming": {"names": "latin", "places": "hu_cau"}}, {"naming.names"}),
     # Mức u tối là khoá trong config/moderation.yaml `darkness_levels` (D-67).
-    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "rat-toi"},
+    ({"genres": ["do_thi"], "length_level": "short", "darkness_level": "rat-toi"},
      {"darkness_level"}),
-    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": 2},
+    ({"genres": ["do_thi"], "length_level": "short", "darkness_level": 2},
      {"darkness_level"}),
-    ({"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "x" * 40},
+    ({"genres": ["do_thi"], "length_level": "short", "darkness_level": "x" * 40},
      {"darkness_level"}),
     # Chữ tự do "mức độ u tối" không còn (D-67): gửi lên là sai dạng, không âm thầm bỏ qua.
-    ({"tags": {"genre": "kiếm hiệp", "darkness": "vừa"}, "length_level": "short"},
+    ({"genres": ["do_thi"], "tags": {"darkness": "vừa"}, "length_level": "short"},
      {"tags.darkness"}),
 ])
 def test_start_body_is_checked(client, body, fields):
@@ -101,7 +102,7 @@ def test_some_story_length_is_closed_in_repo_config():
 def test_start_refuses_a_length_not_open_to_players(client, level):
     """D-88: mức có trong config nhưng chưa mở cho người chơi → mã riêng, câu tiếng Việt, chỉ đúng
     trường (G12). Bị từ chối trước khi chạm Postgres (conn là None)."""
-    resp = client.post("/setup", json={"tags": {"genre": "kiếm hiệp"}, "length_level": level})
+    resp = client.post("/setup", json={"genres": ["do_thi"], "length_level": level})
     assert resp.status_code == 422
     expected = WritoryError(ErrorCode.STORY_LENGTH_NOT_OPEN).player_payload()
     assert resp.json() == {**expected, "fields": ["length_level"]}
@@ -112,7 +113,7 @@ def test_setup_routes_not_mounted_when_dev_flag_off():
     app = create_app(dev_settings(dev=False), health_checks={"neo4j": ok}, config=CFG)
     assert not any(p.startswith("/setup") for p in app.openapi()["paths"])
     with TestClient(app) as c:
-        assert c.post("/setup", json={"tags": {"genre": "x"}, "length_level": "short"}
+        assert c.post("/setup", json={"genres": ["do_thi"], "length_level": "short"}
                       ).status_code == 404
 
 

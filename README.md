@@ -15,6 +15,7 @@ Truyện do AI viết thường **mất context** khi dài ra: quên nhân vật
 - **Người canh** chỉ kiểm bằng code ở bản 1 (phần đọc văn bằng LLM để bản sau): người chết xuất hiện, đồ vật ở hai nơi, nhân vật biết điều chưa biết, quan hệ đổi đột ngột, lộ bí mật sớm, mạch quá hạn.
 - **Bộ dò lộ và guardrail.** Sổ tay, người kể và lựa chọn chỉ nhận dữ liệu từ `player_view`, lọc bằng code. Chữ người chơi luôn bị bọc như dữ liệu, không phải lệnh. Có trần chi phí, kiểm duyệt nội dung, và ghi chương theo kiểu tất cả hoặc không gì. An toàn nằm trong code, không nằm trong prompt. Danh sách đầy đủ: [docs/security.md](docs/security.md).
 - **Người chơi dùng key OpenRouter của chính mình.** Key được mã hoá khi lưu, không vào log hay API. Model viết hiện chỉ có một mức; các vai giữ trí nhớ dùng model cố định. Cấu hình ở `config/models.yaml` (`writer_tiers`, `roles`).
+- **Thể loại và ý tưởng của người chơi.** Chọn một tới vài thể loại trong danh mục `config/genres.yaml`, mỗi thể loại có đề riêng cho khởi tạo, dàn ý và giọng văn (danh mục do Meta Muse Wonder soạn, Claude Sonnet chấm: [evals/results/2026-11-03-genres-gen/](evals/results/2026-11-03-genres-gen/notes.md)), và gõ ý tưởng tuỳ chọn trước khi tạo truyện; ý tưởng là chữ người chơi, được bọc và kiểm duyệt.
 
 Stack: FastAPI · LangGraph · Neo4j · PostgreSQL · React/TypeScript · OpenRouter.
 

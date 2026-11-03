@@ -15,6 +15,7 @@ Các hàm nhận kết nối psycopg ở chế độ autocommit; mỗi bước t
 """
 
 import logging
+from collections.abc import Sequence
 from dataclasses import dataclass
 
 import psycopg
@@ -91,6 +92,7 @@ class StoryRecord:
     committed_chapter: int | None
     darkness_level: str | None = None  # khoá moderation.darkness_levels; None = mặc định (D-67)
     style: str = "prose"  # kiểu truyện (D-153): prose | audio
+    genres: tuple[str, ...] = ()  # khoá thể loại theo thứ tự chọn (D-160); truyện trước D-160 rỗng
 
 
 @dataclass(frozen=True)
@@ -112,25 +114,27 @@ class ReconcileResult:
 
 def create_story(
     conn: psycopg.Connection, story_id: str, *, length_level: str, owner_id: str | None = None,
-    darkness_level: str | None = None, style: str = "prose",
+    darkness_level: str | None = None, style: str = "prose", genres: Sequence[str] = (),
 ) -> StoryRecord:
     require_story_id(story_id)
     conn.execute(
-        "INSERT INTO stories (id, owner_id, length_level, darkness_level, style) VALUES (%s, %s, %s, %s, %s)",
-        (story_id, owner_id, length_level, darkness_level, style),
+        "INSERT INTO stories (id, owner_id, length_level, darkness_level, style, genres) "
+        "VALUES (%s, %s, %s, %s, %s, %s)",
+        (story_id, owner_id, length_level, darkness_level, style, list(genres)),
     )
     return get_story(conn, story_id)
 
 
 def get_story(conn: psycopg.Connection, story_id: str) -> StoryRecord:
     row = conn.execute(
-        "SELECT id, owner_id, length_level, committed_chapter, darkness_level, style FROM stories "
+        "SELECT id, owner_id, length_level, committed_chapter, darkness_level, style, genres FROM stories "
         "WHERE id = %s",
         (story_id,),
     ).fetchone()
     if row is None:
         raise StoryNotFoundError(f"không có truyện {story_id}")
-    return StoryRecord(*row)
+    *head, genres = row
+    return StoryRecord(*head, genres=tuple(genres))
 
 
 def get_owned_story(conn: psycopg.Connection, story_id: str, owner_id: str) -> StoryRecord:

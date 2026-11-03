@@ -36,6 +36,8 @@ export interface PublicConfig {
     personality_max_chars: number | null;
     backstory_max_chars: number | null;
     narrator_question_max_chars: number | null;
+    /** Ý tưởng người chơi lúc khởi tạo (D-160). */
+    story_idea_max_chars: number | null;
   };
   narrator_questions_per_chapter: number | null;
   rewrite_per_scene: number | null;
@@ -50,6 +52,17 @@ export interface PublicConfig {
   writer_tier: { label: string };
   /** Số mặc định cho màn không gắn truyện (D-87); null: chưa đặt. */
   chapter_estimate_default_usd: number | null;
+  /** Danh mục thể loại theo thứ tự config/genres.yaml (D-160); không có đề của model. */
+  genres: GenreOption[];
+  /** Người chơi chọn tối đa bấy nhiêu thể loại. */
+  max_genres: number;
+}
+
+export interface GenreOption {
+  key: string;
+  label: string;
+  hint: string;
+  styles: StoryStyle[];
 }
 
 /** Ước tính chi phí chương tới của một truyện (D-87). `usd` null: không có số nào. */
@@ -108,7 +121,11 @@ export type NamesStyle = 'han_viet' | 'viet';
 export type PlacesStyle = 'hu_cau' | 'that';
 
 export interface SetupStartIn {
-  tags: { genre: string; voice?: string | null };
+  /** Khoá thể loại theo thứ tự chọn (D-160). */
+  genres: string[];
+  tags: { voice?: string | null };
+  /** Ý tưởng người chơi, đã cắt khoảng trắng; bỏ trống thì không gửi (D-160). */
+  idea?: string | null;
   length_level: string;
   darkness_level?: string | null;
   naming: { names: NamesStyle; places: PlacesStyle } | null;

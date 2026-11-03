@@ -47,11 +47,11 @@ curl http://127.0.0.1:8000/player/costs         # {"total_usd", "this_month_usd"
 curl http://127.0.0.1:8000/stories/<story_id>/narrator   # {"remaining"}
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/narrator -H 'content-type: application/json' -d '{"question": "Lan là ai?"}'   # {"answer", "remaining", "source_chapters"}
 ```
-Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
+Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `genres` là 1 tới `max_selected` khoá trong `config/genres.yaml`, theo thứ tự ưu tiên; `idea` (không bắt buộc) là ý tưởng của người chơi (D-160). `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
 ```bash
-curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "moderate"}'
+curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"genres": ["vo_hiep_giang_ho", "trinh_tham"], "idea": "Bạn thân của nhân vật chính ganh ghét ngầm.", "length_level": "short", "darkness_level": "moderate"}'
 # kiểu truyện (D-153): thêm "style": "audio" để viết theo giọng kịch bản audio; bỏ trống là truyện chữ.
-# truyện audio chỉ nhận mức độ dài audio_30, audio_45, audio_60 (D-155), ví dụ "length_level": "audio_30"
+# truyện audio chỉ nhận mức độ dài audio_30, audio_45, audio_60, audio_xl (D-155, D-159), ví dụ "length_level": "audio_30"
 curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json'
 curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
 # tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:
@@ -82,6 +82,15 @@ Frontend (Vite, `http://localhost:5173`) gọi API qua proxy của Vite, nên tr
    ```
 4. Proxy của Vite chỉ chuyển `/api/*` tới backend (mặc định `http://localhost:8000`) và bỏ tiền tố `/api` (`frontend/vite.config.ts`; đổi đích, đổi tiền tố: mục Frontend). Đường của trang (`/truyen/...`, `/moi`, `/khoa`) không bắt đầu bằng `/api`.
 5. Viết chương là SSE trên `POST` (D-46): đọc stream bằng `fetch`, không dùng `EventSource`. SSE qua proxy của Vite đã chạy được trong lần chạy thử đầu cuối với model thật (21/10/2026, CLAUDE.md §9); chưa đo riêng proxy có giữ sự kiện lại lâu hơn không.
+
+## Thêm hay sửa thể loại (D-160)
+
+Danh mục thể loại ở `config/genres.yaml`. Chú thích đầu file là yêu cầu cho người soạn (các trường, luật nội dung, trần ký tự ở `limits`), nên có thể đưa nguyên file cho AI soạn thêm. Sau khi sửa:
+
+1. Kiểm file: `cd backend && uv run python -c "from writory.config import load_config; print(len(load_config().genres.genres))"`. Sai thì lỗi nói mục nào: khoá trùng, quá trần ký tự, thiếu trường, `styles` rỗng, thiếu `sang_van`.
+2. Khởi động lại backend (`make run`, hoặc đóng cửa sổ WriTory rồi bấm icon).
+
+Không đổi `key` của thể loại đã có truyện dùng: truyện lưu khoá (`stories.genres`). Xoá một thể loại thì truyện đang dùng nó vẫn viết tiếp, chỉ thiếu đề của thể loại đó. `sang_van` phải còn, vì truyện audio tạo trước D-160 dùng nó. Máy chủ giả của giao diện (`npm run dev:mock`) có danh mục riêng ở `frontend/src/mock/data.ts` (`MOCK_GENRES`); sửa theo nếu muốn thấy thể loại mới khi chạy giao diện không backend. Lượt soạn danh mục bằng Meta Muse Wonder và chấm bằng Claude Sonnet: `evals/results/2026-11-03-genres-gen/` (script, thang chấm, D-161).
 
 ## Frontend
 React + TypeScript + Tailwind, dựng bằng Vite, trong `frontend/` (D-68). Cần Node 20.19+ và npm (lockfile `package-lock.json`).
