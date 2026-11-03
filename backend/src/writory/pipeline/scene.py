@@ -53,8 +53,9 @@ from writory.safety.wrap import (
 # outline-11, writer-11: dòng mốc đã xảy ra rồi trong mục tiêu chương (D-116).
 # outline-12, writer-12: dòng hành động vượt luật trong mục tiêu chương, chỉ khi có (G6, D-138).
 # outline-13, writer-13: cao trào có dấu sớm là ứng viên, cao trào đã xong đòi viết hậu quả (D-142).
-OUTLINE_PROMPT_VERSION = "outline-13"  # đổi chữ prompt thì tăng số
-WRITER_PROMPT_VERSION = "writer-13"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
+# outline-14, writer-14: ghi chú audio thôi ép sảng văn, đề thể loại vào dàn ý và văn phong (D-160).
+OUTLINE_PROMPT_VERSION = "outline-14"  # đổi chữ prompt thì tăng số
+WRITER_PROMPT_VERSION = "writer-14"  # writer-2: system prompt có thêm câu ngôi kể (D-51)
 # Hướng dẫn văn phong hiện hành (v3, D-111) là system prompt của bước viết (design §6.5 mục 4). Một bản duy nhất,
 # dùng chung với bài đo D.
 STYLE_GUIDE_PATH = REPO_ROOT / "evals" / "scenarios" / "quality" / "style_guide_vi.md"
@@ -70,21 +71,17 @@ def load_style_guide(path: Path = STYLE_GUIDE_PATH) -> str:
     return re.sub(r"<!--.*?-->", "", raw, flags=re.DOTALL).strip()
 
 
-AUDIO_OUTLINE_NOTE = """Truyện này là kịch bản audio sảng văn, một giọng đọc máy đọc cho người nghe (D-155). Khi lập \
-dàn ý:
-- Mỗi cảnh có một bước lật thế rõ: một bên được hay mất một thứ cụ thể (tiền, chức, quyền, hôn ước, thể diện trước \
-đám đông). Mỗi chương có ít nhất một màn vả mặt phản diện kèm một mất mát cụ thể của phản diện.
+AUDIO_OUTLINE_NOTE = """Truyện này là kịch bản audio, một giọng đọc máy đọc cho người nghe (D-155). Kiểu xung đột \
+và giọng theo thể loại (D-160). Khi lập dàn ý:
+- Mỗi cảnh có một bước đổi thế rõ: một bên được hay mất một thứ cụ thể, người nghe nhận ra ngay.
 - Không dựng cảnh chỉ để xác nhận lại điều người nghe đã biết. Sự thật đã lộ chỉ được nhắc kèm một hậu quả mới.
 - Không hoãn cao trào bằng hẹn gặp, cuộc họp để sau hay "sáng mai". Việc đã hẹn thì cảnh kế tiếp giải quyết luôn.
-- Ít cảnh thủ tục (luật sư, biên bản, giấy tờ, kiểm toán): giấy tờ chỉ là đạo cụ để lật mặt, không phải cả cảnh.
-- Phản diện không tự thú khi chưa bị dồn bằng một chứng cứ không chối được xuất hiện ngay trên trang (giấy tờ gốc, \
-ghi âm, nhân chứng tận mắt). Vật chứng đổi tay thì nói rõ ai đang giữ.
-- Mỗi màn vả mặt nặng hơn màn trước một bậc hậu quả; không lặp lại cùng một kiểu bẽ mặt (khách im lặng, hạ ly, tránh \
-đứng cạnh).
+- Ít cảnh thủ tục (luật sư, biên bản, giấy tờ, kiểm toán): giấy tờ chỉ là đạo cụ, không phải cả cảnh.
+- Không ai tự thú điều đã giấu khi chưa bị dồn bằng một chứng cứ xuất hiện ngay trên trang (giấy tờ gốc, ghi âm, \
+nhân chứng tận mắt). Vật chứng đổi tay thì nói rõ ai đang giữ.
 - Cảnh mở chương nói ngay cho người nghe biết đang ở đâu, lúc nào, có ai.
-- Chương cuối: chốt hẳn danh phận và quyền lợi của nhân vật chính, phản diện chịu hình phạt công khai và cụ thể, \
-mọi mạch đã mở đều được gỡ, kết bằng một hình ảnh dư âm. Không công bố lại điều đã công bố ở chương trước: chỉ nói \
-hậu quả mới. Không để mạch nào lửng, không hẹn phần sau."""
+- Chương cuối: mọi mạch đã mở đều được gỡ, kết bằng một hình ảnh dư âm. Không công bố lại điều đã công bố ở chương \
+trước: chỉ nói hậu quả mới. Không để mạch nào lửng, không hẹn phần sau."""
 
 
 def outline_note_for(style: str) -> str | None:

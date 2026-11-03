@@ -663,15 +663,14 @@ _TAG_LABELS = (("genre", "thể loại"), ("era", "thời đại"), ("voice", "g
                ("darkness", "mức độ u tối"))
 
 
-AUDIO_SETUP_NOTE = """Truyện này là kịch bản audio sảng văn (hào môn, thân phận thật giả, trà xanh, vả mặt): một giọng \
-đọc máy đọc cho người nghe, không ai nhìn thấy chữ (D-155).
+AUDIO_SETUP_NOTE = """Truyện này là kịch bản audio: một giọng đọc máy đọc cho người nghe, không ai nhìn thấy chữ \
+(D-155). Giọng và kiểu xung đột theo thể loại người chơi chọn (D-160).
 - Tên: mỗi nhân vật quan trọng có tên gọi khác hẳn nhau khi nghe (khác âm đầu và vần; không hai tên na ná như Khang \
 và Khánh). Người cùng nhà có thể cùng họ nhưng được gọi bằng tên riêng hay vai trong nhà (ông nội, bà cả) khác nhau.
-- Xung đột leo thang: mỗi mốc cốt truyện là một lần lật thế, phản diện mất một thứ cụ thể trước đám đông (tiền, chức, \
-quyền, hôn ước, thể diện).
+- Mỗi mốc cốt truyện là một lần đổi thế người nghe nhận ra ngay, kèm một được mất cụ thể.
 - Mỗi bí mật lộ đúng một lần rồi kéo theo hậu quả; không bí mật nào chỉ để xác nhận đi xác nhận lại.
-- Cái kết chốt danh phận và quyền lợi của nhân vật chính và một hình phạt công khai, cụ thể cho phản diện; không kết \
-bằng lời hứa hay một cuộc họp để sau."""
+- Cái kết gỡ hết các mạch đã mở và chốt số phận của nhân vật chính; không kết bằng lời hứa hay một cuộc hẹn để \
+sau."""
 
 
 def _naming_rule(naming: Naming) -> str:

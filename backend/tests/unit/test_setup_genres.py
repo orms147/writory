@@ -14,7 +14,9 @@ from writory.api.setup import _player_text, _start_choices
 from writory.config import load_config
 from writory.errors import ErrorCode, WritoryError
 from writory.pipeline.genres import GENRE_PRECEDENCE, IDEA_RULE, genre_note, genres_label
+from writory.pipeline.scene import AUDIO_OUTLINE_NOTE, style_guide_for
 from writory.pipeline.setup import (
+    AUDIO_SETUP_NOTE,
     CharacterOption,
     Naming,
     PlotOption,
@@ -154,3 +156,18 @@ def test_public_config_genres():
 def test_genre_note_none_without_text():
     assert genre_note(CFG.genres, (), "setup_brief") is None
     assert genre_note(CFG.genres, ("do_thi",), "voice_brief") is None  # đô thị chưa có voice_brief
+
+
+def test_audio_notes_have_no_sang_van_tropes():
+    """Truyện audio thôi bị ép sảng văn (D-160): ghi chú audio chỉ còn luật cho giọng đọc máy và nhịp nghe."""
+    for name, text in (("setup", AUDIO_SETUP_NOTE), ("outline", AUDIO_OUTLINE_NOTE),
+                       ("style_guide", style_guide_for("audio"))):
+        for trope in ("sảng văn", "vả mặt", "trà xanh", "hào môn", "phản diện"):
+            assert trope not in text, (name, trope)
+
+
+def test_sang_van_genre_carries_tropes():
+    genre = CFG.genres.get("sang_van")
+    for text in (genre.setup_brief, genre.outline_brief, genre.voice_brief):
+        assert "vả mặt" in text
+
