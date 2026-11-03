@@ -1500,3 +1500,9 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Quyết định:** `audio_30` 2–4 mốc, `audio_45` 3–5 mốc; test: mọi mức mở cho người chơi có số mốc tối đa ít nhất min(số chương tối đa, 4). Hướng dẫn văn phong audio: câu dẫn đứng ở dòng kể riêng, không gắn vào cuối dòng thoại.
 - **Hệ quả:** phép kiểm câu dẫn của D-156 gần như không đổi gì trên dữ liệu đã thấy (không chuỗi nào quá 2 lượt; chuỗi đúng 2 lượt hiếm); điểm "không rõ ai nói" của Muse đi cùng câu dẫn chỉ dùng đại từ (3–24% số câu dẫn). Kết quả và số đo: `evals/results/2026-11-01-audio-length-check/notes.md`.
 - **Người quyết:** Claude (chủ dự án giao tự quyết, 1/11/2026), nhánh fix/audio-milestones · 1/11/2026
+
+## D-158 · Icon desktop mở app dev (`make desktop`, `make start`)
+- **Bối cảnh:** chủ dự án muốn bấm một icon trên Desktop để mở app thay vì gõ `make run` rồi tự mở trình duyệt.
+- **Quyết định:** `make desktop` tạo `WriTory.lnk` trên Desktop trỏ tới `make start` ở thư mục repo, icon `deploy/writory.ico` (ấn chu sa chữ W, màu nút chính của giao diện). `make start` như `make run` rồi tự mở http://localhost:5173 khi `/health` trả 200 và cổng 5173 đã nghe; giao diện đang chạy thì chỉ mở trình duyệt; cổng 8000 bận thì báo và dừng; lỗi thì giữ cửa sổ cho đọc. `make db` (nên cả `make run`) tự bật Docker Desktop nếu engine chưa chạy, tìm file chạy từ chỗ cài lệnh `docker`, đợi tối đa khoảng 3 phút. Không thêm script: mọi thứ nằm trong `makefile`.
+- **Hệ quả:** chỉ cho máy dev Windows có GNU Make và PowerShell 7, không đụng chồng prod (D-103). Phép chờ giao diện kiểm cổng nghe chứ không gọi HTTP: Vite chỉ nghe 127.0.0.1, `Invoke-WebRequest` tới `localhost` thử ::1 trước và quá hạn. Dời repo thì chạy lại `make desktop`.
+- **Người quyết:** chủ dự án yêu cầu; Claude chọn cách làm. Nhánh feature/desktop-icon · 3/11/2026
