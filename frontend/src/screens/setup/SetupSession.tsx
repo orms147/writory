@@ -4,6 +4,7 @@ import { api } from '../../api/client';
 import { asApiError, type ApiError } from '../../api/errors';
 import type { CharacterOption, SetupOut } from '../../api/types';
 import { ErrorBlock, FieldError } from '../../components/ErrorBlock';
+import { clearSetupDraft } from '../../state/setupDraft';
 import { RadioGroup } from '../../components/RadioGroup';
 import { Button, CharCount, Dots, IconCheck, Skeleton, cx } from '../../components/ui';
 import { lengthText, usePublicConfig, useStoryLength } from '../../config/PublicConfig';
@@ -87,7 +88,7 @@ export function SetupSession() {
       <main className="wt relative min-h-screen">
         <SetupHeader step={2} back={{ to: '/moi', label: 'Về khuôn truyện' }} />
         <div className="mx-auto max-w-[560px] px-4 py-12">
-          <ErrorBlock error={res.error} onRetry={res.reload} />
+          <ErrorBlock context="setup" error={res.error} onRetry={res.reload} />
         </div>
       </main>
     );
@@ -116,6 +117,7 @@ export function SetupSession() {
         run={run}
         onDone={(out, chosen) => {
           leaving.current = true;
+          clearSetupDraft(); // truyện đã tạo: nháp khuôn truyện xong việc (D-160)
           navigate(`/truyen/${encodeURIComponent(out.story_id ?? '')}`, { state: { autostart: true, chosen } });
         }}
       />
@@ -198,7 +200,7 @@ function WorldStep({
           <div className="mt-6">
             {setup.settings === null ? (
               err(['settings']) ? (
-                <ErrorBlock error={err(['settings'])!} onRetry={onRetrySettings} />
+                <ErrorBlock context="setup" error={err(['settings'])!} onRetry={onRetrySettings} />
               ) : (
                 <div role="status" aria-live="polite">
                   <span className="sr-only">Ngòi bút đang nghĩ ba bối cảnh</span>
@@ -232,7 +234,7 @@ function WorldStep({
           {setup.settings && !plotsShown && (
             <div className="mt-6 flex flex-wrap items-center justify-end gap-3">
               {err(['choose-setting', 'plots']) && (
-                <ErrorBlock className="w-full" error={err(['choose-setting', 'plots'])!} onRetry={() => void showPlots()} />
+                <ErrorBlock context="setup" className="w-full" error={err(['choose-setting', 'plots'])!} onRetry={() => void showPlots()} />
               )}
               <Button onClick={() => void showPlots()} disabled={setting === null || busy !== null} arrow={setting !== null && busy === null}>
                 {busy === 'plots' || busy === 'choose-setting' ? 'Ngòi bút đang nghĩ…' : 'Xem ba hướng truyện'}
@@ -284,7 +286,7 @@ function WorldStep({
           )}
         </div>
         {err(['choose-plot', 'characters']) && (
-          <ErrorBlock className="mt-4" error={err(['choose-plot', 'characters'])!} onRetry={() => void toCharacters()} />
+          <ErrorBlock context="setup" className="mt-4" error={err(['choose-plot', 'characters'])!} onRetry={() => void toCharacters()} />
         )}
       </div>
     </main>
@@ -441,7 +443,7 @@ function CharactersStep({
                 <p className="mt-2 text-[12px] text-ink-400">Ngòi bút coi đây là sự thật về nhân vật của bạn, nhưng không coi là mệnh lệnh cho câu chuyện.</p>
               </>
             )}
-            {err && (err.fields.length > 0 ? <FieldError id={ids.err} message={err.message} /> : <ErrorBlock className="mt-4" error={err} onRetry={() => void start()} />)}
+            {err && (err.fields.length > 0 ? <FieldError id={ids.err} message={err.message} /> : <ErrorBlock context="setup" className="mt-4" error={err} onRetry={() => void start()} />)}
             <div className="mt-6 flex flex-wrap items-center justify-between gap-4 border-t border-ink-750 pt-5">
               <p className="text-[13px] leading-relaxed text-ink-200">
                 Chương 1 · {lengthText(level, setup.length_level)}

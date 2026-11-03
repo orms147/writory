@@ -1,8 +1,11 @@
 // Màn khuôn truyện: chọn nhiều thể loại từ /config/public, ô ý tưởng tuỳ chọn (D-160).
-import { screen, waitFor, within } from '@testing-library/react';
+import { render, screen, waitFor, within } from '@testing-library/react';
 import userEvent from '@testing-library/user-event';
-import { describe, expect, it } from 'vitest';
+import { MemoryRouter } from 'react-router';
+import { beforeEach, describe, expect, it } from 'vitest';
 import { setFetch } from '../api/client';
+import { ApiError } from '../api/errors';
+import { ErrorBlock } from '../components/ErrorBlock';
 import type { PublicConfig } from '../api/types';
 import { Template } from '../screens/setup/Template';
 import { oddConfig, renderApp, withMock } from './render';
@@ -34,6 +37,8 @@ function recording() {
 const genreGroup = () => within(screen.getByRole('group', { name: /Thể loại/ }));
 
 describe('khởi tạo: thể loại và ý tưởng', () => {
+  beforeEach(() => sessionStorage.clear());
+
   it('liệt kê thể loại từ config theo kiểu truyện đang chọn', async () => {
     recording();
     renderApp(<Template />, { config: genreConfig() });
@@ -98,3 +103,43 @@ describe('khởi tạo: thể loại và ý tưởng', () => {
     expect(posts[0]).not.toHaveProperty('idea');
   });
 });
+
+describe('khởi tạo: ý tưởng bị chặn (sau review D-160)', () => {
+  beforeEach(() => sessionStorage.clear());
+
+  it('giữ nháp khuôn truyện: rời màn rồi mở lại vẫn còn ý tưởng và thể loại đã chọn', async () => {
+    recording();
+    const first = renderApp(<Template />, { config: genreConfig() });
+    await userEvent.click(genreGroup().getByRole('checkbox', { name: 'Hài' }));
+    await userEvent.type(screen.getByRole('textbox', { name: /Ý tưởng của bạn/ }), 'bạn thân ganh ghét');
+    first.unmount();
+    renderApp(<Template />, { config: genreConfig() });
+    expect(screen.getByRole('textbox', { name: /Ý tưởng của bạn/ })).toHaveValue('bạn thân ganh ghét');
+    expect(genreGroup().getByRole('checkbox', { name: 'Hài' })).toBeChecked();
+  });
+
+  it('INPUT_BLOCKED ở khởi tạo có nút "Sửa khuôn truyện" về /moi; ở ô tự viết thì không', () => {
+    const error = new ApiError({ code: 'INPUT_BLOCKED', message: 'Nội dung bị chặn.' });
+    const { unmount } = render(
+      <MemoryRouter>
+        <ErrorBlock error={error} context="setup" />
+      </MemoryRouter>,
+    );
+    expect(screen.getByRole('link', { name: 'Sửa khuôn truyện' })).toHaveAttribute('href', '/moi');
+    unmount();
+    render(
+      <MemoryRouter>
+        <ErrorBlock error={error} />
+      </MemoryRouter>,
+    );
+    expect(screen.queryByRole('link', { name: 'Sửa khuôn truyện' })).toBeNull();
+  });
+
+  it('chữ hướng dẫn nói chọn được nhiều thể loại', () => {
+    recording();
+    renderApp(<Template />, { config: genreConfig() });
+    expect(screen.queryByText('Chọn một thể loại chính. Phần còn lại để ngòi bút đề xuất.')).toBeNull();
+    expect(screen.getByText(/Chọn tới 2 thể loại/)).toBeInTheDocument();
+  });
+});
+

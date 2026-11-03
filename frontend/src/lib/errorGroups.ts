@@ -11,6 +11,7 @@ export type ErrorGroup =
   | 'retry_limit'
   | 'rate'
   | 'action_input'
+  | 'setup_input'
   | 'narrator_input'
   | 'narrator_limit'
   | 'busy'
@@ -66,7 +67,9 @@ const GROUP_OF: Record<string, ErrorGroup> = {
 
 /** Mã chưa có trong bảng (`INTERNAL_ERROR`, `LLM_*` còn lại, `CONFIG_*`, `REQUEST_INVALID`, mã mới)
  *  rơi về nhóm chung: Thử lại · Về tủ truyện. */
-export function errorGroup(code: string): ErrorGroup {
+export function errorGroup(code: string, context?: 'setup'): ErrorGroup {
+  // Ở khởi tạo, chữ bị chặn là tag hay ý tưởng ở màn khuôn truyện (D-160): nút đưa về đó để sửa.
+  if (context === 'setup' && code === 'INPUT_BLOCKED') return 'setup_input';
   return GROUP_OF[code] ?? 'generic';
 }
 
@@ -81,6 +84,7 @@ export const GROUP_KICKER: Record<ErrorGroup, string> = {
   retry_limit: 'Viết cảnh',
   rate: 'Giới hạn tần suất',
   action_input: 'Ô tự viết',
+  setup_input: 'Khuôn truyện',
   narrator_input: 'Hỏi người kể',
   narrator_limit: 'Hỏi người kể',
   busy: 'Phiên đọc',
@@ -97,6 +101,7 @@ export type ErrorAction =
   | 'retry'
   | 'open_openrouter'
   | 'new_story'
+  | 'edit_setup'
   | 'back_to_choices'
   | 'reload'
   | 'back_to_reading';
@@ -108,6 +113,7 @@ export const ACTION_LABEL: Record<ErrorAction, string> = {
   retry: 'Thử lại',
   open_openrouter: 'Mở OpenRouter',
   new_story: 'Bắt đầu truyện mới',
+  edit_setup: 'Sửa khuôn truyện',
   back_to_choices: 'Quay về lựa chọn',
   reload: 'Tải lại',
   back_to_reading: 'Quay lại trang đọc',
@@ -124,6 +130,7 @@ export const GROUP_ACTIONS: Record<ErrorGroup, ErrorAction[]> = {
   retry_limit: ['back_to_choices', 'home'],
   rate: ['retry'],
   action_input: [],
+  setup_input: ['edit_setup'],
   narrator_input: [],
   narrator_limit: ['back_to_reading'],
   busy: ['reload'],

@@ -173,3 +173,10 @@ def test_sang_van_genre_carries_tropes():
     for text in (genre.setup_brief, genre.outline_brief, genre.voice_brief):
         assert "vả mặt" in text
 
+
+def test_audio_style_guide_has_no_leftover_sang_van_flavour():
+    """Sau review D-160: văn phong audio dùng cho mọi thể loại, ví dụ trong đó không được mang giọng sảng văn."""
+    guide = style_guide_for("audio")
+    for trope in ("giả nai", "bẽ mặt", "cười khẩy", "trà xanh", "vả"):
+        assert trope not in guide, trope
+

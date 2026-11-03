@@ -40,6 +40,7 @@ function ActionButton({ action, primary, tone, handlers }: { action: ErrorAction
     case 'home':
       return <Link className={cls} to="/">{label}</Link>;
     case 'new_story':
+    case 'edit_setup':
       return <Link className={cls} to="/moi">{label}</Link>;
     case 'open_openrouter':
       return (
@@ -74,9 +75,10 @@ export function ErrorBlock({
   tone = 'dark',
   className,
   sheetOnMobile = false,
+  context,
   ...handlers
-}: ErrorHandlers & { error: ApiError; tone?: Tone; className?: string; sheetOnMobile?: boolean }) {
-  const group = errorGroup(error.code);
+}: ErrorHandlers & { error: ApiError; tone?: Tone; className?: string; sheetOnMobile?: boolean; context?: 'setup' }) {
+  const group = errorGroup(error.code, context);
   const actions = GROUP_ACTIONS[group];
   const mobileSheet = sheetOnMobile && group === 'key';
   return (

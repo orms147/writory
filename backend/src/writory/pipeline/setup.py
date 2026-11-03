@@ -67,6 +67,7 @@ from writory.pipeline.story_plan import (
     WindowShift,
     align_thread_windows,
 )
+from writory.safety.leak import BRIEF_IDEA_PREFIX
 from writory.safety.moderate import darkness_brief
 from writory.safety.wrap import (
     DATA_NOTICE,
@@ -806,7 +807,8 @@ def story_brief(
     darkness = [] if moderation is None else [darkness_brief(moderation, choices.darkness_level)]
     return "\n".join([
         _tags_text(choices.tags),
-        *([f"Ý tưởng của người chơi: {choices.idea}"] if choices.idea else []),  # D-160
+        # D-160: một dòng (xuống dòng gộp lại), để bộ dò lộ nhận ra dòng này (`safety.leak.BRIEF_IDEA_PREFIX`).
+        *([BRIEF_IDEA_PREFIX + " ".join(choices.idea.split())] if choices.idea else []),
         *darkness,  # D-67
         _POV_TEXT[choices.pov],
         f"Quy ước tên và địa danh: {NAMES_TEXT[naming.names]}; {PLACES_TEXT[naming.places]}.",

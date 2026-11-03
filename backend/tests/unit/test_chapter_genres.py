@@ -3,7 +3,7 @@
 import logging
 
 from writory.config import load_config
-from writory.pipeline.genres import chapter_notes, story_genre_keys
+from writory.pipeline.genres import IDEA_CHAPTER_RULE, chapter_notes, story_genre_keys
 from writory.pipeline.scene import AUDIO_OUTLINE_NOTE, AUDIO_STYLE_GUIDE_PATH, load_style_guide
 
 CFG = load_config()
@@ -46,4 +46,14 @@ def test_genre_without_voice_keeps_default_guide():
     """Thể loại không có `voice_brief`, `outline_brief`: truyện chữ giữ văn phong mặc định của `ChapterRun`."""
     cfg = CFG.model_copy(deep=True)
     cfg.genres.genres[0] = cfg.genres.genres[0].model_copy(update={"voice_brief": None, "outline_brief": None})
-    assert chapter_notes("prose", (cfg.genres.genres[0].key,), cfg.genres) == (None, None)
+    guide, outline = chapter_notes("prose", (cfg.genres.genres[0].key,), cfg.genres)
+    assert guide is None and outline == IDEA_CHAPTER_RULE
+
+
+def test_idea_twist_rule_reaches_every_chapter_outline():
+    """Chủ dự án chọn "giấu, lật đúng lúc" cho cú lật trong ý tưởng: luật đó nhắc ở dàn ý mỗi chương, không chỉ lúc
+    khởi tạo (sau review D-160). Truyện cũ không thể loại (không thể có ý tưởng) giữ đề như trước."""
+    _, outline = chapter_notes("prose", ("trinh_tham",), CFG.genres)
+    assert outline is not None and IDEA_CHAPTER_RULE in outline
+    assert chapter_notes("prose", (), CFG.genres) == (None, None)
+

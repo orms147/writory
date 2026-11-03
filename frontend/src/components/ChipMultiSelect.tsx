@@ -36,7 +36,16 @@ export function ChipMultiSelect<O extends ChipOption>({
         const checked = value.includes(o.key);
         const disabled = !checked && full;
         return (
-          <label key={o.key} title={o.hint} className={cx(chipClassName(checked, disabled), disabled && 'cursor-not-allowed opacity-50')}>
+          // Checkbox ẩn (sr-only) nên viền focus vẽ trên nhãn khi dùng bàn phím (sau review D-160).
+          <label
+            key={o.key}
+            title={o.hint}
+            className={cx(
+              chipClassName(checked, disabled),
+              'has-[:focus-visible]:outline has-[:focus-visible]:outline-2 has-[:focus-visible]:outline-offset-2 has-[:focus-visible]:outline-cinnabar-400',
+              disabled && 'cursor-not-allowed opacity-50',
+            )}
+          >
             <input
               type="checkbox"
               className="sr-only"

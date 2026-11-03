@@ -135,11 +135,34 @@ def _proper_tokens(text: str) -> set[str]:
     return {strip_diacritics(w) for w in _WORD.findall(text) if w[0].isupper()}
 
 
-def _seen_text(view: PlayerView, story_brief: str) -> list[str]:
-    """Mọi chữ người chơi đã thấy: player_view, cộng thiết lập truyện đã đọc lúc khởi tạo (D-52).
-    Chỉ dùng để quyết tên nào còn cấm; nhóm `leak_terms` của bí mật không đọc chỗ này."""
+# Dòng của `story_brief` (`pipeline.setup.story_brief`) không tính như chữ thường (D-160, sau review): dòng tag (nhãn thể
+# loại, giọng văn: chữ viết hoa ở đó không phải tên, ví dụ "Hài hước" bỏ dấu trùng "Hải") bỏ qua; dòng ý tưởng người chơi
+# chỉ tính chữ viết hoa GIỮA câu (tên người chơi tự gõ), không tính chữ đầu câu ("Trong làng", "Hải sản").
+BRIEF_TAG_LABELS = ("thể loại", "thời đại", "giọng văn", "mức độ u tối")
+BRIEF_IDEA_PREFIX = "Ý tưởng của người chơi: "
+_SENTENCE_START = re.compile(r"(?:^|[.!?…:;]\s+|[\"“”'(\[–-]\s*)$")
+
+
+def _brief_tokens(story_brief: str) -> set[str]:
+    """Tên trong thiết lập truyện người chơi đã đọc lúc khởi tạo (D-52), theo luật dòng ở trên."""
+    out: set[str] = set()
+    for line in story_brief.splitlines():
+        if any(line.startswith(f"{label}:") for label in BRIEF_TAG_LABELS):
+            continue
+        if line.startswith(BRIEF_IDEA_PREFIX):
+            idea = line[len(BRIEF_IDEA_PREFIX):]
+            out |= {strip_diacritics(m.group(0)) for m in _WORD.finditer(idea)
+                    if m.group(0)[0].isupper() and not _SENTENCE_START.search(idea[:m.start()])}
+            continue
+        out |= _proper_tokens(line)
+    return out
+
+
+def _seen_text(view: PlayerView) -> list[str]:
+    """Mọi chữ người chơi đã thấy trong player_view; thiết lập truyện tính riêng (`_brief_tokens`). Chỉ dùng để quyết tên
+    nào còn cấm; nhóm `leak_terms` của bí mật không đọc chỗ này."""
     seen = [t for e in view.entries for t in (e.text, *e.aliases, *e.quotes)]
-    return [*seen, *(lie.content for lie in view.lies), story_brief]
+    return [*seen, *(lie.content for lie in view.lies)]
 
 
 def name_key(text: str) -> str:
@@ -195,7 +218,7 @@ def forbidden_names(
                   for n in _hidden_names(names, entries[node_id])]  # (a)
     candidates += [(node_id, n) for node_id in sorted(protected_ids(plan, view, scope))
                    for n in truth_names.get(node_id, ())]  # (b)
-    known = set().union(*(_proper_tokens(t) for t in _seen_text(view, story_brief)))
+    known = set().union(*(_proper_tokens(t) for t in _seen_text(view)), _brief_tokens(story_brief))
     out: dict[str, ForbiddenName] = {}
     for node_id, term in candidates:
         if _proper_tokens(term) - known and term not in out:

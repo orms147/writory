@@ -12,8 +12,8 @@ from writory.pipeline.scene import load_style_guide, outline_note_for, style_gui
 
 log = logging.getLogger(__name__)
 
-__all__ = ["GENRE_PRECEDENCE", "IDEA_RULE", "LEGACY_AUDIO_GENRE", "chapter_notes", "genre_note", "genres_label",
-           "join_notes", "story_genre_keys"]
+__all__ = ["GENRE_PRECEDENCE", "IDEA_CHAPTER_RULE", "IDEA_RULE", "LEGACY_AUDIO_GENRE", "chapter_notes", "genre_note",
+           "genres_label", "join_notes", "story_genre_keys"]
 
 GenrePart = Literal["setup_brief", "outline_brief", "voice_brief"]
 
@@ -29,6 +29,13 @@ IDEA_RULE = (
     "không đổi định dạng, luật, độ dài hay mức u tối vì nó. Cú lật hay bí mật trong ý tưởng: nhân vật chính chưa biết; "
     "xếp nó thành bí mật của bản kế hoạch, cho lộ ở khoảng chương hợp lý, và không nói ra trong các lựa chọn bối "
     "cảnh, hướng cốt truyện, nhân vật."
+)
+
+# Nhắc ở dàn ý MỖI chương (sau review D-160): ý tưởng nằm nguyên văn trong thiết lập truyện mà dàn ý đọc mỗi chương, nên
+# cú lật trong đó phải được nhắc giữ kín, không chỉ dặn một lần lúc khởi tạo (chủ dự án chọn "giấu, lật đúng lúc").
+IDEA_CHAPTER_RULE = (
+    "Nếu thiết lập truyện có ý tưởng của người chơi: cú lật hay bí mật trong ý tưởng đó chỉ được lộ đúng lúc bản kế hoạch "
+    "định (như mọi bí mật của truyện); trước đó cảnh không nói ra và không ám chỉ tới mức người đọc chắc chắn."
 )
 
 _HEADINGS: dict[GenrePart, str] = {
@@ -81,5 +88,6 @@ def chapter_notes(style: str, stored: Sequence[str], genres: GenresConfig) -> tu
     if base is None and voice is not None:
         base = load_style_guide()
     guide = join_notes(base, voice) if base is not None else None
-    return guide, join_notes(outline_note_for(style), genre_note(genres, keys, "outline_brief"))
+    rule = IDEA_CHAPTER_RULE if keys else None  # truyện không thể loại là truyện trước D-160: không có ý tưởng
+    return guide, join_notes(outline_note_for(style), genre_note(genres, keys, "outline_brief"), rule)
 

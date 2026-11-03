@@ -47,11 +47,11 @@ curl http://127.0.0.1:8000/player/costs         # {"total_usd", "this_month_usd"
 curl http://127.0.0.1:8000/stories/<story_id>/narrator   # {"remaining"}
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/narrator -H 'content-type: application/json' -d '{"question": "Lan là ai?"}'   # {"answer", "remaining", "source_chapters"}
 ```
-Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
+Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `genres` là 1 tới `max_selected` khoá trong `config/genres.yaml`, theo thứ tự ưu tiên; `idea` (không bắt buộc) là ý tưởng của người chơi (D-160). `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):
 ```bash
-curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"tags": {"genre": "kiếm hiệp"}, "length_level": "short", "darkness_level": "moderate"}'
+curl -X POST http://127.0.0.1:8000/setup -H 'content-type: application/json' -d '{"genres": ["vo_hiep_giang_ho", "trinh_tham"], "idea": "Bạn thân của nhân vật chính ganh ghét ngầm.", "length_level": "short", "darkness_level": "moderate"}'
 # kiểu truyện (D-153): thêm "style": "audio" để viết theo giọng kịch bản audio; bỏ trống là truyện chữ.
-# truyện audio chỉ nhận mức độ dài audio_30, audio_45, audio_60 (D-155), ví dụ "length_level": "audio_30"
+# truyện audio chỉ nhận mức độ dài audio_30, audio_45, audio_60, audio_xl (D-155, D-159), ví dụ "length_level": "audio_30"
 curl -X POST http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json'
 curl -X PUT  http://127.0.0.1:8000/setup/<session_id>/settings -H 'content-type: application/json' -d '{"index": 0}'
 # tương tự với plots, characters (PUT characters nhận thêm name, personality, backstory), rồi:

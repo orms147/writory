@@ -1,4 +1,4 @@
-import { useId, useState, type ReactNode } from 'react';
+import { useEffect, useId, useState, type ReactNode } from 'react';
 import { useNavigate } from 'react-router';
 import { api } from '../../api/client';
 import { asApiError, type ApiError } from '../../api/errors';
@@ -9,6 +9,7 @@ import { RadioGroup } from '../../components/RadioGroup';
 import { Button, Kicker, cx } from '../../components/ui';
 import { usePublicConfig } from '../../config/PublicConfig';
 import { once } from '../../lib/inflight';
+import { readSetupDraft, saveSetupDraft } from '../../state/setupDraft';
 import { SetupHeader } from './SetupHeader';
 
 // Khởi tạo · khuôn truyện (D-KhoiTao-Khuon, M-Khuon). Thể loại là khoá trong danh mục `/config/public` (chọn
@@ -63,12 +64,17 @@ export function Template() {
   const config = usePublicConfig();
   const navigate = useNavigate();
   const ids = { genre: useId(), idea: useId(), ideaCount: useId(), naming: useId(), names: useId(), places: useId(), voice: useId(), dark: useId(), style: useId(), length: useId(), pov: useId() };
-  const [genres, setGenres] = useState<string[]>([]);
-  const [idea, setIdea] = useState('');
-  const [voice, setVoice] = useState<string | null>(null);
+  // Nháp từ lần trước (D-160): quay lại sửa khi ý tưởng bị chặn thì không mất chữ đã gõ.
+  const [draft] = useState(readSetupDraft);
+  const [style, setStyle] = useState<StoryStyle>(draft.style ?? 'prose');
+  const [genres, setGenres] = useState<string[]>(() =>
+    (draft.genres ?? []).filter((k) => config.genres.some((g) => g.key === k && g.styles.includes(draft.style ?? 'prose'))).slice(0, config.max_genres),
+  );
+  const [idea, setIdea] = useState(draft.idea ?? '');
+  const [voice, setVoice] = useState<string | null>(draft.voice ?? null);
   const [darkness, setDarkness] = useState<string | null>(config.default_darkness_level);
-  const [style, setStyle] = useState<StoryStyle>('prose');
-  const [length, setLength] = useState<string | null>(null);
+  const [length, setLength] = useState<string | null>(draft.length ?? null);
+  useEffect(() => saveSetupDraft({ genres, idea, style, length, voice }), [genres, idea, style, length, voice]);
   const [names, setNames] = useState<NamesStyle | null>(null);
   const [places, setPlaces] = useState<PlacesStyle | null>(null);
   const [error, setError] = useState<ApiError | null>(null);
@@ -148,7 +154,7 @@ export function Template() {
       <div className="mx-auto grid w-full max-w-[1440px] gap-10 px-4 md:grid-cols-[1fr_300px] md:px-[100px] lg:gap-16">
         <div className="min-w-0">
           <h1 className="mt-8 font-display text-[34px] font-medium leading-tight md:mt-11 md:text-[50px]">Bạn muốn sống trong loại truyện nào?</h1>
-          <p className="mt-2 text-[15px] text-ink-200">Chọn một thể loại chính. Phần còn lại để ngòi bút đề xuất.</p>
+          <p className="mt-2 text-[15px] text-ink-200">{`Chọn tới ${config.max_genres} thể loại, thêm ý tưởng nếu muốn. Phần còn lại để ngòi bút đề xuất.`}</p>
 
           <Section
             id={ids.genre}
