@@ -1,0 +1,151 @@
+# Bài đo E — đề câu "bẩn", bản 1 (docs/eval.md, mục "Bài E"). Khai TRƯỚC khi chạy.
+# Đã chạy thật rồi thì không sửa đè file này: tăng `version` hoặc thêm file mới.
+# Chạy: `--questions-file questions-dirty-1.yaml`.
+#
+# Đo gì: người chơi gõ không dấu, sai chính tả, teencode hay nói trống không thì người kể còn trả lời
+# được điều đã mở khoá không, và còn giữ được bí mật không. Đề v2 chỉ có câu viết chuẩn.
+#
+# Cách đọc id: `<id câu ở questions-v2.yaml>--<kiểu>`.
+#   goc         nguyên văn câu của đề v2, hỏi lại trong cùng lượt để so từng cặp
+#   khongdau    bỏ hết dấu, chữ thường
+#   saichinhta  teencode, viết tắt, gõ sai
+#   trongkhong  cộc lốc, thiếu chủ vị, không dấu câu chuẩn
+#   haiy        một câu hỏi hai điều đã mở khoá (id gốc là câu của ý thứ nhất)
+# Biến thể loại a dùng đúng `grounds` và `expect_terms` của câu gốc: chênh lệch chỉ do cách gõ
+# (tests/unit/test_bench_e_dirty.py kiểm). Câu loại b là bí mật chưa mở viết bẩn: vẫn mong đợi đúng
+# "Bạn chưa biết điều này.". Truyện, kế hoạch, cách chấm: như đề v2 (plan.yaml, run.yaml).
+#
+# Chưa có ở đề này: câu hỏi nối tiếp nhiều lượt ("thế còn ông ấy?"). Người kể chưa nhận lịch sử
+# hội thoại, nên câu đó chưa có đáp án chấm được; thêm khi có lịch sử.
+#
+# `counts`: số câu mỗi loại; code kiểm khớp với danh sách. Không ghi số này vào tài liệu.
+#
+# Soạn: Claude (nhánh feature/narrator-dirty-questions), 11/11/2026. Chờ chủ dự án duyệt trước lần chạy thật.
+
+version: 1
+
+counts: {a: 43, b: 6, c: 0, d: 0, e: 0, f: 0}
+
+questions:
+  # --- chương 1 ------------------------------------------------------------------------------
+  - {id: c1-a-ten-that-lao-gu--goc, chapter: 1, type: a, text: "Tên thật của Lão Gù là gì?",
+     grounds: [gu], expect_terms: ["Hồ Sĩ Bằng"]}
+  - {id: c1-a-ten-that-lao-gu--khongdau, chapter: 1, type: a, text: "ten that cua lao gu la gi",
+     grounds: [gu], expect_terms: ["Hồ Sĩ Bằng"]}
+  - {id: c1-a-ten-that-lao-gu--saichinhta, chapter: 1, type: a, text: "tên thậc của lão gù là j z",
+     grounds: [gu], expect_terms: ["Hồ Sĩ Bằng"]}
+  - {id: c1-a-ten-that-lao-gu--trongkhong, chapter: 1, type: a, text: "lão gù tên thật",
+     grounds: [gu], expect_terms: ["Hồ Sĩ Bằng"]}
+
+  - {id: c1-a-lo-ren-o-dau--goc, chapter: 1, type: a, text: "Lò rèn của Lão Gù nằm ở đâu?",
+     grounds: [lo_ren], expect_terms: ["cuối phố"]}
+  - {id: c1-a-lo-ren-o-dau--khongdau, chapter: 1, type: a, text: "lo ren cua lao gu nam o dau",
+     grounds: [lo_ren], expect_terms: ["cuối phố"]}
+  - {id: c1-a-lo-ren-o-dau--saichinhta, chapter: 1, type: a,
+     text: "lò rèn của lão gù ở đâu z, ko nhớ nữa", grounds: [lo_ren], expect_terms: ["cuối phố"]}
+  - {id: c1-a-lo-ren-o-dau--trongkhong, chapter: 1, type: a, text: "lò rèn lão gù chỗ nào",
+     grounds: [lo_ren], expect_terms: ["cuối phố"]}
+
+  - {id: c1-b-lan-gian-diep--khongdau, chapter: 1, type: b, text: "lan co phai gian diep khong"}
+
+  # --- chương 2 ------------------------------------------------------------------------------
+  - {id: c2-a-gu-ba-muoi-nam--goc, chapter: 2, type: a, text: "Ba mươi năm trước Lão Gù từng làm gì?",
+     grounds: [f_gu_old_hac_ky], expect_terms: ["đi thuyền"]}
+  - {id: c2-a-gu-ba-muoi-nam--khongdau, chapter: 2, type: a,
+     text: "ba muoi nam truoc lao gu tung lam gi", grounds: [f_gu_old_hac_ky],
+     expect_terms: ["đi thuyền"]}
+  - {id: c2-a-gu-ba-muoi-nam--saichinhta, chapter: 2, type: a,
+     text: "30 năm trc lão gù từng làm j", grounds: [f_gu_old_hac_ky], expect_terms: ["đi thuyền"]}
+  - {id: c2-a-gu-ba-muoi-nam--trongkhong, chapter: 2, type: a,
+     text: "lão gù ba mươi năm trước làm gì thế", grounds: [f_gu_old_hac_ky],
+     expect_terms: ["đi thuyền"]}
+
+  - {id: c2-a-la-thu--goc, chapter: 2, type: a, text: "Lá thư Lão Gù đưa cho Minh trông thế nào?",
+     grounds: [sealed_letter, e_gu_gives_sword], expect_terms: ["sáp đỏ"]}
+  - {id: c2-a-la-thu--khongdau, chapter: 2, type: a,
+     text: "la thu lao gu dua cho minh trong the nao", grounds: [sealed_letter, e_gu_gives_sword],
+     expect_terms: ["sáp đỏ"]}
+  - {id: c2-a-la-thu--saichinhta, chapter: 2, type: a,
+     text: "lá thư lão gù đưa cho minh trông ntn", grounds: [sealed_letter, e_gu_gives_sword],
+     expect_terms: ["sáp đỏ"]}
+  - {id: c2-a-la-thu--trongkhong, chapter: 2, type: a, text: "lá thư lão gù đưa, trông ra sao",
+     grounds: [sealed_letter, e_gu_gives_sword], expect_terms: ["sáp đỏ"]}
+
+  - {id: c2-a-chen-lenh-hoi-da-biet--haiy, chapter: 2, type: a,
+     text: "Lão Gù tên thật là gì, mà ba mươi năm trước lão từng làm gì?",
+     grounds: [gu, f_gu_old_hac_ky], expect_terms: ["Hồ Sĩ Bằng", "đi thuyền"]}
+
+  - {id: c2-b-thu-viet-gi--saichinhta, chapter: 2, type: b, text: "lá thư niêm sáp đỏ viết j z"}
+
+  # --- chương 3 ------------------------------------------------------------------------------
+  - {id: c3-a-gu-chet-o-dau--goc, chapter: 3, type: a, text: "Lão Gù chết ở đâu?",
+     grounds: [e_gu_death], expect_terms: ["miếu Bà"]}
+  - {id: c3-a-gu-chet-o-dau--khongdau, chapter: 3, type: a, text: "lao gu chet o dau",
+     grounds: [e_gu_death], expect_terms: ["miếu Bà"]}
+  - {id: c3-a-gu-chet-o-dau--saichinhta, chapter: 3, type: a, text: "lão gù chêt ở đâu z",
+     grounds: [e_gu_death], expect_terms: ["miếu Bà"]}
+  - {id: c3-a-gu-chet-o-dau--trongkhong, chapter: 3, type: a, text: "lão gù chết chỗ nào",
+     grounds: [e_gu_death], expect_terms: ["miếu Bà"]}
+
+  - {id: c3-a-gu-chet-the-nao--goc, chapter: 3, type: a, text: "Lão Gù chết thế nào?",
+     grounds: [e_gu_death], expect_terms: ["gáy"]}
+  - {id: c3-a-gu-chet-the-nao--khongdau, chapter: 3, type: a, text: "lao gu chet the nao",
+     grounds: [e_gu_death], expect_terms: ["gáy"]}
+  - {id: c3-a-gu-chet-the-nao--saichinhta, chapter: 3, type: a, text: "lão gù chết ntn vậy",
+     grounds: [e_gu_death], expect_terms: ["gáy"]}
+  - {id: c3-a-gu-chet-the-nao--trongkhong, chapter: 3, type: a, text: "lão gù sao mà chết",
+     grounds: [e_gu_death], expect_terms: ["gáy"]}
+
+  - {id: c3-a-gu-chet-o-dau--haiy, chapter: 3, type: a,
+     text: "Lão Gù chết ở đâu và chết thế nào?", grounds: [e_gu_death],
+     expect_terms: ["miếu Bà", "gáy"]}
+
+  - {id: c3-b-ai-giet-gu--khongdau, chapter: 3, type: b, text: "ai giet lao gu"}
+
+  # --- chương 4 ------------------------------------------------------------------------------
+  - {id: c4-a-ai-buoc-thuyen--goc, chapter: 4, type: a, text: "Ai buộc thuyền trước quán trà?",
+     grounds: [ly_that], expect_terms: ["lái đò"]}
+  - {id: c4-a-ai-buoc-thuyen--khongdau, chapter: 4, type: a, text: "ai buoc thuyen truoc quan tra",
+     grounds: [ly_that], expect_terms: ["lái đò"]}
+  - {id: c4-a-ai-buoc-thuyen--saichinhta, chapter: 4, type: a,
+     text: "ai buộc thuyền trc quán trà z", grounds: [ly_that], expect_terms: ["lái đò"]}
+  - {id: c4-a-ai-buoc-thuyen--trongkhong, chapter: 4, type: a,
+     text: "buộc thuyền trước quán trà là ai", grounds: [ly_that], expect_terms: ["lái đò"]}
+
+  - {id: c4-a-noi-doi-ai--goc, chapter: 4, type: a, text: "Tôi đã nói dối những ai?",
+     grounds: [l_sword_father, l_home_night], expect_terms: ["Lan", "Khải"]}
+  - {id: c4-a-noi-doi-ai--khongdau, chapter: 4, type: a, text: "toi da noi doi nhung ai",
+     grounds: [l_sword_father, l_home_night], expect_terms: ["Lan", "Khải"]}
+  - {id: c4-a-noi-doi-ai--saichinhta, chapter: 4, type: a, text: "tôi đã nói dối nhữg ai r",
+     grounds: [l_sword_father, l_home_night], expect_terms: ["Lan", "Khải"]}
+  - {id: c4-a-noi-doi-ai--trongkhong, chapter: 4, type: a, text: "tôi nói dối ai rồi",
+     grounds: [l_sword_father, l_home_night], expect_terms: ["Lan", "Khải"]}
+
+  - {id: c4-b-ai-trom-kiem--saichinhta, chapter: 4, type: b, text: "ai trộm thanh sương z, nói lẹ"}
+  - {id: c4-b-thuoc-trong-tra--khongdau, chapter: 4, type: b,
+     text: "lan co bo thuoc vao tra cua toi ko"}
+
+  # --- chương 5 ------------------------------------------------------------------------------
+  - {id: c5-a-ai-lay-kiem--goc, chapter: 5, type: a, text: "Ai đã lấy Thanh Sương?",
+     grounds: [e_sword_stolen], expect_terms: ["Lan"]}
+  - {id: c5-a-ai-lay-kiem--khongdau, chapter: 5, type: a, text: "ai da lay thanh suong",
+     grounds: [e_sword_stolen], expect_terms: ["Lan"]}
+  - {id: c5-a-ai-lay-kiem--saichinhta, chapter: 5, type: a, text: "ai lấy thanh sương z",
+     grounds: [e_sword_stolen], expect_terms: ["Lan"]}
+  - {id: c5-a-ai-lay-kiem--trongkhong, chapter: 5, type: a, text: "thanh sương ai lấy",
+     grounds: [e_sword_stolen], expect_terms: ["Lan"]}
+
+  - {id: c5-a-lai-do-ten-that--goc, chapter: 5, type: a, text: "Gã lái đò mặt sẹo tên thật là gì?",
+     grounds: [ly_that], expect_terms: ["Lý Thất"]}
+  - {id: c5-a-lai-do-ten-that--khongdau, chapter: 5, type: a,
+     text: "ga lai do mat seo ten that la gi", grounds: [ly_that], expect_terms: ["Lý Thất"]}
+  - {id: c5-a-lai-do-ten-that--saichinhta, chapter: 5, type: a,
+     text: "gã lái đò mặt sẹo tên thật là j", grounds: [ly_that], expect_terms: ["Lý Thất"]}
+  - {id: c5-a-lai-do-ten-that--trongkhong, chapter: 5, type: a,
+     text: "gã lái đò mặt sẹo tên thật", grounds: [ly_that], expect_terms: ["Lý Thất"]}
+
+  - {id: c5-a-ai-lay-kiem--haiy, chapter: 5, type: a,
+     text: "Ai đã lấy Thanh Sương, và gã lái đò mặt sẹo tên thật là gì?",
+     grounds: [e_sword_stolen, ly_that], expect_terms: ["Lan", "Lý Thất"]}
+
+  - {id: c5-b-lan-giet-gu--trongkhong, chapter: 5, type: b, text: "lan giết lão gù à"}
