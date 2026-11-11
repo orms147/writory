@@ -45,6 +45,7 @@ curl http://127.0.0.1:8000/stories              # {"stories": [...]}, mới nh�
 curl http://127.0.0.1:8000/config/public
 curl http://127.0.0.1:8000/player/costs         # {"total_usd", "this_month_usd", "stories"}
 curl http://127.0.0.1:8000/stories/<story_id>/narrator   # {"remaining"}
+curl http://127.0.0.1:8000/stories/<story_id>/narrator/turns   # {"chapter", "turns"}: các lượt đã hỏi của chương (D-162)
 curl -X POST http://127.0.0.1:8000/stories/<story_id>/narrator -H 'content-type: application/json' -d '{"question": "Lan là ai?"}'   # {"answer", "remaining", "source_chapters"}
 ```
 Tạo truyện (design §4.1, D-45). POST một bước trả 3 lựa chọn đã có, hoặc gọi model để tạo nếu chưa có; PUT chọn theo số thứ tự 0–2. `genres` là 1 tới `max_selected` khoá trong `config/genres.yaml`, theo thứ tự ưu tiên; `idea` (không bắt buộc) là ý tưởng của người chơi (D-160). `darkness_level` là một khoá của `config/moderation.yaml` `darkness_levels`, bỏ trống thì dùng mức mặc định (D-67):

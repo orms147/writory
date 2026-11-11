@@ -13,6 +13,7 @@ import type {
   ChoicesOut,
   NarratorAnswerOut,
   NarratorQuotaOut,
+  NarratorTurnsOut,
   NotebookOut,
   PlayerCosts,
   PlayerKeyOut,
@@ -112,6 +113,7 @@ export const api = {
   chapterEstimate: (id: string) => request<ChapterEstimateOut>('GET', `/stories/${enc(id)}/estimate`),
   notebook: (id: string) => request<NotebookOut>('GET', `/stories/${enc(id)}/notebook`),
   narratorQuota: (id: string) => request<NarratorQuotaOut>('GET', `/stories/${enc(id)}/narrator`),
+  narratorTurns: (id: string) => request<NarratorTurnsOut>('GET', `/stories/${enc(id)}/narrator/turns`),
   askNarrator: (id: string, question: string) =>
     request<NarratorAnswerOut>('POST', `/stories/${enc(id)}/narrator`, { question }),
 

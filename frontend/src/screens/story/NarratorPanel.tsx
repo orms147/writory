@@ -9,7 +9,8 @@ import { errorGroup } from '../../lib/errorGroups';
 import { useResource } from '../../lib/useResource';
 
 // Hỏi người kể (D-/M-HoiNguoiKe): không câu hỏi gợi ý; câu trả lời hiện nguyên văn; số câu còn lại
-// và nguồn do máy chủ trả (D-65).
+// và nguồn do máy chủ trả (D-65). Các lượt đã hỏi của chương do máy chủ lưu và trả lại khi mở khung
+// (D-162); không tải được thì khung vẫn dùng được, chỉ thiếu lượt cũ.
 
 interface Message {
   id: number;
@@ -46,6 +47,7 @@ function NarratorBody({ storyId, chapter, onClose }: { storyId: string; chapter:
   const max = config.input.narrator_question_max_chars;
   const quota = useResource(() => api.narratorQuota(storyId), `${storyId}:${chapter}`);
   const [remaining, setRemaining] = useState<number | null>(null);
+  const past = useResource(() => api.narratorTurns(storyId), `${storyId}:${chapter}`);
   const [messages, setMessages] = useState<Message[]>([]);
   const [question, setQuestion] = useState('');
   const [pending, setPending] = useState(false);
@@ -63,7 +65,14 @@ function NarratorBody({ storyId, chapter, onClose }: { storyId: string; chapter:
 
   useEffect(() => {
     listEnd.current?.scrollIntoView({ block: 'end' });
-  }, [messages, pending]);
+  }, [messages, pending, past.data]);
+
+  // Lượt cũ đứng trước lượt hỏi trong lần mở này; mã âm để không trùng mã của lượt mới.
+  const earlier: Message[] = (past.data?.turns ?? []).flatMap((t, i) => [
+    { id: -(2 * i + 1), who: 'me' as const, text: t.question },
+    { id: -(2 * i + 2), who: 'narrator' as const, text: t.answer, sources: t.source_chapters },
+  ]);
+  const shown = [...earlier, ...messages];
 
   const left = remaining ?? quota.data?.remaining ?? null;
   const exhausted = limitError !== null || left === 0;
@@ -116,7 +125,7 @@ function NarratorBody({ storyId, chapter, onClose }: { storyId: string; chapter:
 
       <div className="flex-1 overflow-y-auto px-5 py-5 md:px-6" aria-live="polite">
         <ul className="flex flex-col gap-3">
-          {messages.map((m) =>
+          {shown.map((m) =>
             m.who === 'me' ? (
               <li key={m.id} className="max-w-[85%] self-end rounded-[14px] bg-ink-800 px-4 py-3 text-[14px] text-ink-50">
                 <span className="sr-only">Bạn hỏi: </span>

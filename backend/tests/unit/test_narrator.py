@@ -82,6 +82,7 @@ CFG = REPO.model_copy(update={
             update={"narrator_questions_per_chapter": 3}
         ),
         "narrator_pages": REPO.limits.narrator_pages.model_copy(update={"top_k": 0}),
+        "narrator_history": REPO.limits.narrator_history.model_copy(update={"turns": 0}),
     }),
     "models": REPO.models.model_copy(update={
         "roles": REPO.models.roles.model_copy(update={"narrator": "test/narrator"}),

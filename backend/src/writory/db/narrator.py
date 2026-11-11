@@ -1,4 +1,8 @@
-"""Đếm câu hỏi người kể theo truyện và chương trong Postgres (G8, D-40, D-66)."""
+"""Đếm câu hỏi người kể theo truyện và chương trong Postgres (G8, D-40, D-66), và lưu các lượt
+hỏi đáp đã xong (D-162)."""
+
+from collections.abc import Iterable
+from dataclasses import dataclass
 
 import psycopg
 
@@ -54,3 +58,40 @@ def narrator_questions_asked(conn: psycopg.Connection, story_id: str, chapter: i
         (story_id, chapter),
     ).fetchone()
     return 0 if row is None else row[0]
+
+
+@dataclass(frozen=True)
+class NarratorTurnRow:
+    """Một lượt hỏi đáp đã lưu (D-162): câu người chơi hỏi, đúng chữ đã hiện, chương nguồn đã hiện."""
+
+    question: str
+    answer: str
+    source_chapters: tuple[int, ...] = ()
+
+
+def add_narrator_turn(conn: psycopg.Connection, story_id: str, chapter: int, question: str,
+                      answer: str, source_chapters: Iterable[int]) -> None:
+    """Ghi một lượt hỏi đáp đã xong ở chương `chapter`. Chỉ gọi sau khi câu trả lời đã qua mọi phép
+    kiểm và sắp hiện (G11): `answer` là đúng chữ người chơi thấy, không phải câu thô của model."""
+    require_story_id(story_id)
+    require_chapter(chapter)
+    try:
+        conn.execute(
+            "INSERT INTO narrator_turns (story_id, chapter, question, answer, source_chapters) "
+            "VALUES (%s, %s, %s, %s, %s)",
+            (story_id, chapter, question, answer, sorted(set(source_chapters))),
+        )
+    except psycopg.errors.ForeignKeyViolation as exc:
+        raise StoryNotFoundError(f"không có truyện {story_id}") from exc
+
+
+def narrator_turns(conn: psycopg.Connection, story_id: str, chapter: int) -> list[NarratorTurnRow]:
+    """Các lượt hỏi đáp của chương `chapter`, cũ trước. Luôn lọc theo truyện (G10)."""
+    require_story_id(story_id)
+    require_chapter(chapter)
+    rows = conn.execute(
+        "SELECT question, answer, source_chapters FROM narrator_turns "
+        "WHERE story_id = %s AND chapter = %s ORDER BY id",
+        (story_id, chapter),
+    ).fetchall()
+    return [NarratorTurnRow(q, a, tuple(src)) for q, a, src in rows]

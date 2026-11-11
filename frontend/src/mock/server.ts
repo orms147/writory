@@ -45,6 +45,7 @@ interface MockStory {
   spent: number;
   updated_at: string;
   narratorUsed: Record<number, number>;
+  narratorTurns?: Record<number, { question: string; answer: string; source_chapters: number[] }[]>;
   busy: boolean;
 }
 
@@ -449,6 +450,9 @@ export function createMockServer(options: MockOptions = {}) {
         return jsonResponse(s.action);
       }
       if (rest === 'notebook' && method === 'GET') return jsonResponse(notebookFor(s.chapter));
+      if (rest === 'narrator/turns' && method === 'GET') {
+        return jsonResponse({ chapter: s.chapter, turns: s.narratorTurns?.[s.chapter] ?? [] });
+      }
       if (rest === 'narrator') {
         const limit = MOCK_CONFIG.narrator_questions_per_chapter ?? 0;
         const used = s.narratorUsed[s.chapter] ?? 0;
@@ -468,11 +472,11 @@ export function createMockServer(options: MockOptions = {}) {
           const hit = book.entries.find((e) =>
             [e.text, ...e.aliases].some((name) => lower.includes(name.toLocaleLowerCase('vi'))),
           );
-          return jsonResponse({
-            answer: hit?.quote ? `Bạn đã đọc: ${hit.quote}` : 'Bạn chưa biết điều này.',
-            remaining: Math.max(0, limit - used - 1),
-            source_chapters: hit ? [hit.since_chapter] : [],
-          });
+          const answer = hit?.quote ? `Bạn đã đọc: ${hit.quote}` : 'Bạn chưa biết điều này.';
+          const source_chapters = hit ? [hit.since_chapter] : [];
+          // Như máy chủ thật (D-162): lượt đã xong được lưu theo chương, để hiện lại.
+          s.narratorTurns = { ...s.narratorTurns, [s.chapter]: [...(s.narratorTurns?.[s.chapter] ?? []), { question: q, answer, source_chapters }] };
+          return jsonResponse({ answer, remaining: Math.max(0, limit - used - 1), source_chapters });
         }
       }
     }

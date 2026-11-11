@@ -132,6 +132,16 @@ class NarratorPagesLimits(_Section):
     neighbors: NonNegativeInt = 0  # đoạn liền sau mỗi đoạn trúng cũng lấy (như D-96)
 
 
+class NarratorHistoryLimits(_Section):
+    """Các lượt hỏi đáp trước của chương đưa lại cho người kể (D-162). `turns` 0 = tắt (đề như khi
+    chưa có lịch sử); bật thì `max_chars` bắt buộc."""
+
+    _path = "narrator_history"
+    _file = "limits.yaml"
+    turns: NonNegativeInt | None = None  # số lượt gần nhất đưa lại; 0 = tắt
+    max_chars: PositiveInt | None = None  # tổng độ dài chữ tối đa của các lượt đưa lại
+
+
 class ContextLimits(_Section):
     _path = "context"
     _file = "limits.yaml"
@@ -266,6 +276,7 @@ class LimitsConfig(_Strict):
     input: InputLimits
     narrator_notebook: NarratorNotebookLimits
     narrator_pages: NarratorPagesLimits = NarratorPagesLimits()
+    narrator_history: NarratorHistoryLimits = NarratorHistoryLimits()
     context: ContextLimits
     facts: FactLimits = FactLimits()
     llm_call: LLMCallLimits = LLMCallLimits()

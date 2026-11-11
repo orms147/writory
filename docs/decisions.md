@@ -1526,3 +1526,13 @@ Người quyết: **Chủ dự án** (người dùng đã nói rõ) hoặc **Cla
 - **Kết quả:** 24 thể loại (7 soạn lại, `sang_van` giữ nguyên, 16 mới); Meta 1,03 USD, Anthropic 0,71 USD (`evals/results/2026-11-03-genres-gen/notes.md`). Một giám khảo, một lượt: độ nghiêm chưa đo; truyện viết thật bằng thể loại mới chưa chạy.
 - **Người quyết:** chủ dự án (hai model, không trần, chỉ lượt này); Claude (quy trình, thang chấm, danh sách hướng gợi ý). Nhánh feature/genres-idea · 3/11/2026
 
+## D-162 · Người kể nhớ các lượt hỏi đáp của chương; lượt được lưu trong Postgres (bổ sung D-40, D-143)
+- **Bối cảnh:** chủ dự án (11/11/2026) so tính năng hỏi người kể với khung dựng chatbot của mình: người kể chỉ nhận sổ tay, đoạn trên trang và câu đang hỏi, nên câu nối tiếp ("thế còn ông ấy?") không hiểu được; các câu đã hỏi chỉ nằm trong trình duyệt, tải lại trang là mất. Ngoài danh sách bản 1, chủ dự án yêu cầu.
+- **Quyết định:**
+  - Bảng `narrator_turns` (migration 0014): câu hỏi và đúng chữ đã hiện, kèm chương nguồn; ghi sau khi câu trả lời qua mọi phép kiểm (G11), câu bị chặn hay lỗi thì không ghi; không lưu câu thô của model. `GET /stories/{id}/narrator/turns` trả các lượt của chương đã commit để giao diện hiện lại.
+  - Lịch sử cho model (`limits.narrator_history`, đề `narrator-5`): các lượt của chương đang đọc, tối đa `turns` lượt gần nhất trong `max_chars`, nằm trong khối dữ liệu riêng `narrator_history` đứng trước câu đang hỏi (G4). Lịch sử chỉ giúp hiểu câu nối tiếp, không phải nguồn: mã mục vẫn phải nằm trong phần gửi lần này, dò lộ, lưới úp mở và kiểm duyệt giữ nguyên.
+  - Tìm sổ tay và đoạn trên trang bằng câu hỏi liền trước ghép với câu đang hỏi, ghép bằng code, không thêm lời gọi model.
+  - `turns: 0` là tắt: tin nhắn y như trước, dù lượt vẫn được lưu và hiện lại. Gộp ở trạng thái tắt; bật sau khi đo.
+- **Đo:** đề bài E nhận `history` ghi sẵn trong file; đề câu nối tiếp `questions-followup-1.yaml` chạy hai lần, tắt và bật (`--config-dir evals/config/narrator-history`). Trước đó đề câu "bẩn" `questions-dirty-1.yaml` cho thấy cách gõ chưa phân biệt được với câu chuẩn (`evals/results/2026-11-11-narrator-dirty-check/notes.md`).
+- **Hệ quả:** Postgres giữ chữ người chơi hỏi người kể (xoá truyện thì xoá theo). Lượt của chương trước không đi theo sang chương sau. Bài A (hai hệ người kể) không truyền lịch sử.
+- **Người quyết:** chủ dự án (lưu lượt vào DB, nhớ hết lượt của chương có trần ký tự, gộp ở trạng thái tắt; 11/11/2026); thiết kế: Claude. Nhánh feature/narrator-history · 11/11/2026

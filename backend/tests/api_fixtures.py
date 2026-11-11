@@ -129,6 +129,21 @@ class AllowAllQuota:
         return True
 
 
+class MemoryNarratorLog:
+    """Sổ lượt hỏi đáp người kể trong bộ nhớ, cùng giao thức với `deps.PostgresNarratorLog` (D-162)."""
+
+    def __init__(self) -> None:
+        self.rows: list = []
+
+    def turns(self) -> list:
+        return list(self.rows)
+
+    def add(self, question: str, answer: str, source_chapters: list[int]) -> None:
+        from writory.db import NarratorTurnRow
+
+        self.rows.append(NarratorTurnRow(question, answer, tuple(source_chapters)))
+
+
 def offline(app) -> None:
     """Test không Docker: kết nối Postgres giả (None) nên khoá chống chạy đôi và bộ đếm tần suất
     (cả hai cần Postgres thật) được thay bằng bản không làm gì. Hành vi thật của chúng nằm ở test
@@ -144,6 +159,8 @@ def offline(app) -> None:
 
     for dep in (deps.lock_story, deps.lock_narrator, lock_setup):
         app.dependency_overrides[dep] = no_lock
+    turn_log = MemoryNarratorLog()  # một sổ cho cả app, như một truyện (D-162)
+    app.dependency_overrides[deps.get_narrator_log] = lambda: turn_log
     app.dependency_overrides[deps.get_call_quota] = AllowAllQuota
 
 

@@ -85,6 +85,17 @@ class NarratorRemainingOut(_Out):
     remaining: int
 
 
+class NarratorTurnOut(_Out):
+    question: str  # chữ chính người chơi này đã gõ
+    answer: str  # đúng chữ đã hiện lúc hỏi
+    source_chapters: list[int]
+
+
+class NarratorTurnsOut(_Out):
+    chapter: int  # chương đã commit: các lượt dưới đây là của chương này (D-162)
+    turns: list[NarratorTurnOut]
+
+
 # --- key người chơi (G7, D-45) ---------------------------------------------------------------
 
 

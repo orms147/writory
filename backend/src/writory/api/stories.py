@@ -7,6 +7,7 @@ dùng (`deps.get_owner_id`: người chơi dev ở chế độ `dev`, chủ củ
 cũng không mở được.
 """
 
+import asyncio
 from collections.abc import Mapping
 from functools import partial
 from typing import Annotated
@@ -19,6 +20,8 @@ from writory.api.schemas import (
     NarratorAnswerOut,
     NarratorQuestionIn,
     NarratorRemainingOut,
+    NarratorTurnOut,
+    NarratorTurnsOut,
     NotebookOut,
     StoryListOut,
     StorySummaryOut,
@@ -29,6 +32,7 @@ from writory.graph import PlayerView
 from writory.llm.cost import MeteredClient, estimate_chapter_cost
 from writory.pipeline.narrator import (
     NarratorCounter,
+    NarratorTurn,
     ask_narrator,
     remaining_questions,
     source_chapters,
@@ -70,6 +74,7 @@ async def narrator(
     truth_names: Annotated[Mapping[str, tuple[str, ...]], Depends(deps.get_truth_names)],
     brief: deps.StoryBrief,
     pages: deps.PageTexts,
+    turn_log: deps.NarratorLogDep,
     quota: Counter,
 ) -> NarratorAnswerOut:
     """Hỏi người kể: không mất lượt truyện; số câu mỗi chương có trần (G8). Câu hỏi qua kiểm duyệt
@@ -80,20 +85,41 @@ async def narrator(
 
     Trả thêm số câu còn lại của chương (bộ đếm `narrator_questions`, sau khi giữ lượt) và chương
     của các mục câu trả lời dẫn, tính từ `player_view` (D-65), cộng chương của các đoạn trên trang
-    được dẫn (D-143). Hết lượt: NARRATOR_LIMIT_REACHED như cũ."""
+    được dẫn (D-143). Hết lượt: NARRATOR_LIMIT_REACHED như cũ.
+
+    Lượt hỏi đáp đã xong được lưu (`narrator_turns`, D-162): câu hỏi và đúng chữ đã hiện, sau khi
+    câu trả lời qua mọi phép kiểm (G11); câu bị chặn hay lỗi thì không lưu. Các lượt trước của
+    chương đang đọc đi kèm làm lịch sử; người kể chỉ dùng khi `limits.narrator_history` bật."""
+    turns = await asyncio.to_thread(turn_log.turns)
     result = await ask_narrator(
         body.question, view, llm=llm, config=config, truth_names=truth_names, plan=plan,
         story_brief=brief, quota=quota, pages=pages,
+        history=[NarratorTurn(t.question, t.answer) for t in turns],
         moderate=partial(_moderate_input, llm=llm, config=config),
         # Câu trả lời là văn model viết để hiện thành một đoạn: kiểm như văn cảnh (D-137).
         moderate_answer=partial(moderate, source=Source.SCENE, llm=llm, config=config,
                                 darkness_level=story.darkness_level),
     )
+    sources = source_chapters(view, result.refs, result.page_chapters)
+    await asyncio.to_thread(turn_log.add, body.question, result.answer, sources)
     return NarratorAnswerOut(
         answer=result.answer,
         remaining=await remaining_questions(quota, view.story_id, view.chapter, config),
-        source_chapters=source_chapters(view, result.refs, result.page_chapters),
+        source_chapters=sources,
     )
+
+
+@router.get("/{story_id}/narrator/turns", response_model=NarratorTurnsOut)
+def narrator_turn_list(story: deps.OwnedStory,
+                       turn_log: deps.NarratorLogDep) -> NarratorTurnsOut:
+    """Các lượt hỏi đáp người kể của chương đã commit, cũ trước, để giao diện hiện lại sau khi tải
+    lại trang (D-162). Chỉ chữ chính người chơi này đã gõ và chữ đã hiện cho họ (G1). Không cần
+    key, không gọi model."""
+    return NarratorTurnsOut(
+        chapter=story.committed_chapter or 0,
+        turns=[NarratorTurnOut(question=t.question, answer=t.answer,
+                               source_chapters=list(t.source_chapters))
+               for t in turn_log.turns()])
 
 
 @router.get("/{story_id}/narrator", response_model=NarratorRemainingOut)
