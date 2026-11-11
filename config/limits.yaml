@@ -37,6 +37,12 @@ narrator_pages:
   chunk_chars: 500
   max_chars: 3600
   neighbors: 1
+# Lịch sử hỏi đáp của chương cho người kể (D-162; số tạm): các lượt trước chỉ giúp hiểu câu nối tiếp
+# ("thế còn ông ấy?"), không phải nguồn trả lời. `turns: 0` là TẮT: đề và tin nhắn như khi chưa có lịch sử.
+# Bật thì đề `narrator-5`. Lượt hỏi đáp vẫn được lưu và hiện lại ở giao diện dù tắt.
+narrator_history:
+  turns: 0
+  max_chars: 2000
 context:
   writer_max_neighbors: 30  # số nút lân cận tối đa trong ngữ cảnh model viết (D-28; tạm, D-47)
   summary_max_chars: 800    # độ dài tối đa của tóm tắt một chương (D-49; tạm)

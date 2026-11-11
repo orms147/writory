@@ -88,16 +88,20 @@ from writory.pipeline.bench_e_story import (
 from writory.pipeline.bench_run import BudgetedClient, Price, StepTracker, merged_prices
 from writory.pipeline.narrator import (
     NOT_KNOWN,
-    PAGES_PROMPT_VERSION,
     BlockReason,
     NarratorOutput,
     NarratorReply,
+    NarratorTurn,
     ask_narrator_reply,
     build_messages,
+    history_on,
+    pages_on,
     prompt_version,
     render_notebook,
+    retrieval_query,
     select_passages,
     system_parts,
+    trim_history,
 )
 from writory.pipeline.notebook import select_notebook
 from writory.pipeline.story_plan import Secret, StoryPlan
@@ -159,6 +163,15 @@ class _Strict(BaseModel):
     model_config = ConfigDict(extra="forbid", frozen=True)
 
 
+class HistoryTurn(_Strict):
+    """Một lượt hỏi đáp trước, ghi sẵn trong đề (D-162): không do model sinh, để lượt đo lặp lại
+    được. `answer` là chữ coi như đã hiện cho người chơi: đề không load nếu nó chứa bí mật chưa
+    mở ở chương của câu hỏi."""
+
+    question: str = Field(min_length=1)
+    answer: str = Field(min_length=1)
+
+
 class Question(_Strict):
     id: str = Field(pattern=r"^[a-z0-9][a-z0-9-]*$")
     chapter: PositiveInt
@@ -168,6 +181,9 @@ class Question(_Strict):
     grounds: list[str] = []  # loại a: id lớp truth hoặc chữ hiện của mục làm căn cứ
     expect_terms: list[str] = []  # loại a: cụm phải có trong câu trả lời
     pad: bool = False  # hỏi trên sổ tay lớn (cộng mục đệm `notebook_pad`, D-60)
+    # Các lượt trước của chương, cũ trước (D-162). Người kể chỉ nhận khi bật
+    # `limits.narrator_history`; tắt thì câu được hỏi như không có lượt nào trước.
+    history: list[HistoryTurn] = []
 
     @model_validator(mode="after")
     def _shape(self) -> Self:
@@ -502,6 +518,7 @@ def load_data(data_dir: Path = DATA_DIR, *, redteam_path: Path = REDTEAM_PATH,
 
     problems: list[str] = []
     states = {n: chapter_state(story, n) for n in sorted(chapters)}
+    scorer = Scorer.build(story, scorer_plan, story_brief)
     pad = questions.notebook_pad
     pad_chapters = sorted({q.chapter for q in questions.questions if q.pad} & chapters)
     pad_states = {n: chapter_state(story, n, pad) for n in pad_chapters}
@@ -520,9 +537,13 @@ def load_data(data_dir: Path = DATA_DIR, *, redteam_path: Path = REDTEAM_PATH,
         if (q.chapter, text) in lookup:
             problems.append(f"câu {q.id}: trùng chữ với {lookup[(q.chapter, text)].id} cùng chương")
         texts[q.id], lookup[(q.chapter, text)] = text, q
+        state = pad_states[q.chapter] if q.pad else states[q.chapter]
+        for n, turn in enumerate(q.history, 1):
+            if scorer.leaks(turn.answer, state):
+                problems.append(f"câu {q.id}: câu đáp ghi sẵn của history lượt {n} chứa bí mật chưa "
+                                f"mở ở chương {q.chapter} (không thể là chữ đã hiện)")
         if q.type != "a":
             continue
-        state = pad_states[q.chapter] if q.pad else states[q.chapter]
         try:
             refs[q.id] = list(dict.fromkeys(resolve_ref(state, g) for g in q.grounds))
         except ValueError as e:
@@ -539,7 +560,7 @@ def load_data(data_dir: Path = DATA_DIR, *, redteam_path: Path = REDTEAM_PATH,
     hashes[f"redteam/{redteam_path.name}"] = _sha256(redteam_raw)
     hashes.update(story.hashes)
     return BenchData(data_dir, questions, plan, run, texts, refs, states,
-                     Scorer.build(story, scorer_plan, story_brief), hashes, lookup, story,
+                     scorer, hashes, lookup, story,
                      story_plan, story_brief, pad_states, files)
 
 
@@ -559,7 +580,7 @@ def run_problems(config: AppConfig, data: BenchData) -> list[str]:
                           ("narrator_notebook", "max_entries"), ("narrator_notebook", "max_chars"),
                           ("narrator_notebook", "recent_entries"),
                           ("narrator_notebook", "keyword_entries"),
-                          ("narrator_pages", "top_k")):
+                          ("narrator_pages", "top_k"), ("narrator_history", "turns")):
         try:
             getattr(config.limits, section).require(name)
         except LimitNotSetError as e:
@@ -570,6 +591,11 @@ def run_problems(config: AppConfig, data: BenchData) -> list[str]:
                 config.limits.narrator_pages.require(name)
             except LimitNotSetError as e:
                 problems.append(str(e))
+    if config.limits.narrator_history.turns:  # bật lịch sử hỏi đáp (D-162)
+        try:
+            config.limits.narrator_history.require("max_chars")
+        except LimitNotSetError as e:
+            problems.append(str(e))
     max_chars = config.limits.input.narrator_question_max_chars
     if max_chars is not None:
         long = [qid for qid, t in data.texts.items() if len(t) > max_chars or not t.strip()]
@@ -597,6 +623,8 @@ def score_reply(q: Question, text: str, state: ChapterState, reply: NarratorRepl
         if final_known else [],
         # Truy hồi sổ tay (D-59): số mục đã gửi / tổng, để đo cả khi sổ tay nhỏ gửi nguyên.
         "pad": q.pad, "shown": len(reply.shown), "total": reply.total,
+        # Số lượt trước khai trong đề (D-162); người kể chỉ nhận khi bật `limits.narrator_history`.
+        "history": len(q.history),
         # Đoạn trên trang đã gửi (D-143): [chương, số đoạn] theo mã t1, t2…
         "passages": [[c.chapter, c.index] for _, c in reply.passages],
         "prompt_chars": reply.prompt_chars,
@@ -873,7 +901,11 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
                 config: AppConfig) -> dict[str, Any]:
     """Những gì phải giữ nguyên để chạy tiếp vào cùng thư mục kết quả."""
     version = prompt_version(config)
-    prompt = "\n".join(system_parts(version == PAGES_PROMPT_VERSION))
+    history = history_on(config)
+    prompt = "\n".join(system_parts(pages_on(config), history))
+    # Chỉ ghi khi bật, để thư mục kết quả có trước D-162 vẫn chạy tiếp được.
+    history_fp = ({"narrator_history": config.limits.narrator_history.model_dump()}
+                  if history else {})
     custom = {"data_files": dict(data.files)} if data.files != DEFAULT_FILES else {}
     return {
         **custom,
@@ -887,6 +919,7 @@ def fingerprint(data: BenchData, config_dir: Path, opts: RunOptions,
         "narrator_prompt": version,  # D-77; narrator-4 khi bật đoạn trên trang (D-143)
         "narrator_prompt_sha256": _sha256(prompt.encode()),
         "narrator_pages": config.limits.narrator_pages.model_dump(),
+        **history_fp,
         "judge_frame": JUDGE_FRAME_VERSION,
         "judge_frame_sha256": _sha256(JUDGE_FRAME.encode()),
     }
@@ -973,7 +1006,9 @@ class Runner:
                                              truth_names=state.truth_names,
                                              plan=self.data.story_plan,
                                              story_brief=self.data.story_brief,
-                                             quota=_Unlimited(), pages=self.data.pages)
+                                             quota=_Unlimited(), pages=self.data.pages,
+                                             history=[NarratorTurn(t.question, t.answer)
+                                                      for t in q.history])
         except WritoryError as e:
             if gate.halted:
                 self._halt("budget", gate.halted)
@@ -1089,7 +1124,7 @@ async def run_bench(
     problems = run_problems(config, data)
     if problems:
         raise ConfigError("config chưa đủ để chạy bài E:\n- " + "\n- ".join(problems))
-    if opts.judge and prompt_version(config) == PAGES_PROMPT_VERSION:
+    if opts.judge and pages_on(config):
         raise ConfigError("giám khảo bài E chỉ thấy sổ tay, chưa thấy đoạn trên trang (D-143): chạy "
                           "narrator-4 không kèm --judge, hoặc tắt limits.narrator_pages.top_k")
     questions = select_questions(data, opts)
@@ -1440,14 +1475,18 @@ def plan_text(data: BenchData, config: AppConfig, *, samples: int, judge: bool) 
     price = merged_prices(config, data.run.prices)[model]
     schema_chars = len(json.dumps(NarratorOutput.model_json_schema(), ensure_ascii=False))
     typ = worst = 0.0
-    on = prompt_version(config) == PAGES_PROMPT_VERSION
+    on = pages_on(config)
+    with_history = history_on(config)
     for q in data.questions.questions:
         view = data.state_for(q).view
-        passages = (select_passages(data.texts[q.id], view, data.pages,
+        turns = (trim_history([NarratorTurn(t.question, t.answer) for t in q.history],
+                              config.limits.narrator_history) if with_history else None)
+        query = retrieval_query(data.texts[q.id], turns or ())
+        passages = (select_passages(query, view, data.pages,
                                     config.limits.narrator_pages) if on else None)
         messages = build_messages(
             data.texts[q.id], view,
-            select_notebook(data.texts[q.id], view, config.limits.narrator_notebook), passages)
+            select_notebook(query, view, config.limits.narrator_notebook), passages, turns)
         tokens_in = math.ceil((sum(len(m.content) for m in messages) + schema_chars)
                               / EST_CHARS_PER_TOKEN)
         typ += (tokens_in * price.input + TYPICAL_NARRATOR_OUTPUT_TOKENS * price.output) / 1e6

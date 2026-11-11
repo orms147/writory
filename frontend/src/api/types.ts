@@ -256,6 +256,18 @@ export interface NarratorQuotaOut {
   remaining: number;
 }
 
+/** Một lượt hỏi đáp người kể đã xong (D-162): chữ người chơi gõ và đúng chữ đã hiện. */
+export interface NarratorTurnOut {
+  question: string;
+  answer: string;
+  source_chapters: number[];
+}
+
+export interface NarratorTurnsOut {
+  chapter: number;
+  turns: NarratorTurnOut[];
+}
+
 // --- sự kiện SSE (pipeline/events.py) -----------------------------------------------------------
 
 export interface StageEvent {

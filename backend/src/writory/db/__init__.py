@@ -55,7 +55,10 @@ from writory.db.library import StorySummaryRecord, owned_story_summaries
 from writory.db.locks import StoryBusyError, job_lock
 from writory.db.migrate import migrate
 from writory.db.narrator import (
+    NarratorTurnRow,
+    add_narrator_turn,
     narrator_questions_asked,
+    narrator_turns,
     release_narrator_question,
     take_narrator_question,
 )
@@ -95,6 +98,7 @@ __all__ = [
     "ChapterQuoteError",
     "ChapterRecord",
     "CostEntry",
+    "NarratorTurnRow",
     "OwnerCosts",
     "PendingChapterError",
     "ReconcileResult",
@@ -106,6 +110,7 @@ __all__ = [
     "StoryNotFoundError",
     "StoryRecord",
     "StorySummaryRecord",
+    "add_narrator_turn",
     "chapter_costs",
     "chapter_records",
     "chapter_scenes",
@@ -136,6 +141,7 @@ __all__ = [
     "load_story_plan",
     "migrate",
     "narrator_questions_asked",
+    "narrator_turns",
     "owned_story_summaries",
     "owner_costs",
     "pending_cost_estimates",

@@ -1,0 +1,6 @@
+# Bật lịch sử hỏi đáp cho người kể (D-162): CHỈ bộ đo dùng (`--config-dir evals/config/narrator-history`), để chạy
+# đề câu nối tiếp ở trạng thái bật trong khi sản phẩm còn tắt. Các khoá khác của limits.yaml và mọi file khác lấy
+# từ `config/` (loader gộp từng khoá). Hai số dưới đây là số đề xuất cho sản phẩm khi bật.
+narrator_history:
+  turns: 5
+  max_chars: 2000

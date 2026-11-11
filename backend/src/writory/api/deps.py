@@ -30,8 +30,10 @@ from pydantic import BaseModel, SecretStr
 from writory.config import AppConfig, CostLimits, LimitNotSetError, RateLimits
 from writory.db import (
     CostEntry,
+    NarratorTurnRow,
     OwnerCosts,
     StoryRecord,
+    add_narrator_turn,
     chapter_costs,
     committed_page_texts,
     committed_player_view,
@@ -42,6 +44,7 @@ from writory.db import (
     load_story_brief,
     load_story_plan,
     narrator_questions_asked,
+    narrator_turns,
     owner_costs,
     pending_cost_estimates,
     record_cost,
@@ -287,6 +290,36 @@ def get_page_texts(story: OwnedStory, conn: PgConn, config: Config) -> dict[int,
 
 
 PageTexts = Annotated[dict[int, str], Depends(get_page_texts)]
+
+
+class NarratorLog(Protocol):
+    """Sổ lượt hỏi đáp người kể của MỘT truyện ở chương đã commit (D-162). `turns`: các lượt đã
+    xong, cũ trước, để hiện lại ở giao diện và làm lịch sử cho người kể khi
+    `limits.narrator_history.turns` > 0 (người kể tự cắt và tự bỏ khi tắt). `add`: ghi một lượt vừa
+    xong. Chỉ chương đang đọc: lượt của chương trước không đi theo."""
+
+    def turns(self) -> list[NarratorTurnRow]: ...
+
+    def add(self, question: str, answer: str, source_chapters: list[int]) -> None: ...
+
+
+class PostgresNarratorLog:
+    def __init__(self, conn: psycopg.Connection, story_id: str, chapter: int) -> None:
+        self._conn, self._story_id, self._chapter = conn, story_id, chapter
+
+    def turns(self) -> list[NarratorTurnRow]:
+        return narrator_turns(self._conn, self._story_id, self._chapter)
+
+    def add(self, question: str, answer: str, source_chapters: list[int]) -> None:
+        add_narrator_turn(self._conn, self._story_id, self._chapter, question, answer,
+                          source_chapters)
+
+
+def get_narrator_log(story: OwnedStory, conn: PgConn) -> NarratorLog:
+    return PostgresNarratorLog(conn, story.id, story.committed_chapter or 0)
+
+
+NarratorLogDep = Annotated[NarratorLog, Depends(get_narrator_log)]
 
 
 def get_truth_names(story: OwnedStory, driver: Neo4jDriver) -> Mapping[str, tuple[str, ...]]:

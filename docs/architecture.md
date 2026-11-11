@@ -471,6 +471,7 @@ erDiagram
   stories ||--o| story_plans : "kế hoạch ẩn"
   stories ||--o{ chapter_summaries : "tóm tắt"
   stories ||--o{ narrator_questions : "lượt hỏi"
+  stories ||--o{ narrator_turns : "hỏi đáp đã xong"
   stories ||--o{ chapter_choices : "lựa chọn"
   stories ||--o{ player_actions : "hành động"
   chapter_choices |o--o{ player_actions : "được chọn"
@@ -510,6 +511,7 @@ erDiagram
 | `chapter_summaries` | tóm tắt chương, chỉ dùng nội bộ (D-49) |
 | `chapter_choices`, `player_actions` | bộ lựa chọn phía máy chủ (có id nút thật, không ra API) và hành động dẫn tới chương sau (D-46, D-55); hành động tự viết mang `feasibility` của bộ phân loại, không ra API (G6, migration 0011, D-138) |
 | `narrator_questions` | số câu đã hỏi người kể theo chương |
+| `narrator_turns` | lượt hỏi đáp người kể đã xong: câu hỏi và đúng chữ đã hiện, theo chương; giao diện hiện lại, người kể nhận lại khi bật `limits.narrator_history` (D-162) |
 | `setup_sessions` | phiên khởi tạo; giữ các lựa chọn của từng bước |
 | `player_keys` | key OpenRouter, chỉ bản mã hoá (G7) |
 | `llm_costs`, `llm_call_windows` | nhật ký chi phí theo vai; bộ đếm lời gọi mỗi phút (D-44, D-56, D-64) |
